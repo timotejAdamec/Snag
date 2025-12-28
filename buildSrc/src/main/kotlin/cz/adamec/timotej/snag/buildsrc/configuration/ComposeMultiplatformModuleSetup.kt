@@ -15,6 +15,7 @@ internal fun Project.configureComposeMultiplatformModule() {
             commonMain.dependencies {
                 implementation(library("compose-runtime"))
                 implementation(library("compose-foundation"))
+                implementation(library("compose-material3"))
                 implementation(library("compose-material3-adaptive"))
                 implementation(library("compose-material3-adaptive-layout"))
                 implementation(library("compose-ui"))

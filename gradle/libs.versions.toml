@@ -10,6 +10,7 @@ androidx-espresso = "3.7.0"
 androidx-lifecycle = "2.9.6"
 androidx-testExt = "1.3.0"
 composeHotReload = "1.0.0"
+composeMultiplatformMaterial3 = "1.9.0"
 composeMultiplatform = "1.9.3"
 composeMultiplatformAdaptive = "1.2.0"
 jdk = "21"
@@ -53,7 +54,7 @@ ktor-serverTestHost = { module = "io.ktor:ktor-server-test-host-jvm", version.re
 compose-ui-tooling = { group = "org.jetbrains.compose.ui", name = "ui-tooling", version.ref = "composeMultiplatform" }
 compose-runtime = { group = "org.jetbrains.compose.runtime", name = "runtime", version.ref = "composeMultiplatform" }
 compose-foundation = { group = "org.jetbrains.compose.foundation", name = "foundation", version.ref = "composeMultiplatform" }
-#compose-material3 = { group = "org.jetbrains.compose.material3", name = "material3", version.ref = "composeMultiplatform" }
+compose-material3 = { group = "org.jetbrains.compose.material3", name = "material3", version.ref = "composeMultiplatformMaterial3" }
 compose-material3-adaptive = { module = "org.jetbrains.compose.material3.adaptive:adaptive", version.ref = "composeMultiplatformAdaptive" }
 compose-material3-adaptive-layout = { module = "org.jetbrains.compose.material3.adaptive:adaptive-layout", version.ref = "composeMultiplatformAdaptive" }
 compose-ui = { group = "org.jetbrains.compose.ui", name = "ui", version.ref = "composeMultiplatform" }
