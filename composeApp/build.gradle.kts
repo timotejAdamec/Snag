@@ -27,7 +27,7 @@ kotlin {
             implementation(compose.components.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
-            implementation(projects.feat.shared)
+            implementation(projects.feat.projects.driving)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
@@ -41,6 +41,12 @@ kotlin {
 
 dependencies {
     debugImplementation(compose.uiTooling)
+}
+
+android {
+    buildFeatures {
+        compose = true
+    }
 }
 
 compose.desktop {

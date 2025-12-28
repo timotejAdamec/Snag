@@ -1,16 +1,16 @@
 package cz.adamec.timotej.snag.buildsrc.configuration
 
 import com.android.build.api.dsl.androidLibrary
+import cz.adamec.timotej.snag.buildsrc.extensions.library
 import cz.adamec.timotej.snag.buildsrc.extensions.version
 import org.gradle.api.Project
+import org.gradle.kotlin.dsl.invoke
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import kotlin.text.toInt
 
 internal fun Project.configureKotlinMultiplatformModule() {
     extensions.findByType(KotlinMultiplatformExtension::class.java)?.apply {
-
         androidLibrary {
             namespace = "cz.adamec.timotej.snag." + name.replace("-", "")
             compileSdk = version("android-compileSdk").toInt()
@@ -32,6 +32,12 @@ internal fun Project.configureKotlinMultiplatformModule() {
         @OptIn(ExperimentalWasmDsl::class)
         wasmJs {
             browser()
+        }
+
+        sourceSets {
+            commonTest.dependencies {
+                implementation(library("kotlin-test"))
+            }
         }
     }
 }

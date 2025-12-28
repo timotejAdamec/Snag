@@ -34,4 +34,4 @@ plugins {
 
 include(":composeApp")
 include(":server")
-include(":feat:shared")
+include(":feat:projects:driving")
