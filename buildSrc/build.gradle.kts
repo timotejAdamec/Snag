@@ -7,10 +7,6 @@ kotlin {
 }
 
 gradlePlugin {
-    plugins.register("SnagMultiplatformAppPlugin") {
-        id = libs.plugins.snagMultiplatformApp.get().pluginId
-        implementationClass = "cz.adamec.timotej.snag.buildsrc.plugins.MultiplatformAppPlugin"
-    }
     plugins.register("SnagMultiplatformModulePlugin") {
         id = libs.plugins.snagMultiplatformModule.get().pluginId
         implementationClass = "cz.adamec.timotej.snag.buildsrc.plugins.MultiplatformModulePlugin"
