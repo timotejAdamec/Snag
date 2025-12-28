@@ -1,4 +1,4 @@
-package cz.adamec.timotej.snag
+package cz.adamec.timotej.snag.projects.driving
 
 import platform.UIKit.UIDevice
 

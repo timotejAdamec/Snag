@@ -1,4 +1,4 @@
-package cz.adamec.timotej.snag
+package cz.adamec.timotej.projects
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
