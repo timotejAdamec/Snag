@@ -35,3 +35,4 @@ plugins {
 include(":composeApp")
 include(":server")
 include(":feat:projects:driving")
+include(":feat:projects:app")
