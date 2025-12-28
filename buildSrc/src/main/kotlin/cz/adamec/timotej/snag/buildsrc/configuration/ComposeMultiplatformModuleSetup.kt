@@ -22,6 +22,10 @@ internal fun Project.configureComposeMultiplatformModule() {
                 implementation(library("compose-components-uiToolingPreview"))
                 implementation(library("androidx-lifecycle-viewmodelCompose"))
                 implementation(library("androidx-lifecycle-runtimeCompose"))
+                implementation(library("koin-compose"))
+                implementation(library("koin-compose-viewmodel"))
+                implementation(library("coil-compose"))
+                implementation(library("coil-network-ktor"))
             }
             commonTest.dependencies {
                 implementation(library("kotlin-test"))
