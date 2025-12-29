@@ -12,12 +12,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 internal fun Project.configureKotlinMultiplatformModule() {
     extensions.findByType(KotlinMultiplatformExtension::class.java)?.apply {
         androidLibrary {
-            namespace = "cz.adamec.timotej.snag." + name.replace("-", "")
-            compileSdk = version("android-compileSdk").toInt()
-            minSdk = version("android-minSdk").toInt()
-            compilerOptions {
-                jvmTarget.set(JvmTarget.fromTarget(version("jdk")))
-            }
+            configureBase(this@configureKotlinMultiplatformModule)
         }
 
         iosArm64()

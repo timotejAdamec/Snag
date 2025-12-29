@@ -32,6 +32,9 @@ kotlin {
         commonMain.dependencies {
             implementation(projects.feat.projects.driving)
         }
+        jvmMain.dependencies {
+            implementation(compose.desktop.currentOs)
+        }
     }
 }
 
