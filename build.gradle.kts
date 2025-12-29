@@ -3,6 +3,8 @@ plugins {
     // in each subproject's classloader
     alias(libs.plugins.snagMultiplatformModule) apply false
     alias(libs.plugins.snagDrivingMultiplatformModule) apply false
+    alias(libs.plugins.snagBackendModule) apply false
+    alias(libs.plugins.snagDrivingBackendModule) apply false
 
 //    alias(libs.plugins.androidApplication) apply false
     alias(libs.plugins.composeHotReload) apply false

@@ -64,6 +64,8 @@ compose-components-uiToolingPreview = { group = "org.jetbrains.compose.component
 [plugins]
 snagMultiplatformModule = { id = "libs.plugins.snag.multiplatform.module" }
 snagDrivingMultiplatformModule = { id = "libs.plugins.snag.driving.multiplatform.module" }
+snagBackendModule = { id = "libs.plugins.snag.backend.module" }
+snagDrivingBackendModule = { id = "libs.plugins.snag.driving.backend.module" }
 
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 androidLibrary = { id = "com.android.library", version.ref = "agp" }
