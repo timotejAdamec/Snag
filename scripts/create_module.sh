@@ -41,7 +41,7 @@ else
     else
         PLUGIN="alias(libs.plugins.snagMultiplatformModule)"
     fi
-    SOURCE_SETS=("androidMain" "commonMain" "commonTest" "iosMain" "jsMain" "jvmMain" "wasmJsMain")
+    SOURCE_SETS=("androidMain" "commonMain" "commonTest" "iosMain" "jvmMain" "webMain")
 fi
 
 # Create build.gradle.kts
