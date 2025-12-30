@@ -10,6 +10,7 @@ import org.gradle.kotlin.dsl.apply
 class DrivingBackendModulePlugin : Plugin<Project> {
     override fun apply(target: Project) = with(target) {
         apply(plugin = pluginId("ktor"))
+        apply(plugin = pluginId("kotlinSerialization"))
         apply<BackendModulePlugin>()
         configureKtorBackendModule()
     }

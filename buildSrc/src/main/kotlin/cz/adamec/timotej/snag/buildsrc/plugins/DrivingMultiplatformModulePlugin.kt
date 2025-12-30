@@ -12,6 +12,7 @@ class DrivingMultiplatformModulePlugin : Plugin<Project> {
         apply(plugin = pluginId("composeMultiplatform"))
         apply(plugin = pluginId("composeCompiler"))
         apply(plugin = pluginId("composeHotReload"))
+        apply(plugin = pluginId("kotlinSerialization"))
         apply<MultiplatformModulePlugin>()
         configureComposeMultiplatformModule()
     }
