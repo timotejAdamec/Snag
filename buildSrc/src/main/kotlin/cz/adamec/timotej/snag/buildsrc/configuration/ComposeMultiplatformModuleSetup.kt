@@ -28,10 +28,10 @@ internal fun Project.configureComposeMultiplatformModule() {
                 implementation(library("compose-ui-tooling-preview"))
                 implementation(library("compose-components-resources"))
                 implementation(library("compose-components-uiToolingPreview"))
-                implementation(library("androidx-lifecycle-viewmodelCompose"))
-                implementation(library("androidx-lifecycle-runtimeCompose"))
-                implementation(library("kotlinx-coroutinesCore"))
-                implementation(library("kotlinx-serializationCore"))
+                implementation(library("androidx-lifecycle-viewmodel-compose"))
+                implementation(library("androidx-lifecycle-runtime-compose"))
+                implementation(library("kotlinx-serialization-core"))
+                implementation(library("kotlin-immutable-collections"))
                 implementation(library("navigation3-ui"))
                 implementation(library("navigation3-viewmodel"))
                 implementation(library("navigation3-adaptive"))
@@ -46,7 +46,7 @@ internal fun Project.configureComposeMultiplatformModule() {
                 implementation(library("compose-ui-test"))
             }
             jvmMain.dependencies {
-                implementation(library("kotlinx-coroutinesSwing"))
+                implementation(library("kotlinx-coroutines-swing"))
             }
             webMain.dependencies {
                 implementation(library("navigation3-browser"))

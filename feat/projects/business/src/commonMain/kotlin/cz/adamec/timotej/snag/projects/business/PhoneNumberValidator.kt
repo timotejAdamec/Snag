@@ -1,6 +1,6 @@
 package cz.adamec.timotej.snag.projects.business
 
 class PhoneNumberValidator {
-    operator fun invoke(phoneNumber: String) =
-        phoneNumber.isNotBlank() && phoneNumber.matches(Regex("\\d{9}"))
+    operator fun invoke(phoneNumber: String): Boolean =
+        phoneNumber.isNotBlank() && phoneNumber.none { it.isLetter() }
 }

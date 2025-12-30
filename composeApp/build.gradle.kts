@@ -32,6 +32,8 @@ kotlin {
         commonMain.dependencies {
             implementation(projects.feat.projects.fe.driving.api)
             implementation(projects.feat.projects.fe.driving.impl)
+            implementation(projects.feat.projects.fe.driven)
+            implementation(projects.feat.projects.fe.app)
         }
         jvmMain.dependencies {
             implementation(compose.desktop.currentOs)

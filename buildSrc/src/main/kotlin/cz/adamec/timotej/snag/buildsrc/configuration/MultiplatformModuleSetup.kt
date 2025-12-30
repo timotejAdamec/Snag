@@ -31,7 +31,7 @@ internal fun Project.configureKotlinMultiplatformModule() {
 
         sourceSets {
             commonMain.dependencies {
-                implementation(library("kotlinx-coroutinesCore"))
+                implementation(library("kotlinx-coroutines-core"))
                 implementation(library("koin-core"))
                 implementation(library("kermit"))
                 implementation(library("kermit-koin"))
