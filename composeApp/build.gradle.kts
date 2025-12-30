@@ -31,6 +31,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(projects.feat.projects.fe.driving.api)
+            implementation(projects.feat.projects.fe.driving.impl)
         }
         jvmMain.dependencies {
             implementation(compose.desktop.currentOs)

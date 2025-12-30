@@ -37,6 +37,7 @@ internal fun Project.configureComposeMultiplatformModule() {
                 implementation(library("navigation3-adaptive"))
                 implementation(library("koin-compose"))
                 implementation(library("koin-compose-viewmodel"))
+                implementation(library("koin-compose-navigation3"))
                 implementation(library("coil-compose"))
                 implementation(library("coil-network-ktor"))
             }
@@ -49,6 +50,9 @@ internal fun Project.configureComposeMultiplatformModule() {
             }
             webMain.dependencies {
                 implementation(library("navigation3-browser"))
+            }
+            all {
+                languageSettings.optIn("org.koin.core.annotation.KoinExperimentalAPI")
             }
         }
     }
