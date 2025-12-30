@@ -25,6 +25,7 @@ internal fun Project.configureComposeMultiplatformModule() {
                 implementation(library("compose-material3-adaptive"))
                 implementation(library("compose-material3-adaptive-layout"))
                 implementation(library("compose-ui"))
+                implementation(library("compose-ui-tooling-preview"))
                 implementation(library("compose-components-resources"))
                 implementation(library("compose-components-uiToolingPreview"))
                 implementation(library("androidx-lifecycle-viewmodelCompose"))
