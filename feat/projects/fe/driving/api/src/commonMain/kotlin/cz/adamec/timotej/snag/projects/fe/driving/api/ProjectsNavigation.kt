@@ -4,3 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data object ProjectsRoute
+
+interface OnProjectClick {
+    operator fun invoke(projectId: Int)
+}

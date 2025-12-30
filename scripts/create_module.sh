@@ -8,9 +8,9 @@ if [[ "${@: -1}" == "split" ]]; then
     set -- "${@:1:$(($#-1))}"
 fi
 
-# Check if 3 or 4 arguments are provided
-if [ "$#" -lt 3 ] || [ "$#" -gt 4 ]; then
-    echo "Usage: $0 <type> <domain type> [be/fe/business] <architecture layer> [split]"
+# Check if 2, 3 or 4 arguments are provided
+if [ "$#" -lt 2 ] || [ "$#" -gt 4 ]; then
+    echo "Usage: $0 <type> [domain type] [be/fe/business] <architecture layer> [split]"
     exit 1
 fi
 
@@ -21,13 +21,20 @@ if [ "$#" -eq 4 ]; then
     ARCH_LAYER=$4
     BASE_MODULE_DIR="$TYPE/$DOMAIN_TYPE/$SIDE/$ARCH_LAYER"
     BASE_PACKAGE_DIR="cz/adamec/timotej/snag/$DOMAIN_TYPE/$SIDE/$ARCH_LAYER"
-else
+elif [ "$#" -eq 3 ]; then
     TYPE=$1
     DOMAIN_TYPE=$2
     ARCH_LAYER=$3
     SIDE=""
     BASE_MODULE_DIR="$TYPE/$DOMAIN_TYPE/$ARCH_LAYER"
     BASE_PACKAGE_DIR="cz/adamec/timotej/snag/$DOMAIN_TYPE/$ARCH_LAYER"
+else
+    TYPE=$1
+    ARCH_LAYER=$2
+    SIDE=""
+    DOMAIN_TYPE=""
+    BASE_MODULE_DIR="$TYPE/$ARCH_LAYER"
+    BASE_PACKAGE_DIR="cz/adamec/timotej/snag/$TYPE/$ARCH_LAYER"
 fi
 
 # Determine plugin and source sets

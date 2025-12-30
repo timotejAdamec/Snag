@@ -5,3 +5,9 @@ interface Client {
     val name: String
     val address: String?
 }
+
+data class ClientImpl(
+    override val id: Int,
+    override val name: String,
+    override val address: String?
+) : Client

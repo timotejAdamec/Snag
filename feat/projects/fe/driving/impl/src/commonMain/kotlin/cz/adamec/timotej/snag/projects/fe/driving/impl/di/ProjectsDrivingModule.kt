@@ -13,10 +13,11 @@ import org.koin.dsl.navigation3.navigation
 val projectsDrivingModule = module {
     viewModelOf(::ProjectsViewModel)
 
-    navigation<ProjectsRoute> { route ->
+    navigation<ProjectsRoute> { _ ->
         ProjectsScreen(
             modifier = Modifier.fillMaxSize(),
-            viewModel = koinViewModel()
+            viewModel = koinViewModel(),
+            onProjectClick = get(),
         )
     }
 }

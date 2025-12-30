@@ -53,6 +53,7 @@ internal fun Project.configureComposeMultiplatformModule() {
             }
             all {
                 languageSettings.optIn("org.koin.core.annotation.KoinExperimentalAPI")
+                languageSettings.optIn("androidx.compose.material3.ExperimentalMaterial3ExpressiveApi")
             }
         }
     }
