@@ -2,6 +2,7 @@ package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.ui.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
@@ -21,11 +22,15 @@ internal fun ProjectCard(
     OutlinedCard(
         modifier = modifier,
         onClick = onClick,
+        colors = CardDefaults.outlinedCardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
+        ),
     ) {
         Column(
             modifier = Modifier
                 .padding(
                     start = 24.dp,
+                    end = 24.dp,
                     top = 12.dp,
                     bottom = 12.dp,
                 ),

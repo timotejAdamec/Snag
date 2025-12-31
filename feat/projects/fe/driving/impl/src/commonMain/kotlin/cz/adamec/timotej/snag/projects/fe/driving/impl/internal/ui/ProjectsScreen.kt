@@ -30,7 +30,8 @@ internal fun ProjectsScreen(
         contentPadding = PaddingValues(
             start = 16.dp,
             end = 16.dp,
-            bottom = 16.dp,
+            top = 16.dp,
+            bottom = 48.dp,
         ),
         verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
