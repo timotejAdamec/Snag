@@ -2,19 +2,23 @@ package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import cz.adamec.timotej.snag.lib.design.scaffold.LocalAppScaffoldState
 import cz.adamec.timotej.snag.projects.fe.driving.api.OnProjectClick
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.ui.components.ProjectCard
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.vm.ProjectsViewModel
+import org.jetbrains.compose.resources.getString
 import org.koin.compose.viewmodel.koinViewModel
+import snag.feat.projects.fe.driving.impl.generated.resources.Res
+import snag.feat.projects.fe.driving.impl.generated.resources.projects_title
 
 @Composable
 internal fun ProjectsScreen(
@@ -23,6 +27,11 @@ internal fun ProjectsScreen(
     onProjectClick: OnProjectClick,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val scaffoldState = LocalAppScaffoldState.current
+
+    LaunchedEffect(Unit) {
+        scaffoldState.title.value = getString(Res.string.projects_title)
+    }
 
     LazyVerticalGrid(
         modifier = modifier,

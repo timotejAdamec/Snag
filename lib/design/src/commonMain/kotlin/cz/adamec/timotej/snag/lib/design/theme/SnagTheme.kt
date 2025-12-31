@@ -1,4 +1,4 @@
-package cz.adamec.timotej.snag.lib.design
+package cz.adamec.timotej.snag.lib.design.theme
 
 import androidx.compose.material3.MaterialExpressiveTheme
 import androidx.compose.runtime.Composable

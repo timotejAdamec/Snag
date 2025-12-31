@@ -1,4 +1,4 @@
-package cz.adamec.timotej.snag.ui
+package cz.adamec.timotej.snag.ui.di
 
 import cz.adamec.timotej.snag.projects.fe.app.di.projectsAppModule
 import cz.adamec.timotej.snag.projects.fe.driven.di.projectsDrivenModule

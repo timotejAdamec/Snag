@@ -1,5 +1,6 @@
 package cz.adamec.timotej.snag.ui
 
+import cz.adamec.timotej.snag.ui.di.appModule
 import org.koin.test.verify.verify
 import kotlin.test.Test
 
