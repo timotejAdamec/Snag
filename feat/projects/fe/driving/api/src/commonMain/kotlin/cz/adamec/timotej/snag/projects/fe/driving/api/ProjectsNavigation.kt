@@ -1,10 +1,10 @@
 package cz.adamec.timotej.snag.projects.fe.driving.api
 
-import kotlinx.serialization.Serializable
+import cz.adamec.timotej.snag.lib.design.navigation.NavRoute
+import kotlin.uuid.Uuid
 
-@Serializable
-data object ProjectsRoute
+interface ProjectsRoute : NavRoute
 
 interface OnProjectClick {
-    operator fun invoke(projectId: Int)
+    operator fun invoke(projectId: Uuid)
 }

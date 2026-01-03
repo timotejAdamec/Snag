@@ -15,6 +15,10 @@ gradlePlugin {
         id = libs.plugins.snagDrivingMultiplatformModule.get().pluginId
         implementationClass = "cz.adamec.timotej.snag.buildsrc.plugins.DrivingMultiplatformModulePlugin"
     }
+    plugins.register("SnagDrivenMultiplatformModulePlugin") {
+        id = libs.plugins.snagDrivenMultiplatformModule.get().pluginId
+        implementationClass = "cz.adamec.timotej.snag.buildsrc.plugins.DrivenMultiplatformModulePlugin"
+    }
     plugins.register("SnagBackendModulePlugin") {
         id = libs.plugins.snagBackendModule.get().pluginId
         implementationClass = "cz.adamec.timotej.snag.buildsrc.plugins.BackendModulePlugin"

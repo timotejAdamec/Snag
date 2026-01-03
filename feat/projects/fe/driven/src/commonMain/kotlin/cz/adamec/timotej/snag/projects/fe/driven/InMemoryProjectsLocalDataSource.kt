@@ -1,16 +1,13 @@
 package cz.adamec.timotej.snag.projects.fe.driven
 
-import cz.adamec.timotej.snag.projects.business.ClientImpl
-import cz.adamec.timotej.snag.projects.business.InspectionImpl
-import cz.adamec.timotej.snag.projects.business.InspectorImpl
 import cz.adamec.timotej.snag.projects.business.Project
 import cz.adamec.timotej.snag.projects.business.ProjectImpl
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsLocalDataSource
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
-import kotlin.time.Duration.Companion.hours
 import kotlin.time.Instant
+import kotlin.uuid.Uuid
 
 class InMemoryProjectsLocalDataSource : ProjectsLocalDataSource {
 
@@ -21,36 +18,36 @@ class InMemoryProjectsLocalDataSource : ProjectsLocalDataSource {
         projects.addAll(
             listOf(
                 ProjectImpl(
-                    id = 1,
+                    id = Uuid.random(),
                     name = "Central Park Renovation",
                     address = "New York, NY 10024",
-                    client = ClientImpl(1, "City Parks Dept", "830 5th Ave"),
-                    inspector = InspectorImpl(1, "John Doe", "+12125550199"),
-                    inspection = InspectionImpl(
-                        start = now,
-                        end = now + 2.hours,
-                        otherParticipants = persistentListOf("Alice Freeman", "Bob Smith"),
-                        climateConditions = "Sunny, 20°C",
-                        note = "Initial site survey completed."
-                    ),
+//                    client = ClientImpl(1, "City Parks Dept", "830 5th Ave"),
+//                    inspector = InspectorImpl(1, "John Doe", "+12125550199"),
+//                    inspection = InspectionImpl(
+//                        start = now,
+//                        end = now + 2.hours,
+//                        otherParticipants = persistentListOf("Alice Freeman", "Bob Smith"),
+//                        climateConditions = "Sunny, 20°C",
+//                        note = "Initial site survey completed."
+//                    ),
                     findingCategories = persistentListOf("Safety", "Landscaping")
                 ),
                 ProjectImpl(
-                    id = 2,
+                    id = Uuid.random(),
                     name = "Golden Gate Bridge Painting",
                     address = "San Francisco, CA 94129",
-                    client = ClientImpl(2, "Caltrans", "1120 N St, Sacramento"),
-                    inspector = InspectorImpl(2, "Jane Smith", "+14155550122"),
-                    inspection = null,
+//                    client = ClientImpl(2, "Caltrans", "1120 N St, Sacramento"),
+//                    inspector = InspectorImpl(2, "Jane Smith", "+14155550122"),
+//                    inspection = null,
                     findingCategories = persistentListOf("Structure", "Paint Quality")
                 ),
                 ProjectImpl(
-                    id = 3,
+                    id = Uuid.random(),
                     name = "Space Needle Maintenance",
                     address = "400 Broad St, Seattle, WA 98109",
-                    client = ClientImpl(3, "Space Needle Corp", null),
-                    inspector = InspectorImpl(3, "Bob Wilson", "+12065550144"),
-                    inspection = null,
+//                    client = ClientImpl(3, "Space Needle Corp", null),
+//                    inspector = InspectorImpl(3, "Bob Wilson", "+12065550144"),
+//                    inspection = null,
                     findingCategories = persistentListOf("Elevators", "Structural")
                 )
             )

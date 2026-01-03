@@ -1,5 +1,5 @@
 plugins {
-    alias(libs.plugins.snagMultiplatformModule)
+    alias(libs.plugins.snagDrivenMultiplatformModule)
 }
 
 kotlin {
@@ -7,7 +7,7 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(project(":feat:projects:business"))
-                implementation(project(":feat:projects:fe:ports"))
+                api(project(":feat:projects:fe:ports"))
             }
         }
     }

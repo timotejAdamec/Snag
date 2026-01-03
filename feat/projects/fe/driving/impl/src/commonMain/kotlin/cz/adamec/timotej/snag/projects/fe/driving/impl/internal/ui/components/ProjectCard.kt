@@ -40,7 +40,7 @@ internal fun ProjectCard(
                 style = MaterialTheme.typography.titleLargeEmphasized,
             )
             Text(
-                text = project.client.name,
+                text = "Client A",
                 style = MaterialTheme.typography.bodyLarge,
             )
         }

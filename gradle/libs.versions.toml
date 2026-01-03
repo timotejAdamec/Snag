@@ -26,6 +26,7 @@ coil = "3.3.0"
 kermit = "2.0.8"
 ktor = "3.3.3"
 logback = "1.5.23"
+store = "5.1.0-alpha07"
 
 [libraries]
 kotlin-gradle = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
@@ -41,6 +42,7 @@ androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "a
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
 androidx-lifecycle-viewmodel-compose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "androidx-lifecycle" }
 androidx-lifecycle-runtime-compose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose", version.ref = "androidx-lifecycle" }
+
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
 kotlinx-coroutines-swing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "kotlinx-coroutines" }
 kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlinx-serialization" }
@@ -51,11 +53,15 @@ koin-compose = { module = "io.insert-koin:koin-compose", version.ref = "koin" }
 koin-compose-viewmodel = { module = "io.insert-koin:koin-compose-viewmodel", version.ref = "koin" }
 koin-compose-navigation3 = { module = "io.insert-koin:koin-compose-navigation3", version.ref = "koin" }
 koin-test = { module = "io.insert-koin:koin-test", version.ref = "koin" }
+
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
 coil-network-ktor = { module = "io.coil-kt.coil3:coil-network-ktor3", version.ref = "coil" }
+
 kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }
 kermit-koin = { module = "co.touchlab:kermit-koin", version.ref = "kermit" }
+
 logback = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
+
 ktor-serverCore = { module = "io.ktor:ktor-server-core-jvm", version.ref = "ktor" }
 ktor-serverNetty = { module = "io.ktor:ktor-server-netty-jvm", version.ref = "ktor" }
 ktor-serverTestHost = { module = "io.ktor:ktor-server-test-host-jvm", version.ref = "ktor" }
@@ -78,9 +84,12 @@ navigation3-viewmodel = { group = "org.jetbrains.androidx.lifecycle", name = "li
 navigation3-adaptive = { group = "org.jetbrains.compose.material3.adaptive", name = "adaptive-navigation3", version.ref = "composeMultiplatformAdaptive" }
 navigation3-browser = { group = "com.github.terrakok", name = "navigation3-browser", version.ref = "navigation3-browser" }
 
+store = { module = "org.mobilenativefoundation.store:store5", version.ref = "store" }
+
 [plugins]
 snagMultiplatformModule = { id = "libs.plugins.snag.multiplatform.module" }
 snagDrivingMultiplatformModule = { id = "libs.plugins.snag.driving.multiplatform.module" }
+snagDrivenMultiplatformModule = { id = "libs.plugins.snag.driven.multiplatform.module" }
 snagBackendModule = { id = "libs.plugins.snag.backend.module" }
 snagDrivingBackendModule = { id = "libs.plugins.snag.driving.backend.module" }
 
