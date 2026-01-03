@@ -5,6 +5,4 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 @Immutable
-data object ProjectsRouteImpl : ProjectsRoute {
-    const val URL_NAME = "projects"
-}
+data object ProjectsRouteImpl : ProjectsRoute

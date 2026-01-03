@@ -9,6 +9,7 @@ internal fun Project.configureDataMultiplatformModule() {
     extensions.findByType(KotlinMultiplatformExtension::class.java)?.apply {
         sourceSets {
             commonMain.dependencies {
+                implementation(library("kotlinx-serialization-core"))
                 implementation(library("store"))
             }
         }

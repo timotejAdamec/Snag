@@ -29,7 +29,7 @@ class InMemoryProjectsLocalDataSource : ProjectsLocalDataSource {
 //                        climateConditions = "Sunny, 20°C",
 //                        note = "Initial site survey completed."
 //                    ),
-                    findingCategories = persistentListOf("Safety", "Landscaping")
+//                    findingCategories = persistentListOf("Safety", "Landscaping")
                 ),
                 Project(
                     id = Uuid.random(),
@@ -38,7 +38,7 @@ class InMemoryProjectsLocalDataSource : ProjectsLocalDataSource {
 //                    client = ClientImpl(2, "Caltrans", "1120 N St, Sacramento"),
 //                    inspector = InspectorImpl(2, "Jane Smith", "+14155550122"),
 //                    inspection = null,
-                    findingCategories = persistentListOf("Structure", "Paint Quality")
+//                    findingCategories = persistentListOf("Structure", "Paint Quality")
                 ),
                 Project(
                     id = Uuid.random(),
@@ -47,7 +47,7 @@ class InMemoryProjectsLocalDataSource : ProjectsLocalDataSource {
 //                    client = ClientImpl(3, "Space Needle Corp", null),
 //                    inspector = InspectorImpl(3, "Bob Wilson", "+12065550144"),
 //                    inspection = null,
-                    findingCategories = persistentListOf("Elevators", "Structural")
+//                    findingCategories = persistentListOf("Elevators", "Structural")
                 )
             )
         )
