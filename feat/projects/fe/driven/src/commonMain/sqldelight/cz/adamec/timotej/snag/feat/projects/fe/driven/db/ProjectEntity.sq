@@ -1,0 +1,21 @@
+CREATE TABLE ProjectEntity (
+    id TEXT NOT NULL PRIMARY KEY,
+    name TEXT NOT NULL,
+    address TEXT NOT NULL
+);
+
+insertProject:
+INSERT OR REPLACE INTO ProjectEntity(id, name, address)
+VALUES ?;
+
+selectAll:
+SELECT * FROM ProjectEntity;
+
+selectById:
+SELECT * FROM ProjectEntity WHERE id = :id;
+
+deleteById:
+DELETE FROM ProjectEntity WHERE id = :id;
+
+deleteAll:
+DELETE FROM ProjectEntity;

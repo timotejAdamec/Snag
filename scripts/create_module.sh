@@ -100,6 +100,11 @@ EOF
         mkdir -p "$FULL_PATH"
     done
 
+    # Create sqldelight directory for fe driven modules
+    if [ "$SIDE" != "be" ] && [ "$ARCH_LAYER" == "driven" ]; then
+        mkdir -p "$M_DIR/src/commonMain/sqldelight/$P_DIR"
+    fi
+
     # Add to settings.gradle.kts
     INCLUDE_STRING="include(\":$(echo "$M_DIR" | tr '/' ':')\")"
     if grep -qF "$INCLUDE_STRING" "$SETTINGS_FILE"; then

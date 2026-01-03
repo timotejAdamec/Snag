@@ -24,6 +24,9 @@ internal fun Project.configureDataMultiplatformModule() {
             jvmMain.dependencies {
                 implementation(library("sqldelight-jvm-driver"))
             }
+            webMain.dependencies {
+                implementation(library("sqldelight-web-worker-driver"))
+            }
         }
     }
 
