@@ -3,8 +3,8 @@ package cz.adamec.timotej.snag.ui.navigation
 import androidx.compose.runtime.Composable
 import com.github.terrakok.navigation3.browser.HierarchicalBrowserNavigation
 import com.github.terrakok.navigation3.browser.buildBrowserHistoryFragment
-import cz.adamec.timotej.snag.lib.design.navigation.NavRoute
-import cz.adamec.timotej.snag.projects.fe.driving.api.WebProjectsRoute
+import cz.adamec.timotej.snag.lib.navigation.NavRoute
+import cz.adamec.timotej.snag.projects.fe.driving.api.WebProjectsRouteImpl
 
 @Composable
 internal actual fun SnagNavigationPreparation(
@@ -13,7 +13,7 @@ internal actual fun SnagNavigationPreparation(
     HierarchicalBrowserNavigation(
         currentDestinationName = {
             when (val key = backStack.lastOrNull()) {
-                is WebProjectsRoute -> buildBrowserHistoryFragment(key.urlName)
+                is WebProjectsRouteImpl -> buildBrowserHistoryFragment(key.URL_NAME)
 //                is Profile -> buildBrowserHistoryFragment("profile", mapOf("id" to key.id.toString()))
                 else -> null
             }

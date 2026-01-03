@@ -1,6 +1,10 @@
 package cz.adamec.timotej.snag.projects.fe.driving.api
 
+import androidx.compose.runtime.Immutable
 import kotlinx.serialization.Serializable
 
 @Serializable
-data object NonWebProjectsRoute : ProjectsRoute
+@Immutable
+data object ProjectsRouteImpl : ProjectsRoute {
+    const val URL_NAME = "projects"
+}

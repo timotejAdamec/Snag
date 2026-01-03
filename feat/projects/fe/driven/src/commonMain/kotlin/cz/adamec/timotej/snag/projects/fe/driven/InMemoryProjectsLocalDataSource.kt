@@ -1,7 +1,6 @@
 package cz.adamec.timotej.snag.projects.fe.driven
 
 import cz.adamec.timotej.snag.projects.business.Project
-import cz.adamec.timotej.snag.projects.business.ProjectImpl
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsLocalDataSource
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.Flow
@@ -17,7 +16,7 @@ class InMemoryProjectsLocalDataSource : ProjectsLocalDataSource {
         val now = Instant.parse("2023-10-27T10:00:00Z")
         projects.addAll(
             listOf(
-                ProjectImpl(
+                Project(
                     id = Uuid.random(),
                     name = "Central Park Renovation",
                     address = "New York, NY 10024",
@@ -32,7 +31,7 @@ class InMemoryProjectsLocalDataSource : ProjectsLocalDataSource {
 //                    ),
                     findingCategories = persistentListOf("Safety", "Landscaping")
                 ),
-                ProjectImpl(
+                Project(
                     id = Uuid.random(),
                     name = "Golden Gate Bridge Painting",
                     address = "San Francisco, CA 94129",
@@ -41,7 +40,7 @@ class InMemoryProjectsLocalDataSource : ProjectsLocalDataSource {
 //                    inspection = null,
                     findingCategories = persistentListOf("Structure", "Paint Quality")
                 ),
-                ProjectImpl(
+                Project(
                     id = Uuid.random(),
                     name = "Space Needle Maintenance",
                     address = "400 Broad St, Seattle, WA 98109",

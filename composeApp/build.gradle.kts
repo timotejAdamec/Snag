@@ -32,7 +32,6 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            implementation(projects.lib.navigation)
             implementation(projects.lib.design)
             implementation(projects.feat.projects.fe.driving.api)
             implementation(projects.feat.projects.fe.driving.impl)

@@ -55,6 +55,9 @@ internal fun Project.configureKotlinMultiplatformModule() {
                 implementation(library("kotlin-test"))
                 implementation(library("koin-test"))
             }
+            androidMain.dependencies {
+                implementation(library("koin-android"))
+            }
             all {
                 languageSettings.optIn("kotlin.uuid.ExperimentalUuidApi")
             }
