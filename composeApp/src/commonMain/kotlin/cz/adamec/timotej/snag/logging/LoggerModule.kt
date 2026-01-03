@@ -1,4 +1,4 @@
-package cz.adamec.timotej.snag.ui.logging
+package cz.adamec.timotej.snag.logging
 
 import co.touchlab.kermit.Logger
 import co.touchlab.kermit.platformLogWriter
