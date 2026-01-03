@@ -15,18 +15,6 @@ internal fun Project.configureDataMultiplatformModule() {
                 implementation(library("kotlinx-serialization-core"))
                 implementation(library("store"))
             }
-            androidMain.dependencies {
-                implementation(library("sqldelight-android-driver"))
-            }
-            iosMain.dependencies {
-                implementation(library("sqldelight-native-driver"))
-            }
-            jvmMain.dependencies {
-                implementation(library("sqldelight-jvm-driver"))
-            }
-            webMain.dependencies {
-                implementation(library("sqldelight-web-worker-driver"))
-            }
         }
     }
 
@@ -34,6 +22,7 @@ internal fun Project.configureDataMultiplatformModule() {
         databases {
             create("Database") {
                 packageName.set(SNAG_NAMESPACE + "." + dotFormattedPath() + ".db")
+                generateAsync.set(true)
             }
         }
     }
