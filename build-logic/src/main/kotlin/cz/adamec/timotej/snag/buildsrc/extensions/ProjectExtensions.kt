@@ -16,3 +16,8 @@ fun Project.pluginId(alias: String): String = libs.plugin(alias).get().pluginId
 fun Project.library(alias: String) = libs.library(alias)
 fun Project.bundle(alias: String) = libs.bundle(alias)
 fun Project.version(alias: String) = libs.version(alias)
+
+fun Project.dotFormattedPath(): String = path
+    .removePrefix(":")
+    .replace(":", ".")
+    .replace("-", "")
