@@ -9,6 +9,7 @@ import org.gradle.kotlin.dsl.dependencies
 
 internal fun Project.configureBackendModule() {
     dependencies {
+        implementation(project(":lib:core"))
         implementation(libs.library("logback"))
         testImplementation(libs.library("kotlin-testJunit"))
     }

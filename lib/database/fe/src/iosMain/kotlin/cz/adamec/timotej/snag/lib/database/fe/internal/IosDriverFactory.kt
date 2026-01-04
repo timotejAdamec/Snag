@@ -8,13 +8,10 @@ import app.cash.sqldelight.driver.native.NativeSqliteDriver
 import cz.adamec.timotej.snag.lib.database.fe.internal.DriverFactory
 
 internal class IosDriverFactory() : DriverFactory {
-    override fun createDriver(
-        schema: SqlSchema<QueryResult.AsyncValue<Unit>>,
-        name: String,
-    ): SqlDriver {
+    override fun createDriver(): SqlDriver {
         return NativeSqliteDriver(
-            schema = schema.synchronous(),
-            name = name,
+            schema = DriverFactory.schema.synchronous(),
+            name = DriverFactory.NAME,
         )
     }
 }

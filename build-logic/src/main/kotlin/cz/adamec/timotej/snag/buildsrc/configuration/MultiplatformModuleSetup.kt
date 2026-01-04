@@ -45,6 +45,9 @@ internal fun Project.configureKotlinMultiplatformModule() {
             }
 
             commonMain.dependencies {
+                if (name != "core") {
+                    implementation(project(":lib:core"))
+                }
                 implementation(library("kotlinx-coroutines-core"))
                 implementation(library("kotlin-immutable-collections"))
                 implementation(library("koin-core"))

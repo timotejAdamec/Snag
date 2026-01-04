@@ -11,14 +11,11 @@ import cz.adamec.timotej.snag.lib.database.fe.internal.DriverFactory
 internal class AndroidDriverFactory(
     private val context: Context,
 ) : DriverFactory {
-    override fun createDriver(
-        schema: SqlSchema<QueryResult.AsyncValue<Unit>>,
-        name: String,
-    ): SqlDriver {
+    override fun createDriver(): SqlDriver {
         return AndroidSqliteDriver(
-            schema = schema.synchronous(),
+            schema = DriverFactory.schema.synchronous(),
             context = context,
-            name = name,
+            name = DriverFactory.NAME,
         )
     }
 }
