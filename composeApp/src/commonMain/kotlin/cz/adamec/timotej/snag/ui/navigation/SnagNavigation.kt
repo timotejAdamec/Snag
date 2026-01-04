@@ -5,7 +5,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.navigation3.ui.NavDisplay
-import cz.adamec.timotej.snag.lib.navigation.NavRoute
+import cz.adamec.timotej.snag.lib.navigation.fe.NavRoute
 import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectsRoute
 import org.koin.compose.koinInject
 import org.koin.compose.navigation3.koinEntryProvider

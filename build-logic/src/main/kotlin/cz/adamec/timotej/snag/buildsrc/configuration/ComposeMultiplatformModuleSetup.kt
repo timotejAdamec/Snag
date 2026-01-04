@@ -1,6 +1,7 @@
 package cz.adamec.timotej.snag.buildsrc.configuration
 
 import com.android.build.api.dsl.androidLibrary
+import cz.adamec.timotej.snag.buildsrc.extensions.dotFormattedPath
 import cz.adamec.timotej.snag.buildsrc.extensions.library
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.invoke
@@ -19,7 +20,7 @@ internal fun Project.configureComposeMultiplatformModule() {
                 implementation(library("compose-ui-tooling"))
             }
             commonMain.dependencies {
-                if (!name.contains("design") && !name.contains("navigation")) {
+                if (!path.contains("design") && !path.contains("navigation")) {
                     implementation(project(":lib:design:fe"))
                     implementation(project(":lib:navigation:fe"))
                 }

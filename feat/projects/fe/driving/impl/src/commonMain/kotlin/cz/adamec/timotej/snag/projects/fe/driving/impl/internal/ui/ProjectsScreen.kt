@@ -11,7 +11,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import cz.adamec.timotej.snag.lib.design.scaffold.LocalAppScaffoldState
+import cz.adamec.timotej.snag.lib.design.fe.scaffold.LocalAppScaffoldState
 import cz.adamec.timotej.snag.projects.fe.driving.api.OnProjectClick
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.ui.components.ProjectCard
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.vm.ProjectsViewModel

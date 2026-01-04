@@ -1,7 +1,7 @@
-package cz.adamec.timotej.snag.lib.database.di
+package cz.adamec.timotej.snag.lib.database.fe.di
 
-import cz.adamec.timotej.snag.lib.database.DriverFactory
-import cz.adamec.timotej.snag.lib.database.internal.IosDriverFactory
+import cz.adamec.timotej.snag.lib.database.fe.DriverFactory
+import cz.adamec.timotej.snag.lib.database.fe.internal.IosDriverFactory
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
 import org.koin.dsl.module

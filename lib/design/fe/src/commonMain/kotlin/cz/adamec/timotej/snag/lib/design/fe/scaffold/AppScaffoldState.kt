@@ -1,4 +1,4 @@
-package cz.adamec.timotej.snag.lib.design.scaffold
+package cz.adamec.timotej.snag.lib.design.fe.scaffold
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.compositionLocalOf

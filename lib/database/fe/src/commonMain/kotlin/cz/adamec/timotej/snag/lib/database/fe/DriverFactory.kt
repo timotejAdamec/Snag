@@ -1,4 +1,4 @@
-package cz.adamec.timotej.snag.lib.database
+package cz.adamec.timotej.snag.lib.database.fe
 
 import app.cash.sqldelight.db.QueryResult
 import app.cash.sqldelight.db.SqlDriver

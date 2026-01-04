@@ -1,4 +1,4 @@
-package cz.adamec.timotej.snag.lib.design.scaffold
+package cz.adamec.timotej.snag.lib.design.fe.scaffold
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -20,9 +20,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.painterResource
-import snag.lib.design.generated.resources.Res
-import snag.lib.design.generated.resources.ic_add
-import snag.lib.design.generated.resources.ic_home_filled
+import snag.lib.design.fe.generated.resources.Res
+import snag.lib.design.fe.generated.resources.ic_add
+import snag.lib.design.fe.generated.resources.ic_home_filled
 
 @Composable
 fun AppScaffold(

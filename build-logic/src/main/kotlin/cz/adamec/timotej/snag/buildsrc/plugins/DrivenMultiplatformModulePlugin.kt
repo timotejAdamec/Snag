@@ -11,6 +11,7 @@ class DrivenMultiplatformModulePlugin : Plugin<Project> {
     override fun apply(target: Project) = with(target) {
         apply(plugin = pluginId("kotlinSerialization"))
         apply<DatabaseMultiplatformModulePlugin>()
+        apply<NetworkMultiplatformModulePlugin>()
         configureStoreMultiplatformModule()
     }
 }

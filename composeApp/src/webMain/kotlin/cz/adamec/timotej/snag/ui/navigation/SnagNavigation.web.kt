@@ -3,7 +3,7 @@ package cz.adamec.timotej.snag.ui.navigation
 import androidx.compose.runtime.Composable
 import com.github.terrakok.navigation3.browser.HierarchicalBrowserNavigation
 import com.github.terrakok.navigation3.browser.buildBrowserHistoryFragment
-import cz.adamec.timotej.snag.lib.navigation.NavRoute
+import cz.adamec.timotej.snag.lib.navigation.fe.NavRoute
 import cz.adamec.timotej.snag.projects.fe.driving.api.WebProjectsRouteImpl
 
 @Composable

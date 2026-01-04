@@ -1,4 +1,4 @@
-package cz.adamec.timotej.snag.lib.database.di
+package cz.adamec.timotej.snag.lib.database.fe.di
 
 import org.koin.core.module.Module
 import org.koin.dsl.module
