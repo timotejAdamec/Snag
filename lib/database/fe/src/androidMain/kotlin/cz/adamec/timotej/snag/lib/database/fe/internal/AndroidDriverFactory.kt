@@ -6,7 +6,7 @@ import app.cash.sqldelight.db.QueryResult
 import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.db.SqlSchema
 import app.cash.sqldelight.driver.android.AndroidSqliteDriver
-import cz.adamec.timotej.snag.lib.database.fe.DriverFactory
+import cz.adamec.timotej.snag.lib.database.fe.internal.DriverFactory
 
 internal class AndroidDriverFactory(
     private val context: Context,

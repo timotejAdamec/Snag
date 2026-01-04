@@ -28,6 +28,8 @@ ktor = "3.3.3"
 logback = "1.5.23"
 store = "5.1.0-alpha07"
 sqldelight = "2.2.1"
+sqlJs = "1.6.2"
+webPackPlugin = "9.1.0"
 
 [libraries]
 kotlin-gradle = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
