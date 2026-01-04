@@ -6,7 +6,7 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation(project(":lib:navigation"))
+                implementation(project(":lib:navigation:fe"))
             }
         }
     }

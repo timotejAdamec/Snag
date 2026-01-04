@@ -97,6 +97,8 @@ sqldelight-web-driver = { module = "app.cash.sqldelight:web-worker-driver", vers
 [plugins]
 snagMultiplatformModule = { id = "libs.plugins.snag.multiplatform.module" }
 snagDrivingMultiplatformModule = { id = "libs.plugins.snag.driving.multiplatform.module" }
+snagDatabaseMultiplatformModule = { id = "libs.plugins.snag.database.multiplatform.module" }
+snagNetworkMultiplatformModule = { id = "libs.plugins.snag.network.multiplatform.module" }
 snagDrivenMultiplatformModule = { id = "libs.plugins.snag.driven.multiplatform.module" }
 snagBackendModule = { id = "libs.plugins.snag.backend.module" }
 snagDrivingBackendModule = { id = "libs.plugins.snag.driving.backend.module" }

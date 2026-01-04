@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.snagMultiplatformModule) apply false
     alias(libs.plugins.snagDrivingMultiplatformModule) apply false
+    alias(libs.plugins.snagDatabaseMultiplatformModule) apply false
+    alias(libs.plugins.snagNetworkMultiplatformModule) apply false
     alias(libs.plugins.snagDrivenMultiplatformModule) apply false
     alias(libs.plugins.snagBackendModule) apply false
     alias(libs.plugins.snagDrivingBackendModule) apply false
@@ -10,4 +12,5 @@ plugins {
     alias(libs.plugins.composeMultiplatform) apply false
     alias(libs.plugins.composeCompiler) apply false
     alias(libs.plugins.ktor) apply false
+    alias(libs.plugins.sqldelight) apply false
 }

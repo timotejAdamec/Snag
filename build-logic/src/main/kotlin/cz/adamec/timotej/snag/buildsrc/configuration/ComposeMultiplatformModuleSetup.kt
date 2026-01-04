@@ -20,8 +20,8 @@ internal fun Project.configureComposeMultiplatformModule() {
             }
             commonMain.dependencies {
                 if (!name.contains("design") && !name.contains("navigation")) {
-                    implementation(project(":lib:design"))
-                    implementation(project(":lib:navigation"))
+                    implementation(project(":lib:design:fe"))
+                    implementation(project(":lib:navigation:fe"))
                 }
                 implementation(library("compose-runtime"))
                 implementation(library("compose-foundation"))
