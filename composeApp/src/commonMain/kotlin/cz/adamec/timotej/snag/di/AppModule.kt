@@ -12,6 +12,7 @@ val appModule = module {
     includes(
         loggerModule,
         navigationModule,
+        mainModule,
         projectsDrivingApiModule,
         projectsDrivingImplModule,
         projectsDrivenModule,
