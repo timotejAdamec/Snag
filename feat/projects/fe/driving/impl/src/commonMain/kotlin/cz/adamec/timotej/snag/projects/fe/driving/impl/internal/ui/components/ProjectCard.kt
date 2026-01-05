@@ -51,6 +51,5 @@ internal fun ProjectCard(
 @Preview
 internal fun ProjectCardPreview() {
     SnagTheme {
-
     }
 }

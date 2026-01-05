@@ -30,11 +30,14 @@ store = "5.1.0-alpha07"
 sqldelight = "2.2.1"
 sqlJs = "1.6.2"
 webPackPlugin = "9.1.0"
+detekt = "2.0.0-alpha.1"
 
 [libraries]
 kotlin-gradle = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
 android-gradle = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }
 sqldelight-gradle = { group = "app.cash.sqldelight", name = "gradle-plugin", version.ref = "sqldelight" }
+detekt-gradle = { group = "dev.detekt", name = "detekt-gradle-plugin", version.ref = "detekt" }
+detekt-rules-ktlint = { group = "dev.detekt", name = "detekt-rules-ktlint-wrapper", version.ref = "detekt" }
 
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlin-testJunit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
@@ -119,3 +122,4 @@ composeHotReload = { id = "org.jetbrains.compose.hot-reload", version.ref = "com
 composeMultiplatform = { id = "org.jetbrains.compose", version.ref = "composeMultiplatform" }
 ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
 sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
+detekt = { id = "dev.detekt", version.ref = "detekt" }

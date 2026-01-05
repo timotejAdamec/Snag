@@ -3,7 +3,6 @@ package cz.adamec.timotej.snag.projects.fe.driving.impl.di
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectsRoute
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.ui.ProjectsScreen
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.vm.ProjectsViewModel
 import org.koin.compose.viewmodel.koinViewModel

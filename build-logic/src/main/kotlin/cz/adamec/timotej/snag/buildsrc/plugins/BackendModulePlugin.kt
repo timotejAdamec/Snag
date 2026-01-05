@@ -1,6 +1,7 @@
 package cz.adamec.timotej.snag.buildsrc.plugins
 
 import cz.adamec.timotej.snag.buildsrc.configuration.configureBackendModule
+import cz.adamec.timotej.snag.buildsrc.configuration.configureLint
 import cz.adamec.timotej.snag.buildsrc.extensions.pluginId
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -11,5 +12,6 @@ class BackendModulePlugin : Plugin<Project> {
     override fun apply(target: Project) = with(target) {
         apply(plugin = pluginId("kotlinJvm"))
         configureBackendModule()
+        configureLint()
     }
 }

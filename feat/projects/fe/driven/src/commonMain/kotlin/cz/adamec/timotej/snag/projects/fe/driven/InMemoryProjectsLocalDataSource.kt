@@ -2,7 +2,6 @@ package cz.adamec.timotej.snag.projects.fe.driven
 
 import cz.adamec.timotej.snag.projects.business.Project
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsLocalDataSource
-import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import kotlin.time.Instant

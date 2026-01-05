@@ -41,4 +41,5 @@ dependencies {
     implementation(libs.android.gradle)
     implementation(libs.kotlin.gradle)
     implementation(libs.sqldelight.gradle)
+    implementation(libs.detekt.gradle)
 }
