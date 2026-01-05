@@ -31,13 +31,13 @@ sqldelight = "2.2.1"
 sqlJs = "1.6.2"
 webPackPlugin = "9.1.0"
 detekt = "2.0.0-alpha.1"
+compose-rules = "0.5.3"
 
 [libraries]
 kotlin-gradle = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
 android-gradle = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }
 sqldelight-gradle = { group = "app.cash.sqldelight", name = "gradle-plugin", version.ref = "sqldelight" }
 detekt-gradle = { group = "dev.detekt", name = "detekt-gradle-plugin", version.ref = "detekt" }
-detekt-rules-ktlint = { group = "dev.detekt", name = "detekt-rules-ktlint-wrapper", version.ref = "detekt" }
 
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlin-testJunit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
@@ -101,6 +101,9 @@ sqldelight-android-driver = { module = "app.cash.sqldelight:android-driver", ver
 sqldelight-native-driver = { module = "app.cash.sqldelight:native-driver", version.ref = "sqldelight" }
 sqldelight-jvm-driver = { module = "app.cash.sqldelight:sqlite-driver", version.ref = "sqldelight" }
 sqldelight-web-driver = { module = "app.cash.sqldelight:web-worker-driver", version.ref = "sqldelight" }
+
+compose-rules-detekt = { group = "io.nlopez.compose.rules", name = "detekt", version.ref = "compose-rules" }
+compose-rules-ktlint = { group = "io.nlopez.compose.rules", name = "ktlint", version.ref = "compose-rules" }
 
 [plugins]
 snagMultiplatformModule = { id = "libs.plugins.snag.multiplatform.module" }

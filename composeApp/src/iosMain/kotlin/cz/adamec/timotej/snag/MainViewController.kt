@@ -14,4 +14,5 @@ package cz.adamec.timotej.snag
 
 import androidx.compose.ui.window.ComposeUIViewController
 
+@Suppress("FunctionNaming", "unused")
 fun MainViewController() = ComposeUIViewController { App() }

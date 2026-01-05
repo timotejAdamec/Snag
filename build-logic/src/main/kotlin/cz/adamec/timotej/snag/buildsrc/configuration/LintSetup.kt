@@ -34,6 +34,6 @@ fun Project.configureLint() {
     }
 
     dependencies {
-        "detektPlugins"(library("detekt-rules-ktlint"))
+        "detektPlugins"(library("compose-rules-detekt"))
     }
 }
