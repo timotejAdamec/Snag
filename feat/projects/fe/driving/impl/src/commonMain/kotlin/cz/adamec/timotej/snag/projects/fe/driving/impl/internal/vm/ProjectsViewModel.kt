@@ -26,13 +26,14 @@ internal class ProjectsViewModel(
     getProjectsUseCase: GetProjectsUseCase,
 ) : ViewModel() {
     val state: StateFlow<ProjectsUiState> =
-        getProjectsUseCase().map {
-            ProjectsUiState(
-                projects = it.toPersistentList(),
+        getProjectsUseCase()
+            .map {
+                ProjectsUiState(
+                    projects = it.toPersistentList(),
+                )
+            }.stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(DEFAULT_STATE_STOP_TIMEOUT_MILLIS),
+                initialValue = ProjectsUiState(),
             )
-        }.stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(DEFAULT_STATE_STOP_TIMEOUT_MILLIS),
-            initialValue = ProjectsUiState(),
-        )
 }
