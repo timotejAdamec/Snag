@@ -14,6 +14,7 @@ package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.vm
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cz.adamec.timotej.snag.lib.core.DEFAULT_STATE_STOP_TIMEOUT_MILLIS
 import cz.adamec.timotej.snag.projects.fe.app.GetProjectsUseCase
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.SharingStarted
@@ -25,14 +26,13 @@ internal class ProjectsViewModel(
     getProjectsUseCase: GetProjectsUseCase,
 ) : ViewModel() {
     val state: StateFlow<ProjectsUiState> =
-        getProjectsUseCase()
-            .map {
-                ProjectsUiState(
-                    projects = it.toPersistentList(),
-                )
-            }.stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(5_000),
-                initialValue = ProjectsUiState(),
+        getProjectsUseCase().map {
+            ProjectsUiState(
+                projects = it.toPersistentList(),
             )
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(DEFAULT_STATE_STOP_TIMEOUT_MILLIS),
+            initialValue = ProjectsUiState(),
+        )
 }

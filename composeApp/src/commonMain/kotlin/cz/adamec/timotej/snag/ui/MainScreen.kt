@@ -21,6 +21,7 @@ import cz.adamec.timotej.snag.ui.navigation.SnagNavigation
 import cz.adamec.timotej.snag.vm.MainViewModel
 import org.koin.compose.viewmodel.koinViewModel
 
+@Suppress("UnusedParameter")
 @Composable
 internal fun MainScreen(mainViewModel: MainViewModel = koinViewModel()) {
     SnagTheme {

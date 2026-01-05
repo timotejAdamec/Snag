@@ -10,11 +10,6 @@
  * Department of Software Engineering
  */
 
-@file:Suppress("ktlint:standard:function-naming")
+package cz.adamec.timotej.snag.lib.core
 
-package cz.adamec.timotej.snag
-
-import androidx.compose.ui.window.ComposeUIViewController
-
-@Suppress("unused", "FunctionNaming")
-fun MainViewController() = ComposeUIViewController { App() }
+const val DEFAULT_STATE_STOP_TIMEOUT_MILLIS = 5_000L

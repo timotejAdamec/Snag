@@ -18,6 +18,7 @@ import com.github.terrakok.navigation3.browser.buildBrowserHistoryFragment
 import cz.adamec.timotej.snag.lib.navigation.fe.NavRoute
 import cz.adamec.timotej.snag.projects.fe.driving.api.WebProjectsRouteImpl
 
+@Suppress("UseIfInsteadOfWhen")
 @Composable
 internal actual fun SnagNavigationPreparation(backStack: List<NavRoute>) {
     HierarchicalBrowserNavigation(
