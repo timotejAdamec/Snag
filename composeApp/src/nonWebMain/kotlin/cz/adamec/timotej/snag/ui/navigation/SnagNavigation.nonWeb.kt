@@ -4,6 +4,4 @@ import androidx.compose.runtime.Composable
 import cz.adamec.timotej.snag.lib.navigation.fe.NavRoute
 
 @Composable
-internal actual fun SnagNavigationPreparation(
-    backStack: MutableList<NavRoute>,
-) {}
+internal actual fun SnagNavigationPreparation(backStack: MutableList<NavRoute>) {}

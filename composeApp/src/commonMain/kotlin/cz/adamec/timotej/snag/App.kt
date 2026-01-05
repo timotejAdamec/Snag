@@ -13,11 +13,12 @@ import org.koin.dsl.koinConfiguration
 @Preview
 fun App() {
     KoinApplication(
-        configuration = koinConfiguration(
+        configuration =
+        koinConfiguration(
             declaration = {
                 logger(KermitKoinLogger(Logger.withTag("Koin")))
                 modules(appModule)
-            }
+            },
         ),
     ) {
         MainScreen()

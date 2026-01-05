@@ -5,7 +5,6 @@ import org.koin.test.verify.verify
 import kotlin.test.Test
 
 internal class AppModuleTest {
-
     @Test
     fun checkKoinModule() {
         // verifies the whole app DI graph

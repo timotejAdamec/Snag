@@ -14,20 +14,21 @@ import kotlinx.coroutines.SupervisorJob
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
-val appModule = module {
-    includes(
-        coreModule,
-        loggerModule,
-        navigationModule,
-        databaseModule,
-        mainModule,
-        projectsDrivingApiModule,
-        projectsDrivingImplModule,
-        projectsDrivenModule,
-        projectsAppModule,
-    )
+val appModule =
+    module {
+        includes(
+            coreModule,
+            loggerModule,
+            navigationModule,
+            databaseModule,
+            mainModule,
+            projectsDrivingApiModule,
+            projectsDrivingImplModule,
+            projectsDrivenModule,
+            projectsAppModule,
+        )
 
-    single {
-        CoroutineScope(SupervisorJob() + Dispatchers.Default)
-    } bind CoroutineScope::class
-}
+        single {
+            CoroutineScope(SupervisorJob() + Dispatchers.Default)
+        } bind CoroutineScope::class
+    }

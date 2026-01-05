@@ -10,9 +10,7 @@ import cz.adamec.timotej.snag.vm.MainViewModel
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-internal fun MainScreen(
-    mainViewModel: MainViewModel = koinViewModel(),
-) {
+internal fun MainScreen(mainViewModel: MainViewModel = koinViewModel()) {
     SnagTheme {
         AppScaffold { paddingValues ->
             SnagNavigation(

@@ -11,9 +11,7 @@ import org.koin.compose.koinInject
 import org.koin.compose.navigation3.koinEntryProvider
 
 @Composable
-internal fun SnagNavigation(
-    modifier: Modifier = Modifier,
-) {
+internal fun SnagNavigation(modifier: Modifier = Modifier) {
     val initRoute = koinInject<ProjectsRoute>()
     val backStack = remember { mutableStateListOf<NavRoute>(initRoute) }
     SnagNavigationPreparation(
@@ -28,6 +26,4 @@ internal fun SnagNavigation(
 }
 
 @Composable
-internal expect fun SnagNavigationPreparation(
-    backStack: MutableList<NavRoute>,
-)
+internal expect fun SnagNavigationPreparation(backStack: MutableList<NavRoute>)

@@ -14,8 +14,8 @@ fun Project.configureLint() {
 
     configure<DetektExtension> {
         toolVersion.set(version("detekt"))
-        source.setFrom(files("src/commonMain/kotlin", "src/androidMain/kotlin", "src/iosMain/kotlin", "src/jvmMain/kotlin", "src/webMain/kotlin", "src/jsMain/kotlin", "src/wasmJsMain/kotlin", "src/nonWebMain/kotlin", "src/main/kotlin"))
-        config.setFrom(files("${rootProject.projectDir}/config/detekt/detekt.yml"))
+        source.setFrom(files("$projectDir/src"))
+        config.setFrom(files("${rootDir}/config/detekt/detekt.yml"))
         allRules.set(true)
         buildUponDefaultConfig.set(true)
         autoCorrect.set(true)

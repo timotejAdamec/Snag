@@ -5,12 +5,13 @@ import org.koin.dsl.bind
 import org.koin.dsl.module
 import kotlin.uuid.Uuid
 
-internal val navigationModule = module {
-    single {
-        object : OnProjectClick {
-            override fun invoke(projectId: Uuid) {
-                // TODO
+internal val navigationModule =
+    module {
+        single {
+            object : OnProjectClick {
+                override fun invoke(projectId: Uuid) {
+                    // TODO
+                }
             }
-        }
-    } bind OnProjectClick::class
-}
+        } bind OnProjectClick::class
+    }
