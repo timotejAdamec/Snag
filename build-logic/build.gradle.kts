@@ -54,4 +54,5 @@ dependencies {
     implementation(libs.kotlin.gradle)
     implementation(libs.sqldelight.gradle)
     implementation(libs.detekt.gradle)
+    implementation(libs.ktlint.gradle)
 }

@@ -20,9 +20,11 @@ import org.gradle.api.Project
 import org.gradle.kotlin.dsl.apply
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.dependencies
+import org.gradle.kotlin.dsl.withType
 
 fun Project.configureLint() {
     apply(plugin = pluginId("detekt"))
+    apply(plugin = pluginId("ktlint"))
 
     configure<DetektExtension> {
         toolVersion.set(version("detekt"))
@@ -33,7 +35,17 @@ fun Project.configureLint() {
         autoCorrect.set(true)
     }
 
+    tasks.named("check").configure {
+        dependsOn("ktlintCheck")
+        dependsOn("detekt")
+    }
+
+    tasks.named("detekt").configure {
+        mustRunAfter("ktlintCheck")
+    }
+
     dependencies {
         "detektPlugins"(library("compose-rules-detekt"))
+        "ktlintRuleset"(library("compose-rules-ktlint"))
     }
 }

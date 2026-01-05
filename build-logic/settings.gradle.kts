@@ -36,6 +36,7 @@ dependencyResolutionManagement {
             }
         }
         mavenCentral()
+        gradlePluginPortal()
     }
 
     versionCatalogs {
