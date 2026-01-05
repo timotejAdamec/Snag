@@ -18,6 +18,7 @@ import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
-internal actual val platformModule = module {
-    singleOf(::WebDriverFactory) bind DriverFactory::class
-}
+internal actual val platformModule =
+    module {
+        singleOf(::WebDriverFactory) bind DriverFactory::class
+    }

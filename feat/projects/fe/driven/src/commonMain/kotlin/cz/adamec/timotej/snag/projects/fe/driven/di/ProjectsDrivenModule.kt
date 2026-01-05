@@ -18,8 +18,9 @@ import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 
-val projectsDrivenModule = module {
-    singleOf(::InMemoryProjectsLocalDataSource) {
-        bind<ProjectsLocalDataSource>()
+val projectsDrivenModule =
+    module {
+        singleOf(::InMemoryProjectsLocalDataSource) {
+            bind<ProjectsLocalDataSource>()
+        }
     }
-}

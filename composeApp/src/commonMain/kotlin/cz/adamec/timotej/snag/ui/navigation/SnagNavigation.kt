@@ -25,6 +25,8 @@ import org.koin.compose.navigation3.koinEntryProvider
 @Composable
 internal fun SnagNavigation(modifier: Modifier = Modifier) {
     val initRoute = koinInject<ProjectsRoute>()
+    // TODO replace with rememberNavBackStack.
+    //  See https://kotlinlang.org/docs/multiplatform/compose-navigation-3.html#polymorphic-serialization-for-destination-keys
     val backStack = remember { mutableStateListOf<NavRoute>(initRoute) }
     SnagNavigationPreparation(
         backStack = backStack,
@@ -38,4 +40,4 @@ internal fun SnagNavigation(modifier: Modifier = Modifier) {
 }
 
 @Composable
-internal expect fun SnagNavigationPreparation(backStack: MutableList<NavRoute>)
+internal expect fun SnagNavigationPreparation(backStack: List<NavRoute>)

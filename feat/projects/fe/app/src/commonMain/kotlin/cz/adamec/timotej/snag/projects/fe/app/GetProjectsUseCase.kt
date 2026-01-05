@@ -19,7 +19,5 @@ import kotlinx.coroutines.flow.Flow
 class GetProjectsUseCase(
     private val localDataSource: ProjectsLocalDataSource,
 ) {
-    operator fun invoke(): Flow<List<Project>> {
-        return localDataSource.getProjects()
-    }
+    operator fun invoke(): Flow<List<Project>> = localDataSource.getProjects()
 }

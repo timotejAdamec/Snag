@@ -18,6 +18,7 @@ import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
-val coreModule = module {
-    singleOf(::DefaultApplicationScope) bind ApplicationScope::class
-}
+val coreModule =
+    module {
+        singleOf(::DefaultApplicationScope) bind ApplicationScope::class
+    }

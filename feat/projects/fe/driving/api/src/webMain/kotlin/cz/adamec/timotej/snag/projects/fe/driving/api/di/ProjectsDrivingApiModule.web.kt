@@ -17,6 +17,7 @@ import cz.adamec.timotej.snag.projects.fe.driving.api.WebProjectsRouteImpl
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
-internal actual val platformModule = module {
-    single { WebProjectsRouteImpl } bind ProjectsRoute::class
-}
+internal actual val platformModule =
+    module {
+        single { WebProjectsRouteImpl } bind ProjectsRoute::class
+    }

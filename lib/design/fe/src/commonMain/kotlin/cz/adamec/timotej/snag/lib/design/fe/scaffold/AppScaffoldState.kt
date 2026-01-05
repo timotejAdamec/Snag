@@ -17,9 +17,10 @@ import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.mutableStateOf
 
 class AppScaffoldState(
-    val title: MutableState<String> = mutableStateOf("")
+    val title: MutableState<String> = mutableStateOf(""),
 )
 
-val LocalAppScaffoldState = compositionLocalOf<AppScaffoldState> {
-    error("No AppScaffoldState provided")
-}
+val LocalAppScaffoldState =
+    compositionLocalOf<AppScaffoldState> {
+        error("No AppScaffoldState provided")
+    }

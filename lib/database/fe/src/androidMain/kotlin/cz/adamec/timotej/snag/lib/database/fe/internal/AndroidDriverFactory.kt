@@ -20,11 +20,10 @@ import app.cash.sqldelight.driver.android.AndroidSqliteDriver
 internal class AndroidDriverFactory(
     private val context: Context,
 ) : DriverFactory {
-    override fun createDriver(): SqlDriver {
-        return AndroidSqliteDriver(
+    override fun createDriver(): SqlDriver =
+        AndroidSqliteDriver(
             schema = DriverFactory.schema.synchronous(),
             context = context,
             name = DriverFactory.NAME,
         )
-    }
 }

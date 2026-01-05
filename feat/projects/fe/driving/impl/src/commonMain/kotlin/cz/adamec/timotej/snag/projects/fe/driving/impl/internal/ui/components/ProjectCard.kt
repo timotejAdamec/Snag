@@ -27,25 +27,27 @@ import cz.adamec.timotej.snag.projects.business.Project
 
 @Composable
 internal fun ProjectCard(
-    modifier: Modifier = Modifier,
     project: Project,
     onClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     OutlinedCard(
         modifier = modifier,
         onClick = onClick,
-        colors = CardDefaults.outlinedCardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
-        ),
+        colors =
+            CardDefaults.outlinedCardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
+            ),
     ) {
         Column(
-            modifier = Modifier
-                .padding(
-                    start = 24.dp,
-                    end = 24.dp,
-                    top = 12.dp,
-                    bottom = 12.dp,
-                ),
+            modifier =
+                Modifier
+                    .padding(
+                        start = 24.dp,
+                        end = 24.dp,
+                        top = 12.dp,
+                        bottom = 12.dp,
+                    ),
         ) {
             Text(
                 text = project.name,

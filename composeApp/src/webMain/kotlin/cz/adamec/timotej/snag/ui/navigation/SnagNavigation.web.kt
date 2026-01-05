@@ -19,7 +19,7 @@ import cz.adamec.timotej.snag.lib.navigation.fe.NavRoute
 import cz.adamec.timotej.snag.projects.fe.driving.api.WebProjectsRouteImpl
 
 @Composable
-internal actual fun SnagNavigationPreparation(backStack: MutableList<NavRoute>) {
+internal actual fun SnagNavigationPreparation(backStack: List<NavRoute>) {
     HierarchicalBrowserNavigation(
         currentDestinationName = {
             when (val key = backStack.lastOrNull()) {

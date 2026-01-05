@@ -24,13 +24,15 @@ import kotlinx.coroutines.flow.stateIn
 internal class ProjectsViewModel(
     getProjectsUseCase: GetProjectsUseCase,
 ) : ViewModel() {
-    val state: StateFlow<ProjectsUiState> = getProjectsUseCase().map {
-        ProjectsUiState(
-            projects = it.toPersistentList(),
-        )
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = ProjectsUiState(),
-    )
+    val state: StateFlow<ProjectsUiState> =
+        getProjectsUseCase()
+            .map {
+                ProjectsUiState(
+                    projects = it.toPersistentList(),
+                )
+            }.stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5_000),
+                initialValue = ProjectsUiState(),
+            )
 }

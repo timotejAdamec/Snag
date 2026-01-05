@@ -38,15 +38,18 @@ import snag.lib.design.fe.generated.resources.ic_home_filled
 
 @Composable
 fun AppScaffold(
+    modifier: Modifier = Modifier,
     content: @Composable (paddingValues: PaddingValues) -> Unit,
 ) {
     val appScaffoldState = remember { AppScaffoldState() }
-    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(
-        state = rememberTopAppBarState()
-    )
+    val scrollBehavior =
+        TopAppBarDefaults.exitUntilCollapsedScrollBehavior(
+            state = rememberTopAppBarState(),
+        )
 
     CompositionLocalProvider(LocalAppScaffoldState provides appScaffoldState) {
         NavigationSuiteScaffold(
+            modifier = modifier,
             navigationItems = {
                 NavigationSuiteItem(
                     selected = true,
@@ -62,7 +65,7 @@ fun AppScaffold(
                             text = "Home",
                             style = MaterialTheme.typography.labelMedium,
                         )
-                    }
+                    },
                 )
             },
             navigationItemVerticalArrangement = Arrangement.Center,
@@ -75,9 +78,9 @@ fun AppScaffold(
                             painter = painterResource(Res.drawable.ic_add),
                             contentDescription = "Add",
                         )
-                    }
+                    },
                 )
-            }
+            },
         ) {
             Scaffold(
                 modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -90,7 +93,7 @@ fun AppScaffold(
                         },
                         scrollBehavior = scrollBehavior,
                     )
-                }
+                },
             ) { paddingValues ->
                 content(paddingValues)
             }

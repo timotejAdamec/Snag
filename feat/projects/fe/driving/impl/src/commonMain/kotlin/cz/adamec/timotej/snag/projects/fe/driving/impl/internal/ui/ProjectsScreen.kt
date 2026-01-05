@@ -34,9 +34,9 @@ import snag.feat.projects.fe.driving.impl.generated.resources.projects_title
 
 @Composable
 internal fun ProjectsScreen(
+    onProjectClick: OnProjectClick,
     modifier: Modifier = Modifier,
     viewModel: ProjectsViewModel = koinViewModel(),
-    onProjectClick: OnProjectClick,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val scaffoldState = LocalAppScaffoldState.current
@@ -48,20 +48,21 @@ internal fun ProjectsScreen(
     LazyVerticalGrid(
         modifier = modifier,
         columns = GridCells.Adaptive(minSize = 360.dp),
-        contentPadding = PaddingValues(
-            start = 16.dp,
-            end = 16.dp,
-            top = 16.dp,
-            bottom = 48.dp,
-        ),
+        contentPadding =
+            PaddingValues(
+                start = 16.dp,
+                end = 16.dp,
+                top = 16.dp,
+                bottom = 48.dp,
+            ),
         verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         items(state.projects) { project ->
             ProjectCard(
                 modifier = Modifier,
+                onClick = { onProjectClick(project.id) },
                 project = project,
-                onClick = { onProjectClick(project.id) }
             )
         }
     }

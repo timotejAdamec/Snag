@@ -17,4 +17,4 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 @Immutable
-data object ProjectsRouteImpl : ProjectsRoute
+data object NonWebProjectsRouteImpl : ProjectsRoute

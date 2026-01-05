@@ -16,7 +16,7 @@ import kotlinx.serialization.Serializable
 import kotlin.uuid.Uuid
 
 @Serializable
-data class Project(
+data class ApiProject(
     val id: Uuid,
     val name: String,
     val address: String,

@@ -10,9 +10,11 @@
  * Department of Software Engineering
  */
 
+@file:Suppress("ktlint:standard:function-naming")
+
 package cz.adamec.timotej.snag
 
 import androidx.compose.ui.window.ComposeUIViewController
 
-@Suppress("FunctionNaming", "unused")
+@Suppress("unused")
 fun MainViewController() = ComposeUIViewController { App() }

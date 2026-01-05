@@ -23,8 +23,9 @@ import org.koin.core.module.dsl.viewModelOf
 import org.koin.core.scope.Scope
 import org.koin.dsl.module
 
+@Suppress("ktlint:compose:modifier-missing-check")
 @Composable
-fun Scope.projectsScreenInjection() {
+fun Scope.ProjectsScreenInjection() {
     ProjectsScreen(
         modifier = Modifier.fillMaxSize(),
         viewModel = koinViewModel(),
@@ -32,9 +33,10 @@ fun Scope.projectsScreenInjection() {
     )
 }
 
-val projectsDrivingImplModule = module {
-    viewModelOf(::ProjectsViewModel)
-    includes(platformModule)
-}
+val projectsDrivingImplModule =
+    module {
+        viewModelOf(::ProjectsViewModel)
+        includes(platformModule)
+    }
 
 internal expect val platformModule: Module

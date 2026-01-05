@@ -10,6 +10,8 @@
  * Department of Software Engineering
  */
 
+@file:Suppress("ktlint:standard:filename")
+
 package cz.adamec.timotej.snag
 
 import androidx.compose.ui.ExperimentalComposeUiApi

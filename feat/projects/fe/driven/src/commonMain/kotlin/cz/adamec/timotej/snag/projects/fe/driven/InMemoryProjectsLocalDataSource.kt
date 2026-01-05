@@ -20,7 +20,6 @@ import kotlin.time.Instant
 import kotlin.uuid.Uuid
 
 class InMemoryProjectsLocalDataSource : ProjectsLocalDataSource {
-
     private val projects = mutableListOf<Project>()
 
     init {
@@ -59,12 +58,10 @@ class InMemoryProjectsLocalDataSource : ProjectsLocalDataSource {
 //                    inspector = InspectorImpl(3, "Bob Wilson", "+12065550144"),
 //                    inspection = null,
 //                    findingCategories = persistentListOf("Elevators", "Structural")
-                )
-            )
+                ),
+            ),
         )
     }
 
-    override fun getProjects(): Flow<List<Project>> {
-        return flowOf(projects)
-    }
+    override fun getProjects(): Flow<List<Project>> = flowOf(projects)
 }

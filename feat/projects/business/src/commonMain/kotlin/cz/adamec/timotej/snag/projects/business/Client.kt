@@ -10,6 +10,8 @@
  * Department of Software Engineering
  */
 
+@file:Suppress("ktlint:standard:no-empty-file")
+
 package cz.adamec.timotej.snag.projects.business
 //
 // interface Client {
