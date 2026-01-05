@@ -6,7 +6,7 @@ on:
 
 jobs:
   lint:
-    name: Lint Check
+    name: Check
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -21,5 +21,5 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
 
-      - name: Run Lint (ktlint & detekt)
+      - name: Run Check
         run: ./gradlew check
