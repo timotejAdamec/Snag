@@ -1,15 +1,21 @@
 #!/bin/sh
 
 #
-# Copyright (c) 2026 Timotej Adamec
-# SPDX-License-Identifier: MIT
+# Copyright © 2015 the original authors.
 #
-# This file is part of the thesis:
-# "Multiplatform snagging system with code sharing maximisation"
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
 #
-# Czech Technical University in Prague
-# Faculty of Information Technology
-# Department of Software Engineering
+#      https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+# SPDX-License-Identifier: Apache-2.0
 #
 
 ##############################################################################
@@ -108,16 +114,15 @@ case "$( uname )" in                #(
   NONSTOP* )        nonstop=true ;;
 esac
 
-CLASSPATH="\\\"\\\""
 
 
 # Determine the Java command to use to start the JVM.
 if [ -n "$JAVA_HOME" ] ; then
     if [ -x "$JAVA_HOME/jre/sh/java" ] ; then
         # IBM's JDK on AIX uses strange locations for the executables
-        JAVACMD=$JAVA_HOME/jre/sh/kotlin
+        JAVACMD=$JAVA_HOME/jre/sh/java
     else
-        JAVACMD=$JAVA_HOME/bin/kotlin
+        JAVACMD=$JAVA_HOME/bin/java
     fi
     if [ ! -x "$JAVACMD" ] ; then
         die "ERROR: JAVA_HOME is set to an invalid directory: $JAVA_HOME
@@ -126,8 +131,8 @@ Please set the JAVA_HOME variable in your environment to match the
 location of your Java installation."
     fi
 else
-    JAVACMD=kotlin
-    if ! command -v kotlin >/dev/null 2>&1
+    JAVACMD=java
+    if ! command -v java >/dev/null 2>&1
     then
         die "ERROR: JAVA_HOME is not set and no 'java' command could be found in your PATH.
 
@@ -155,7 +160,7 @@ if ! "$cygwin" && ! "$darwin" && ! "$nonstop" ; then
     esac
 fi
 
-# Collect all arguments for the kotlin command, stacking in reverse order:
+# Collect all arguments for the java command, stacking in reverse order:
 #   * args from the command line
 #   * the main class name
 #   * -classpath
@@ -163,10 +168,9 @@ fi
 #   * --module-path (only if needed)
 #   * DEFAULT_JVM_OPTS, JAVA_OPTS, and GRADLE_OPTS environment variables.
 
-# For Cygwin or MSYS, switch paths to Windows format before running kotlin
+# For Cygwin or MSYS, switch paths to Windows format before running java
 if "$cygwin" || "$msys" ; then
     APP_HOME=$( cygpath --path --mixed "$APP_HOME" )
-    CLASSPATH=$( cygpath --path --mixed "$CLASSPATH" )
 
     JAVACMD=$( cygpath --unix "$JAVACMD" )
 
@@ -198,7 +202,7 @@ fi
 # Add default JVM options here. You can also use JAVA_OPTS and GRADLE_OPTS to pass JVM options to this script.
 DEFAULT_JVM_OPTS='"-Xmx64m" "-Xms64m"'
 
-# Collect all arguments for the kotlin command:
+# Collect all arguments for the java command:
 #   * DEFAULT_JVM_OPTS, JAVA_OPTS, and optsEnvironmentVar are not allowed to contain shell fragments,
 #     and any embedded shellness will be escaped.
 #   * For example: A user cannot expect ${Hostname} to be expanded, as it is an environment variable and will be
@@ -206,7 +210,6 @@ DEFAULT_JVM_OPTS='"-Xmx64m" "-Xms64m"'
 
 set -- \
         "-Dorg.gradle.appname=$APP_BASE_NAME" \
-        -classpath "$CLASSPATH" \
         -jar "$APP_HOME/gradle/wrapper/gradle-wrapper.jar" \
         "$@"
 
