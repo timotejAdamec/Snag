@@ -45,7 +45,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(projects.lib.core)
-            implementation(projects.lib.database.fe)
+            implementation(projects.feat.shared.database.fe)
             implementation(projects.lib.design.fe)
             implementation(projects.feat.projects.fe.driving.api)
             implementation(projects.feat.projects.fe.driving.impl)

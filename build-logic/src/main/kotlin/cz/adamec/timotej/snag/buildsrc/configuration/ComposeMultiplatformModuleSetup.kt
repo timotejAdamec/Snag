@@ -35,6 +35,7 @@ internal fun Project.configureComposeMultiplatformModule() {
                 if (!path.contains("design") && !path.contains("navigation")) {
                     implementation(project(":lib:design:fe"))
                     implementation(project(":lib:navigation:fe"))
+                    implementation(project(":feat:shared:design:fe"))
                 }
                 implementation(library("compose-runtime"))
                 implementation(library("compose-foundation"))

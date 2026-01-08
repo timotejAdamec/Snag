@@ -17,10 +17,13 @@ import org.gradle.api.Project
 import org.gradle.kotlin.dsl.invoke
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
-internal fun Project.configureStoreMultiplatformModule() {
+internal fun Project.configureDataMultiplatformModule() {
     extensions.findByType(KotlinMultiplatformExtension::class.java)?.apply {
         sourceSets {
             commonMain.dependencies {
+                if (!path.contains("database")) {
+                    implementation(project(":feat:shared:database:fe"))
+                }
                 implementation(library("store"))
             }
         }
