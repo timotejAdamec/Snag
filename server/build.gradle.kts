@@ -25,8 +25,8 @@ application {
 }
 
 dependencies {
-    implementation(projects.feat.projects.be.driving)
-    implementation(projects.feat.structures.be.driving)
+    implementation(projects.feat.projects.be.driving.impl)
+    implementation(projects.feat.structures.be.driving.impl)
 
     implementation(libs.ktor.server.core)
     implementation(libs.ktor.server.netty)

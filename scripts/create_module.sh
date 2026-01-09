@@ -72,37 +72,40 @@ if [ -z "$PLATFORM" ]; then
     fi
 fi
 
-# Determine plugin and source sets
-if [ "$PLATFORM" == "jvm" ]; then
-    if [ "$ARCH_LAYER" == "driving" ]; then
-        PLUGIN="alias(libs.plugins.snagDrivingBackendModule)"
-    else
-        PLUGIN="alias(libs.plugins.snagBackendModule)"
-    fi
-    SOURCE_SETS=("main" "test")
-else
-    if [ "$ARCH_LAYER" == "driving" ]; then
-        PLUGIN="alias(libs.plugins.snagDrivingMultiplatformModule)"
-    else
-        PLUGIN="alias(libs.plugins.snagMultiplatformModule)"
-    fi
-    SOURCE_SETS=("androidMain" "commonMain" "commonTest" "iosMain" "jvmMain" "webMain")
-fi
-
 SETTINGS_FILE="settings.gradle.kts"
 
 create_module_internal() {
     local M_DIR=$1
     local P_DIR=$2
-    local PLUG=$3
-    local DEPENDENCY=$4
+    local TARGET_PLATFORM=$3
+    local TARGET_ARCH=$4
+    local DEPENDENCY=$5
 
-    echo "Creating module at $M_DIR..."
+    # Determine plugin and source sets
+    local CURRENT_PLUGIN=""
+    local CURRENT_SOURCE_SETS=()
+    if [ "$TARGET_PLATFORM" == "jvm" ]; then
+        if [ "$TARGET_ARCH" == "driving" ]; then
+            CURRENT_PLUGIN="alias(libs.plugins.snagDrivingBackendModule)"
+        else
+            CURRENT_PLUGIN="alias(libs.plugins.snagBackendModule)"
+        fi
+        CURRENT_SOURCE_SETS=("main" "test")
+    else
+        if [ "$TARGET_ARCH" == "driving" ]; then
+            CURRENT_PLUGIN="alias(libs.plugins.snagDrivingMultiplatformModule)"
+        else
+            CURRENT_PLUGIN="alias(libs.plugins.snagMultiplatformModule)"
+        fi
+        CURRENT_SOURCE_SETS=("androidMain" "commonMain" "commonTest" "iosMain" "jvmMain" "webMain")
+    fi
+
+    echo "Creating module at $M_DIR ($TARGET_PLATFORM)..."
     mkdir -p "$M_DIR"
 
     local DEP_BLOCK=""
     if [ -n "$DEPENDENCY" ]; then
-        if [ "$PLATFORM" == "jvm" ]; then
+        if [ "$TARGET_PLATFORM" == "jvm" ]; then
             DEP_BLOCK="
 dependencies {
     implementation(project(\"$DEPENDENCY\"))
@@ -124,13 +127,13 @@ kotlin {
     # Create build.gradle.kts
     cat <<EOF > "$M_DIR/build.gradle.kts"
 plugins {
-    $PLUG
+    $CURRENT_PLUGIN
 }
 $DEP_BLOCK
 EOF
 
     # Create source sets
-    for SET in "${SOURCE_SETS[@]}"; do
+    for SET in "${CURRENT_SOURCE_SETS[@]}"; do
         FULL_PATH="$M_DIR/src/$SET/kotlin/$P_DIR"
         mkdir -p "$FULL_PATH"
     done
@@ -145,15 +148,33 @@ EOF
     fi
 }
 
+# Determine if forced split (be driving) or regular split
+API_SUBMODULE_NAME="api"
+FORCED_BE_DRIVING_SPLIT=false
+if [ "$SIDE" == "be" ] && [ "$ARCH_LAYER" == "driving" ]; then
+    SPLIT=true
+    API_SUBMODULE_NAME="contract"
+    FORCED_BE_DRIVING_SPLIT=true
+fi
+
 if [ "$SPLIT" = true ]; then
-    # Create API module
-    create_module_internal "$BASE_MODULE_DIR/api" "$BASE_PACKAGE_DIR/api" "$PLUGIN"
-    
-    # Create IMPL module with dependency on API
-    API_PATH=":$(echo "$BASE_MODULE_DIR/api" | tr '/' ':')"
-    create_module_internal "$BASE_MODULE_DIR/impl" "$BASE_PACKAGE_DIR/impl" "$PLUGIN" "$API_PATH"
+    if [ "$FORCED_BE_DRIVING_SPLIT" = true ]; then
+        # Contract is always Multiplatform
+        create_module_internal "$BASE_MODULE_DIR/$API_SUBMODULE_NAME" "$BASE_PACKAGE_DIR/$API_SUBMODULE_NAME" "multiplatform" "$ARCH_LAYER"
+        
+        # Impl is always JVM (Backend)
+        API_PATH=":$(echo "$BASE_MODULE_DIR/$API_SUBMODULE_NAME" | tr '/' ':')"
+        create_module_internal "$BASE_MODULE_DIR/impl" "$BASE_PACKAGE_DIR/impl" "jvm" "$ARCH_LAYER" "$API_PATH"
+    else
+        # Regular split (both use the same platform)
+        create_module_internal "$BASE_MODULE_DIR/$API_SUBMODULE_NAME" "$BASE_PACKAGE_DIR/$API_SUBMODULE_NAME" "$PLATFORM" "$ARCH_LAYER"
+        
+        # Create IMPL module with dependency on API
+        API_PATH=":$(echo "$BASE_MODULE_DIR/$API_SUBMODULE_NAME" | tr '/' ':')"
+        create_module_internal "$BASE_MODULE_DIR/impl" "$BASE_PACKAGE_DIR/impl" "$PLATFORM" "$ARCH_LAYER" "$API_PATH"
+    fi
 else
-    create_module_internal "$BASE_MODULE_DIR" "$BASE_PACKAGE_DIR" "$PLUGIN"
+    create_module_internal "$BASE_MODULE_DIR" "$BASE_PACKAGE_DIR" "$PLATFORM" "$ARCH_LAYER"
 fi
 
 echo "Module creation finished successfully."
