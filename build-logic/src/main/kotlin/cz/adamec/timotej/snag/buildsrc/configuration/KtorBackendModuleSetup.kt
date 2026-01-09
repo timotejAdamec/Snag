@@ -21,7 +21,8 @@ import org.gradle.kotlin.dsl.dependencies
 
 internal fun Project.configureKtorBackendModule() {
     dependencies {
-        implementation(libs.library("ktor-serverCore"))
-        testImplementation(libs.library("ktor-serverTestHost"))
+        implementation(libs.library("ktor-server-core"))
+        implementation(libs.library("koin-ktor"))
+        testImplementation(libs.library("ktor-server-test-host"))
     }
 }

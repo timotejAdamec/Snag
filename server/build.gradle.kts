@@ -11,8 +11,7 @@
  */
 
 plugins {
-    id("org.jetbrains.kotlin.jvm")
-    alias(libs.plugins.ktor)
+    alias(libs.plugins.snagDrivingBackendModule)
     application
 }
 
@@ -26,9 +25,11 @@ application {
 }
 
 dependencies {
+    implementation(libs.ktor.server.core)
+    implementation(libs.ktor.server.netty)
+    implementation(libs.ktor.server.call.logging)
+    implementation(libs.ktor.server.status.pages)
+    implementation(libs.ktor.server.config.yaml)
     implementation(libs.logback)
-    implementation(libs.ktor.serverCore)
-    implementation(libs.ktor.serverNetty)
-    testImplementation(libs.ktor.serverTestHost)
-    testImplementation(libs.kotlin.testJunit)
+    implementation(libs.koin.logger.slf4j)
 }

@@ -13,7 +13,6 @@
 package cz.adamec.timotej.snag.buildsrc.configuration
 
 import com.android.build.api.dsl.androidLibrary
-import cz.adamec.timotej.snag.buildsrc.extensions.dotFormattedPath
 import cz.adamec.timotej.snag.buildsrc.extensions.library
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.invoke

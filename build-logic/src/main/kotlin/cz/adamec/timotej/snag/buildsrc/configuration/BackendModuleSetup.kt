@@ -22,7 +22,8 @@ import org.gradle.kotlin.dsl.dependencies
 internal fun Project.configureBackendModule() {
     dependencies {
         implementation(project(":lib:core"))
-        implementation(libs.library("logback"))
-        testImplementation(libs.library("kotlin-testJunit"))
+
+        implementation(libs.library("slf4j-api"))
+        testImplementation(libs.library("kotlin-test-junit"))
     }
 }
