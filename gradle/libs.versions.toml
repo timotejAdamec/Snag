@@ -122,7 +122,8 @@ snagDatabaseMultiplatformModule = { id = "libs.plugins.snag.database.multiplatfo
 snagNetworkMultiplatformModule = { id = "libs.plugins.snag.network.multiplatform.module" }
 snagDrivenMultiplatformModule = { id = "libs.plugins.snag.driven.multiplatform.module" }
 snagBackendModule = { id = "libs.plugins.snag.backend.module" }
-snagDrivingBackendModule = { id = "libs.plugins.snag.driving.backend.module" }
+snagImplDrivingBackendModule = { id = "libs.plugins.snag.impl.driving.backend.module" }
+snagContractDrivingBackendMultiplatformModule = { id = "libs.plugins.snag.contract.driving.backend.multiplatform.module" }
 
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 androidLibrary = { id = "com.android.library", version.ref = "agp" }

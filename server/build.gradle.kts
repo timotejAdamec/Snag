@@ -11,7 +11,7 @@
  */
 
 plugins {
-    alias(libs.plugins.snagDrivingBackendModule)
+    alias(libs.plugins.snagImplDrivingBackendModule)
     application
 }
 

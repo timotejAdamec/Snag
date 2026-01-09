@@ -17,7 +17,8 @@ plugins {
     alias(libs.plugins.snagNetworkMultiplatformModule) apply false
     alias(libs.plugins.snagDrivenMultiplatformModule) apply false
     alias(libs.plugins.snagBackendModule) apply false
-    alias(libs.plugins.snagDrivingBackendModule) apply false
+    alias(libs.plugins.snagImplDrivingBackendModule) apply false
+    alias(libs.plugins.snagContractDrivingBackendMultiplatformModule) apply false
 
     alias(libs.plugins.kotlinSerialization) apply false
     alias(libs.plugins.composeHotReload) apply false

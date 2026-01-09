@@ -1,4 +1,3 @@
 plugins {
-    alias(libs.plugins.snagDrivingMultiplatformModule)
+    alias(libs.plugins.snagContractDrivingBackendMultiplatformModule)
 }
-

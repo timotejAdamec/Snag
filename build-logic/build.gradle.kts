@@ -43,9 +43,13 @@ gradlePlugin {
         id = libs.plugins.snagBackendModule.get().pluginId
         implementationClass = "cz.adamec.timotej.snag.buildsrc.plugins.BackendModulePlugin"
     }
-    plugins.register("SnagDrivingBackendModulePlugin") {
-        id = libs.plugins.snagDrivingBackendModule.get().pluginId
-        implementationClass = "cz.adamec.timotej.snag.buildsrc.plugins.DrivingBackendModulePlugin"
+    plugins.register("SnagImplDrivingBackendModulePlugin") {
+        id = libs.plugins.snagImplDrivingBackendModule.get().pluginId
+        implementationClass = "cz.adamec.timotej.snag.buildsrc.plugins.ImplDrivingBackendModulePlugin"
+    }
+    plugins.register("SnagContractDrivingBackendMultiplatformModulePlugin") {
+        id = libs.plugins.snagContractDrivingBackendMultiplatformModule.get().pluginId
+        implementationClass = "cz.adamec.timotej.snag.buildsrc.plugins.ContractDrivingBackendMultiplatformModulePlugin"
     }
 }
 
