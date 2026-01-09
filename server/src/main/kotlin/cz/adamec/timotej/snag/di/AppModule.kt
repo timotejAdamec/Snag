@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.di
 
+import cz.adamec.timotej.snag.projects.be.driven.di.projectsDrivenModule
 import cz.adamec.timotej.snag.projects.be.driving.impl.di.projectsDrivingModule
 import cz.adamec.timotej.snag.structures.be.driving.impl.di.structuresDrivingModule
 import org.koin.dsl.module
@@ -19,6 +20,7 @@ import org.koin.dsl.module
 internal val appModule = module {
     includes(
         projectsDrivingModule,
+        projectsDrivenModule,
         structuresDrivingModule,
     )
 }

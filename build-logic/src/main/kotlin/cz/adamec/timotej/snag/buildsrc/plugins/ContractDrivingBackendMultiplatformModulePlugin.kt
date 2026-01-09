@@ -21,6 +21,6 @@ import org.gradle.kotlin.dsl.apply
 class ContractDrivingBackendMultiplatformModulePlugin : Plugin<Project> {
     override fun apply(target: Project) = with(target) {
         apply(plugin = pluginId("kotlinSerialization"))
-        apply<MultiplatformModulePlugin>()
+        apply<NetworkMultiplatformModulePlugin>()
     }
 }

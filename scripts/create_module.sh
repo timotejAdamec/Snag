@@ -79,7 +79,8 @@ create_module_internal() {
     local P_DIR=$2
     local TARGET_PLATFORM=$3
     local TARGET_ARCH=$4
-    local DEPENDENCY=$5
+    local IMPL_DEPS=$5
+    local API_DEPS=$6
 
     # Determine plugin and source sets
     local CURRENT_PLUGIN=""
@@ -104,19 +105,35 @@ create_module_internal() {
     mkdir -p "$M_DIR"
 
     local DEP_BLOCK=""
-    if [ -n "$DEPENDENCY" ]; then
+    if [ -n "$IMPL_DEPS" ] || [ -n "$API_DEPS" ]; then
         if [ "$TARGET_PLATFORM" == "jvm" ]; then
             DEP_BLOCK="
-dependencies {
-    implementation(project(\"$DEPENDENCY\"))
+dependencies {"
+            for dep in $API_DEPS; do
+                DEP_BLOCK="$DEP_BLOCK
+    api(project(\"$dep\"))"
+            done
+            for dep in $IMPL_DEPS; do
+                DEP_BLOCK="$DEP_BLOCK
+    implementation(project(\"$dep\"))"
+            done
+            DEP_BLOCK="$DEP_BLOCK
 }"
         else
             DEP_BLOCK="
 kotlin {
     sourceSets {
         commonMain {
-            dependencies {
-                implementation(project(\"$DEPENDENCY\"))
+            dependencies {"
+            for dep in $API_DEPS; do
+                DEP_BLOCK="$DEP_BLOCK
+                api(project(\"$dep\"))"
+            done
+            for dep in $IMPL_DEPS; do
+                DEP_BLOCK="$DEP_BLOCK
+                implementation(project(\"$dep\"))"
+            done
+            DEP_BLOCK="$DEP_BLOCK
             }
         }
     }
@@ -148,6 +165,38 @@ EOF
     fi
 }
 
+# Path helpers for automatic dependencies
+COLON_TYPE=":$(echo "$TYPE" | tr '/' ':')"
+COLON_DOMAIN=""
+[ -n "$DOMAIN_TYPE" ] && COLON_DOMAIN=":$(echo "$DOMAIN_TYPE" | tr '/' ':')"
+COLON_SIDE=""
+[ -n "$SIDE" ] && COLON_SIDE=":$(echo "$SIDE" | tr '/' ':')"
+
+PARENT_PATH="${COLON_TYPE}${COLON_DOMAIN}${COLON_SIDE}"
+GRANDPARENT_PATH="${COLON_TYPE}${COLON_DOMAIN}"
+
+PORTS_PATH="$PARENT_PATH:ports"
+APP_PATH="$PARENT_PATH:app"
+if [ "$#" -eq 4 ]; then
+    BUSINESS_PATH="$GRANDPARENT_PATH:business"
+else
+    BUSINESS_PATH="$PARENT_PATH:business"
+fi
+
+# Determine automatic dependencies
+AUTO_API_DEPS=""
+AUTO_IMPL_DEPS=""
+
+if [ "$ARCH_LAYER" == "driven" ]; then
+    AUTO_API_DEPS="$PORTS_PATH"
+elif [ "$ARCH_LAYER" == "app" ]; then
+    AUTO_API_DEPS="$PORTS_PATH"
+elif [ "$ARCH_LAYER" == "ports" ]; then
+    AUTO_API_DEPS="$BUSINESS_PATH"
+elif [ "$ARCH_LAYER" == "driving" ]; then
+    AUTO_IMPL_DEPS="$APP_PATH"
+fi
+
 # Determine if forced split (be driving) or regular split
 API_SUBMODULE_NAME="api"
 FORCED_BE_DRIVING_SPLIT=false
@@ -159,22 +208,24 @@ fi
 
 if [ "$SPLIT" = true ]; then
     if [ "$FORCED_BE_DRIVING_SPLIT" = true ]; then
-        # Contract is always Multiplatform
-        create_module_internal "$BASE_MODULE_DIR/$API_SUBMODULE_NAME" "$BASE_PACKAGE_DIR/$API_SUBMODULE_NAME" "multiplatform" "$ARCH_LAYER"
+        # Contract is always Multiplatform. No auto-deps for driving contract.
+        create_module_internal "$BASE_MODULE_DIR/$API_SUBMODULE_NAME" "$BASE_PACKAGE_DIR/$API_SUBMODULE_NAME" "multiplatform" "$ARCH_LAYER" "" "$AUTO_API_DEPS"
         
-        # Impl is always JVM (Backend)
+        # Impl is always JVM (Backend). Needs dependency on API and potentially APP.
         API_PATH=":$(echo "$BASE_MODULE_DIR/$API_SUBMODULE_NAME" | tr '/' ':')"
-        create_module_internal "$BASE_MODULE_DIR/impl" "$BASE_PACKAGE_DIR/impl" "jvm" "$ARCH_LAYER" "$API_PATH"
+        create_module_internal "$BASE_MODULE_DIR/impl" "$BASE_PACKAGE_DIR/impl" "jvm" "$ARCH_LAYER" "$API_PATH $AUTO_IMPL_DEPS" ""
     else
         # Regular split (both use the same platform)
-        create_module_internal "$BASE_MODULE_DIR/$API_SUBMODULE_NAME" "$BASE_PACKAGE_DIR/$API_SUBMODULE_NAME" "$PLATFORM" "$ARCH_LAYER"
+        # API/Contract gets AUTO_API_DEPS
+        create_module_internal "$BASE_MODULE_DIR/$API_SUBMODULE_NAME" "$BASE_PACKAGE_DIR/$API_SUBMODULE_NAME" "$PLATFORM" "$ARCH_LAYER" "" "$AUTO_API_DEPS"
         
-        # Create IMPL module with dependency on API
+        # Create IMPL module with dependency on API and AUTO_IMPL_DEPS
         API_PATH=":$(echo "$BASE_MODULE_DIR/$API_SUBMODULE_NAME" | tr '/' ':')"
-        create_module_internal "$BASE_MODULE_DIR/impl" "$BASE_PACKAGE_DIR/impl" "$PLATFORM" "$ARCH_LAYER" "$API_PATH"
+        create_module_internal "$BASE_MODULE_DIR/impl" "$BASE_PACKAGE_DIR/impl" "$PLATFORM" "$ARCH_LAYER" "$API_PATH $AUTO_IMPL_DEPS" ""
     fi
 else
-    create_module_internal "$BASE_MODULE_DIR" "$BASE_PACKAGE_DIR" "$PLATFORM" "$ARCH_LAYER"
+    # Not split. Gets both.
+    create_module_internal "$BASE_MODULE_DIR" "$BASE_PACKAGE_DIR" "$PLATFORM" "$ARCH_LAYER" "$AUTO_IMPL_DEPS" "$AUTO_API_DEPS"
 fi
 
 echo "Module creation finished successfully."

@@ -18,12 +18,21 @@ import cz.adamec.timotej.snag.buildsrc.extensions.libs
 import cz.adamec.timotej.snag.buildsrc.extensions.testImplementation
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.dependencies
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmExtension
 
 internal fun Project.configureBackendModule() {
     dependencies {
         implementation(project(":lib:core"))
 
+        implementation(libs.library("kotlinx-coroutines-core"))
+        implementation(libs.library("koin-core"))
         implementation(libs.library("slf4j-api"))
         testImplementation(libs.library("kotlin-test-junit"))
+    }
+
+    extensions.findByType(KotlinJvmExtension::class.java)?.apply {
+        this.compilerOptions {
+            freeCompilerArgs.add("-opt-in=kotlin.uuid.ExperimentalUuidApi")
+        }
     }
 }

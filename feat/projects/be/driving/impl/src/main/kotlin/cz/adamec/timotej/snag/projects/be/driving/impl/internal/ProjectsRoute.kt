@@ -12,17 +12,21 @@
 
 package cz.adamec.timotej.snag.projects.be.driving.impl.internal
 
+import cz.adamec.timotej.snag.projects.be.app.GetProjectsUseCase
 import cz.adamec.timotej.snag.routing.be.AppRoute
-import io.ktor.server.response.respondText
+import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
 import io.ktor.server.routing.route
 
-internal class ProjectsRoute : AppRoute {
+internal class ProjectsRoute(
+    private val getProjectsUseCase: GetProjectsUseCase,
+) : AppRoute {
     override fun Route.setup() {
         route("/projects") {
             get {
-                call.respondText("Hello from projects!")
+                val dtoProjects = getProjectsUseCase().toDto()
+                call.respond(dtoProjects)
             }
         }
     }

@@ -24,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import cz.adamec.timotej.snag.feat.shared.design.fe.theme.SnagTheme
+import cz.adamec.timotej.snag.lib.core.UuidProvider
 import cz.adamec.timotej.snag.projects.business.Project
 import kotlin.uuid.Uuid
 
@@ -73,7 +74,7 @@ internal fun ProjectCardPreview() {
                 height = 100.dp,
             ),
             project = Project(
-                id = Uuid.random(),
+                id = UuidProvider.getUuid(),
                 name = "Project A",
                 address = "Client A",
             ),
