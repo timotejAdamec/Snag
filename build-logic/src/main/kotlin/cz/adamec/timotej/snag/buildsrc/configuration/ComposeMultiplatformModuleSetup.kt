@@ -33,7 +33,7 @@ internal fun Project.configureComposeMultiplatformModule() {
             commonMain.dependencies {
                 if (!path.contains("design") && !path.contains("navigation")) {
                     implementation(project(":lib:design:fe"))
-                    implementation(project(":lib:navigation:fe"))
+                    implementation(project(":lib:routing:fe"))
                     implementation(project(":feat:shared:design:fe"))
                 }
                 implementation(library("compose-runtime"))

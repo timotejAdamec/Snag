@@ -21,6 +21,10 @@ import org.gradle.kotlin.dsl.dependencies
 
 internal fun Project.configureKtorBackendModule() {
     dependencies {
+        if (!path.contains("routing")) {
+            implementation(project(":lib:routing:be"))
+        }
+
         implementation(libs.library("ktor-server-core"))
         implementation(libs.library("koin-ktor"))
         testImplementation(libs.library("ktor-server-test-host"))

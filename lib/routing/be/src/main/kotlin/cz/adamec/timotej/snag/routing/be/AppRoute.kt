@@ -10,6 +10,10 @@
  * Department of Software Engineering
  */
 
-plugins {
-    alias(libs.plugins.snagDrivingMultiplatformModule)
+package cz.adamec.timotej.snag.routing.be
+
+import io.ktor.server.routing.Route
+
+interface AppRoute {
+    fun Route.setup()
 }

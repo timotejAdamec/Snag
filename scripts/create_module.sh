@@ -12,17 +12,31 @@
 # Department of Software Engineering
 #
 
-# Parse optional "split" argument
+# Parse optional arguments
 SPLIT=false
-if [[ "${@: -1}" == "split" ]]; then
-    SPLIT=true
-    # remove last argument
-    set -- "${@:1:$(($#-1))}"
-fi
+PLATFORM=""
+NEW_ARGS=()
+for arg in "$@"; do
+    case $arg in
+        --jvm)
+            PLATFORM="jvm"
+            ;;
+        --multiplatform)
+            PLATFORM="multiplatform"
+            ;;
+        split)
+            SPLIT=true
+            ;;
+        *)
+            NEW_ARGS+=("$arg")
+            ;;
+    esac
+done
+set -- "${NEW_ARGS[@]}"
 
 # Check if 2, 3 or 4 arguments are provided
 if [ "$#" -lt 2 ] || [ "$#" -gt 4 ]; then
-    echo "Usage: $0 <type> [domain type] [be/fe/business] <architecture layer> [split]"
+    echo "Usage: $0 [--jvm|--multiplatform] <type> [domain type] [be/fe/business] <architecture layer> [split]"
     exit 1
 fi
 
@@ -49,8 +63,17 @@ else
     BASE_PACKAGE_DIR="cz/adamec/timotej/snag/$TYPE/$ARCH_LAYER"
 fi
 
+# Determine platform if not explicitly set
+if [ -z "$PLATFORM" ]; then
+    if [ "$SIDE" == "be" ]; then
+        PLATFORM="jvm"
+    else
+        PLATFORM="multiplatform"
+    fi
+fi
+
 # Determine plugin and source sets
-if [ "$SIDE" == "be" ]; then
+if [ "$PLATFORM" == "jvm" ]; then
     if [ "$ARCH_LAYER" == "driving" ]; then
         PLUGIN="alias(libs.plugins.snagDrivingBackendModule)"
     else
@@ -79,7 +102,7 @@ create_module_internal() {
 
     local DEP_BLOCK=""
     if [ -n "$DEPENDENCY" ]; then
-        if [ "$SIDE" == "be" ]; then
+        if [ "$PLATFORM" == "jvm" ]; then
             DEP_BLOCK="
 dependencies {
     implementation(project(\"$DEPENDENCY\"))

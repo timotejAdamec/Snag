@@ -25,6 +25,9 @@ application {
 }
 
 dependencies {
+    implementation(projects.feat.projects.be.driving)
+    implementation(projects.feat.structures.be.driving)
+
     implementation(libs.ktor.server.core)
     implementation(libs.ktor.server.netty)
     implementation(libs.ktor.server.call.logging)
