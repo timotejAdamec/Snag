@@ -17,6 +17,7 @@ plugins {
 kotlin {
     sourceSets {
         commonMain.dependencies {
+            implementation(project(":feat:projects:be:driving:contract"))
             implementation(project(":feat:projects:business"))
             api(project(":feat:projects:fe:ports"))
         }

@@ -12,15 +12,19 @@
 
 package cz.adamec.timotej.snag.projects.fe.driven.di
 
-import cz.adamec.timotej.snag.projects.fe.driven.InMemoryProjectsLocalDataSource
-import cz.adamec.timotej.snag.projects.fe.ports.ProjectsLocalDataSource
-import org.koin.core.module.dsl.bind
-import org.koin.core.module.dsl.singleOf
+import cz.adamec.timotej.snag.lib.core.di.getIoDispatcher
+import cz.adamec.timotej.snag.projects.fe.driven.internal.api.ProjectsApi
+import cz.adamec.timotej.snag.projects.fe.driven.internal.db.ProjectsDb
+import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.module
 
 val projectsDrivenModule =
     module {
-        singleOf(::InMemoryProjectsLocalDataSource) {
-            bind<ProjectsLocalDataSource>()
+        factory {
+            ProjectsDb(
+                projectEntityQueries = get(),
+                ioDispatcher = getIoDispatcher(),
+            )
         }
+        factoryOf(::ProjectsApi)
     }

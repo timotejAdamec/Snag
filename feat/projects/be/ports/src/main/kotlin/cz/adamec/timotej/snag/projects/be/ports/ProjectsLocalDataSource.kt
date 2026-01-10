@@ -13,7 +13,9 @@
 package cz.adamec.timotej.snag.projects.be.ports
 
 import cz.adamec.timotej.snag.projects.business.Project
+import kotlin.uuid.Uuid
 
 interface ProjectsLocalDataSource {
     suspend fun getProjects(): List<Project>
+    suspend fun getProject(id: Uuid): Project?
 }

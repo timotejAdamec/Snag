@@ -12,6 +12,8 @@
 
 import cz.adamec.timotej.snag.buildsrc.consts.SNAG_NAMESPACE
 import cz.adamec.timotej.snag.buildsrc.extensions.dotFormattedPath
+import cz.adamec.timotej.snag.buildsrc.extensions.library
+
 plugins {
     alias(libs.plugins.snagMultiplatformModule)
     alias(libs.plugins.sqldelight)
@@ -51,6 +53,7 @@ sqldelight {
             migrationOutputDirectory = file("$outputDir/migrations")
             generateAsync = true
             verifyMigrations = true
+            dialect(library("sqldelight-sqlite-dialect"))
         }
     }
 }

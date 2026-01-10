@@ -21,7 +21,28 @@ internal fun Project.configureNetworkMultiplatformModule() {
     extensions.findByType(KotlinMultiplatformExtension::class.java)?.apply {
         sourceSets {
             commonMain.dependencies {
+                if (!path.contains("networking")) {
+                    implementation(project(":lib:network:fe"))
+                }
                 implementation(library("kotlinx-serialization-core"))
+                implementation(library("ktor-client-core"))
+                implementation(library("ktor-client-content-negotiation"))
+                implementation(library("ktor-serialization-kotlinx-json"))
+            }
+            androidMain.dependencies {
+                implementation(library("ktor-client-okhttp"))
+            }
+            jvmMain.dependencies {
+                implementation(library("ktor-client-okhttp"))
+            }
+            iosMain.dependencies {
+                implementation(library("ktor-client-darwin"))
+            }
+            wasmJsMain.dependencies {
+                implementation(library("ktor-client-cio"))
+            }
+            jsMain.dependencies {
+                implementation(library("ktor-client-js"))
             }
         }
     }

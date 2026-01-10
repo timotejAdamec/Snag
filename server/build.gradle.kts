@@ -27,6 +27,7 @@ application {
 dependencies {
     implementation(projects.feat.projects.be.driving.impl)
     implementation(projects.feat.projects.be.driven)
+    implementation(projects.feat.projects.be.app)
     implementation(projects.feat.structures.be.driving.impl)
 
     implementation(libs.ktor.server.core)

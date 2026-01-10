@@ -4,9 +4,12 @@ CREATE TABLE ProjectEntity (
     address TEXT NOT NULL
 );
 
-insertProject:
-INSERT OR REPLACE INTO ProjectEntity(id, name, address)
-VALUES ?;
+saveProject:
+INSERT INTO ProjectEntity(id, name, address)
+VALUES ?
+ON CONFLICT(id) DO UPDATE SET
+    name = excluded.name,
+    address = excluded.address;
 
 selectAll:
 SELECT * FROM ProjectEntity;

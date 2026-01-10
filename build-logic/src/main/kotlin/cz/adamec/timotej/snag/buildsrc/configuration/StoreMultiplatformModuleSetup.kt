@@ -26,6 +26,9 @@ internal fun Project.configureDataMultiplatformModule() {
                 }
                 implementation(library("store"))
             }
+            all {
+                languageSettings.optIn("org.mobilenativefoundation.store.core5.ExperimentalStoreApi")
+            }
         }
     }
 }

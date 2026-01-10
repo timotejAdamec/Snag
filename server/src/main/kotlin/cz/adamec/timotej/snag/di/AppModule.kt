@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.di
 
+import cz.adamec.timotej.snag.projects.be.app.di.projectsAppModule
 import cz.adamec.timotej.snag.projects.be.driven.di.projectsDrivenModule
 import cz.adamec.timotej.snag.projects.be.driving.impl.di.projectsDrivingModule
 import cz.adamec.timotej.snag.structures.be.driving.impl.di.structuresDrivingModule
@@ -21,6 +22,7 @@ internal val appModule = module {
     includes(
         projectsDrivingModule,
         projectsDrivenModule,
+        projectsAppModule,
         structuresDrivingModule,
     )
 }

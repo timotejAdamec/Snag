@@ -70,6 +70,7 @@ internal fun Project.configureKotlinMultiplatformModule() {
                 implementation(library("koin-test"))
             }
             androidMain.dependencies {
+                implementation(library("kotlinx-coroutines-android"))
                 implementation(library("koin-android"))
             }
             all {

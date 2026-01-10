@@ -23,10 +23,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import cz.adamec.timotej.snag.feat.shared.design.fe.theme.SnagTheme
+import cz.adamec.timotej.snag.lib.design.fe.theme.SnagTheme
 import cz.adamec.timotej.snag.lib.core.UuidProvider
 import cz.adamec.timotej.snag.projects.business.Project
-import kotlin.uuid.Uuid
 
 @Composable
 internal fun ProjectCard(
