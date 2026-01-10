@@ -46,19 +46,19 @@ object HttpClientFactory {
                     is ConnectTimeoutException,
                     is SocketTimeoutException,
                         -> throw NetworkException.NetworkUnavailable(
-                        message = cause.message ?: "Network unavailable",
                         cause = cause,
                     )
+
                     is ClientRequestException -> {
                         when (cause.response.status) {
                             HttpStatusCode.Unauthorized -> throw NetworkException.ClientError.Unauthorized(
-                                message = cause.message,
                                 cause = cause,
                             )
+
                             HttpStatusCode.NotFound -> throw NetworkException.ClientError.NotFound(
-                                message = cause.message,
                                 cause = cause,
                             )
+
                             else -> throw NetworkException.ClientError.OtherClientError(
                                 message = cause.message,
                                 cause = cause,
@@ -70,9 +70,9 @@ object HttpClientFactory {
                         message = cause.message,
                         cause = cause,
                     )
+
                     is CancellationException -> throw cause
                     else -> throw NetworkException.ProgrammerError(
-                        message = cause.message ?: "Unknown error",
                         cause = cause,
                     )
                 }
