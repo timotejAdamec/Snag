@@ -13,10 +13,13 @@
 package cz.adamec.timotej.snag.lib.core.di
 
 import cz.adamec.timotej.snag.lib.core.ApplicationScope
+import cz.adamec.timotej.snag.lib.core.TimestampProvider
 import cz.adamec.timotej.snag.lib.core.internal.DefaultApplicationScope
+import cz.adamec.timotej.snag.lib.core.internal.SystemTimestampProvider
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import org.koin.core.module.Module
+import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.qualifier.named
 import org.koin.core.scope.Scope
@@ -44,6 +47,8 @@ val coreModule =
         single(named(DispatcherDiQualifiers.MAIN)) { Dispatchers.Main }
         single(named(DispatcherDiQualifiers.DEFAULT)) { Dispatchers.Default }
         single(named(DispatcherDiQualifiers.UNCONFINED)) { Dispatchers.Unconfined }
+
+        factoryOf(::SystemTimestampProvider) bind TimestampProvider::class
     }
 
 internal expect val platformModule: Module

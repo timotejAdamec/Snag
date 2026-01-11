@@ -13,6 +13,8 @@
 package cz.adamec.timotej.snag.projects.fe.driven.internal
 
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.ProjectEntity
+import cz.adamec.timotej.snag.lib.core.TimestampProvider
+import cz.adamec.timotej.snag.network.fe.NetworkResult
 import cz.adamec.timotej.snag.projects.be.driving.contract.ProjectApiDto
 import cz.adamec.timotej.snag.projects.business.Project
 import cz.adamec.timotej.snag.projects.fe.driven.internal.api.ProjectsApi
@@ -21,7 +23,9 @@ import cz.adamec.timotej.snag.projects.fe.driven.internal.api.toBusiness
 import cz.adamec.timotej.snag.projects.fe.driven.internal.db.ProjectsDb
 import cz.adamec.timotej.snag.projects.fe.driven.internal.db.toBusiness
 import cz.adamec.timotej.snag.projects.fe.driven.internal.db.toEntity
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 import org.mobilenativefoundation.store.store5.Bookkeeper
 import org.mobilenativefoundation.store.store5.Converter
 import org.mobilenativefoundation.store.store5.Fetcher
@@ -30,6 +34,7 @@ import org.mobilenativefoundation.store.store5.SourceOfTruth
 import org.mobilenativefoundation.store.store5.Store
 import org.mobilenativefoundation.store.store5.Updater
 import org.mobilenativefoundation.store.store5.UpdaterResult
+import kotlin.time.Instant
 import kotlin.uuid.Uuid
 
 typealias ProjectsStore = Store<Uuid, Project>
@@ -51,15 +56,13 @@ internal class ProjectsStoreFactory(
 
     private fun createFetcher(): Fetcher<Uuid, ProjectApiDto> =
         Fetcher.of { id ->
-            projectsApi.getProject(id)
+            projectsApi.getProject(id).getOrThrow()
         }
 
     private fun createSourceOfTruth(): SourceOfTruth<Uuid, ProjectEntity, Project> =
         SourceOfTruth.of(
             reader = { id ->
-                flow {
-                    emit(projectsDb.getProject(id)?.toBusiness())
-                }
+                projectsDb.getProjectFlow(id).map { it?.toBusiness() }
             },
             writer = { _, projectEntity ->
                 projectsDb.saveProject(projectEntity)
@@ -72,20 +75,55 @@ internal class ProjectsStoreFactory(
             .fromNetworkToLocal { projectApiDto -> projectApiDto.toBusiness().toEntity() }
             .build()
 
-    private fun createUpdater(): Updater<Uuid, Project, Boolean> =
+    private fun <T> createUpdater(): Updater<Uuid, Project, NetworkResult<T>> =
         Updater.by(
             post = { _, updatedProject ->
                 val apiDto = updatedProject.toApiDto()
-                projectsApi.updateProject()
-                if (success) {
-                    UpdaterResult.Success.Typed(success)
+                val result = projectsApi.updateProject(apiDto)
+                if (result is NetworkResult.Success) {
+                    UpdaterResult.Success.Typed(result.data)
                 } else {
-                    UpdaterResult.Error.Message("Something went wrong.")
+                    UpdaterResult.Error.Message(result.exceptionOrNull()?.message ?: "Something went wrong")
                 }
             }
         )
 
-    private fun createBookkeeper(): Bookkeeper<Uuid> {
-        TODO()
-    }
+    private fun createBookkeeper(): Bookkeeper<Uuid> =
+        Bookkeeper.by(
+            getLastFailedSync = { id ->
+                projectsDb.getLastFailedProjectSyncFlow(id).first()
+            },
+            setLastFailedSync = { id, timestamp ->
+                try {
+                    projectsDb.projectBookkeepingQueries.insertFailedSync(
+                        ProjectFailedSync(
+                            project_id = id,
+                            timestamp = timestamp,
+                        )
+                    )
+                    true
+                } catch (e: SQLException) {
+                    // Handle the exception
+                    false
+                }
+            },
+            clear = { id ->
+                try {
+                    projectsDb.projectBookkeepingQueries.clearByProjectId(id)
+                    true
+                } catch (e: SQLException) {
+                    // Handle the exception
+                    false
+                }
+            },
+            clearAll = {
+                try {
+                    projectsDb.projectBookkeepingQueries.clearAll()
+                    true
+                } catch (e: SQLException) {
+                    // Handle the exception
+                    false
+                }
+            }
+        )
 }

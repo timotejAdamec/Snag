@@ -48,7 +48,9 @@ sqldelight {
     databases {
         create("SnagDatabase") {
             packageName = SNAG_NAMESPACE + "." + dotFormattedPath() + ".db"
-            val outputDir = "src/commonMain/sqldelight/$SNAG_NAMESPACE.$path".replace(".", "/")
+            val outputDir = "src/commonMain/sqldelight/$SNAG_NAMESPACE.$path"
+                .replace(".", "/")
+                .replace(":", "/")
             schemaOutputDirectory = file("$outputDir/schemas")
             migrationOutputDirectory = file("$outputDir/migrations")
             generateAsync = true

@@ -60,7 +60,7 @@ internal fun Project.configureKotlinMultiplatformModule() {
                     implementation(project(":lib:core"))
                 }
                 implementation(library("kotlinx-coroutines-core"))
-                implementation(library("kotlin-immutable-collections"))
+                implementation(library("kotlinx-immutable-collections"))
                 implementation(library("koin-core"))
                 implementation(library("kermit"))
                 implementation(library("kermit-koin"))

@@ -13,11 +13,14 @@
 package cz.adamec.timotej.snag.feat.shared.database.fe.di
 
 import app.cash.sqldelight.db.SqlDriver
+import cz.adamec.timotej.snag.feat.shared.database.fe.CallDatabaseWithResult
+import cz.adamec.timotej.snag.feat.shared.database.fe.db.ProjectBookkeepingQueries
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.ProjectEntityQueries
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.SnagDatabase
 import cz.adamec.timotej.snag.feat.shared.database.fe.internal.DatabaseFactory
 import cz.adamec.timotej.snag.feat.shared.database.fe.internal.DriverFactory
 import org.koin.core.module.Module
+import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
@@ -36,10 +39,17 @@ val databaseModule =
             ).createDatabase()
         } bind SnagDatabase::class
 
+        factoryOf(::CallDatabaseWithResult)
+
         factory {
             val snagDatabase = get<SnagDatabase>()
             snagDatabase.projectEntityQueries
         } bind ProjectEntityQueries::class
+
+        factory {
+            val snagDatabase = get<SnagDatabase>()
+            snagDatabase.projectBookkeepingQueries
+        } bind ProjectBookkeepingQueries::class
     }
 
 internal expect val platformModule: Module

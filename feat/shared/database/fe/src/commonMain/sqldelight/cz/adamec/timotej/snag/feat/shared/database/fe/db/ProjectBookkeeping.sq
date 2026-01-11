@@ -1,0 +1,22 @@
+CREATE TABLE ProjectFailedSync (
+    project_id TEXT NOT NULL,
+    timestamp INTEGER NOT NULL
+);
+
+selectMostRecentFailedSync:
+SELECT timestamp
+FROM ProjectFailedSync
+WHERE project_id = ?
+ORDER BY timestamp DESC
+LIMIT 1;
+
+insertFailedSync:
+INSERT OR REPLACE INTO ProjectFailedSync
+VALUES ?;
+
+clearByProjectId:
+DELETE FROM ProjectFailedSync
+WHERE project_id = ?;
+
+clearAll:
+DELETE FROM ProjectFailedSync;

@@ -49,7 +49,7 @@ internal fun Project.configureComposeMultiplatformModule() {
                 implementation(library("androidx-lifecycle-viewmodel-compose"))
                 implementation(library("androidx-lifecycle-runtime-compose"))
                 implementation(library("kotlinx-serialization-core"))
-                implementation(library("kotlin-immutable-collections"))
+                implementation(library("kotlinx-immutable-collections"))
                 implementation(library("navigation3-ui"))
                 implementation(library("navigation3-viewmodel"))
                 implementation(library("navigation3-adaptive"))

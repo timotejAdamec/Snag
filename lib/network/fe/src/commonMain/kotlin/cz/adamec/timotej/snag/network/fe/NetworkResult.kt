@@ -27,9 +27,10 @@ sealed class NetworkResult<out T> {
         data class Programmer(override val exception: NetworkException.ProgrammerError) : Failure()
     }
 
-    val isSuccess: Boolean get() = this is Success
-    val isFailure: Boolean get() = this is Failure
-
+    fun getOrThrow(): T = when(this) {
+        is Success -> data
+        is Failure -> throw exception
+    }
     fun getOrNull(): T? = (this as? Success)?.data
     fun exceptionOrNull(): NetworkException? = (this as? Failure)?.exception
 
@@ -37,23 +38,6 @@ sealed class NetworkResult<out T> {
         return when (this) {
             is Success -> Success(transform(data))
             is Failure -> this
-        }
-    }
-
-    companion object {
-        inline fun <T> runSafelyOnNetwork(block: () -> T): NetworkResult<T> {
-            return try {
-                Success(block())
-            } catch (e: NetworkException) {
-                when (e) {
-                    is NetworkException.NetworkUnavailable -> Failure.Connectivity(e)
-                    is NetworkException.ClientError.Unauthorized -> Failure.Unauthorized(e)
-                    is NetworkException.ClientError.NotFound -> Failure.NotFound(e)
-                    is NetworkException.ClientError.OtherClientError -> Failure.UserError(e, e.message)
-                    is NetworkException.ServerError -> Failure.ServerError(e)
-                    is NetworkException.ProgrammerError -> Failure.Programmer(e)
-                }
-            }
         }
     }
 }
