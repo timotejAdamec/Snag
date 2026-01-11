@@ -13,7 +13,7 @@
 package cz.adamec.timotej.snag.projects.fe.driven.internal
 
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.ProjectEntity
-import cz.adamec.timotej.snag.lib.core.TimestampProvider
+import cz.adamec.timotej.snag.lib.core.Timestamp
 import cz.adamec.timotej.snag.network.fe.NetworkResult
 import cz.adamec.timotej.snag.projects.be.driving.contract.ProjectApiDto
 import cz.adamec.timotej.snag.projects.business.Project
@@ -24,34 +24,32 @@ import cz.adamec.timotej.snag.projects.fe.driven.internal.db.ProjectsDb
 import cz.adamec.timotej.snag.projects.fe.driven.internal.db.toBusiness
 import cz.adamec.timotej.snag.projects.fe.driven.internal.db.toEntity
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import org.mobilenativefoundation.store.store5.Bookkeeper
 import org.mobilenativefoundation.store.store5.Converter
 import org.mobilenativefoundation.store.store5.Fetcher
+import org.mobilenativefoundation.store.store5.MutableStore
 import org.mobilenativefoundation.store.store5.MutableStoreBuilder
 import org.mobilenativefoundation.store.store5.SourceOfTruth
-import org.mobilenativefoundation.store.store5.Store
 import org.mobilenativefoundation.store.store5.Updater
 import org.mobilenativefoundation.store.store5.UpdaterResult
-import kotlin.time.Instant
 import kotlin.uuid.Uuid
 
-typealias ProjectsStore = Store<Uuid, Project>
+typealias ProjectsStore = MutableStore<Uuid, Project>
 
 internal class ProjectsStoreFactory(
     private val projectsApi: ProjectsApi,
     private val projectsDb: ProjectsDb,
 ) {
-    fun create(): ProjectsStore {
-//        return MutableStoreBuilder.from(
-//            fetcher = createFetcher(),
-//            sourceOfTruth = createSourceOfTruth(),
-//            converter = createConverter()
-//        ).build(
-//            updater = createUpdater(),
-//            bookkeeper = createBookkeeper()
-//        )
+    fun create(): MutableStore<Uuid, Project> {
+        return MutableStoreBuilder.from(
+            fetcher = createFetcher(),
+            sourceOfTruth = createSourceOfTruth(),
+            converter = createConverter()
+        ).build(
+            updater = createUpdater(),
+            bookkeeper = createBookkeeper()
+        )
     }
 
     private fun createFetcher(): Fetcher<Uuid, ProjectApiDto> =
@@ -62,7 +60,7 @@ internal class ProjectsStoreFactory(
     private fun createSourceOfTruth(): SourceOfTruth<Uuid, ProjectEntity, Project> =
         SourceOfTruth.of(
             reader = { id ->
-                projectsDb.getProjectFlow(id).map { it?.toBusiness() }
+                projectsDb.getProjectFlow(id).map { it.getOrNull()?.toBusiness() }
             },
             writer = { _, projectEntity ->
                 projectsDb.saveProject(projectEntity)
@@ -75,7 +73,7 @@ internal class ProjectsStoreFactory(
             .fromNetworkToLocal { projectApiDto -> projectApiDto.toBusiness().toEntity() }
             .build()
 
-    private fun <T> createUpdater(): Updater<Uuid, Project, NetworkResult<T>> =
+    private fun createUpdater(): Updater<Uuid, Project, NetworkResult<ProjectApiDto>> =
         Updater.by(
             post = { _, updatedProject ->
                 val apiDto = updatedProject.toApiDto()
@@ -83,7 +81,9 @@ internal class ProjectsStoreFactory(
                 if (result is NetworkResult.Success) {
                     UpdaterResult.Success.Typed(result.data)
                 } else {
-                    UpdaterResult.Error.Message(result.exceptionOrNull()?.message ?: "Something went wrong")
+                    UpdaterResult.Error.Message(
+                        result.exceptionOrNull()?.message ?: "Something went wrong"
+                    )
                 }
             }
         )
@@ -91,39 +91,21 @@ internal class ProjectsStoreFactory(
     private fun createBookkeeper(): Bookkeeper<Uuid> =
         Bookkeeper.by(
             getLastFailedSync = { id ->
-                projectsDb.getLastFailedProjectSyncFlow(id).first()
+                projectsDb.getLastFailedProjectSyncFlow(id).first().getOrNull()
             },
             setLastFailedSync = { id, timestamp ->
-                try {
-                    projectsDb.projectBookkeepingQueries.insertFailedSync(
-                        ProjectFailedSync(
-                            project_id = id,
-                            timestamp = timestamp,
-                        )
-                    )
-                    true
-                } catch (e: SQLException) {
-                    // Handle the exception
-                    false
-                }
+                projectsDb.insertFailedProjectSync(
+                    id = id,
+                    timestamp = Timestamp(timestamp),
+                ).getOrNull()?.let { true } ?: false
             },
             clear = { id ->
-                try {
-                    projectsDb.projectBookkeepingQueries.clearByProjectId(id)
-                    true
-                } catch (e: SQLException) {
-                    // Handle the exception
-                    false
-                }
+                projectsDb.deleteProjectSyncs(id)
+                    .getOrNull()?.let { true } ?: false
             },
             clearAll = {
-                try {
-                    projectsDb.projectBookkeepingQueries.clearAll()
-                    true
-                } catch (e: SQLException) {
-                    // Handle the exception
-                    false
-                }
+                projectsDb.deleteAllProjectsSyncs()
+                    .getOrNull()?.let { true } ?: false
             }
         )
 }

@@ -13,7 +13,8 @@
 package cz.adamec.timotej.snag.feat.shared.database.fe.di
 
 import app.cash.sqldelight.db.SqlDriver
-import cz.adamec.timotej.snag.feat.shared.database.fe.CallDatabaseWithResult
+import cz.adamec.timotej.snag.feat.shared.database.fe.internal.CallDatabaseWithResult
+import cz.adamec.timotej.snag.feat.shared.database.fe.SuspendCallDatabaseWithResult
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.ProjectBookkeepingQueries
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.ProjectEntityQueries
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.SnagDatabase
@@ -39,7 +40,7 @@ val databaseModule =
             ).createDatabase()
         } bind SnagDatabase::class
 
-        factoryOf(::CallDatabaseWithResult)
+        factoryOf(::SuspendCallDatabaseWithResult)
 
         factory {
             val snagDatabase = get<SnagDatabase>()

@@ -14,9 +14,9 @@ insertFailedSync:
 INSERT OR REPLACE INTO ProjectFailedSync
 VALUES ?;
 
-clearByProjectId:
+deleteByProjectId:
 DELETE FROM ProjectFailedSync
 WHERE project_id = ?;
 
-clearAll:
+deleteAll:
 DELETE FROM ProjectFailedSync;
