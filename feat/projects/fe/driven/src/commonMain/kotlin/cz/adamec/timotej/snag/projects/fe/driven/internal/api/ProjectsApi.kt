@@ -24,15 +24,18 @@ internal class ProjectsApi(
     private val httpClient: SnagNetworkHttpClient,
     private val callNetworkWithResult: CallNetworkWithResult,
 ) {
-    suspend fun getProjects(): NetworkResult<List<ProjectApiDto>> {
-        return httpClient.get("/projects").body()
+    suspend fun getProjects(): NetworkResult<List<ProjectApiDto>> = callNetworkWithResult {
+        httpClient.get("/projects").body()
     }
 
-    suspend fun getProject(id: Uuid): NetworkResult<ProjectApiDto> {
-        return httpClient.get("/projects/$id").body()
+    suspend fun getProject(id: Uuid): NetworkResult<ProjectApiDto> = callNetworkWithResult {
+        httpClient.get("/projects/$id").body()
     }
 
-    suspend fun updateProject(project: ProjectApiDto): NetworkResult<ProjectApiDto> {
-        val adwad: Instant
+    suspend fun updateProject(project: ProjectApiDto): NetworkResult<ProjectApiDto> =
+        callNetworkWithResult {
+            httpClient.put("/projects/${project.id}") {
+                setBody(project)
+            }.body()
     }
 }

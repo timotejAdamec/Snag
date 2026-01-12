@@ -18,7 +18,7 @@ import kotlin.uuid.Uuid
 
 internal class InMemoryProjectsLocalDataSource : ProjectsLocalDataSource {
 
-    private val projects = listOf(
+    private val projects = mutableListOf(
         Project(
             id = Uuid.parse("00000000-0000-0000-0000-000000000001"),
             name = "Strahov Dormitories Renovation",
@@ -77,5 +77,13 @@ internal class InMemoryProjectsLocalDataSource : ProjectsLocalDataSource {
 
     override suspend fun getProjects(): List<Project> = projects
 
-    override suspend fun getProject(id: Uuid): Project? = projects.find { it.id == id }
+    override suspend fun getProject(id: Uuid): Project? = projects
+        .find { it.id == id }
+
+    // TODO check updated timestamp and return the database project if it is newer
+    override suspend fun updateProject(project: Project): Project {
+        projects.removeIf { it.id == project.id }
+        projects.add(project)
+        return project
+    }
 }

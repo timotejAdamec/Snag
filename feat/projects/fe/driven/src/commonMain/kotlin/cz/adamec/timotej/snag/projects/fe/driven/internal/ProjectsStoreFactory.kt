@@ -41,7 +41,7 @@ internal class ProjectsStoreFactory(
     private val projectsApi: ProjectsApi,
     private val projectsDb: ProjectsDb,
 ) {
-    fun create(): MutableStore<Uuid, Project> {
+    fun create(): ProjectsStore {
         return MutableStoreBuilder.from(
             fetcher = createFetcher(),
             sourceOfTruth = createSourceOfTruth(),

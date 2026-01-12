@@ -10,13 +10,15 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.projects.be.ports
+package cz.adamec.timotej.snag.projects.be.app
 
+import cz.adamec.timotej.snag.projects.be.ports.ProjectsLocalDataSource
 import cz.adamec.timotej.snag.projects.business.Project
-import kotlin.uuid.Uuid
 
-interface ProjectsLocalDataSource {
-    suspend fun getProjects(): List<Project>
-    suspend fun getProject(id: Uuid): Project?
-    suspend fun updateProject(project: Project): Project
+class SaveProjectUseCase(
+    private val projectsLocalDataSource: ProjectsLocalDataSource,
+) {
+    suspend operator fun invoke(project: Project): Project {
+        return projectsLocalDataSource.updateProject(project)
+    }
 }

@@ -14,17 +14,22 @@ package cz.adamec.timotej.snag.projects.be.driving.impl.internal
 
 import cz.adamec.timotej.snag.projects.be.app.GetProjectUseCase
 import cz.adamec.timotej.snag.projects.be.app.GetProjectsUseCase
+import cz.adamec.timotej.snag.projects.be.app.SaveProjectUseCase
+import cz.adamec.timotej.snag.projects.be.driving.contract.PutProjectApiDto
 import cz.adamec.timotej.snag.routing.be.AppRoute
 import io.ktor.http.HttpStatusCode
+import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
+import io.ktor.server.routing.put
 import io.ktor.server.routing.route
 import kotlin.uuid.Uuid
 
 internal class ProjectsRoute(
     private val getProjectsUseCase: GetProjectsUseCase,
     private val getProjectUseCase: GetProjectUseCase,
+    private val saveProjectUseCase: SaveProjectUseCase,
 ) : AppRoute {
     override fun Route.setup() {
         route("/projects") {
@@ -43,13 +48,32 @@ internal class ProjectsRoute(
                     message = "Invalid ID format.",
                 )
 
-                val dtoProject = getProjectUseCase(id)?.toDto()
+                val dtoProject = getProjectUseCase(id)
                     ?: return@get call.respond(
                         status = HttpStatusCode.NotFound,
                         message = "Project not found.",
                     )
 
-                call.respond(dtoProject)
+                call.respond(dtoProject.toDto())
+            }
+
+            put("/{id}") {
+                val id = call.parameters["id"]?.let {
+                    runCatching { Uuid.parse(it) }.getOrNull()
+                } ?: return@put call.respond(
+                    status = HttpStatusCode.BadRequest,
+                    message = "Invalid ID format.",
+                )
+
+                val putProjectDto = runCatching { call.receive<PutProjectApiDto>() }.getOrNull()
+                    ?: return@put call.respond(
+                        status = HttpStatusCode.BadRequest,
+                        message = "Invalid request body.",
+                    )
+
+                val updatedProject = saveProjectUseCase(putProjectDto.toBusiness(id))
+
+                call.respond(updatedProject.toDto())
             }
         }
     }
