@@ -20,5 +20,5 @@ import kotlin.uuid.Uuid
 interface ProjectRepository {
     fun getAllProjectsFlow(): List<Project>
     fun getProjectFlow(id: Uuid): Flow<DataResult<Project?>>
-    suspend fun saveProject(project: Project)
+    suspend fun saveProject(project: Project): DataResult<Unit>
 }

@@ -14,6 +14,7 @@ package cz.adamec.timotej.snag.projects.fe.driven.internal
 
 import cz.adamec.timotej.snag.lib.core.DataResult
 import cz.adamec.timotej.snag.network.fe.NetworkException
+import cz.adamec.timotej.snag.network.fe.toDataResult
 import cz.adamec.timotej.snag.projects.business.Project
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectRepository
 import kotlinx.coroutines.flow.Flow
@@ -21,6 +22,8 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.transform
 import org.mobilenativefoundation.store.store5.StoreReadRequest
 import org.mobilenativefoundation.store.store5.StoreReadResponse
+import org.mobilenativefoundation.store.store5.StoreWriteRequest
+import org.mobilenativefoundation.store.store5.StoreWriteResponse
 import kotlin.uuid.Uuid
 
 class StoreProjectsRepository(
@@ -49,25 +52,7 @@ class StoreProjectsRepository(
                 }
 
                 is StoreReadResponse.Error.Exception -> {
-                    val failure = when (val error = response.error) {
-                        is NetworkException.NetworkUnavailable ->
-                            DataResult.Failure.NetworkUnavailable
-
-                        is NetworkException.ClientError ->
-                            DataResult.Failure.UserMessageError(
-                                throwable = error,
-                                message = error.message ?: "Invalid request"
-                            )
-
-                        is NetworkException.ServerError ->
-                            DataResult.Failure.UserMessageError(
-                                throwable = error,
-                                message = "Problems on server side."
-                            )
-
-                        else -> DataResult.Failure.ProgrammerError(error)
-                    }
-                    emit(failure)
+                    emit(response.error.toDataResultFailure())
                 }
 
                 is StoreReadResponse.Error.Message -> {
@@ -82,7 +67,23 @@ class StoreProjectsRepository(
             }
         }.distinctUntilChanged()
 
-    override suspend fun saveProject(project: Project) {
-        TODO("Not yet implemented")
+    override suspend fun saveProject(project: Project): DataResult<Unit> {
+        val response = projectStore.write(
+            StoreWriteRequest.of(
+                key = project.id,
+                value = project
+            )
+        )
+
+        return when (response) {
+            is StoreWriteResponse.Success -> DataResult.Success(Unit)
+            is StoreWriteResponse.Error.Exception -> response.error.toDataResultFailure()
+            is StoreWriteResponse.Error.Message -> DataResult.Failure.ProgrammerError(Exception(response.message))
+        }
+    }
+
+    private fun Throwable.toDataResultFailure() = when (this) {
+        is NetworkException -> this.toDataResult()
+        else -> DataResult.Failure.ProgrammerError(this)
     }
 }
