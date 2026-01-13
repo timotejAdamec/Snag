@@ -31,6 +31,7 @@ internal fun ProjectsScreen(
     ProjectsContent(
         modifier = modifier,
         onProjectClick = onProjectClick,
+        onErrorMessageShown = { viewModel.onErrorMessageShown() },
         state = state,
     )
 }

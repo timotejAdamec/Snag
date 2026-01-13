@@ -19,41 +19,76 @@ import cz.adamec.timotej.snag.lib.core.DataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.projects.fe.app.GetProjectsUseCase
 import kotlinx.collections.immutable.toPersistentList
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 internal class ProjectsViewModel(
-    getProjectsUseCase: GetProjectsUseCase,
+    private val getProjectsUseCase: GetProjectsUseCase,
 ) : ViewModel() {
-    val state: StateFlow<ProjectsUiState> =
+
+    val _state: MutableStateFlow<ProjectsUiState> = MutableStateFlow(ProjectsUiState())
+
+    val state: StateFlow<ProjectsUiState> = _state
+
+    init {
+        collectProjects()
+    }
+
+    private fun collectProjects() =
         getProjectsUseCase()
             .map { projectsDataResult ->
                 when (projectsDataResult) {
-                    DataResult.Failure.NetworkUnavailable -> state.value.copy(
-                        error = UiError.NetworkUnavailable,
-                        isLoading = false,
-                    )
-                    is DataResult.Failure.ProgrammerError -> state.value.copy(
-                        error = UiError.Unknown,
-                        isLoading = false,
-                    )
-                    is DataResult.Failure.UserMessageError -> state.value.copy(
-                        error = UiError.CustomUserMessage(projectsDataResult.message),
-                        isLoading = false,
-                    )
-                    DataResult.Loading -> state.value.copy(
-                        isLoading = true,
-                    )
-                    is DataResult.Success -> state.value.copy(
-                        projects = projectsDataResult.data.toPersistentList(),
-                        isLoading = false,
-                    )
+                    DataResult.Failure.NetworkUnavailable -> _state.update {
+                        it.copy(
+                            error = UiError.NetworkUnavailable,
+                            isLoading = false,
+                        )
+                    }
+
+                    is DataResult.Failure.ProgrammerError -> _state.update {
+                        it.copy(
+                            error = UiError.Unknown,
+                            isLoading = false,
+                        )
+                    }
+
+                    is DataResult.Failure.UserMessageError -> _state.update {
+                        it.copy(
+                            error = UiError.CustomUserMessage(projectsDataResult.message),
+                            isLoading = false,
+                        )
+                    }
+
+                    DataResult.Loading -> _state.update {
+                        it.copy(
+                            isLoading = true,
+                        )
+                    }
+
+                    is DataResult.Success -> _state.update {
+                        it.copy(
+                            projects = projectsDataResult.data.toPersistentList(),
+                            isLoading = false,
+                        )
+                    }
                 }
-            }.stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(DEFAULT_STATE_STOP_TIMEOUT_MILLIS),
-                initialValue = ProjectsUiState(),
+            }.launchIn(viewModelScope)
+
+    internal fun onErrorMessageShown() {
+        _state.update {
+            it.copy(
+                error = null,
             )
+        }
+    }
 }

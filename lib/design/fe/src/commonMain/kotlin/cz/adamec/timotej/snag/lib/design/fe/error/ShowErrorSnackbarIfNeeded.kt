@@ -20,7 +20,10 @@ import cz.adamec.timotej.snag.lib.design.fe.scaffold.LocalAppScaffoldState
 import kotlinx.coroutines.launch
 
 @Composable
-fun ShowErrorSnackbarIfNeeded(uiError: UiError?) {
+fun ShowErrorSnackbarIfNeeded(
+    uiError: UiError?,
+    onShown: () -> Unit,
+) {
     val scope = rememberCoroutineScope()
     val scaffoldState = LocalAppScaffoldState.current
 
@@ -31,6 +34,7 @@ fun ShowErrorSnackbarIfNeeded(uiError: UiError?) {
                 message = uiError.toInformativeMessage(),
                 duration = SnackbarDuration.Long,
             )
+            onShown()
         }
     }
 }
