@@ -12,11 +12,8 @@
 
 package cz.adamec.timotej.snag.network.fe.di
 
-import cz.adamec.timotej.snag.network.fe.CallNetworkWithResult
 import cz.adamec.timotej.snag.network.fe.SnagNetworkHttpClient
 import cz.adamec.timotej.snag.network.fe.internal.HttpClientFactory
-import org.koin.core.module.dsl.factoryOf
-import org.koin.dsl.bind
 import org.koin.dsl.module
 
 val networkModule = module {
@@ -25,5 +22,4 @@ val networkModule = module {
             httpClient = HttpClientFactory.createHttpClient(),
         )
     }
-    factoryOf(::CallNetworkWithResult)
 }

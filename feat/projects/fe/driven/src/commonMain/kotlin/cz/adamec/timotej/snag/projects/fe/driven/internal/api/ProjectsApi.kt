@@ -12,8 +12,6 @@
 
 package cz.adamec.timotej.snag.projects.fe.driven.internal.api
 
-import cz.adamec.timotej.snag.network.fe.CallNetworkWithResult
-import cz.adamec.timotej.snag.network.fe.NetworkResult
 import cz.adamec.timotej.snag.network.fe.SnagNetworkHttpClient
 import cz.adamec.timotej.snag.projects.be.driving.contract.ProjectApiDto
 import io.ktor.client.call.body
@@ -22,20 +20,15 @@ import kotlin.uuid.Uuid
 
 internal class ProjectsApi(
     private val httpClient: SnagNetworkHttpClient,
-    private val callNetworkWithResult: CallNetworkWithResult,
 ) {
-    suspend fun getProjects(): NetworkResult<List<ProjectApiDto>> = callNetworkWithResult {
+    suspend fun getProjects(): List<ProjectApiDto> =
         httpClient.get("/projects").body()
-    }
 
-    suspend fun getProject(id: Uuid): NetworkResult<ProjectApiDto> = callNetworkWithResult {
+    suspend fun getProject(id: Uuid): ProjectApiDto =
         httpClient.get("/projects/$id").body()
-    }
 
-    suspend fun updateProject(project: ProjectApiDto): NetworkResult<ProjectApiDto> =
-        callNetworkWithResult {
-            httpClient.put("/projects/${project.id}") {
-                setBody(project)
-            }.body()
-    }
+    suspend fun updateProject(project: ProjectApiDto): ProjectApiDto =
+        httpClient.put("/projects/${project.id}") {
+            setBody(project)
+        }.body()
 }
