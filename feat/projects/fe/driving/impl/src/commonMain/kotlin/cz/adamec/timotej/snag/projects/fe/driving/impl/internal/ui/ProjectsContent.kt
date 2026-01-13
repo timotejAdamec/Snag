@@ -13,6 +13,7 @@
 package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.ui
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -65,7 +66,10 @@ internal fun ProjectsContent(
             )
         }
         item {
-            AnimatedVisibility(visible = state.isLoading) {
+            AnimatedVisibility(
+                visible = state.isLoading,
+                exit = fadeOut(),
+            ) {
                 Box(
                     contentAlignment = Alignment.Center,
                 ) {

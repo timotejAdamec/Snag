@@ -32,13 +32,16 @@ internal class ProjectsViewModel(
             .map { projectsDataResult ->
                 when (projectsDataResult) {
                     DataResult.Failure.NetworkUnavailable -> state.value.copy(
-                        error = UiError.NetworkUnavailable
+                        error = UiError.NetworkUnavailable,
+                        isLoading = false,
                     )
                     is DataResult.Failure.ProgrammerError -> state.value.copy(
-                        error = UiError.Unknown
+                        error = UiError.Unknown,
+                        isLoading = false,
                     )
                     is DataResult.Failure.UserMessageError -> state.value.copy(
                         error = UiError.CustomUserMessage(projectsDataResult.message),
+                        isLoading = false,
                     )
                     DataResult.Loading -> state.value.copy(
                         isLoading = true,
