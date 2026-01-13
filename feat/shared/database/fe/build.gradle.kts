@@ -22,9 +22,9 @@ plugins {
 kotlin {
     sourceSets {
         commonMain.dependencies {
+            api(libs.sqldelight.async.extensions)
+            api(libs.sqldelight.coroutines.extensions)
             implementation(libs.sqldelight.runtime)
-            implementation(libs.sqldelight.async.extensions)
-            implementation(libs.sqldelight.coroutines.extensions)
         }
         androidMain.dependencies {
             implementation(libs.sqldelight.android.driver)

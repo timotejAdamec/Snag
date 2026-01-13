@@ -1,4 +1,4 @@
-CREATE TABLE ProjectFailedSync (
+CREATE TABLE IF NOT EXISTS ProjectFailedSync (
     project_id TEXT NOT NULL,
     timestamp INTEGER NOT NULL
 );

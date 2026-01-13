@@ -1,4 +1,4 @@
-CREATE TABLE ProjectEntity (
+CREATE TABLE IF NOT EXISTS ProjectEntity (
     id TEXT NOT NULL PRIMARY KEY,
     name TEXT NOT NULL,
     address TEXT NOT NULL

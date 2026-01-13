@@ -26,8 +26,8 @@ fun App() {
         configuration =
             koinConfiguration(
                 declaration = {
-                    logger(KermitKoinLogger(Logger.withTag("Koin")))
                     modules(appModule)
+                    logger(KermitKoinLogger(Logger.withTag("Koin")))
                 },
             ),
     ) {

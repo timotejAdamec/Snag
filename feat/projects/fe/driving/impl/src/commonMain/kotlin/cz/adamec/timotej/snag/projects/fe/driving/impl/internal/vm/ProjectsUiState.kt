@@ -12,10 +12,15 @@
 
 package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.vm
 
+import androidx.compose.runtime.Immutable
+import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.projects.business.Project
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
+@Immutable
 data class ProjectsUiState(
     val projects: ImmutableList<Project> = persistentListOf(),
+    val isLoading: Boolean = false,
+    val error: UiError? = null,
 )

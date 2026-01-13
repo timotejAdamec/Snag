@@ -12,11 +12,15 @@
 
 package cz.adamec.timotej.snag.lib.core
 
+import co.touchlab.kermit.Logger
+
 sealed interface DataResult<out T> {
     data class Success<T>(val data: T) : DataResult<T>
     sealed interface Failure : DataResult<Nothing> {
 
-        object NetworkUnavailable : Failure
+        object NetworkUnavailable : Failure {
+            override fun toString(): String = "DataResult.NetworkUnavailable"
+        }
 
         data class UserMessageError(
             val throwable: Throwable,
@@ -28,5 +32,36 @@ sealed interface DataResult<out T> {
         ) : Failure
     }
 
-    object Loading : DataResult<Nothing>
+    object Loading : DataResult<Nothing> {
+        override fun toString(): String = "DataResult.Loading"
+    }
+}
+
+inline fun <T, R> DataResult<T>.map(transform: (T) -> R): DataResult<R> {
+    return when (this) {
+        is DataResult.Success -> DataResult.Success(transform(data))
+        is DataResult.Failure -> this
+        DataResult.Loading -> DataResult.Loading
+    }
+}
+
+fun <T> Logger.log(
+    dataResult: DataResult<T>,
+    additionalInfo: String? = null,
+) {
+    var message = when (dataResult) {
+        is DataResult.Success -> "Successful data result: $dataResult"
+        DataResult.Failure.NetworkUnavailable -> "Network unavailable"
+        is DataResult.Failure.ProgrammerError -> "Programmer error"
+        is DataResult.Failure.UserMessageError -> "User message error: ${dataResult.message}"
+        DataResult.Loading -> "Loading data"
+    }
+    additionalInfo?.let { message += ", additionalInfo: $it" }
+    when (dataResult) {
+        is DataResult.Success -> v(message)
+        DataResult.Failure.NetworkUnavailable -> w(message)
+        is DataResult.Failure.ProgrammerError -> e(message, dataResult.throwable)
+        is DataResult.Failure.UserMessageError -> w(message, dataResult.throwable)
+        DataResult.Loading -> v(message)
+    }
 }

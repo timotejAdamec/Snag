@@ -13,6 +13,7 @@
 package cz.adamec.timotej.snag.logging
 
 import co.touchlab.kermit.Logger
+import co.touchlab.kermit.koin.kermitLoggerModule
 import co.touchlab.kermit.platformLogWriter
 import org.koin.dsl.module
 

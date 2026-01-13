@@ -12,11 +12,13 @@
 
 package cz.adamec.timotej.snag.projects.fe.driving.api
 
+import androidx.compose.runtime.Stable
 import cz.adamec.timotej.snag.lib.navigation.fe.NavRoute
 import kotlin.uuid.Uuid
 
 interface ProjectsRoute : NavRoute
 
+@Stable
 interface OnProjectClick {
     operator fun invoke(projectId: Uuid)
 }

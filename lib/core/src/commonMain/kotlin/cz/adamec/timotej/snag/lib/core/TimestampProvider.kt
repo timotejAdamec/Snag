@@ -12,8 +12,11 @@
 
 package cz.adamec.timotej.snag.lib.core
 
+import kotlin.jvm.JvmInline
+
 interface TimestampProvider {
     fun getTimestamp(): Timestamp
 }
 
+@JvmInline
 value class Timestamp(val value: Long)

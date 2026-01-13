@@ -31,7 +31,7 @@ internal fun Project.configureComposeMultiplatformModule() {
                 implementation(library("compose-ui-tooling"))
             }
             commonMain.dependencies {
-                if (!path.contains("design") && !path.contains("navigation")) {
+                if (!path.contains("design") && !path.contains("routing") && !path.contains("navigation")) {
                     implementation(project(":lib:design:fe"))
                     implementation(project(":lib:routing:fe"))
                     implementation(project(":lib:design:fe"))

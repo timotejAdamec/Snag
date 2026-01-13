@@ -21,7 +21,7 @@ internal fun Project.configureNetworkMultiplatformModule() {
     extensions.findByType(KotlinMultiplatformExtension::class.java)?.apply {
         sourceSets {
             commonMain.dependencies {
-                if (!path.contains("networking")) {
+                if (!path.contains("network")) {
                     implementation(project(":lib:network:fe"))
                 }
                 implementation(library("kotlinx-serialization-core"))

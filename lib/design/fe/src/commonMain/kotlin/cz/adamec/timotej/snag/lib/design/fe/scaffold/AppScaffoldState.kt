@@ -12,12 +12,14 @@
 
 package cz.adamec.timotej.snag.lib.design.fe.scaffold
 
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.mutableStateOf
 
 class AppScaffoldState(
     val title: MutableState<String> = mutableStateOf(""),
+    val snackbarHostState: SnackbarHostState = SnackbarHostState(),
 )
 
 val LocalAppScaffoldState =

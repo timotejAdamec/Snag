@@ -15,6 +15,8 @@ package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.vm
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cz.adamec.timotej.snag.lib.core.DEFAULT_STATE_STOP_TIMEOUT_MILLIS
+import cz.adamec.timotej.snag.lib.core.DataResult
+import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.projects.fe.app.GetProjectsUseCase
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.SharingStarted
@@ -27,10 +29,25 @@ internal class ProjectsViewModel(
 ) : ViewModel() {
     val state: StateFlow<ProjectsUiState> =
         getProjectsUseCase()
-            .map {
-                ProjectsUiState(
-                    projects = it.toPersistentList(),
-                )
+            .map { projectsDataResult ->
+                when (projectsDataResult) {
+                    DataResult.Failure.NetworkUnavailable -> state.value.copy(
+                        error = UiError.NetworkUnavailable
+                    )
+                    is DataResult.Failure.ProgrammerError -> state.value.copy(
+                        error = UiError.Unknown
+                    )
+                    is DataResult.Failure.UserMessageError -> state.value.copy(
+                        error = UiError.CustomUserMessage(projectsDataResult.message),
+                    )
+                    DataResult.Loading -> state.value.copy(
+                        isLoading = true,
+                    )
+                    is DataResult.Success -> state.value.copy(
+                        projects = projectsDataResult.data.toPersistentList(),
+                        isLoading = false,
+                    )
+                }
             }.stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(DEFAULT_STATE_STOP_TIMEOUT_MILLIS),
