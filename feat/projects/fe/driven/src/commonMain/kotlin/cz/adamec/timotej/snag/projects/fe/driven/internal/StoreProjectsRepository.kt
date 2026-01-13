@@ -12,10 +12,13 @@
 
 package cz.adamec.timotej.snag.projects.fe.driven.internal
 
+import cz.adamec.timotej.snag.lib.core.DataResult
+import cz.adamec.timotej.snag.network.fe.NetworkException
 import cz.adamec.timotej.snag.projects.business.Project
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectRepository
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.transform
 import org.mobilenativefoundation.store.store5.StoreReadRequest
 import org.mobilenativefoundation.store.store5.StoreReadResponse
 import kotlin.uuid.Uuid
@@ -23,27 +26,61 @@ import kotlin.uuid.Uuid
 class StoreProjectsRepository(
     private val projectStore: ProjectStore,
 ) : ProjectRepository {
-    override suspend fun getAllProjectsFlow(): List<Project> {
+    override fun getAllProjectsFlow(): List<Project> {
         TODO("Not yet implemented")
     }
 
-    override suspend fun getProjectFlow(id: Uuid): Flow<Project?> =
-        projectStore.stream(
+    override fun getProjectFlow(id: Uuid): Flow<DataResult<Project>> =
+        projectStore.stream<Project>(
             request = StoreReadRequest.cached(
                 key = id,
-                refresh = false,
+                refresh = true,
             )
-        ).map { response ->
+        ).transform { response ->
             when (response) {
-                is StoreReadResponse.Data -> response.value
-                is StoreReadResponse.Error.Custom<*> -> TODO()
-                is StoreReadResponse.Error.Exception -> TODO()
-                is StoreReadResponse.Error.Message -> TODO()
-                StoreReadResponse.Initial -> TODO()
-                is StoreReadResponse.Loading -> TODO()
-                is StoreReadResponse.NoNewData -> TODO()
+                is StoreReadResponse.Data -> {
+                    emit(DataResult.Success(response.value))
+                }
+
+                is StoreReadResponse.Loading,
+                is StoreReadResponse.Initial,
+                    -> {
+                    emit(DataResult.Loading)
+                }
+
+                is StoreReadResponse.Error.Exception -> {
+                    val failure = when (val error = response.error) {
+                        is NetworkException.NetworkUnavailable ->
+                            DataResult.Failure.NetworkUnavailable
+
+                        is NetworkException.ClientError ->
+                            DataResult.Failure.UserMessageError(
+                                throwable = error,
+                                message = error.message ?: "Invalid request"
+                            )
+
+                        is NetworkException.ServerError ->
+                            DataResult.Failure.UserMessageError(
+                                throwable = error,
+                                message = "Problems on server side."
+                            )
+
+                        else -> DataResult.Failure.ProgrammerError(error)
+                    }
+                    emit(failure)
+                }
+
+                is StoreReadResponse.Error.Message -> {
+                    emit(DataResult.Failure.ProgrammerError(Exception(response.message)))
+                }
+
+                is StoreReadResponse.Error.Custom<*> -> {
+                    emit(DataResult.Failure.ProgrammerError(Exception("Custom error")))
+                }
+
+                is StoreReadResponse.NoNewData -> { /* Do nothing */ }
             }
-        }
+        }.distinctUntilChanged()
 
     override suspend fun saveProject(project: Project) {
         TODO("Not yet implemented")

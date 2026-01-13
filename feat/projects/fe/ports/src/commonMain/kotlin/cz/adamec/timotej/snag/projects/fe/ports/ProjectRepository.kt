@@ -12,12 +12,13 @@
 
 package cz.adamec.timotej.snag.projects.fe.ports
 
+import cz.adamec.timotej.snag.lib.core.DataResult
 import cz.adamec.timotej.snag.projects.business.Project
 import kotlinx.coroutines.flow.Flow
 import kotlin.uuid.Uuid
 
 interface ProjectRepository {
-    suspend fun getAllProjectsFlow(): List<Project>
-    suspend fun getProjectFlow(id: Uuid): Flow<Project?>
+    fun getAllProjectsFlow(): List<Project>
+    fun getProjectFlow(id: Uuid): Flow<DataResult<Project?>>
     suspend fun saveProject(project: Project)
 }

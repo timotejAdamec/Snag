@@ -14,15 +14,17 @@ package cz.adamec.timotej.snag.projects.fe.driven.internal
 
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.ProjectEntity
 import cz.adamec.timotej.snag.lib.core.Timestamp
-import cz.adamec.timotej.snag.network.fe.NetworkResult
 import cz.adamec.timotej.snag.projects.be.driving.contract.ProjectApiDto
 import cz.adamec.timotej.snag.projects.business.Project
+import cz.adamec.timotej.snag.projects.fe.driven.internal.LH.logger
 import cz.adamec.timotej.snag.projects.fe.driven.internal.api.ProjectsApi
 import cz.adamec.timotej.snag.projects.fe.driven.internal.api.toApiDto
 import cz.adamec.timotej.snag.projects.fe.driven.internal.api.toBusiness
 import cz.adamec.timotej.snag.projects.fe.driven.internal.db.ProjectsDb
 import cz.adamec.timotej.snag.projects.fe.driven.internal.db.toBusiness
 import cz.adamec.timotej.snag.projects.fe.driven.internal.db.toEntity
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import org.mobilenativefoundation.store.store5.Bookkeeper
@@ -54,16 +56,26 @@ internal class ProjectsStoreFactory(
 
     private fun createFetcher(): Fetcher<Uuid, ProjectApiDto> =
         Fetcher.of { id ->
-            projectsApi.getProject(id).getOrThrow()
+            projectsApi.getProject(id)
         }
 
     private fun createSourceOfTruth(): SourceOfTruth<Uuid, ProjectEntity, Project> =
         SourceOfTruth.of(
             reader = { id ->
-                projectsDb.getProjectFlow(id).map { it.getOrNull()?.toBusiness() }
+                projectsDb.getProjectFlow(id)
+                    .catch { e ->
+                        logger.e(e) { "Error while reading project from database." }
+                        emit(null)
+                    }
+                    .map { it?.toBusiness() }
             },
             writer = { _, projectEntity ->
-                projectsDb.saveProject(projectEntity)
+                runCatching {
+                    projectsDb.saveProject(projectEntity)
+                }.onFailure { e ->
+                    if (e is CancellationException) throw e
+                    logger.e(e) { "Error while writing project to database." }
+                }
             }
         )
 
@@ -76,16 +88,15 @@ internal class ProjectsStoreFactory(
     private fun createUpdater(): Updater<Uuid, Project, ProjectApiDto> =
         Updater.by(
             post = { _, updatedProject ->
-                val apiDto = updatedProject.toApiDto()
-                val result = projectsApi.updateProject(apiDto)
-                if (result is NetworkResult.Success) {
-                    val freshDto = result.data
-                    projectsDb.saveProject(freshDto.toBusiness().toEntity()).getOrThrow()
+                try {
+                    val apiDto = updatedProject.toApiDto()
+                    val freshDto = projectsApi.updateProject(apiDto)
+                    projectsDb.saveProject(freshDto.toBusiness().toEntity())
                     UpdaterResult.Success.Typed(freshDto)
-                } else {
-                    UpdaterResult.Error.Message(
-                        result.exceptionOrNull()?.message ?: "Something went wrong"
-                    )
+                } catch (e: Exception) {
+                    if (e is CancellationException) throw e
+                    logger.e { "Error while updating project. Error: $e" }
+                    UpdaterResult.Error.Exception(e)
                 }
             }
         )
@@ -93,21 +104,38 @@ internal class ProjectsStoreFactory(
     private fun createBookkeeper(): Bookkeeper<Uuid> =
         Bookkeeper.by(
             getLastFailedSync = { id ->
-                projectsDb.getLastFailedProjectSyncFlow(id).first().getOrNull()
+                runCatching {
+                    projectsDb.getLastFailedProjectSyncFlow(id).first()
+                }.onFailure {
+                    if (it is CancellationException) throw it
+                }.getOrNull()
             },
             setLastFailedSync = { id, timestamp ->
-                projectsDb.insertFailedProjectSync(
-                    id = id,
-                    timestamp = Timestamp(timestamp),
-                ).getOrNull()?.let { true } ?: false
+                runCatching {
+                    projectsDb.insertFailedProjectSync(
+                        id = id,
+                        timestamp = Timestamp(timestamp),
+                    )
+                    true
+                }.onFailure {
+                    if (it is CancellationException) throw it
+                }.getOrDefault(false)
             },
             clear = { id ->
-                projectsDb.deleteProjectSyncs(id)
-                    .getOrNull()?.let { true } ?: false
+                runCatching {
+                    projectsDb.deleteProjectSyncs(id)
+                    true
+                }.onFailure {
+                    if (it is CancellationException) throw it
+                }.getOrDefault(false)
             },
             clearAll = {
-                projectsDb.deleteAllProjectsSyncs()
-                    .getOrNull()?.let { true } ?: false
+                runCatching {
+                    projectsDb.deleteAllProjectsSyncs()
+                    true
+                }.onFailure {
+                    if (it is CancellationException) throw it
+                }.getOrDefault(false)
             }
         )
 }
