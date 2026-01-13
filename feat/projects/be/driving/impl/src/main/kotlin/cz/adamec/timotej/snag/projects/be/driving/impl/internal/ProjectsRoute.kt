@@ -34,42 +34,47 @@ internal class ProjectsRoute(
     override fun Route.setup() {
         route("/projects") {
             get {
-                val dtoProjects = getProjectsUseCase().map {
-                    it.toDto()
-                }
+                val dtoProjects =
+                    getProjectsUseCase().map {
+                        it.toDto()
+                    }
                 call.respond(dtoProjects)
             }
 
             get("/{id}") {
-                val id = call.parameters["id"]?.let {
-                    runCatching { Uuid.parse(it) }.getOrNull()
-                } ?: return@get call.respond(
-                    status = HttpStatusCode.BadRequest,
-                    message = "Invalid ID format.",
-                )
-
-                val dtoProject = getProjectUseCase(id)
-                    ?: return@get call.respond(
-                        status = HttpStatusCode.NotFound,
-                        message = "Project not found.",
+                val id =
+                    call.parameters["id"]?.let {
+                        runCatching { Uuid.parse(it) }.getOrNull()
+                    } ?: return@get call.respond(
+                        status = HttpStatusCode.BadRequest,
+                        message = "Invalid ID format.",
                     )
+
+                val dtoProject =
+                    getProjectUseCase(id)
+                        ?: return@get call.respond(
+                            status = HttpStatusCode.NotFound,
+                            message = "Project not found.",
+                        )
 
                 call.respond(dtoProject.toDto())
             }
 
             put("/{id}") {
-                val id = call.parameters["id"]?.let {
-                    runCatching { Uuid.parse(it) }.getOrNull()
-                } ?: return@put call.respond(
-                    status = HttpStatusCode.BadRequest,
-                    message = "Invalid ID format.",
-                )
-
-                val putProjectDto = runCatching { call.receive<PutProjectApiDto>() }.getOrNull()
-                    ?: return@put call.respond(
+                val id =
+                    call.parameters["id"]?.let {
+                        runCatching { Uuid.parse(it) }.getOrNull()
+                    } ?: return@put call.respond(
                         status = HttpStatusCode.BadRequest,
-                        message = "Invalid request body.",
+                        message = "Invalid ID format.",
                     )
+
+                val putProjectDto =
+                    runCatching { call.receive<PutProjectApiDto>() }.getOrNull()
+                        ?: return@put call.respond(
+                            status = HttpStatusCode.BadRequest,
+                            message = "Invalid request body.",
+                        )
 
                 val updatedProject = saveProjectUseCase(putProjectDto.toBusiness(id))
 

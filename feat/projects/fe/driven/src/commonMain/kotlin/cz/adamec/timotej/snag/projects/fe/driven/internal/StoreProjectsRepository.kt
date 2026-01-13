@@ -33,14 +33,15 @@ class StoreProjectsRepository(
     private val projectStore: ProjectStore,
     private val projectsStore: ProjectsStore,
 ) : ProjectsRepository {
-
     override fun getAllProjectsFlow(): Flow<DataResult<List<Project>>> =
-        projectsStore.stream(
-            request = StoreReadRequest.cached(
-                key = Unit,
-                refresh = true,
-            )
-        ).toDataResultFlow()
+        projectsStore
+            .stream(
+                request =
+                    StoreReadRequest.cached(
+                        key = Unit,
+                        refresh = true,
+                    ),
+            ).toDataResultFlow()
             .onEach {
                 logger.log(
                     dataResult = it,
@@ -49,12 +50,14 @@ class StoreProjectsRepository(
             }.distinctUntilChanged()
 
     override fun getProjectFlow(id: Uuid): Flow<DataResult<Project>> =
-        projectStore.stream<Project>(
-            request = StoreReadRequest.cached(
-                key = id,
-                refresh = true,
-            )
-        ).toDataResultFlow()
+        projectStore
+            .stream<Project>(
+                request =
+                    StoreReadRequest.cached(
+                        key = id,
+                        refresh = true,
+                    ),
+            ).toDataResultFlow()
             .onEach {
                 logger.log(
                     dataResult = it,
@@ -63,22 +66,24 @@ class StoreProjectsRepository(
             }.distinctUntilChanged()
 
     override suspend fun saveProject(project: Project): DataResult<Unit> {
-        val response = projectStore.write(
-            StoreWriteRequest.of(
-                key = project.id,
-                value = project
+        val response =
+            projectStore.write(
+                StoreWriteRequest.of(
+                    key = project.id,
+                    value = project,
+                ),
             )
-        )
 
         return when (response) {
             is StoreWriteResponse.Success -> DataResult.Success(Unit)
             is StoreWriteResponse.Error.Exception -> response.error.toDataResultFailure()
 
-            is StoreWriteResponse.Error.Message -> DataResult.Failure.ProgrammerError(
-                Exception(
-                    response.message
+            is StoreWriteResponse.Error.Message ->
+                DataResult.Failure.ProgrammerError(
+                    Exception(
+                        response.message,
+                    ),
                 )
-            )
         }.also {
             logger.log(
                 dataResult = it,
@@ -97,7 +102,7 @@ class StoreProjectsRepository(
 
                 is StoreReadResponse.Loading,
                 is StoreReadResponse.Initial,
-                    -> {
+                -> {
                     emit(DataResult.Loading)
                 }
 
@@ -113,13 +118,14 @@ class StoreProjectsRepository(
                     emit(DataResult.Failure.ProgrammerError(Exception("Custom error")))
                 }
 
-                is StoreReadResponse.NoNewData -> { /* Do nothing */
+                is StoreReadResponse.NoNewData -> { // Do nothing
                 }
             }
         }
 
-    private fun Throwable.toDataResultFailure() = when (this) {
-        is NetworkException -> this.toDataResult()
-        else -> DataResult.Failure.ProgrammerError(this)
-    }
+    private fun Throwable.toDataResultFailure() =
+        when (this) {
+            is NetworkException -> this.toDataResult()
+            else -> DataResult.Failure.ProgrammerError(this)
+        }
 }

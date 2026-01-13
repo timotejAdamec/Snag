@@ -38,11 +38,12 @@ internal class ProjectsDb(
             .asFlow()
             .mapToList(ioDispatcher)
 
-    suspend fun saveProjects(projectEntities: List<ProjectEntity>) = withContext(ioDispatcher) {
-        projectEntityQueries.transaction {
-            projectEntities.forEach { projectEntityQueries.saveProject(it) }
+    suspend fun saveProjects(projectEntities: List<ProjectEntity>) =
+        withContext(ioDispatcher) {
+            projectEntityQueries.transaction {
+                projectEntities.forEach { projectEntityQueries.saveProject(it) }
+            }
         }
-    }
 
     fun getProjectFlow(id: Uuid): Flow<ProjectEntity?> =
         projectEntityQueries
@@ -67,21 +68,23 @@ internal class ProjectsDb(
             timestamp = timestampProvider.getTimestamp(),
         )
 
-    suspend fun insertFailedProjectSync(id: Uuid, timestamp: Timestamp): Long =
+    suspend fun insertFailedProjectSync(
+        id: Uuid,
+        timestamp: Timestamp,
+    ): Long =
         withContext(ioDispatcher) {
             projectBookkeepingQueries.insertFailedSync(
                 ProjectFailedSync(
                     project_id = id.toString(),
                     timestamp = timestamp.value,
-                )
+                ),
             )
         }
 
-    suspend fun deleteProjectSyncs(
-        projectId: Uuid,
-    ): Long = withContext(ioDispatcher) {
-        projectBookkeepingQueries.deleteByProjectId(projectId.toString())
-    }
+    suspend fun deleteProjectSyncs(projectId: Uuid): Long =
+        withContext(ioDispatcher) {
+            projectBookkeepingQueries.deleteByProjectId(projectId.toString())
+        }
 
     suspend fun deleteAllProjectsSyncs(): Long =
         withContext(ioDispatcher) {

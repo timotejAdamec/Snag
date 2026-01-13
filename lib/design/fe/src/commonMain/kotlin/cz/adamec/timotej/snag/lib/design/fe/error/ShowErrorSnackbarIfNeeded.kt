@@ -22,19 +22,19 @@ import kotlinx.coroutines.launch
 @Composable
 fun ShowErrorSnackbarIfNeeded(
     uiError: UiError?,
-    onShown: () -> Unit,
+    onShow: () -> Unit,
 ) {
     val scope = rememberCoroutineScope()
     val scaffoldState = LocalAppScaffoldState.current
 
-    LaunchedEffect(uiError) {
+    LaunchedEffect(uiError, onShow) {
         if (uiError == null) return@LaunchedEffect
         scope.launch {
             scaffoldState.snackbarHostState.showSnackbar(
                 message = uiError.toInformativeMessage(),
                 duration = SnackbarDuration.Long,
             )
-            onShown()
+            onShow()
         }
     }
 }

@@ -16,14 +16,16 @@ import cz.adamec.timotej.snag.feat.shared.database.fe.db.ProjectEntity
 import cz.adamec.timotej.snag.projects.business.Project
 import kotlin.uuid.Uuid
 
-internal fun Project.toEntity() = ProjectEntity(
-    id = id.toString(),
-    name = name,
-    address = address,
-)
+internal fun Project.toEntity() =
+    ProjectEntity(
+        id = id.toString(),
+        name = name,
+        address = address,
+    )
 
-internal fun ProjectEntity.toBusiness() = Project(
-    id = Uuid.parse(id),
-    name = name,
-    address = address,
-)
+internal fun ProjectEntity.toBusiness() =
+    Project(
+        id = Uuid.parse(id),
+        name = name,
+        address = address,
+    )

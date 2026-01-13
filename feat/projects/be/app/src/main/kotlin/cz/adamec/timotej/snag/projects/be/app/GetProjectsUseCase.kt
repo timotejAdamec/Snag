@@ -18,7 +18,5 @@ import cz.adamec.timotej.snag.projects.business.Project
 class GetProjectsUseCase(
     private val projectsLocalDataSource: ProjectsLocalDataSource,
 ) {
-    suspend operator fun invoke(): List<Project> {
-        return projectsLocalDataSource.getProjects()
-    }
+    suspend operator fun invoke(): List<Project> = projectsLocalDataSource.getProjects()
 }

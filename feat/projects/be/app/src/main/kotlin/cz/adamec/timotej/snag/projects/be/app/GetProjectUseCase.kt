@@ -19,7 +19,5 @@ import kotlin.uuid.Uuid
 class GetProjectUseCase(
     private val projectsLocalDataSource: ProjectsLocalDataSource,
 ) {
-    suspend operator fun invoke(id: Uuid): Project? {
-        return projectsLocalDataSource.getProject(id)
-    }
+    suspend operator fun invoke(id: Uuid): Project? = projectsLocalDataSource.getProject(id)
 }

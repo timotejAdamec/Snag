@@ -18,8 +18,9 @@ import cz.adamec.timotej.snag.projects.be.app.SaveProjectUseCase
 import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.module
 
-val projectsAppModule = module {
-    factoryOf(::GetProjectsUseCase)
-    factoryOf(::GetProjectUseCase)
-    factoryOf(::SaveProjectUseCase)
-}
+val projectsAppModule =
+    module {
+        factoryOf(::GetProjectsUseCase)
+        factoryOf(::GetProjectUseCase)
+        factoryOf(::SaveProjectUseCase)
+    }

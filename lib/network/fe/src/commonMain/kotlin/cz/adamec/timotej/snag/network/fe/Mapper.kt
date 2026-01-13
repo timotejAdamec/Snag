@@ -14,22 +14,23 @@ package cz.adamec.timotej.snag.network.fe
 
 import cz.adamec.timotej.snag.lib.core.DataResult
 
-fun NetworkException.toDataResult() = when (this) {
-    is NetworkException.NetworkUnavailable ->
-        DataResult.Failure.NetworkUnavailable
+fun NetworkException.toDataResult() =
+    when (this) {
+        is NetworkException.NetworkUnavailable ->
+            DataResult.Failure.NetworkUnavailable
 
-    is NetworkException.ClientError ->
-        DataResult.Failure.UserMessageError(
-            throwable = this,
-            message = this.message ?: "Invalid request"
-        )
+        is NetworkException.ClientError ->
+            DataResult.Failure.UserMessageError(
+                throwable = this,
+                message = this.message ?: "Invalid request",
+            )
 
-    is NetworkException.ServerError ->
-        DataResult.Failure.UserMessageError(
-            throwable = this,
-            message = "Problems on server side."
-        )
+        is NetworkException.ServerError ->
+            DataResult.Failure.UserMessageError(
+                throwable = this,
+                message = "Problems on server side.",
+            )
 
-    is NetworkException.ProgrammerError ->
-        DataResult.Failure.ProgrammerError(this)
-}
+        is NetworkException.ProgrammerError ->
+            DataResult.Failure.ProgrammerError(this)
+    }

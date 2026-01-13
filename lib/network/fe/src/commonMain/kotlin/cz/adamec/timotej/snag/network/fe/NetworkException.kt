@@ -16,7 +16,6 @@ sealed class NetworkException(
     override val cause: Throwable,
     override val message: String? = null,
 ) : RuntimeException(message, cause) {
-
     /** No internet, Airplane mode, DNS failure, or Timeout */
     class NetworkUnavailable(
         override val cause: Throwable,
@@ -27,7 +26,6 @@ sealed class NetworkException(
         override val cause: Throwable,
         override val message: String? = null,
     ) : NetworkException(cause, message) {
-
         /** Server returned 401 */
         class Unauthorized(
             override val cause: Throwable,

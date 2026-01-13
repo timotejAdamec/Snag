@@ -19,7 +19,6 @@ import cz.adamec.timotej.snag.feat.shared.database.fe.db.SnagDatabase
 import cz.adamec.timotej.snag.feat.shared.database.fe.internal.DatabaseFactory
 import cz.adamec.timotej.snag.feat.shared.database.fe.internal.DriverFactory
 import org.koin.core.module.Module
-import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
 

@@ -21,14 +21,17 @@ import snag.lib.design.fe.generated.resources.error_unknown
 @Immutable
 sealed interface UiError {
     data object NetworkUnavailable : UiError
+
     data object Unknown : UiError
-    data class CustomUserMessage(val message: String) : UiError
+
+    data class CustomUserMessage(
+        val message: String,
+    ) : UiError
 }
 
-suspend fun UiError.toInformativeMessage(): String {
-    return when (this) {
+suspend fun UiError.toInformativeMessage(): String =
+    when (this) {
         UiError.NetworkUnavailable -> getString(Res.string.error_network)
         UiError.Unknown -> getString(Res.string.error_unknown)
         is UiError.CustomUserMessage -> this.message
     }
-}

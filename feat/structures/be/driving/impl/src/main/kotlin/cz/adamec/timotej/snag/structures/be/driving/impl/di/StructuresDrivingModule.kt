@@ -18,6 +18,7 @@ import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
-val structuresDrivingModule = module {
-    singleOf(::StructuresRoute) bind AppRoute::class
-}
+val structuresDrivingModule =
+    module {
+        singleOf(::StructuresRoute) bind AppRoute::class
+    }

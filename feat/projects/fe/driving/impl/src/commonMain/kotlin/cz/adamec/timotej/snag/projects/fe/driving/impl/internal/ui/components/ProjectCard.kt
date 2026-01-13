@@ -23,8 +23,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import cz.adamec.timotej.snag.lib.design.fe.theme.SnagTheme
 import cz.adamec.timotej.snag.lib.core.UuidProvider
+import cz.adamec.timotej.snag.lib.design.fe.theme.SnagTheme
 import cz.adamec.timotej.snag.projects.business.Project
 
 @Composable
@@ -68,15 +68,17 @@ internal fun ProjectCard(
 internal fun ProjectCardPreview() {
     SnagTheme {
         ProjectCard(
-            modifier = Modifier.size(
-                width = 200.dp,
-                height = 100.dp,
-            ),
-            project = Project(
-                id = UuidProvider.getUuid(),
-                name = "Project A",
-                address = "Client A",
-            ),
+            modifier =
+                Modifier.size(
+                    width = 200.dp,
+                    height = 100.dp,
+                ),
+            project =
+                Project(
+                    id = UuidProvider.getUuid(),
+                    name = "Project A",
+                    address = "Client A",
+                ),
             onClick = {},
         )
     }

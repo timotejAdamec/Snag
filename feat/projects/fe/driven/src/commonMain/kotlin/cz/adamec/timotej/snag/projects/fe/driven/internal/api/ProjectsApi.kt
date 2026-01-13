@@ -21,14 +21,13 @@ import kotlin.uuid.Uuid
 internal class ProjectsApi(
     private val httpClient: SnagNetworkHttpClient,
 ) {
-    suspend fun getProjects(): List<ProjectApiDto> =
-        httpClient.get("/projects").body()
+    suspend fun getProjects(): List<ProjectApiDto> = httpClient.get("/projects").body()
 
-    suspend fun getProject(id: Uuid): ProjectApiDto =
-        httpClient.get("/projects/$id").body()
+    suspend fun getProject(id: Uuid): ProjectApiDto = httpClient.get("/projects/$id").body()
 
     suspend fun updateProject(project: ProjectApiDto): ProjectApiDto =
-        httpClient.put("/projects/${project.id}") {
-            setBody(project)
-        }.body()
+        httpClient
+            .put("/projects/${project.id}") {
+                setBody(project)
+            }.body()
 }

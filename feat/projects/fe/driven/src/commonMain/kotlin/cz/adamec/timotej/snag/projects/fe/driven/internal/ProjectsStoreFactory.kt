@@ -36,13 +36,13 @@ internal class ProjectsStoreFactory(
     private val projectsApi: ProjectsApi,
     private val projectsDb: ProjectsDb,
 ) {
-    fun create(): ProjectsStore {
-        return StoreBuilder.from(
-            fetcher = createFetcher(),
-            sourceOfTruth = createSourceOfTruth(),
-            converter = createConverter(),
-        ).build()
-    }
+    fun create(): ProjectsStore =
+        StoreBuilder
+            .from(
+                fetcher = createFetcher(),
+                sourceOfTruth = createSourceOfTruth(),
+                converter = createConverter(),
+            ).build()
 
     private fun createFetcher(): Fetcher<Unit, List<ProjectApiDto>> =
         Fetcher.of {
@@ -52,11 +52,11 @@ internal class ProjectsStoreFactory(
     private fun createSourceOfTruth(): SourceOfTruth<Unit, List<ProjectEntity>, List<Project>> =
         SourceOfTruth.of(
             reader = {
-                projectsDb.getAllProjectsFlow()
+                projectsDb
+                    .getAllProjectsFlow()
                     .catch { e ->
                         logger.e(e) { "Error while reading projects from database." }
-                    }
-                    .map { list -> list.map { it.toBusiness()} }
+                    }.map { list -> list.map { it.toBusiness() } }
             },
             writer = { _, projectEntities ->
                 runCatching {
@@ -65,11 +65,12 @@ internal class ProjectsStoreFactory(
                     if (e is CancellationException) throw e
                     logger.e(e) { "Error while writing projects to database." }
                 }
-            }
+            },
         )
 
     private fun createConverter(): Converter<List<ProjectApiDto>, List<ProjectEntity>, List<Project>> =
-        Converter.Builder<List<ProjectApiDto>, List<ProjectEntity>, List<Project>>()
+        Converter
+            .Builder<List<ProjectApiDto>, List<ProjectEntity>, List<Project>>()
             .fromOutputToLocal { projects -> projects.map { it.toEntity() } }
             .fromNetworkToLocal { projectApiDtos -> projectApiDtos.map { it.toBusiness().toEntity() } }
             .build()

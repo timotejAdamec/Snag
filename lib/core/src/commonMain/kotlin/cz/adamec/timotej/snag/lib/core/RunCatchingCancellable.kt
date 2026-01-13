@@ -14,12 +14,11 @@ package cz.adamec.timotej.snag.lib.core
 
 import kotlinx.coroutines.CancellationException
 
-inline fun <R> runCatchingCancellable(block: () -> R): Result<R> {
-    return try {
+inline fun <R> runCatchingCancellable(block: () -> R): Result<R> =
+    try {
         Result.success(block())
     } catch (e: CancellationException) {
         throw e // Let cancellation propagate!
     } catch (e: Throwable) {
         Result.failure(e)
     }
-}

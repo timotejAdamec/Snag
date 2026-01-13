@@ -34,8 +34,11 @@ internal object DispatcherDiQualifiers {
 }
 
 fun Scope.getIoDispatcher(): CoroutineDispatcher = get(named(DispatcherDiQualifiers.IO))
+
 fun Scope.getMainDispatcher(): CoroutineDispatcher = get(named(DispatcherDiQualifiers.MAIN))
+
 fun Scope.getDefaultDispatcher(): CoroutineDispatcher = get(named(DispatcherDiQualifiers.DEFAULT))
+
 fun Scope.getUnconfinedDispatcher(): CoroutineDispatcher = get(named(DispatcherDiQualifiers.UNCONFINED))
 
 val coreModule =
@@ -52,4 +55,3 @@ val coreModule =
     }
 
 internal expect val platformModule: Module
-

@@ -28,39 +28,36 @@ class SnagNetworkHttpClient(
     suspend fun get(
         path: String,
         block: HttpRequestBuilder.() -> Unit = {},
-    ): HttpResponse {
-        return httpClient.get(
+    ): HttpResponse =
+        httpClient.get(
             urlString = BASE_URL + path,
         ) {
             block()
         }
-    }
 
     suspend fun post(
         path: String,
         contentType: ContentType = ContentType.Application.Json,
         block: HttpRequestBuilder.() -> Unit = {},
-    ): HttpResponse {
-        return httpClient.post(
+    ): HttpResponse =
+        httpClient.post(
             urlString = BASE_URL + path,
         ) {
             contentType(contentType)
             block()
         }
-    }
 
     suspend fun put(
         path: String,
         contentType: ContentType = ContentType.Application.Json,
         block: HttpRequestBuilder.() -> Unit = {},
-    ): HttpResponse {
-        return httpClient.put(
+    ): HttpResponse =
+        httpClient.put(
             urlString = BASE_URL + path,
         ) {
             contentType(contentType)
             block()
         }
-    }
 
     private companion object {
         const val BASE_URL = "http://0.0.0.0:" + Host.Localhost.PORT

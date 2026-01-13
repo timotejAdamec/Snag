@@ -15,13 +15,11 @@ package cz.adamec.timotej.snag.impl
 import cz.adamec.timotej.snag.impl.di.appModule
 import cz.adamec.timotej.snag.server.api.Host
 import cz.adamec.timotej.snag.server.api.configureJson
-import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
-import kotlinx.serialization.json.Json
 import org.koin.ktor.plugin.Koin
 
 fun main() {

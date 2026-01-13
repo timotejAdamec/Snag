@@ -18,11 +18,12 @@ import cz.adamec.timotej.snag.projects.be.driving.impl.di.projectsDrivingModule
 import cz.adamec.timotej.snag.structures.be.driving.impl.di.structuresDrivingModule
 import org.koin.dsl.module
 
-internal val appModule = module {
-    includes(
-        projectsDrivingModule,
-        projectsDrivenModule,
-        projectsAppModule,
-        structuresDrivingModule,
-    )
-}
+internal val appModule =
+    module {
+        includes(
+            projectsDrivingModule,
+            projectsDrivenModule,
+            projectsAppModule,
+            structuresDrivingModule,
+        )
+    }

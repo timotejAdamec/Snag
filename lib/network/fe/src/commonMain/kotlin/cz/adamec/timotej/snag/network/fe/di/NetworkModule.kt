@@ -16,10 +16,11 @@ import cz.adamec.timotej.snag.network.fe.SnagNetworkHttpClient
 import cz.adamec.timotej.snag.network.fe.internal.HttpClientFactory
 import org.koin.dsl.module
 
-val networkModule = module {
-    single {
-        SnagNetworkHttpClient(
-            httpClient = HttpClientFactory.createHttpClient(),
-        )
+val networkModule =
+    module {
+        single {
+            SnagNetworkHttpClient(
+                httpClient = HttpClientFactory.createHttpClient(),
+            )
+        }
     }
-}

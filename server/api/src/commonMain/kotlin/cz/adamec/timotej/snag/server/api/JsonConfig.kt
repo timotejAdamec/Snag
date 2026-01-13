@@ -17,7 +17,9 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 
 fun Configuration.configureJson() {
-    json(Json {
-        ignoreUnknownKeys = true
-    })
+    json(
+        Json {
+            ignoreUnknownKeys = true
+        },
+    )
 }

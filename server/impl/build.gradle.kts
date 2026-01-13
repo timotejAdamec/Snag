@@ -1,4 +1,4 @@
-//import com.github.psxpaul.task.JavaExecFork
+// import com.github.psxpaul.task.JavaExecFork
 
 /*
  * Copyright (c) 2026 Timotej Adamec
@@ -21,7 +21,7 @@ group = "cz.adamec.timotej.snag"
 version = "1.0.0"
 application {
     mainClass.set("cz.adamec.timotej.snag.impl.ApplicationKt")
-    
+
     val isDevelopment: Boolean = project.ext.has("development")
     applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
 }

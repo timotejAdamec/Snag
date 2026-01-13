@@ -17,6 +17,8 @@ import kotlin.uuid.Uuid
 
 interface ProjectsLocalDataSource {
     suspend fun getProjects(): List<Project>
+
     suspend fun getProject(id: Uuid): Project?
+
     suspend fun updateProject(project: Project): Project
 }

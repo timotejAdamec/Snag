@@ -19,4 +19,6 @@ interface TimestampProvider {
 }
 
 @JvmInline
-value class Timestamp(val value: Long)
+value class Timestamp(
+    val value: Long,
+)

@@ -16,6 +16,7 @@ import kotlinx.coroutines.Dispatchers
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
-internal actual val platformModule = module {
-    single(named(DispatcherDiQualifiers.IO)) { Dispatchers.Default }
-}
+internal actual val platformModule =
+    module {
+        single(named(DispatcherDiQualifiers.IO)) { Dispatchers.Default }
+    }

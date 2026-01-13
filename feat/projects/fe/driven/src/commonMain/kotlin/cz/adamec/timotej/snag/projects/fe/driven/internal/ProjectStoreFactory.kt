@@ -43,16 +43,16 @@ internal class ProjectStoreFactory(
     private val projectsApi: ProjectsApi,
     private val projectsDb: ProjectsDb,
 ) {
-    fun create(): ProjectStore {
-        return MutableStoreBuilder.from(
-            fetcher = createFetcher(),
-            sourceOfTruth = createSourceOfTruth(),
-            converter = createConverter()
-        ).build(
-            updater = createUpdater(),
-            bookkeeper = createBookkeeper()
-        )
-    }
+    fun create(): ProjectStore =
+        MutableStoreBuilder
+            .from(
+                fetcher = createFetcher(),
+                sourceOfTruth = createSourceOfTruth(),
+                converter = createConverter(),
+            ).build(
+                updater = createUpdater(),
+                bookkeeper = createBookkeeper(),
+            )
 
     private fun createFetcher(): Fetcher<Uuid, ProjectApiDto> =
         Fetcher.of { id ->
@@ -62,12 +62,12 @@ internal class ProjectStoreFactory(
     private fun createSourceOfTruth(): SourceOfTruth<Uuid, ProjectEntity, Project> =
         SourceOfTruth.of(
             reader = { id ->
-                projectsDb.getProjectFlow(id)
+                projectsDb
+                    .getProjectFlow(id)
                     .catch { e ->
                         logger.e(e) { "Error while reading project from database." }
                         emit(null)
-                    }
-                    .map { it?.toBusiness() }
+                    }.map { it?.toBusiness() }
             },
             writer = { _, projectEntity ->
                 runCatching {
@@ -76,11 +76,12 @@ internal class ProjectStoreFactory(
                     if (e is CancellationException) throw e
                     logger.e(e) { "Error while writing project to database." }
                 }
-            }
+            },
         )
 
     private fun createConverter(): Converter<ProjectApiDto, ProjectEntity, Project> =
-        Converter.Builder<ProjectApiDto, ProjectEntity, Project>()
+        Converter
+            .Builder<ProjectApiDto, ProjectEntity, Project>()
             .fromOutputToLocal { project -> project.toEntity() }
             .fromNetworkToLocal { projectApiDto -> projectApiDto.toBusiness().toEntity() }
             .build()
@@ -98,7 +99,7 @@ internal class ProjectStoreFactory(
                     logger.e { "Error while updating project. Error: $e" }
                     UpdaterResult.Error.Exception(e)
                 }
-            }
+            },
         )
 
     private fun createBookkeeper(): Bookkeeper<Uuid> =
@@ -136,6 +137,6 @@ internal class ProjectStoreFactory(
                 }.onFailure {
                     if (it is CancellationException) throw it
                 }.getOrDefault(false)
-            }
+            },
         )
 }

@@ -12,8 +12,8 @@
 
 package cz.adamec.timotej.snag.di
 
-import cz.adamec.timotej.snag.lib.core.di.coreModule
 import cz.adamec.timotej.snag.feat.shared.database.fe.di.databaseModule
+import cz.adamec.timotej.snag.lib.core.di.coreModule
 import cz.adamec.timotej.snag.logging.loggerModule
 import cz.adamec.timotej.snag.network.fe.di.networkModule
 import cz.adamec.timotej.snag.projects.fe.app.di.projectsAppModule

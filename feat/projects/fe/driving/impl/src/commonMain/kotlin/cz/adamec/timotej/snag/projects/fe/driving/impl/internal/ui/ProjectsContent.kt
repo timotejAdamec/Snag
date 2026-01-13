@@ -20,7 +20,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.material3.ContainedLoadingIndicator
 import androidx.compose.material3.LoadingIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -38,14 +37,14 @@ import snag.feat.projects.fe.driving.impl.generated.resources.projects_title
 internal fun ProjectsContent(
     state: ProjectsUiState,
     onProjectClick: OnProjectClick,
-    onErrorMessageShown: () -> Unit,
+    onShowErrorMessage: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     SetTitle(Res.string.projects_title)
     ShowErrorSnackbarIfNeeded(
         uiError = state.error,
-        onShown = {
-            onErrorMessageShown()
+        onShow = {
+            onShowErrorMessage()
         },
     )
 
@@ -86,5 +85,3 @@ internal fun ProjectsContent(
         }
     }
 }
-
-
