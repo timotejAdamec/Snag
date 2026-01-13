@@ -21,6 +21,7 @@ sealed interface DatabaseResult<out T> {
     data class Failure(val throwable: Throwable?) : DatabaseResult<Nothing>
 
     fun getOrNull(): T? = (this as? Success)?.data
+    fun getOrThrow(): T = (this as? Success)?.data ?: throw throwableOrNull() ?: Exception("No throwable provided")
     fun throwableOrNull(): Throwable? = (this as? Failure)?.throwable
 
 }

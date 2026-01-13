@@ -35,13 +35,13 @@ import org.mobilenativefoundation.store.store5.Updater
 import org.mobilenativefoundation.store.store5.UpdaterResult
 import kotlin.uuid.Uuid
 
-typealias ProjectsStore = MutableStore<Uuid, Project>
+typealias ProjectStore = MutableStore<Uuid, Project>
 
 internal class ProjectsStoreFactory(
     private val projectsApi: ProjectsApi,
     private val projectsDb: ProjectsDb,
 ) {
-    fun create(): ProjectsStore {
+    fun create(): ProjectStore {
         return MutableStoreBuilder.from(
             fetcher = createFetcher(),
             sourceOfTruth = createSourceOfTruth(),
@@ -73,13 +73,15 @@ internal class ProjectsStoreFactory(
             .fromNetworkToLocal { projectApiDto -> projectApiDto.toBusiness().toEntity() }
             .build()
 
-    private fun createUpdater(): Updater<Uuid, Project, NetworkResult<ProjectApiDto>> =
+    private fun createUpdater(): Updater<Uuid, Project, ProjectApiDto> =
         Updater.by(
             post = { _, updatedProject ->
                 val apiDto = updatedProject.toApiDto()
                 val result = projectsApi.updateProject(apiDto)
                 if (result is NetworkResult.Success) {
-                    UpdaterResult.Success.Typed(result.data)
+                    val freshDto = result.data
+                    projectsDb.saveProject(freshDto.toBusiness().toEntity()).getOrThrow()
+                    UpdaterResult.Success.Typed(freshDto)
                 } else {
                     UpdaterResult.Error.Message(
                         result.exceptionOrNull()?.message ?: "Something went wrong"

@@ -14,7 +14,10 @@ package cz.adamec.timotej.snag.projects.fe.ports
 
 import cz.adamec.timotej.snag.projects.business.Project
 import kotlinx.coroutines.flow.Flow
+import kotlin.uuid.Uuid
 
-interface ProjectsLocalDataSource {
-    fun getProjects(): Flow<List<Project>>
+interface ProjectRepository {
+    suspend fun getAllProjectsFlow(): List<Project>
+    suspend fun getProjectFlow(id: Uuid): Flow<Project?>
+    suspend fun saveProject(project: Project)
 }
