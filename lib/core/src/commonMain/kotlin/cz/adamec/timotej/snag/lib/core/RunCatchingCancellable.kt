@@ -14,11 +14,12 @@ package cz.adamec.timotej.snag.lib.core
 
 import kotlinx.coroutines.CancellationException
 
+@Suppress("TooGenericExceptionCaught")
 inline fun <R> runCatchingCancellable(block: () -> R): Result<R> =
     try {
         Result.success(block())
     } catch (e: CancellationException) {
-        throw e // Let cancellation propagate!
+        throw e
     } catch (e: Throwable) {
         Result.failure(e)
     }

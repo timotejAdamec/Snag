@@ -26,6 +26,7 @@ import io.ktor.server.routing.put
 import io.ktor.server.routing.route
 import kotlin.uuid.Uuid
 
+@Suppress("LabeledExpression")
 internal class ProjectsRoute(
     private val getProjectsUseCase: GetProjectsUseCase,
     private val getProjectUseCase: GetProjectUseCase,

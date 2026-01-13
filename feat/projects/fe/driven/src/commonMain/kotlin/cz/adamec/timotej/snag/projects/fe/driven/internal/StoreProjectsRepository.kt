@@ -124,8 +124,9 @@ class StoreProjectsRepository(
         }
 
     private fun Throwable.toDataResultFailure() =
-        when (this) {
-            is NetworkException -> this.toDataResult()
-            else -> DataResult.Failure.ProgrammerError(this)
+        if (this is NetworkException) {
+            this.toDataResult()
+        } else {
+            DataResult.Failure.ProgrammerError(this)
         }
 }

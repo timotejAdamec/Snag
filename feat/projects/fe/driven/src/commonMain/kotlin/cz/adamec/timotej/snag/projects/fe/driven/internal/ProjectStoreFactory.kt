@@ -86,6 +86,7 @@ internal class ProjectStoreFactory(
             .fromNetworkToLocal { projectApiDto -> projectApiDto.toBusiness().toEntity() }
             .build()
 
+    @Suppress("TooGenericExceptionCaught")
     private fun createUpdater(): Updater<Uuid, Project, ProjectApiDto> =
         Updater.by(
             post = { _, updatedProject ->

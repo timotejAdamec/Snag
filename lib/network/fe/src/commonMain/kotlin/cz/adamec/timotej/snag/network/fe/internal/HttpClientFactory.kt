@@ -60,7 +60,7 @@ object HttpClientFactory {
                             cause = cause,
                         )
 
-                        is ClientRequestException -> {
+                        is ClientRequestException ->
                             when (cause.response.status) {
                                 HttpStatusCode.Unauthorized -> throw NetworkException.ClientError.Unauthorized(
                                     cause = cause,
@@ -75,7 +75,6 @@ object HttpClientFactory {
                                     cause = cause,
                                 )
                             }
-                        }
 
                         is ServerResponseException -> throw NetworkException.ServerError(
                             message = cause.message,

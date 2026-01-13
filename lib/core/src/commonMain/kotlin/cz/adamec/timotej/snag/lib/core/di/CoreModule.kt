@@ -26,21 +26,6 @@ import org.koin.core.scope.Scope
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
-internal object DispatcherDiQualifiers {
-    const val IO = "io"
-    const val MAIN = "main"
-    const val DEFAULT = "default"
-    const val UNCONFINED = "unconfined"
-}
-
-fun Scope.getIoDispatcher(): CoroutineDispatcher = get(named(DispatcherDiQualifiers.IO))
-
-fun Scope.getMainDispatcher(): CoroutineDispatcher = get(named(DispatcherDiQualifiers.MAIN))
-
-fun Scope.getDefaultDispatcher(): CoroutineDispatcher = get(named(DispatcherDiQualifiers.DEFAULT))
-
-fun Scope.getUnconfinedDispatcher(): CoroutineDispatcher = get(named(DispatcherDiQualifiers.UNCONFINED))
-
 val coreModule =
     module {
         includes(platformModule)
@@ -55,3 +40,18 @@ val coreModule =
     }
 
 internal expect val platformModule: Module
+
+internal object DispatcherDiQualifiers {
+    const val IO = "io"
+    const val MAIN = "main"
+    const val DEFAULT = "default"
+    const val UNCONFINED = "unconfined"
+}
+
+fun Scope.getIoDispatcher(): CoroutineDispatcher = get(named(DispatcherDiQualifiers.IO))
+
+fun Scope.getMainDispatcher(): CoroutineDispatcher = get(named(DispatcherDiQualifiers.MAIN))
+
+fun Scope.getDefaultDispatcher(): CoroutineDispatcher = get(named(DispatcherDiQualifiers.DEFAULT))
+
+fun Scope.getUnconfinedDispatcher(): CoroutineDispatcher = get(named(DispatcherDiQualifiers.UNCONFINED))

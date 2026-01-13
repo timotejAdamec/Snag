@@ -19,6 +19,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.LocalAppScaffoldState
 import kotlinx.coroutines.launch
 
+@Suppress("LabeledExpression")
 @Composable
 fun ShowErrorSnackbarIfNeeded(
     uiError: UiError?,

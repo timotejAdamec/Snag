@@ -16,22 +16,22 @@ sealed class NetworkException(
     override val cause: Throwable,
     override val message: String? = null,
 ) : RuntimeException(message, cause) {
-    /** No internet, Airplane mode, DNS failure, or Timeout */
+    /** No internet, Airplane mode, DNS failure, or Timeout. */
     class NetworkUnavailable(
         override val cause: Throwable,
     ) : NetworkException(cause)
 
-    /** Server returned 4xx */
+    /** Server returned 4xx. */
     sealed class ClientError(
         override val cause: Throwable,
         override val message: String? = null,
     ) : NetworkException(cause, message) {
-        /** Server returned 401 */
+        /** Server returned 401. */
         class Unauthorized(
             override val cause: Throwable,
         ) : ClientError(cause)
 
-        /** Server returned 404 */
+        /** Server returned 404. */
         class NotFound(
             override val cause: Throwable,
         ) : ClientError(cause)
@@ -42,13 +42,13 @@ sealed class NetworkException(
         ) : ClientError(cause, message)
     }
 
-    /** Server returned 5xx */
+    /** Server returned 5xx. */
     class ServerError(
         override val message: String,
         override val cause: Throwable,
     ) : NetworkException(cause, message)
 
-    /** Fallback for everything else */
+    /** Fallback for everything else. */
     class ProgrammerError(
         override val cause: Throwable,
     ) : NetworkException(cause)
