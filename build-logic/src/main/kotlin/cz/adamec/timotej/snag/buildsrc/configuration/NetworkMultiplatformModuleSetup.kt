@@ -27,6 +27,7 @@ internal fun Project.configureNetworkMultiplatformModule() {
                 implementation(library("kotlinx-serialization-core"))
                 implementation(library("ktor-client-core"))
                 implementation(library("ktor-client-content-negotiation"))
+                implementation(library("ktor-client-logging"))
                 implementation(library("ktor-serialization-kotlinx-json"))
             }
             androidMain.dependencies {

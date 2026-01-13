@@ -10,13 +10,14 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag
+package cz.adamec.timotej.snag.impl
 
-import io.ktor.client.request.*
-import io.ktor.client.statement.*
-import io.ktor.http.*
-import io.ktor.server.testing.*
-import kotlin.test.*
+import io.ktor.client.request.get
+import io.ktor.client.statement.bodyAsText
+import io.ktor.http.HttpStatusCode
+import io.ktor.server.testing.testApplication
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 class ApplicationTest {
 
@@ -26,7 +27,7 @@ class ApplicationTest {
             this.main()
         }
         val response = client.get("/")
-        assertEquals(HttpStatusCode.OK, response.status)
+        assertEquals(HttpStatusCode.Companion.OK, response.status)
         assertEquals("Ktor: Hello server", response.bodyAsText())
     }
 }

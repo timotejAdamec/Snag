@@ -1,3 +1,5 @@
+//import com.github.psxpaul.task.JavaExecFork
+
 /*
  * Copyright (c) 2026 Timotej Adamec
  * SPDX-License-Identifier: MIT
@@ -18,13 +20,14 @@ plugins {
 group = "cz.adamec.timotej.snag"
 version = "1.0.0"
 application {
-    mainClass.set("cz.adamec.timotej.snag.ApplicationKt")
+    mainClass.set("cz.adamec.timotej.snag.impl.ApplicationKt")
     
     val isDevelopment: Boolean = project.ext.has("development")
     applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
 }
 
 dependencies {
+    implementation(projects.server.api)
     implementation(projects.feat.projects.be.driving.impl)
     implementation(projects.feat.projects.be.driven)
     implementation(projects.feat.projects.be.app)

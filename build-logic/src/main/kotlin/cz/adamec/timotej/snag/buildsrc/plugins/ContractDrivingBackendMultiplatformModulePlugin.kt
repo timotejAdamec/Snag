@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.buildsrc.plugins
 
+import cz.adamec.timotej.snag.buildsrc.configuration.configureContractModule
 import cz.adamec.timotej.snag.buildsrc.extensions.pluginId
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -21,6 +22,7 @@ import org.gradle.kotlin.dsl.apply
 class ContractDrivingBackendMultiplatformModulePlugin : Plugin<Project> {
     override fun apply(target: Project) = with(target) {
         apply(plugin = pluginId("kotlinSerialization"))
-        apply<NetworkMultiplatformModulePlugin>()
+        apply<MultiplatformModulePlugin>()
+        configureContractModule()
     }
 }

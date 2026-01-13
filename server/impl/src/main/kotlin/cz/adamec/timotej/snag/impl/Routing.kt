@@ -10,7 +10,7 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag
+package cz.adamec.timotej.snag.impl
 
 import cz.adamec.timotej.snag.routing.be.AppRoute
 import io.ktor.server.application.Application

@@ -12,7 +12,9 @@
 
 package cz.adamec.timotej.snag.network.fe.internal
 
+import co.touchlab.kermit.Logger as KermitLogger
 import cz.adamec.timotej.snag.network.fe.NetworkException
+import cz.adamec.timotej.snag.server.api.configureJson
 import io.ktor.client.HttpClient
 import io.ktor.client.network.sockets.ConnectTimeoutException
 import io.ktor.client.network.sockets.SocketTimeoutException
@@ -21,10 +23,11 @@ import io.ktor.client.plugins.HttpRequestTimeoutException
 import io.ktor.client.plugins.HttpResponseValidator
 import io.ktor.client.plugins.ServerResponseException
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.logging.LogLevel
+import io.ktor.client.plugins.logging.Logger as KtorLogger
+import io.ktor.client.plugins.logging.Logging
 import io.ktor.http.HttpStatusCode
-import io.ktor.serialization.kotlinx.json.json
 import kotlinx.io.IOException
-import kotlinx.serialization.json.Json
 import kotlin.coroutines.cancellation.CancellationException
 
 object HttpClientFactory {
@@ -32,10 +35,17 @@ object HttpClientFactory {
     fun createHttpClient(): HttpClient = HttpClient {
         expectSuccess = true
 
+        install(Logging) {
+            logger = object : KtorLogger {
+                override fun log(message: String) {
+                    KermitLogger.withTag("HTTP Client").v(message)
+                }
+            }
+            level = LogLevel.HEADERS
+        }
+
         install(ContentNegotiation) {
-            json(Json {
-                ignoreUnknownKeys = true
-            })
+            configureJson()
         }
 
         HttpResponseValidator {

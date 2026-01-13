@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.network.fe
 
+import cz.adamec.timotej.snag.server.api.Host
 import io.ktor.client.HttpClient
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.get
@@ -62,6 +63,6 @@ class SnagNetworkHttpClient(
     }
 
     private companion object {
-        const val BASE_URL = "http://localhost:8080"
+        const val BASE_URL = "http://0.0.0.0:" + Host.Localhost.PORT
     }
 }

@@ -10,10 +10,11 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag
+package cz.adamec.timotej.snag.impl
 
-import cz.adamec.timotej.snag.di.appModule
-import io.ktor.http.ContentType.Application.Json
+import cz.adamec.timotej.snag.impl.di.appModule
+import cz.adamec.timotej.snag.server.api.Host
+import cz.adamec.timotej.snag.server.api.configureJson
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
@@ -26,7 +27,7 @@ import org.koin.ktor.plugin.Koin
 fun main() {
     embeddedServer(
         factory = Netty,
-        port = 8080,
+        port = Host.Localhost.PORT,
         host = "0.0.0.0",
         module = Application::main,
     ).start(wait = true)
@@ -37,9 +38,7 @@ fun Application.main() {
         modules(appModule)
     }
     install(ContentNegotiation) {
-        json(Json {
-            ignoreUnknownKeys = true
-        })
+        configureJson()
     }
     configureRouting()
 }

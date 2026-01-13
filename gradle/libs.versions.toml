@@ -30,7 +30,7 @@ logback = "1.5.23"
 store = "5.1.0-alpha07"
 sqldelight = "2.2.1"
 sqlJs = "1.6.2"
-webPackPlugin = "9.1.0"
+webpack = "9.1.0"
 detekt = "2.0.0-alpha.1"
 ktlint = "14.0.1"
 compose-rules = "0.5.3"
@@ -90,6 +90,7 @@ ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "kto
 ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
 ktor-client-js = { module = "io.ktor:ktor-client-js", version.ref = "ktor" }
 ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
+ktor-client-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktor" }
 ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
 ktor-server-test-host = { module = "io.ktor:ktor-server-test-host-jvm", version.ref = "ktor" }
 

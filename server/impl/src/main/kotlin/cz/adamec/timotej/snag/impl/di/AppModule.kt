@@ -10,7 +10,7 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.di
+package cz.adamec.timotej.snag.impl.di
 
 import cz.adamec.timotej.snag.projects.be.app.di.projectsAppModule
 import cz.adamec.timotej.snag.projects.be.driven.di.projectsDrivenModule
