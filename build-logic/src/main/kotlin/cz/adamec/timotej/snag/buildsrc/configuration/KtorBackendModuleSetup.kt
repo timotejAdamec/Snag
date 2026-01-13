@@ -19,7 +19,7 @@ import cz.adamec.timotej.snag.buildsrc.extensions.testImplementation
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.dependencies
 
-internal fun Project.configureKtorBackendModule() {
+internal fun Project.configureNetworkBackendModule() {
     dependencies {
         if (!path.contains("routing")) {
             implementation(project(":lib:routing:be"))
@@ -27,6 +27,7 @@ internal fun Project.configureKtorBackendModule() {
 
         implementation(libs.library("ktor-server-core"))
         implementation(libs.library("koin-ktor"))
+        implementation(libs.library("ktor-serialization-kotlinx-json"))
         testImplementation(libs.library("ktor-server-test-host"))
     }
 }

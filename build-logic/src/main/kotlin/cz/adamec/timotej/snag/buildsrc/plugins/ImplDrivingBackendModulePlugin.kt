@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.buildsrc.plugins
 
-import cz.adamec.timotej.snag.buildsrc.configuration.configureKtorBackendModule
+import cz.adamec.timotej.snag.buildsrc.configuration.configureNetworkBackendModule
 import cz.adamec.timotej.snag.buildsrc.extensions.pluginId
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -24,6 +24,6 @@ class ImplDrivingBackendModulePlugin : Plugin<Project> {
         apply(plugin = pluginId("ktor"))
         apply(plugin = pluginId("kotlinSerialization"))
         apply<BackendModulePlugin>()
-        configureKtorBackendModule()
+        configureNetworkBackendModule()
     }
 }

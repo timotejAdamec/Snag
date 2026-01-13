@@ -13,12 +13,14 @@
 package cz.adamec.timotej.snag
 
 import cz.adamec.timotej.snag.di.appModule
+import io.ktor.http.ContentType.Application.Json
+import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
-import io.ktor.server.routing.Route
-import org.koin.ktor.ext.getKoin
+import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
+import kotlinx.serialization.json.Json
 import org.koin.ktor.plugin.Koin
 
 fun main() {
@@ -34,6 +36,10 @@ fun Application.main() {
     install(Koin) {
         modules(appModule)
     }
-
+    install(ContentNegotiation) {
+        json(Json {
+            ignoreUnknownKeys = true
+        })
+    }
     configureRouting()
 }
