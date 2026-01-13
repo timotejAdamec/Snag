@@ -17,8 +17,8 @@ import cz.adamec.timotej.snag.projects.business.Project
 import kotlinx.coroutines.flow.Flow
 import kotlin.uuid.Uuid
 
-interface ProjectRepository {
-    fun getAllProjectsFlow(): List<Project>
+interface ProjectsRepository {
+    fun getAllProjectsFlow(): Flow<DataResult<List<Project>>>
     fun getProjectFlow(id: Uuid): Flow<DataResult<Project?>>
     suspend fun saveProject(project: Project): DataResult<Unit>
 }

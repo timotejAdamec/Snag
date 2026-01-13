@@ -38,6 +38,12 @@ internal class ProjectsDb(
             .asFlow()
             .mapToList(ioDispatcher)
 
+    suspend fun saveProjects(projectEntities: List<ProjectEntity>) = withContext(ioDispatcher) {
+        projectEntityQueries.transaction {
+            projectEntities.forEach { projectEntityQueries.saveProject(it) }
+        }
+    }
+
     fun getProjectFlow(id: Uuid): Flow<ProjectEntity?> =
         projectEntityQueries
             .selectById(id.toString())

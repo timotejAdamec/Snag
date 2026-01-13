@@ -12,12 +12,13 @@
 
 package cz.adamec.timotej.snag.projects.fe.app
 
+import cz.adamec.timotej.snag.lib.core.DataResult
 import cz.adamec.timotej.snag.projects.business.Project
-import cz.adamec.timotej.snag.projects.fe.ports.ProjectRepository
+import cz.adamec.timotej.snag.projects.fe.ports.ProjectsRepository
 import kotlinx.coroutines.flow.Flow
 
 class GetProjectsUseCase(
-    private val projectRepository: ProjectRepository,
+    private val projectsRepository: ProjectsRepository,
 ) {
-    operator fun invoke(): Flow<List<Project>> = projectRepository.getAllProjectsFlow()
+    operator fun invoke(): Flow<DataResult<List<Project>>> = projectsRepository.getAllProjectsFlow()
 }

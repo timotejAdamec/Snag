@@ -13,129 +13,64 @@
 package cz.adamec.timotej.snag.projects.fe.driven.internal
 
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.ProjectEntity
-import cz.adamec.timotej.snag.lib.core.Timestamp
 import cz.adamec.timotej.snag.projects.be.driving.contract.ProjectApiDto
 import cz.adamec.timotej.snag.projects.business.Project
 import cz.adamec.timotej.snag.projects.fe.driven.internal.LH.logger
 import cz.adamec.timotej.snag.projects.fe.driven.internal.api.ProjectsApi
-import cz.adamec.timotej.snag.projects.fe.driven.internal.api.toApiDto
 import cz.adamec.timotej.snag.projects.fe.driven.internal.api.toBusiness
 import cz.adamec.timotej.snag.projects.fe.driven.internal.db.ProjectsDb
 import cz.adamec.timotej.snag.projects.fe.driven.internal.db.toBusiness
 import cz.adamec.timotej.snag.projects.fe.driven.internal.db.toEntity
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
-import org.mobilenativefoundation.store.store5.Bookkeeper
 import org.mobilenativefoundation.store.store5.Converter
 import org.mobilenativefoundation.store.store5.Fetcher
-import org.mobilenativefoundation.store.store5.MutableStore
-import org.mobilenativefoundation.store.store5.MutableStoreBuilder
 import org.mobilenativefoundation.store.store5.SourceOfTruth
-import org.mobilenativefoundation.store.store5.Updater
-import org.mobilenativefoundation.store.store5.UpdaterResult
-import kotlin.uuid.Uuid
+import org.mobilenativefoundation.store.store5.Store
+import org.mobilenativefoundation.store.store5.StoreBuilder
 
-typealias ProjectStore = MutableStore<Uuid, Project>
+typealias ProjectsStore = Store<Unit, List<Project>>
 
 internal class ProjectsStoreFactory(
     private val projectsApi: ProjectsApi,
     private val projectsDb: ProjectsDb,
 ) {
-    fun create(): ProjectStore {
-        return MutableStoreBuilder.from(
+    fun create(): ProjectsStore {
+        return StoreBuilder.from(
             fetcher = createFetcher(),
             sourceOfTruth = createSourceOfTruth(),
-            converter = createConverter()
-        ).build(
-            updater = createUpdater(),
-            bookkeeper = createBookkeeper()
-        )
+            converter = createConverter(),
+        ).build()
     }
 
-    private fun createFetcher(): Fetcher<Uuid, ProjectApiDto> =
-        Fetcher.of { id ->
-            projectsApi.getProject(id)
+    private fun createFetcher(): Fetcher<Unit, List<ProjectApiDto>> =
+        Fetcher.of {
+            projectsApi.getProjects()
         }
 
-    private fun createSourceOfTruth(): SourceOfTruth<Uuid, ProjectEntity, Project> =
+    private fun createSourceOfTruth(): SourceOfTruth<Unit, List<ProjectEntity>, List<Project>> =
         SourceOfTruth.of(
-            reader = { id ->
-                projectsDb.getProjectFlow(id)
+            reader = {
+                projectsDb.getAllProjectsFlow()
                     .catch { e ->
-                        logger.e(e) { "Error while reading project from database." }
-                        emit(null)
+                        logger.e(e) { "Error while reading projects from database." }
                     }
-                    .map { it?.toBusiness() }
+                    .map { list -> list.map { it.toBusiness()} }
             },
-            writer = { _, projectEntity ->
+            writer = { _, projectEntities ->
                 runCatching {
-                    projectsDb.saveProject(projectEntity)
+                    projectsDb.saveProjects(projectEntities)
                 }.onFailure { e ->
                     if (e is CancellationException) throw e
-                    logger.e(e) { "Error while writing project to database." }
+                    logger.e(e) { "Error while writing projects to database." }
                 }
             }
         )
 
-    private fun createConverter(): Converter<ProjectApiDto, ProjectEntity, Project> =
-        Converter.Builder<ProjectApiDto, ProjectEntity, Project>()
-            .fromOutputToLocal { project -> project.toEntity() }
-            .fromNetworkToLocal { projectApiDto -> projectApiDto.toBusiness().toEntity() }
+    private fun createConverter(): Converter<List<ProjectApiDto>, List<ProjectEntity>, List<Project>> =
+        Converter.Builder<List<ProjectApiDto>, List<ProjectEntity>, List<Project>>()
+            .fromOutputToLocal { projects -> projects.map { it.toEntity() } }
+            .fromNetworkToLocal { projectApiDtos -> projectApiDtos.map { it.toBusiness().toEntity() } }
             .build()
-
-    private fun createUpdater(): Updater<Uuid, Project, ProjectApiDto> =
-        Updater.by(
-            post = { _, updatedProject ->
-                try {
-                    val apiDto = updatedProject.toApiDto()
-                    val freshDto = projectsApi.updateProject(apiDto)
-                    projectsDb.saveProject(freshDto.toBusiness().toEntity())
-                    UpdaterResult.Success.Typed(freshDto)
-                } catch (e: Exception) {
-                    if (e is CancellationException) throw e
-                    logger.e { "Error while updating project. Error: $e" }
-                    UpdaterResult.Error.Exception(e)
-                }
-            }
-        )
-
-    private fun createBookkeeper(): Bookkeeper<Uuid> =
-        Bookkeeper.by(
-            getLastFailedSync = { id ->
-                runCatching {
-                    projectsDb.getLastFailedProjectSyncFlow(id).first()
-                }.onFailure {
-                    if (it is CancellationException) throw it
-                }.getOrNull()
-            },
-            setLastFailedSync = { id, timestamp ->
-                runCatching {
-                    projectsDb.insertFailedProjectSync(
-                        id = id,
-                        timestamp = Timestamp(timestamp),
-                    )
-                    true
-                }.onFailure {
-                    if (it is CancellationException) throw it
-                }.getOrDefault(false)
-            },
-            clear = { id ->
-                runCatching {
-                    projectsDb.deleteProjectSyncs(id)
-                    true
-                }.onFailure {
-                    if (it is CancellationException) throw it
-                }.getOrDefault(false)
-            },
-            clearAll = {
-                runCatching {
-                    projectsDb.deleteAllProjectsSyncs()
-                    true
-                }.onFailure {
-                    if (it is CancellationException) throw it
-                }.getOrDefault(false)
-            }
-        )
 }
