@@ -14,6 +14,6 @@ package cz.adamec.timotej.snag.server.api
 
 sealed interface Host {
     data object Localhost : Host {
-        const val PORT: Int = 8080
+        const val PORT: Int = 8081
     }
 }

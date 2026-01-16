@@ -38,6 +38,7 @@ fun Application.main() {
     }
     install(CORS) {
         // allowHost("web frontend address") TODO once web FE deployed
+        allowHost("localhost:8080")
     }
     install(ContentNegotiation) {
         configureJson()

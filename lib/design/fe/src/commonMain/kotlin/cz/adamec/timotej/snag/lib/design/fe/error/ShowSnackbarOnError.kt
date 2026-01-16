@@ -23,7 +23,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
 @Composable
-fun ObserveUiErrorsAsEvents(
+fun ShowSnackbarOnError(
     uiErrorsFlow: Flow<UiError>,
     appScaffoldState: AppScaffoldState= LocalAppScaffoldState.current,
     scope: CoroutineScope = rememberCoroutineScope(),

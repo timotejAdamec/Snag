@@ -22,5 +22,4 @@ import kotlinx.collections.immutable.persistentListOf
 data class ProjectsUiState(
     val projects: ImmutableList<Project> = persistentListOf(),
     val isLoading: Boolean = false,
-    val error: UiError? = null,
 )

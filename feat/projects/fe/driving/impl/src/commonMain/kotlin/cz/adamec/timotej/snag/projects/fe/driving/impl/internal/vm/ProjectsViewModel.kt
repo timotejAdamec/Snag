@@ -44,29 +44,32 @@ internal class ProjectsViewModel(
         getProjectsUseCase()
             .map { projectsDataResult ->
                 when (projectsDataResult) {
-                    DataResult.Failure.NetworkUnavailable ->
+                    DataResult.Failure.NetworkUnavailable -> {
                         _state.update {
                             it.copy(
-                                error = UiError.NetworkUnavailable,
                                 isLoading = false,
                             )
                         }
+                        errorEventsChannel.send(UiError.NetworkUnavailable)
+                    }
 
-                    is DataResult.Failure.ProgrammerError ->
+                    is DataResult.Failure.ProgrammerError -> {
                         _state.update {
                             it.copy(
-                                error = UiError.Unknown,
                                 isLoading = false,
                             )
                         }
+                        errorEventsChannel.send(UiError.Unknown)
+                    }
 
-                    is DataResult.Failure.UserMessageError ->
+                    is DataResult.Failure.UserMessageError -> {
                         _state.update {
                             it.copy(
-                                error = UiError.CustomUserMessage(projectsDataResult.message),
                                 isLoading = false,
                             )
                         }
+                        errorEventsChannel.send(UiError.CustomUserMessage(projectsDataResult.message))
+                    }
 
                     DataResult.Loading ->
                         _state.update {
@@ -84,12 +87,4 @@ internal class ProjectsViewModel(
                         }
                 }
             }.launchIn(viewModelScope)
-
-    internal fun onErrorMessageShown() {
-        _state.update {
-            it.copy(
-                error = null,
-            )
-        }
-    }
 }

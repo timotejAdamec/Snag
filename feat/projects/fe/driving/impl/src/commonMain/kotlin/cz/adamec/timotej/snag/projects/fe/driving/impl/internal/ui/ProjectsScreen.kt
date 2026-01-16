@@ -16,7 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import cz.adamec.timotej.snag.lib.design.fe.error.ObserveUiErrorsAsEvents
+import cz.adamec.timotej.snag.lib.design.fe.error.ShowSnackbarOnError
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.SetTitle
 import cz.adamec.timotej.snag.projects.fe.driving.api.OnProjectClick
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.vm.ProjectsViewModel
@@ -34,7 +34,7 @@ internal fun ProjectsScreen(
 
     SetTitle(Res.string.projects_title)
 
-    ObserveUiErrorsAsEvents(viewModel.errorsFlow)
+    ShowSnackbarOnError(viewModel.errorsFlow)
 
     ProjectsContent(
         modifier = modifier,
