@@ -32,9 +32,9 @@ val coreModule =
 
         singleOf(::DefaultApplicationScope) bind ApplicationScope::class
 
-        single(named(DispatcherDiQualifiers.MAIN)) { Dispatchers.Main }
-        single(named(DispatcherDiQualifiers.DEFAULT)) { Dispatchers.Default }
-        single(named(DispatcherDiQualifiers.UNCONFINED)) { Dispatchers.Unconfined }
+        factory(named(DispatcherDiQualifiers.MAIN)) { Dispatchers.Main }
+        factory(named(DispatcherDiQualifiers.DEFAULT)) { Dispatchers.Default }
+        factory(named(DispatcherDiQualifiers.UNCONFINED)) { Dispatchers.Unconfined }
 
         factoryOf(::SystemTimestampProvider) bind TimestampProvider::class
     }

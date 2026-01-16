@@ -30,6 +30,8 @@ internal class DatabaseFactory(
         check(!isInitialized) { "Database is already initialized!" }
         isInitialized = true
 
+        TODO("Move web init into separate method and wait for it to complete before querying the database.")
+
         return SnagDatabase(databaseDriver).also {
             applicationScope.launch {
                 withContext(Dispatchers.Default) {

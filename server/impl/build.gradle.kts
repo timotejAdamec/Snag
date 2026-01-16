@@ -1,3 +1,5 @@
+import io.ktor.plugin.OpenApiPreview
+
 // import com.github.psxpaul.task.JavaExecFork
 
 /*
@@ -26,6 +28,17 @@ application {
     applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
 }
 
+// Currently not working, only with Kotlin 2.2.0. Wait for newer ktor.
+ktor {
+    @OptIn(OpenApiPreview::class)
+    openApi {
+        title = "Snag server API"
+        version = "2.1"
+        summary = "This is an overview of the Snag backend"
+        target = project.layout.buildDirectory.file("open-api.json")
+    }
+}
+
 dependencies {
     implementation(projects.server.api)
     implementation(projects.feat.projects.be.driving.impl)
@@ -38,6 +51,7 @@ dependencies {
     implementation(libs.ktor.server.call.logging)
     implementation(libs.ktor.server.status.pages)
     implementation(libs.ktor.server.content.negotiation)
+    implementation(libs.ktor.server.cors)
     implementation(libs.ktor.server.config.yaml)
     implementation(libs.logback)
     implementation(libs.koin.logger.slf4j)

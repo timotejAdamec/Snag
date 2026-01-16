@@ -16,9 +16,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import cz.adamec.timotej.snag.lib.design.fe.error.ObserveUiErrorsAsEvents
+import cz.adamec.timotej.snag.lib.design.fe.scaffold.SetTitle
 import cz.adamec.timotej.snag.projects.fe.driving.api.OnProjectClick
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.vm.ProjectsViewModel
 import org.koin.compose.viewmodel.koinViewModel
+import snag.feat.projects.fe.driving.impl.generated.resources.Res
+import snag.feat.projects.fe.driving.impl.generated.resources.projects_title
 
 @Composable
 internal fun ProjectsScreen(
@@ -28,10 +32,13 @@ internal fun ProjectsScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
+    SetTitle(Res.string.projects_title)
+
+    ObserveUiErrorsAsEvents(viewModel.errorsFlow)
+
     ProjectsContent(
         modifier = modifier,
         onProjectClick = onProjectClick,
-        onShowErrorMessage = { viewModel.onErrorMessageShown() },
         state = state,
     )
 }

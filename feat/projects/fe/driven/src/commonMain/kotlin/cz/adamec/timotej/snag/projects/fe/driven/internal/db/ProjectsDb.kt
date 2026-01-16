@@ -32,11 +32,12 @@ internal class ProjectsDb(
     private val timestampProvider: TimestampProvider,
     private val ioDispatcher: CoroutineDispatcher,
 ) {
-    fun getAllProjectsFlow(): Flow<List<ProjectEntity>> =
-        projectEntityQueries
+    fun getAllProjectsFlow(): Flow<List<ProjectEntity>> {
+        return projectEntityQueries
             .selectAll()
             .asFlow()
             .mapToList(ioDispatcher)
+    }
 
     suspend fun saveProjects(projectEntities: List<ProjectEntity>) =
         withContext(ioDispatcher) {

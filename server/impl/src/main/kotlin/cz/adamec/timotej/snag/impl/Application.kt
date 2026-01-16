@@ -20,6 +20,7 @@ import io.ktor.server.application.install
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.server.plugins.cors.routing.CORS
 import org.koin.ktor.plugin.Koin
 
 fun main() {
@@ -34,6 +35,9 @@ fun main() {
 fun Application.main() {
     install(Koin) {
         modules(appModule)
+    }
+    install(CORS) {
+        // allowHost("web frontend address") TODO once web FE deployed
     }
     install(ContentNegotiation) {
         configureJson()

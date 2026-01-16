@@ -18,18 +18,23 @@ import cz.adamec.timotej.snag.lib.core.DataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.projects.fe.app.GetProjectsUseCase
 import kotlinx.collections.immutable.toPersistentList
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 
 internal class ProjectsViewModel(
     private val getProjectsUseCase: GetProjectsUseCase,
 ) : ViewModel() {
-    private val _state: MutableStateFlow<ProjectsUiState> = MutableStateFlow(ProjectsUiState())
 
+    private val _state: MutableStateFlow<ProjectsUiState> = MutableStateFlow(ProjectsUiState())
     val state: StateFlow<ProjectsUiState> = _state
+
+    private val errorEventsChannel = Channel<UiError>()
+    val errorsFlow = errorEventsChannel.receiveAsFlow()
 
     init {
         collectProjects()

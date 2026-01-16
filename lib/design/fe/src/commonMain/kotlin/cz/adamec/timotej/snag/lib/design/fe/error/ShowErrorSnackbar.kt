@@ -14,28 +14,23 @@ package cz.adamec.timotej.snag.lib.design.fe.error
 
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
+import cz.adamec.timotej.snag.lib.design.fe.scaffold.AppScaffoldState
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.LocalAppScaffoldState
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Suppress("LabeledExpression")
-@Composable
-fun ShowErrorSnackbarIfNeeded(
+fun showErrorSnackbar(
     uiError: UiError?,
-    onShow: () -> Unit,
+    scope: CoroutineScope,
+    scaffoldState: AppScaffoldState,
 ) {
-    val scope = rememberCoroutineScope()
-    val scaffoldState = LocalAppScaffoldState.current
-
-    LaunchedEffect(uiError, onShow) {
-        if (uiError == null) return@LaunchedEffect
-        scope.launch {
-            scaffoldState.snackbarHostState.showSnackbar(
-                message = uiError.toInformativeMessage(),
-                duration = SnackbarDuration.Long,
-            )
-            onShow()
-        }
+    if (uiError == null) return
+    scope.launch {
+        scaffoldState.snackbarHostState.showSnackbar(
+            message = uiError.toInformativeMessage(),
+            duration = SnackbarDuration.Long,
+        )
     }
 }

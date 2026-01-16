@@ -20,6 +20,16 @@ plugins {
 }
 
 kotlin {
+    wasmJs {
+        browser {
+            commonWebpackConfig {
+                devServer = (devServer ?: org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.DevServer()).apply {
+                    // This ensures the dev server knows where to find the wasm file
+                    static("build/processedResources/wasmJs/main")
+                }
+            }
+        }
+    }
     sourceSets {
         commonMain.dependencies {
             api(libs.sqldelight.async.extensions)

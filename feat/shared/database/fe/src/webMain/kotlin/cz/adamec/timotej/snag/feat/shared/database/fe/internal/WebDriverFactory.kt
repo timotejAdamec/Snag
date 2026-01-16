@@ -14,7 +14,6 @@ package cz.adamec.timotej.snag.feat.shared.database.fe.internal
 
 import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.driver.worker.createDefaultWebWorkerDriver
-import cz.adamec.timotej.snag.feat.shared.database.fe.internal.DriverFactory
 
 internal class WebDriverFactory : DriverFactory {
     override fun createDriver(): SqlDriver = createDefaultWebWorkerDriver()

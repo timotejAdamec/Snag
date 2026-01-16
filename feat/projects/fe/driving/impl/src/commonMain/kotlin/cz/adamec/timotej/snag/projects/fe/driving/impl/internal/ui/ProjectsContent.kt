@@ -25,29 +25,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import cz.adamec.timotej.snag.lib.design.fe.error.ShowErrorSnackbarIfNeeded
-import cz.adamec.timotej.snag.lib.design.fe.scaffold.SetTitle
 import cz.adamec.timotej.snag.projects.fe.driving.api.OnProjectClick
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.ui.components.ProjectCard
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.vm.ProjectsUiState
-import snag.feat.projects.fe.driving.impl.generated.resources.Res
-import snag.feat.projects.fe.driving.impl.generated.resources.projects_title
 
 @Composable
 internal fun ProjectsContent(
     state: ProjectsUiState,
     onProjectClick: OnProjectClick,
-    onShowErrorMessage: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    SetTitle(Res.string.projects_title)
-    ShowErrorSnackbarIfNeeded(
-        uiError = state.error,
-        onShow = {
-            onShowErrorMessage()
-        },
-    )
-
     LazyVerticalGrid(
         modifier = modifier,
         columns = GridCells.Adaptive(minSize = 360.dp),
