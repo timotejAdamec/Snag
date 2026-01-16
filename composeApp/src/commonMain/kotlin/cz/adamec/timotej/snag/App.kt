@@ -12,12 +12,23 @@
 
 package cz.adamec.timotej.snag
 
+import androidx.compose.material3.ContainedLoadingIndicator
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import co.touchlab.kermit.Logger
 import co.touchlab.kermit.koin.KermitKoinLogger
 import cz.adamec.timotej.snag.di.appModule
+import cz.adamec.timotej.snag.lib.core.ApplicationScope
+import cz.adamec.timotej.snag.lib.core.Initializer
 import cz.adamec.timotej.snag.ui.MainScreen
+import kotlinx.coroutines.async
 import org.koin.compose.KoinApplication
+import org.koin.compose.getKoin
+import org.koin.compose.koinInject
 import org.koin.dsl.koinConfiguration
 
 @Composable
@@ -31,6 +42,30 @@ fun App() {
                 },
             ),
     ) {
-        MainScreen()
+        InitializeInitializers(
+            uninitializedContent = { ContainedLoadingIndicator() },
+        ) {
+            MainScreen()
+        }
+    }
+}
+
+@Composable
+fun InitializeInitializers(
+    uninitializedContent: @Composable () -> Unit,
+    initializedContent: @Composable () -> Unit,
+) {
+    val initializers = getKoin().getAll<Initializer>()
+    var isInitialized by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        initializers.forEach { it.init() }
+        isInitialized = true
+    }
+
+    if (isInitialized) {
+        initializedContent()
+    } else {
+        uninitializedContent()
     }
 }

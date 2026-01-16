@@ -16,9 +16,13 @@ import app.cash.sqldelight.db.SqlDriver
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.ProjectBookkeepingQueries
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.ProjectEntityQueries
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.SnagDatabase
-import cz.adamec.timotej.snag.feat.shared.database.fe.internal.DatabaseFactory
+import cz.adamec.timotej.snag.feat.shared.database.fe.internal.DatabaseInitializer
 import cz.adamec.timotej.snag.feat.shared.database.fe.internal.DriverFactory
+import cz.adamec.timotej.snag.lib.core.Initializer
+import cz.adamec.timotej.snag.lib.core.di.getDefaultDispatcher
+import cz.adamec.timotej.snag.lib.core.di.getIoDispatcher
 import org.koin.core.module.Module
+import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
@@ -31,10 +35,7 @@ val databaseModule =
         } bind SqlDriver::class
 
         single {
-            DatabaseFactory(
-                databaseDriver = get(),
-                applicationScope = get(),
-            ).createDatabase()
+            SnagDatabase(driver = get())
         } bind SnagDatabase::class
 
         factory {
@@ -46,6 +47,13 @@ val databaseModule =
             val snagDatabase = get<SnagDatabase>()
             snagDatabase.projectBookkeepingQueries
         } bind ProjectBookkeepingQueries::class
+
+        single {
+            DatabaseInitializer(
+                databaseDriver = get(),
+                defaultDispatcher = getDefaultDispatcher(),
+            )
+        } bind Initializer::class
     }
 
 internal expect val platformModule: Module
