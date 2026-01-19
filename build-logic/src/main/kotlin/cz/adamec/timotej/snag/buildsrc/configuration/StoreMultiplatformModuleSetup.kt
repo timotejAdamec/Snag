@@ -21,8 +21,9 @@ internal fun Project.configureDataMultiplatformModule() {
     extensions.findByType(KotlinMultiplatformExtension::class.java)?.apply {
         sourceSets {
             commonMain.dependencies {
-                if (!path.contains("database")) {
+                if (!path.contains("database") && !path.contains("store")) {
                     implementation(project(":feat:shared:database:fe"))
+                    implementation(project(":lib:store"))
                 }
                 implementation(library("store"))
             }

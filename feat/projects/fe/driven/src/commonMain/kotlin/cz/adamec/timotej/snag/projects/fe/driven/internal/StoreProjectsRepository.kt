@@ -14,6 +14,8 @@ package cz.adamec.timotej.snag.projects.fe.driven.internal
 
 import cz.adamec.timotej.snag.lib.core.DataResult
 import cz.adamec.timotej.snag.lib.core.log
+import cz.adamec.timotej.snag.lib.store.toDataResult
+import cz.adamec.timotej.snag.lib.store.toDataResultFlow
 import cz.adamec.timotej.snag.network.fe.NetworkException
 import cz.adamec.timotej.snag.network.fe.toDataResult
 import cz.adamec.timotej.snag.projects.business.Project
@@ -74,59 +76,11 @@ class StoreProjectsRepository(
                 ),
             )
 
-        return when (response) {
-            is StoreWriteResponse.Success -> DataResult.Success(Unit)
-            is StoreWriteResponse.Error.Exception -> response.error.toDataResultFailure()
-
-            is StoreWriteResponse.Error.Message ->
-                DataResult.Failure.ProgrammerError(
-                    Exception(
-                        response.message,
-                    ),
-                )
-        }.also {
+        response.toDataResult().also {
             logger.log(
                 dataResult = it,
                 additionalInfo = "saveProject, id ${project.id}",
             )
         }
     }
-
-    // TODO extract into lib store module
-    private fun <T> Flow<StoreReadResponse<T>>.toDataResultFlow(): Flow<DataResult<T>> =
-        transform { response ->
-            when (response) {
-                is StoreReadResponse.Data -> {
-                    emit(DataResult.Success(response.value))
-                }
-
-                is StoreReadResponse.Loading,
-                is StoreReadResponse.Initial,
-                -> {
-                    emit(DataResult.Loading)
-                }
-
-                is StoreReadResponse.Error.Exception -> {
-                    emit(response.error.toDataResultFailure())
-                }
-
-                is StoreReadResponse.Error.Message -> {
-                    emit(DataResult.Failure.ProgrammerError(Exception(response.message)))
-                }
-
-                is StoreReadResponse.Error.Custom<*> -> {
-                    emit(DataResult.Failure.ProgrammerError(Exception("Custom error")))
-                }
-
-                is StoreReadResponse.NoNewData -> { // Do nothing
-                }
-            }
-        }
-
-    private fun Throwable.toDataResultFailure() =
-        if (this is NetworkException) {
-            this.toDataResult()
-        } else {
-            DataResult.Failure.ProgrammerError(this)
-        }
 }
