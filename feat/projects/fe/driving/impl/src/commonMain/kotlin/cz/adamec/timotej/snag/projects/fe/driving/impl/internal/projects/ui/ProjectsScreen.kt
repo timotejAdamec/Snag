@@ -10,35 +10,46 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.ui
+package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projects.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cz.adamec.timotej.snag.lib.design.fe.error.ShowSnackbarOnError
+import cz.adamec.timotej.snag.lib.design.fe.scaffold.FabState
+import cz.adamec.timotej.snag.lib.design.fe.scaffold.SetFabState
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.SetTitle
-import cz.adamec.timotej.snag.projects.fe.driving.api.OnProjectClick
-import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.vm.ProjectsViewModel
+import cz.adamec.timotej.snag.lib.navigation.fe.SnagBackStack
+import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectCreationRoute
+import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projects.vm.ProjectsViewModel
 import org.koin.compose.viewmodel.koinViewModel
 import snag.feat.projects.fe.driving.impl.generated.resources.Res
 import snag.feat.projects.fe.driving.impl.generated.resources.projects_title
 
 @Composable
 internal fun ProjectsScreen(
-    onProjectClick: OnProjectClick,
+    backStack: SnagBackStack,
     modifier: Modifier = Modifier,
     viewModel: ProjectsViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
-    SetTitle(Res.string.projects_title)
+    SetTitle(stringResource = Res.string.projects_title)
+    SetFabState(
+        fabState = FabState.Visible(
+            text = "New project",
+            onClick = {
+                backStack.value.add(ProjectCreationRoute)
+            },
+        )
+    )
 
     ShowSnackbarOnError(viewModel.errorsFlow)
 
     ProjectsContent(
         modifier = modifier,
-        onProjectClick = onProjectClick,
+        onProjectClick = {},
         state = state,
     )
 }

@@ -10,7 +10,7 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.vm
+package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projects.vm
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

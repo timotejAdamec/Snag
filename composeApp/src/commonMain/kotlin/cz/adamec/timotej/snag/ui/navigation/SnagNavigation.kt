@@ -13,31 +13,34 @@
 package cz.adamec.timotej.snag.ui.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.navigation3.ui.NavDisplay
-import cz.adamec.timotej.snag.lib.navigation.fe.NavRoute
+import cz.adamec.timotej.snag.lib.navigation.fe.SnagBackStack
+import cz.adamec.timotej.snag.lib.navigation.fe.SnagNavRoute
 import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectsRoute
 import org.koin.compose.koinInject
 import org.koin.compose.navigation3.koinEntryProvider
 
 @Composable
-internal fun SnagNavigation(modifier: Modifier = Modifier) {
-    val initRoute = koinInject<ProjectsRoute>()
-    // TODO replace with rememberNavBackStack.
-    //  See https://kotlinlang.org/docs/multiplatform/compose-navigation-3.html#polymorphic-serialization-for-destination-keys
-    val backStack = remember { mutableStateListOf<NavRoute>(initRoute) }
+internal fun SnagNavigation(
+    modifier: Modifier = Modifier,
+    backStack: SnagBackStack = koinInject(),
+) {
     SnagNavigationPreparation(
         backStack = backStack,
     )
-    val entryProvider = koinEntryProvider()
+    val entryProvider = koinEntryProvider<SnagNavRoute>()
     NavDisplay(
         modifier = modifier,
-        backStack = backStack,
+        backStack = backStack.value,
         entryProvider = entryProvider,
     )
 }
 
 @Composable
-internal expect fun SnagNavigationPreparation(backStack: List<NavRoute>)
+internal expect fun SnagNavigationPreparation(backStack: SnagBackStack)

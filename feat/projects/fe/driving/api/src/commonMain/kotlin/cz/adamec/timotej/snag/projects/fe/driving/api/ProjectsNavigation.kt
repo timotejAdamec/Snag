@@ -12,13 +12,13 @@
 
 package cz.adamec.timotej.snag.projects.fe.driving.api
 
-import androidx.compose.runtime.Stable
-import cz.adamec.timotej.snag.lib.navigation.fe.NavRoute
+import cz.adamec.timotej.snag.lib.navigation.fe.SnagNavRoute
 import kotlin.uuid.Uuid
 
-interface ProjectsRoute : NavRoute
+interface ProjectsRoute : SnagNavRoute
 
-@Stable
-interface OnProjectClick {
-    operator fun invoke(projectId: Uuid)
-}
+//interface ProjectCreationRoute : SnagNavRoute {
+//    val projectId: Uuid?
+//}
+
+data object ProjectCreationRoute : SnagNavRoute

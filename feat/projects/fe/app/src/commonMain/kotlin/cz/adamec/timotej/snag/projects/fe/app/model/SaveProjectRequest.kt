@@ -10,11 +10,9 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.ui.navigation
+package cz.adamec.timotej.snag.projects.fe.app.model
 
-import androidx.compose.runtime.Composable
-import cz.adamec.timotej.snag.lib.navigation.fe.SnagBackStack
-import cz.adamec.timotej.snag.lib.navigation.fe.SnagNavRoute
-
-@Composable
-internal actual fun SnagNavigationPreparation(backStack: SnagBackStack) {}
+data class SaveProjectRequest(
+    val name: String,
+    val address: String,
+)

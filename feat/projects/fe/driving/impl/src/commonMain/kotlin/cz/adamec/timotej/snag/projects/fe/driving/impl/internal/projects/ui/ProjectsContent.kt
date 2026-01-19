@@ -10,7 +10,7 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.ui
+package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projects.ui
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeOut
@@ -25,14 +25,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import cz.adamec.timotej.snag.projects.fe.driving.api.OnProjectClick
-import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.ui.components.ProjectCard
-import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.vm.ProjectsUiState
+import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projects.ui.components.ProjectCard
+import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projects.vm.ProjectsUiState
+import kotlin.uuid.Uuid
 
 @Composable
 internal fun ProjectsContent(
     state: ProjectsUiState,
-    onProjectClick: OnProjectClick,
+    onProjectClick: (projectId: Uuid) -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     LazyVerticalGrid(

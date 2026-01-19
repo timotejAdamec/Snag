@@ -21,4 +21,9 @@ internal actual val platformModule =
         navigation<WebProjectsRouteImpl> { _ ->
             ProjectsScreenInjection()
         }
+//        navigation<WebEditProjectRouteImpl> { route ->
+//            ProjectDetailScreenInjection(
+//                projectId = route.projectId,
+//            )
+//        }
     }

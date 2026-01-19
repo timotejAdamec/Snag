@@ -21,6 +21,6 @@ import org.jetbrains.compose.resources.getString
 fun SetTitle(stringResource: StringResource) {
     val scaffoldState = LocalAppScaffoldState.current
     LaunchedEffect(Unit) {
-        scaffoldState.title.value = getString(stringResource)
+        scaffoldState.title = getString(stringResource)
     }
 }

@@ -10,11 +10,6 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.ui.navigation
+package cz.adamec.timotej.snag.lib.navigation.fe
 
-import androidx.compose.runtime.Composable
-import cz.adamec.timotej.snag.lib.navigation.fe.SnagBackStack
-import cz.adamec.timotej.snag.lib.navigation.fe.SnagNavRoute
-
-@Composable
-internal actual fun SnagNavigationPreparation(backStack: SnagBackStack) {}
+interface SnagNavRoute

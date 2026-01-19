@@ -10,11 +10,15 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.ui.navigation
+package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.project.ui
 
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import cz.adamec.timotej.snag.lib.navigation.fe.SnagBackStack
-import cz.adamec.timotej.snag.lib.navigation.fe.SnagNavRoute
+import androidx.compose.ui.Modifier
 
 @Composable
-internal actual fun SnagNavigationPreparation(backStack: SnagBackStack) {}
+fun NewProjectScreen(
+    modifier: Modifier = Modifier,
+) {
+    Text("New project")
+}

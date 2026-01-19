@@ -13,20 +13,23 @@
 package cz.adamec.timotej.snag.ui.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.remember
 import com.github.terrakok.navigation3.browser.HierarchicalBrowserNavigation
 import com.github.terrakok.navigation3.browser.buildBrowserHistoryFragment
-import cz.adamec.timotej.snag.lib.navigation.fe.NavRoute
+import cz.adamec.timotej.snag.lib.navigation.fe.SnagBackStack
+import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectCreationRoute
 import cz.adamec.timotej.snag.projects.fe.driving.api.WebProjectsRouteImpl
 
 @Suppress("UseIfInsteadOfWhen")
 @Composable
-internal actual fun SnagNavigationPreparation(backStack: List<NavRoute>) {
+internal actual fun SnagNavigationPreparation(backStack: SnagBackStack) {
     HierarchicalBrowserNavigation(
-        currentDestinationName = {
-            when (val key = backStack.lastOrNull()) {
+        currentDestination = remember { derivedStateOf { backStack.value.lastOrNull() } },
+        currentDestinationName = { key ->
+            when (key) {
                 is WebProjectsRouteImpl -> buildBrowserHistoryFragment(key.URL_NAME)
-
-                //                is Profile -> buildBrowserHistoryFragment("profile", mapOf("id" to key.id.toString()))
+                is ProjectCreationRoute -> buildBrowserHistoryFragment(WebProjectsRouteImpl.URL_NAME, mapOf("id" to key.projectId.toString()))
                 else -> null
             }
         },

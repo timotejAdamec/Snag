@@ -21,4 +21,9 @@ internal actual val platformModule =
         navigation<NonWebProjectsRouteImpl> { _ ->
             ProjectsScreenInjection()
         }
+//        navigation<NonWebEditProjectRouteImpl> { route ->
+//            ProjectDetailScreenInjection(
+//                projectId = route.projectId,
+//            )
+//        }
     }

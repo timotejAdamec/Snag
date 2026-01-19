@@ -18,3 +18,9 @@ import kotlinx.serialization.Serializable
 @Serializable
 @Immutable
 data object NonWebProjectsRouteImpl : ProjectsRoute
+
+//@Serializable
+//@Immutable
+//data class NonWebProjectDetailRouteImpl(
+//    override val projectId: Uuid?,
+//) : ProjectCreationRoute

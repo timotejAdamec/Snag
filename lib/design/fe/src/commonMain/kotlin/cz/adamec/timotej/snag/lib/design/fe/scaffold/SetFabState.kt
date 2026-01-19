@@ -10,11 +10,15 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.ui.navigation
+package cz.adamec.timotej.snag.lib.design.fe.scaffold
 
 import androidx.compose.runtime.Composable
-import cz.adamec.timotej.snag.lib.navigation.fe.SnagBackStack
-import cz.adamec.timotej.snag.lib.navigation.fe.SnagNavRoute
+import androidx.compose.runtime.LaunchedEffect
 
 @Composable
-internal actual fun SnagNavigationPreparation(backStack: SnagBackStack) {}
+fun SetFabState(fabState: FabState) {
+    val scaffoldState = LocalAppScaffoldState.current
+    LaunchedEffect(Unit) {
+        scaffoldState.fabState = fabState
+    }
+}

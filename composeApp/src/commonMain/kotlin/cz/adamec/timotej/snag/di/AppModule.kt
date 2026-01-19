@@ -21,10 +21,6 @@ import cz.adamec.timotej.snag.projects.fe.driven.di.projectsDrivenModule
 import cz.adamec.timotej.snag.projects.fe.driving.api.di.projectsDrivingApiModule
 import cz.adamec.timotej.snag.projects.fe.driving.impl.di.projectsDrivingImplModule
 import cz.adamec.timotej.snag.ui.navigation.navigationModule
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import org.koin.dsl.bind
 import org.koin.dsl.module
 
 val appModule =
@@ -41,8 +37,4 @@ val appModule =
             projectsDrivenModule,
             projectsAppModule,
         )
-
-        single {
-            CoroutineScope(SupervisorJob() + Dispatchers.Default)
-        } bind CoroutineScope::class
     }

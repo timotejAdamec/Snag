@@ -10,10 +10,9 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.vm
+package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projects.vm
 
 import androidx.compose.runtime.Immutable
-import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.projects.business.Project
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf

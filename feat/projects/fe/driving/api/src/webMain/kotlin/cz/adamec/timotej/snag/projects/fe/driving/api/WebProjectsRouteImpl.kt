@@ -20,3 +20,9 @@ import kotlinx.serialization.Serializable
 data object WebProjectsRouteImpl : ProjectsRoute {
     const val URL_NAME = "projects"
 }
+
+//@Serializable
+//@Immutable
+//data class WebProjectDetailRouteImpl(
+//    override val projectId: Uuid,
+//) : ProjectCreationRoute

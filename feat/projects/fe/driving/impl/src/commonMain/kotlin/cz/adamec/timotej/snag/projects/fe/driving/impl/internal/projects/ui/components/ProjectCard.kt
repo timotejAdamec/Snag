@@ -10,7 +10,7 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.ui.components
+package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projects.ui.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding

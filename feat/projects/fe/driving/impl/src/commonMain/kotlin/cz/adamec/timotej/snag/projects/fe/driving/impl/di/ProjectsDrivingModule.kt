@@ -15,13 +15,17 @@ package cz.adamec.timotej.snag.projects.fe.driving.impl.di
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.ui.ProjectsScreen
-import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.vm.ProjectsViewModel
+import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectCreationRoute
+import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.project.ui.NewProjectScreen
+import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projects.ui.ProjectsScreen
+import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projects.vm.ProjectsViewModel
+import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.project.ui.ProjectEditScreen
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.core.scope.Scope
 import org.koin.dsl.module
+import org.koin.dsl.navigation3.navigation
 
 @Suppress("ktlint:compose:modifier-missing-check")
 @Composable
@@ -29,14 +33,19 @@ fun Scope.ProjectsScreenInjection() {
     ProjectsScreen(
         modifier = Modifier.fillMaxSize(),
         viewModel = koinViewModel(),
-        onProjectClick = get(),
+        backStack = get(),
     )
 }
 
 val projectsDrivingImplModule =
     module {
-        viewModelOf(::ProjectsViewModel)
         includes(platformModule)
+        viewModelOf(::ProjectsViewModel)
+        navigation<ProjectCreationRoute> { route ->
+            NewProjectScreen(
+                modifier = Modifier.fillMaxSize(),
+            )
+        }
     }
 
 internal expect val platformModule: Module

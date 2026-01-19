@@ -12,18 +12,15 @@
 
 package cz.adamec.timotej.snag.ui.navigation
 
-import cz.adamec.timotej.snag.projects.fe.driving.api.OnProjectClick
-import org.koin.dsl.bind
+import androidx.compose.runtime.mutableStateListOf
+import cz.adamec.timotej.snag.lib.navigation.fe.SnagBackStack
+import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectsRoute
 import org.koin.dsl.module
-import kotlin.uuid.Uuid
 
-internal val navigationModule =
-    module {
-        single {
-            object : OnProjectClick {
-                override fun invoke(projectId: Uuid) {
-                    // TODO
-                }
-            }
-        } bind OnProjectClick::class
+internal val navigationModule = module {
+    single {
+        SnagBackStack(
+            value = mutableStateListOf(get<ProjectsRoute>())
+        )
     }
+}
