@@ -67,6 +67,7 @@ internal fun Project.configureKotlinMultiplatformModule() {
             }
             commonTest.dependencies {
                 implementation(library("kotlin-test"))
+                implementation(library("kotlinx-coroutines-test"))
                 implementation(library("koin-test"))
             }
             androidMain.dependencies {

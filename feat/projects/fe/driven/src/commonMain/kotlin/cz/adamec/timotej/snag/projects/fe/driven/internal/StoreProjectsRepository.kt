@@ -76,7 +76,7 @@ class StoreProjectsRepository(
                 ),
             )
 
-        response.toDataResult().also {
+        return response.toDataResult().also {
             logger.log(
                 dataResult = it,
                 additionalInfo = "saveProject, id ${project.id}",

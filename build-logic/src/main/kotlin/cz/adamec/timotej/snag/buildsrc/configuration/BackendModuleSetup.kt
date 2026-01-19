@@ -28,6 +28,7 @@ internal fun Project.configureBackendModule() {
         implementation(libs.library("koin-core"))
         implementation(libs.library("slf4j-api"))
         testImplementation(libs.library("kotlin-test-junit"))
+        testImplementation(libs.library("kotlinx-coroutines-test"))
     }
 
     extensions.findByType(KotlinJvmExtension::class.java)?.apply {
