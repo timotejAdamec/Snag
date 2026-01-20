@@ -10,15 +10,9 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.project.ui
+package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.project.vm
 
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-
-@Composable
-fun NewProjectScreen(
-    modifier: Modifier = Modifier,
-) {
-    Text("New project")
-}
+internal data class ProjectDetailsEditState(
+    val projectName: String = "",
+    val projectAddress: String = "",
+)

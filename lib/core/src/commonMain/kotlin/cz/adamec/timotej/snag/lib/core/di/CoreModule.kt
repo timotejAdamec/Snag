@@ -14,6 +14,7 @@ package cz.adamec.timotej.snag.lib.core.di
 
 import cz.adamec.timotej.snag.lib.core.ApplicationScope
 import cz.adamec.timotej.snag.lib.core.TimestampProvider
+import cz.adamec.timotej.snag.lib.core.UuidProvider
 import cz.adamec.timotej.snag.lib.core.internal.DefaultApplicationScope
 import cz.adamec.timotej.snag.lib.core.internal.SystemTimestampProvider
 import kotlinx.coroutines.CoroutineDispatcher
@@ -36,6 +37,7 @@ val coreModule =
         factory(named(DispatcherDiQualifiers.DEFAULT)) { Dispatchers.Default }
         factory(named(DispatcherDiQualifiers.UNCONFINED)) { Dispatchers.Unconfined }
 
+        factory { UuidProvider }
         factoryOf(::SystemTimestampProvider) bind TimestampProvider::class
     }
 

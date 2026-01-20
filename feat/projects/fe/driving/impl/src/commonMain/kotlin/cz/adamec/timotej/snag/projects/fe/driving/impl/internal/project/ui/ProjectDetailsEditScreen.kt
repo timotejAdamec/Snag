@@ -10,7 +10,7 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projects.ui
+package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.project.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -21,35 +21,45 @@ import cz.adamec.timotej.snag.lib.design.fe.scaffold.FabState
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.SetFabState
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.SetTitle
 import cz.adamec.timotej.snag.lib.navigation.fe.SnagBackStack
-import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectCreationRoute
-import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projects.vm.ProjectsViewModel
+import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.project.vm.ProjectDetailsEditViewModel
 import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.parameter.parametersOf
 import snag.feat.projects.fe.driving.impl.generated.resources.Res
-import snag.feat.projects.fe.driving.impl.generated.resources.projects_title
+import snag.feat.projects.fe.driving.impl.generated.resources.new_project
+import kotlin.uuid.Uuid
 
 @Composable
-internal fun ProjectsScreen(
+internal fun ProjectDetailsEditScreen(
     backStack: SnagBackStack,
     modifier: Modifier = Modifier,
-    viewModel: ProjectsViewModel = koinViewModel(),
+    projectId: Uuid? = null,
+    viewModel: ProjectDetailsEditViewModel = koinViewModel { parametersOf(projectId) },
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
-    SetTitle(stringResource = Res.string.projects_title)
+    if (projectId == null) {
+        SetTitle(stringResource = Res.string.new_project)
+    }
     SetFabState(
-        fabState = FabState.Visible(
-            text = "New project",
-            onClick = {
-                backStack.value.add(ProjectCreationRoute)
-            },
-        )
+        fabState = FabState.NotVisible,
     )
 
     ShowSnackbarOnError(viewModel.errorsFlow)
 
-    ProjectsContent(
+    ProjectDetailsEditContent(
         modifier = modifier,
-        onSaveClick = {},
         state = state,
+        onProjectNameChange = {
+            viewModel.onProjectNameChange(it)
+        },
+        onProjectAddressChange = {
+            viewModel.onProjectAddressChange(it)
+        },
+        onSaveClick = {
+            viewModel.onSaveProject()
+        },
+        onCancelClick = {
+            backStack.value.removeLastOrNull()
+        },
     )
 }

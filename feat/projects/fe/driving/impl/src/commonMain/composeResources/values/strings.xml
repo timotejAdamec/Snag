@@ -12,4 +12,7 @@
 
 <resources>
     <string name="projects_title">Projects</string>
+    <string name="new_project">New project</string>
+    <string name="project_name_label">Name</string>
+    <string name="project_address_label">Address</string>
 </resources>
