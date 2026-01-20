@@ -25,7 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projects.ui.components.ProjectCard
+import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projects.ui.components.ProjectListItem
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projects.vm.ProjectsUiState
 import kotlin.uuid.Uuid
 
@@ -40,9 +40,9 @@ internal fun ProjectsContent(
         columns = GridCells.Adaptive(minSize = 360.dp),
         contentPadding =
             PaddingValues(
-                start = 16.dp,
-                end = 16.dp,
-                top = 16.dp,
+                start = 8.dp,
+                end = 8.dp,
+                top = 8.dp,
                 bottom = 48.dp,
             ),
         verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -52,7 +52,7 @@ internal fun ProjectsContent(
             items = state.projects,
             key = { it.id },
         ) { project ->
-            ProjectCard(
+            ProjectListItem(
                 modifier = Modifier,
                 onClick = { onProjectClick(project.id) },
                 project = project,

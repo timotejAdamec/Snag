@@ -12,12 +12,10 @@
 
 package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projects.ui.components
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -28,46 +26,35 @@ import cz.adamec.timotej.snag.lib.design.fe.theme.SnagTheme
 import cz.adamec.timotej.snag.projects.business.Project
 
 @Composable
-internal fun ProjectCard(
+internal fun ProjectListItem(
     project: Project,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    OutlinedCard(
-        modifier = modifier,
-        onClick = onClick,
-        colors =
-            CardDefaults.outlinedCardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
-            ),
-    ) {
-        Column(
-            modifier =
-                Modifier
-                    .padding(
-                        start = 24.dp,
-                        end = 24.dp,
-                        top = 12.dp,
-                        bottom = 12.dp,
-                    ),
-        ) {
+    ListItem(
+        modifier = modifier
+            .clickable(onClick = onClick),
+        headlineContent = {
             Text(
                 text = project.name,
                 style = MaterialTheme.typography.titleLargeEmphasized,
             )
+        },
+        supportingContent = {
             Text(
-                text = "Client A",
+                text = project.address,
                 style = MaterialTheme.typography.bodyLarge,
+                maxLines = 2,
             )
-        }
-    }
+        },
+    )
 }
 
 @Composable
 @Preview
-internal fun ProjectCardPreview() {
+internal fun ProjectListItemPreview() {
     SnagTheme {
-        ProjectCard(
+        ProjectListItem(
             modifier =
                 Modifier.size(
                     width = 200.dp,
