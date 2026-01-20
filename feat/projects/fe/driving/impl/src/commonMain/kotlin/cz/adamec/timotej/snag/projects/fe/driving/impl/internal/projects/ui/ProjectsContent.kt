@@ -32,7 +32,7 @@ import kotlin.uuid.Uuid
 @Composable
 internal fun ProjectsContent(
     state: ProjectsUiState,
-    onSaveClick: (projectId: Uuid) -> Unit = {},
+    onProjectClick: (projectId: Uuid) -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     LazyVerticalGrid(
@@ -54,7 +54,7 @@ internal fun ProjectsContent(
         ) { project ->
             ProjectCard(
                 modifier = Modifier,
-                onClick = { onSaveClick(project.id) },
+                onClick = { onProjectClick(project.id) },
                 project = project,
             )
         }

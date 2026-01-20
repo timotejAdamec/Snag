@@ -22,7 +22,9 @@ import cz.adamec.timotej.snag.lib.design.fe.scaffold.SetFabState
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.SetTitle
 import cz.adamec.timotej.snag.lib.navigation.fe.SnagBackStack
 import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectCreationRoute
+import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectEditRouteFactory
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projects.vm.ProjectsViewModel
+import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import snag.feat.projects.fe.driving.impl.generated.resources.Res
 import snag.feat.projects.fe.driving.impl.generated.resources.projects_title
@@ -31,6 +33,8 @@ import snag.feat.projects.fe.driving.impl.generated.resources.projects_title
 internal fun ProjectsScreen(
     backStack: SnagBackStack,
     modifier: Modifier = Modifier,
+    projectCreationRoute: ProjectCreationRoute = koinInject(),
+    projectEditRouteFactory: ProjectEditRouteFactory = koinInject(),
     viewModel: ProjectsViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -40,7 +44,7 @@ internal fun ProjectsScreen(
         fabState = FabState.Visible(
             text = "New project",
             onClick = {
-                backStack.value.add(ProjectCreationRoute)
+                backStack.value.add(projectCreationRoute)
             },
         )
     )
@@ -49,7 +53,10 @@ internal fun ProjectsScreen(
 
     ProjectsContent(
         modifier = modifier,
-        onSaveClick = {},
+        onProjectClick = {
+            val newRoute = projectEditRouteFactory.create(it)
+            backStack.value.add(newRoute)
+        },
         state = state,
     )
 }

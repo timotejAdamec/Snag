@@ -12,18 +12,23 @@
 
 package cz.adamec.timotej.snag.projects.fe.driving.impl.di
 
-import cz.adamec.timotej.snag.projects.fe.driving.api.WebProjectsRouteImpl
+import cz.adamec.timotej.snag.projects.fe.driving.api.WebProjectCreationRoute
+import cz.adamec.timotej.snag.projects.fe.driving.api.WebProjectEditRoute
+import cz.adamec.timotej.snag.projects.fe.driving.api.WebProjectsRoute
 import org.koin.dsl.module
 import org.koin.dsl.navigation3.navigation
 
 internal actual val platformModule =
     module {
-        navigation<WebProjectsRouteImpl> { _ ->
+        navigation<WebProjectsRoute> { _ ->
             ProjectsScreenInjection()
         }
-//        navigation<WebEditProjectRouteImpl> { route ->
-//            ProjectDetailScreenInjection(
-//                projectId = route.projectId,
-//            )
-//        }
+        navigation<WebProjectCreationRoute> { _ ->
+            ProjectDetailsEditScreenInjection()
+        }
+        navigation<WebProjectEditRoute> { route ->
+            ProjectDetailsEditScreenInjection(
+                projectId = route.projectId,
+            )
+        }
     }

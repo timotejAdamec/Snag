@@ -14,15 +14,22 @@ package cz.adamec.timotej.snag.projects.fe.driving.api
 
 import androidx.compose.runtime.Immutable
 import kotlinx.serialization.Serializable
+import kotlin.uuid.Uuid
 
 @Serializable
 @Immutable
-data object WebProjectsRouteImpl : ProjectsRoute {
-    const val URL_NAME = "projects"
-}
+data object NonWebProjectsRoute : ProjectsRoute
 
-//@Serializable
-//@Immutable
-//data class WebProjectDetailRouteImpl(
-//    override val projectId: Uuid,
-//) : ProjectCreationRoute
+@Serializable
+@Immutable
+data object NonWebProjectCreationRoute : ProjectCreationRoute
+
+@Serializable
+@Immutable
+data class NonWebProjectEditRoute(
+    override val projectId: Uuid,
+) : ProjectEditRoute
+
+class NonWebProjectEditRouteFactory : ProjectEditRouteFactory {
+    override fun create(projectId: Uuid): ProjectEditRoute = NonWebProjectEditRoute(projectId)
+}

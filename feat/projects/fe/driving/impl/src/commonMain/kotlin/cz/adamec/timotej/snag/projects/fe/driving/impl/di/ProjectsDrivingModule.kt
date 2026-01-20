@@ -15,7 +15,6 @@ package cz.adamec.timotej.snag.projects.fe.driving.impl.di
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectCreationRoute
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.project.ui.ProjectDetailsEditScreen
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.project.vm.ProjectDetailsEditViewModel
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projects.ui.ProjectsScreen
@@ -26,8 +25,6 @@ import org.koin.core.module.dsl.viewModel
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.core.scope.Scope
 import org.koin.dsl.module
-import org.koin.dsl.navigation3.navigation
-import org.koin.plugin.module.dsl.viewModel
 import kotlin.uuid.Uuid
 
 @Suppress("ktlint:compose:modifier-missing-check")
@@ -36,6 +33,18 @@ fun Scope.ProjectsScreenInjection() {
     ProjectsScreen(
         modifier = Modifier.fillMaxSize(),
         viewModel = koinViewModel(),
+        backStack = get(),
+    )
+}
+
+@Suppress("ktlint:compose:modifier-missing-check")
+@Composable
+fun Scope.ProjectDetailsEditScreenInjection(
+    projectId: Uuid? = null,
+) {
+    ProjectDetailsEditScreen(
+        modifier = Modifier.fillMaxSize(),
+        projectId = projectId,
         backStack = get(),
     )
 }
@@ -49,12 +58,6 @@ val projectsDrivingImplModule =
                 projectId = projectId,
                 getProjectUseCase = get(),
                 saveProjectUseCase = get(),
-            )
-        }
-        navigation<ProjectCreationRoute> { _ ->
-            ProjectDetailsEditScreen(
-                modifier = Modifier.fillMaxSize(),
-                backStack = get(),
             )
         }
     }

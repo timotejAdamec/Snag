@@ -12,12 +12,18 @@
 
 package cz.adamec.timotej.snag.projects.fe.driving.api.di
 
-import cz.adamec.timotej.snag.projects.fe.driving.api.NonWebProjectsRouteImpl
+import cz.adamec.timotej.snag.projects.fe.driving.api.NonWebProjectCreationRoute
+import cz.adamec.timotej.snag.projects.fe.driving.api.NonWebProjectEditRouteFactory
+import cz.adamec.timotej.snag.projects.fe.driving.api.NonWebProjectsRoute
+import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectCreationRoute
+import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectEditRouteFactory
 import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectsRoute
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
 internal actual val platformModule =
     module {
-        single { NonWebProjectsRouteImpl } bind ProjectsRoute::class
+        single { NonWebProjectsRoute } bind ProjectsRoute::class
+        single { NonWebProjectCreationRoute } bind ProjectCreationRoute::class
+        factory { NonWebProjectEditRouteFactory() } bind ProjectEditRouteFactory::class
     }
