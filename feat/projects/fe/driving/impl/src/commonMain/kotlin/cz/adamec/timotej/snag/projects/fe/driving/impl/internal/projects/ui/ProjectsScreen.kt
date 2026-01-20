@@ -34,7 +34,6 @@ internal fun ProjectsScreen(
     backStack: SnagBackStack,
     modifier: Modifier = Modifier,
     projectCreationRoute: ProjectCreationRoute = koinInject(),
-    projectEditRouteFactory: ProjectEditRouteFactory = koinInject(),
     viewModel: ProjectsViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -54,8 +53,7 @@ internal fun ProjectsScreen(
     ProjectsContent(
         modifier = modifier,
         onProjectClick = {
-            val newRoute = projectEditRouteFactory.create(it)
-            backStack.value.add(newRoute)
+
         },
         state = state,
     )
