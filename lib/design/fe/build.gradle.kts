@@ -13,3 +13,7 @@
 plugins {
     alias(libs.plugins.snagDrivingMultiplatformModule)
 }
+
+compose.resources {
+    publicResClass = true
+}
