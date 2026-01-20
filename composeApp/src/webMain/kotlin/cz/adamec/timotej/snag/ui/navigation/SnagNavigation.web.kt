@@ -34,7 +34,7 @@ internal actual fun SnagNavigationPreparation(backStack: SnagBackStack) {
                 is WebProjectsRoute -> buildBrowserHistoryFragment(key.URL_NAME)
                 is WebProjectCreationRoute -> buildBrowserHistoryFragment(key.URL_NAME)
                 is WebProjectEditRoute -> buildBrowserHistoryFragment(WebProjectEditRoute.URL_NAME, mapOf("id" to key.projectId.toString()))
-                else -> null
+                else -> error("Unknown web route $key")
             }
         },
     )
