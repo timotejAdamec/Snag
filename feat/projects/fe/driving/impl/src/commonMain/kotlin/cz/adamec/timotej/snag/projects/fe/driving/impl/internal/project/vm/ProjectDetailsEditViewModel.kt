@@ -39,6 +39,9 @@ internal class ProjectDetailsEditViewModel(
     private val errorEventsChannel = Channel<UiError>()
     val errorsFlow = errorEventsChannel.receiveAsFlow()
 
+    private val finishEventChannel = Channel<Unit>()
+    val finishEventFlow = finishEventChannel.receiveAsFlow()
+
     init {
         projectId?.let { collectProject(it) }
     }
@@ -75,6 +78,15 @@ internal class ProjectDetailsEditViewModel(
     }
 
     fun onSaveProject() = viewModelScope.launch {
+        if (state.value.projectName.isBlank()) {
+            errorEventsChannel.send(UiError.CustomUserMessage("Project name cannot be empty"))
+            return@launch
+        }
+        if (state.value.projectAddress.isBlank()) {
+            errorEventsChannel.send(UiError.CustomUserMessage("Project address cannot be empty"))
+            return@launch
+        }
+
         val result = saveProjectUseCase(
             request = SaveProjectRequest(
                 name = state.value.projectName,
@@ -91,7 +103,7 @@ internal class ProjectDetailsEditViewModel(
             }
             DataResult.Loading -> {}
             is DataResult.Success -> {
-                /* do nothing */
+                finishEventChannel.send(Unit)
             }
         }
     }

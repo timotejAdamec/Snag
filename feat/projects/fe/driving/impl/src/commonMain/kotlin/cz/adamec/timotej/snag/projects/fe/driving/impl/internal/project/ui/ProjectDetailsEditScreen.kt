@@ -12,20 +12,22 @@
 
 package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.project.ui
 
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cz.adamec.timotej.snag.lib.design.fe.error.ShowSnackbarOnError
+import cz.adamec.timotej.snag.lib.design.fe.error.toInformativeMessage
+import cz.adamec.timotej.snag.lib.design.fe.events.ObserveAsEvents
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.FabState
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.SetFabState
-import cz.adamec.timotej.snag.lib.design.fe.scaffold.SetTitle
 import cz.adamec.timotej.snag.lib.navigation.fe.SnagBackStack
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.project.vm.ProjectDetailsEditViewModel
+import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
-import snag.feat.projects.fe.driving.impl.generated.resources.Res
-import snag.feat.projects.fe.driving.impl.generated.resources.new_project
 import kotlin.uuid.Uuid
 
 @Composable
@@ -37,17 +39,21 @@ internal fun ProjectDetailsEditScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
-    if (projectId == null) {
-        SetTitle(stringResource = Res.string.new_project)
-    }
     SetFabState(
         fabState = FabState.NotVisible,
     )
 
     ShowSnackbarOnError(viewModel.errorsFlow)
+    ObserveAsEvents(
+        eventsFlow = viewModel.finishEventFlow,
+        onEvent = {
+            backStack.value.removeLastOrNull()
+        }
+    )
 
     ProjectDetailsEditContent(
         modifier = modifier,
+        projectId = projectId,
         state = state,
         onProjectNameChange = {
             viewModel.onProjectNameChange(it)
