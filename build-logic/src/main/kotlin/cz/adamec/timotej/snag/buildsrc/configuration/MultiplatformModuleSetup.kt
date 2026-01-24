@@ -14,12 +14,23 @@ package cz.adamec.timotej.snag.buildsrc.configuration
 
 import com.android.build.api.dsl.androidLibrary
 import cz.adamec.timotej.snag.buildsrc.extensions.library
+import cz.adamec.timotej.snag.buildsrc.extensions.version
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.invoke
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
 internal fun Project.configureKotlinMultiplatformModule() {
+
+    // Fixes a problem where kotlin stdlib has a different version than the compiler
+    configurations.all {
+        resolutionStrategy.eachDependency {
+            if (requested.group == "org.jetbrains.kotlin") {
+                useVersion(version("kotlin"))
+            }
+        }
+    }
+
     extensions.findByType(KotlinMultiplatformExtension::class.java)?.apply {
         androidLibrary {
             configureBase(this@configureKotlinMultiplatformModule)
