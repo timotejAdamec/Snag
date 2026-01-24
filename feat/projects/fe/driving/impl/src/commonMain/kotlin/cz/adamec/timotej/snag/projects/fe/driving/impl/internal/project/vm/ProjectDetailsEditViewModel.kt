@@ -40,7 +40,7 @@ internal class ProjectDetailsEditViewModel(
     val errorsFlow = errorEventsChannel.receiveAsFlow()
 
     private val finishEventChannel = Channel<Unit>()
-    val finishEventFlow = finishEventChannel.receiveAsFlow()
+    val saveEventFlow = finishEventChannel.receiveAsFlow()
 
     init {
         projectId?.let { collectProject(it) }

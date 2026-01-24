@@ -19,17 +19,13 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cz.adamec.timotej.snag.lib.design.fe.error.ShowSnackbarOnError
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.FabState
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.SetFabState
-import cz.adamec.timotej.snag.lib.navigation.fe.SnagBackStack
-import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectCreationRoute
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projects.vm.ProjectsViewModel
-import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 internal fun ProjectsScreen(
-    backStack: SnagBackStack,
+    onNewProjectClick: () -> Unit,
     modifier: Modifier = Modifier,
-    projectCreationRoute: ProjectCreationRoute = koinInject(),
     viewModel: ProjectsViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -38,7 +34,7 @@ internal fun ProjectsScreen(
         fabState = FabState.Visible(
             text = "New project",
             onClick = {
-                backStack.value.add(projectCreationRoute)
+                onNewProjectClick()
             },
         )
     )

@@ -14,6 +14,7 @@ package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.project.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
@@ -42,6 +43,8 @@ import snag.lib.design.fe.generated.resources.ic_location
 import snag.lib.design.fe.generated.resources.save
 import kotlin.uuid.Uuid
 
+private val HorizontalPadding = 12.dp
+
 @Composable
 internal fun ProjectDetailsEditContent(
     projectId: Uuid?,
@@ -53,8 +56,11 @@ internal fun ProjectDetailsEditContent(
     modifier: Modifier = Modifier,
 ) {
     Scaffold(
+        modifier = modifier,
         topBar = {
             TopAppBar(
+                modifier = Modifier
+                    .fillMaxWidth(),
                 title = {
                     val text = if (projectId == null && state.projectName.isBlank()) {
                         stringResource(Res.string.new_project)
@@ -84,19 +90,21 @@ internal fun ProjectDetailsEditContent(
                             text = stringResource(DesignRes.string.save)
                         )
                     }
-                }
+                },
+                contentPadding = PaddingValues(
+                    end = HorizontalPadding,
+                )
             )
         }
     ) { paddingValues ->
         Column(
-            modifier = modifier
+            modifier = Modifier
                 .padding(paddingValues)
-                .padding(start = 12.dp, end = 12.dp),
+                .padding(horizontal = HorizontalPadding),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             OutlinedTextField(
                 modifier = Modifier
-                    .widthIn(max = 400.dp)
                     .fillMaxWidth(),
                 label = { Text(text = stringResource(Res.string.project_name_label) + "*") },
                 supportingText = { Text(text = stringResource(Res.string.required) + "*") },
@@ -107,7 +115,6 @@ internal fun ProjectDetailsEditContent(
             )
             OutlinedTextField(
                 modifier = Modifier
-                    .widthIn(max = 400.dp)
                     .fillMaxWidth(),
                 label = { Text(text = stringResource(Res.string.project_address_label) + "*") },
                 supportingText = { Text(text = stringResource(Res.string.required) + "*") },

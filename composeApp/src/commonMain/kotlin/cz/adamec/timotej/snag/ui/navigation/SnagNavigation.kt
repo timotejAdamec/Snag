@@ -19,6 +19,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.navigation3.scene.DialogSceneStrategy
 import androidx.navigation3.ui.NavDisplay
 import cz.adamec.timotej.snag.lib.navigation.fe.SnagBackStack
 import cz.adamec.timotej.snag.lib.navigation.fe.SnagNavRoute
@@ -35,10 +36,12 @@ internal fun SnagNavigation(
         backStack = backStack,
     )
     val entryProvider = koinEntryProvider<SnagNavRoute>()
+    val sceneStrategy = remember { DialogSceneStrategy<SnagNavRoute>() }
     NavDisplay(
         modifier = modifier,
         backStack = backStack.value,
         entryProvider = entryProvider,
+        sceneStrategy = sceneStrategy,
     )
 }
 

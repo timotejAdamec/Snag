@@ -12,42 +12,32 @@
 
 package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.project.ui
 
-import androidx.compose.material3.SnackbarDuration
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cz.adamec.timotej.snag.lib.design.fe.error.ShowSnackbarOnError
-import cz.adamec.timotej.snag.lib.design.fe.error.toInformativeMessage
 import cz.adamec.timotej.snag.lib.design.fe.events.ObserveAsEvents
-import cz.adamec.timotej.snag.lib.design.fe.scaffold.FabState
-import cz.adamec.timotej.snag.lib.design.fe.scaffold.SetFabState
-import cz.adamec.timotej.snag.lib.navigation.fe.SnagBackStack
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.project.vm.ProjectDetailsEditViewModel
-import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 import kotlin.uuid.Uuid
 
 @Composable
 internal fun ProjectDetailsEditScreen(
-    backStack: SnagBackStack,
+    onSaveClick: () -> Unit,
+    onCancelClick: () -> Unit,
     modifier: Modifier = Modifier,
     projectId: Uuid? = null,
     viewModel: ProjectDetailsEditViewModel = koinViewModel { parametersOf(projectId) },
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
-    SetFabState(
-        fabState = FabState.NotVisible,
-    )
-
     ShowSnackbarOnError(viewModel.errorsFlow)
     ObserveAsEvents(
-        eventsFlow = viewModel.finishEventFlow,
+        eventsFlow = viewModel.saveEventFlow,
         onEvent = {
-            backStack.value.removeLastOrNull()
+            onSaveClick()
         }
     )
 
@@ -65,7 +55,7 @@ internal fun ProjectDetailsEditScreen(
             viewModel.onSaveProject()
         },
         onCancelClick = {
-            backStack.value.removeLastOrNull()
+            onCancelClick()
         },
     )
 }

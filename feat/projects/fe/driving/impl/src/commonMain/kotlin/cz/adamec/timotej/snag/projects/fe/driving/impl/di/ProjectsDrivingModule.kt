@@ -13,8 +13,19 @@
 package cz.adamec.timotej.snag.projects.fe.driving.impl.di
 
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.unit.dp
+import androidx.window.core.layout.WindowSizeClass
+import androidx.window.core.layout.WindowWidthSizeClass
+import cz.adamec.timotej.snag.lib.navigation.fe.SnagBackStack
+import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectCreationRoute
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.project.ui.ProjectDetailsEditScreen
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.project.vm.ProjectDetailsEditViewModel
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projects.ui.ProjectsScreen
@@ -33,7 +44,11 @@ fun Scope.ProjectsScreenInjection() {
     ProjectsScreen(
         modifier = Modifier.fillMaxSize(),
         viewModel = koinViewModel(),
-        backStack = get(),
+        onNewProjectClick = {
+            val backStack = get<SnagBackStack>()
+            val projectCreationRoute = get<ProjectCreationRoute>()
+            backStack.value.add(projectCreationRoute)
+        }
     )
 }
 
@@ -42,10 +57,32 @@ fun Scope.ProjectsScreenInjection() {
 fun Scope.ProjectDetailsEditScreenInjection(
     projectId: Uuid? = null,
 ) {
+    val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
+    val shouldClip = windowSizeClass.isAtLeastBreakpoint(
+        widthDpBreakpoint = WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND,
+        heightDpBreakpoint = WindowSizeClass.HEIGHT_DP_MEDIUM_LOWER_BOUND,
+    )
+
+    val modifier = if (shouldClip) {
+        Modifier
+            .padding(vertical = 32.dp)
+            .clip(
+                shape = MaterialTheme.shapes.large,
+            )
+    } else Modifier.fillMaxSize()
+
     ProjectDetailsEditScreen(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier,
         projectId = projectId,
-        backStack = get(),
+        onSaveClick = {
+            val backStack = get<SnagBackStack>()
+            // TODO navigate to project screen
+            backStack.value.removeLastOrNull()
+        },
+        onCancelClick = {
+            val backStack = get<SnagBackStack>()
+            backStack.value.removeLastOrNull()
+        }
     )
 }
 

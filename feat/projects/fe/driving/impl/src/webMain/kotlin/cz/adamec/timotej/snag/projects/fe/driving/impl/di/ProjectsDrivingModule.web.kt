@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.projects.fe.driving.impl.di
 
+import androidx.navigation3.scene.DialogSceneStrategy
 import cz.adamec.timotej.snag.projects.fe.driving.api.WebProjectCreationRoute
 import cz.adamec.timotej.snag.projects.fe.driving.api.WebProjectEditRoute
 import cz.adamec.timotej.snag.projects.fe.driving.api.WebProjectsRoute
@@ -23,10 +24,14 @@ internal actual val platformModule =
         navigation<WebProjectsRoute> { _ ->
             ProjectsScreenInjection()
         }
-        navigation<WebProjectCreationRoute> { _ ->
+        navigation<WebProjectCreationRoute>(
+            metadata = DialogSceneStrategy.dialog(),
+        ) { _ ->
             ProjectDetailsEditScreenInjection()
         }
-        navigation<WebProjectEditRoute> { route ->
+        navigation<WebProjectEditRoute>(
+            metadata = DialogSceneStrategy.dialog(),
+        ) { route ->
             ProjectDetailsEditScreenInjection(
                 projectId = route.projectId,
             )
