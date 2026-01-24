@@ -12,10 +12,40 @@
 # Department of Software Engineering
 #
 
+set -e
+
+# Resolve Project Root
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
+cd "$PROJECT_ROOT"
+
+usage() {
+    echo "Usage: $0 [options] <type> [domain type] [be/fe/business] <architecture layer> [name]"
+    echo ""
+    echo "Arguments:"
+    echo "  type                Module type (e.g., feat, lib)"
+    echo "  domain type         Domain (e.g., projects, user) - Optional"
+    echo "  be/fe/business      Side/Context (be=backend, fe=frontend) - Optional"
+    echo "  architecture layer  Layer (e.g., driven, driving, ports, app)"
+    echo "  name                Extra name/sub-module name - Optional"
+    echo ""
+    echo "Options:"
+    echo "  --jvm               Force JVM platform"
+    echo "  --multiplatform     Force Multiplatform"
+    echo "  --split             Split into api/contract and impl modules"
+    echo "  --help              Show this help message"
+    echo ""
+    echo "Examples:"
+    echo "  $0 feat projects fe driven test"
+    echo "  $0 lib core commonMain"
+    exit 1
+}
+
 # Parse optional arguments
 SPLIT=false
 PLATFORM=""
 NEW_ARGS=()
+
 for arg in "$@"; do
     case $arg in
         --jvm)
@@ -24,8 +54,11 @@ for arg in "$@"; do
         --multiplatform)
             PLATFORM="multiplatform"
             ;;
-        split)
+        --split|split)
             SPLIT=true
+            ;;
+        --help|-h)
+            usage
             ;;
         *)
             NEW_ARGS+=("$arg")
@@ -34,31 +67,69 @@ for arg in "$@"; do
 done
 set -- "${NEW_ARGS[@]}"
 
-# Check if 2, 3 or 4 arguments are provided
-if [ "$#" -lt 2 ] || [ "$#" -gt 4 ]; then
-    echo "Usage: $0 [--jvm|--multiplatform] <type> [domain type] [be/fe/business] <architecture layer> [split]"
-    exit 1
+# Check argument count (2 to 5 arguments supported)
+if [ "$#" -lt 2 ] || [ "$#" -gt 5 ]; then
+    usage
 fi
 
-if [ "$#" -eq 4 ]; then
+TYPE=""
+DOMAIN_TYPE=""
+SIDE=""
+ARCH_LAYER=""
+EXTRA_NAME=""
+
+# Assign arguments based on count
+if [ "$#" -eq 5 ]; then
     TYPE=$1
     DOMAIN_TYPE=$2
     SIDE=$3
     ARCH_LAYER=$4
-    BASE_MODULE_DIR="$TYPE/$DOMAIN_TYPE/$SIDE/$ARCH_LAYER"
-    BASE_PACKAGE_DIR="cz/adamec/timotej/snag/$DOMAIN_TYPE/$SIDE/$ARCH_LAYER"
+    EXTRA_NAME=$5
+elif [ "$#" -eq 4 ]; then
+    TYPE=$1
+    DOMAIN_TYPE=$2
+    SIDE=$3
+    ARCH_LAYER=$4
 elif [ "$#" -eq 3 ]; then
     TYPE=$1
     DOMAIN_TYPE=$2
     ARCH_LAYER=$3
-    SIDE=""
-    BASE_MODULE_DIR="$TYPE/$DOMAIN_TYPE/$ARCH_LAYER"
-    BASE_PACKAGE_DIR="cz/adamec/timotej/snag/$DOMAIN_TYPE/$ARCH_LAYER"
 else
     TYPE=$1
     ARCH_LAYER=$2
-    SIDE=""
-    DOMAIN_TYPE=""
+fi
+
+# Construct Base Paths
+BASE_MODULE_DIR=""
+BASE_PACKAGE_DIR=""
+
+# Helper to construct path segments
+append_path() {
+    local base=$1
+    local part=$2
+    if [ -n "$base" ]; then
+        echo "$base/$part"
+    else
+        echo "$part"
+    fi
+}
+
+# Build directories logic
+# Note: Logic inferred from original script's behavior
+if [ -n "$EXTRA_NAME" ]; then
+    # 5 Args case: feat projects fe driven test
+    BASE_MODULE_DIR="$TYPE/$DOMAIN_TYPE/$SIDE/$ARCH_LAYER/$EXTRA_NAME"
+    BASE_PACKAGE_DIR="cz/adamec/timotej/snag/$DOMAIN_TYPE/$SIDE/$ARCH_LAYER/$EXTRA_NAME"
+elif [ "$#" -eq 4 ]; then
+    # 4 Args case
+    BASE_MODULE_DIR="$TYPE/$DOMAIN_TYPE/$SIDE/$ARCH_LAYER"
+    BASE_PACKAGE_DIR="cz/adamec/timotej/snag/$DOMAIN_TYPE/$SIDE/$ARCH_LAYER"
+elif [ "$#" -eq 3 ]; then
+    # 3 Args case
+    BASE_MODULE_DIR="$TYPE/$DOMAIN_TYPE/$ARCH_LAYER"
+    BASE_PACKAGE_DIR="cz/adamec/timotej/snag/$DOMAIN_TYPE/$ARCH_LAYER"
+else
+    # 2 Args case
     BASE_MODULE_DIR="$TYPE/$ARCH_LAYER"
     BASE_PACKAGE_DIR="cz/adamec/timotej/snag/$TYPE/$ARCH_LAYER"
 fi
@@ -166,6 +237,7 @@ EOF
 }
 
 # Path helpers for automatic dependencies
+# Note: Dependencies are generally based on the parent structure
 COLON_TYPE=":$(echo "$TYPE" | tr '/' ':')"
 COLON_DOMAIN=""
 [ -n "$DOMAIN_TYPE" ] && COLON_DOMAIN=":$(echo "$DOMAIN_TYPE" | tr '/' ':')"
@@ -177,7 +249,7 @@ GRANDPARENT_PATH="${COLON_TYPE}${COLON_DOMAIN}"
 
 PORTS_PATH="$PARENT_PATH:ports"
 APP_PATH="$PARENT_PATH:app"
-if [ "$#" -eq 4 ]; then
+if [ "$#" -ge 4 ]; then
     BUSINESS_PATH="$GRANDPARENT_PATH:business"
 else
     BUSINESS_PATH="$PARENT_PATH:business"

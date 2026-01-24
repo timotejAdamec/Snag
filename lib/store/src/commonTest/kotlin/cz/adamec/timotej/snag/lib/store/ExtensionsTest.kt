@@ -44,15 +44,36 @@ class ExtensionsTest {
     @Test
     fun `StoreWriteResponse toDataResult maps Success correctly`() {
         val response = StoreWriteResponse.Success.Untyped("test")
-        val result = response.toDataResult()
-        assertEquals(DataResult.Success(Unit), result)
+        val result = response.toDataResult<String>()
+        assertEquals(DataResult.Success("test"), result)
+    }
+
+    @Test
+    fun `StoreWriteResponse toDataResult maps Typed Success correctly`() {
+        val response = StoreWriteResponse.Success.Typed("test")
+        val result = response.toDataResult<String>()
+        assertEquals(DataResult.Success("test"), result)
+    }
+
+    @Test
+    fun `StoreWriteResponse toDataResult maps Typed Success with wrong type to ProgrammerError`() {
+        val response = StoreWriteResponse.Success.Typed(123)
+        val result = response.toDataResult<String>()
+        assertIs<DataResult.Failure.ProgrammerError>(result)
+    }
+
+    @Test
+    fun `StoreWriteResponse toDataResult maps Untyped Success with wrong type to ProgrammerError`() {
+        val response = StoreWriteResponse.Success.Untyped(123)
+        val result = response.toDataResult<String>()
+        assertIs<DataResult.Failure.ProgrammerError>(result)
     }
 
     @Test
     fun `StoreWriteResponse toDataResult maps Exception correctly`() {
         val exception = RuntimeException("fail")
         val response = StoreWriteResponse.Error.Exception(exception)
-        val result = response.toDataResult()
+        val result = response.toDataResult<Any>()
         assertIs<DataResult.Failure.ProgrammerError>(result)
         assertEquals(exception, result.throwable)
     }
@@ -60,7 +81,7 @@ class ExtensionsTest {
     @Test
     fun `StoreWriteResponse toDataResult maps Message correctly`() {
         val response = StoreWriteResponse.Error.Message("fail message")
-        val result = response.toDataResult()
+        val result = response.toDataResult<Any>()
         assertIs<DataResult.Failure.ProgrammerError>(result)
     }
 

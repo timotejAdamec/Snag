@@ -28,19 +28,19 @@ import kotlinx.coroutines.launch
 import kotlin.uuid.Uuid
 
 internal class ProjectDetailsEditViewModel(
-    projectId: Uuid?,
+    private val projectId: Uuid?,
     private val getProjectUseCase: GetProjectUseCase,
     private val saveProjectUseCase: SaveProjectUseCase,
 ) : ViewModel() {
 
-    private val _state: MutableStateFlow<ProjectDetailsEditState> = MutableStateFlow(ProjectDetailsEditState())
-    val state: StateFlow<ProjectDetailsEditState> = _state
+    private val _state: MutableStateFlow<ProjectDetailsEditUiState> = MutableStateFlow(ProjectDetailsEditUiState())
+    val state: StateFlow<ProjectDetailsEditUiState> = _state
 
     private val errorEventsChannel = Channel<UiError>()
     val errorsFlow = errorEventsChannel.receiveAsFlow()
 
-    private val finishEventChannel = Channel<Uuid>()
-    val saveEventFlow = finishEventChannel.receiveAsFlow()
+    private val saveEventChannel = Channel<Uuid>(Channel.BUFFERED)
+    val saveEventFlow = saveEventChannel.receiveAsFlow()
 
     init {
         projectId?.let { collectProject(it) }
@@ -79,6 +79,7 @@ internal class ProjectDetailsEditViewModel(
 
     fun onSaveProject() = viewModelScope.launch {
         if (state.value.projectName.isBlank()) {
+            // TODO use string provider
             errorEventsChannel.send(UiError.CustomUserMessage("Project name cannot be empty"))
             return@launch
         }
@@ -89,6 +90,7 @@ internal class ProjectDetailsEditViewModel(
 
         val result = saveProjectUseCase(
             request = SaveProjectRequest(
+                id = projectId,
                 name = state.value.projectName,
                 address = state.value.projectAddress,
             )
@@ -103,7 +105,7 @@ internal class ProjectDetailsEditViewModel(
             }
             DataResult.Loading -> {}
             is DataResult.Success -> {
-                finishEventChannel.send(result.data)
+                saveEventChannel.send(result.data)
             }
         }
     }

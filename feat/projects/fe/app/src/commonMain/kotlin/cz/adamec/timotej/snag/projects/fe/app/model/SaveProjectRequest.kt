@@ -12,7 +12,10 @@
 
 package cz.adamec.timotej.snag.projects.fe.app.model
 
+import kotlin.uuid.Uuid
+
 data class SaveProjectRequest(
+    val id: Uuid? = null,
     val name: String,
     val address: String,
 )

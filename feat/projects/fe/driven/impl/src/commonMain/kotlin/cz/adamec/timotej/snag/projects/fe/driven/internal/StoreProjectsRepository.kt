@@ -63,13 +63,13 @@ class StoreProjectsRepository(
             }.distinctUntilChanged()
 
     override suspend fun saveProject(project: Project): DataResult<Project> {
-        val result: DataResult<Project> =
-            projectStore.write(
-                StoreWriteRequest.of(
-                    key = project.id,
-                    value = project,
-                ),
-            ).toDataResult()
+        val result: DataResult<Project> = projectStore.write(
+            StoreWriteRequest.of(
+                key = project.id,
+                value = project,
+            ),
+        ).toDataResult()
+
         logger.log(
             dataResult = result,
             additionalInfo = "saveProject, id ${project.id}",

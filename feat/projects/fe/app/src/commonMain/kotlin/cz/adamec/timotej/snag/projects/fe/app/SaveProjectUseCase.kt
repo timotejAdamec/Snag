@@ -26,7 +26,7 @@ class SaveProjectUseCase(
 ) {
     suspend operator fun invoke(request: SaveProjectRequest): DataResult<Uuid> = projectsRepository.saveProject(
         Project(
-            id = uuidProvider.getUuid(),
+            id = request.id ?: uuidProvider.getUuid(),
             name = request.name,
             address = request.address
         )

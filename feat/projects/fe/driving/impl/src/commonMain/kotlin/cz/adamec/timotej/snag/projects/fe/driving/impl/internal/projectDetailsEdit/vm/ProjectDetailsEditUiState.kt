@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetailsEdit.vm
 
-internal data class ProjectDetailsEditState(
+internal data class ProjectDetailsEditUiState(
     val projectName: String = "",
     val projectAddress: String = "",
 )

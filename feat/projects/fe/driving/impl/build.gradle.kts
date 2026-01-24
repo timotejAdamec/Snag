@@ -24,5 +24,11 @@ kotlin {
                 implementation(project(":feat:projects:business"))
             }
         }
+        commonTest {
+            dependencies {
+//                TODO()
+                implementation(project(":feat:projects:fe:driven:test"))
+            }
+        }
     }
 }

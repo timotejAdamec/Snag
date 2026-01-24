@@ -50,17 +50,39 @@ fun <T> Flow<StoreReadResponse<T>>.toDataResultFlow(): Flow<DataResult<T>> =
         }
     }
 
-internal fun Throwable.toDataResultFailure() =
+fun Throwable.toDataResultFailure() =
     if (this is NetworkException) {
         this.toDataResult()
     } else {
         DataResult.Failure.ProgrammerError(this)
     }
 
-fun <T> StoreWriteResponse.toDataResult(): DataResult<T> =
+inline fun <reified T> StoreWriteResponse.toDataResult(): DataResult<T> =
     when (this) {
-        is StoreWriteResponse.Success.Typed<*> -> DataResult.Success(this.value as T)
-        is StoreWriteResponse.Success.Untyped -> DataResult.Success(this.value as T)
+        is StoreWriteResponse.Success.Typed<*> -> {
+            val value = this.value as? T
+            if (value != null) {
+                DataResult.Success(value)
+            } else {
+                DataResult.Failure.ProgrammerError(
+                    RuntimeException("StoreWriteResponse.toDataResult():" +
+                            " Couldn't cast to Typed value to ${T::class.simpleName}")
+                )
+            }
+        }
+
+        is StoreWriteResponse.Success.Untyped -> {
+            val value = this.value as? T
+            if (value != null) {
+                DataResult.Success(value)
+            } else {
+                DataResult.Failure.ProgrammerError(
+                    RuntimeException("StoreWriteResponse.toDataResult():" +
+                            " Couldn't cast Untyped value to ${T::class.simpleName}")
+                )
+            }
+        }
+
         is StoreWriteResponse.Error.Exception -> this.error.toDataResultFailure()
         is StoreWriteResponse.Error.Message ->
             DataResult.Failure.ProgrammerError(

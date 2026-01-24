@@ -10,16 +10,14 @@
  * Department of Software Engineering
  */
 
-plugins {
-    alias(libs.plugins.snagMultiplatformModule)
-}
+package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.ui
 
-kotlin {
-    sourceSets {
-        commonMain {
-            dependencies {
-                api(project(":feat:projects:business"))
-            }
-        }
-    }
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+
+@Composable
+internal fun ProjectDetailsContent(
+    modifier: Modifier = Modifier,
+) {
+
 }
