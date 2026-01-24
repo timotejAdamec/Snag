@@ -57,9 +57,10 @@ internal fun Throwable.toDataResultFailure() =
         DataResult.Failure.ProgrammerError(this)
     }
 
-fun StoreWriteResponse.toDataResult(): DataResult<Unit> =
+fun <T> StoreWriteResponse.toDataResult(): DataResult<T> =
     when (this) {
-        is StoreWriteResponse.Success -> DataResult.Success(Unit)
+        is StoreWriteResponse.Success.Typed<*> -> DataResult.Success(this.value as T)
+        is StoreWriteResponse.Success.Untyped -> DataResult.Success(this.value as T)
         is StoreWriteResponse.Error.Exception -> this.error.toDataResultFailure()
         is StoreWriteResponse.Error.Message ->
             DataResult.Failure.ProgrammerError(

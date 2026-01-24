@@ -16,19 +16,14 @@ import cz.adamec.timotej.snag.lib.core.DataResult
 import cz.adamec.timotej.snag.lib.core.log
 import cz.adamec.timotej.snag.lib.store.toDataResult
 import cz.adamec.timotej.snag.lib.store.toDataResultFlow
-import cz.adamec.timotej.snag.network.fe.NetworkException
-import cz.adamec.timotej.snag.network.fe.toDataResult
 import cz.adamec.timotej.snag.projects.business.Project
 import cz.adamec.timotej.snag.projects.fe.driven.internal.LH.logger
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.transform
 import org.mobilenativefoundation.store.store5.StoreReadRequest
-import org.mobilenativefoundation.store.store5.StoreReadResponse
 import org.mobilenativefoundation.store.store5.StoreWriteRequest
-import org.mobilenativefoundation.store.store5.StoreWriteResponse
 import kotlin.uuid.Uuid
 
 class StoreProjectsRepository(
@@ -67,20 +62,19 @@ class StoreProjectsRepository(
                 )
             }.distinctUntilChanged()
 
-    override suspend fun saveProject(project: Project): DataResult<Unit> {
-        val response =
+    override suspend fun saveProject(project: Project): DataResult<Project> {
+        val result: DataResult<Project> =
             projectStore.write(
                 StoreWriteRequest.of(
                     key = project.id,
                     value = project,
                 ),
-            )
+            ).toDataResult()
+        logger.log(
+            dataResult = result,
+            additionalInfo = "saveProject, id ${project.id}",
+        )
 
-        return response.toDataResult().also {
-            logger.log(
-                dataResult = it,
-                additionalInfo = "saveProject, id ${project.id}",
-            )
-        }
+        return result
     }
 }

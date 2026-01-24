@@ -22,5 +22,5 @@ interface ProjectsRepository {
 
     fun getProjectFlow(id: Uuid): Flow<DataResult<Project?>>
 
-    suspend fun saveProject(project: Project): DataResult<Unit>
+    suspend fun saveProject(project: Project): DataResult<Project>
 }

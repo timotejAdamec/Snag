@@ -14,19 +14,21 @@ package cz.adamec.timotej.snag.projects.fe.app
 
 import cz.adamec.timotej.snag.lib.core.DataResult
 import cz.adamec.timotej.snag.lib.core.UuidProvider
+import cz.adamec.timotej.snag.lib.core.map
 import cz.adamec.timotej.snag.projects.business.Project
 import cz.adamec.timotej.snag.projects.fe.app.model.SaveProjectRequest
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsRepository
+import kotlin.uuid.Uuid
 
 class SaveProjectUseCase(
     private val projectsRepository: ProjectsRepository,
     private val uuidProvider: UuidProvider,
 ) {
-    suspend operator fun invoke(request: SaveProjectRequest): DataResult<Unit> = projectsRepository.saveProject(
+    suspend operator fun invoke(request: SaveProjectRequest): DataResult<Uuid> = projectsRepository.saveProject(
         Project(
             id = uuidProvider.getUuid(),
             name = request.name,
             address = request.address
         )
-    )
+    ).map { it.id }
 }

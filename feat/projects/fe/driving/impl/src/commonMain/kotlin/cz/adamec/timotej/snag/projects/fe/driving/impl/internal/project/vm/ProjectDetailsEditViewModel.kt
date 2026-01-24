@@ -39,7 +39,7 @@ internal class ProjectDetailsEditViewModel(
     private val errorEventsChannel = Channel<UiError>()
     val errorsFlow = errorEventsChannel.receiveAsFlow()
 
-    private val finishEventChannel = Channel<Unit>()
+    private val finishEventChannel = Channel<Uuid>()
     val saveEventFlow = finishEventChannel.receiveAsFlow()
 
     init {
@@ -103,7 +103,7 @@ internal class ProjectDetailsEditViewModel(
             }
             DataResult.Loading -> {}
             is DataResult.Success -> {
-                finishEventChannel.send(Unit)
+                finishEventChannel.send(result.data)
             }
         }
     }

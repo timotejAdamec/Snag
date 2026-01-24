@@ -12,10 +12,16 @@
 
 package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.project.ui
 
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.window.core.layout.WindowSizeClass
 import cz.adamec.timotej.snag.lib.design.fe.error.ShowSnackbarOnError
 import cz.adamec.timotej.snag.lib.design.fe.events.ObserveAsEvents
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.project.vm.ProjectDetailsEditViewModel
@@ -25,9 +31,8 @@ import kotlin.uuid.Uuid
 
 @Composable
 internal fun ProjectDetailsEditScreen(
-    onSaveClick: () -> Unit,
+    onProjectSaved: (projectId: Uuid) -> Unit,
     onCancelClick: () -> Unit,
-    modifier: Modifier = Modifier,
     projectId: Uuid? = null,
     viewModel: ProjectDetailsEditViewModel = koinViewModel { parametersOf(projectId) },
 ) {
@@ -36,13 +41,25 @@ internal fun ProjectDetailsEditScreen(
     ShowSnackbarOnError(viewModel.errorsFlow)
     ObserveAsEvents(
         eventsFlow = viewModel.saveEventFlow,
-        onEvent = {
-            onSaveClick()
+        onEvent = { newProjectId ->
+            onProjectSaved(newProjectId)
         }
     )
 
+    val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
+    val shouldPad = windowSizeClass.isAtLeastBreakpoint(
+        widthDpBreakpoint = WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND,
+        heightDpBreakpoint = WindowSizeClass.HEIGHT_DP_MEDIUM_LOWER_BOUND,
+    )
+    val modifier = if (shouldPad) {
+        Modifier
+            .padding(vertical = 32.dp)
+    } else Modifier
     ProjectDetailsEditContent(
-        modifier = modifier,
+        modifier = modifier
+            .clip(
+                shape = MaterialTheme.shapes.large,
+            ),
         projectId = projectId,
         state = state,
         onProjectNameChange = {
