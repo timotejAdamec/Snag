@@ -26,6 +26,8 @@ import org.mobilenativefoundation.store.store5.StoreReadRequest
 import org.mobilenativefoundation.store.store5.StoreWriteRequest
 import kotlin.uuid.Uuid
 
+import org.mobilenativefoundation.store.store5.StoreWriteResponse
+
 class StoreProjectsRepository(
     private val projectStore: ProjectStore,
     private val projectsStore: ProjectsStore,
@@ -63,12 +65,26 @@ class StoreProjectsRepository(
             }.distinctUntilChanged()
 
     override suspend fun saveProject(project: Project): DataResult<Project> {
-        val result: DataResult<Project> = projectStore.write(
+        val response = projectStore.write(
             StoreWriteRequest.of(
                 key = project.id,
                 value = project,
             ),
-        ).toDataResult()
+        )
+
+        val result = when (response) {
+            is StoreWriteResponse.Success -> response.toDataResult()
+            is StoreWriteResponse.Error -> {
+                // In offline-first, we consider local save as success.
+                // The error is likely due to network/updater failure.
+                // We assume SourceOfTruth (local DB) write succeeded before this.
+                logger.log(
+                    dataResult = response.toDataResult<Project>(),
+                    additionalInfo = "saveProject network failed, but treating as local success, id ${project.id}",
+                )
+                DataResult.Success(project)
+            }
+        }
 
         logger.log(
             dataResult = result,
