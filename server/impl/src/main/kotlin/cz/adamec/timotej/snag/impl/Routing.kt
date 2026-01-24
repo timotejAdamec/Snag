@@ -13,9 +13,13 @@
 package cz.adamec.timotej.snag.impl
 
 import cz.adamec.timotej.snag.routing.be.AppRoute
+import io.ktor.http.ContentType
+import io.ktor.openapi.OpenApiInfo
 import io.ktor.server.application.Application
+import io.ktor.server.plugins.swagger.swaggerUI
 import io.ktor.server.response.respondText
 import io.ktor.server.routing.get
+import io.ktor.server.routing.openapi.OpenApiDocSource
 import io.ktor.server.routing.routing
 import org.koin.ktor.ext.getKoin
 
@@ -25,10 +29,14 @@ internal fun Application.configureRouting() {
         routes.forEach { route ->
             with(route) { setup() }
         }
-    }
-    routing {
         get("/") {
             call.respondText("Ktor: Hello server")
+        }
+        swaggerUI("/swaggerUI") {
+            info = OpenApiInfo("Snag API", "1.0")
+            source = OpenApiDocSource.Routing(ContentType.Application.Json) {
+                this@routing.descendants()
+            }
         }
     }
 }

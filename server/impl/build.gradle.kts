@@ -1,7 +1,3 @@
-import io.ktor.plugin.OpenApiPreview
-
-// import com.github.psxpaul.task.JavaExecFork
-
 /*
  * Copyright (c) 2026 Timotej Adamec
  * SPDX-License-Identifier: MIT
@@ -30,12 +26,10 @@ application {
 
 // Currently not working, only with Kotlin 2.2.0. Wait for newer ktor.
 ktor {
-    @OptIn(OpenApiPreview::class)
     openApi {
-        title = "Snag server API"
-        version = "2.1"
-        summary = "This is an overview of the Snag backend"
-        target = project.layout.buildDirectory.file("open-api.json")
+        enabled = true
+        codeInferenceEnabled = true
+        onlyCommented = false
     }
 }
 
@@ -53,6 +47,8 @@ dependencies {
     implementation(libs.ktor.server.content.negotiation)
     implementation(libs.ktor.server.cors)
     implementation(libs.ktor.server.config.yaml)
+    implementation(libs.ktor.server.swagger)
+    implementation(libs.ktor.server.routing.openapi)
     implementation(libs.logback)
     implementation(libs.koin.logger.slf4j)
 }
