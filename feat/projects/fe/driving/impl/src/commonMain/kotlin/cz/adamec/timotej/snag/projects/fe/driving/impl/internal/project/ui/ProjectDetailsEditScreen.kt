@@ -14,9 +14,11 @@ package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.project.ui
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
@@ -38,7 +40,11 @@ internal fun ProjectDetailsEditScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
-    ShowSnackbarOnError(viewModel.errorsFlow)
+    val snackbarHostState = remember { SnackbarHostState() }
+    ShowSnackbarOnError(
+        uiErrorsFlow = viewModel.errorsFlow,
+        snackbarHostState = snackbarHostState,
+    )
     ObserveAsEvents(
         eventsFlow = viewModel.saveEventFlow,
         onEvent = { newProjectId ->
@@ -62,6 +68,7 @@ internal fun ProjectDetailsEditScreen(
             ),
         projectId = projectId,
         state = state,
+        snackbarHostState = snackbarHostState,
         onProjectNameChange = {
             viewModel.onProjectNameChange(it)
         },

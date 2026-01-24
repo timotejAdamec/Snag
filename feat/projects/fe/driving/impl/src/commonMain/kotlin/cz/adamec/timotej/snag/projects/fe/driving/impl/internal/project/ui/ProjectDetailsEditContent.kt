@@ -23,6 +23,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -49,6 +51,7 @@ private val HorizontalPadding = 12.dp
 internal fun ProjectDetailsEditContent(
     projectId: Uuid?,
     state: ProjectDetailsEditState,
+    snackbarHostState: SnackbarHostState,
     onProjectNameChange: (String) -> Unit,
     onProjectAddressChange: (String) -> Unit,
     onSaveClick: () -> Unit,
@@ -95,7 +98,10 @@ internal fun ProjectDetailsEditContent(
                     end = HorizontalPadding,
                 )
             )
-        }
+        },
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState)
+        },
     ) { paddingValues ->
         Column(
             modifier = Modifier

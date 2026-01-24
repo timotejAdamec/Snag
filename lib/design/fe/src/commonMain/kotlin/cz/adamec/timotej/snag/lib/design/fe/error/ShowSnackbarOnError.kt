@@ -13,10 +13,10 @@
 package cz.adamec.timotej.snag.lib.design.fe.error
 
 import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import cz.adamec.timotej.snag.lib.design.fe.events.ObserveAsEvents
-import cz.adamec.timotej.snag.lib.design.fe.scaffold.AppScaffoldState
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.LocalAppScaffoldState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
@@ -25,14 +25,14 @@ import kotlinx.coroutines.launch
 @Composable
 fun ShowSnackbarOnError(
     uiErrorsFlow: Flow<UiError>,
-    appScaffoldState: AppScaffoldState= LocalAppScaffoldState.current,
+    snackbarHostState: SnackbarHostState = LocalAppScaffoldState.current.snackbarHostState,
     scope: CoroutineScope = rememberCoroutineScope(),
 ) {
     ObserveAsEvents(
         eventsFlow = uiErrorsFlow,
         onEvent = { uiError ->
             scope.launch {
-                appScaffoldState.snackbarHostState.showSnackbar(
+                snackbarHostState.showSnackbar(
                     message = uiError.toInformativeMessage(),
                     duration = SnackbarDuration.Long,
                 )
