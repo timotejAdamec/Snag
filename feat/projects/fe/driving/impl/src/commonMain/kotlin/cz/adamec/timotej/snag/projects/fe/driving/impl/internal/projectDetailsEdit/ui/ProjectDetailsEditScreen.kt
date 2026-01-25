@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.window.core.layout.WindowSizeClass
 import cz.adamec.timotej.snag.lib.design.fe.error.ShowSnackbarOnError
 import cz.adamec.timotej.snag.lib.design.fe.events.ObserveAsEvents
@@ -36,7 +37,9 @@ internal fun ProjectDetailsEditScreen(
     onProjectSaved: (projectId: Uuid) -> Unit,
     onCancelClick: () -> Unit,
     projectId: Uuid? = null,
-    viewModel: ProjectDetailsEditViewModel = koinViewModel { parametersOf(projectId) },
+    viewModel: ProjectDetailsEditViewModel = koinViewModel(
+        viewModelStoreOwner = LocalViewModelStoreOwner.current ?: error("No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"),
+    ) { parametersOf(projectId) },
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 

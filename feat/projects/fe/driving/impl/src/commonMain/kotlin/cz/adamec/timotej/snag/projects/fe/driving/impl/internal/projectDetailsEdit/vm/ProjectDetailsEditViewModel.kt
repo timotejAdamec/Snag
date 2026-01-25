@@ -16,13 +16,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cz.adamec.timotej.snag.lib.core.DataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
-import cz.adamec.timotej.snag.lib.design.fe.error.UiError.*
-import cz.adamec.timotej.snag.projects.business.Project
+import cz.adamec.timotej.snag.lib.design.fe.error.UiError.CustomUserMessage
+import cz.adamec.timotej.snag.lib.design.fe.error.UiError.Unknown
 import cz.adamec.timotej.snag.projects.fe.app.GetProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.SaveProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.model.SaveProjectRequest
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.NonCancellable.cancel
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -89,11 +87,11 @@ internal class ProjectDetailsEditViewModel(
     fun onSaveProject() = viewModelScope.launch {
         if (state.value.projectName.isBlank()) {
             // TODO use string provider
-            errorEventsChannel.send(UiError.CustomUserMessage("Project name cannot be empty"))
+            errorEventsChannel.send(CustomUserMessage("Project name cannot be empty"))
             return@launch
         }
         if (state.value.projectAddress.isBlank()) {
-            errorEventsChannel.send(UiError.CustomUserMessage("Project address cannot be empty"))
+            errorEventsChannel.send(CustomUserMessage("Project address cannot be empty"))
             return@launch
         }
 
@@ -107,11 +105,11 @@ internal class ProjectDetailsEditViewModel(
         when (result) {
             DataResult.Failure.NetworkUnavailable -> {}
             is DataResult.Failure.ProgrammerError -> {
-                errorEventsChannel.send(UiError.Unknown)
+                errorEventsChannel.send(Unknown)
             }
 
             is DataResult.Failure.UserMessageError -> {
-                errorEventsChannel.send(UiError.CustomUserMessage(result.message))
+                errorEventsChannel.send(CustomUserMessage(result.message))
             }
 
             DataResult.Loading -> {}
