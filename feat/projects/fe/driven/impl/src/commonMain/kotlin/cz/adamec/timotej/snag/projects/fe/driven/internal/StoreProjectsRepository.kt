@@ -16,6 +16,7 @@ import cz.adamec.timotej.snag.lib.core.DataResult
 import cz.adamec.timotej.snag.lib.core.log
 import cz.adamec.timotej.snag.lib.store.toDataResult
 import cz.adamec.timotej.snag.lib.store.toDataResultFlow
+import cz.adamec.timotej.snag.lib.store.toOfflineFirstDataResult
 import cz.adamec.timotej.snag.projects.business.Project
 import cz.adamec.timotej.snag.projects.fe.driven.internal.LH.logger
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsRepository
@@ -25,8 +26,6 @@ import kotlinx.coroutines.flow.onEach
 import org.mobilenativefoundation.store.store5.StoreReadRequest
 import org.mobilenativefoundation.store.store5.StoreWriteRequest
 import kotlin.uuid.Uuid
-
-import org.mobilenativefoundation.store.store5.StoreWriteResponse
 
 class StoreProjectsRepository(
     private val projectStore: ProjectStore,
@@ -65,26 +64,12 @@ class StoreProjectsRepository(
             }.distinctUntilChanged()
 
     override suspend fun saveProject(project: Project): DataResult<Project> {
-        val response = projectStore.write(
+        val result: DataResult<Project> = projectStore.write(
             StoreWriteRequest.of(
                 key = project.id,
                 value = project,
             ),
-        )
-
-        val result = when (response) {
-            is StoreWriteResponse.Success -> response.toDataResult()
-            is StoreWriteResponse.Error -> {
-                // In offline-first, we consider local save as success.
-                // The error is likely due to network/updater failure.
-                // We assume SourceOfTruth (local DB) write succeeded before this.
-                logger.log(
-                    dataResult = response.toDataResult<Project>(),
-                    additionalInfo = "saveProject network failed, but treating as local success, id ${project.id}",
-                )
-                DataResult.Success(project)
-            }
-        }
+        ).toOfflineFirstDataResult(project)
 
         logger.log(
             dataResult = result,

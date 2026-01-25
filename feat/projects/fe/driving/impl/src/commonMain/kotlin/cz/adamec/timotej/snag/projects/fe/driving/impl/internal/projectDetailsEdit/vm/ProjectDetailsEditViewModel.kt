@@ -16,9 +16,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cz.adamec.timotej.snag.lib.core.DataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
+import cz.adamec.timotej.snag.lib.design.fe.error.UiError.*
+import cz.adamec.timotej.snag.projects.business.Project
 import cz.adamec.timotej.snag.projects.fe.app.GetProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.SaveProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.model.SaveProjectRequest
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.NonCancellable.cancel
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -33,13 +38,14 @@ internal class ProjectDetailsEditViewModel(
     private val saveProjectUseCase: SaveProjectUseCase,
 ) : ViewModel() {
 
-    private val _state: MutableStateFlow<ProjectDetailsEditUiState> = MutableStateFlow(ProjectDetailsEditUiState())
+    private val _state: MutableStateFlow<ProjectDetailsEditUiState> =
+        MutableStateFlow(ProjectDetailsEditUiState())
     val state: StateFlow<ProjectDetailsEditUiState> = _state
 
     private val errorEventsChannel = Channel<UiError>()
     val errorsFlow = errorEventsChannel.receiveAsFlow()
 
-    private val saveEventChannel = Channel<Uuid>(Channel.BUFFERED)
+    private val saveEventChannel = Channel<Uuid>()
     val saveEventFlow = saveEventChannel.receiveAsFlow()
 
     init {
@@ -51,11 +57,13 @@ internal class ProjectDetailsEditViewModel(
             when (result) {
                 DataResult.Failure.NetworkUnavailable -> {}
                 is DataResult.Failure.ProgrammerError -> {
-                    errorEventsChannel.send(UiError.Unknown)
+                    errorEventsChannel.send(Unknown)
                 }
+
                 is DataResult.Failure.UserMessageError -> {
-                    errorEventsChannel.send(UiError.CustomUserMessage(result.message))
+                    errorEventsChannel.send(CustomUserMessage(result.message))
                 }
+
                 DataResult.Loading -> {}
                 is DataResult.Success -> result.data?.let { data ->
                     _state.update {
@@ -64,6 +72,7 @@ internal class ProjectDetailsEditViewModel(
                             projectAddress = data.address,
                         )
                     }
+                    cancel()
                 }
             }
         }
@@ -100,12 +109,14 @@ internal class ProjectDetailsEditViewModel(
             is DataResult.Failure.ProgrammerError -> {
                 errorEventsChannel.send(UiError.Unknown)
             }
+
             is DataResult.Failure.UserMessageError -> {
                 errorEventsChannel.send(UiError.CustomUserMessage(result.message))
             }
+
             DataResult.Loading -> {}
             is DataResult.Success -> {
-                saveEventChannel.send(result.data)
+                saveEventChannel.send(result.data.id)
             }
         }
     }

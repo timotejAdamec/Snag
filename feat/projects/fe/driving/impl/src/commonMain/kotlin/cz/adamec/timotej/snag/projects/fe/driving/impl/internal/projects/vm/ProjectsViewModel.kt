@@ -16,8 +16,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cz.adamec.timotej.snag.lib.core.DataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
+import cz.adamec.timotej.snag.lib.design.fe.error.UiError.*
+import cz.adamec.timotej.snag.projects.business.Project
 import cz.adamec.timotej.snag.projects.fe.app.GetProjectsUseCase
 import kotlinx.collections.immutable.toPersistentList
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -50,7 +53,7 @@ internal class ProjectsViewModel(
                                 isLoading = false,
                             )
                         }
-                        errorEventsChannel.send(UiError.NetworkUnavailable)
+                        errorEventsChannel.send(NetworkUnavailable)
                     }
 
                     is DataResult.Failure.ProgrammerError -> {
@@ -59,7 +62,7 @@ internal class ProjectsViewModel(
                                 isLoading = false,
                             )
                         }
-                        errorEventsChannel.send(UiError.Unknown)
+                        errorEventsChannel.send(Unknown)
                     }
 
                     is DataResult.Failure.UserMessageError -> {
@@ -68,7 +71,7 @@ internal class ProjectsViewModel(
                                 isLoading = false,
                             )
                         }
-                        errorEventsChannel.send(UiError.CustomUserMessage(projectsDataResult.message))
+                        errorEventsChannel.send(CustomUserMessage(projectsDataResult.message))
                     }
 
                     DataResult.Loading ->
@@ -78,13 +81,12 @@ internal class ProjectsViewModel(
                             )
                         }
 
-                    is DataResult.Success ->
-                        _state.update {
-                            it.copy(
-                                projects = projectsDataResult.data.toPersistentList(),
-                                isLoading = false,
-                            )
-                        }
+                    is DataResult.Success -> _state.update {
+                        it.copy(
+                            projects = projectsDataResult.data.toPersistentList(),
+                            isLoading = false,
+                        )
+                    }
                 }
             }.launchIn(viewModelScope)
 }

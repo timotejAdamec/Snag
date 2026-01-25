@@ -92,3 +92,16 @@ inline fun <reified T> StoreWriteResponse.toDataResult(): DataResult<T> =
             )
     }
 
+inline fun <reified T> StoreWriteResponse.toOfflineFirstDataResult(
+    localValue: T,
+): DataResult<T> {
+    val rawResult: DataResult<T> = toDataResult()
+    return if (rawResult is DataResult.Failure.NetworkUnavailable) {
+        DataResult.Success(
+            data = localValue,
+            isNetworkUnavailable = true,
+        )
+    } else {
+        rawResult
+    }
+}

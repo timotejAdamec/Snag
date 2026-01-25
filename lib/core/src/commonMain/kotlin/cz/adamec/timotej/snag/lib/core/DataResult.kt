@@ -15,8 +15,10 @@ package cz.adamec.timotej.snag.lib.core
 import co.touchlab.kermit.Logger
 
 sealed interface DataResult<out T> {
+
     data class Success<T>(
         val data: T,
+        val isNetworkUnavailable: Boolean = false,
     ) : DataResult<T>
 
     sealed interface Failure : DataResult<Nothing> {

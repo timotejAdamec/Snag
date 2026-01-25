@@ -24,11 +24,12 @@ class SaveProjectUseCase(
     private val projectsRepository: ProjectsRepository,
     private val uuidProvider: UuidProvider,
 ) {
-    suspend operator fun invoke(request: SaveProjectRequest): DataResult<Uuid> = projectsRepository.saveProject(
-        Project(
-            id = request.id ?: uuidProvider.getUuid(),
-            name = request.name,
-            address = request.address
+    suspend operator fun invoke(request: SaveProjectRequest): DataResult<Project> =
+        projectsRepository.saveProject(
+            Project(
+                id = request.id ?: uuidProvider.getUuid(),
+                name = request.name,
+                address = request.address
+            )
         )
-    ).map { it.id }
 }
