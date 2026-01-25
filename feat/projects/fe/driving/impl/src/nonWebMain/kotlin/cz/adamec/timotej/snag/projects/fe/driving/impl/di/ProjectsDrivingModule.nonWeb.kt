@@ -12,28 +12,16 @@
 
 package cz.adamec.timotej.snag.projects.fe.driving.impl.di
 
-import androidx.navigation3.scene.DialogSceneStrategy
 import cz.adamec.timotej.snag.projects.fe.driving.api.NonWebProjectCreationRoute
 import cz.adamec.timotej.snag.projects.fe.driving.api.NonWebProjectEditRoute
 import cz.adamec.timotej.snag.projects.fe.driving.api.NonWebProjectsRoute
 import org.koin.dsl.module
-import org.koin.dsl.navigation3.navigation
 
 internal actual val platformModule =
     module {
-        navigation<NonWebProjectsRoute> { _ ->
-            ProjectsScreenInjection()
-        }
-        navigation<NonWebProjectCreationRoute>(
-            metadata = DialogSceneStrategy.dialog(),
-        ) { _ ->
-            ProjectDetailsEditScreenInjection()
-        }
-        navigation<NonWebProjectEditRoute>(
-            metadata = DialogSceneStrategy.dialog(),
-        ) { route ->
-            ProjectDetailsEditScreenInjection(
-                projectId = route.projectId,
-            )
+        projectsScreenNavigation<NonWebProjectsRoute>()
+        projectDetailsEditScreenNavigation<NonWebProjectCreationRoute>()
+        projectDetailsEditScreenNavigation<NonWebProjectEditRoute> {
+            it.projectId
         }
     }

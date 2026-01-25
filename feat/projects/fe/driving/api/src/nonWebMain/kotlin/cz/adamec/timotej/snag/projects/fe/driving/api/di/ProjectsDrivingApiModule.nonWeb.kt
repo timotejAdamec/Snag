@@ -23,7 +23,7 @@ import org.koin.dsl.module
 
 internal actual val platformModule =
     module {
-        single { NonWebProjectsRoute } bind ProjectsRoute::class
-        single { NonWebProjectCreationRoute } bind ProjectCreationRoute::class
+        factory { NonWebProjectsRoute } bind ProjectsRoute::class
+        factory { NonWebProjectCreationRoute } bind ProjectCreationRoute::class
         factory { NonWebProjectEditRouteFactory() } bind ProjectEditRouteFactory::class
     }
