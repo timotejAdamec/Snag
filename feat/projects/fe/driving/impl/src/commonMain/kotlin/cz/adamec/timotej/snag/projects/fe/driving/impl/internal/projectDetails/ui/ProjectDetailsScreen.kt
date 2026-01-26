@@ -12,12 +12,11 @@
 
 package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.ui
 
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cz.adamec.timotej.snag.lib.design.fe.error.ShowSnackbarOnError
+import cz.adamec.timotej.snag.lib.design.fe.events.ObserveAsEvents
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.vm.ProjectDetailsViewModel
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -26,6 +25,7 @@ import kotlin.uuid.Uuid
 @Composable
 internal fun ProjectDetailsScreen(
     projectId: Uuid,
+    onBack: () -> Unit,
     viewModel: ProjectDetailsViewModel = koinViewModel { parametersOf(projectId) },
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -33,6 +33,16 @@ internal fun ProjectDetailsScreen(
     ShowSnackbarOnError(
         uiErrorsFlow = viewModel.errorsFlow,
     )
+    ObserveAsEvents(
+        eventsFlow = viewModel.deletedSuccessfullyEventFlow,
+        onEvent = {
+            onBack()
+        }
+    )
 
-    ProjectDetailsContent()
+    ProjectDetailsContent(
+        state = state,
+        onBack = onBack,
+        onDelete = viewModel::onDelete
+    )
 }

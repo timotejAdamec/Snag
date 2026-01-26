@@ -14,6 +14,7 @@ package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.
 
 internal data class ProjectDetailsUiState(
     val status: ProjectDetailsUiStatus = ProjectDetailsUiStatus.LOADING,
+    val isBeingDeleted: Boolean = false,
     val name: String = "",
     val address: String = "",
 )

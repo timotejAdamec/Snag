@@ -15,6 +15,7 @@ package cz.adamec.timotej.snag.network.fe
 import cz.adamec.timotej.snag.server.api.Host
 import io.ktor.client.HttpClient
 import io.ktor.client.request.HttpRequestBuilder
+import io.ktor.client.request.delete
 import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.request.put
@@ -35,18 +36,6 @@ class SnagNetworkHttpClient(
             block()
         }
 
-    suspend fun post(
-        path: String,
-        contentType: ContentType = ContentType.Application.Json,
-        block: HttpRequestBuilder.() -> Unit = {},
-    ): HttpResponse =
-        httpClient.post(
-            urlString = BASE_URL + path,
-        ) {
-            contentType(contentType)
-            block()
-        }
-
     suspend fun put(
         path: String,
         contentType: ContentType = ContentType.Application.Json,
@@ -56,6 +45,16 @@ class SnagNetworkHttpClient(
             urlString = BASE_URL + path,
         ) {
             contentType(contentType)
+            block()
+        }
+
+    suspend fun delete(
+        path: String,
+        block: HttpRequestBuilder.() -> Unit = {},
+    ): HttpResponse =
+        httpClient.delete(
+            urlString = BASE_URL + path,
+        ) {
             block()
         }
 

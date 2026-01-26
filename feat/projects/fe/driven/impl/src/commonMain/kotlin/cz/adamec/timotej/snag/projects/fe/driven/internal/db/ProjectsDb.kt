@@ -42,7 +42,7 @@ internal class ProjectsDb(
     suspend fun saveProjects(projectEntities: List<ProjectEntity>) =
         withContext(ioDispatcher) {
             projectEntityQueries.transaction {
-                projectEntities.forEach { projectEntityQueries.saveProject(it) }
+                projectEntities.forEach { projectEntityQueries.save(it) }
             }
         }
 
@@ -54,7 +54,12 @@ internal class ProjectsDb(
 
     suspend fun saveProject(project: ProjectEntity): Long =
         withContext(ioDispatcher) {
-            projectEntityQueries.saveProject(project)
+            projectEntityQueries.save(project)
+        }
+
+    suspend fun deleteProject(id: Uuid) =
+        withContext(ioDispatcher) {
+            projectEntityQueries.deleteById(id.toString())
         }
 
     fun getLastFailedProjectSyncFlow(id: Uuid): Flow<Long?> =

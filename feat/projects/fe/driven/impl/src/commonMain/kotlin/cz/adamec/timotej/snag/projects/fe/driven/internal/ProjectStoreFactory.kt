@@ -14,6 +14,7 @@ package cz.adamec.timotej.snag.projects.fe.driven.internal
 
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.ProjectEntity
 import cz.adamec.timotej.snag.lib.core.Timestamp
+import cz.adamec.timotej.snag.lib.store.StoreMutation
 import cz.adamec.timotej.snag.projects.be.driving.contract.ProjectApiDto
 import cz.adamec.timotej.snag.projects.business.Project
 import cz.adamec.timotej.snag.projects.fe.driven.internal.LH.logger
@@ -37,7 +38,9 @@ import org.mobilenativefoundation.store.store5.Updater
 import org.mobilenativefoundation.store.store5.UpdaterResult
 import kotlin.uuid.Uuid
 
-typealias ProjectStore = MutableStore<Uuid, Project>
+typealias LocalProjectMutation = StoreMutation<Uuid, ProjectEntity>
+typealias ProjectMutation = StoreMutation<Uuid, Project>
+typealias ProjectStore = MutableStore<Uuid, StoreMutation<Uuid, Project>>
 
 internal class ProjectStoreFactory(
     private val projectsApi: ProjectsApi,
@@ -59,7 +62,7 @@ internal class ProjectStoreFactory(
             projectsApi.getProject(id)
         }
 
-    private fun createSourceOfTruth(): SourceOfTruth<Uuid, ProjectEntity, Project> =
+    private fun createSourceOfTruth(): SourceOfTruth<Uuid, LocalProjectMutation, ProjectMutation> =
         SourceOfTruth.of(
             reader = { id ->
                 projectsDb
@@ -67,34 +70,61 @@ internal class ProjectStoreFactory(
                     .catch { e ->
                         logger.e(e) { "Error while reading project from database." }
                         emit(null)
-                    }.map { it?.toBusiness() }
+                    }
+                    .map { entity ->
+                        entity?.toBusiness()?.let { StoreMutation.Save(it) }
+                    }
             },
-            writer = { _, projectEntity ->
+            writer = { id, mutation ->
                 runCatching {
-                    projectsDb.saveProject(projectEntity)
+                    when (mutation) {
+                        is StoreMutation.Save -> projectsDb.saveProject(mutation.value)
+                        is StoreMutation.Delete -> projectsDb.deleteProject(id)
+                    }
                 }.onFailure { e ->
                     if (e is CancellationException) throw e
                     logger.e(e) { "Error while writing project to database." }
                 }
-            },
+            }
         )
 
-    private fun createConverter(): Converter<ProjectApiDto, ProjectEntity, Project> =
+    private fun createConverter(): Converter<ProjectApiDto, LocalProjectMutation, ProjectMutation> =
         Converter
-            .Builder<ProjectApiDto, ProjectEntity, Project>()
-            .fromOutputToLocal { project -> project.toEntity() }
-            .fromNetworkToLocal { projectApiDto -> projectApiDto.toBusiness().toEntity() }
+            .Builder<ProjectApiDto, LocalProjectMutation, ProjectMutation>()
+            .fromOutputToLocal { mutation ->
+                when (mutation) {
+                    is StoreMutation.Delete -> StoreMutation.Delete(mutation.key)
+                    is StoreMutation.Save -> StoreMutation.Save(mutation.value.toEntity())
+                }
+            }
+            .fromNetworkToLocal { projectApiDto ->
+                StoreMutation.Save(projectApiDto.toBusiness().toEntity())
+            }
             .build()
 
     @Suppress("TooGenericExceptionCaught")
-    private fun createUpdater(): Updater<Uuid, Project, ProjectApiDto> =
+    private fun createUpdater(): Updater<Uuid, ProjectMutation, LocalProjectMutation> =
         Updater.by(
-            post = { _, updatedProject ->
+            post = { _, projectMutation ->
                 try {
-                    val apiDto = updatedProject.toApiDto()
-                    val freshDto = projectsApi.updateProject(apiDto)
-                    projectsDb.saveProject(freshDto.toBusiness().toEntity())
-                    UpdaterResult.Success.Typed(freshDto)
+                    when (projectMutation) {
+                        is StoreMutation.Save -> {
+                            val apiDto = projectMutation.value.toApiDto()
+                            val freshDto = projectsApi.updateProject(apiDto)
+                            UpdaterResult.Success.Typed(
+                                StoreMutation.Save<Uuid, ProjectEntity>(
+                                    freshDto.toBusiness().toEntity()
+                                )
+                            )
+                        }
+
+                        is StoreMutation.Delete -> {
+                            projectsApi.deleteProject(projectMutation.key)
+                            UpdaterResult.Success.Typed(
+                                StoreMutation.Delete(projectMutation.key)
+                            )
+                        }
+                    }
                 } catch (e: Exception) {
                     if (e is CancellationException) throw e
                     logger.e { "Error while updating project. Error: $e" }

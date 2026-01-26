@@ -99,7 +99,7 @@ inline fun <reified T> StoreWriteResponse.toOfflineFirstDataResult(
     return if (rawResult is DataResult.Failure.NetworkUnavailable) {
         DataResult.Success(
             data = localValue,
-            isNetworkUnavailable = true,
+            locallyOnly = true,
         )
     } else {
         rawResult

@@ -15,4 +15,6 @@
     <string name="error_network">Network unavailable. Please check your connection.</string>
     <string name="close">Close</string>
     <string name="save">Save</string>
+    <string name="back">Back</string>
+    <string name="delete">Delete</string>
 </resources>

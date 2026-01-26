@@ -21,10 +21,12 @@ import cz.adamec.timotej.snag.lib.design.fe.scaffold.FabState
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.SetFabState
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projects.vm.ProjectsViewModel
 import org.koin.compose.viewmodel.koinViewModel
+import kotlin.uuid.Uuid
 
 @Composable
 internal fun ProjectsScreen(
     onNewProjectClick: () -> Unit,
+    onProjectClick: (projectId: Uuid) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: ProjectsViewModel = koinViewModel(),
 ) {
@@ -43,9 +45,7 @@ internal fun ProjectsScreen(
 
     ProjectsContent(
         modifier = modifier,
-        onProjectClick = {
-
-        },
+        onProjectClick = onProjectClick,
         state = state,
     )
 }

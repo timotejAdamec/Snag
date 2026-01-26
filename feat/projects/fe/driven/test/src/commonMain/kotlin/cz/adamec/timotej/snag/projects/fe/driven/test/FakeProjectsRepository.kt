@@ -24,6 +24,7 @@ import kotlin.uuid.Uuid
 class FakeProjectsRepository : ProjectsRepository {
     private val projects = MutableStateFlow<Map<Uuid, Project>>(emptyMap())
     private var saveResult: DataResult<Project>? = null
+    private var deleteResult: DataResult<Unit>? = null
 
     fun setProject(id: Uuid, project: Project) {
         projects.update { it + (id to project) }
@@ -31,6 +32,10 @@ class FakeProjectsRepository : ProjectsRepository {
 
     fun setSaveResult(result: DataResult<Project>) {
         saveResult = result
+    }
+
+    fun setDeleteResult(result: DataResult<Unit>) {
+        deleteResult = result
     }
 
     override fun getAllProjectsFlow(): Flow<DataResult<List<Project>>> =
@@ -43,6 +48,14 @@ class FakeProjectsRepository : ProjectsRepository {
         val result = saveResult ?: DataResult.Success(project)
         if (result is DataResult.Success) {
             setProject(result.data.id, result.data)
+        }
+        return result
+    }
+
+    override suspend fun deleteProject(projectId: Uuid): DataResult<Unit> {
+        val result = deleteResult ?: DataResult.Success(Unit)
+        if (result is DataResult.Success) {
+            projects.update { it - projectId }
         }
         return result
     }

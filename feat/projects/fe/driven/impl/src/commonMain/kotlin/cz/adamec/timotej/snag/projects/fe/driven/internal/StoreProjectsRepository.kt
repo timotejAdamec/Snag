@@ -14,6 +14,8 @@ package cz.adamec.timotej.snag.projects.fe.driven.internal
 
 import cz.adamec.timotej.snag.lib.core.DataResult
 import cz.adamec.timotej.snag.lib.core.log
+import cz.adamec.timotej.snag.lib.core.map
+import cz.adamec.timotej.snag.lib.store.StoreMutation
 import cz.adamec.timotej.snag.lib.store.toDataResult
 import cz.adamec.timotej.snag.lib.store.toDataResultFlow
 import cz.adamec.timotej.snag.lib.store.toOfflineFirstDataResult
@@ -22,6 +24,7 @@ import cz.adamec.timotej.snag.projects.fe.driven.internal.LH.logger
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import org.mobilenativefoundation.store.store5.StoreReadRequest
 import org.mobilenativefoundation.store.store5.StoreWriteRequest
@@ -49,13 +52,20 @@ class StoreProjectsRepository(
 
     override fun getProjectFlow(id: Uuid): Flow<DataResult<Project>> =
         projectStore
-            .stream<Project>(
+            .stream<ProjectMutation>(
                 request =
                     StoreReadRequest.cached(
                         key = id,
                         refresh = true,
                     ),
-            ).toDataResultFlow()
+            )
+            .toDataResultFlow()
+            .map { dataResult ->
+                dataResult.map { mutation ->
+                    (mutation as? StoreMutation.Save)?.value
+                        ?: error("Unexpected mutation type in read stream: $mutation")
+                }
+            }
             .onEach {
                 logger.log(
                     dataResult = it,
@@ -67,13 +77,29 @@ class StoreProjectsRepository(
         val result: DataResult<Project> = projectStore.write(
             StoreWriteRequest.of(
                 key = project.id,
-                value = project,
+                value = StoreMutation.Save(project),
             ),
         ).toOfflineFirstDataResult(project)
 
         logger.log(
             dataResult = result,
             additionalInfo = "saveProject, id ${project.id}",
+        )
+
+        return result
+    }
+
+    override suspend fun deleteProject(projectId: Uuid): DataResult<Unit> {
+        val result: DataResult<Unit> = projectStore.write(
+            StoreWriteRequest.of(
+                key = projectId,
+                value = StoreMutation.Delete(projectId)
+            )
+        ).toOfflineFirstDataResult(Unit)
+
+        logger.log(
+            dataResult = result,
+            additionalInfo = "deleteProject, id $projectId",
         )
 
         return result

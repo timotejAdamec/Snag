@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS ProjectEntity (
     address TEXT NOT NULL
 );
 
-saveProject:
+save:
 INSERT INTO ProjectEntity(id, name, address)
 VALUES ?
 ON CONFLICT(id) DO UPDATE SET

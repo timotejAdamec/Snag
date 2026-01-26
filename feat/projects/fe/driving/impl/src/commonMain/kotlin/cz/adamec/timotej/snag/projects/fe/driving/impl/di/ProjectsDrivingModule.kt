@@ -18,6 +18,9 @@ import androidx.navigation3.scene.DialogSceneStrategy
 import cz.adamec.timotej.snag.lib.navigation.fe.SnagBackStack
 import cz.adamec.timotej.snag.lib.navigation.fe.SnagNavRoute
 import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectCreationRoute
+import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectDetailRoute
+import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.ui.ProjectDetailsScreen
+import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.vm.ProjectDetailsViewModel
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetailsEdit.ui.ProjectDetailsEditScreen
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetailsEdit.vm.ProjectDetailsEditViewModel
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projects.ui.ProjectsScreen
@@ -31,35 +34,54 @@ import org.koin.dsl.module
 import org.koin.dsl.navigation3.navigation
 import kotlin.uuid.Uuid
 
-internal inline fun <reified T : SnagNavRoute> Module.projectsScreenNavigation() =
-    navigation<T> {
-        ProjectsScreen(
-            modifier = Modifier.fillMaxSize(),
-            viewModel = koinViewModel(),
-            onNewProjectClick = {
-                val backStack = get<SnagBackStack>()
-                val projectCreationRoute = get<ProjectCreationRoute>()
-                backStack.value.add(projectCreationRoute)
-            }
-        )
-    }
+internal inline fun <reified T : SnagNavRoute> Module.projectsScreenNavigation(
+    crossinline getProjectDetailRoute: (projectId: Uuid) -> ProjectDetailRoute,
+) = navigation<T> {
+    ProjectsScreen(
+        modifier = Modifier.fillMaxSize(),
+        viewModel = koinViewModel(),
+        onNewProjectClick = {
+            val backStack = get<SnagBackStack>()
+            val projectCreationRoute = get<ProjectCreationRoute>()
+            backStack.value.add(projectCreationRoute)
+        },
+        onProjectClick = {
+            val backStack = get<SnagBackStack>()
+            val projectDetailRoute = getProjectDetailRoute(it)
+            backStack.value.add(projectDetailRoute)
+        }
+    )
+}
 
 internal inline fun <reified T : SnagNavRoute> Module.projectDetailsEditScreenNavigation(
+    crossinline getProjectDetailRoute: (savedProjectId: Uuid) -> ProjectDetailRoute,
     crossinline getProjectId: (Scope.(T) -> Uuid?) = { null },
 ) = navigation<T>(
     metadata = DialogSceneStrategy.dialog(),
 ) { route ->
     ProjectDetailsEditScreen(
         projectId = getProjectId(route),
-        onProjectSaved = {
+        onProjectSaved = { savedProjectId ->
             val backStack = get<SnagBackStack>()
-            // TODO navigate to project screen
-            backStack.value.removeLastOrNull()
+            val projectDetailRoute = getProjectDetailRoute(savedProjectId)
+            backStack.value.add(projectDetailRoute)
         },
         onCancelClick = {
             val backStack = get<SnagBackStack>()
             backStack.value.removeLastOrNull()
         }
+    )
+}
+
+internal inline fun <reified T : SnagNavRoute> Module.projectDetailsScreenNavigation(
+    crossinline getProjectId: (Scope.(T) -> Uuid),
+) = navigation<T> { route ->
+    ProjectDetailsScreen(
+        projectId = getProjectId(route),
+        onBack = {
+            val backStack = get<SnagBackStack>()
+            backStack.value.removeLastOrNull()
+        },
     )
 }
 
@@ -72,6 +94,13 @@ val projectsDrivingImplModule =
                 projectId = projectId,
                 getProjectUseCase = get(),
                 saveProjectUseCase = get(),
+            )
+        }
+        viewModel { (projectId: Uuid) ->
+            ProjectDetailsViewModel(
+                projectId = projectId,
+                getProjectUseCase = get(),
+                deleteProjectUseCase = get()
             )
         }
     }

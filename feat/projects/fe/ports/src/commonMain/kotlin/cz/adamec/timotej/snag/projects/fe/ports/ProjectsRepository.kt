@@ -23,4 +23,6 @@ interface ProjectsRepository {
     fun getProjectFlow(id: Uuid): Flow<DataResult<Project?>>
 
     suspend fun saveProject(project: Project): DataResult<Project>
+
+    suspend fun deleteProject(projectId: Uuid): DataResult<Unit>
 }

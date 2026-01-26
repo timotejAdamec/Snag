@@ -30,6 +30,12 @@ data class NonWebProjectEditRoute(
     override val projectId: Uuid,
 ) : ProjectEditRoute
 
+@Serializable
+@Immutable
+data class NonWebProjectDetailRoute(
+    override val projectId: Uuid,
+) : ProjectDetailRoute
+
 class NonWebProjectEditRouteFactory : ProjectEditRouteFactory {
     override fun create(projectId: Uuid): ProjectEditRoute = NonWebProjectEditRoute(projectId)
 }

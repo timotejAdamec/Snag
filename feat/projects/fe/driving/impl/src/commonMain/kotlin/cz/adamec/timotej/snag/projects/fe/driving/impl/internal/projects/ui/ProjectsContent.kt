@@ -17,6 +17,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -44,7 +45,9 @@ internal fun ProjectsContent(
         title = stringResource(Res.string.projects_title)
     ) { paddingValues ->
         LazyVerticalGrid(
-            modifier = modifier.padding(paddingValues),
+            modifier = modifier
+                .padding(paddingValues)
+                .consumeWindowInsets(paddingValues),
             columns = GridCells.Adaptive(minSize = 360.dp),
             contentPadding =
                 PaddingValues(

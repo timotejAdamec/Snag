@@ -18,7 +18,7 @@ sealed interface DataResult<out T> {
 
     data class Success<T>(
         val data: T,
-        val isNetworkUnavailable: Boolean = false,
+        val locallyOnly: Boolean = false,
     ) : DataResult<T>
 
     sealed interface Failure : DataResult<Nothing> {

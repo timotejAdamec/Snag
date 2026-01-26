@@ -27,6 +27,10 @@ interface ProjectEditRoute : SnagNavRoute {
     val projectId: Uuid
 }
 
+interface ProjectDetailRoute : SnagNavRoute {
+    val projectId: Uuid
+}
+
 interface ProjectEditRouteFactory {
     fun create(projectId: Uuid): ProjectEditRoute
 }

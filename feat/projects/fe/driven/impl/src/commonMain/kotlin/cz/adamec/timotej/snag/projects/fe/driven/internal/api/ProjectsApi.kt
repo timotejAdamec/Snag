@@ -30,4 +30,8 @@ internal class ProjectsApi(
             .put("/projects/${project.id}") {
                 setBody(project)
             }.body()
+
+    suspend fun deleteProject(id: Uuid) {
+        httpClient.delete("/projects/$id")
+    }
 }

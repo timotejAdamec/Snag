@@ -38,6 +38,16 @@ data class WebProjectEditRoute(
     }
 }
 
+@Serializable
+@Immutable
+data class WebProjectDetailRoute(
+    override val projectId: Uuid,
+) : ProjectDetailRoute {
+    companion object {
+        const val URL_NAME = "project-detail"
+    }
+}
+
 class WebProjectEditRouteFactory : ProjectEditRouteFactory {
     override fun create(projectId: Uuid): ProjectEditRoute = WebProjectEditRoute(projectId)
 }

@@ -18,6 +18,7 @@ import cz.adamec.timotej.snag.lib.core.DataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError.*
 import cz.adamec.timotej.snag.projects.business.Project
+import cz.adamec.timotej.snag.projects.fe.app.DeleteProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.GetProjectUseCase
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,8 +29,9 @@ import kotlinx.coroutines.launch
 import kotlin.uuid.Uuid
 
 internal class ProjectDetailsViewModel(
-    projectId: Uuid,
+    private val projectId: Uuid,
     private val getProjectUseCase: GetProjectUseCase,
+    private val deleteProjectUseCase: DeleteProjectUseCase,
 ) : ViewModel() {
 
     private val _state: MutableStateFlow<ProjectDetailsUiState> =
@@ -38,6 +40,9 @@ internal class ProjectDetailsViewModel(
 
     private val errorEventsChannel = Channel<UiError>()
     val errorsFlow = errorEventsChannel.receiveAsFlow()
+
+    private val deletedSuccessfullyEventChannel = Channel<Unit>()
+    val deletedSuccessfullyEventFlow = deletedSuccessfullyEventChannel.receiveAsFlow()
 
     init {
         collectProject(projectId)
@@ -50,19 +55,68 @@ internal class ProjectDetailsViewModel(
                 is DataResult.Failure.ProgrammerError -> {
                     errorEventsChannel.send(Unknown)
                 }
+
                 is DataResult.Failure.UserMessageError -> {
                     errorEventsChannel.send(CustomUserMessage(result.message))
                 }
-                DataResult.Loading -> _state.update { it.copy(status = ProjectDetailsUiStatus.LOADING) }
-                is DataResult.Success<Project?> -> result.data?.let {
+
+                DataResult.Loading -> {}
+                is DataResult.Success<Project?> -> result.data?.let { project ->
                     _state.update {
                         it.copy(
                             status = ProjectDetailsUiStatus.LOADED,
-                            name = it.name,
-                            address = it.address,
+                            name = project.name,
+                            address = project.address,
                         )
                     }
                 } ?: _state.update { it.copy(status = ProjectDetailsUiStatus.NOT_FOUND) }
+            }
+        }
+    }
+
+    fun onDelete() = viewModelScope.launch {
+        when (val result = deleteProjectUseCase(projectId)) {
+            DataResult.Failure.NetworkUnavailable -> {
+                _state.update {
+                    it.copy(
+                        isBeingDeleted = false
+                    )
+                }
+                errorEventsChannel.send(NetworkUnavailable)
+            }
+            is DataResult.Failure.ProgrammerError -> {
+                _state.update {
+                    it.copy(
+                        isBeingDeleted = false
+                    )
+                }
+                errorEventsChannel.send(Unknown)
+            }
+
+            is DataResult.Failure.UserMessageError -> {
+                _state.update {
+                    it.copy(
+                        isBeingDeleted = false
+                    )
+                }
+                errorEventsChannel.send(CustomUserMessage(result.message))
+            }
+
+            DataResult.Loading -> {
+                _state.update {
+                    it.copy(
+                        isBeingDeleted = true
+                    )
+                }
+            }
+
+            is DataResult.Success -> {
+                _state.update {
+                    it.copy(
+                        isBeingDeleted = false
+                    )
+                }
+                deletedSuccessfullyEventChannel.send(Unit)
             }
         }
     }

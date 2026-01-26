@@ -34,7 +34,7 @@ import kotlin.uuid.Uuid
 
 @Composable
 internal fun ProjectDetailsEditScreen(
-    onProjectSaved: (projectId: Uuid) -> Unit,
+    onProjectSaved: (savedProjectId: Uuid) -> Unit,
     onCancelClick: () -> Unit,
     projectId: Uuid? = null,
     viewModel: ProjectDetailsEditViewModel = koinViewModel(

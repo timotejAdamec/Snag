@@ -13,9 +13,10 @@
 package cz.adamec.timotej.snag.lib.design.fe.scaffold
 
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.material3.FabPosition
 import androidx.compose.material3.MediumFlexibleTopAppBar
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
@@ -27,13 +28,17 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 fun CollapsableTopAppBarScaffold(
     title: String,
     modifier: Modifier = Modifier,
+    topAppBarNavigationIcon: @Composable () -> Unit = {},
+    topAppBarActions: @Composable RowScope.() -> Unit = {},
+    floatingActionButton: @Composable (() -> Unit) = {},
+    floatingActionButtonPosition: FabPosition = FabPosition.End,
+    bottomBar: @Composable () -> Unit = {},
     content: @Composable (paddingValues: PaddingValues) -> Unit,
 ) {
     val scrollBehavior =
         TopAppBarDefaults.exitUntilCollapsedScrollBehavior(
             state = rememberTopAppBarState(),
         )
-    val appScaffoldState = LocalAppScaffoldState.current
 
     Scaffold(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -45,9 +50,13 @@ fun CollapsableTopAppBarScaffold(
                     )
                 },
                 scrollBehavior = scrollBehavior,
+                navigationIcon = topAppBarNavigationIcon,
+                actions = topAppBarActions,
             )
         },
-        snackbarHost = { SnackbarHost(appScaffoldState.snackbarHostState) },
+        bottomBar = bottomBar,
+        floatingActionButton = floatingActionButton,
+        floatingActionButtonPosition = floatingActionButtonPosition,
     ) { paddingValues ->
         content(paddingValues)
     }

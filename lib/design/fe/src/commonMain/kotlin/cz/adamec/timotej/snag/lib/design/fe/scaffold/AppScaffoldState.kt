@@ -24,7 +24,6 @@ class AppScaffoldState(
     initialFabState: FabState = FabState.NotVisible,
     val snackbarHostState: SnackbarHostState = SnackbarHostState(),
 ) {
-    var topAppBarOverride: (@Composable (title: String?) -> Unit)? = null
     var fabState by mutableStateOf(initialFabState)
 }
 

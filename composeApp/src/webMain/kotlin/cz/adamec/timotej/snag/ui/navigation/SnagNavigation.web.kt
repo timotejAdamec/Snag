@@ -21,6 +21,7 @@ import cz.adamec.timotej.snag.lib.navigation.fe.SnagBackStack
 import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectCreationRoute
 import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectEditRoute
 import cz.adamec.timotej.snag.projects.fe.driving.api.WebProjectCreationRoute
+import cz.adamec.timotej.snag.projects.fe.driving.api.WebProjectDetailRoute
 import cz.adamec.timotej.snag.projects.fe.driving.api.WebProjectEditRoute
 import cz.adamec.timotej.snag.projects.fe.driving.api.WebProjectsRoute
 
@@ -35,6 +36,10 @@ internal actual fun SnagNavigationPreparation(backStack: SnagBackStack) {
                 is WebProjectCreationRoute -> buildBrowserHistoryFragment(key.URL_NAME)
                 is WebProjectEditRoute -> buildBrowserHistoryFragment(
                     WebProjectEditRoute.URL_NAME,
+                    mapOf("id" to key.projectId.toString())
+                )
+                is WebProjectDetailRoute -> buildBrowserHistoryFragment(
+                    WebProjectDetailRoute.URL_NAME,
                     mapOf("id" to key.projectId.toString())
                 )
                 else -> error("Unknown web route $key")
