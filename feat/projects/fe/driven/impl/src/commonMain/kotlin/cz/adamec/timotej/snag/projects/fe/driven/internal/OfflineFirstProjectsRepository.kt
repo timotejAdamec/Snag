@@ -12,7 +12,6 @@
 
 package cz.adamec.timotej.snag.projects.fe.driven.internal
 
-import cz.adamec.timotej.snag.feat.shared.database.fe.db.ProjectEntity
 import cz.adamec.timotej.snag.lib.core.common.ApplicationScope
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.core.fe.log
@@ -21,11 +20,7 @@ import cz.adamec.timotej.snag.network.fe.log
 import cz.adamec.timotej.snag.projects.business.Project
 import cz.adamec.timotej.snag.projects.fe.driven.internal.LH.logger
 import cz.adamec.timotej.snag.projects.fe.driven.internal.api.ProjectsApi
-import cz.adamec.timotej.snag.projects.fe.driven.internal.api.toApiDto
-import cz.adamec.timotej.snag.projects.fe.driven.internal.api.toBusiness
 import cz.adamec.timotej.snag.projects.fe.driven.internal.db.ProjectsDb
-import cz.adamec.timotej.snag.projects.fe.driven.internal.db.toBusiness
-import cz.adamec.timotej.snag.projects.fe.driven.internal.db.toEntity
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsRepository
 import io.ktor.utils.io.CancellationException
 import kotlinx.coroutines.flow.Flow
@@ -44,11 +39,8 @@ internal class OfflineFirstProjectsRepository(
     override fun getAllProjectsFlow(): Flow<OfflineFirstDataResult<List<Project>>> {
         applicationScope.launch {
             runCatching {
-                val remoteDtos = projectsApi.getProjects()
-                return@runCatching projectsDb.saveProjects(
-                    remoteDtos.map {
-                        it.toBusiness().toEntity()
-                    })
+                val remoteProjects = projectsApi.getProjects()
+                return@runCatching projectsDb.saveProjects(remoteProjects)
             }.onSuccess { result ->
                 logger.d { "Saved $result projects from API." }
             }.onFailure { e ->
@@ -59,8 +51,8 @@ internal class OfflineFirstProjectsRepository(
         }
 
         return projectsDb.getAllProjectsFlow()
-            .map<List<ProjectEntity>, OfflineFirstDataResult<List<Project>>> { entities ->
-                OfflineFirstDataResult.Success(entities.map { it.toBusiness() })
+            .map<List<Project>, OfflineFirstDataResult<List<Project>>> { entities ->
+                OfflineFirstDataResult.Success(entities.map { it })
             }.catch { e ->
                 if (e is NetworkException) {
                     e.log()
@@ -82,8 +74,8 @@ internal class OfflineFirstProjectsRepository(
     override fun getProjectFlow(id: Uuid): Flow<OfflineFirstDataResult<Project?>> {
         applicationScope.launch {
             runCatching {
-                val remoteDto = projectsApi.getProject(id)
-                projectsDb.saveProject(remoteDto.toBusiness().toEntity())
+                val remoteProject = projectsApi.getProject(id)
+                projectsDb.saveProject(remoteProject)
             }.onSuccess { result ->
                 logger.d { "Saved $result project $id from API." }
             }.onFailure { e ->
@@ -94,8 +86,8 @@ internal class OfflineFirstProjectsRepository(
         }
 
         return projectsDb.getProjectFlow(id)
-            .map<ProjectEntity?, OfflineFirstDataResult<Project?>> { entity ->
-                OfflineFirstDataResult.Success(entity?.toBusiness())
+            .map<Project?, OfflineFirstDataResult<Project?>> { entity ->
+                OfflineFirstDataResult.Success(entity)
             }.catch { e ->
                 if (e is NetworkException) {
                     e.log()
@@ -117,12 +109,11 @@ internal class OfflineFirstProjectsRepository(
     override suspend fun saveProject(project: Project): OfflineFirstDataResult<Project> {
         applicationScope.launch {
             runCatching {
-                val updatedDto = projectsApi.saveProject(project.toApiDto())
-                updatedDto?.let {
-                    val updatedProject = it.toBusiness()
-                    projectsDb.saveProject(updatedProject.toEntity())
+                val updatedProject = projectsApi.saveProject(project)
+                updatedProject?.let {
+                    projectsDb.saveProject(it)
                 }
-                return@runCatching updatedDto
+                return@runCatching updatedProject
             }.onSuccess { updatedDto ->
                 logger.d { "Updated remote project ${project.id}." }
                 updatedDto?.let {
@@ -136,7 +127,7 @@ internal class OfflineFirstProjectsRepository(
         }
 
         return try {
-            projectsDb.saveProject(project.toEntity())
+            projectsDb.saveProject(project)
             OfflineFirstDataResult.Success(project)
         } catch (e: Exception) {
             if (e is CancellationException) throw e

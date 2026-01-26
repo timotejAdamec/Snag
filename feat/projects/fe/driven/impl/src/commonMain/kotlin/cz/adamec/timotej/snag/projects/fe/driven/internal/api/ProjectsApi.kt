@@ -14,6 +14,7 @@ package cz.adamec.timotej.snag.projects.fe.driven.internal.api
 
 import cz.adamec.timotej.snag.network.fe.SnagNetworkHttpClient
 import cz.adamec.timotej.snag.projects.be.driving.contract.ProjectApiDto
+import cz.adamec.timotej.snag.projects.business.Project
 import io.ktor.client.call.body
 import io.ktor.client.request.setBody
 import io.ktor.http.HttpStatusCode
@@ -22,15 +23,22 @@ import kotlin.uuid.Uuid
 internal class ProjectsApi(
     private val httpClient: SnagNetworkHttpClient,
 ) {
-    suspend fun getProjects(): List<ProjectApiDto> = httpClient.get("/projects").body()
-
-    suspend fun getProject(id: Uuid): ProjectApiDto = httpClient.get("/projects/$id").body()
-
-    suspend fun saveProject(project: ProjectApiDto): ProjectApiDto? {
-        val response = httpClient.put("/projects/${project.id}") {
-            setBody(project)
+    suspend fun getProjects(): List<Project> =
+        httpClient.get("/projects").body<List<ProjectApiDto>>().map {
+            it.toBusiness()
         }
-        return if (response.status != HttpStatusCode.NoContent) response.body() else null
+
+    suspend fun getProject(id: Uuid): Project =
+        httpClient.get("/projects/$id").body<ProjectApiDto>().toBusiness()
+
+    suspend fun saveProject(project: Project): Project? {
+        val projectDto = project.toApiDto()
+        val response = httpClient.put("/projects/${projectDto.id}") {
+            setBody(projectDto)
+        }
+        return if (response.status != HttpStatusCode.NoContent) {
+            response.body<ProjectApiDto>().toBusiness()
+        } else null
     }
 
     suspend fun deleteProject(id: Uuid) {

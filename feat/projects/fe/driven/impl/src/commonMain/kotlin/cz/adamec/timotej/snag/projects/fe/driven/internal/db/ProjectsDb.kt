@@ -16,13 +16,14 @@ import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import app.cash.sqldelight.coroutines.mapToOneOrNull
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.ProjectBookkeepingQueries
-import cz.adamec.timotej.snag.feat.shared.database.fe.db.ProjectEntity
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.ProjectEntityQueries
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.ProjectFailedSync
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.common.TimestampProvider
+import cz.adamec.timotej.snag.projects.business.Project
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import kotlin.uuid.Uuid
 
@@ -32,29 +33,33 @@ internal class ProjectsDb(
     private val timestampProvider: TimestampProvider,
     private val ioDispatcher: CoroutineDispatcher,
 ) {
-    fun getAllProjectsFlow(): Flow<List<ProjectEntity>> {
+    fun getAllProjectsFlow(): Flow<List<Project>> {
         return projectEntityQueries
             .selectAll()
             .asFlow()
             .mapToList(ioDispatcher)
+            .map { entities ->
+                entities.map { it.toBusiness() }
+            }
     }
 
-    suspend fun saveProjects(projectEntities: List<ProjectEntity>) =
+    suspend fun saveProjects(projects: List<Project>) =
         withContext(ioDispatcher) {
             projectEntityQueries.transaction {
-                projectEntities.forEach { projectEntityQueries.save(it) }
+                projects.forEach { projectEntityQueries.save(it.toEntity()) }
             }
         }
 
-    fun getProjectFlow(id: Uuid): Flow<ProjectEntity?> =
+    fun getProjectFlow(id: Uuid): Flow<Project?> =
         projectEntityQueries
             .selectById(id.toString())
             .asFlow()
             .mapToOneOrNull(ioDispatcher)
+            .map { it?.toBusiness() }
 
-    suspend fun saveProject(project: ProjectEntity): Unit =
+    suspend fun saveProject(project: Project): Unit =
         withContext(ioDispatcher) {
-            projectEntityQueries.save(project)
+            projectEntityQueries.save(project.toEntity())
         }
 
     suspend fun deleteProject(id: Uuid) =
