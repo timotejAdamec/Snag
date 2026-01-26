@@ -13,10 +13,6 @@
 package cz.adamec.timotej.snag.projects.fe.driven.di
 
 import cz.adamec.timotej.snag.lib.core.di.getIoDispatcher
-import cz.adamec.timotej.snag.projects.fe.driven.internal.ProjectStore
-import cz.adamec.timotej.snag.projects.fe.driven.internal.ProjectStoreFactory
-import cz.adamec.timotej.snag.projects.fe.driven.internal.ProjectsStore
-import cz.adamec.timotej.snag.projects.fe.driven.internal.ProjectsStoreFactory
 import cz.adamec.timotej.snag.projects.fe.driven.internal.StoreProjectsRepository
 import cz.adamec.timotej.snag.projects.fe.driven.internal.api.ProjectsApi
 import cz.adamec.timotej.snag.projects.fe.driven.internal.db.ProjectsDb
@@ -36,17 +32,5 @@ val projectsDrivenModule =
             )
         }
         factoryOf(::ProjectsApi)
-        factory {
-            ProjectStoreFactory(
-                projectsApi = get(),
-                projectsDb = get(),
-            ).create()
-        } bind ProjectStore::class
-        factory {
-            ProjectsStoreFactory(
-                projectsApi = get(),
-                projectsDb = get(),
-            ).create()
-        } bind ProjectsStore::class
         factoryOf(::StoreProjectsRepository) bind ProjectsRepository::class
     }

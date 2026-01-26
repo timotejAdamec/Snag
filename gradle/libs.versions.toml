@@ -27,7 +27,6 @@ kermit = "2.0.8"
 ktor = "3.4.0"
 slf4j = "2.0.17"
 logback = "1.5.25"
-store = "5.1.0-alpha08"
 sqldelight = "2.2.1"
 sqlJs = "1.6.2"
 webpack = "9.1.0"
@@ -115,8 +114,6 @@ navigation3-ui = { group = "org.jetbrains.androidx.navigation3", name = "navigat
 navigation3-viewmodel = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-viewmodel-navigation3", version.ref = "androidx-lifecycle" }
 navigation3-adaptive = { group = "org.jetbrains.compose.material3.adaptive", name = "adaptive-navigation3", version.ref = "composeMultiplatformAdaptive" }
 navigation3-browser = { group = "com.github.terrakok", name = "navigation3-browser", version.ref = "navigation3-browser" }
-
-store = { module = "org.mobilenativefoundation.store:store5", version.ref = "store" }
 
 sqldelight-runtime = { module = "app.cash.sqldelight:runtime", version.ref = "sqldelight" }
 sqldelight-async-extensions = { module = "app.cash.sqldelight:async-extensions", version.ref = "sqldelight" }

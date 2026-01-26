@@ -14,79 +14,96 @@ package cz.adamec.timotej.snag.projects.fe.driven.internal
 
 import cz.adamec.timotej.snag.lib.core.DataResult
 import cz.adamec.timotej.snag.lib.core.log
-import cz.adamec.timotej.snag.lib.core.map
-import cz.adamec.timotej.snag.lib.store.StoreMutation
-import cz.adamec.timotej.snag.lib.store.toDataResult
-import cz.adamec.timotej.snag.lib.store.toDataResultFlow
-import cz.adamec.timotej.snag.lib.store.toOfflineFirstDataResult
+import cz.adamec.timotej.snag.network.fe.NetworkException
 import cz.adamec.timotej.snag.projects.business.Project
 import cz.adamec.timotej.snag.projects.fe.driven.internal.LH.logger
+import cz.adamec.timotej.snag.projects.fe.driven.internal.api.ProjectsApi
+import cz.adamec.timotej.snag.projects.fe.driven.internal.api.toApiDto
+import cz.adamec.timotej.snag.projects.fe.driven.internal.api.toBusiness
+import cz.adamec.timotej.snag.projects.fe.driven.internal.db.ProjectsDb
 import cz.adamec.timotej.snag.projects.fe.driven.internal.db.toBusiness
 import cz.adamec.timotej.snag.projects.fe.driven.internal.db.toEntity
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.channelFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
-import org.mobilenativefoundation.store.store5.Store
-import org.mobilenativefoundation.store.store5.StoreReadRequest
-import org.mobilenativefoundation.store.store5.StoreWriteRequest
+import kotlinx.coroutines.launch
 import kotlin.uuid.Uuid
 
-class StoreProjectsRepository(
-    private val projectStore: ProjectStore,
-    private val projectsStore: ProjectsStore,
+internal class StoreProjectsRepository(
+    private val projectsApi: ProjectsApi,
+    private val projectsDb: ProjectsDb,
 ) : ProjectsRepository {
     override fun getAllProjectsFlow(): Flow<DataResult<List<Project>>> =
-        projectsStore
-            .stream(
-                request =
-                    StoreReadRequest.cached(
-                        key = Unit,
-                        refresh = true,
-                    ),
-            ).toDataResultFlow()
-            .onEach {
-                logger.log(
-                    dataResult = it,
-                    additionalInfo = "getAllProjectsFlow",
-                )
-            }.distinctUntilChanged()
+        channelFlow {
+            send(DataResult.Loading)
 
-    override fun getProjectFlow(id: Uuid): Flow<DataResult<Project>> =
-        projectStore
-            .stream<ProjectMutation>(
-                request =
-                    StoreReadRequest.cached(
-                        key = id,
-                        refresh = true,
-                    ),
-            )
-            .toDataResultFlow()
-            .map { dataResult ->
-                dataResult.map { mutation ->
-                    (mutation as? StoreMutation.Save)?.value
-                        ?: error("Unexpected mutation type in getProjectFlow: $mutation")
+            launch {
+                projectsDb.getAllProjectsFlow().collectLatest { entities ->
+                    send(DataResult.Success(entities.map { it.toBusiness() }))
                 }
             }
-            .onEach {
-                logger.log(
-                    dataResult = it,
-                    additionalInfo = "getProjectFlow, id $id",
-                )
-            }.distinctUntilChanged()
+
+            launch {
+                try {
+                    val remoteDtos = projectsApi.getProjects()
+                    projectsDb.saveProjects(remoteDtos.map { it.toBusiness().toEntity() })
+                } catch (e: Exception) {
+                    logger.e(e) { "Error fetching projects from API" }
+                }
+            }
+        }.onEach {
+            logger.log(
+                dataResult = it,
+                additionalInfo = "getAllProjectsFlow",
+            )
+        }.distinctUntilChanged()
+
+    override fun getProjectFlow(id: Uuid): Flow<DataResult<Project>> =
+        channelFlow {
+            send(DataResult.Loading)
+
+            launch {
+                projectsDb.getProjectFlow(id).collectLatest { entity ->
+                    if (entity != null) {
+                        send(DataResult.Success(entity.toBusiness()))
+                    }
+                }
+            }
+
+            launch {
+                try {
+                    val remoteDto = projectsApi.getProject(id)
+                    projectsDb.saveProject(remoteDto.toBusiness().toEntity())
+                } catch (e: Exception) {
+                    logger.e(e) { "Error fetching project $id from API" }
+                }
+            }
+        }.onEach {
+            logger.log(
+                dataResult = it,
+                additionalInfo = "getProjectFlow, id $id",
+            )
+        }.distinctUntilChanged()
 
     override suspend fun saveProject(project: Project): DataResult<Project> {
-        val result: DataResult<Project> = projectStore.write(
-            StoreWriteRequest.of(
-                key = project.id,
-                value = StoreMutation.Save(project),
-            ),
-        )
-            .toOfflineFirstDataResult<LocalProjectMutation>(StoreMutation.Save(project.toEntity()))
-            .map { mutation: LocalProjectMutation ->
-                (mutation as? StoreMutation.Save)?.value?.toBusiness()
-                    ?: error("Unexpected mutation type in saveProject: $mutation")
+        projectsDb.saveProject(project.toEntity())
+
+        val result =
+            try {
+                val updatedDto = projectsApi.updateProject(project.toApiDto())
+                val updatedProject = updatedDto.toBusiness()
+                projectsDb.saveProject(updatedProject.toEntity())
+                DataResult.Success(updatedProject)
+            } catch (e: Exception) {
+                logger.e(e) { "Error saving project $project to API" }
+                if (e is NetworkException) {
+                    DataResult.Success(project, locallyOnly = true)
+                } else {
+                    DataResult.Failure.ProgrammerError(e)
+                }
             }
 
         logger.log(
@@ -98,12 +115,20 @@ class StoreProjectsRepository(
     }
 
     override suspend fun deleteProject(projectId: Uuid): DataResult<Unit> {
-        val result: DataResult<Unit> = projectStore.write(
-            StoreWriteRequest.of(
-                key = projectId,
-                value = StoreMutation.Delete(projectId)
-            )
-        ).toOfflineFirstDataResult(Unit)
+        projectsDb.deleteProject(projectId)
+
+        val result =
+            try {
+                projectsApi.deleteProject(projectId)
+                DataResult.Success(Unit)
+            } catch (e: Exception) {
+                logger.e(e) { "Error deleting project $projectId from API" }
+                if (e is NetworkException) {
+                    DataResult.Success(Unit, locallyOnly = true)
+                } else {
+                    DataResult.Failure.ProgrammerError(e)
+                }
+            }
 
         logger.log(
             dataResult = result,
