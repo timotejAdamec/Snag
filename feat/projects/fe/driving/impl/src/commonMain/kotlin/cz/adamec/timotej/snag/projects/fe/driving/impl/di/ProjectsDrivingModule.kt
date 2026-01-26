@@ -64,6 +64,7 @@ internal inline fun <reified T : SnagNavRoute> Module.projectDetailsEditScreenNa
         onProjectSaved = { savedProjectId ->
             val backStack = get<SnagBackStack>()
             val projectDetailRoute = getProjectDetailRoute(savedProjectId)
+            backStack.value.removeLastOrNull()
             backStack.value.add(projectDetailRoute)
         },
         onCancelClick = {

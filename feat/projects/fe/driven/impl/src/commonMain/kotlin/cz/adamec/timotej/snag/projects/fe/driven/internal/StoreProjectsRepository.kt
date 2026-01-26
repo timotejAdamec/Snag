@@ -21,11 +21,14 @@ import cz.adamec.timotej.snag.lib.store.toDataResultFlow
 import cz.adamec.timotej.snag.lib.store.toOfflineFirstDataResult
 import cz.adamec.timotej.snag.projects.business.Project
 import cz.adamec.timotej.snag.projects.fe.driven.internal.LH.logger
+import cz.adamec.timotej.snag.projects.fe.driven.internal.db.toBusiness
+import cz.adamec.timotej.snag.projects.fe.driven.internal.db.toEntity
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
+import org.mobilenativefoundation.store.store5.Store
 import org.mobilenativefoundation.store.store5.StoreReadRequest
 import org.mobilenativefoundation.store.store5.StoreWriteRequest
 import kotlin.uuid.Uuid
@@ -63,7 +66,7 @@ class StoreProjectsRepository(
             .map { dataResult ->
                 dataResult.map { mutation ->
                     (mutation as? StoreMutation.Save)?.value
-                        ?: error("Unexpected mutation type in read stream: $mutation")
+                        ?: error("Unexpected mutation type in getProjectFlow: $mutation")
                 }
             }
             .onEach {
@@ -79,7 +82,12 @@ class StoreProjectsRepository(
                 key = project.id,
                 value = StoreMutation.Save(project),
             ),
-        ).toOfflineFirstDataResult(project)
+        )
+            .toOfflineFirstDataResult<LocalProjectMutation>(StoreMutation.Save(project.toEntity()))
+            .map { mutation: LocalProjectMutation ->
+                (mutation as? StoreMutation.Save)?.value?.toBusiness()
+                    ?: error("Unexpected mutation type in saveProject: $mutation")
+            }
 
         logger.log(
             dataResult = result,
