@@ -13,7 +13,7 @@
 package cz.adamec.timotej.snag.projects.fe.driven.di
 
 import cz.adamec.timotej.snag.lib.core.di.getIoDispatcher
-import cz.adamec.timotej.snag.projects.fe.driven.internal.StoreProjectsRepository
+import cz.adamec.timotej.snag.projects.fe.driven.internal.OfflineFirstProjectsRepository
 import cz.adamec.timotej.snag.projects.fe.driven.internal.api.ProjectsApi
 import cz.adamec.timotej.snag.projects.fe.driven.internal.db.ProjectsDb
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsRepository
@@ -32,5 +32,5 @@ val projectsDrivenModule =
             )
         }
         factoryOf(::ProjectsApi)
-        factoryOf(::StoreProjectsRepository) bind ProjectsRepository::class
+        factoryOf(::OfflineFirstProjectsRepository) bind ProjectsRepository::class
     }

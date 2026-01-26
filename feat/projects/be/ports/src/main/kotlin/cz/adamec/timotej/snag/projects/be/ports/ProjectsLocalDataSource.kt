@@ -20,5 +20,5 @@ interface ProjectsLocalDataSource {
 
     suspend fun getProject(id: Uuid): Project?
 
-    suspend fun updateProject(project: Project): Project
+    suspend fun updateProject(project: Project): Project?
 }

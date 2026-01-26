@@ -21,6 +21,7 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
+import io.ktor.server.routing.delete
 import io.ktor.server.routing.get
 import io.ktor.server.routing.put
 import io.ktor.server.routing.route
@@ -79,7 +80,13 @@ internal class ProjectsRoute(
 
                 val updatedProject = saveProjectUseCase(putProjectDto.toBusiness(id))
 
-                call.respond(updatedProject.toDto())
+                updatedProject?.let {
+                    call.respond(it.toDto())
+                } ?: call.respond(HttpStatusCode.NoContent)
+            }
+
+            delete("/{id}") {
+
             }
         }
     }

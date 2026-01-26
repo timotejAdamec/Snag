@@ -12,25 +12,25 @@
 
 package cz.adamec.timotej.snag.network.fe
 
-import cz.adamec.timotej.snag.lib.core.DataResult
+import cz.adamec.timotej.snag.lib.core.OnlineDataResult
 
-fun NetworkException.toDataResult() =
+fun NetworkException.toOnlineDataResult() =
     when (this) {
         is NetworkException.NetworkUnavailable ->
-            DataResult.Failure.NetworkUnavailable
+            OnlineDataResult.Failure.NetworkUnavailable
 
         is NetworkException.ClientError ->
-            DataResult.Failure.UserMessageError(
+            OnlineDataResult.Failure.UserMessageError(
                 throwable = this,
                 message = this.message ?: "Invalid request",
             )
 
         is NetworkException.ServerError ->
-            DataResult.Failure.UserMessageError(
+            OnlineDataResult.Failure.UserMessageError(
                 throwable = this,
                 message = "Problems on server side.",
             )
 
         is NetworkException.ProgrammerError ->
-            DataResult.Failure.ProgrammerError(this)
+            OnlineDataResult.Failure.ProgrammerError(this)
     }

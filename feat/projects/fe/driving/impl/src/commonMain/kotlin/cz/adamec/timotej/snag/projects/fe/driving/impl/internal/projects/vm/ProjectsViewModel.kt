@@ -14,13 +14,11 @@ package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projects.vm
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import cz.adamec.timotej.snag.lib.core.DataResult
+import cz.adamec.timotej.snag.lib.core.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError.*
-import cz.adamec.timotej.snag.projects.business.Project
 import cz.adamec.timotej.snag.projects.fe.app.GetProjectsUseCase
 import kotlinx.collections.immutable.toPersistentList
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -47,16 +45,7 @@ internal class ProjectsViewModel(
         getProjectsUseCase()
             .map { projectsDataResult ->
                 when (projectsDataResult) {
-                    DataResult.Failure.NetworkUnavailable -> {
-                        _state.update {
-                            it.copy(
-                                isLoading = false,
-                            )
-                        }
-                        errorEventsChannel.send(NetworkUnavailable)
-                    }
-
-                    is DataResult.Failure.ProgrammerError -> {
+                    is OfflineFirstDataResult.ProgrammerError -> {
                         _state.update {
                             it.copy(
                                 isLoading = false,
@@ -65,23 +54,7 @@ internal class ProjectsViewModel(
                         errorEventsChannel.send(Unknown)
                     }
 
-                    is DataResult.Failure.UserMessageError -> {
-                        _state.update {
-                            it.copy(
-                                isLoading = false,
-                            )
-                        }
-                        errorEventsChannel.send(CustomUserMessage(projectsDataResult.message))
-                    }
-
-                    DataResult.Loading ->
-                        _state.update {
-                            it.copy(
-                                isLoading = true,
-                            )
-                        }
-
-                    is DataResult.Success -> _state.update {
+                    is OfflineFirstDataResult.Success -> _state.update {
                         it.copy(
                             projects = projectsDataResult.data.toPersistentList(),
                             isLoading = false,

@@ -82,9 +82,9 @@ internal class InMemoryProjectsLocalDataSource : ProjectsLocalDataSource {
             .find { it.id == id }
 
     // TODO check updated timestamp and return the database project if it is newer
-    override suspend fun updateProject(project: Project): Project {
+    override suspend fun updateProject(project: Project): Project? {
         projects.removeIf { it.id == project.id }
         projects.add(project)
-        return project
+        return null
     }
 }

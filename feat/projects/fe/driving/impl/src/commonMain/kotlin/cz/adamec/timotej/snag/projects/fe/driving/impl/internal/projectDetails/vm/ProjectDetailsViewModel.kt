@@ -14,7 +14,7 @@ package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import cz.adamec.timotej.snag.lib.core.DataResult
+import cz.adamec.timotej.snag.lib.core.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError.*
 import cz.adamec.timotej.snag.projects.business.Project
@@ -51,17 +51,10 @@ internal class ProjectDetailsViewModel(
     private fun collectProject(projectId: Uuid) = viewModelScope.launch {
         getProjectUseCase(projectId).collect { result ->
             when (result) {
-                DataResult.Failure.NetworkUnavailable -> {}
-                is DataResult.Failure.ProgrammerError -> {
+                is OfflineFirstDataResult.ProgrammerError -> {
                     errorEventsChannel.send(Unknown)
                 }
-
-                is DataResult.Failure.UserMessageError -> {
-                    errorEventsChannel.send(CustomUserMessage(result.message))
-                }
-
-                DataResult.Loading -> {}
-                is DataResult.Success<Project?> -> result.data?.let { project ->
+                is OfflineFirstDataResult.Success<Project?> -> result.data?.let { project ->
                     _state.update {
                         it.copy(
                             status = ProjectDetailsUiStatus.LOADED,
@@ -75,16 +68,8 @@ internal class ProjectDetailsViewModel(
     }
 
     fun onDelete() = viewModelScope.launch {
-        when (val result = deleteProjectUseCase(projectId)) {
-            DataResult.Failure.NetworkUnavailable -> {
-                _state.update {
-                    it.copy(
-                        isBeingDeleted = false
-                    )
-                }
-                errorEventsChannel.send(NetworkUnavailable)
-            }
-            is DataResult.Failure.ProgrammerError -> {
+        when (deleteProjectUseCase(projectId)) {
+            is OfflineFirstDataResult.ProgrammerError -> {
                 _state.update {
                     it.copy(
                         isBeingDeleted = false
@@ -93,24 +78,7 @@ internal class ProjectDetailsViewModel(
                 errorEventsChannel.send(Unknown)
             }
 
-            is DataResult.Failure.UserMessageError -> {
-                _state.update {
-                    it.copy(
-                        isBeingDeleted = false
-                    )
-                }
-                errorEventsChannel.send(CustomUserMessage(result.message))
-            }
-
-            DataResult.Loading -> {
-                _state.update {
-                    it.copy(
-                        isBeingDeleted = true
-                    )
-                }
-            }
-
-            is DataResult.Success -> {
+            is OfflineFirstDataResult.Success -> {
                 _state.update {
                     it.copy(
                         isBeingDeleted = false

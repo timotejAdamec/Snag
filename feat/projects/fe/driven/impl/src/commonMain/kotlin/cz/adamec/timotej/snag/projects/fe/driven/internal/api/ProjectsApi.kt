@@ -16,6 +16,7 @@ import cz.adamec.timotej.snag.network.fe.SnagNetworkHttpClient
 import cz.adamec.timotej.snag.projects.be.driving.contract.ProjectApiDto
 import io.ktor.client.call.body
 import io.ktor.client.request.setBody
+import io.ktor.http.HttpStatusCode
 import kotlin.uuid.Uuid
 
 internal class ProjectsApi(
@@ -25,11 +26,12 @@ internal class ProjectsApi(
 
     suspend fun getProject(id: Uuid): ProjectApiDto = httpClient.get("/projects/$id").body()
 
-    suspend fun updateProject(project: ProjectApiDto): ProjectApiDto =
-        httpClient
-            .put("/projects/${project.id}") {
-                setBody(project)
-            }.body()
+    suspend fun saveProject(project: ProjectApiDto): ProjectApiDto? {
+        val response = httpClient.put("/projects/${project.id}") {
+            setBody(project)
+        }
+        return if (response.status != HttpStatusCode.NoContent) response.body() else null
+    }
 
     suspend fun deleteProject(id: Uuid) {
         httpClient.delete("/projects/$id")

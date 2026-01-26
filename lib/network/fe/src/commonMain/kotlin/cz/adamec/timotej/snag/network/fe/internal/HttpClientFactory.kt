@@ -63,10 +63,12 @@ object HttpClientFactory {
                         is ClientRequestException ->
                             when (cause.response.status) {
                                 HttpStatusCode.Unauthorized -> throw NetworkException.ClientError.Unauthorized(
+                                    message = cause.message,
                                     cause = cause,
                                 )
 
                                 HttpStatusCode.NotFound -> throw NetworkException.ClientError.NotFound(
+                                    message = cause.message,
                                     cause = cause,
                                 )
 

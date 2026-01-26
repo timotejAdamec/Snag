@@ -12,19 +12,16 @@
 
 package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetailsEdit.vm
 
-import cz.adamec.timotej.snag.lib.core.DataResult
+import cz.adamec.timotej.snag.lib.core.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.core.UuidProvider
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.projects.business.Project
 import cz.adamec.timotej.snag.projects.fe.app.GetProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.SaveProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.driven.test.FakeProjectsRepository
-import cz.adamec.timotej.snag.projects.fe.ports.ProjectsRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
@@ -135,7 +132,7 @@ class ProjectDetailsEditViewModelTest {
 
         val expectedUuid = Uuid.random()
         val savedProject = Project(expectedUuid, "Name", "Address")
-        projectsRepository.setSaveResult(DataResult.Success(savedProject))
+        projectsRepository.setSaveResult(OfflineFirstDataResult.Success(savedProject))
 
         viewModel.onSaveProject()
 
@@ -149,7 +146,7 @@ class ProjectDetailsEditViewModelTest {
         viewModel.onProjectNameChange("Name")
         viewModel.onProjectAddressChange("Address")
 
-        projectsRepository.setSaveResult(DataResult.Failure.ProgrammerError(RuntimeException("Failed")))
+        projectsRepository.setSaveResult(OfflineFirstDataResult.Failure.ProgrammerError(RuntimeException("Failed")))
 
         viewModel.onSaveProject()
 

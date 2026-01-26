@@ -14,7 +14,7 @@ package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetailsE
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import cz.adamec.timotej.snag.lib.core.DataResult
+import cz.adamec.timotej.snag.lib.core.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError.CustomUserMessage
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError.Unknown
@@ -53,17 +53,10 @@ internal class ProjectDetailsEditViewModel(
     private fun collectProject(projectId: Uuid) = viewModelScope.launch {
         getProjectUseCase(projectId).collect { result ->
             when (result) {
-                DataResult.Failure.NetworkUnavailable -> {}
-                is DataResult.Failure.ProgrammerError -> {
+                is OfflineFirstDataResult.ProgrammerError -> {
                     errorEventsChannel.send(Unknown)
                 }
-
-                is DataResult.Failure.UserMessageError -> {
-                    errorEventsChannel.send(CustomUserMessage(result.message))
-                }
-
-                DataResult.Loading -> {}
-                is DataResult.Success -> result.data?.let { data ->
+                is OfflineFirstDataResult.Success -> result.data?.let { data ->
                     _state.update {
                         it.copy(
                             projectName = data.name,
@@ -103,17 +96,10 @@ internal class ProjectDetailsEditViewModel(
             )
         )
         when (result) {
-            DataResult.Failure.NetworkUnavailable -> {}
-            is DataResult.Failure.ProgrammerError -> {
+            is OfflineFirstDataResult.ProgrammerError -> {
                 errorEventsChannel.send(Unknown)
             }
-
-            is DataResult.Failure.UserMessageError -> {
-                errorEventsChannel.send(CustomUserMessage(result.message))
-            }
-
-            DataResult.Loading -> {}
-            is DataResult.Success -> {
+            is OfflineFirstDataResult.Success -> {
                 saveEventChannel.send(result.data.id)
             }
         }

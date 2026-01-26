@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.projects.fe.app
 
-import cz.adamec.timotej.snag.lib.core.DataResult
+import cz.adamec.timotej.snag.lib.core.OfflineFirstDataResult
 import cz.adamec.timotej.snag.projects.business.Project
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsRepository
 import kotlinx.coroutines.flow.Flow
@@ -21,5 +21,5 @@ import kotlin.uuid.Uuid
 class GetProjectUseCase(
     private val projectsRepository: ProjectsRepository,
 ) {
-    operator fun invoke(projectId: Uuid): Flow<DataResult<Project?>> = projectsRepository.getProjectFlow(projectId)
+    operator fun invoke(projectId: Uuid): Flow<OfflineFirstDataResult<Project?>> = projectsRepository.getProjectFlow(projectId)
 }

@@ -18,5 +18,5 @@ import cz.adamec.timotej.snag.projects.business.Project
 class SaveProjectUseCase(
     private val projectsLocalDataSource: ProjectsLocalDataSource,
 ) {
-    suspend operator fun invoke(project: Project): Project = projectsLocalDataSource.updateProject(project)
+    suspend operator fun invoke(project: Project): Project? = projectsLocalDataSource.updateProject(project)
 }

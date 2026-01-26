@@ -52,7 +52,7 @@ internal class ProjectsDb(
             .asFlow()
             .mapToOneOrNull(ioDispatcher)
 
-    suspend fun saveProject(project: ProjectEntity): Long =
+    suspend fun saveProject(project: ProjectEntity): Unit =
         withContext(ioDispatcher) {
             projectEntityQueries.save(project)
         }
