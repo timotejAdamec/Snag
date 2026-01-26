@@ -14,7 +14,7 @@ import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 
 plugins {
-    alias(libs.plugins.snagDrivingMultiplatformModule)
+    alias(libs.plugins.snagDrivingFrontendMultiplatformModule)
 }
 
 kotlin {
@@ -45,7 +45,7 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            implementation(projects.lib.core)
+            implementation(projects.lib.core.fe)
             implementation(projects.lib.network.fe)
             implementation(projects.lib.design.fe)
             implementation(projects.feat.shared.database.fe)

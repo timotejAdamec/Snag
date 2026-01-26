@@ -67,14 +67,12 @@ internal fun Project.configureKotlinMultiplatformModule() {
             }
 
             commonMain.dependencies {
-                if (name != "core") {
-                    implementation(project(":lib:core"))
+                if (!path.contains("core")) {
+                    implementation(project(":lib:core:common"))
                 }
                 implementation(library("kotlinx-coroutines-core"))
                 implementation(library("kotlinx-immutable-collections"))
                 implementation(library("koin-core"))
-                implementation(library("kermit"))
-                implementation(library("kermit-koin"))
             }
             commonTest.dependencies {
                 implementation(library("kotlin-test"))

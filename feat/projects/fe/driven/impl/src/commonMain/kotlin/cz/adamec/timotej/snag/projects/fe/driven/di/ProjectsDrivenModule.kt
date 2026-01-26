@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.projects.fe.driven.di
 
-import cz.adamec.timotej.snag.lib.core.di.getIoDispatcher
+import cz.adamec.timotej.snag.lib.core.common.di.getIoDispatcher
 import cz.adamec.timotej.snag.projects.fe.driven.internal.OfflineFirstProjectsRepository
 import cz.adamec.timotej.snag.projects.fe.driven.internal.api.ProjectsApi
 import cz.adamec.timotej.snag.projects.fe.driven.internal.db.ProjectsDb

@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.projects.fe.app
 
-import cz.adamec.timotej.snag.lib.core.OfflineFirstDataResult
+import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.projects.business.Project
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsRepository
 import kotlinx.coroutines.flow.Flow

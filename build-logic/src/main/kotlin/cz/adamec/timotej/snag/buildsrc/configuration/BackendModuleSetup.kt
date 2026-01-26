@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinJvmExtension
 
 internal fun Project.configureBackendModule() {
     dependencies {
-        implementation(project(":lib:core"))
+        implementation(project(":lib:core:be"))
 
         implementation(libs.library("kotlinx-coroutines-core"))
         implementation(libs.library("koin-core"))

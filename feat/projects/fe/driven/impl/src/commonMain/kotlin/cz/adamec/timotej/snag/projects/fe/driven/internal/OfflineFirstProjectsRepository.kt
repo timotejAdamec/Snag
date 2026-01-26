@@ -13,9 +13,9 @@
 package cz.adamec.timotej.snag.projects.fe.driven.internal
 
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.ProjectEntity
-import cz.adamec.timotej.snag.lib.core.ApplicationScope
-import cz.adamec.timotej.snag.lib.core.OfflineFirstDataResult
-import cz.adamec.timotej.snag.lib.core.log
+import cz.adamec.timotej.snag.lib.core.common.ApplicationScope
+import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
+import cz.adamec.timotej.snag.lib.core.fe.log
 import cz.adamec.timotej.snag.network.fe.NetworkException
 import cz.adamec.timotej.snag.network.fe.log
 import cz.adamec.timotej.snag.projects.business.Project

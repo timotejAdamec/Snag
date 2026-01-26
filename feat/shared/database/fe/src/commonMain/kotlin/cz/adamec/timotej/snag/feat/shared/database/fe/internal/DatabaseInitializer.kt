@@ -15,7 +15,7 @@ package cz.adamec.timotej.snag.feat.shared.database.fe.internal
 import app.cash.sqldelight.async.coroutines.awaitCreate
 import app.cash.sqldelight.db.SqlDriver
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.SnagDatabase
-import cz.adamec.timotej.snag.lib.core.Initializer
+import cz.adamec.timotej.snag.lib.core.fe.Initializer
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 

@@ -37,7 +37,7 @@ usage() {
     echo ""
     echo "Examples:"
     echo "  $0 feat projects fe driven test"
-    echo "  $0 lib core commonMain"
+    echo "  $0 lib core fe"
     exit 1
 }
 
@@ -99,40 +99,23 @@ else
     ARCH_LAYER=$2
 fi
 
-# Construct Base Paths
-BASE_MODULE_DIR=""
-BASE_PACKAGE_DIR=""
-
-# Helper to construct path segments
-append_path() {
-    local base=$1
-    local part=$2
-    if [ -n "$base" ]; then
-        echo "$base/$part"
-    else
-        echo "$part"
-    fi
-}
-
 # Build directories logic
-# Note: Logic inferred from original script's behavior
 if [ -n "$EXTRA_NAME" ]; then
     # 5 Args case: feat projects fe driven test
     BASE_MODULE_DIR="$TYPE/$DOMAIN_TYPE/$SIDE/$ARCH_LAYER/$EXTRA_NAME"
-    BASE_PACKAGE_DIR="cz/adamec/timotej/snag/$DOMAIN_TYPE/$SIDE/$ARCH_LAYER/$EXTRA_NAME"
 elif [ "$#" -eq 4 ]; then
     # 4 Args case
     BASE_MODULE_DIR="$TYPE/$DOMAIN_TYPE/$SIDE/$ARCH_LAYER"
-    BASE_PACKAGE_DIR="cz/adamec/timotej/snag/$DOMAIN_TYPE/$SIDE/$ARCH_LAYER"
 elif [ "$#" -eq 3 ]; then
     # 3 Args case
     BASE_MODULE_DIR="$TYPE/$DOMAIN_TYPE/$ARCH_LAYER"
-    BASE_PACKAGE_DIR="cz/adamec/timotej/snag/$DOMAIN_TYPE/$ARCH_LAYER"
 else
     # 2 Args case
     BASE_MODULE_DIR="$TYPE/$ARCH_LAYER"
-    BASE_PACKAGE_DIR="cz/adamec/timotej/snag/$TYPE/$ARCH_LAYER"
 fi
+
+# Package name now consistently includes the TYPE (e.g. lib, feat)
+BASE_PACKAGE_DIR="cz/adamec/timotej/snag/$BASE_MODULE_DIR"
 
 # Determine platform if not explicitly set
 if [ -z "$PLATFORM" ]; then
@@ -158,14 +141,14 @@ create_module_internal() {
     local CURRENT_SOURCE_SETS=()
     if [ "$TARGET_PLATFORM" == "jvm" ]; then
         if [ "$TARGET_ARCH" == "driving" ]; then
-            CURRENT_PLUGIN="alias(libs.plugins.snagDrivingBackendModule)"
+            CURRENT_PLUGIN="alias(libs.plugins.snagDrivingFrontendBackendModule)"
         else
             CURRENT_PLUGIN="alias(libs.plugins.snagBackendModule)"
         fi
         CURRENT_SOURCE_SETS=("main" "test")
     else
         if [ "$TARGET_ARCH" == "driving" ]; then
-            CURRENT_PLUGIN="alias(libs.plugins.snagDrivingMultiplatformModule)"
+            CURRENT_PLUGIN="alias(libs.plugins.snagDrivingFrontendMultiplatformModule)"
         else
             CURRENT_PLUGIN="alias(libs.plugins.snagMultiplatformModule)"
         fi

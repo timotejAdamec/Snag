@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.network.fe
 
-import cz.adamec.timotej.snag.lib.core.OnlineDataResult
+import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
 
 fun NetworkException.toOnlineDataResult() =
     when (this) {

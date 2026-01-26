@@ -23,21 +23,21 @@ gradlePlugin {
         id = libs.plugins.snagMultiplatformModule.get().pluginId
         implementationClass = "cz.adamec.timotej.snag.buildsrc.plugins.MultiplatformModulePlugin"
     }
-    plugins.register("SnagDrivingMultiplatformModulePlugin") {
-        id = libs.plugins.snagDrivingMultiplatformModule.get().pluginId
-        implementationClass = "cz.adamec.timotej.snag.buildsrc.plugins.DrivingMultiplatformModulePlugin"
+    plugins.register("SnagFrontendMultiplatformModulePlugin") {
+        id = libs.plugins.snagFrontendMultiplatformModule.get().pluginId
+        implementationClass = "cz.adamec.timotej.snag.buildsrc.plugins.FrontendMultiplatformModulePlugin"
     }
-    plugins.register("SnagDatabaseMultiplatformModulePlugin") {
-        id = libs.plugins.snagDatabaseMultiplatformModule.get().pluginId
-        implementationClass = "cz.adamec.timotej.snag.buildsrc.plugins.DatabaseMultiplatformModulePlugin"
+    plugins.register("SnagDrivingFrontendMultiplatformModulePlugin") {
+        id = libs.plugins.snagDrivingFrontendMultiplatformModule.get().pluginId
+        implementationClass = "cz.adamec.timotej.snag.buildsrc.plugins.DrivingFrontendMultiplatformModulePlugin"
     }
-    plugins.register("SnagNetworkMultiplatformModulePlugin") {
-        id = libs.plugins.snagNetworkMultiplatformModule.get().pluginId
-        implementationClass = "cz.adamec.timotej.snag.buildsrc.plugins.NetworkMultiplatformModulePlugin"
+    plugins.register("SnagNetworkFrontendMultiplatformModulePlugin") {
+        id = libs.plugins.snagNetworkFrontendMultiplatformModule.get().pluginId
+        implementationClass = "cz.adamec.timotej.snag.buildsrc.plugins.NetworkFrontendMultiplatformModulePlugin"
     }
-    plugins.register("SnagDrivenMultiplatformModulePlugin") {
-        id = libs.plugins.snagDrivenMultiplatformModule.get().pluginId
-        implementationClass = "cz.adamec.timotej.snag.buildsrc.plugins.DrivenMultiplatformModulePlugin"
+    plugins.register("SnagDrivenFrontendMultiplatformModulePlugin") {
+        id = libs.plugins.snagDrivenFrontendMultiplatformModule.get().pluginId
+        implementationClass = "cz.adamec.timotej.snag.buildsrc.plugins.DrivenFrontendMultiplatformModulePlugin"
     }
     plugins.register("SnagBackendModulePlugin") {
         id = libs.plugins.snagBackendModule.get().pluginId

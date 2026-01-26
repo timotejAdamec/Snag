@@ -129,10 +129,10 @@ compose-rules-ktlint = { group = "io.nlopez.compose.rules", name = "ktlint", ver
 
 [plugins]
 snagMultiplatformModule = { id = "libs.plugins.snag.multiplatform.module" }
-snagDrivingMultiplatformModule = { id = "libs.plugins.snag.driving.multiplatform.module" }
-snagDatabaseMultiplatformModule = { id = "libs.plugins.snag.database.multiplatform.module" }
-snagNetworkMultiplatformModule = { id = "libs.plugins.snag.network.multiplatform.module" }
-snagDrivenMultiplatformModule = { id = "libs.plugins.snag.driven.multiplatform.module" }
+snagFrontendMultiplatformModule = { id = "libs.plugins.snag.frontend.multiplatform.module" }
+snagDrivingFrontendMultiplatformModule = { id = "libs.plugins.snag.driving.frontend.multiplatform.module" }
+snagNetworkFrontendMultiplatformModule = { id = "libs.plugins.snag.network.frontend.multiplatform.module" }
+snagDrivenFrontendMultiplatformModule = { id = "libs.plugins.snag.driven.frontend.multiplatform.module" }
 snagBackendModule = { id = "libs.plugins.snag.backend.module" }
 snagImplDrivingBackendModule = { id = "libs.plugins.snag.impl.driving.backend.module" }
 snagContractDrivingBackendMultiplatformModule = { id = "libs.plugins.snag.contract.driving.backend.multiplatform.module" }

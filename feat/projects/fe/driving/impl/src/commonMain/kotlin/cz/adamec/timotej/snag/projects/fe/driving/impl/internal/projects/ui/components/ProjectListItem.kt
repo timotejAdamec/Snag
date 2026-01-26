@@ -21,9 +21,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import cz.adamec.timotej.snag.lib.core.UuidProvider
+import cz.adamec.timotej.snag.lib.core.common.UuidProvider
 import cz.adamec.timotej.snag.lib.design.fe.theme.SnagTheme
 import cz.adamec.timotej.snag.projects.business.Project
+import org.koin.compose.koinInject
 
 @Composable
 internal fun ProjectListItem(
@@ -62,7 +63,7 @@ internal fun ProjectListItemPreview() {
                 ),
             project =
                 Project(
-                    id = UuidProvider.getUuid(),
+                    id = koinInject<UuidProvider>().getUuid(),
                     name = "Project A",
                     address = "Client A",
                 ),

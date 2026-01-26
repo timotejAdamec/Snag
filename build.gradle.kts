@@ -12,10 +12,9 @@
 
 plugins {
     alias(libs.plugins.snagMultiplatformModule) apply false
-    alias(libs.plugins.snagDrivingMultiplatformModule) apply false
-    alias(libs.plugins.snagDatabaseMultiplatformModule) apply false
-    alias(libs.plugins.snagNetworkMultiplatformModule) apply false
-    alias(libs.plugins.snagDrivenMultiplatformModule) apply false
+    alias(libs.plugins.snagDrivingFrontendMultiplatformModule) apply false
+    alias(libs.plugins.snagNetworkFrontendMultiplatformModule) apply false
+    alias(libs.plugins.snagDrivenFrontendMultiplatformModule) apply false
     alias(libs.plugins.snagBackendModule) apply false
     alias(libs.plugins.snagImplDrivingBackendModule) apply false
     alias(libs.plugins.snagContractDrivingBackendMultiplatformModule) apply false

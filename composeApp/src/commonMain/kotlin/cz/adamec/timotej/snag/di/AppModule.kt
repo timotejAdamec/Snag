@@ -13,7 +13,7 @@
 package cz.adamec.timotej.snag.di
 
 import cz.adamec.timotej.snag.feat.shared.database.fe.di.databaseModule
-import cz.adamec.timotej.snag.lib.core.di.coreModule
+import cz.adamec.timotej.snag.lib.core.fe.di.frontendCoreModule
 import cz.adamec.timotej.snag.logging.loggerModule
 import cz.adamec.timotej.snag.network.fe.di.networkModule
 import cz.adamec.timotej.snag.projects.fe.app.di.projectsAppModule
@@ -26,7 +26,7 @@ import org.koin.dsl.module
 val appModule =
     module {
         includes(
-            coreModule,
+            frontendCoreModule,
             loggerModule,
             navigationModule,
             databaseModule,

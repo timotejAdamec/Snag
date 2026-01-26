@@ -10,9 +10,12 @@
  * Department of Software Engineering
  */
 
+@file:OptIn(ExperimentalWasmDsl::class)
+
 import cz.adamec.timotej.snag.buildsrc.consts.SNAG_NAMESPACE
 import cz.adamec.timotej.snag.buildsrc.extensions.dotFormattedPath
 import cz.adamec.timotej.snag.buildsrc.extensions.library
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 
 plugins {
     alias(libs.plugins.snagMultiplatformModule)
@@ -32,6 +35,7 @@ kotlin {
     }
     sourceSets {
         commonMain.dependencies {
+            implementation(project(":lib:core:fe"))
             api(libs.sqldelight.async.extensions)
             api(libs.sqldelight.coroutines.extensions)
             implementation(libs.sqldelight.runtime)

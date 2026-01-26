@@ -1,5 +1,5 @@
 plugins {
-    alias(libs.plugins.snagNetworkMultiplatformModule)
+    alias(libs.plugins.snagNetworkFrontendMultiplatformModule)
 }
 
 kotlin {

@@ -19,8 +19,8 @@ import cz.adamec.timotej.snag.feat.shared.database.fe.db.ProjectBookkeepingQueri
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.ProjectEntity
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.ProjectEntityQueries
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.ProjectFailedSync
-import cz.adamec.timotej.snag.lib.core.Timestamp
-import cz.adamec.timotej.snag.lib.core.TimestampProvider
+import cz.adamec.timotej.snag.lib.core.common.Timestamp
+import cz.adamec.timotej.snag.lib.core.common.TimestampProvider
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext

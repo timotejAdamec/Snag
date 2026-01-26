@@ -18,11 +18,9 @@ import cz.adamec.timotej.snag.feat.shared.database.fe.db.ProjectEntityQueries
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.SnagDatabase
 import cz.adamec.timotej.snag.feat.shared.database.fe.internal.DatabaseInitializer
 import cz.adamec.timotej.snag.feat.shared.database.fe.internal.DriverFactory
-import cz.adamec.timotej.snag.lib.core.Initializer
-import cz.adamec.timotej.snag.lib.core.di.getDefaultDispatcher
-import cz.adamec.timotej.snag.lib.core.di.getIoDispatcher
+import cz.adamec.timotej.snag.lib.core.common.di.getDefaultDispatcher
+import cz.adamec.timotej.snag.lib.core.fe.Initializer
 import org.koin.core.module.Module
-import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
