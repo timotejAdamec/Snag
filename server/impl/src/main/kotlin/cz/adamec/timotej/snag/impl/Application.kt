@@ -15,6 +15,8 @@ package cz.adamec.timotej.snag.impl
 import cz.adamec.timotej.snag.impl.di.appModule
 import cz.adamec.timotej.snag.server.api.Host
 import cz.adamec.timotej.snag.server.api.configureJson
+import io.ktor.http.HttpHeaders
+import io.ktor.http.HttpMethod
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
 import io.ktor.server.engine.embeddedServer
@@ -39,6 +41,11 @@ fun Application.main() {
     install(CORS) {
         // allowHost("web frontend address") TODO once web FE deployed
         allowHost("localhost:8080")
+        allowMethod(HttpMethod.Put)
+        allowMethod(HttpMethod.Delete)
+        allowMethod(HttpMethod.Options)
+        allowHeader(HttpHeaders.ContentType)
+        allowHeader(HttpHeaders.Authorization)
     }
     install(ContentNegotiation) {
         configureJson()
