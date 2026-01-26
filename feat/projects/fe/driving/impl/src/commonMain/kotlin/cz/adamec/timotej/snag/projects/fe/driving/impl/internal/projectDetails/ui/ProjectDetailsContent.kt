@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ContainedLoadingIndicator
 import androidx.compose.material3.HorizontalFloatingToolbar
 import androidx.compose.material3.Icon
@@ -23,6 +24,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Label
 import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TooltipBox
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -37,7 +39,10 @@ import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.v
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import snag.feat.projects.fe.driving.impl.generated.resources.Res
+import snag.feat.projects.fe.driving.impl.generated.resources.delete_project_confirmation_text
+import snag.feat.projects.fe.driving.impl.generated.resources.delete_project_confirmation_title
 import snag.feat.projects.fe.driving.impl.generated.resources.project_not_found
+import snag.feat.projects.fe.driving.impl.generated.resources.projects_title
 import snag.lib.design.fe.generated.resources.delete
 import snag.lib.design.fe.generated.resources.ic_delete
 import snag.lib.design.fe.generated.resources.Res as DesignRes
@@ -95,6 +100,35 @@ private fun LoadedProjectDetailsContent(
                 .padding(paddingValues)
                 .consumeWindowInsets(paddingValues),
         ) {
+            AlertDialog(
+                title = {
+                    Text(text = stringResource(Res.string.delete_project_confirmation_title))
+                },
+                text = {
+                    Text(text = stringResource(Res.string.delete_project_confirmation_text))
+                },
+                onDismissRequest = {
+                    TODO()
+                },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            TODO()
+                        }
+                    ) {
+                        Text("Confirm")
+                    }
+                },
+                dismissButton = {
+                    TextButton(
+                        onClick = {
+                            TODO()
+                        }
+                    ) {
+                        Text("Dismiss")
+                    }
+                }
+            )
             HorizontalFloatingToolbar(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)

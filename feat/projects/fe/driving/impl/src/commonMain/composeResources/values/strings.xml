@@ -16,6 +16,8 @@
     <string name="project_name_label">Name</string>
     <string name="project_address_label">Address</string>
     <string name="project_not_found">Project not found</string>
+    <string name="delete_project_confirmation_title">Delete project?</string>
+    <string name="delete_project_confirmation_text">Project will be deleted permanently locally and on the server.</string>
 
     <string name="required">Required</string>
 </resources>
