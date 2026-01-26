@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.ui
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -100,35 +101,40 @@ private fun LoadedProjectDetailsContent(
                 .padding(paddingValues)
                 .consumeWindowInsets(paddingValues),
         ) {
-            AlertDialog(
-                title = {
-                    Text(text = stringResource(Res.string.delete_project_confirmation_title))
-                },
-                text = {
-                    Text(text = stringResource(Res.string.delete_project_confirmation_text))
-                },
-                onDismissRequest = {
-                    TODO()
-                },
-                confirmButton = {
-                    TextButton(
-                        onClick = {
-                            TODO()
+            val isShowingDeleteConfirmation = false
+            AnimatedVisibility(
+                visible = isShowingDeleteConfirmation,
+            ) {
+                AlertDialog(
+                    title = {
+                        Text(text = stringResource(Res.string.delete_project_confirmation_title))
+                    },
+                    text = {
+                        Text(text = stringResource(Res.string.delete_project_confirmation_text))
+                    },
+                    onDismissRequest = {
+                        TODO()
+                    },
+                    confirmButton = {
+                        TextButton(
+                            onClick = {
+                                TODO()
+                            }
+                        ) {
+                            Text("Confirm")
                         }
-                    ) {
-                        Text("Confirm")
-                    }
-                },
-                dismissButton = {
-                    TextButton(
-                        onClick = {
-                            TODO()
+                    },
+                    dismissButton = {
+                        TextButton(
+                            onClick = {
+                                TODO()
+                            }
+                        ) {
+                            Text("Dismiss")
                         }
-                    ) {
-                        Text("Dismiss")
                     }
-                }
-            )
+                )
+            }
             HorizontalFloatingToolbar(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
