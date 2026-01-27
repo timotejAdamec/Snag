@@ -12,14 +12,15 @@
 
 package cz.adamec.timotej.snag.projects.fe.ports
 
+import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.projects.business.Project
 import kotlinx.coroutines.flow.Flow
 import kotlin.uuid.Uuid
 
 interface ProjectsDb {
-    fun getAllProjectsFlow(): Flow<List<Project>>
-    suspend fun saveProjects(projects: List<Project>)
-    fun getProjectFlow(id: Uuid): Flow<Project?>
-    suspend fun saveProject(project: Project)
-    suspend fun deleteProject(id: Uuid)
+    fun getAllProjectsFlow(): Flow<OfflineFirstDataResult<List<Project>>>
+    suspend fun saveProjects(projects: List<Project>): OfflineFirstDataResult<Unit>
+    fun getProjectFlow(id: Uuid): Flow<OfflineFirstDataResult<Project?>>
+    suspend fun saveProject(project: Project): OfflineFirstDataResult<Unit>
+    suspend fun deleteProject(id: Uuid): OfflineFirstDataResult<Unit>
 }

@@ -44,37 +44,7 @@ internal class OfflineFirstProjectsRepository(
     }
 
     override suspend fun saveProject(project: Project): OfflineFirstDataResult<Project> {
-        applicationScope.launch {
-            runCatching {
-                val updatedProject = projectsApi.saveProject(project)
-                updatedProject?.let {
-                    projectsDb.saveProject(it)
-                }
-                return@runCatching updatedProject
-            }.onSuccess { updatedDto ->
-                logger.d { "Updated remote project ${project.id}." }
-                updatedDto?.let {
-                    logger.d { "Saved $updatedDto project from API." }
-                } ?: logger.d { "No updated project received from API." }
-            }.onFailure { e ->
-                if (e is CancellationException) throw e
-                if (e is NetworkException) e.log()
-                else logger.e(e) { "Error saving project ${project.id} from API." }
-            }
-        }
 
-        return try {
-            projectsDb.saveProject(project)
-            OfflineFirstDataResult.Success(project)
-        } catch (e: Exception) {
-            if (e is CancellationException) throw e
-            OfflineFirstDataResult.ProgrammerError(e)
-        }.also { result ->
-            logger.log(
-                offlineFirstDataResult = result,
-                additionalInfo = "saveProject, id ${project.id}",
-            )
-        }
     }
 
     override suspend fun deleteProject(projectId: Uuid): OfflineFirstDataResult<Unit> {

@@ -49,12 +49,10 @@ class GetProjectUseCase(
         }
 
         return projectsDb.getProjectFlow(projectId)
-            .map<Project?, OfflineFirstDataResult<Project?>> { entity ->
-                OfflineFirstDataResult.Success(entity)
-            }.onEach {
+            .onEach {
                 logger.log(
                     offlineFirstDataResult = it,
-                    additionalInfo = "GetProjectUseCase, id $projectId",
+                    additionalInfo = "GetProjectUseCase, projectsDb.getProjectFlow($projectId)",
                 )
             }.distinctUntilChanged()
     }

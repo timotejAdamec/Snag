@@ -48,12 +48,10 @@ class GetProjectsUseCase(
         }
 
         return projectsDb.getAllProjectsFlow()
-            .map<List<Project>, OfflineFirstDataResult<List<Project>>> { entities ->
-                OfflineFirstDataResult.Success(entities)
-            }.onEach {
+            .onEach {
                 LH.logger.log(
                     offlineFirstDataResult = it,
-                    additionalInfo = "GetProjectsUseCase",
+                    additionalInfo = "GetProjectsUseCase, projectsDb.getAllProjectsFlow()",
                 )
             }.distinctUntilChanged()
     }

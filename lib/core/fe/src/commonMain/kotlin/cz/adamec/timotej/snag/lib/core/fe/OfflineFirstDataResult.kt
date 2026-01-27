@@ -46,8 +46,8 @@ fun <T> Logger.log(
     when (offlineFirstDataResult) {
         is OfflineFirstDataResult.Success -> v(message)
         is OfflineFirstDataResult.ProgrammerError -> e(
-            message,
-            offlineFirstDataResult.throwable,
+            throwable = offlineFirstDataResult.throwable,
+            messageString = message,
         )
     }
 }

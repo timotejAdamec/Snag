@@ -47,7 +47,7 @@ internal class RealProjectsApi(
                     e.log()
                     e.toOnlineDataResult()
                 } else {
-                    LH.logger.e(e) { "Error fetching projects." }
+                    LH.logger.e { "Error fetching projects." }
                     OnlineDataResult.Failure.ProgrammerError(
                         throwable = e,
                     )
@@ -69,7 +69,7 @@ internal class RealProjectsApi(
                     e.log()
                     e.toOnlineDataResult()
                 } else {
-                    LH.logger.e(e) { "Error fetching project $id." }
+                    LH.logger.e { "Error fetching project $id." }
                     OnlineDataResult.Failure.ProgrammerError(
                         throwable = e,
                     )
@@ -97,7 +97,7 @@ internal class RealProjectsApi(
                     e.log()
                     e.toOnlineDataResult()
                 } else {
-                    LH.logger.e(e) { "Error saving project ${project.id} to API." }
+                    LH.logger.e { "Error saving project ${project.id} to API." }
                     OnlineDataResult.Failure.ProgrammerError(
                         throwable = e,
                     )
@@ -114,7 +114,7 @@ internal class RealProjectsApi(
                 OnlineDataResult.Success(Unit)
             },
             onFailure = { e ->
-                LH.logger.e(e) { "Error deleting project $id from API." }
+                LH.logger.e { "Error deleting project $id from API." }
                 OnlineDataResult.Failure.ProgrammerError(
                     throwable = e,
                 )
