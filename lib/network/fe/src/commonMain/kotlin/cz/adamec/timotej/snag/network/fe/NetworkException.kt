@@ -26,30 +26,30 @@ sealed class NetworkException(
     /** Server returned 4xx. */
     sealed class ClientError(
         override val cause: Throwable,
-        override val message: String? = null,
+        override val message: String,
     ) : NetworkException(cause, message) {
         /** Server returned 401. */
         class Unauthorized(
-            override val message: String,
             override val cause: Throwable,
-        ) : ClientError(cause)
+            override val message: String,
+        ) : ClientError(cause, message)
 
         /** Server returned 404. */
         class NotFound(
-            override val message: String,
             override val cause: Throwable,
-        ) : ClientError(cause)
+            override val message: String,
+        ) : ClientError(cause, message)
 
         class OtherClientError(
-            override val message: String,
             override val cause: Throwable,
+            override val message: String,
         ) : ClientError(cause, message)
     }
 
     /** Server returned 5xx. */
     class ServerError(
-        override val message: String,
         override val cause: Throwable,
+        override val message: String,
     ) : NetworkException(cause, message)
 
     /** Fallback for everything else. */

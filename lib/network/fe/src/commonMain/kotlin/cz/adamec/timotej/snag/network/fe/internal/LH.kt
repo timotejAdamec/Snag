@@ -14,6 +14,6 @@ package cz.adamec.timotej.snag.network.fe.internal
 
 import co.touchlab.kermit.Logger
 
-object LH {
-    val logger = Logger.withTag("network-fe")
+internal object LH {
+    val logger = Logger.withTag("lib-network-fe")
 }

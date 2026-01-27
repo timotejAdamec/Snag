@@ -13,7 +13,6 @@
 package cz.adamec.timotej.snag.projects.fe.app
 
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
-import cz.adamec.timotej.snag.projects.fe.ports.ProjectsRepository
 import kotlin.uuid.Uuid
 
 class DeleteProjectUseCase(

@@ -16,7 +16,6 @@ import cz.adamec.timotej.snag.lib.core.common.UuidProvider
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.projects.business.Project
 import cz.adamec.timotej.snag.projects.fe.app.model.SaveProjectRequest
-import cz.adamec.timotej.snag.projects.fe.ports.ProjectsRepository
 
 class SaveProjectUseCase(
     private val projectsRepository: ProjectsRepository,

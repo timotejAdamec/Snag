@@ -20,8 +20,7 @@ import cz.adamec.timotej.snag.network.fe.log
 import cz.adamec.timotej.snag.projects.business.Project
 import cz.adamec.timotej.snag.projects.fe.driven.internal.LH.logger
 import cz.adamec.timotej.snag.projects.fe.driven.internal.api.ProjectsApi
-import cz.adamec.timotej.snag.projects.fe.driven.internal.db.ProjectsDb
-import cz.adamec.timotej.snag.projects.fe.ports.ProjectsRepository
+import cz.adamec.timotej.snag.projects.fe.driven.internal.db.RealProjectsDb
 import io.ktor.utils.io.CancellationException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -33,77 +32,15 @@ import kotlin.uuid.Uuid
 
 internal class OfflineFirstProjectsRepository(
     private val projectsApi: ProjectsApi,
-    private val projectsDb: ProjectsDb,
+    private val projectsDb: RealProjectsDb,
     private val applicationScope: ApplicationScope,
 ) : ProjectsRepository {
     override fun getAllProjectsFlow(): Flow<OfflineFirstDataResult<List<Project>>> {
-        applicationScope.launch {
-            runCatching {
-                val remoteProjects = projectsApi.getProjects()
-                return@runCatching projectsDb.saveProjects(remoteProjects)
-            }.onSuccess { result ->
-                logger.d { "Saved $result projects from API." }
-            }.onFailure { e ->
-                if (e is CancellationException) throw e
-                if (e is NetworkException) e.log()
-                else logger.e(e) { "Error saving projects from API." }
-            }
-        }
 
-        return projectsDb.getAllProjectsFlow()
-            .map<List<Project>, OfflineFirstDataResult<List<Project>>> { entities ->
-                OfflineFirstDataResult.Success(entities.map { it })
-            }.catch { e ->
-                if (e is NetworkException) {
-                    e.log()
-                } else {
-                    emit(
-                        OfflineFirstDataResult.ProgrammerError(
-                            throwable = e,
-                        )
-                    )
-                }
-            }.onEach {
-                logger.log(
-                    offlineFirstDataResult = it,
-                    additionalInfo = "getAllProjectsFlow",
-                )
-            }.distinctUntilChanged()
     }
 
     override fun getProjectFlow(id: Uuid): Flow<OfflineFirstDataResult<Project?>> {
-        applicationScope.launch {
-            runCatching {
-                val remoteProject = projectsApi.getProject(id)
-                projectsDb.saveProject(remoteProject)
-            }.onSuccess { result ->
-                logger.d { "Saved $result project $id from API." }
-            }.onFailure { e ->
-                if (e is CancellationException) throw e
-                if (e is NetworkException) e.log()
-                else logger.e(e) { "Error saving project $id from API." }
-            }
-        }
 
-        return projectsDb.getProjectFlow(id)
-            .map<Project?, OfflineFirstDataResult<Project?>> { entity ->
-                OfflineFirstDataResult.Success(entity)
-            }.catch { e ->
-                if (e is NetworkException) {
-                    e.log()
-                } else {
-                    emit(
-                        OfflineFirstDataResult.ProgrammerError(
-                            throwable = e,
-                        )
-                    )
-                }
-            }.onEach {
-                logger.log(
-                    offlineFirstDataResult = it,
-                    additionalInfo = "getProjectFlow, id $id",
-                )
-            }.distinctUntilChanged()
     }
 
     override suspend fun saveProject(project: Project): OfflineFirstDataResult<Project> {

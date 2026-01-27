@@ -12,13 +12,49 @@
 
 package cz.adamec.timotej.snag.projects.fe.app
 
+import cz.adamec.timotej.snag.lib.core.common.ApplicationScope
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
+import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
+import cz.adamec.timotej.snag.lib.core.fe.log
 import cz.adamec.timotej.snag.projects.business.Project
-import cz.adamec.timotej.snag.projects.fe.ports.ProjectsRepository
+import cz.adamec.timotej.snag.projects.fe.app.internal.LH
+import cz.adamec.timotej.snag.projects.fe.ports.ProjectsApi
+import cz.adamec.timotej.snag.projects.fe.ports.ProjectsDb
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 
 class GetProjectsUseCase(
-    private val projectsRepository: ProjectsRepository,
+    private val projectsApi: ProjectsApi,
+    private val projectsDb: ProjectsDb,
+    private val applicationScope: ApplicationScope,
 ) {
-    operator fun invoke(): Flow<OfflineFirstDataResult<List<Project>>> = projectsRepository.getAllProjectsFlow()
+    operator fun invoke(): Flow<OfflineFirstDataResult<List<Project>>> {
+        applicationScope.launch {
+            when (val remoteProjectsResult = projectsApi.getProjects()) {
+                is OnlineDataResult.Failure -> LH.logger.w(
+                    "Error fetching projects, not updating local DB."
+                )
+                is OnlineDataResult.Success -> {
+                    LH.logger.d {
+                        "Fetched ${remoteProjectsResult.data.size} projects from API." +
+                                " Saving them to local DB."
+                    }
+                    projectsDb.saveProjects(remoteProjectsResult.data)
+                }
+            }
+        }
+
+        return projectsDb.getAllProjectsFlow()
+            .map<List<Project>, OfflineFirstDataResult<List<Project>>> { entities ->
+                OfflineFirstDataResult.Success(entities)
+            }.onEach {
+                LH.logger.log(
+                    offlineFirstDataResult = it,
+                    additionalInfo = "GetProjectsUseCase",
+                )
+            }.distinctUntilChanged()
+    }
 }

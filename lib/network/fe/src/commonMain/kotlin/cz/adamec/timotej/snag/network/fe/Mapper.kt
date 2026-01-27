@@ -16,21 +16,23 @@ import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
 
 fun NetworkException.toOnlineDataResult() =
     when (this) {
-        is NetworkException.NetworkUnavailable ->
-            OnlineDataResult.Failure.NetworkUnavailable
-
         is NetworkException.ClientError ->
             OnlineDataResult.Failure.UserMessageError(
                 throwable = this,
-                message = this.message ?: "Invalid request",
+                message = this.message,
+            )
+
+        is NetworkException.NetworkUnavailable ->
+            OnlineDataResult.Failure.NetworkUnavailable
+
+        is NetworkException.ProgrammerError ->
+            OnlineDataResult.Failure.ProgrammerError(
+                throwable = this,
             )
 
         is NetworkException.ServerError ->
             OnlineDataResult.Failure.UserMessageError(
                 throwable = this,
-                message = "Problems on server side.",
+                message = this.message,
             )
-
-        is NetworkException.ProgrammerError ->
-            OnlineDataResult.Failure.ProgrammerError(this)
     }

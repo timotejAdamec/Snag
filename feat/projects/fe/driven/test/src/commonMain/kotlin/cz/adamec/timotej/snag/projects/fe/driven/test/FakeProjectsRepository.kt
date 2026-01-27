@@ -2,7 +2,6 @@ package cz.adamec.timotej.snag.projects.fe.driven.test
 
 import cz.adamec.timotej.snag.lib.core.OfflineFirstDataResult
 import cz.adamec.timotej.snag.projects.business.Project
-import cz.adamec.timotej.snag.projects.fe.ports.ProjectsRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map

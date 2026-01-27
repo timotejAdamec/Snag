@@ -13,10 +13,10 @@
 package cz.adamec.timotej.snag.projects.fe.driven.di
 
 import cz.adamec.timotej.snag.lib.core.common.di.getIoDispatcher
-import cz.adamec.timotej.snag.projects.fe.driven.internal.OfflineFirstProjectsRepository
-import cz.adamec.timotej.snag.projects.fe.driven.internal.api.ProjectsApi
-import cz.adamec.timotej.snag.projects.fe.driven.internal.db.ProjectsDb
-import cz.adamec.timotej.snag.projects.fe.ports.ProjectsRepository
+import cz.adamec.timotej.snag.projects.fe.driven.internal.api.RealProjectsApi
+import cz.adamec.timotej.snag.projects.fe.driven.internal.db.RealProjectsDb
+import cz.adamec.timotej.snag.projects.fe.ports.ProjectsApi
+import cz.adamec.timotej.snag.projects.fe.ports.ProjectsDb
 import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
@@ -24,13 +24,10 @@ import org.koin.dsl.module
 val projectsDrivenModule =
     module {
         factory {
-            ProjectsDb(
+            RealProjectsDb(
                 projectEntityQueries = get(),
-                projectBookkeepingQueries = get(),
-                timestampProvider = get(),
                 ioDispatcher = getIoDispatcher(),
             )
-        }
-        factoryOf(::ProjectsApi)
-        factoryOf(::OfflineFirstProjectsRepository) bind ProjectsRepository::class
+        } bind ProjectsDb::class
+        factoryOf(::RealProjectsApi) bind ProjectsApi::class
     }

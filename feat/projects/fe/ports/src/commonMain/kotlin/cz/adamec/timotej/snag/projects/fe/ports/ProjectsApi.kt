@@ -12,5 +12,13 @@
 
 package cz.adamec.timotej.snag.projects.fe.ports
 
+import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
+import cz.adamec.timotej.snag.projects.business.Project
+import kotlin.uuid.Uuid
+
 interface ProjectsApi {
+    suspend fun getProjects(): OnlineDataResult<List<Project>>
+    suspend fun getProject(id: Uuid): OnlineDataResult<Project>
+    suspend fun saveProject(project: Project): OnlineDataResult<Project?>
+    suspend fun deleteProject(id: Uuid): OnlineDataResult<Unit>
 }

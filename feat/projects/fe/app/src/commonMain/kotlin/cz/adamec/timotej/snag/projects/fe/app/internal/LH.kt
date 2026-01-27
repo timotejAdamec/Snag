@@ -10,10 +10,10 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.projects.fe.driven.internal
+package cz.adamec.timotej.snag.projects.fe.app.internal
 
 import co.touchlab.kermit.Logger
 
 internal object LH {
-    val logger = Logger.withTag("feat-projects-fe-driven")
+    val logger = Logger.withTag("feat-projects-fe-app")
 }
