@@ -17,10 +17,13 @@ internal data class ProjectDetailsUiState(
     val isBeingDeleted: Boolean = false,
     val name: String = "",
     val address: String = "",
-)
+) {
+    val canInvokeDeletion = status == ProjectDetailsUiStatus.LOADED && !isBeingDeleted
+}
 
 internal enum class ProjectDetailsUiStatus {
     NOT_FOUND,
     LOADING,
     LOADED,
+    DELETED,
 }

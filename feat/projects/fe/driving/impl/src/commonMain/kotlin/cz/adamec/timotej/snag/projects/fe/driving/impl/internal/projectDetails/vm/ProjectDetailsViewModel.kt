@@ -62,12 +62,21 @@ internal class ProjectDetailsViewModel(
                             address = project.address,
                         )
                     }
-                } ?: _state.update { it.copy(status = ProjectDetailsUiStatus.NOT_FOUND) }
+                } ?: if (state.value.status != ProjectDetailsUiStatus.DELETED) {
+                    _state.update {
+                        it.copy(status = ProjectDetailsUiStatus.NOT_FOUND)
+                    }
+                } else {
+                    // keep as deleted
+                }
             }
         }
     }
 
     fun onDelete() = viewModelScope.launch {
+        _state.update {
+            it.copy(isBeingDeleted = true)
+        }
         when (deleteProjectUseCase(projectId)) {
             is OfflineFirstDataResult.ProgrammerError -> {
                 _state.update {
@@ -81,7 +90,8 @@ internal class ProjectDetailsViewModel(
             is OfflineFirstDataResult.Success -> {
                 _state.update {
                     it.copy(
-                        isBeingDeleted = false
+                        status = ProjectDetailsUiStatus.DELETED,
+                        isBeingDeleted = false,
                     )
                 }
                 deletedSuccessfullyEventChannel.send(Unit)

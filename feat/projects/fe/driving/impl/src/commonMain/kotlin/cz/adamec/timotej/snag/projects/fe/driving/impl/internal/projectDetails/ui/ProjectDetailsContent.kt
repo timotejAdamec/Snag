@@ -28,6 +28,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TooltipBox
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -65,12 +69,16 @@ internal fun ProjectDetailsContent(
                     text = stringResource(Res.string.project_not_found)
                 )
             }
+
             ProjectDetailsUiStatus.LOADING -> {
                 ContainedLoadingIndicator(
                     modifier = Modifier.align(Alignment.Center),
                 )
             }
-            ProjectDetailsUiStatus.LOADED -> LoadedProjectDetailsContent(
+
+            ProjectDetailsUiStatus.LOADED,
+            ProjectDetailsUiStatus.DELETED,
+                -> LoadedProjectDetailsContent(
                 state = state,
                 onBack = onBack,
                 onDelete = onDelete,
@@ -101,10 +109,8 @@ private fun LoadedProjectDetailsContent(
                 .padding(paddingValues)
                 .consumeWindowInsets(paddingValues),
         ) {
-            val isShowingDeleteConfirmation = false
-            AnimatedVisibility(
-                visible = isShowingDeleteConfirmation,
-            ) {
+            var isShowingDeleteConfirmation by remember { mutableStateOf(false) }
+            if (isShowingDeleteConfirmation) {
                 AlertDialog(
                     title = {
                         Text(text = stringResource(Res.string.delete_project_confirmation_title))
@@ -113,12 +119,13 @@ private fun LoadedProjectDetailsContent(
                         Text(text = stringResource(Res.string.delete_project_confirmation_text))
                     },
                     onDismissRequest = {
-                        TODO()
+                        isShowingDeleteConfirmation = false
                     },
                     confirmButton = {
                         TextButton(
+                            enabled = state.canInvokeDeletion,
                             onClick = {
-                                TODO()
+                                onDelete()
                             }
                         ) {
                             Text("Confirm")
@@ -126,8 +133,9 @@ private fun LoadedProjectDetailsContent(
                     },
                     dismissButton = {
                         TextButton(
+                            enabled = state.canInvokeDeletion,
                             onClick = {
-                                TODO()
+                                isShowingDeleteConfirmation = false
                             }
                         ) {
                             Text("Dismiss")
@@ -142,8 +150,10 @@ private fun LoadedProjectDetailsContent(
                 expanded = true,
             ) {
                 IconButton(
-                    enabled = !state.isBeingDeleted,
-                    onClick = onDelete,
+                    enabled = state.canInvokeDeletion,
+                    onClick = {
+                        isShowingDeleteConfirmation = true
+                    },
                 ) {
                     Icon(
                         painter = painterResource(DesignRes.drawable.ic_delete),

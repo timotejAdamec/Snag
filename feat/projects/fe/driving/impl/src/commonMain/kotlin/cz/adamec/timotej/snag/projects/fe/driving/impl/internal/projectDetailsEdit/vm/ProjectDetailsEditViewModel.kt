@@ -100,7 +100,7 @@ internal class ProjectDetailsEditViewModel(
                 errorEventsChannel.send(Unknown)
             }
             is OfflineFirstDataResult.Success -> {
-                saveEventChannel.send(result.data.id)
+                saveEventChannel.send(result.data)
             }
         }
     }

@@ -17,13 +17,14 @@ import cz.adamec.timotej.snag.lib.core.common.UuidProvider
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
 import cz.adamec.timotej.snag.lib.core.fe.log
+import cz.adamec.timotej.snag.lib.core.fe.map
 import cz.adamec.timotej.snag.projects.business.Project
-import cz.adamec.timotej.snag.projects.fe.app.internal.LH
 import cz.adamec.timotej.snag.projects.fe.app.internal.LH.logger
 import cz.adamec.timotej.snag.projects.fe.app.model.SaveProjectRequest
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsApi
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsDb
 import kotlinx.coroutines.launch
+import kotlin.uuid.Uuid
 
 class SaveProjectUseCase(
     private val projectsApi: ProjectsApi,
@@ -31,7 +32,7 @@ class SaveProjectUseCase(
     private val applicationScope: ApplicationScope,
     private val uuidProvider: UuidProvider,
 ) {
-    suspend operator fun invoke(request: SaveProjectRequest): OfflineFirstDataResult<Unit> {
+    suspend operator fun invoke(request: SaveProjectRequest): OfflineFirstDataResult<Uuid> {
         val project = Project(
             id = request.id ?: uuidProvider.getUuid(),
             name = request.name,
@@ -59,6 +60,8 @@ class SaveProjectUseCase(
                 offlineFirstDataResult = it,
                 additionalInfo = "SaveProjectUseCase, projectsDb.saveProject($project)",
             )
+        }.map {
+            project.id
         }
     }
 }
