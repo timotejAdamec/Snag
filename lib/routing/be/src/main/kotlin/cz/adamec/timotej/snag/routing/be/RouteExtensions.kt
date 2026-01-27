@@ -15,8 +15,10 @@ package cz.adamec.timotej.snag.routing.be
 import io.ktor.server.routing.RoutingContext
 import kotlin.uuid.Uuid
 
-fun RoutingContext.getIdFromParameters(): Uuid {
-    return call.parameters["id"]?.let {
+fun RoutingContext.getIdFromParameters(): Uuid = getIdFromParameters("id")
+
+fun RoutingContext.getIdFromParameters(parameterName: String): Uuid {
+    return call.parameters[parameterName]?.let {
         runCatching { Uuid.parse(it) }.getOrNull()
     } ?: throw InvalidIdException()
 }

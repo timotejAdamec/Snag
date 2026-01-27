@@ -13,16 +13,25 @@
 package cz.adamec.timotej.snag.structures.be.driving.impl.internal
 
 import cz.adamec.timotej.snag.routing.be.AppRoute
-import io.ktor.server.response.respondText
+import cz.adamec.timotej.snag.routing.be.getIdFromParameters
+import cz.adamec.timotej.snag.structures.be.app.GetStructuresUseCase
+import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
 import io.ktor.server.routing.route
 
-internal class StructuresRoute : AppRoute {
+internal class StructuresRoute(
+    private val getStructuresUseCase: GetStructuresUseCase,
+) : AppRoute {
     override fun Route.setup() {
-        route("/structures") {
+        route("/projects/{projectId}/structures") {
             get {
-                call.respondText("Hello from structures")
+                val projectId = getIdFromParameters("projectId")
+                val dtoStructures =
+                    getStructuresUseCase(projectId).map {
+                        it.toDto()
+                    }
+                call.respond(dtoStructures)
             }
         }
     }

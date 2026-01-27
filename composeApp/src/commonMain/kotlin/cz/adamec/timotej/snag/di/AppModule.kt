@@ -20,6 +20,8 @@ import cz.adamec.timotej.snag.projects.fe.app.di.projectsAppModule
 import cz.adamec.timotej.snag.projects.fe.driven.di.projectsDrivenModule
 import cz.adamec.timotej.snag.projects.fe.driving.api.di.projectsDrivingApiModule
 import cz.adamec.timotej.snag.projects.fe.driving.impl.di.projectsDrivingImplModule
+import cz.adamec.timotej.snag.structures.fe.app.di.structuresAppModule
+import cz.adamec.timotej.snag.structures.fe.driven.di.structuresDrivenModule
 import cz.adamec.timotej.snag.ui.navigation.navigationModule
 import org.koin.dsl.module
 
@@ -36,5 +38,7 @@ val appModule =
             projectsDrivingImplModule,
             projectsDrivenModule,
             projectsAppModule,
+            structuresDrivenModule,
+            structuresAppModule,
         )
     }

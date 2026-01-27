@@ -1,14 +1,13 @@
 plugins {
-    alias(libs.plugins.snagMultiplatformModule)
+    alias(libs.plugins.snagDrivenFrontendMultiplatformModule)
 }
 
 kotlin {
     sourceSets {
-        commonMain {
-            dependencies {
-                api(project(":feat:structures:fe:ports"))
-                implementation(project(":feat:structures:be:driving:contract"))
-            }
+        commonMain.dependencies {
+            implementation(project(":feat:structures:be:driving:contract"))
+            implementation(project(":feat:structures:business"))
+            api(project(":feat:structures:fe:ports"))
         }
     }
 }
