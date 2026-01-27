@@ -25,6 +25,7 @@ import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetailsEd
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetailsEdit.vm.ProjectDetailsEditViewModel
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projects.ui.ProjectsScreen
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projects.vm.ProjectsViewModel
+import org.jetbrains.compose.resources.getString
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.viewModel
@@ -101,6 +102,7 @@ val projectsDrivingImplModule =
                 projectId = projectId,
                 getProjectUseCase = get(),
                 deleteProjectUseCase = get(),
+                getStructuresUseCase = get(),
             )
         }
     }

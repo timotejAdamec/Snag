@@ -20,6 +20,7 @@ import cz.adamec.timotej.snag.projects.business.Project
 import cz.adamec.timotej.snag.projects.fe.app.DeleteProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.GetProjectUseCase
 import cz.adamec.timotej.snag.structures.fe.app.GetStructuresUseCase
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -98,7 +99,7 @@ internal class ProjectDetailsViewModel(
                     _state.update {
                         it.copy(
                             structureStatus = StructuresUiStatus.LOADED,
-                            structures = result.data,
+                            structures = result.data.toImmutableList(),
                         )
                     }
                 }

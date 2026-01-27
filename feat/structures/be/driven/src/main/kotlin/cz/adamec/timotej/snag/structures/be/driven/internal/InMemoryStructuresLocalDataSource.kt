@@ -23,13 +23,13 @@ internal class InMemoryStructuresLocalDataSource : StructuresLocalDataSource {
                 id = Uuid.parse("00000000-0000-0000-0001-000000000001"),
                 projectId = Uuid.parse("00000000-0000-0000-0000-000000000001"),
                 name = "Block A - Ground Floor",
-                floorPlanUrl = null,
+                floorPlanUrl = "https://upload.wikimedia.org/wikipedia/commons/9/9a/Sample_Floorplan.jpg",
             ),
             Structure(
                 id = Uuid.parse("00000000-0000-0000-0001-000000000002"),
                 projectId = Uuid.parse("00000000-0000-0000-0000-000000000001"),
                 name = "Block A - First Floor",
-                floorPlanUrl = null,
+                floorPlanUrl = "https://saterdesign.com/cdn/shop/products/6842.M_1200x.jpeg?v=1547874083",
             ),
             Structure(
                 id = Uuid.parse("00000000-0000-0000-0001-000000000003"),
@@ -47,7 +47,7 @@ internal class InMemoryStructuresLocalDataSource : StructuresLocalDataSource {
                 id = Uuid.parse("00000000-0000-0000-0001-000000000005"),
                 projectId = Uuid.parse("00000000-0000-0000-0000-000000000002"),
                 name = "Main Building - Ground Floor",
-                floorPlanUrl = null,
+                floorPlanUrl = "https://www.thehousedesigners.com/images/plans/01/SCA/bulk/9333/1st-floor_m.webp",
             ),
             Structure(
                 id = Uuid.parse("00000000-0000-0000-0001-000000000006"),

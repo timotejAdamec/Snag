@@ -12,15 +12,23 @@
 
 package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.ui
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ContainedLoadingIndicator
 import androidx.compose.material3.HorizontalFloatingToolbar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -32,6 +40,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureCard
 import cz.adamec.timotej.snag.lib.core.common.UuidProvider
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.BackNavigationIcon
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.CollapsableTopAppBarScaffold
@@ -39,6 +48,7 @@ import cz.adamec.timotej.snag.lib.design.fe.theme.SnagTheme
 import cz.adamec.timotej.snag.projects.business.Project
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.vm.ProjectDetailsUiState
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.vm.ProjectDetailsUiStatus
+import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.vm.StructuresUiStatus
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
@@ -112,38 +122,51 @@ private fun LoadedProjectDetailsContent(
                     .padding(paddingValues)
                     .consumeWindowInsets(paddingValues),
         ) {
+            LazyVerticalGrid(
+                modifier = Modifier.fillMaxSize(),
+                columns = GridCells.Adaptive(minSize = 360.dp),
+                contentPadding =
+                    PaddingValues(
+                        start = 8.dp,
+                        end = 8.dp,
+                        top = 8.dp,
+                        bottom = 48.dp,
+                    ),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                items(
+                    items = state.structures,
+                    key = { it.id }
+                ) { structure ->
+                    StructureCard(
+                        modifier = Modifier,
+                        structure = structure,
+                        onClick = {},
+                    )
+                }
+                item {
+                    AnimatedVisibility(
+                        visible = state.structureStatus == StructuresUiStatus.LOADING,
+                        exit = fadeOut(),
+                    ) {
+                        Box(
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            LoadingIndicator()
+                        }
+                    }
+                }
+            }
+
             var isShowingDeleteConfirmation by remember { mutableStateOf(false) }
             if (isShowingDeleteConfirmation) {
-                AlertDialog(
-                    title = {
-                        Text(text = stringResource(Res.string.delete_project_confirmation_title))
-                    },
-                    text = {
-                        Text(text = stringResource(Res.string.delete_project_confirmation_text))
-                    },
-                    onDismissRequest = {
+                ProjectDeletionAlertDialog(
+                    areButtonsEnabled = state.canInvokeDeletion,
+                    onDelete = onDelete,
+                    onDismiss = {
                         isShowingDeleteConfirmation = false
-                    },
-                    confirmButton = {
-                        TextButton(
-                            enabled = state.canInvokeDeletion,
-                            onClick = {
-                                onDelete()
-                            },
-                        ) {
-                            Text("Confirm")
-                        }
-                    },
-                    dismissButton = {
-                        TextButton(
-                            enabled = state.canInvokeDeletion,
-                            onClick = {
-                                isShowingDeleteConfirmation = false
-                            },
-                        ) {
-                            Text("Dismiss")
-                        }
-                    },
+                    }
                 )
             }
             HorizontalFloatingToolbar(
@@ -167,6 +190,41 @@ private fun LoadedProjectDetailsContent(
             }
         }
     }
+}
+
+@Composable
+private fun ProjectDeletionAlertDialog(
+    areButtonsEnabled: Boolean,
+    onDelete: () -> Unit,
+    onDismiss: () -> Unit,
+) {
+    AlertDialog(
+        title = {
+            Text(text = stringResource(Res.string.delete_project_confirmation_title))
+        },
+        text = {
+            Text(text = stringResource(Res.string.delete_project_confirmation_text))
+        },
+        onDismissRequest = onDismiss,
+        confirmButton = {
+            TextButton(
+                enabled = areButtonsEnabled,
+                onClick = {
+                    onDelete()
+                },
+            ) {
+                Text("Confirm")
+            }
+        },
+        dismissButton = {
+            TextButton(
+                enabled = areButtonsEnabled,
+                onClick = onDismiss,
+            ) {
+                Text("Dismiss")
+            }
+        },
+    )
 }
 
 @Preview

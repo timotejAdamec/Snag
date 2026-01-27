@@ -22,6 +22,7 @@ kotlin {
                 implementation(project(":feat:projects:fe:app"))
                 implementation(project(":feat:projects:business"))
                 implementation(project(":feat:structures:fe:app"))
+                implementation(project(":feat:structures:fe:driving:api"))
             }
         }
         commonTest {
