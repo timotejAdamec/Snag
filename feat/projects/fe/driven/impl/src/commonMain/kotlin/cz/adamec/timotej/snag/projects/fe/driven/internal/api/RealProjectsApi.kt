@@ -25,7 +25,6 @@ import cz.adamec.timotej.snag.projects.fe.ports.ProjectsApi
 import io.ktor.client.call.body
 import io.ktor.client.request.setBody
 import io.ktor.http.HttpStatusCode
-import kotlin.text.get
 import kotlin.uuid.Uuid
 
 internal class RealProjectsApi(
@@ -52,7 +51,7 @@ internal class RealProjectsApi(
                         throwable = e,
                     )
                 }
-            }
+            },
         )
 
     override suspend fun getProject(id: Uuid): OnlineDataResult<Project> =
@@ -74,19 +73,22 @@ internal class RealProjectsApi(
                         throwable = e,
                     )
                 }
-            }
+            },
         )
 
     override suspend fun saveProject(project: Project): OnlineDataResult<Project?> =
         runCatchingCancellable {
             LH.logger.d { "Saving project ${project.id} to API..." }
             val projectDto = project.toApiDto()
-            val response = httpClient.put("/projects/${projectDto.id}") {
-                setBody(projectDto)
-            }
+            val response =
+                httpClient.put("/projects/${projectDto.id}") {
+                    setBody(projectDto)
+                }
             if (response.status != HttpStatusCode.NoContent) {
                 response.body<ProjectApiDto>().toBusiness()
-            } else null
+            } else {
+                null
+            }
         }.fold(
             onSuccess = {
                 LH.logger.d { "Saved project ${project.id} to API." }
@@ -102,7 +104,7 @@ internal class RealProjectsApi(
                         throwable = e,
                     )
                 }
-            }
+            },
         )
 
     override suspend fun deleteProject(id: Uuid): OnlineDataResult<Unit> =
@@ -118,6 +120,6 @@ internal class RealProjectsApi(
                 OnlineDataResult.Failure.ProgrammerError(
                     throwable = e,
                 )
-            }
+            },
         )
-    }
+}

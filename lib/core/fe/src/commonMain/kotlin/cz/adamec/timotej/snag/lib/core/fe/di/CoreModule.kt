@@ -15,6 +15,7 @@ package cz.adamec.timotej.snag.lib.core.fe.di
 import cz.adamec.timotej.snag.lib.core.common.di.commonCoreModule
 import org.koin.dsl.module
 
-val frontendCoreModule = module {
-    includes(commonCoreModule)
-}
+val frontendCoreModule =
+    module {
+        includes(commonCoreModule)
+    }

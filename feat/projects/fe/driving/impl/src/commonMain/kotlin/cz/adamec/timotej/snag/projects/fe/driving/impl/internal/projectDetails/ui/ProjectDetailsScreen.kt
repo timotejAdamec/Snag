@@ -37,12 +37,12 @@ internal fun ProjectDetailsScreen(
         eventsFlow = viewModel.deletedSuccessfullyEventFlow,
         onEvent = {
             onBack()
-        }
+        },
     )
 
     ProjectDetailsContent(
         state = state,
         onBack = onBack,
-        onDelete = viewModel::onDelete
+        onDelete = viewModel::onDelete,
     )
 }

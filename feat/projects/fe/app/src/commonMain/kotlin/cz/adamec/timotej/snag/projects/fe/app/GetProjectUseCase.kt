@@ -22,7 +22,6 @@ import cz.adamec.timotej.snag.projects.fe.ports.ProjectsApi
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsDb
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlin.uuid.Uuid
@@ -35,20 +34,22 @@ class GetProjectUseCase(
     operator fun invoke(projectId: Uuid): Flow<OfflineFirstDataResult<Project?>> {
         applicationScope.launch {
             when (val remoteProjectResult = projectsApi.getProject(projectId)) {
-                is OnlineDataResult.Failure -> logger.w(
-                    "Error fetching project $projectId, not updating local DB."
-                )
+                is OnlineDataResult.Failure ->
+                    logger.w(
+                        "Error fetching project $projectId, not updating local DB.",
+                    )
                 is OnlineDataResult.Success -> {
                     logger.d {
                         "Fetched project $projectId from API." +
-                                " Saving it to local DB."
+                            " Saving it to local DB."
                     }
                     projectsDb.saveProject(remoteProjectResult.data)
                 }
             }
         }
 
-        return projectsDb.getProjectFlow(projectId)
+        return projectsDb
+            .getProjectFlow(projectId)
             .onEach {
                 logger.log(
                     offlineFirstDataResult = it,

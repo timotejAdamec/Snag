@@ -30,9 +30,10 @@ class DeleteProjectUseCase(
     suspend operator fun invoke(projectId: Uuid): OfflineFirstDataResult<Unit> {
         applicationScope.launch {
             when (projectsApi.deleteProject(projectId)) {
-                is OnlineDataResult.Failure -> logger.w {
-                    "Error deleting project $projectId from API."
-                }
+                is OnlineDataResult.Failure ->
+                    logger.w {
+                        "Error deleting project $projectId from API."
+                    }
 
                 is OnlineDataResult.Success -> {
                     logger.d { "Deleted project $projectId from API." }
@@ -40,7 +41,8 @@ class DeleteProjectUseCase(
             }
         }
 
-        return projectsDb.deleteProject(projectId)
+        return projectsDb
+            .deleteProject(projectId)
             .also {
                 logger.log(
                     offlineFirstDataResult = it,

@@ -53,104 +53,114 @@ class ProjectDetailsEditViewModelTest {
     }
 
     @Test
-    fun `initial state is empty when projectId is null`() = runTest {
-        val viewModel = ProjectDetailsEditViewModel(
-            projectId = null,
-            getProjectUseCase = getProjectUseCase,
-            saveProjectUseCase = saveProjectUseCase
-        )
+    fun `initial state is empty when projectId is null`() =
+        runTest {
+            val viewModel =
+                ProjectDetailsEditViewModel(
+                    projectId = null,
+                    getProjectUseCase = getProjectUseCase,
+                    saveProjectUseCase = saveProjectUseCase,
+                )
 
-        assertEquals("", viewModel.state.value.projectName)
-        assertEquals("", viewModel.state.value.projectAddress)
-    }
-
-    @Test
-    fun `loading project data updates state when projectId is provided`() = runTest {
-        val projectId = Uuid.random()
-        val project = Project(projectId, "Test Project", "Test Address")
-        projectsRepository.setProject(projectId, project)
-
-        val viewModel = ProjectDetailsEditViewModel(
-            projectId = projectId,
-            getProjectUseCase = getProjectUseCase,
-            saveProjectUseCase = saveProjectUseCase
-        )
-
-        advanceUntilIdle()
-
-        assertEquals("Test Project", viewModel.state.value.projectName)
-        assertEquals("Test Address", viewModel.state.value.projectAddress)
-    }
+            assertEquals("", viewModel.state.value.projectName)
+            assertEquals("", viewModel.state.value.projectAddress)
+        }
 
     @Test
-    fun `onProjectNameChange updates state`() = runTest {
-        val viewModel = ProjectDetailsEditViewModel(null, getProjectUseCase, saveProjectUseCase)
+    fun `loading project data updates state when projectId is provided`() =
+        runTest {
+            val projectId = Uuid.random()
+            val project = Project(projectId, "Test Project", "Test Address")
+            projectsRepository.setProject(projectId, project)
 
-        viewModel.onProjectNameChange("New Name")
+            val viewModel =
+                ProjectDetailsEditViewModel(
+                    projectId = projectId,
+                    getProjectUseCase = getProjectUseCase,
+                    saveProjectUseCase = saveProjectUseCase,
+                )
 
-        assertEquals("New Name", viewModel.state.value.projectName)
-    }
+            advanceUntilIdle()
 
-    @Test
-    fun `onProjectAddressChange updates state`() = runTest {
-        val viewModel = ProjectDetailsEditViewModel(null, getProjectUseCase, saveProjectUseCase)
-
-        viewModel.onProjectAddressChange("New Address")
-
-        assertEquals("New Address", viewModel.state.value.projectAddress)
-    }
-
-    @Test
-    fun `onSaveProject with empty name sends error`() = runTest {
-        val viewModel = ProjectDetailsEditViewModel(null, getProjectUseCase, saveProjectUseCase)
-        viewModel.onProjectAddressChange("Address")
-
-        viewModel.onSaveProject()
-
-        val error = viewModel.errorsFlow.first()
-        assertIs<UiError.CustomUserMessage>(error)
-        assertEquals("Project name cannot be empty", error.message)
-    }
+            assertEquals("Test Project", viewModel.state.value.projectName)
+            assertEquals("Test Address", viewModel.state.value.projectAddress)
+        }
 
     @Test
-    fun `onSaveProject with empty address sends error`() = runTest {
-        val viewModel = ProjectDetailsEditViewModel(null, getProjectUseCase, saveProjectUseCase)
-        viewModel.onProjectNameChange("Name")
+    fun `onProjectNameChange updates state`() =
+        runTest {
+            val viewModel = ProjectDetailsEditViewModel(null, getProjectUseCase, saveProjectUseCase)
 
-        viewModel.onSaveProject()
+            viewModel.onProjectNameChange("New Name")
 
-        val error = viewModel.errorsFlow.first()
-        assertIs<UiError.CustomUserMessage>(error)
-        assertEquals("Project address cannot be empty", error.message)
-    }
+            assertEquals("New Name", viewModel.state.value.projectName)
+        }
 
     @Test
-    fun `onSaveProject successful sends save event`() = runTest {
-        val viewModel = ProjectDetailsEditViewModel(null, getProjectUseCase, saveProjectUseCase)
-        viewModel.onProjectNameChange("Name")
-        viewModel.onProjectAddressChange("Address")
+    fun `onProjectAddressChange updates state`() =
+        runTest {
+            val viewModel = ProjectDetailsEditViewModel(null, getProjectUseCase, saveProjectUseCase)
 
-        val expectedUuid = Uuid.random()
-        val savedProject = Project(expectedUuid, "Name", "Address")
-        projectsRepository.setSaveResult(OfflineFirstDataResult.Success(savedProject))
+            viewModel.onProjectAddressChange("New Address")
 
-        viewModel.onSaveProject()
-
-        val savedId = viewModel.saveEventFlow.first()
-        assertEquals(expectedUuid, savedId)
-    }
+            assertEquals("New Address", viewModel.state.value.projectAddress)
+        }
 
     @Test
-    fun `onSaveProject failure sends error`() = runTest {
-        val viewModel = ProjectDetailsEditViewModel(null, getProjectUseCase, saveProjectUseCase)
-        viewModel.onProjectNameChange("Name")
-        viewModel.onProjectAddressChange("Address")
+    fun `onSaveProject with empty name sends error`() =
+        runTest {
+            val viewModel = ProjectDetailsEditViewModel(null, getProjectUseCase, saveProjectUseCase)
+            viewModel.onProjectAddressChange("Address")
 
-        projectsRepository.setSaveResult(OfflineFirstDataResult.Failure.ProgrammerError(RuntimeException("Failed")))
+            viewModel.onSaveProject()
 
-        viewModel.onSaveProject()
+            val error = viewModel.errorsFlow.first()
+            assertIs<UiError.CustomUserMessage>(error)
+            assertEquals("Project name cannot be empty", error.message)
+        }
 
-        val error = viewModel.errorsFlow.first()
-        assertIs<UiError.Unknown>(error)
-    }
+    @Test
+    fun `onSaveProject with empty address sends error`() =
+        runTest {
+            val viewModel = ProjectDetailsEditViewModel(null, getProjectUseCase, saveProjectUseCase)
+            viewModel.onProjectNameChange("Name")
+
+            viewModel.onSaveProject()
+
+            val error = viewModel.errorsFlow.first()
+            assertIs<UiError.CustomUserMessage>(error)
+            assertEquals("Project address cannot be empty", error.message)
+        }
+
+    @Test
+    fun `onSaveProject successful sends save event`() =
+        runTest {
+            val viewModel = ProjectDetailsEditViewModel(null, getProjectUseCase, saveProjectUseCase)
+            viewModel.onProjectNameChange("Name")
+            viewModel.onProjectAddressChange("Address")
+
+            val expectedUuid = Uuid.random()
+            val savedProject = Project(expectedUuid, "Name", "Address")
+            projectsRepository.setSaveResult(OfflineFirstDataResult.Success(savedProject))
+
+            viewModel.onSaveProject()
+
+            val savedId = viewModel.saveEventFlow.first()
+            assertEquals(expectedUuid, savedId)
+        }
+
+    @Test
+    fun `onSaveProject failure sends error`() =
+        runTest {
+            val viewModel = ProjectDetailsEditViewModel(null, getProjectUseCase, saveProjectUseCase)
+            viewModel.onProjectNameChange("Name")
+            viewModel.onProjectAddressChange("Address")
+
+            projectsRepository.setSaveResult(OfflineFirstDataResult.Failure.ProgrammerError(RuntimeException("Failed")))
+
+            viewModel.onSaveProject()
+
+            val error = viewModel.errorsFlow.first()
+            assertIs<UiError.Unknown>(error)
+        }
 }

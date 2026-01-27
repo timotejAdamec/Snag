@@ -34,12 +34,15 @@ import kotlin.uuid.Uuid
 
 @Composable
 internal fun ProjectDetailsEditScreen(
-    onProjectSaved: (savedProjectId: Uuid) -> Unit,
+    onSaveProject: (projectId: Uuid) -> Unit,
     onCancelClick: () -> Unit,
     projectId: Uuid? = null,
-    viewModel: ProjectDetailsEditViewModel = koinViewModel(
-        viewModelStoreOwner = LocalViewModelStoreOwner.current ?: error("No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"),
-    ) { parametersOf(projectId) },
+    viewModel: ProjectDetailsEditViewModel =
+        koinViewModel(
+            viewModelStoreOwner =
+                LocalViewModelStoreOwner.current
+                    ?: error("No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"),
+        ) { parametersOf(projectId) },
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -51,24 +54,29 @@ internal fun ProjectDetailsEditScreen(
     ObserveAsEvents(
         eventsFlow = viewModel.saveEventFlow,
         onEvent = { newProjectId ->
-            onProjectSaved(newProjectId)
-        }
+            onSaveProject(newProjectId)
+        },
     )
 
     val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
-    val shouldPad = windowSizeClass.isAtLeastBreakpoint(
-        widthDpBreakpoint = WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND,
-        heightDpBreakpoint = WindowSizeClass.HEIGHT_DP_MEDIUM_LOWER_BOUND,
-    )
-    val modifier = if (shouldPad) {
-        Modifier
-            .padding(vertical = 32.dp)
-    } else Modifier
+    val shouldPad =
+        windowSizeClass.isAtLeastBreakpoint(
+            widthDpBreakpoint = WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND,
+            heightDpBreakpoint = WindowSizeClass.HEIGHT_DP_MEDIUM_LOWER_BOUND,
+        )
+    val modifier =
+        if (shouldPad) {
+            Modifier
+                .padding(vertical = 32.dp)
+        } else {
+            Modifier
+        }
     ProjectDetailsEditContent(
-        modifier = modifier
-            .clip(
-                shape = MaterialTheme.shapes.large,
-            ),
+        modifier =
+            modifier
+                .clip(
+                    shape = MaterialTheme.shapes.large,
+                ),
         projectId = projectId,
         state = state,
         snackbarHostState = snackbarHostState,

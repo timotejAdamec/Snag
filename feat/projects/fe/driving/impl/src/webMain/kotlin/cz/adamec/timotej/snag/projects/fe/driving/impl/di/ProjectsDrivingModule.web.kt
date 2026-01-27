@@ -23,18 +23,18 @@ internal actual val platformModule =
         projectsScreenNavigation<WebProjectsRoute>(
             getProjectDetailRoute = { projectId ->
                 WebProjectDetailRoute(projectId = projectId)
-            }
+            },
         )
         projectDetailsEditScreenNavigation<WebProjectCreationRoute>(
             getProjectDetailRoute = { savedProjectId ->
                 WebProjectDetailRoute(projectId = savedProjectId)
-            }
+            },
         )
         projectDetailsEditScreenNavigation<WebProjectEditRoute>(
             getProjectDetailRoute = { savedProjectId ->
                 WebProjectDetailRoute(projectId = savedProjectId)
             },
-            getProjectId = { it.projectId }
+            getProjectId = { it.projectId },
         )
         projectDetailsScreenNavigation<WebProjectDetailRoute> { it.projectId }
     }

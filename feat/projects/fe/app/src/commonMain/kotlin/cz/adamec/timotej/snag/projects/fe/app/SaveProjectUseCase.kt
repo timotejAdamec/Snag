@@ -33,17 +33,19 @@ class SaveProjectUseCase(
     private val uuidProvider: UuidProvider,
 ) {
     suspend operator fun invoke(request: SaveProjectRequest): OfflineFirstDataResult<Uuid> {
-        val project = Project(
-            id = request.id ?: uuidProvider.getUuid(),
-            name = request.name,
-            address = request.address
-        )
+        val project =
+            Project(
+                id = request.id ?: uuidProvider.getUuid(),
+                name = request.name,
+                address = request.address,
+            )
 
         applicationScope.launch {
             when (val remoteProjectResult = projectsApi.saveProject(project)) {
-                is OnlineDataResult.Failure -> logger.w {
-                    "Error saving $project to API, not updating local DB."
-                }
+                is OnlineDataResult.Failure ->
+                    logger.w {
+                        "Error saving $project to API, not updating local DB."
+                    }
                 is OnlineDataResult.Success -> {
                     val updatedDto = remoteProjectResult.data
                     logger.d { "Saved $project to API." }
@@ -55,13 +57,15 @@ class SaveProjectUseCase(
             }
         }
 
-        return projectsDb.saveProject(project).also {
-            logger.log(
-                offlineFirstDataResult = it,
-                additionalInfo = "SaveProjectUseCase, projectsDb.saveProject($project)",
-            )
-        }.map {
-            project.id
-        }
+        return projectsDb
+            .saveProject(project)
+            .also {
+                logger.log(
+                    offlineFirstDataResult = it,
+                    additionalInfo = "SaveProjectUseCase, projectsDb.saveProject($project)",
+                )
+            }.map {
+                project.id
+            }
     }
 }

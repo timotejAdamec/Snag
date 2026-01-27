@@ -17,10 +17,11 @@ import cz.adamec.timotej.snag.lib.navigation.fe.SnagBackStack
 import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectsRoute
 import org.koin.dsl.module
 
-internal val navigationModule = module {
-    single {
-        SnagBackStack(
-            value = mutableStateListOf(get<ProjectsRoute>())
-        )
+internal val navigationModule =
+    module {
+        single {
+            SnagBackStack(
+                value = mutableStateListOf(get<ProjectsRoute>()),
+            )
+        }
     }
-}

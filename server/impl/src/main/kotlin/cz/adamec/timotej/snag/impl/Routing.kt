@@ -34,9 +34,10 @@ internal fun Application.configureRouting() {
         }
         swaggerUI("/swaggerUI") {
             info = OpenApiInfo("Snag API", "1.0")
-            source = OpenApiDocSource.Routing(ContentType.Application.Json) {
-                this@routing.descendants()
-            }
+            source =
+                OpenApiDocSource.Routing(ContentType.Application.Json) {
+                    this@routing.descendants()
+                }
         }
     }
 }

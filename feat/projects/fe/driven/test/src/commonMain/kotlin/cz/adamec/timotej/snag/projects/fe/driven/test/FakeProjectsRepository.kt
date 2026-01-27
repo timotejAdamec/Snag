@@ -25,7 +25,10 @@ class FakeProjectsRepository : ProjectsRepository {
     private var saveResult: OfflineFirstDataResult<Project>? = null
     private var deleteResult: OfflineFirstDataResult<Unit>? = null
 
-    fun setProject(id: Uuid, project: Project) {
+    fun setProject(
+        id: Uuid,
+        project: Project,
+    ) {
         projects.update { it + (id to project) }
     }
 
@@ -40,8 +43,7 @@ class FakeProjectsRepository : ProjectsRepository {
     override fun getAllProjectsFlow(): Flow<OfflineFirstDataResult<List<Project>>> =
         projects.map { OfflineFirstDataResult.Success(it.values.toList()) }
 
-    override fun getProjectFlow(id: Uuid): Flow<OfflineFirstDataResult<Project?>> =
-        projects.map { OfflineFirstDataResult.Success(it[id]) }
+    override fun getProjectFlow(id: Uuid): Flow<OfflineFirstDataResult<Project?>> = projects.map { OfflineFirstDataResult.Success(it[id]) }
 
     override suspend fun saveProject(project: Project): OfflineFirstDataResult<Project> {
         val result = saveResult ?: OfflineFirstDataResult.Success(project)

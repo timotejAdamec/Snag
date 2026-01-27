@@ -33,8 +33,9 @@ internal fun ProjectListItem(
     modifier: Modifier = Modifier,
 ) {
     ListItem(
-        modifier = modifier
-            .clickable(onClick = onClick),
+        modifier =
+            modifier
+                .clickable(onClick = onClick),
         headlineContent = {
             Text(
                 text = project.name,

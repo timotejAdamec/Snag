@@ -16,5 +16,5 @@ import kotlin.jvm.JvmInline
 
 @JvmInline
 value class SnagBackStack(
-    val value: MutableList<SnagNavRoute>
+    val value: MutableList<SnagNavRoute>,
 )

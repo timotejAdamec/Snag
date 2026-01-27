@@ -15,7 +15,6 @@ package cz.adamec.timotej.snag.lib.core.fe
 import co.touchlab.kermit.Logger
 
 sealed interface OfflineFirstDataResult<out T> {
-
     data class Success<T>(
         val data: T,
     ) : OfflineFirstDataResult<T>
@@ -27,9 +26,10 @@ sealed interface OfflineFirstDataResult<out T> {
 
 inline fun <T, R> OfflineFirstDataResult<T>.map(transform: (T) -> R): OfflineFirstDataResult<R> =
     when (this) {
-        is OfflineFirstDataResult.Success -> OfflineFirstDataResult.Success(
-            data = transform(data),
-        )
+        is OfflineFirstDataResult.Success ->
+            OfflineFirstDataResult.Success(
+                data = transform(data),
+            )
         is OfflineFirstDataResult.ProgrammerError -> this
     }
 
@@ -45,9 +45,10 @@ fun <T> Logger.log(
     additionalInfo?.let { message += ", additionalInfo: $it" }
     when (offlineFirstDataResult) {
         is OfflineFirstDataResult.Success -> v(message)
-        is OfflineFirstDataResult.ProgrammerError -> e(
-            throwable = offlineFirstDataResult.throwable,
-            messageString = message,
-        )
+        is OfflineFirstDataResult.ProgrammerError ->
+            e(
+                throwable = offlineFirstDataResult.throwable,
+                messageString = message,
+            )
     }
 }

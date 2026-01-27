@@ -86,7 +86,6 @@ internal class ProjectsRoute(
             }
 
             delete("/{id}") {
-
             }
         }
     }

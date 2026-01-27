@@ -33,7 +33,7 @@ fun BackNavigationIcon(
     ) {
         Icon(
             painter = painterResource(Res.drawable.ic_back),
-            contentDescription = stringResource(Res.string.back)
+            contentDescription = stringResource(Res.string.back),
         )
     }
 }

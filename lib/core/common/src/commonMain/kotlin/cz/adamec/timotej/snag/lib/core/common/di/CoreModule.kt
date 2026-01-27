@@ -27,17 +27,18 @@ import org.koin.core.scope.Scope
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
-val commonCoreModule = module {
-    includes(platformModule)
+val commonCoreModule =
+    module {
+        includes(platformModule)
 
-    factory(named(DispatcherDiQualifiers.MAIN)) { Dispatchers.Main }
-    factory(named(DispatcherDiQualifiers.DEFAULT)) { Dispatchers.Default }
-    factory(named(DispatcherDiQualifiers.UNCONFINED)) { Dispatchers.Unconfined }
+        factory(named(DispatcherDiQualifiers.MAIN)) { Dispatchers.Main }
+        factory(named(DispatcherDiQualifiers.DEFAULT)) { Dispatchers.Default }
+        factory(named(DispatcherDiQualifiers.UNCONFINED)) { Dispatchers.Unconfined }
 
-    singleOf(::DefaultApplicationScope) bind ApplicationScope::class
-    factoryOf(::SystemTimestampProvider) bind TimestampProvider::class
-    factory { UuidProvider }
-}
+        singleOf(::DefaultApplicationScope) bind ApplicationScope::class
+        factoryOf(::SystemTimestampProvider) bind TimestampProvider::class
+        factory { UuidProvider }
+    }
 
 internal expect val platformModule: Module
 

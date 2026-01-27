@@ -28,7 +28,7 @@ internal class AppModuleTest {
                     HttpClient::class,
                     HttpClientEngine::class,
                     HttpClientConfig::class,
-                )
+                ),
         )
     }
 }

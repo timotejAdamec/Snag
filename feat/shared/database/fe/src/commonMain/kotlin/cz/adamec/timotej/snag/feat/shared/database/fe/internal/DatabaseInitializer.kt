@@ -23,7 +23,8 @@ internal class DatabaseInitializer(
     private val databaseDriver: SqlDriver,
     private val defaultDispatcher: CoroutineDispatcher,
 ) : Initializer {
-    override suspend fun init() = withContext(defaultDispatcher) {
-        SnagDatabase.Schema.awaitCreate(databaseDriver)
-    }
+    override suspend fun init() =
+        withContext(defaultDispatcher) {
+            SnagDatabase.Schema.awaitCreate(databaseDriver)
+        }
 }

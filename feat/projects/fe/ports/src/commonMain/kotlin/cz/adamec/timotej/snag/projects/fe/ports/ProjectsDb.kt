@@ -19,8 +19,12 @@ import kotlin.uuid.Uuid
 
 interface ProjectsDb {
     fun getAllProjectsFlow(): Flow<OfflineFirstDataResult<List<Project>>>
+
     suspend fun saveProjects(projects: List<Project>): OfflineFirstDataResult<Unit>
+
     fun getProjectFlow(id: Uuid): Flow<OfflineFirstDataResult<Project?>>
+
     suspend fun saveProject(project: Project): OfflineFirstDataResult<Unit>
+
     suspend fun deleteProject(id: Uuid): OfflineFirstDataResult<Unit>
 }

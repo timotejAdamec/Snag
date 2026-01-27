@@ -37,6 +37,6 @@ fun ShowSnackbarOnError(
                     duration = SnackbarDuration.Long,
                 )
             }
-        }
+        },
     )
 }

@@ -32,21 +32,19 @@ internal class RealProjectsDb(
     private val projectEntityQueries: ProjectEntityQueries,
     private val ioDispatcher: CoroutineDispatcher,
 ) : ProjectsDb {
-    override fun getAllProjectsFlow(): Flow<OfflineFirstDataResult<List<Project>>> {
-        return projectEntityQueries
+    override fun getAllProjectsFlow(): Flow<OfflineFirstDataResult<List<Project>>> =
+        projectEntityQueries
             .selectAll()
             .asFlow()
             .mapToList(ioDispatcher)
             .map<List<ProjectEntity>, OfflineFirstDataResult<List<Project>>> { entities ->
                 OfflineFirstDataResult.Success(
-                    entities.map { it.toBusiness() }
+                    entities.map { it.toBusiness() },
                 )
-            }
-            .catch { e ->
+            }.catch { e ->
                 LH.logger.e { "Error loading projects from DB." }
                 emit(OfflineFirstDataResult.ProgrammerError(throwable = e))
             }
-    }
 
     override suspend fun saveProjects(projects: List<Project>): OfflineFirstDataResult<Unit> =
         withContext(ioDispatcher) {
@@ -67,7 +65,7 @@ internal class RealProjectsDb(
                     OfflineFirstDataResult.ProgrammerError(
                         throwable = e,
                     )
-                }
+                },
             )
         }
 
@@ -78,8 +76,7 @@ internal class RealProjectsDb(
             .mapToOneOrNull(ioDispatcher)
             .map<ProjectEntity?, OfflineFirstDataResult<Project?>> {
                 OfflineFirstDataResult.Success(it?.toBusiness())
-            }
-            .catch { e ->
+            }.catch { e ->
                 LH.logger.e { "Error loading project $id from DB." }
                 emit(OfflineFirstDataResult.ProgrammerError(throwable = e))
             }
@@ -99,7 +96,7 @@ internal class RealProjectsDb(
                     OfflineFirstDataResult.ProgrammerError(
                         throwable = e,
                     )
-                }
+                },
             )
         }
 
@@ -118,7 +115,7 @@ internal class RealProjectsDb(
                     OfflineFirstDataResult.ProgrammerError(
                         throwable = e,
                     )
-                }
+                },
             )
         }
 }

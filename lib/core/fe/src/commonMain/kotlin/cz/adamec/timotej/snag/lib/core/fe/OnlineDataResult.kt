@@ -15,13 +15,11 @@ package cz.adamec.timotej.snag.lib.core.fe
 import co.touchlab.kermit.Logger
 
 sealed interface OnlineDataResult<out T> {
-
     data class Success<T>(
         val data: T,
     ) : OnlineDataResult<T>
 
     sealed interface Failure : OnlineDataResult<Nothing> {
-
         object NetworkUnavailable : Failure {
             override fun toString(): String = "DataResult.NetworkUnavailable"
         }

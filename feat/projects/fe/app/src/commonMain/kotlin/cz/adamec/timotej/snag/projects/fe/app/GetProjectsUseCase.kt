@@ -33,20 +33,22 @@ class GetProjectsUseCase(
     operator fun invoke(): Flow<OfflineFirstDataResult<List<Project>>> {
         applicationScope.launch {
             when (val remoteProjectsResult = projectsApi.getProjects()) {
-                is OnlineDataResult.Failure -> LH.logger.w(
-                    "Error fetching projects, not updating local DB."
-                )
+                is OnlineDataResult.Failure ->
+                    LH.logger.w(
+                        "Error fetching projects, not updating local DB.",
+                    )
                 is OnlineDataResult.Success -> {
                     LH.logger.d {
                         "Fetched ${remoteProjectsResult.data.size} projects from API." +
-                                " Saving them to local DB."
+                            " Saving them to local DB."
                     }
                     projectsDb.saveProjects(remoteProjectsResult.data)
                 }
             }
         }
 
-        return projectsDb.getAllProjectsFlow()
+        return projectsDb
+            .getAllProjectsFlow()
             .onEach {
                 LH.logger.log(
                     offlineFirstDataResult = it,

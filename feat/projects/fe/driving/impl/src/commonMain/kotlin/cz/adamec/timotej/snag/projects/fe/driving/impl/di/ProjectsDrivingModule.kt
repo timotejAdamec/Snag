@@ -49,7 +49,7 @@ internal inline fun <reified T : SnagNavRoute> Module.projectsScreenNavigation(
             val backStack = get<SnagBackStack>()
             val projectDetailRoute = getProjectDetailRoute(it)
             backStack.value.add(projectDetailRoute)
-        }
+        },
     )
 }
 
@@ -61,7 +61,7 @@ internal inline fun <reified T : SnagNavRoute> Module.projectDetailsEditScreenNa
 ) { route ->
     ProjectDetailsEditScreen(
         projectId = getProjectId(route),
-        onProjectSaved = { savedProjectId ->
+        onSaveProject = { savedProjectId ->
             val backStack = get<SnagBackStack>()
             val projectDetailRoute = getProjectDetailRoute(savedProjectId)
             backStack.value.removeLastOrNull()
@@ -70,21 +70,20 @@ internal inline fun <reified T : SnagNavRoute> Module.projectDetailsEditScreenNa
         onCancelClick = {
             val backStack = get<SnagBackStack>()
             backStack.value.removeLastOrNull()
-        }
-    )
-}
-
-internal inline fun <reified T : SnagNavRoute> Module.projectDetailsScreenNavigation(
-    crossinline getProjectId: (Scope.(T) -> Uuid),
-) = navigation<T> { route ->
-    ProjectDetailsScreen(
-        projectId = getProjectId(route),
-        onBack = {
-            val backStack = get<SnagBackStack>()
-            backStack.value.removeLastOrNull()
         },
     )
 }
+
+internal inline fun <reified T : SnagNavRoute> Module.projectDetailsScreenNavigation(crossinline getProjectId: (Scope.(T) -> Uuid)) =
+    navigation<T> { route ->
+        ProjectDetailsScreen(
+            projectId = getProjectId(route),
+            onBack = {
+                val backStack = get<SnagBackStack>()
+                backStack.value.removeLastOrNull()
+            },
+        )
+    }
 
 val projectsDrivingImplModule =
     module {
@@ -101,7 +100,7 @@ val projectsDrivingImplModule =
             ProjectDetailsViewModel(
                 projectId = projectId,
                 getProjectUseCase = get(),
-                deleteProjectUseCase = get()
+                deleteProjectUseCase = get(),
             )
         }
     }

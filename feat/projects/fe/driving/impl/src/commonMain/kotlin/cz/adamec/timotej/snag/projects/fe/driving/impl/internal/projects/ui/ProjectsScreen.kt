@@ -33,12 +33,13 @@ internal fun ProjectsScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     SetFabState(
-        fabState = FabState.Visible(
-            text = "New project",
-            onClick = {
-                onNewProjectClick()
-            },
-        )
+        fabState =
+            FabState.Visible(
+                text = "New project",
+                onClick = {
+                    onNewProjectClick()
+                },
+            ),
     )
 
     ShowSnackbarOnError(viewModel.errorsFlow)

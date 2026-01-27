@@ -17,9 +17,9 @@ import kotlin.uuid.Uuid
 
 interface ProjectsRoute : SnagNavRoute
 
-//interface ProjectCreationRoute : SnagNavRoute {
+// interface ProjectCreationRoute : SnagNavRoute {
 //    val projectId: Uuid?
-//}
+// }
 
 interface ProjectCreationRoute : SnagNavRoute
 

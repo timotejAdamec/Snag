@@ -16,7 +16,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
-import cz.adamec.timotej.snag.lib.design.fe.error.UiError.*
 import cz.adamec.timotej.snag.projects.fe.app.GetProjectsUseCase
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.channels.Channel
@@ -30,7 +29,6 @@ import kotlinx.coroutines.flow.update
 internal class ProjectsViewModel(
     private val getProjectsUseCase: GetProjectsUseCase,
 ) : ViewModel() {
-
     private val _state: MutableStateFlow<ProjectsUiState> = MutableStateFlow(ProjectsUiState())
     val state: StateFlow<ProjectsUiState> = _state
 
@@ -51,15 +49,16 @@ internal class ProjectsViewModel(
                                 isLoading = false,
                             )
                         }
-                        errorEventsChannel.send(Unknown)
+                        errorEventsChannel.send(UiError.Unknown)
                     }
 
-                    is OfflineFirstDataResult.Success -> _state.update {
-                        it.copy(
-                            projects = projectsDataResult.data.toPersistentList(),
-                            isLoading = false,
-                        )
-                    }
+                    is OfflineFirstDataResult.Success ->
+                        _state.update {
+                            it.copy(
+                                projects = projectsDataResult.data.toPersistentList(),
+                                isLoading = false,
+                            )
+                        }
                 }
             }.launchIn(viewModelScope)
 }

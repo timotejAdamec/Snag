@@ -42,12 +42,13 @@ internal fun ProjectsContent(
     modifier: Modifier = Modifier,
 ) {
     CollapsableTopAppBarScaffold(
-        title = stringResource(Res.string.projects_title)
+        title = stringResource(Res.string.projects_title),
     ) { paddingValues ->
         LazyVerticalGrid(
-            modifier = modifier
-                .padding(paddingValues)
-                .consumeWindowInsets(paddingValues),
+            modifier =
+                modifier
+                    .padding(paddingValues)
+                    .consumeWindowInsets(paddingValues),
             columns = GridCells.Adaptive(minSize = 360.dp),
             contentPadding =
                 PaddingValues(

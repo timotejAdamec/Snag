@@ -13,8 +13,6 @@
 package cz.adamec.timotej.snag.lib.design.fe.scaffold
 
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -29,6 +27,7 @@ class AppScaffoldState(
 
 interface FabState {
     data object NotVisible : FabState
+
     data class Visible(
         val text: String,
         val onClick: () -> Unit,

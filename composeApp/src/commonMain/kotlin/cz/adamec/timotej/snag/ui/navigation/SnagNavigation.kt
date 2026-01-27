@@ -39,10 +39,11 @@ internal fun SnagNavigation(
         backStack = backStack.value,
         entryProvider = entryProvider,
         sceneStrategy = sceneStrategy,
-        entryDecorators = listOf(
-            rememberSaveableStateHolderNavEntryDecorator(),
-            rememberViewModelStoreNavEntryDecorator(),
-        ),
+        entryDecorators =
+            listOf(
+                rememberSaveableStateHolderNavEntryDecorator(),
+                rememberViewModelStoreNavEntryDecorator(),
+            ),
     )
 }
 

@@ -12,7 +12,6 @@
 
 package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.ui
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,11 +21,8 @@ import androidx.compose.material3.ContainedLoadingIndicator
 import androidx.compose.material3.HorizontalFloatingToolbar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.Label
-import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TooltipBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -47,7 +43,6 @@ import snag.feat.projects.fe.driving.impl.generated.resources.Res
 import snag.feat.projects.fe.driving.impl.generated.resources.delete_project_confirmation_text
 import snag.feat.projects.fe.driving.impl.generated.resources.delete_project_confirmation_title
 import snag.feat.projects.fe.driving.impl.generated.resources.project_not_found
-import snag.feat.projects.fe.driving.impl.generated.resources.projects_title
 import snag.lib.design.fe.generated.resources.delete
 import snag.lib.design.fe.generated.resources.ic_delete
 import snag.lib.design.fe.generated.resources.Res as DesignRes
@@ -66,7 +61,7 @@ internal fun ProjectDetailsContent(
             ProjectDetailsUiStatus.NOT_FOUND -> {
                 Text(
                     modifier = Modifier.align(Alignment.Center),
-                    text = stringResource(Res.string.project_not_found)
+                    text = stringResource(Res.string.project_not_found),
                 )
             }
 
@@ -78,11 +73,12 @@ internal fun ProjectDetailsContent(
 
             ProjectDetailsUiStatus.LOADED,
             ProjectDetailsUiStatus.DELETED,
-                -> LoadedProjectDetailsContent(
-                state = state,
-                onBack = onBack,
-                onDelete = onDelete,
-            )
+            ->
+                LoadedProjectDetailsContent(
+                    state = state,
+                    onBack = onBack,
+                    onDelete = onDelete,
+                )
         }
     }
 }
@@ -104,10 +100,11 @@ private fun LoadedProjectDetailsContent(
         },
     ) { paddingValues ->
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .consumeWindowInsets(paddingValues),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+                    .consumeWindowInsets(paddingValues),
         ) {
             var isShowingDeleteConfirmation by remember { mutableStateOf(false) }
             if (isShowingDeleteConfirmation) {
@@ -126,7 +123,7 @@ private fun LoadedProjectDetailsContent(
                             enabled = state.canInvokeDeletion,
                             onClick = {
                                 onDelete()
-                            }
+                            },
                         ) {
                             Text("Confirm")
                         }
@@ -136,17 +133,18 @@ private fun LoadedProjectDetailsContent(
                             enabled = state.canInvokeDeletion,
                             onClick = {
                                 isShowingDeleteConfirmation = false
-                            }
+                            },
                         ) {
                             Text("Dismiss")
                         }
-                    }
+                    },
                 )
             }
             HorizontalFloatingToolbar(
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(bottom = 16.dp),
+                modifier =
+                    Modifier
+                        .align(Alignment.BottomCenter)
+                        .padding(bottom = 16.dp),
                 expanded = true,
             ) {
                 IconButton(
@@ -170,11 +168,12 @@ private fun LoadedProjectDetailsContent(
 private fun LoadedProjectDetailsContentPreview() {
     SnagTheme {
         LoadedProjectDetailsContent(
-            state = ProjectDetailsUiState(
-                status = ProjectDetailsUiStatus.LOADED,
-                name = "Example project name",
-                address = "Example project address",
-            ),
+            state =
+                ProjectDetailsUiState(
+                    status = ProjectDetailsUiStatus.LOADED,
+                    name = "Example project name",
+                    address = "Example project address",
+                ),
             onBack = {},
             onDelete = {},
         )

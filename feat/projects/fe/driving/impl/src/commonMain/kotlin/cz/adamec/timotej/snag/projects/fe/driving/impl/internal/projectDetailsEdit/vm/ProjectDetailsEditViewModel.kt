@@ -35,7 +35,6 @@ internal class ProjectDetailsEditViewModel(
     private val getProjectUseCase: GetProjectUseCase,
     private val saveProjectUseCase: SaveProjectUseCase,
 ) : ViewModel() {
-
     private val _state: MutableStateFlow<ProjectDetailsEditUiState> =
         MutableStateFlow(ProjectDetailsEditUiState())
     val state: StateFlow<ProjectDetailsEditUiState> = _state
@@ -50,24 +49,26 @@ internal class ProjectDetailsEditViewModel(
         projectId?.let { collectProject(it) }
     }
 
-    private fun collectProject(projectId: Uuid) = viewModelScope.launch {
-        getProjectUseCase(projectId).collect { result ->
-            when (result) {
-                is OfflineFirstDataResult.ProgrammerError -> {
-                    errorEventsChannel.send(Unknown)
-                }
-                is OfflineFirstDataResult.Success -> result.data?.let { data ->
-                    _state.update {
-                        it.copy(
-                            projectName = data.name,
-                            projectAddress = data.address,
-                        )
+    private fun collectProject(projectId: Uuid) =
+        viewModelScope.launch {
+            getProjectUseCase(projectId).collect { result ->
+                when (result) {
+                    is OfflineFirstDataResult.ProgrammerError -> {
+                        errorEventsChannel.send(Unknown)
                     }
-                    cancel()
+                    is OfflineFirstDataResult.Success ->
+                        result.data?.let { data ->
+                            _state.update {
+                                it.copy(
+                                    projectName = data.name,
+                                    projectAddress = data.address,
+                                )
+                            }
+                            cancel()
+                        }
                 }
             }
         }
-    }
 
     fun onProjectNameChange(updatedName: String) {
         _state.update { it.copy(projectName = updatedName) }
@@ -77,31 +78,34 @@ internal class ProjectDetailsEditViewModel(
         _state.update { it.copy(projectAddress = updatedAddress) }
     }
 
-    fun onSaveProject() = viewModelScope.launch {
-        if (state.value.projectName.isBlank()) {
-            // TODO use string provider
-            errorEventsChannel.send(CustomUserMessage("Project name cannot be empty"))
-            return@launch
-        }
-        if (state.value.projectAddress.isBlank()) {
-            errorEventsChannel.send(CustomUserMessage("Project address cannot be empty"))
-            return@launch
-        }
+    fun onSaveProject() =
+        viewModelScope.launch {
+            if (state.value.projectName.isBlank()) {
+                // TODO use string provider
+                errorEventsChannel.send(CustomUserMessage("Project name cannot be empty"))
+                return@launch
+            }
+            if (state.value.projectAddress.isBlank()) {
+                errorEventsChannel.send(CustomUserMessage("Project address cannot be empty"))
+                return@launch
+            }
 
-        val result = saveProjectUseCase(
-            request = SaveProjectRequest(
-                id = projectId,
-                name = state.value.projectName,
-                address = state.value.projectAddress,
-            )
-        )
-        when (result) {
-            is OfflineFirstDataResult.ProgrammerError -> {
-                errorEventsChannel.send(Unknown)
-            }
-            is OfflineFirstDataResult.Success -> {
-                saveEventChannel.send(result.data)
+            val result =
+                saveProjectUseCase(
+                    request =
+                        SaveProjectRequest(
+                            id = projectId,
+                            name = state.value.projectName,
+                            address = state.value.projectAddress,
+                        ),
+                )
+            when (result) {
+                is OfflineFirstDataResult.ProgrammerError -> {
+                    errorEventsChannel.send(Unknown)
+                }
+                is OfflineFirstDataResult.Success -> {
+                    saveEventChannel.send(result.data)
+                }
             }
         }
-    }
 }

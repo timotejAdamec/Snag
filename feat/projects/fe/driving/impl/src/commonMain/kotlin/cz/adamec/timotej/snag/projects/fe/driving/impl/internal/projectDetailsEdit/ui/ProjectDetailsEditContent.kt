@@ -39,10 +39,10 @@ import snag.feat.projects.fe.driving.impl.generated.resources.project_name_label
 import snag.feat.projects.fe.driving.impl.generated.resources.required
 import snag.lib.design.fe.generated.resources.close
 import snag.lib.design.fe.generated.resources.ic_close
-import snag.lib.design.fe.generated.resources.Res as DesignRes
 import snag.lib.design.fe.generated.resources.ic_location
 import snag.lib.design.fe.generated.resources.save
 import kotlin.uuid.Uuid
+import snag.lib.design.fe.generated.resources.Res as DesignRes
 
 private val HorizontalPadding = 12.dp
 
@@ -61,14 +61,16 @@ internal fun ProjectDetailsEditContent(
         modifier = modifier,
         topBar = {
             TopAppBar(
-                modifier = Modifier
-                    .fillMaxWidth(),
+                modifier =
+                    Modifier
+                        .fillMaxWidth(),
                 title = {
-                    val text = if (projectId == null && state.projectName.isBlank()) {
-                        stringResource(Res.string.new_project)
-                    } else {
-                        state.projectName
-                    }
+                    val text =
+                        if (projectId == null && state.projectName.isBlank()) {
+                            stringResource(Res.string.new_project)
+                        } else {
+                            state.projectName
+                        }
                     Text(
                         text = text,
                         maxLines = 1,
@@ -89,13 +91,14 @@ internal fun ProjectDetailsEditContent(
                         onClick = onSaveClick,
                     ) {
                         Text(
-                            text = stringResource(DesignRes.string.save)
+                            text = stringResource(DesignRes.string.save),
                         )
                     }
                 },
-                contentPadding = PaddingValues(
-                    end = HorizontalPadding,
-                )
+                contentPadding =
+                    PaddingValues(
+                        end = HorizontalPadding,
+                    ),
             )
         },
         snackbarHost = {
@@ -103,14 +106,16 @@ internal fun ProjectDetailsEditContent(
         },
     ) { paddingValues ->
         Column(
-            modifier = Modifier
-                .padding(paddingValues)
-                .padding(horizontal = HorizontalPadding),
+            modifier =
+                Modifier
+                    .padding(paddingValues)
+                    .padding(horizontal = HorizontalPadding),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             OutlinedTextField(
-                modifier = Modifier
-                    .fillMaxWidth(),
+                modifier =
+                    Modifier
+                        .fillMaxWidth(),
                 label = { Text(text = stringResource(Res.string.project_name_label) + "*") },
                 supportingText = { Text(text = stringResource(Res.string.required) + "*") },
                 value = state.projectName,
@@ -119,8 +124,9 @@ internal fun ProjectDetailsEditContent(
                 },
             )
             OutlinedTextField(
-                modifier = Modifier
-                    .fillMaxWidth(),
+                modifier =
+                    Modifier
+                        .fillMaxWidth(),
                 label = { Text(text = stringResource(Res.string.project_address_label) + "*") },
                 supportingText = { Text(text = stringResource(Res.string.required) + "*") },
                 value = state.projectAddress,
@@ -132,7 +138,7 @@ internal fun ProjectDetailsEditContent(
                         painter = painterResource(DesignRes.drawable.ic_location),
                         contentDescription = "Address",
                     )
-                }
+                },
             )
         }
     }

@@ -14,7 +14,6 @@ package cz.adamec.timotej.snag.ui.navigation
 
 import androidx.compose.runtime.Composable
 import cz.adamec.timotej.snag.lib.navigation.fe.SnagBackStack
-import cz.adamec.timotej.snag.lib.navigation.fe.SnagNavRoute
 
 @Composable
 internal actual fun SnagNavigationPreparation(backStack: SnagBackStack) {}
