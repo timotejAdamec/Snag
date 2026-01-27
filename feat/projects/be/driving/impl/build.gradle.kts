@@ -5,5 +5,4 @@ plugins {
 dependencies {
     implementation(project(":feat:projects:be:driving:contract"))
     implementation(project(":feat:projects:be:app"))
-    implementation(project(":feat:projects:fe:driven:impl"))
 }
