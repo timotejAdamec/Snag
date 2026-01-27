@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.projects.be.app
 
+import cz.adamec.timotej.snag.projects.be.app.internal.LH.logger
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsLocalDataSource
 import cz.adamec.timotej.snag.projects.business.Project
 import kotlin.uuid.Uuid
@@ -19,5 +20,10 @@ import kotlin.uuid.Uuid
 class GetProjectUseCase(
     private val projectsLocalDataSource: ProjectsLocalDataSource,
 ) {
-    suspend operator fun invoke(id: Uuid): Project? = projectsLocalDataSource.getProject(id)
+    suspend operator fun invoke(id: Uuid): Project? {
+        logger.debug("Getting project {} from local storage.", id)
+        return projectsLocalDataSource.getProject(id).also {
+            logger.debug("Got project {} from local storage.", id)
+        }
+    }
 }

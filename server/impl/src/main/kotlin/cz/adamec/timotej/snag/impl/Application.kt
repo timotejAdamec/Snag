@@ -12,18 +12,19 @@
 
 package cz.adamec.timotej.snag.impl
 
+import cz.adamec.timotej.snag.impl.configuration.configureCallLogging
+import cz.adamec.timotej.snag.impl.configuration.configureContentNegotiation
+import cz.adamec.timotej.snag.impl.configuration.configureCors
+import cz.adamec.timotej.snag.impl.configuration.configureRouting
+import cz.adamec.timotej.snag.impl.configuration.configureStatusPages
 import cz.adamec.timotej.snag.impl.di.appModule
 import cz.adamec.timotej.snag.server.api.Host
-import cz.adamec.timotej.snag.server.api.configureJson
-import io.ktor.http.HttpHeaders
-import io.ktor.http.HttpMethod
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
-import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.server.plugins.cors.routing.CORS
 import org.koin.ktor.plugin.Koin
+import org.koin.logger.slf4jLogger
 
 fun main() {
     embeddedServer(
@@ -36,19 +37,12 @@ fun main() {
 
 fun Application.main() {
     install(Koin) {
+        slf4jLogger()
         modules(appModule)
     }
-    install(CORS) {
-        // allowHost("web frontend address") TODO once web FE deployed
-        allowHost("localhost:8080")
-        allowMethod(HttpMethod.Put)
-        allowMethod(HttpMethod.Delete)
-        allowMethod(HttpMethod.Options)
-        allowHeader(HttpHeaders.ContentType)
-        allowHeader(HttpHeaders.Authorization)
-    }
-    install(ContentNegotiation) {
-        configureJson()
-    }
+    configureCallLogging()
+    configureContentNegotiation()
+    configureCors()
+    configureStatusPages()
     configureRouting()
 }

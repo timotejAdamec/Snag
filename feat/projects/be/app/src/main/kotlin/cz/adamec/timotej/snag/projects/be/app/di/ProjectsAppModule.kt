@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.projects.be.app.di
 
+import cz.adamec.timotej.snag.projects.be.app.DeleteProjectUseCase
 import cz.adamec.timotej.snag.projects.be.app.GetProjectUseCase
 import cz.adamec.timotej.snag.projects.be.app.GetProjectsUseCase
 import cz.adamec.timotej.snag.projects.be.app.SaveProjectUseCase
@@ -23,4 +24,5 @@ val projectsAppModule =
         factoryOf(::GetProjectsUseCase)
         factoryOf(::GetProjectUseCase)
         factoryOf(::SaveProjectUseCase)
+        factoryOf(::DeleteProjectUseCase)
     }

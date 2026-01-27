@@ -12,11 +12,13 @@
 
 package cz.adamec.timotej.snag.projects.be.driving.impl.internal
 
+import cz.adamec.timotej.snag.projects.be.app.DeleteProjectUseCase
 import cz.adamec.timotej.snag.projects.be.app.GetProjectUseCase
 import cz.adamec.timotej.snag.projects.be.app.GetProjectsUseCase
 import cz.adamec.timotej.snag.projects.be.app.SaveProjectUseCase
 import cz.adamec.timotej.snag.projects.be.driving.contract.PutProjectApiDto
 import cz.adamec.timotej.snag.routing.be.AppRoute
+import cz.adamec.timotej.snag.routing.be.getIdFromParameters
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
@@ -32,6 +34,7 @@ internal class ProjectsRoute(
     private val getProjectsUseCase: GetProjectsUseCase,
     private val getProjectUseCase: GetProjectUseCase,
     private val saveProjectUseCase: SaveProjectUseCase,
+    private val deleteProjectUseCase: DeleteProjectUseCase,
 ) : AppRoute {
     override fun Route.setup() {
         route("/projects") {
@@ -44,13 +47,7 @@ internal class ProjectsRoute(
             }
 
             get("/{id}") {
-                val id =
-                    call.parameters["id"]?.let {
-                        runCatching { Uuid.parse(it) }.getOrNull()
-                    } ?: return@get call.respond(
-                        status = HttpStatusCode.BadRequest,
-                        message = "Invalid ID format.",
-                    )
+                val id = getIdFromParameters()
 
                 val dtoProject =
                     getProjectUseCase(id)
@@ -63,13 +60,7 @@ internal class ProjectsRoute(
             }
 
             put("/{id}") {
-                val id =
-                    call.parameters["id"]?.let {
-                        runCatching { Uuid.parse(it) }.getOrNull()
-                    } ?: return@put call.respond(
-                        status = HttpStatusCode.BadRequest,
-                        message = "Invalid ID format.",
-                    )
+                val id = getIdFromParameters()
 
                 val putProjectDto =
                     runCatching { call.receive<PutProjectApiDto>() }.getOrNull()
@@ -86,6 +77,11 @@ internal class ProjectsRoute(
             }
 
             delete("/{id}") {
+                val id = getIdFromParameters()
+
+                deleteProjectUseCase(id)
+
+                call.respond(HttpStatusCode.NoContent)
             }
         }
     }

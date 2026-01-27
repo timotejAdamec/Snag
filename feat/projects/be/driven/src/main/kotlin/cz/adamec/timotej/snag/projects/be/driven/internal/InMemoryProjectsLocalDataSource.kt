@@ -87,4 +87,8 @@ internal class InMemoryProjectsLocalDataSource : ProjectsLocalDataSource {
         projects.add(project)
         return null
     }
+
+    override suspend fun deleteProject(id: Uuid) {
+        projects.removeIf { it.id == id }
+    }
 }

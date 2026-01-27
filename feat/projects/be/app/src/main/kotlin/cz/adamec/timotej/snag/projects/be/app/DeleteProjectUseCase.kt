@@ -14,15 +14,14 @@ package cz.adamec.timotej.snag.projects.be.app
 
 import cz.adamec.timotej.snag.projects.be.app.internal.LH.logger
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsLocalDataSource
-import cz.adamec.timotej.snag.projects.business.Project
+import kotlin.uuid.Uuid
 
-class SaveProjectUseCase(
+class DeleteProjectUseCase(
     private val projectsLocalDataSource: ProjectsLocalDataSource,
 ) {
-    suspend operator fun invoke(project: Project): Project? {
-        logger.debug("Saving project {} to local storage.", project)
-        return projectsLocalDataSource.updateProject(project).also {
-            logger.debug("Saved project {} to local storage.", project)
-        }
+    suspend operator fun invoke(projectId: Uuid) {
+        logger.debug("Deleting project {} from local storage.", projectId)
+        projectsLocalDataSource.deleteProject(projectId)
+        logger.debug("Deleted project {} from local storage.", projectId)
     }
 }
