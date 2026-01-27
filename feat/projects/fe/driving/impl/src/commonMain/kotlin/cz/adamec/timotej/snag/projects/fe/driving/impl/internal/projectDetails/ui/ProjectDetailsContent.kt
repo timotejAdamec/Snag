@@ -93,6 +93,7 @@ private fun LoadedProjectDetailsContent(
     CollapsableTopAppBarScaffold(
         modifier = modifier,
         title = state.name,
+        subtitle = state.address,
         topAppBarNavigationIcon = {
             BackNavigationIcon(
                 onClick = onBack,

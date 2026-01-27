@@ -28,6 +28,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 fun CollapsableTopAppBarScaffold(
     title: String,
     modifier: Modifier = Modifier,
+    subtitle: String? = null,
     topAppBarNavigationIcon: @Composable () -> Unit = {},
     topAppBarActions: @Composable RowScope.() -> Unit = {},
     floatingActionButton: @Composable (() -> Unit) = {},
@@ -45,9 +46,10 @@ fun CollapsableTopAppBarScaffold(
         topBar = {
             MediumFlexibleTopAppBar(
                 title = {
-                    Text(
-                        text = title,
-                    )
+                    Text(text = title)
+                },
+                subtitle = {
+                    subtitle?.let { Text(text = subtitle) }
                 },
                 scrollBehavior = scrollBehavior,
                 navigationIcon = topAppBarNavigationIcon,

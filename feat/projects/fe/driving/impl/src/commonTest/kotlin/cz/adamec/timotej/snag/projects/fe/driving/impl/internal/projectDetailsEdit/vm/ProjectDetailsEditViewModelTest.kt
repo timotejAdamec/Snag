@@ -12,13 +12,16 @@
 
 package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetailsEdit.vm
 
-import cz.adamec.timotej.snag.lib.core.OfflineFirstDataResult
-import cz.adamec.timotej.snag.lib.core.UuidProvider
+import cz.adamec.timotej.snag.lib.core.common.ApplicationScope
+import cz.adamec.timotej.snag.lib.core.common.UuidProvider
+import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.projects.business.Project
 import cz.adamec.timotej.snag.projects.fe.app.GetProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.SaveProjectUseCase
-import cz.adamec.timotej.snag.projects.fe.driven.test.FakeProjectsRepository
+import cz.adamec.timotej.snag.projects.fe.driven.test.FakeProjectsApi
+import cz.adamec.timotej.snag.projects.fe.driven.test.FakeProjectsDb
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
@@ -38,9 +41,12 @@ import kotlin.uuid.Uuid
 class ProjectDetailsEditViewModelTest {
     private val testDispatcher = StandardTestDispatcher()
 
-    private val projectsRepository = FakeProjectsRepository()
-    private val getProjectUseCase = GetProjectUseCase(projectsRepository)
-    private val saveProjectUseCase = SaveProjectUseCase(projectsRepository, UuidProvider)
+    private val projectsApi = FakeProjectsApi()
+    private val projectsDb = FakeProjectsDb()
+    private val applicationScope = object : ApplicationScope, CoroutineScope by CoroutineScope(testDispatcher) {}
+
+    private val getProjectUseCase = GetProjectUseCase(projectsApi, projectsDb, applicationScope)
+    private val saveProjectUseCase = SaveProjectUseCase(projectsApi, projectsDb, applicationScope, UuidProvider)
 
     @BeforeTest
     fun setUp() {
@@ -71,7 +77,7 @@ class ProjectDetailsEditViewModelTest {
         runTest {
             val projectId = Uuid.random()
             val project = Project(projectId, "Test Project", "Test Address")
-            projectsRepository.setProject(projectId, project)
+            projectsDb.setProject(project)
 
             val viewModel =
                 ProjectDetailsEditViewModel(
@@ -139,14 +145,16 @@ class ProjectDetailsEditViewModelTest {
             viewModel.onProjectNameChange("Name")
             viewModel.onProjectAddressChange("Address")
 
-            val expectedUuid = Uuid.random()
-            val savedProject = Project(expectedUuid, "Name", "Address")
-            projectsRepository.setSaveResult(OfflineFirstDataResult.Success(savedProject))
-
             viewModel.onSaveProject()
 
             val savedId = viewModel.saveEventFlow.first()
-            assertEquals(expectedUuid, savedId)
+
+            // Verify project is saved in DB
+            val savedProjectResult = projectsDb.getProjectFlow(savedId).first()
+            assertIs<OfflineFirstDataResult.Success<Project?>>(savedProjectResult)
+            val savedProject = savedProjectResult.data
+            assertEquals("Name", savedProject?.name)
+            assertEquals("Address", savedProject?.address)
         }
 
     @Test
@@ -156,7 +164,7 @@ class ProjectDetailsEditViewModelTest {
             viewModel.onProjectNameChange("Name")
             viewModel.onProjectAddressChange("Address")
 
-            projectsRepository.setSaveResult(OfflineFirstDataResult.Failure.ProgrammerError(RuntimeException("Failed")))
+            projectsDb.forcedFailure = OfflineFirstDataResult.ProgrammerError(RuntimeException("Failed"))
 
             viewModel.onSaveProject()
 
