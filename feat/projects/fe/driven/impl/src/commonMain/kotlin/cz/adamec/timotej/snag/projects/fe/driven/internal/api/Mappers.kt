@@ -13,6 +13,7 @@
 package cz.adamec.timotej.snag.projects.fe.driven.internal.api
 
 import cz.adamec.timotej.snag.projects.be.driving.contract.ProjectApiDto
+import cz.adamec.timotej.snag.projects.be.driving.contract.PutProjectApiDto
 import cz.adamec.timotej.snag.projects.business.Project
 
 internal fun ProjectApiDto.toBusiness() =
@@ -22,9 +23,8 @@ internal fun ProjectApiDto.toBusiness() =
         address = address,
     )
 
-internal fun Project.toApiDto() =
-    ProjectApiDto(
-        id = id,
+internal fun Project.toPutApiDto() =
+    PutProjectApiDto(
         name = name,
         address = address,
     )

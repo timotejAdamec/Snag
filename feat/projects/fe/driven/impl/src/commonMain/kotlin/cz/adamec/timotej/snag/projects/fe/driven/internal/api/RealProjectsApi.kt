@@ -79,9 +79,9 @@ internal class RealProjectsApi(
     override suspend fun saveProject(project: Project): OnlineDataResult<Project?> =
         runCatchingCancellable {
             LH.logger.d { "Saving project ${project.id} to API..." }
-            val projectDto = project.toApiDto()
+            val projectDto = project.toPutApiDto()
             val response =
-                httpClient.put("/projects/${projectDto.id}") {
+                httpClient.put("/projects/${project.id}") {
                     setBody(projectDto)
                 }
             if (response.status != HttpStatusCode.NoContent) {
