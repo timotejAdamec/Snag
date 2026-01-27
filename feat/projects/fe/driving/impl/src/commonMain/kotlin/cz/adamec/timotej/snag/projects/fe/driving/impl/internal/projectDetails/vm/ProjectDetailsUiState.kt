@@ -12,18 +12,29 @@
 
 package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.vm
 
+import cz.adamec.timotej.snag.feat.structures.business.Structure
+import cz.adamec.timotej.snag.projects.business.Project
+
 internal data class ProjectDetailsUiState(
-    val status: ProjectDetailsUiStatus = ProjectDetailsUiStatus.LOADING,
+    val projectStatus: ProjectDetailsUiStatus = ProjectDetailsUiStatus.LOADING,
+    val structureStatus: StructuresUiStatus = StructuresUiStatus.LOADING,
     val isBeingDeleted: Boolean = false,
-    val name: String = "",
-    val address: String = "",
+    val project: Project? = null,
+    val structures: List<Structure> = listOf(),
 ) {
-    val canInvokeDeletion = status == ProjectDetailsUiStatus.LOADED && !isBeingDeleted
+    val canInvokeDeletion = projectStatus == ProjectDetailsUiStatus.LOADED && !isBeingDeleted
 }
 
 internal enum class ProjectDetailsUiStatus {
+    ERROR,
     NOT_FOUND,
     LOADING,
     LOADED,
     DELETED,
+}
+
+internal enum class StructuresUiStatus {
+    ERROR,
+    LOADING,
+    LOADED,
 }

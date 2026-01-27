@@ -32,13 +32,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import cz.adamec.timotej.snag.lib.core.common.UuidProvider
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.BackNavigationIcon
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.CollapsableTopAppBarScaffold
 import cz.adamec.timotej.snag.lib.design.fe.theme.SnagTheme
+import cz.adamec.timotej.snag.projects.business.Project
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.vm.ProjectDetailsUiState
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.vm.ProjectDetailsUiStatus
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
 import snag.feat.projects.fe.driving.impl.generated.resources.Res
 import snag.feat.projects.fe.driving.impl.generated.resources.delete_project_confirmation_text
 import snag.feat.projects.fe.driving.impl.generated.resources.delete_project_confirmation_title
@@ -57,7 +60,7 @@ internal fun ProjectDetailsContent(
     Box(
         modifier = modifier,
     ) {
-        when (state.status) {
+        when (state.projectStatus) {
             ProjectDetailsUiStatus.NOT_FOUND -> {
                 Text(
                     modifier = Modifier.align(Alignment.Center),
@@ -73,12 +76,14 @@ internal fun ProjectDetailsContent(
 
             ProjectDetailsUiStatus.LOADED,
             ProjectDetailsUiStatus.DELETED,
-            ->
+                ->
                 LoadedProjectDetailsContent(
                     state = state,
                     onBack = onBack,
                     onDelete = onDelete,
                 )
+
+            ProjectDetailsUiStatus.ERROR -> onBack()
         }
     }
 }
@@ -92,8 +97,8 @@ private fun LoadedProjectDetailsContent(
 ) {
     CollapsableTopAppBarScaffold(
         modifier = modifier,
-        title = state.name,
-        subtitle = state.address,
+        title = state.project?.name.orEmpty(),
+        subtitle = state.project?.address.orEmpty(),
         topAppBarNavigationIcon = {
             BackNavigationIcon(
                 onClick = onBack,
@@ -171,9 +176,12 @@ private fun LoadedProjectDetailsContentPreview() {
         LoadedProjectDetailsContent(
             state =
                 ProjectDetailsUiState(
-                    status = ProjectDetailsUiStatus.LOADED,
-                    name = "Example project name",
-                    address = "Example project address",
+                    projectStatus = ProjectDetailsUiStatus.LOADED,
+                    project = Project(
+                        id = koinInject<UuidProvider>().getUuid(),
+                        name = "Example project name",
+                        address = "Example project address",
+                    )
                 ),
             onBack = {},
             onDelete = {},

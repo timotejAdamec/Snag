@@ -19,6 +19,7 @@ import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.projects.business.Project
 import cz.adamec.timotej.snag.projects.fe.app.DeleteProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.GetProjectUseCase
+import cz.adamec.timotej.snag.structures.fe.app.GetStructuresUseCase
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -32,6 +33,7 @@ internal class ProjectDetailsViewModel(
     @InjectedParam private val projectId: Uuid,
     private val getProjectUseCase: GetProjectUseCase,
     private val deleteProjectUseCase: DeleteProjectUseCase,
+    private val getStructuresUseCase: GetStructuresUseCase,
 ) : ViewModel() {
     private val _state: MutableStateFlow<ProjectDetailsUiState> =
         MutableStateFlow(ProjectDetailsUiState())
@@ -45,6 +47,7 @@ internal class ProjectDetailsViewModel(
 
     init {
         collectProject(projectId)
+        collectStructures(projectId)
     }
 
     private fun collectProject(projectId: Uuid) =
@@ -52,20 +55,26 @@ internal class ProjectDetailsViewModel(
             getProjectUseCase(projectId).collect { result ->
                 when (result) {
                     is OfflineFirstDataResult.ProgrammerError -> {
+                        _state.update {
+                            it.copy(
+                                projectStatus = ProjectDetailsUiStatus.ERROR,
+                            )
+                        }
                         errorEventsChannel.send(UiError.Unknown)
                     }
                     is OfflineFirstDataResult.Success<Project?> ->
                         result.data?.let { project ->
                             _state.update {
                                 it.copy(
-                                    status = ProjectDetailsUiStatus.LOADED,
-                                    name = project.name,
-                                    address = project.address,
+                                    projectStatus = ProjectDetailsUiStatus.LOADED,
+                                    project = project,
                                 )
                             }
-                        } ?: if (state.value.status != ProjectDetailsUiStatus.DELETED) {
+                        } ?: if (state.value.projectStatus != ProjectDetailsUiStatus.DELETED) {
                             _state.update {
-                                it.copy(status = ProjectDetailsUiStatus.NOT_FOUND)
+                                it.copy(
+                                    projectStatus = ProjectDetailsUiStatus.NOT_FOUND
+                                )
                             }
                         } else {
                             // keep as deleted
@@ -73,6 +82,29 @@ internal class ProjectDetailsViewModel(
                 }
             }
         }
+
+    private fun collectStructures(projectId: Uuid) = viewModelScope.launch {
+        getStructuresUseCase(projectId).collect { result ->
+            when (result) {
+                is OfflineFirstDataResult.ProgrammerError -> {
+                    _state.update {
+                        it.copy(
+                            structureStatus = StructuresUiStatus.ERROR,
+                        )
+                    }
+                    errorEventsChannel.send(UiError.Unknown)
+                }
+                is OfflineFirstDataResult.Success -> {
+                    _state.update {
+                        it.copy(
+                            structureStatus = StructuresUiStatus.LOADED,
+                            structures = result.data,
+                        )
+                    }
+                }
+            }
+        }
+    }
 
     fun onDelete() =
         viewModelScope.launch {
@@ -92,7 +124,7 @@ internal class ProjectDetailsViewModel(
                 is OfflineFirstDataResult.Success -> {
                     _state.update {
                         it.copy(
-                            status = ProjectDetailsUiStatus.DELETED,
+                            projectStatus = ProjectDetailsUiStatus.DELETED,
                             isBeingDeleted = false,
                         )
                     }
