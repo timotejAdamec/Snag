@@ -13,9 +13,11 @@
 package cz.adamec.timotej.snag.ui
 
 import cz.adamec.timotej.snag.di.appModule
+import cz.adamec.timotej.snag.lib.navigation.fe.SnagBackStack
 import io.ktor.client.HttpClient
 import io.ktor.client.HttpClientConfig
 import io.ktor.client.engine.HttpClientEngine
+import org.koin.test.verify.definition
 import org.koin.test.verify.verify
 import kotlin.test.Test
 
@@ -25,6 +27,8 @@ internal class AppModuleTest {
         appModule.verify(
             extraTypes =
                 listOf(
+                    List::class,
+                    MutableList::class,
                     HttpClient::class,
                     HttpClientEngine::class,
                     HttpClientConfig::class,

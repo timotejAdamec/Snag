@@ -24,6 +24,7 @@ class MultiplatformModulePlugin : Plugin<Project> {
     override fun apply(target: Project) = with(target) {
         apply(plugin = pluginId("kotlinMultiplatform"))
         apply(plugin = pluginId("androidKotlinMultiplatformLibrary"))
+        apply(plugin = pluginId("ksp"))
         configureKotlinMultiplatformModule()
         configureLint()
     }

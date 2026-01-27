@@ -28,10 +28,11 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.koin.core.annotation.InjectedParam
 import kotlin.uuid.Uuid
 
 internal class ProjectDetailsEditViewModel(
-    private val projectId: Uuid?,
+    @InjectedParam private val projectId: Uuid?,
     private val getProjectUseCase: GetProjectUseCase,
     private val saveProjectUseCase: SaveProjectUseCase,
 ) : ViewModel() {

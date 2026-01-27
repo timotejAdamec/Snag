@@ -12,9 +12,10 @@
 
 package cz.adamec.timotej.snag.lib.navigation.fe
 
+import org.koin.core.annotation.Provided
 import kotlin.jvm.JvmInline
 
 @JvmInline
 value class SnagBackStack(
-    val value: MutableList<SnagNavRoute>,
+    @Provided val value: MutableList<SnagNavRoute>,
 )

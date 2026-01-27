@@ -16,6 +16,7 @@ import com.android.build.api.dsl.androidLibrary
 import cz.adamec.timotej.snag.buildsrc.extensions.library
 import cz.adamec.timotej.snag.buildsrc.extensions.version
 import org.gradle.api.Project
+import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.invoke
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
@@ -73,6 +74,7 @@ internal fun Project.configureKotlinMultiplatformModule() {
                 implementation(library("kotlinx-coroutines-core"))
                 implementation(library("kotlinx-immutable-collections"))
                 implementation(library("koin-core"))
+                api(library("koin-annotations"))
             }
             commonTest.dependencies {
                 implementation(library("kotlin-test"))
@@ -87,5 +89,31 @@ internal fun Project.configureKotlinMultiplatformModule() {
                 languageSettings.optIn("kotlin.uuid.ExperimentalUuidApi")
             }
         }
+    }
+
+    dependencies {
+        val koinKspCompilerLib = library("koin-ksp-compiler")
+        configurations.matching { it.name.startsWith("ksp") && it.name != "ksp" }.all {
+            add(this.name, koinKspCompilerLib)
+        }
+//        add("kspCommonMainMetadata", library("koin-ksp-compiler"))
+//        add("kspCommonMainTest", library("koin-ksp-compiler"))
+//        add("kspAndroid", library("koin-ksp-compiler"))
+//        add("kspAndroidUnitTest", library("koin-ksp-compiler"))
+//        add("kspAndroidInstrumentedTest", library("koin-ksp-compiler"))
+//        add("kspIosArm64", library("koin-ksp-compiler"))
+//        add("kspIosArm64Test", library("koin-ksp-compiler"))
+//        add("kspIosSimulatorArm64", library("koin-ksp-compiler"))
+//        add("kspIosSimulatorArm64Test", library("koin-ksp-compiler"))
+//        add("kspJvm", library("koin-ksp-compiler"))
+//        add("kspJvmTest", library("koin-ksp-compiler"))
+//        add("kspJs", library("koin-ksp-compiler"))
+//        add("kspJsTest", library("koin-ksp-compiler"))
+//        add("kspWasmJs", library("koin-ksp-compiler"))
+//        add("kspWasmJsTest", library("koin-ksp-compiler"))
+//        add("kspNonWebMain", library("koin-ksp-compiler"))
+//        add("kspNonWebMainTest", library("koin-ksp-compiler"))
+//        add("kspWebMain", library("koin-ksp-compiler"))
+//        add("kspWebMainTest", library("koin-ksp-compiler"))
     }
 }

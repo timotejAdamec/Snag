@@ -54,6 +54,9 @@ kotlin {
             implementation(projects.feat.projects.fe.driven.impl)
             implementation(projects.feat.projects.fe.app)
         }
+        commonTest.dependencies {
+            implementation(projects.feat.projects.fe.driving.impl)
+        }
         jvmMain.dependencies {
             implementation(compose.desktop.currentOs)
         }
