@@ -56,3 +56,6 @@ They can have submodules of `fe`, `be` or `common`, depending on the semantics o
 
 Library modules are to be used in adapter layers, so `driving` and `driven`. The only exception is
 the `core` module, which can be used in any layer.
+
+## Modules configurations
+The project uses custom plugins located in the top-level `build-logic` module.
