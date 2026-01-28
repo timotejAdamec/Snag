@@ -15,5 +15,5 @@ package cz.adamec.timotej.snag.lib.core.common
 import kotlin.uuid.Uuid
 
 object UuidProvider {
-    fun getUuid(): Uuid = Uuid.Companion.random()
+    fun getUuid(): Uuid = Uuid.generateV7()
 }
