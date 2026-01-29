@@ -18,4 +18,8 @@ import kotlin.jvm.JvmInline
 @JvmInline
 value class SnagBackStack(
     @Provided val value: MutableList<SnagNavRoute>,
-)
+) {
+    fun removeLastSafely() {
+        if (value.size > 1) value.removeLastOrNull()
+    }
+}

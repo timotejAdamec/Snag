@@ -16,13 +16,15 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ContainedLoadingIndicator
 import androidx.compose.material3.HorizontalFloatingToolbar
@@ -122,28 +124,34 @@ private fun LoadedProjectDetailsContent(
                     .padding(paddingValues)
                     .consumeWindowInsets(paddingValues),
         ) {
-            LazyVerticalGrid(
+            @OptIn(ExperimentalLayoutApi::class)
+            LazyColumn(
                 modifier = Modifier.fillMaxSize(),
-                columns = GridCells.Adaptive(minSize = 360.dp),
                 contentPadding =
                     PaddingValues(
-                        start = 8.dp,
-                        end = 8.dp,
-                        top = 8.dp,
-                        bottom = 48.dp,
+                        start = 16.dp,
+                        end = 16.dp,
+                        top = 16.dp,
+                        bottom = 72.dp,
                     ),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                items(
-                    items = state.structures,
-                    key = { it.id }
-                ) { structure ->
-                    StructureCard(
-                        modifier = Modifier,
-                        structure = structure,
-                        onClick = {},
-                    )
+                item {
+                    FlowRow(
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp),
+                        maxItemsInEachRow = 3,
+                    ) {
+                        state.structures.forEach { structure ->
+                            StructureCard(
+                                modifier = Modifier
+                                    .widthIn(min = 150.dp)
+                                    .weight(1f)
+                                    .heightIn(min = 200.dp, max = 260.dp),
+                                structure = structure,
+                                onClick = {},
+                            )
+                        }
+                    }
                 }
                 item {
                     AnimatedVisibility(
