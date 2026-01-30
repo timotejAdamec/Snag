@@ -12,10 +12,10 @@
 
 package cz.adamec.timotej.snag.projects.be.driving.impl.internal
 
-import cz.adamec.timotej.snag.projects.be.app.DeleteProjectUseCase
-import cz.adamec.timotej.snag.projects.be.app.GetProjectUseCase
-import cz.adamec.timotej.snag.projects.be.app.GetProjectsUseCase
-import cz.adamec.timotej.snag.projects.be.app.SaveProjectUseCase
+import cz.adamec.timotej.snag.projects.be.app.api.DeleteProjectUseCase
+import cz.adamec.timotej.snag.projects.be.app.api.GetProjectUseCase
+import cz.adamec.timotej.snag.projects.be.app.api.GetProjectsUseCase
+import cz.adamec.timotej.snag.projects.be.app.api.SaveProjectUseCase
 import cz.adamec.timotej.snag.projects.be.driving.contract.PutProjectApiDto
 import cz.adamec.timotej.snag.routing.be.AppRoute
 import cz.adamec.timotej.snag.routing.be.getIdFromParameters

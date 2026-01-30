@@ -14,7 +14,7 @@ package cz.adamec.timotej.snag.structures.be.driving.impl.internal
 
 import cz.adamec.timotej.snag.routing.be.AppRoute
 import cz.adamec.timotej.snag.routing.be.getIdFromParameters
-import cz.adamec.timotej.snag.structures.be.app.GetStructuresUseCase
+import cz.adamec.timotej.snag.structures.be.app.api.GetStructuresUseCase
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.get

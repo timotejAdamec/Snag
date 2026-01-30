@@ -17,9 +17,9 @@ import androidx.lifecycle.viewModelScope
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.projects.business.Project
-import cz.adamec.timotej.snag.projects.fe.app.DeleteProjectUseCase
-import cz.adamec.timotej.snag.projects.fe.app.GetProjectUseCase
-import cz.adamec.timotej.snag.structures.fe.app.GetStructuresUseCase
+import cz.adamec.timotej.snag.projects.fe.app.api.DeleteProjectUseCase
+import cz.adamec.timotej.snag.projects.fe.app.api.GetProjectUseCase
+import cz.adamec.timotej.snag.structures.fe.app.api.GetStructuresUseCase
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow

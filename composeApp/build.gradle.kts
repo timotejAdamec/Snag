@@ -52,11 +52,11 @@ kotlin {
             implementation(projects.feat.projects.fe.driving.api)
             implementation(projects.feat.projects.fe.driving.impl)
             implementation(projects.feat.projects.fe.driven.impl)
-            implementation(projects.feat.projects.fe.app)
+            implementation(projects.feat.structures.fe.app.impl)
+            implementation(projects.feat.projects.fe.app.impl)
             implementation(projects.lib.sync.fe.driven.impl)
             implementation(projects.lib.sync.fe.app)
             implementation(projects.feat.structures.fe.driven.impl)
-            implementation(projects.feat.structures.fe.app)
         }
         commonTest.dependencies {
             implementation(projects.feat.projects.fe.driving.impl)
