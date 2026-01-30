@@ -12,7 +12,9 @@
 
 package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetailsEdit.ui
 
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
@@ -68,15 +70,14 @@ internal fun ProjectDetailsEditScreen(
         if (shouldPad) {
             Modifier
                 .padding(vertical = 32.dp)
+                .clip(shape = MaterialTheme.shapes.large)
+                .widthIn(max = WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND.dp)
         } else {
             Modifier
+                .fillMaxSize()
         }
     ProjectDetailsEditContent(
-        modifier =
-            modifier
-                .clip(
-                    shape = MaterialTheme.shapes.large,
-                ),
+        modifier = modifier,
         projectId = projectId,
         state = state,
         snackbarHostState = snackbarHostState,

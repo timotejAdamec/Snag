@@ -14,6 +14,7 @@ package cz.adamec.timotej.snag.projects.fe.driving.impl.di
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.window.DialogProperties
 import androidx.navigation3.scene.DialogSceneStrategy
 import cz.adamec.timotej.snag.lib.navigation.fe.SnagBackStack
 import cz.adamec.timotej.snag.lib.navigation.fe.SnagNavRoute
@@ -57,7 +58,7 @@ internal inline fun <reified T : SnagNavRoute> Module.projectDetailsEditScreenNa
     crossinline getProjectDetailRoute: (savedProjectId: Uuid) -> ProjectDetailRoute,
     crossinline getProjectId: (Scope.(T) -> Uuid?) = { null },
 ) = navigation<T>(
-    metadata = DialogSceneStrategy.dialog(),
+    metadata = DialogSceneStrategy.dialog(DialogProperties(usePlatformDefaultWidth = false)),
 ) { route ->
     ProjectDetailsEditScreen(
         projectId = getProjectId(route),
