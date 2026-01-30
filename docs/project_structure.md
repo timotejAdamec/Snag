@@ -11,7 +11,7 @@ Each platform application is runnable from the following modules:
 ## Feature directories
 Feature modules are located in the `feat` directory. These contain domain-tied code. Each feature is
 a submodule there with an exception of the `shared` directory, which contains concerns that are shared
-between the features.
+between the features. If no layer is specified, the module is considered to be in the `driven` layer.
 
 ### Feature directory structure
 Each feature contains is structured by platforms and by layers:
