@@ -13,10 +13,10 @@
 package cz.adamec.timotej.snag.impl.di
 
 import cz.adamec.timotej.snag.projects.be.app.impl.di.projectsAppModule
-import cz.adamec.timotej.snag.projects.be.driven.di.projectsDrivenModule
+import cz.adamec.timotej.snag.projects.be.driven.impl.di.projectsDrivenModule
 import cz.adamec.timotej.snag.projects.be.driving.impl.di.projectsDrivingModule
 import cz.adamec.timotej.snag.structures.be.app.impl.di.structuresAppModule
-import cz.adamec.timotej.snag.structures.be.driven.di.structuresDrivenModule
+import cz.adamec.timotej.snag.structures.be.driven.impl.di.structuresDrivenModule
 import cz.adamec.timotej.snag.structures.be.driving.impl.di.structuresDrivingModule
 import org.koin.dsl.module
 
