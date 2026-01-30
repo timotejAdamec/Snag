@@ -225,7 +225,7 @@ Uses `FakeProjectsDb` and `FakeProjectsApi`:
 | `lib/sync/fe/ports/.../SyncQueue.kt` | Storage port interface (lib-internal) |
 | `lib/sync/fe/driven/test/build.gradle.kts` | Module config |
 | `lib/sync/fe/driven/test/.../FakeSyncQueue.kt` | Test fake |
-| `lib/sync/fe/driven/test/.../FakeEnqueueSyncOperation.kt` | Test fake |
+| `lib/sync/fe/driven/test/.../FakeEnqueueSyncOperationUseCase.kt` | Test fake |
 | `lib/sync/fe/driven/impl/build.gradle.kts` | Module config |
 | `lib/sync/fe/driven/impl/.../RealSyncQueue.kt` | SQLite implementation |
 | `lib/sync/fe/driven/impl/.../di/SyncDrivenModule.kt` | Koin module |
@@ -233,7 +233,7 @@ Uses `FakeProjectsDb` and `FakeProjectsApi`:
 | `lib/sync/fe/app/build.gradle.kts` | Module config |
 | `lib/sync/fe/app/.../SyncOperationType.kt` | Enum (public API) |
 | `lib/sync/fe/app/.../SyncOperationResult.kt` | Result sealed interface (public API) |
-| `lib/sync/fe/app/.../EnqueueSyncOperation.kt` | Enqueue interface (public API) |
+| `lib/sync/fe/app/.../EnqueueSyncOperationUseCase.kt` | Enqueue interface (public API) |
 | `lib/sync/fe/app/.../SyncOperationHandler.kt` | Handler interface (public API) |
 | `lib/sync/fe/app/.../SyncEngine.kt` | Core sync engine |
 | `lib/sync/fe/app/.../di/SyncAppModule.kt` | Koin module |

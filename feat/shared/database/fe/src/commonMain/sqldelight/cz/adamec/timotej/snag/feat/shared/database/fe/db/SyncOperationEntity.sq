@@ -1,0 +1,21 @@
+CREATE TABLE IF NOT EXISTS SyncOperationEntity (
+    id TEXT NOT NULL PRIMARY KEY,
+    entityType TEXT NOT NULL,
+    entityId TEXT NOT NULL,
+    operationType TEXT NOT NULL
+);
+
+CREATE UNIQUE INDEX IF NOT EXISTS idx_sync_entity
+    ON SyncOperationEntity(entityType, entityId);
+
+enqueue:
+INSERT INTO SyncOperationEntity(id, entityType, entityId, operationType)
+VALUES (?, ?, ?, ?)
+ON CONFLICT(entityType, entityId) DO UPDATE SET
+    operationType = excluded.operationType;
+
+selectAllPending:
+SELECT * FROM SyncOperationEntity ORDER BY rowid ASC;
+
+deleteById:
+DELETE FROM SyncOperationEntity WHERE id = ?;

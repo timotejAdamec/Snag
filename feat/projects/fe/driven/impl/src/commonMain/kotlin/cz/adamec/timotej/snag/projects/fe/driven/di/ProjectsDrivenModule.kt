@@ -13,10 +13,14 @@
 package cz.adamec.timotej.snag.projects.fe.driven.di
 
 import cz.adamec.timotej.snag.lib.core.common.di.getIoDispatcher
+import cz.adamec.timotej.snag.lib.sync.fe.app.handler.SyncOperationHandler
 import cz.adamec.timotej.snag.projects.fe.driven.internal.api.RealProjectsApi
 import cz.adamec.timotej.snag.projects.fe.driven.internal.db.RealProjectsDb
+import cz.adamec.timotej.snag.projects.fe.driven.internal.sync.ProjectSyncHandler
+import cz.adamec.timotej.snag.projects.fe.driven.internal.sync.RealProjectsSync
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsApi
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsDb
+import cz.adamec.timotej.snag.projects.fe.ports.ProjectsSync
 import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
@@ -30,4 +34,6 @@ val projectsDrivenModule =
             )
         } bind ProjectsDb::class
         factoryOf(::RealProjectsApi) bind ProjectsApi::class
+        factoryOf(::ProjectSyncHandler) bind SyncOperationHandler::class
+        factoryOf(::RealProjectsSync) bind ProjectsSync::class
     }

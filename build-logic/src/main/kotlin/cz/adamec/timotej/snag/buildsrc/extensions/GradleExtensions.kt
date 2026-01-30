@@ -14,6 +14,9 @@ package cz.adamec.timotej.snag.buildsrc.extensions
 
 import org.gradle.api.artifacts.dsl.DependencyHandler
 
+internal fun DependencyHandler.api(dependency: Any) =
+    add("api", dependency)
+
 internal fun DependencyHandler.implementation(dependency: Any) =
     add("implementation", dependency)
 

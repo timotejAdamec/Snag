@@ -19,7 +19,6 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(project(":feat:projects:business"))
-                implementation(project(":feat:projects:fe:ports"))
             }
         }
     }

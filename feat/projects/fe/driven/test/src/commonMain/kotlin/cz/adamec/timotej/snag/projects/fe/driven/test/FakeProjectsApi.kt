@@ -20,6 +20,7 @@ import kotlin.uuid.Uuid
 class FakeProjectsApi : ProjectsApi {
     private val projects = mutableMapOf<Uuid, Project>()
     var forcedFailure: OnlineDataResult.Failure? = null
+    var saveProjectResponseOverride: ((Project) -> OnlineDataResult<Project?>)? = null
 
     override suspend fun getProjects(): OnlineDataResult<List<Project>> {
         val failure = forcedFailure
@@ -37,6 +38,8 @@ class FakeProjectsApi : ProjectsApi {
     override suspend fun saveProject(project: Project): OnlineDataResult<Project?> {
         val failure = forcedFailure
         if (failure != null) return failure
+        val override = saveProjectResponseOverride
+        if (override != null) return override(project)
         projects[project.id] = project
         return OnlineDataResult.Success(project)
     }

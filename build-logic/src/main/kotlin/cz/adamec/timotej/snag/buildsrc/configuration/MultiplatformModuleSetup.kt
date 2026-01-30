@@ -68,6 +68,17 @@ internal fun Project.configureKotlinMultiplatformModule() {
             }
 
             commonMain.dependencies {
+                val moduleDirectoryPath = this@configureKotlinMultiplatformModule.path.substringBeforeLast(":")
+                if (this@configureKotlinMultiplatformModule.name == "ports") {
+                    val businessDirectoryPath = moduleDirectoryPath.substringBeforeLast(":")
+                    api(project("$businessDirectoryPath:business"))
+                } else if (this@configureKotlinMultiplatformModule.name == "app") {
+                    implementation(project("$moduleDirectoryPath:ports"))
+                } else if (this@configureKotlinMultiplatformModule.path.contains("driven")) {
+                    val drivenDirectoryPath = moduleDirectoryPath.substringBeforeLast(":driven")
+                    api(project("$drivenDirectoryPath:ports"))
+                }
+
                 if (!path.contains("core")) {
                     implementation(project(":lib:core:common"))
                 }

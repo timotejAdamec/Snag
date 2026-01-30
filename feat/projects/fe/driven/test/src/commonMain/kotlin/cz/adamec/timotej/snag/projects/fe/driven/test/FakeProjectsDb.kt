@@ -31,7 +31,7 @@ class FakeProjectsDb : ProjectsDb {
     override suspend fun saveProjects(projects: List<Project>): OfflineFirstDataResult<Unit> {
         val failure = forcedFailure
         if (failure != null) return failure
-        
+
         this.projects.update { current ->
             current + projects.associateBy { it.id }
         }

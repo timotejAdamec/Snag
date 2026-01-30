@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.buildsrc.configuration
 
+import cz.adamec.timotej.snag.buildsrc.extensions.api
 import cz.adamec.timotej.snag.buildsrc.extensions.implementation
 import cz.adamec.timotej.snag.buildsrc.extensions.library
 import cz.adamec.timotej.snag.buildsrc.extensions.libs
@@ -24,6 +25,17 @@ internal fun Project.configureBackendModule() {
     dependencies {
         if (!path.contains("core")) {
             implementation(project(":lib:core:be"))
+        }
+
+        val moduleDirectoryPath = path.substringBeforeLast(":")
+        if (name == "ports") {
+            val businessDirectoryPath = moduleDirectoryPath.substringBeforeLast(":")
+            api(project("$businessDirectoryPath:business"))
+        } else if (name == "app") {
+            implementation(project("$moduleDirectoryPath:ports"))
+        } else if (path.contains("driven")) {
+            val drivenDirectoryPath = moduleDirectoryPath.substringBeforeLast(":driven")
+            api(project("$drivenDirectoryPath:ports"))
         }
 
         implementation(libs.library("kotlinx-coroutines-core"))

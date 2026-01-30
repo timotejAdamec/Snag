@@ -19,7 +19,11 @@ kotlin {
         commonMain.dependencies {
             implementation(project(":feat:projects:be:driving:contract"))
             implementation(project(":feat:projects:business"))
-            api(project(":feat:projects:fe:ports"))
+            implementation(project(":lib:sync:fe:app"))
+            implementation(project(":lib:sync:business"))
+        }
+        commonTest.dependencies {
+            implementation(project(":feat:projects:fe:driven:test"))
         }
     }
 }

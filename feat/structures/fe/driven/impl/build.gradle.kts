@@ -7,7 +7,6 @@ kotlin {
         commonMain.dependencies {
             implementation(project(":feat:structures:be:driving:contract"))
             implementation(project(":feat:structures:business"))
-            api(project(":feat:structures:fe:ports"))
         }
     }
 }

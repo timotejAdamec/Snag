@@ -21,6 +21,7 @@ import cz.adamec.timotej.snag.projects.fe.app.GetProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.SaveProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.driven.test.FakeProjectsApi
 import cz.adamec.timotej.snag.projects.fe.driven.test.FakeProjectsDb
+import cz.adamec.timotej.snag.projects.fe.driven.test.FakeProjectsSync
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -43,10 +44,11 @@ class ProjectDetailsEditViewModelTest {
 
     private val projectsApi = FakeProjectsApi()
     private val projectsDb = FakeProjectsDb()
+    private val projectsSync = FakeProjectsSync()
     private val applicationScope = object : ApplicationScope, CoroutineScope by CoroutineScope(testDispatcher) {}
 
     private val getProjectUseCase = GetProjectUseCase(projectsApi, projectsDb, applicationScope)
-    private val saveProjectUseCase = SaveProjectUseCase(projectsApi, projectsDb, applicationScope, UuidProvider)
+    private val saveProjectUseCase = SaveProjectUseCase(projectsDb, projectsSync, UuidProvider)
 
     @BeforeTest
     fun setUp() {

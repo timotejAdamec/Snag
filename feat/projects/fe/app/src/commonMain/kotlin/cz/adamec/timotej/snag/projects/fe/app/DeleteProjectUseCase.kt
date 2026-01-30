@@ -12,42 +12,27 @@
 
 package cz.adamec.timotej.snag.projects.fe.app
 
-import cz.adamec.timotej.snag.lib.core.common.ApplicationScope
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
-import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
 import cz.adamec.timotej.snag.lib.core.fe.log
 import cz.adamec.timotej.snag.projects.fe.app.internal.LH.logger
-import cz.adamec.timotej.snag.projects.fe.ports.ProjectsApi
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsDb
-import kotlinx.coroutines.launch
+import cz.adamec.timotej.snag.projects.fe.ports.ProjectsSync
 import kotlin.uuid.Uuid
 
 class DeleteProjectUseCase(
-    private val projectsApi: ProjectsApi,
     private val projectsDb: ProjectsDb,
-    private val applicationScope: ApplicationScope,
+    private val projectsSync: ProjectsSync,
 ) {
-    suspend operator fun invoke(projectId: Uuid): OfflineFirstDataResult<Unit> {
-        applicationScope.launch {
-            when (projectsApi.deleteProject(projectId)) {
-                is OnlineDataResult.Failure ->
-                    logger.w {
-                        "Error deleting project $projectId from API."
-                    }
-
-                is OnlineDataResult.Success -> {
-                    logger.d { "Deleted project $projectId from API." }
-                }
-            }
-        }
-
-        return projectsDb
+    suspend operator fun invoke(projectId: Uuid): OfflineFirstDataResult<Unit> =
+        projectsDb
             .deleteProject(projectId)
             .also {
                 logger.log(
                     offlineFirstDataResult = it,
                     additionalInfo = "deleteProject, projectsDb.deleteProject($projectId)",
                 )
+                if (it is OfflineFirstDataResult.Success) {
+                    projectsSync.enqueueProjectDelete(projectId)
+                }
             }
-    }
 }
