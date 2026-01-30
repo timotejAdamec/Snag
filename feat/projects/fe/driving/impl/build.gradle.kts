@@ -19,15 +19,16 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(project(":feat:projects:fe:driving:api"))
-                implementation(project(":feat:projects:fe:app"))
+                implementation(project(":feat:projects:fe:app:api"))
                 implementation(project(":feat:projects:business"))
-                implementation(project(":feat:structures:fe:app"))
+                implementation(project(":feat:structures:fe:app:api"))
                 implementation(project(":feat:structures:fe:driving:api"))
             }
         }
         commonTest {
             dependencies {
 //                TODO()
+                implementation(project(":feat:projects:fe:app:impl"))
                 implementation(project(":feat:projects:fe:driven:test"))
             }
         }

@@ -6,7 +6,7 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation(project(":feat:structures:fe:app"))
+                implementation(project(":feat:structures:fe:app:api"))
                 implementation(project(":feat:structures:fe:driving:api"))
             }
         }

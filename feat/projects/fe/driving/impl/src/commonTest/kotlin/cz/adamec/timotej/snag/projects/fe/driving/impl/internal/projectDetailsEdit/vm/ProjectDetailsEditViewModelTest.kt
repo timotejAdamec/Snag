@@ -17,8 +17,8 @@ import cz.adamec.timotej.snag.lib.core.common.UuidProvider
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.projects.business.Project
-import cz.adamec.timotej.snag.projects.fe.app.GetProjectUseCase
-import cz.adamec.timotej.snag.projects.fe.app.SaveProjectUseCase
+import cz.adamec.timotej.snag.projects.fe.app.impl.internal.GetProjectUseCaseImpl
+import cz.adamec.timotej.snag.projects.fe.app.impl.internal.SaveProjectUseCaseImpl
 import cz.adamec.timotej.snag.projects.fe.driven.test.FakeProjectsApi
 import cz.adamec.timotej.snag.projects.fe.driven.test.FakeProjectsDb
 import cz.adamec.timotej.snag.projects.fe.driven.test.FakeProjectsSync
@@ -47,8 +47,8 @@ class ProjectDetailsEditViewModelTest {
     private val projectsSync = FakeProjectsSync()
     private val applicationScope = object : ApplicationScope, CoroutineScope by CoroutineScope(testDispatcher) {}
 
-    private val getProjectUseCase = GetProjectUseCase(projectsApi, projectsDb, applicationScope)
-    private val saveProjectUseCase = SaveProjectUseCase(projectsDb, projectsSync, UuidProvider)
+    private val getProjectUseCase = GetProjectUseCaseImpl(projectsApi, projectsDb, applicationScope)
+    private val saveProjectUseCase = SaveProjectUseCaseImpl(projectsDb, projectsSync, UuidProvider)
 
     @BeforeTest
     fun setUp() {

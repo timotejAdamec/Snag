@@ -18,9 +18,9 @@ import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError.CustomUserMessage
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError.Unknown
-import cz.adamec.timotej.snag.projects.fe.app.GetProjectUseCase
-import cz.adamec.timotej.snag.projects.fe.app.SaveProjectUseCase
-import cz.adamec.timotej.snag.projects.fe.app.model.SaveProjectRequest
+import cz.adamec.timotej.snag.projects.fe.app.api.GetProjectUseCase
+import cz.adamec.timotej.snag.projects.fe.app.api.SaveProjectUseCase
+import cz.adamec.timotej.snag.projects.fe.app.api.model.SaveProjectRequest
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow

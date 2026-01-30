@@ -4,5 +4,5 @@ plugins {
 
 dependencies {
     implementation(project(":feat:structures:be:driving:contract"))
-    implementation(project(":feat:structures:be:app"))
+    implementation(project(":feat:structures:be:app:api"))
 }

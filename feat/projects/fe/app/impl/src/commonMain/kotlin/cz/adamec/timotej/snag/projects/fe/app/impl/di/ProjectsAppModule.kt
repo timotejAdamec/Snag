@@ -16,18 +16,18 @@ import cz.adamec.timotej.snag.projects.fe.app.api.DeleteProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.GetProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.GetProjectsUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.SaveProjectUseCase
-import cz.adamec.timotej.snag.projects.fe.app.impl.internal.RealDeleteProjectUseCase
-import cz.adamec.timotej.snag.projects.fe.app.impl.internal.RealGetProjectUseCase
-import cz.adamec.timotej.snag.projects.fe.app.impl.internal.RealGetProjectsUseCase
-import cz.adamec.timotej.snag.projects.fe.app.impl.internal.RealSaveProjectUseCase
+import cz.adamec.timotej.snag.projects.fe.app.impl.internal.DeleteProjectUseCaseImpl
+import cz.adamec.timotej.snag.projects.fe.app.impl.internal.GetProjectUseCaseImpl
+import cz.adamec.timotej.snag.projects.fe.app.impl.internal.GetProjectsUseCaseImpl
+import cz.adamec.timotej.snag.projects.fe.app.impl.internal.SaveProjectUseCaseImpl
 import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
 val projectsAppModule =
     module {
-        factoryOf(::RealGetProjectsUseCase) bind GetProjectsUseCase::class
-        factoryOf(::RealGetProjectUseCase) bind GetProjectUseCase::class
-        factoryOf(::RealSaveProjectUseCase) bind SaveProjectUseCase::class
-        factoryOf(::RealDeleteProjectUseCase) bind DeleteProjectUseCase::class
+        factoryOf(::GetProjectsUseCaseImpl) bind GetProjectsUseCase::class
+        factoryOf(::GetProjectUseCaseImpl) bind GetProjectUseCase::class
+        factoryOf(::SaveProjectUseCaseImpl) bind SaveProjectUseCase::class
+        factoryOf(::DeleteProjectUseCaseImpl) bind DeleteProjectUseCase::class
     }
