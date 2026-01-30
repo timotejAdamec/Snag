@@ -25,6 +25,7 @@ import cz.adamec.timotej.snag.lib.core.common.UuidProvider
 import cz.adamec.timotej.snag.lib.design.fe.theme.SnagTheme
 import cz.adamec.timotej.snag.projects.business.Project
 import org.koin.compose.koinInject
+import kotlin.uuid.Uuid
 
 @Composable
 internal fun ProjectListItem(
@@ -64,7 +65,7 @@ internal fun ProjectListItemPreview() {
                 ),
             project =
                 Project(
-                    id = koinInject<UuidProvider>().getUuid(),
+                    id = UuidProvider.getUuid(),
                     name = "Project A",
                     address = "Client A",
                 ),

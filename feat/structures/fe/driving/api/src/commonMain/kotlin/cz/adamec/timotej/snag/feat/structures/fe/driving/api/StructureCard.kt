@@ -87,8 +87,8 @@ private fun StructureCardPreview() {
         StructureCard(
             modifier = Modifier.wrapContentSize(),
             structure = Structure(
-                id = koinInject<UuidProvider>().getUuid(),
-                projectId = koinInject<UuidProvider>().getUuid(),
+                id = UuidProvider.getUuid(),
+                projectId = UuidProvider.getUuid(),
                 name = "Structure Name",
                 floorPlanUrl = "https://saterdesign.com/cdn/shop/products/6842.M_1200x.jpeg?v=1547874083"
             ),

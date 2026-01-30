@@ -41,6 +41,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
 import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureCard
 import cz.adamec.timotej.snag.lib.core.common.UuidProvider
@@ -249,8 +250,8 @@ private fun ProjectDeletionAlertDialog(
     )
 }
 
-@Preview(widthDp = 100)
-@Preview(widthDp = 360)
+@Preview
+@PreviewScreenSizes
 @Composable
 private fun LoadedProjectDetailsContentPreview() {
     SnagTheme {
@@ -259,7 +260,7 @@ private fun LoadedProjectDetailsContentPreview() {
                 ProjectDetailsUiState(
                     projectStatus = ProjectDetailsUiStatus.LOADED,
                     project = Project(
-                        id = koinInject<UuidProvider>().getUuid(),
+                        id = UuidProvider.getUuid(),
                         name = "Example project name",
                         address = "Example project address",
                     )
