@@ -13,7 +13,9 @@
 package cz.adamec.timotej.snag.structures.fe.app.impl.di
 
 import cz.adamec.timotej.snag.structures.fe.app.api.GetStructuresUseCase
+import cz.adamec.timotej.snag.structures.fe.app.api.SaveStructureUseCase
 import cz.adamec.timotej.snag.structures.fe.app.impl.internal.GetStructuresUseCaseImpl
+import cz.adamec.timotej.snag.structures.fe.app.impl.internal.SaveStructureUseCaseImpl
 import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
@@ -21,4 +23,5 @@ import org.koin.dsl.module
 val structuresAppModule =
     module {
         factoryOf(::GetStructuresUseCaseImpl) bind GetStructuresUseCase::class
+        factoryOf(::SaveStructureUseCaseImpl) bind SaveStructureUseCase::class
     }

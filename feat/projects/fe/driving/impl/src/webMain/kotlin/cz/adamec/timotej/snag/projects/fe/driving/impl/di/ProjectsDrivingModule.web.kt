@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.projects.fe.driving.impl.di
 
+import cz.adamec.timotej.snag.feat.structures.fe.driving.api.WebStructureCreationRoute
 import cz.adamec.timotej.snag.projects.fe.driving.api.WebProjectCreationRoute
 import cz.adamec.timotej.snag.projects.fe.driving.api.WebProjectDetailRoute
 import cz.adamec.timotej.snag.projects.fe.driving.api.WebProjectEditRoute
@@ -36,5 +37,9 @@ internal actual val platformModule =
             },
             getProjectId = { it.projectId },
         )
-        projectDetailsScreenNavigation<WebProjectDetailRoute> { it.projectId }
+        projectDetailsScreenNavigation<WebProjectDetailRoute>(
+            getStructureCreationRoute = { projectId ->
+                WebStructureCreationRoute(projectId = projectId)
+            },
+        ) { it.projectId }
     }

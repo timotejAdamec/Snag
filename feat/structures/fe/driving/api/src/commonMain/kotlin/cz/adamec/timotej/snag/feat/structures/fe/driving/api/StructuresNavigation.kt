@@ -10,13 +10,15 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.structures.be.ports
+package cz.adamec.timotej.snag.feat.structures.fe.driving.api
 
-import cz.adamec.timotej.snag.feat.structures.business.Structure
+import cz.adamec.timotej.snag.lib.navigation.fe.SnagNavRoute
 import kotlin.uuid.Uuid
 
-interface StructuresLocalDataSource {
-    suspend fun getStructures(projectId: Uuid): List<Structure>
+interface StructureCreationRoute : SnagNavRoute {
+    val projectId: Uuid
+}
 
-    suspend fun updateStructure(structure: Structure): Structure?
+interface StructureCreationRouteFactory {
+    fun create(projectId: Uuid): StructureCreationRoute
 }

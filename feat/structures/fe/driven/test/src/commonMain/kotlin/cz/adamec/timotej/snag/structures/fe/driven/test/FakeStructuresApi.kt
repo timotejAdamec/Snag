@@ -20,11 +20,21 @@ import kotlin.uuid.Uuid
 class FakeStructuresApi : StructuresApi {
     private val structures = mutableMapOf<Uuid, Structure>()
     var forcedFailure: OnlineDataResult.Failure? = null
+    var saveStructureResponseOverride: ((Structure) -> OnlineDataResult<Structure?>)? = null
 
     override suspend fun getStructures(projectId: Uuid): OnlineDataResult<List<Structure>> {
         val failure = forcedFailure
         if (failure != null) return failure
         return OnlineDataResult.Success(structures.values.filter { it.projectId == projectId })
+    }
+
+    override suspend fun saveStructure(structure: Structure): OnlineDataResult<Structure?> {
+        val failure = forcedFailure
+        if (failure != null) return failure
+        val override = saveStructureResponseOverride
+        if (override != null) return override(structure)
+        structures[structure.id] = structure
+        return OnlineDataResult.Success(structure)
     }
 
     fun setStructure(structure: Structure) {

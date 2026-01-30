@@ -21,4 +21,8 @@ interface StructuresDb {
     fun getStructuresFlow(projectId: Uuid): Flow<OfflineFirstDataResult<List<Structure>>>
 
     suspend fun saveStructures(structures: List<Structure>): OfflineFirstDataResult<Unit>
+
+    suspend fun saveStructure(structure: Structure): OfflineFirstDataResult<Unit>
+
+    fun getStructureFlow(id: Uuid): Flow<OfflineFirstDataResult<Structure?>>
 }

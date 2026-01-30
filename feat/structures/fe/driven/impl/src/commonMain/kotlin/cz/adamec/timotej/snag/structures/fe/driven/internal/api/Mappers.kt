@@ -13,11 +13,19 @@
 package cz.adamec.timotej.snag.structures.fe.driven.internal.api
 
 import cz.adamec.timotej.snag.feat.structures.business.Structure
+import cz.adamec.timotej.snag.structures.be.driving.contract.PutStructureApiDto
 import cz.adamec.timotej.snag.structures.be.driving.contract.StructureApiDto
 
 internal fun StructureApiDto.toBusiness() =
     Structure(
         id = id,
+        projectId = projectId,
+        name = name,
+        floorPlanUrl = floorPlanUrl,
+    )
+
+internal fun Structure.toPutApiDto() =
+    PutStructureApiDto(
         projectId = projectId,
         name = name,
         floorPlanUrl = floorPlanUrl,

@@ -10,13 +10,12 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.structures.be.ports
+package cz.adamec.timotej.snag.structures.fe.app.api.model
 
-import cz.adamec.timotej.snag.feat.structures.business.Structure
 import kotlin.uuid.Uuid
 
-interface StructuresLocalDataSource {
-    suspend fun getStructures(projectId: Uuid): List<Structure>
-
-    suspend fun updateStructure(structure: Structure): Structure?
-}
+data class SaveStructureRequest(
+    val id: Uuid?,
+    val projectId: Uuid,
+    val name: String,
+)

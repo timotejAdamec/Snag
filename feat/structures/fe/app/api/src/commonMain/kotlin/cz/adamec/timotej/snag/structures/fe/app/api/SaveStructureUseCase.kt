@@ -10,13 +10,12 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.structures.be.ports
+package cz.adamec.timotej.snag.structures.fe.app.api
 
-import cz.adamec.timotej.snag.feat.structures.business.Structure
+import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
+import cz.adamec.timotej.snag.structures.fe.app.api.model.SaveStructureRequest
 import kotlin.uuid.Uuid
 
-interface StructuresLocalDataSource {
-    suspend fun getStructures(projectId: Uuid): List<Structure>
-
-    suspend fun updateStructure(structure: Structure): Structure?
+interface SaveStructureUseCase {
+    suspend operator fun invoke(request: SaveStructureRequest): OfflineFirstDataResult<Uuid>
 }

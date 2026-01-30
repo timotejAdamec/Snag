@@ -17,6 +17,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.remember
 import com.github.terrakok.navigation3.browser.HierarchicalBrowserNavigation
 import com.github.terrakok.navigation3.browser.buildBrowserHistoryFragment
+import cz.adamec.timotej.snag.feat.structures.fe.driving.api.WebStructureCreationRoute
 import cz.adamec.timotej.snag.lib.navigation.fe.SnagBackStack
 import cz.adamec.timotej.snag.projects.fe.driving.api.WebProjectCreationRoute
 import cz.adamec.timotej.snag.projects.fe.driving.api.WebProjectDetailRoute
@@ -41,6 +42,11 @@ internal actual fun SnagNavigationPreparation(backStack: SnagBackStack) {
                     buildBrowserHistoryFragment(
                         WebProjectDetailRoute.URL_NAME,
                         mapOf("id" to key.projectId.toString()),
+                    )
+                is WebStructureCreationRoute ->
+                    buildBrowserHistoryFragment(
+                        WebStructureCreationRoute.URL_NAME,
+                        mapOf("projectId" to key.projectId.toString()),
                     )
                 else -> error("Unknown web route $key")
             }
