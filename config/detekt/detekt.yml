@@ -8,10 +8,14 @@ complexity:
 naming:
   FunctionNaming:
     ignoreAnnotated: [ 'Composable' ]
+  FunctionNameMaxLength:
+    excludes: ['**/test/**', '**/*Test.kt', '**/*Spec.kt']
   TopLevelPropertyNaming:
     constantPattern: '[A-Z][A-Za-z0-9]*|[A-Z][_A-Z0-9]*'
 
 style:
+  MaxLineLength:
+    active: false
   UnusedPrivateFunction:
     ignoreAnnotated: [ 'Preview' ]
   CascadingCallWrapping:
