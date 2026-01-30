@@ -26,6 +26,20 @@ data class WebStructureCreationRoute(
     }
 }
 
+@Serializable
+@Immutable
+data class WebStructureEditRoute(
+    override val structureId: Uuid,
+) : StructureEditRoute {
+    companion object {
+        const val URL_NAME = "edit-structure"
+    }
+}
+
 class WebStructureCreationRouteFactory : StructureCreationRouteFactory {
     override fun create(projectId: Uuid): StructureCreationRoute = WebStructureCreationRoute(projectId)
+}
+
+class WebStructureEditRouteFactory : StructureEditRouteFactory {
+    override fun create(structureId: Uuid): StructureEditRoute = WebStructureEditRoute(structureId)
 }
