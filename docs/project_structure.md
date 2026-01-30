@@ -52,10 +52,10 @@ The `contract` and `impl` split is typical for backend driving code.
 Library modules are located in the `lib` directory. These contain "domain-agnostic" code.
 "Domain-agnostic" means it can theoretically be used in other projects.
 
-They can have submodules of `fe`, `be` or `common`, depending on the semantics of the module.
-
-Library modules are to be used in adapter layers, so `driving` and `driven`. The only exception is
-the `core` module, which can be used in any layer.
+They can be structured into submodules just as features. However, if the library is only part of
+infrastructure, so integrating with technologies – a driven adapter – then the top level directory
+can be just a simple module, or divided into `fe`, `be` or `common`, depending on the semantics of
+the module. The only exception are the `core` modules, which can be used in any layer.
 
 ## Modules configurations
 The project uses custom plugins located in the top-level `build-logic` module.
