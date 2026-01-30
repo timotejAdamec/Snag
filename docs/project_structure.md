@@ -43,14 +43,16 @@ Each feature module/directory can be split into submodules if there is a need fo
   instead of `impl`.
     - Depends on `api`/`contract`.
 
-The `api` and `impl` split is typical for frontend driving code.
+The `api` and `impl` split is typical for frontend `driving` code and for `app` layer.
 The `test` and `impl` split is typical for driven code so that tests in `driving` and `app` layers
 can run with non-production unit-test-friendly adapter `ports`.
 The `contract` and `impl` split is typical for backend driving code.
 
 ## Library modules
 Library modules are located in the `lib` directory. These contain "domain-agnostic" code.
-"Domain-agnostic" means it can theoretically be used in other projects.
+"Domain-agnostic" means it can theoretically be used in other projects. From features POV,
+they are infrastructure code (excluding `core` modules) that should be integrated in feature 
+driven modules.
 
 They can be structured into submodules just as features. However, if the library is only part of
 infrastructure, so integrating with technologies – a driven adapter – then the top level directory
