@@ -25,6 +25,7 @@ import kotlin.uuid.Uuid
 @Composable
 internal fun ProjectDetailsScreen(
     projectId: Uuid,
+    onNewStructureClick: () -> Unit,
     onBack: () -> Unit,
     viewModel: ProjectDetailsViewModel = koinViewModel { parametersOf(projectId) },
 ) {
@@ -42,6 +43,7 @@ internal fun ProjectDetailsScreen(
 
     ProjectDetailsContent(
         state = state,
+        onNewStructureClick = onNewStructureClick,
         onBack = onBack,
         onDelete = viewModel::onDelete,
     )

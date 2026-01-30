@@ -78,6 +78,7 @@ internal inline fun <reified T : SnagNavRoute> Module.projectDetailsScreenNaviga
     navigation<T> { route ->
         ProjectDetailsScreen(
             projectId = getProjectId(route),
+            onNewStructureClick = {},
             onBack = {
                 val backStack = get<SnagBackStack>()
                 backStack.removeLastSafely()

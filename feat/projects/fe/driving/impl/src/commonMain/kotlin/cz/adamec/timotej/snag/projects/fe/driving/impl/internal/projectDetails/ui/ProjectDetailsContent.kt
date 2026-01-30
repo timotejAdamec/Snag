@@ -44,6 +44,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureCard
 import cz.adamec.timotej.snag.lib.core.common.UuidProvider
+import cz.adamec.timotej.snag.lib.design.fe.button.AdaptiveTonalButton
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.BackNavigationIcon
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.CollapsableTopAppBarScaffold
 import cz.adamec.timotej.snag.lib.design.fe.theme.SnagTheme
@@ -57,14 +58,18 @@ import org.koin.compose.koinInject
 import snag.feat.projects.fe.driving.impl.generated.resources.Res
 import snag.feat.projects.fe.driving.impl.generated.resources.delete_project_confirmation_text
 import snag.feat.projects.fe.driving.impl.generated.resources.delete_project_confirmation_title
+import snag.feat.projects.fe.driving.impl.generated.resources.new_project
+import snag.feat.projects.fe.driving.impl.generated.resources.new_structure
 import snag.feat.projects.fe.driving.impl.generated.resources.project_not_found
 import snag.lib.design.fe.generated.resources.delete
+import snag.lib.design.fe.generated.resources.ic_add
 import snag.lib.design.fe.generated.resources.ic_delete
 import snag.lib.design.fe.generated.resources.Res as DesignRes
 
 @Composable
 internal fun ProjectDetailsContent(
     state: ProjectDetailsUiState,
+    onNewStructureClick: () -> Unit,
     onBack: () -> Unit,
     onDelete: () -> Unit,
     modifier: Modifier = Modifier,
@@ -91,6 +96,7 @@ internal fun ProjectDetailsContent(
                 ->
                 LoadedProjectDetailsContent(
                     state = state,
+                    onNewStructureClick = onNewStructureClick,
                     onBack = onBack,
                     onDelete = onDelete,
                 )
@@ -103,6 +109,7 @@ internal fun ProjectDetailsContent(
 @Composable
 private fun LoadedProjectDetailsContent(
     state: ProjectDetailsUiState,
+    onNewStructureClick: () -> Unit,
     onBack: () -> Unit,
     onDelete: () -> Unit,
     modifier: Modifier = Modifier,
@@ -116,6 +123,13 @@ private fun LoadedProjectDetailsContent(
                 onClick = onBack,
             )
         },
+        topAppBarActions = {
+            AdaptiveTonalButton(
+                onClick = onNewStructureClick,
+                icon = painterResource(DesignRes.drawable.ic_add),
+                label = stringResource(Res.string.new_structure),
+            )
+        }
     ) { paddingValues ->
         Box(
             modifier =
@@ -235,7 +249,8 @@ private fun ProjectDeletionAlertDialog(
     )
 }
 
-@Preview
+@Preview(widthDp = 100)
+@Preview(widthDp = 360)
 @Composable
 private fun LoadedProjectDetailsContentPreview() {
     SnagTheme {
@@ -249,6 +264,7 @@ private fun LoadedProjectDetailsContentPreview() {
                         address = "Example project address",
                     )
                 ),
+            onNewStructureClick = {},
             onBack = {},
             onDelete = {},
         )

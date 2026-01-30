@@ -17,8 +17,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cz.adamec.timotej.snag.lib.design.fe.error.ShowSnackbarOnError
-import cz.adamec.timotej.snag.lib.design.fe.scaffold.FabState
-import cz.adamec.timotej.snag.lib.design.fe.scaffold.SetFabState
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projects.vm.ProjectsViewModel
 import org.koin.compose.viewmodel.koinViewModel
 import kotlin.uuid.Uuid
@@ -32,20 +30,11 @@ internal fun ProjectsScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
-    SetFabState(
-        fabState =
-            FabState.Visible(
-                text = "New project",
-                onClick = {
-                    onNewProjectClick()
-                },
-            ),
-    )
-
     ShowSnackbarOnError(viewModel.errorsFlow)
 
     ProjectsContent(
         modifier = modifier,
+        onNewProjectClick = onNewProjectClick,
         onProjectClick = onProjectClick,
         state = state,
     )

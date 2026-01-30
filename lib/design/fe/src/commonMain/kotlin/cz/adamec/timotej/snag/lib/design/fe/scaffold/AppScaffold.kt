@@ -62,24 +62,6 @@ fun AppScaffold(
                 )
             },
             navigationItemVerticalArrangement = Arrangement.Center,
-            primaryActionContent = {
-                val fabState = appScaffoldState.fabState
-                AnimatedVisibility(
-                    visible = fabState is FabState.Visible,
-                ) {
-                    if (fabState !is FabState.Visible) return@AnimatedVisibility
-                    FloatingActionButton(
-                        modifier = Modifier.padding(start = 20.dp),
-                        onClick = fabState.onClick,
-                        content = {
-                            Icon(
-                                painter = painterResource(Res.drawable.ic_add),
-                                contentDescription = fabState.text,
-                            )
-                        },
-                    )
-                }
-            },
         ) {
             Scaffold(
                 snackbarHost = { SnackbarHost(appScaffoldState.snackbarHostState) },

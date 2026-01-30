@@ -13,8 +13,10 @@
 package cz.adamec.timotej.snag.buildsrc.configuration
 
 import com.android.build.api.dsl.androidLibrary
+import cz.adamec.timotej.snag.buildsrc.extensions.debugImplementation
 import cz.adamec.timotej.snag.buildsrc.extensions.library
 import org.gradle.api.Project
+import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.invoke
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 

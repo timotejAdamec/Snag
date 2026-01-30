@@ -19,20 +19,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 
 class AppScaffoldState(
-    initialFabState: FabState = FabState.NotVisible,
     val snackbarHostState: SnackbarHostState = SnackbarHostState(),
-) {
-    var fabState by mutableStateOf(initialFabState)
-}
-
-interface FabState {
-    data object NotVisible : FabState
-
-    data class Visible(
-        val text: String,
-        val onClick: () -> Unit,
-    ) : FabState
-}
+)
 
 val LocalAppScaffoldState =
     compositionLocalOf<AppScaffoldState> {
