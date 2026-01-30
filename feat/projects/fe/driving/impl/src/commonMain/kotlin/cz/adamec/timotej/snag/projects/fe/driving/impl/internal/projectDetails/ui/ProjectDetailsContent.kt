@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.widthIn
@@ -151,20 +152,26 @@ private fun LoadedProjectDetailsContent(
                     ),
             ) {
                 item {
-                    FlowRow(
-                        horizontalArrangement = Arrangement.spacedBy(12.dp),
-                        verticalArrangement = Arrangement.spacedBy(12.dp),
-                        maxItemsInEachRow = 3,
+                    Box(
+                        modifier = Modifier.fillMaxWidth(),
+                        contentAlignment = Alignment.TopCenter,
                     ) {
-                        state.structures.forEach { structure ->
-                            StructureCard(
-                                modifier = Modifier
-                                    .widthIn(min = 150.dp)
-                                    .weight(1f)
-                                    .heightIn(min = 200.dp, max = 260.dp),
-                                structure = structure,
-                                onClick = {},
-                            )
+                        FlowRow(
+                            modifier = Modifier.widthIn(max = 936.dp),
+                            horizontalArrangement = Arrangement.spacedBy(12.dp),
+                            verticalArrangement = Arrangement.spacedBy(12.dp),
+                            maxItemsInEachRow = 3,
+                        ) {
+                            state.structures.forEach { structure ->
+                                StructureCard(
+                                    modifier = Modifier
+                                        .widthIn(min = 150.dp)
+                                        .weight(1f)
+                                        .heightIn(min = 200.dp, max = 260.dp),
+                                    structure = structure,
+                                    onClick = {},
+                                )
+                            }
                         }
                     }
                 }
