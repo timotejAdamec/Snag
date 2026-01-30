@@ -12,11 +12,12 @@
 
 package cz.adamec.timotej.snag.structures.fe.driving.impl.di
 
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation3.scene.DialogSceneStrategy
+import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureCreationRoute
+import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureEditRoute
 import cz.adamec.timotej.snag.lib.navigation.fe.SnagBackStack
-import cz.adamec.timotej.snag.lib.navigation.fe.SnagNavRoute
-import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectDetailRoute
 import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.structureDetailsEdit.ui.StructureDetailsEditScreen
 import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.structureDetailsEdit.vm.StructureDetailsEditViewModel
 import org.koin.core.module.Module
@@ -26,38 +27,37 @@ import org.koin.dsl.module
 import org.koin.dsl.navigation3.navigation
 import kotlin.uuid.Uuid
 
-internal inline fun <reified T : SnagNavRoute> Module.structureCreationScreenNavigation(
-    crossinline getProjectDetailRoute: (projectId: Uuid) -> ProjectDetailRoute,
-    crossinline getProjectId: (Scope.(T) -> Uuid),
-) = navigation<T>(
-    metadata = DialogSceneStrategy.dialog(DialogProperties(usePlatformDefaultWidth = false)),
-) { route ->
-    StructureDetailsEditScreen(
-        structureId = null,
-        projectId = getProjectId(route),
-        onSaveStructure = { _, _ ->
-            val backStack = get<SnagBackStack>()
-            backStack.removeLastSafely()
-        },
-        onCancelClick = {
-            val backStack = get<SnagBackStack>()
-            backStack.removeLastSafely()
-        },
-    )
-}
+internal inline fun <reified T : StructureCreationRoute> Module.structureCreationScreenNavigation() =
+    navigation<T>(
+        metadata = DialogSceneStrategy.dialog(DialogProperties(usePlatformDefaultWidth = false)),
+    ) { _ ->
+        StructureDetailsEditScreenInjection(
+            onSaveStructure = { _ ->
+                val backStack = get<SnagBackStack>()
+                backStack.removeLastSafely()
+            },
+        )
+    }
 
-internal inline fun <reified T : SnagNavRoute> Module.structureEditScreenNavigation(
-    crossinline getProjectDetailRoute: (projectId: Uuid) -> ProjectDetailRoute,
-    crossinline getStructureId: (Scope.(T) -> Uuid),
-) = navigation<T>(
-    metadata = DialogSceneStrategy.dialog(DialogProperties(usePlatformDefaultWidth = false)),
-) { route ->
+internal inline fun <reified T : StructureEditRoute> Module.structureEditScreenNavigation() =
+    navigation<T>(
+        metadata = DialogSceneStrategy.dialog(DialogProperties(usePlatformDefaultWidth = false)),
+    ) { _ ->
+        StructureDetailsEditScreenInjection(
+            onSaveStructure = { _ ->
+                val backStack = get<SnagBackStack>()
+                backStack.removeLastSafely()
+            },
+        )
+    }
+
+@Composable
+private fun Scope.StructureDetailsEditScreenInjection(
+    onSaveStructure: (savedStructureId: Uuid) -> Unit,
+) {
     StructureDetailsEditScreen(
-        structureId = getStructureId(route),
-        projectId = null,
-        onSaveStructure = { _, _ ->
-            val backStack = get<SnagBackStack>()
-            backStack.removeLastSafely()
+        onSaveStructure = { savedStructureId, _ ->
+            onSaveStructure(savedStructureId)
         },
         onCancelClick = {
             val backStack = get<SnagBackStack>()

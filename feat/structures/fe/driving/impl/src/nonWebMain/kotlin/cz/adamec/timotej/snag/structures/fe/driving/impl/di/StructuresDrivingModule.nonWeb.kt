@@ -12,7 +12,12 @@
 
 package cz.adamec.timotej.snag.structures.fe.driving.impl.di
 
-import org.koin.core.module.Module
+import cz.adamec.timotej.snag.feat.structures.fe.driving.api.NonWebStructureCreationRoute
+import cz.adamec.timotej.snag.feat.structures.fe.driving.api.NonWebStructureEditRoute
 import org.koin.dsl.module
 
-internal actual val platformModule: Module = module {}
+internal actual val platformModule =
+    module {
+        structureCreationScreenNavigation<NonWebStructureCreationRoute>()
+        structureEditScreenNavigation<NonWebStructureEditRoute>()
+    }
