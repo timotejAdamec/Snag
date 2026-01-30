@@ -21,43 +21,42 @@ internal class InMemoryStructuresLocalDataSource : StructuresLocalDataSource {
         mutableListOf(
             Structure(
                 id = Uuid.parse("00000000-0000-0000-0001-000000000001"),
-                projectId = Uuid.parse("00000000-0000-0000-0000-000000000001"),
+                projectId = Uuid.parse(PROJECT_1),
                 name = "Block A - Ground Floor",
                 floorPlanUrl = "https://upload.wikimedia.org/wikipedia/commons/9/9a/Sample_Floorplan.jpg",
             ),
             Structure(
                 id = Uuid.parse("00000000-0000-0000-0001-000000000002"),
-                projectId = Uuid.parse("00000000-0000-0000-0000-000000000001"),
+                projectId = Uuid.parse(PROJECT_1),
                 name = "Block A - First Floor",
                 floorPlanUrl = "https://saterdesign.com/cdn/shop/products/6842.M_1200x.jpeg?v=1547874083",
             ),
             Structure(
                 id = Uuid.parse("00000000-0000-0000-0001-000000000003"),
-                projectId = Uuid.parse("00000000-0000-0000-0000-000000000001"),
+                projectId = Uuid.parse(PROJECT_1),
                 name = "Block B - Ground Floor",
                 floorPlanUrl = null,
             ),
             Structure(
                 id = Uuid.parse("00000000-0000-0000-0001-000000000004"),
-                projectId = Uuid.parse("00000000-0000-0000-0000-000000000002"),
+                projectId = Uuid.parse(PROJECT_2),
                 name = "Main Building - Basement",
                 floorPlanUrl = null,
             ),
             Structure(
                 id = Uuid.parse("00000000-0000-0000-0001-000000000005"),
-                projectId = Uuid.parse("00000000-0000-0000-0000-000000000002"),
+                projectId = Uuid.parse(PROJECT_2),
                 name = "Main Building - Ground Floor",
                 floorPlanUrl = "https://www.thehousedesigners.com/images/plans/01/SCA/bulk/9333/1st-floor_m.webp",
             ),
             Structure(
                 id = Uuid.parse("00000000-0000-0000-0001-000000000006"),
-                projectId = Uuid.parse("00000000-0000-0000-0000-000000000003"),
+                projectId = Uuid.parse(PROJECT_3),
                 name = "Reading Hall - Level 1",
                 floorPlanUrl = null,
             ),
         )
 
-    @Suppress("MaxLineLength")
     override suspend fun getStructures(projectId: Uuid): List<Structure> = structures.filter { it.projectId == projectId }
 
     // TODO check updated timestamp and return the database structure if it is newer
@@ -65,5 +64,11 @@ internal class InMemoryStructuresLocalDataSource : StructuresLocalDataSource {
         structures.removeIf { it.id == structure.id }
         structures.add(structure)
         return null
+    }
+
+    private companion object {
+        private const val PROJECT_1 = "00000000-0000-0000-0000-000000000001"
+        private const val PROJECT_2 = "00000000-0000-0000-0000-000000000002"
+        private const val PROJECT_3 = "00000000-0000-0000-0000-000000000003"
     }
 }

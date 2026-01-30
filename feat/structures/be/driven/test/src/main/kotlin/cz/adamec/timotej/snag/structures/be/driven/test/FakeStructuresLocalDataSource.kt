@@ -19,7 +19,6 @@ import kotlin.uuid.Uuid
 class FakeStructuresLocalDataSource : StructuresLocalDataSource {
     private val structures = mutableListOf<Structure>()
 
-    @Suppress("MaxLineLength")
     override suspend fun getStructures(projectId: Uuid): List<Structure> = structures.filter { it.projectId == projectId }
 
     override suspend fun updateStructure(structure: Structure): Structure? {
