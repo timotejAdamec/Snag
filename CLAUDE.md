@@ -31,6 +31,8 @@ feat/<feature>/
 ├── business/     # Platform-agnostic domain models (no dependencies except :lib:core)
 ├── be/           # Backend
 │   ├── app/      # Use cases
+        ├── api/  # Public use case interfaces
+        └── impl/ # Use case implementations
 │   ├── ports/    # Data source interfaces
 │   ├── driven/   # Port implementations (database)
 │   └── driving/  # HTTP routes (Ktor)
@@ -38,6 +40,8 @@ feat/<feature>/
 │       └── impl/      # Route implementations
 └── fe/           # Frontend
     ├── app/      # Use cases
+        ├── api/  # Public use case interfaces
+        └── impl/ # Use case implementations
     ├── ports/    # API and DB interfaces
     ├── driven/   # Implementations
     │   ├── impl/ # Production (HTTP, SQLite)
@@ -48,6 +52,7 @@ feat/<feature>/
 
 lib/              # Domain-agnostic reusable libraries
 ├── core/         # Core utilities (used anywhere)
+├── sync/         # Sync logic
 ├── design/       # Design system components
 ├── network/      # HTTP client setup
 └── routing/      # Routing utilities
