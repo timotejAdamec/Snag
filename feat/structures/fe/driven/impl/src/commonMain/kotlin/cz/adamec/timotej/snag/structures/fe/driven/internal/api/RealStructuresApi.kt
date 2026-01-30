@@ -23,6 +23,8 @@ import cz.adamec.timotej.snag.structures.be.driving.contract.StructureApiDto
 import cz.adamec.timotej.snag.structures.fe.driven.internal.LH
 import cz.adamec.timotej.snag.structures.fe.ports.StructuresApi
 import io.ktor.client.call.body
+import io.ktor.client.request.setBody
+import io.ktor.http.HttpStatusCode
 import kotlin.uuid.Uuid
 
 internal class RealStructuresApi(
@@ -45,6 +47,37 @@ internal class RealStructuresApi(
                     e.toOnlineDataResult()
                 } else {
                     LH.logger.e { "Error fetching structures for project $projectId." }
+                    OnlineDataResult.Failure.ProgrammerError(
+                        throwable = e,
+                    )
+                }
+            },
+        )
+
+    override suspend fun saveStructure(structure: Structure): OnlineDataResult<Structure?> =
+        runCatchingCancellable {
+            LH.logger.d { "Saving structure ${structure.id} to API..." }
+            val structureDto = structure.toPutApiDto()
+            val response =
+                httpClient.put("/projects/${structure.projectId}/structures/${structure.id}") {
+                    setBody(structureDto)
+                }
+            if (response.status != HttpStatusCode.NoContent) {
+                response.body<StructureApiDto>().toBusiness()
+            } else {
+                null
+            }
+        }.fold(
+            onSuccess = {
+                LH.logger.d { "Saved structure ${structure.id} to API." }
+                OnlineDataResult.Success(it)
+            },
+            onFailure = { e ->
+                return if (e is NetworkException) {
+                    e.log()
+                    e.toOnlineDataResult()
+                } else {
+                    LH.logger.e { "Error saving structure ${structure.id} to API." }
                     OnlineDataResult.Failure.ProgrammerError(
                         throwable = e,
                     )

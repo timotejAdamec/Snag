@@ -14,6 +14,7 @@ package cz.adamec.timotej.snag.structures.fe.driven.internal.db
 
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
+import app.cash.sqldelight.coroutines.mapToOneOrNull
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.StructureEntity
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.StructureEntityQueries
 import cz.adamec.timotej.snag.feat.structures.business.Structure
@@ -67,4 +68,35 @@ internal class RealStructuresDb(
                 },
             )
         }
+
+    override suspend fun saveStructure(structure: Structure): OfflineFirstDataResult<Unit> =
+        withContext(ioDispatcher) {
+            runCatching {
+                structureEntityQueries.save(structure.toEntity())
+            }.fold(
+                onSuccess = {
+                    OfflineFirstDataResult.Success(
+                        data = Unit,
+                    )
+                },
+                onFailure = { e ->
+                    LH.logger.e { "Error saving structure $structure to DB." }
+                    OfflineFirstDataResult.ProgrammerError(
+                        throwable = e,
+                    )
+                },
+            )
+        }
+
+    override fun getStructureFlow(id: Uuid): Flow<OfflineFirstDataResult<Structure?>> =
+        structureEntityQueries
+            .selectById(id.toString())
+            .asFlow()
+            .mapToOneOrNull(ioDispatcher)
+            .map<StructureEntity?, OfflineFirstDataResult<Structure?>> { entity ->
+                OfflineFirstDataResult.Success(entity?.toBusiness())
+            }.catch { e ->
+                LH.logger.e { "Error loading structure $id from DB." }
+                emit(OfflineFirstDataResult.ProgrammerError(throwable = e))
+            }
 }

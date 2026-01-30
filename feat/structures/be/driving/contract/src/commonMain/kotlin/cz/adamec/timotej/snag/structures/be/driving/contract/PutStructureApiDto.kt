@@ -10,13 +10,14 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.structures.be.ports
+package cz.adamec.timotej.snag.structures.be.driving.contract
 
-import cz.adamec.timotej.snag.feat.structures.business.Structure
+import kotlinx.serialization.Serializable
 import kotlin.uuid.Uuid
 
-interface StructuresLocalDataSource {
-    suspend fun getStructures(projectId: Uuid): List<Structure>
-
-    suspend fun updateStructure(structure: Structure): Structure?
-}
+@Serializable
+data class PutStructureApiDto(
+    val projectId: Uuid,
+    val name: String,
+    val floorPlanUrl: String?,
+)

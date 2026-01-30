@@ -13,10 +13,14 @@
 package cz.adamec.timotej.snag.structures.fe.driven.di
 
 import cz.adamec.timotej.snag.lib.core.common.di.getIoDispatcher
+import cz.adamec.timotej.snag.lib.sync.fe.app.handler.SyncOperationHandler
 import cz.adamec.timotej.snag.structures.fe.driven.internal.api.RealStructuresApi
 import cz.adamec.timotej.snag.structures.fe.driven.internal.db.RealStructuresDb
+import cz.adamec.timotej.snag.structures.fe.driven.internal.sync.RealStructuresSync
+import cz.adamec.timotej.snag.structures.fe.driven.internal.sync.StructureSyncHandler
 import cz.adamec.timotej.snag.structures.fe.ports.StructuresApi
 import cz.adamec.timotej.snag.structures.fe.ports.StructuresDb
+import cz.adamec.timotej.snag.structures.fe.ports.StructuresSync
 import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
@@ -30,4 +34,6 @@ val structuresDrivenModule =
             )
         } bind StructuresDb::class
         factoryOf(::RealStructuresApi) bind StructuresApi::class
+        factoryOf(::StructureSyncHandler) bind SyncOperationHandler::class
+        factoryOf(::RealStructuresSync) bind StructuresSync::class
     }

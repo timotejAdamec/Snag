@@ -13,10 +13,20 @@
 package cz.adamec.timotej.snag.structures.be.driving.impl.internal
 
 import cz.adamec.timotej.snag.feat.structures.business.Structure
+import cz.adamec.timotej.snag.structures.be.driving.contract.PutStructureApiDto
 import cz.adamec.timotej.snag.structures.be.driving.contract.StructureApiDto
+import kotlin.uuid.Uuid
 
 internal fun Structure.toDto() =
     StructureApiDto(
+        id = id,
+        projectId = projectId,
+        name = name,
+        floorPlanUrl = floorPlanUrl,
+    )
+
+internal fun PutStructureApiDto.toBusiness(id: Uuid) =
+    Structure(
         id = id,
         projectId = projectId,
         name = name,

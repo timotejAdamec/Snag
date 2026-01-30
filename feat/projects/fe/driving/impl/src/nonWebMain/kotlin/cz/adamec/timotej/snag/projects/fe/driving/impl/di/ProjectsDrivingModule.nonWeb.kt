@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.projects.fe.driving.impl.di
 
+import cz.adamec.timotej.snag.feat.structures.fe.driving.api.NonWebStructureCreationRoute
 import cz.adamec.timotej.snag.projects.fe.driving.api.NonWebProjectCreationRoute
 import cz.adamec.timotej.snag.projects.fe.driving.api.NonWebProjectDetailRoute
 import cz.adamec.timotej.snag.projects.fe.driving.api.NonWebProjectEditRoute
@@ -36,5 +37,9 @@ internal actual val platformModule =
             },
             getProjectId = { it.projectId },
         )
-        projectDetailsScreenNavigation<NonWebProjectDetailRoute> { it.projectId }
+        projectDetailsScreenNavigation<NonWebProjectDetailRoute>(
+            getStructureCreationRoute = { projectId ->
+                NonWebStructureCreationRoute(projectId = projectId)
+            },
+        ) { it.projectId }
     }

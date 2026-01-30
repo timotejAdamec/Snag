@@ -41,6 +41,24 @@ class FakeStructuresDb : StructuresDb {
         return OfflineFirstDataResult.Success(Unit)
     }
 
+    override suspend fun saveStructure(structure: Structure): OfflineFirstDataResult<Unit> {
+        val failure = forcedFailure
+        if (failure != null) return failure
+
+        structures.update { it + (structure.id to structure) }
+        return OfflineFirstDataResult.Success(Unit)
+    }
+
+    override fun getStructureFlow(id: Uuid): Flow<OfflineFirstDataResult<Structure?>> =
+        structures.map { map ->
+            val failure = forcedFailure
+            if (failure != null) {
+                failure
+            } else {
+                OfflineFirstDataResult.Success(map[id])
+            }
+        }
+
     fun setStructure(structure: Structure) {
         structures.update { it + (structure.id to structure) }
     }

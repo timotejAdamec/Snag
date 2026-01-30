@@ -22,6 +22,7 @@ import cz.adamec.timotej.snag.projects.fe.app.impl.di.projectsAppModule
 import cz.adamec.timotej.snag.projects.fe.driven.di.projectsDrivenModule
 import cz.adamec.timotej.snag.projects.fe.driving.api.di.projectsDrivingApiModule
 import cz.adamec.timotej.snag.projects.fe.driving.impl.di.projectsDrivingImplModule
+import cz.adamec.timotej.snag.feat.structures.fe.driving.api.di.structuresDrivingApiModule
 import cz.adamec.timotej.snag.structures.fe.app.impl.di.structuresAppModule
 import cz.adamec.timotej.snag.structures.fe.driven.di.structuresDrivenModule
 import cz.adamec.timotej.snag.ui.navigation.navigationModule
@@ -42,6 +43,7 @@ val appModule =
             projectsDrivingImplModule,
             projectsDrivenModule,
             projectsAppModule,
+            structuresDrivingApiModule,
             structuresDrivenModule,
             structuresAppModule,
         )

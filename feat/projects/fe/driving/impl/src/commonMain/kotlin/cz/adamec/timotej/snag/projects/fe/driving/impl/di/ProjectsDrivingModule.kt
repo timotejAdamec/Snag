@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation3.scene.DialogSceneStrategy
+import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureCreationRoute
 import cz.adamec.timotej.snag.lib.navigation.fe.SnagBackStack
 import cz.adamec.timotej.snag.lib.navigation.fe.SnagNavRoute
 import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectCreationRoute
@@ -75,17 +76,22 @@ internal inline fun <reified T : SnagNavRoute> Module.projectDetailsEditScreenNa
     )
 }
 
-internal inline fun <reified T : SnagNavRoute> Module.projectDetailsScreenNavigation(crossinline getProjectId: (Scope.(T) -> Uuid)) =
-    navigation<T> { route ->
-        ProjectDetailsScreen(
-            projectId = getProjectId(route),
-            onNewStructureClick = {},
-            onBack = {
-                val backStack = get<SnagBackStack>()
-                backStack.removeLastSafely()
-            },
-        )
-    }
+internal inline fun <reified T : SnagNavRoute> Module.projectDetailsScreenNavigation(
+    crossinline getStructureCreationRoute: (projectId: Uuid) -> StructureCreationRoute,
+    crossinline getProjectId: (Scope.(T) -> Uuid),
+) = navigation<T> { route ->
+    ProjectDetailsScreen(
+        projectId = getProjectId(route),
+        onNewStructureClick = {
+            val backStack = get<SnagBackStack>()
+            backStack.value.add(getStructureCreationRoute(getProjectId(route)))
+        },
+        onBack = {
+            val backStack = get<SnagBackStack>()
+            backStack.removeLastSafely()
+        },
+    )
+}
 
 val projectsDrivingImplModule =
     module {
