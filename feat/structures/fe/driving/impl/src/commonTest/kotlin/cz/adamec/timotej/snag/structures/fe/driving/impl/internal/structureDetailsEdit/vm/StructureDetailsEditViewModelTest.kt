@@ -60,7 +60,7 @@ class StructureDetailsEditViewModelTest {
     @Test
     fun `initial state is empty when creating (projectId provided, structureId null)`() =
         runTest {
-            val projectId = Uuid.random()
+            val projectId = UuidProvider.getUuid()
             val viewModel =
                 StructureDetailsEditViewModel(
                     structureId = null,
@@ -76,8 +76,8 @@ class StructureDetailsEditViewModelTest {
     @Test
     fun `loading structure data updates state and projectId when editing (structureId provided)`() =
         runTest {
-            val projectId = Uuid.random()
-            val structureId = Uuid.random()
+            val projectId = UuidProvider.getUuid()
+            val structureId = UuidProvider.getUuid()
             val structure = Structure(structureId, projectId, "Test Structure", null)
             structuresDb.setStructures(listOf(structure))
 
@@ -98,7 +98,7 @@ class StructureDetailsEditViewModelTest {
     @Test
     fun `onStructureNameChange updates state`() =
         runTest {
-            val projectId = Uuid.random()
+            val projectId = UuidProvider.getUuid()
             val viewModel =
                 StructureDetailsEditViewModel(null, projectId, getStructureUseCase, saveStructureUseCase)
 
@@ -110,7 +110,7 @@ class StructureDetailsEditViewModelTest {
     @Test
     fun `onSaveStructure with empty name sends error`() =
         runTest {
-            val projectId = Uuid.random()
+            val projectId = UuidProvider.getUuid()
             val viewModel =
                 StructureDetailsEditViewModel(null, projectId, getStructureUseCase, saveStructureUseCase)
 
@@ -124,7 +124,7 @@ class StructureDetailsEditViewModelTest {
     @Test
     fun `onSaveStructure successful in create mode sends save event`() =
         runTest {
-            val projectId = Uuid.random()
+            val projectId = UuidProvider.getUuid()
             val viewModel =
                 StructureDetailsEditViewModel(null, projectId, getStructureUseCase, saveStructureUseCase)
             viewModel.onStructureNameChange("Name")
@@ -145,8 +145,8 @@ class StructureDetailsEditViewModelTest {
     @Test
     fun `onSaveStructure successful in edit mode sends save event`() =
         runTest {
-            val projectId = Uuid.random()
-            val structureId = Uuid.random()
+            val projectId = UuidProvider.getUuid()
+            val structureId = UuidProvider.getUuid()
             val structure = Structure(structureId, projectId, "Original Name", null)
             structuresDb.setStructures(listOf(structure))
 
@@ -173,7 +173,7 @@ class StructureDetailsEditViewModelTest {
     @Test
     fun `onSaveStructure failure sends error`() =
         runTest {
-            val projectId = Uuid.random()
+            val projectId = UuidProvider.getUuid()
             val viewModel =
                 StructureDetailsEditViewModel(null, projectId, getStructureUseCase, saveStructureUseCase)
             viewModel.onStructureNameChange("Name")
