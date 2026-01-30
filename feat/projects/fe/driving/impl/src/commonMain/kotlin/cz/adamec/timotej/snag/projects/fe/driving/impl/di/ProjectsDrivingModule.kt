@@ -17,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation3.scene.DialogSceneStrategy
+import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureEditRouteFactory
 import cz.adamec.timotej.snag.lib.navigation.fe.SnagBackStack
 import cz.adamec.timotej.snag.lib.navigation.fe.SnagNavRoute
 import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectCreationRoute
@@ -103,7 +104,7 @@ private fun Scope.ProjectDetailsEditScreenInjection(
 
 internal inline fun <reified T : ProjectDetailRoute> Module.projectDetailsScreenNavigation() =
     navigation<T> { route ->
-        val routeFactory = koinInject<ProjectDetailRouteFactory>()
+        val routeFactory = koinInject<StructureEditRouteFactory>()
         ProjectDetailsScreen(
             projectId = route.projectId,
             onNewStructureClick = {
