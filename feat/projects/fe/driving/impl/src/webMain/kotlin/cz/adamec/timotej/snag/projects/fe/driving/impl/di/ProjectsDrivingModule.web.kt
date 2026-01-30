@@ -12,7 +12,6 @@
 
 package cz.adamec.timotej.snag.projects.fe.driving.impl.di
 
-import cz.adamec.timotej.snag.feat.structures.fe.driving.api.WebStructureCreationRoute
 import cz.adamec.timotej.snag.projects.fe.driving.api.WebProjectCreationRoute
 import cz.adamec.timotej.snag.projects.fe.driving.api.WebProjectDetailRoute
 import cz.adamec.timotej.snag.projects.fe.driving.api.WebProjectEditRoute
@@ -21,25 +20,8 @@ import org.koin.dsl.module
 
 internal actual val platformModule =
     module {
-        projectsScreenNavigation<WebProjectsRoute>(
-            getProjectDetailRoute = { projectId ->
-                WebProjectDetailRoute(projectId = projectId)
-            },
-        )
-        projectDetailsEditScreenNavigation<WebProjectCreationRoute>(
-            getProjectDetailRoute = { savedProjectId ->
-                WebProjectDetailRoute(projectId = savedProjectId)
-            },
-        )
-        projectDetailsEditScreenNavigation<WebProjectEditRoute>(
-            getProjectDetailRoute = { savedProjectId ->
-                WebProjectDetailRoute(projectId = savedProjectId)
-            },
-            getProjectId = { it.projectId },
-        )
-        projectDetailsScreenNavigation<WebProjectDetailRoute>(
-            getStructureCreationRoute = { projectId ->
-                WebStructureCreationRoute(projectId = projectId)
-            },
-        ) { it.projectId }
+        projectsScreenNavigation<WebProjectsRoute>()
+        projectCreationScreenNavigation<WebProjectCreationRoute>()
+        projectEditScreenNavigation<WebProjectEditRoute>()
+        projectDetailsScreenNavigation<WebProjectDetailRoute>()
     }

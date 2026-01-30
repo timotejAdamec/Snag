@@ -13,9 +13,11 @@
 package cz.adamec.timotej.snag.projects.fe.driving.api.di
 
 import cz.adamec.timotej.snag.projects.fe.driving.api.NonWebProjectCreationRoute
+import cz.adamec.timotej.snag.projects.fe.driving.api.NonWebProjectDetailRouteFactory
 import cz.adamec.timotej.snag.projects.fe.driving.api.NonWebProjectEditRouteFactory
 import cz.adamec.timotej.snag.projects.fe.driving.api.NonWebProjectsRoute
 import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectCreationRoute
+import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectDetailRouteFactory
 import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectEditRouteFactory
 import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectsRoute
 import org.koin.dsl.bind
@@ -26,4 +28,5 @@ internal actual val platformModule =
         factory { NonWebProjectsRoute } bind ProjectsRoute::class
         factory { NonWebProjectCreationRoute } bind ProjectCreationRoute::class
         factory { NonWebProjectEditRouteFactory() } bind ProjectEditRouteFactory::class
+        factory { NonWebProjectDetailRouteFactory() } bind ProjectDetailRouteFactory::class
     }

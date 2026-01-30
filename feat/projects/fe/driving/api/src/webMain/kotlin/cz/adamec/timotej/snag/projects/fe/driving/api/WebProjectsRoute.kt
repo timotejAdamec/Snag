@@ -51,3 +51,7 @@ data class WebProjectDetailRoute(
 class WebProjectEditRouteFactory : ProjectEditRouteFactory {
     override fun create(projectId: Uuid): ProjectEditRoute = WebProjectEditRoute(projectId)
 }
+
+class WebProjectDetailRouteFactory : ProjectDetailRouteFactory {
+    override fun create(projectId: Uuid): ProjectDetailRoute = WebProjectDetailRoute(projectId)
+}

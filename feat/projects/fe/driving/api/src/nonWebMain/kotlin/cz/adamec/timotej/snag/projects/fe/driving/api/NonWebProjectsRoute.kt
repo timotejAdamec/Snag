@@ -39,3 +39,7 @@ data class NonWebProjectDetailRoute(
 class NonWebProjectEditRouteFactory : ProjectEditRouteFactory {
     override fun create(projectId: Uuid): ProjectEditRoute = NonWebProjectEditRoute(projectId)
 }
+
+class NonWebProjectDetailRouteFactory : ProjectDetailRouteFactory {
+    override fun create(projectId: Uuid): ProjectDetailRoute = NonWebProjectDetailRoute(projectId)
+}
