@@ -30,8 +30,9 @@ import kotlin.uuid.Uuid
 internal inline fun <reified T : StructureCreationRoute> Module.structureCreationScreenNavigation() =
     navigation<T>(
         metadata = DialogSceneStrategy.dialog(DialogProperties(usePlatformDefaultWidth = false)),
-    ) { _ ->
+    ) { route ->
         StructureDetailsEditScreenInjection(
+            projectId = route.projectId,
             onSaveStructure = { _ ->
                 val backStack = get<SnagBackStack>()
                 backStack.removeLastSafely()
@@ -42,8 +43,9 @@ internal inline fun <reified T : StructureCreationRoute> Module.structureCreatio
 internal inline fun <reified T : StructureEditRoute> Module.structureEditScreenNavigation() =
     navigation<T>(
         metadata = DialogSceneStrategy.dialog(DialogProperties(usePlatformDefaultWidth = false)),
-    ) { _ ->
+    ) { route ->
         StructureDetailsEditScreenInjection(
+            structureId = route.structureId,
             onSaveStructure = { _ ->
                 val backStack = get<SnagBackStack>()
                 backStack.removeLastSafely()
@@ -54,8 +56,12 @@ internal inline fun <reified T : StructureEditRoute> Module.structureEditScreenN
 @Composable
 private fun Scope.StructureDetailsEditScreenInjection(
     onSaveStructure: (savedStructureId: Uuid) -> Unit,
+    structureId: Uuid? = null,
+    projectId: Uuid? = null,
 ) {
     StructureDetailsEditScreen(
+        structureId = structureId,
+        projectId = projectId,
         onSaveStructure = { savedStructureId, _ ->
             onSaveStructure(savedStructureId)
         },

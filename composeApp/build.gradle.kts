@@ -58,6 +58,7 @@ kotlin {
             implementation(projects.lib.sync.fe.app)
             implementation(projects.feat.structures.fe.driven.impl)
             implementation(projects.feat.structures.fe.driving.api)
+            implementation(projects.feat.structures.fe.driving.impl)
         }
         commonTest.dependencies {
             implementation(projects.feat.projects.fe.driving.impl)
