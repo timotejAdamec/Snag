@@ -15,6 +15,7 @@ package cz.adamec.timotej.snag.structures.fe.driving.impl.internal.structureDeta
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ContainedLoadingIndicator
@@ -123,14 +124,16 @@ private fun LoadedStructureDetailsContent(
             val floorPlanUrl = state.structure?.floorPlanUrl
             if (floorPlanUrl != null) {
                 CoilZoomAsyncImage(
+                    modifier = Modifier
+                        .fillMaxSize(),
                     model = floorPlanUrl,
-                    contentDescription = state.structure?.name,
-                    modifier = Modifier.fillMaxSize(),
+                    contentDescription = state.structure.name,
                     contentScale = ContentScale.Fit,
                 )
             } else {
                 FloorPlanPlaceholder(
-                    modifier = Modifier.align(Alignment.Center),
+                    modifier = Modifier
+                        .align(Alignment.TopCenter),
                 )
             }
 
