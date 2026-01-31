@@ -46,10 +46,18 @@ fun CollapsableTopAppBarScaffold(
         topBar = {
             MediumFlexibleTopAppBar(
                 title = {
-                    Text(text = title)
+                    Text(
+                        text = title,
+                        maxLines = 1,
+                    )
                 },
                 subtitle = {
-                    subtitle?.let { Text(text = subtitle) }
+                    subtitle?.let {
+                        Text(
+                            text = subtitle,
+                            maxLines = 1,
+                        )
+                    }
                 },
                 scrollBehavior = scrollBehavior,
                 navigationIcon = topAppBarNavigationIcon,
