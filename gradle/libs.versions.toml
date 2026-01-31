@@ -25,6 +25,7 @@ kotlinx-immmutable-collections = "0.4.0"
 koin = "4.2.0-RC1"
 koinKspCompiler = "2.3.1"
 coil = "3.3.0"
+zoomimage = "1.4.0"
 kermit = "2.0.8"
 ktor = "3.4.0"
 slf4j = "2.0.17"
@@ -75,6 +76,8 @@ koin-test = { module = "io.insert-koin:koin-test", version.ref = "koin" }
 
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
 coil-network-ktor = { module = "io.coil-kt.coil3:coil-network-ktor3", version.ref = "coil" }
+
+zoomimage-compose-coil3 = { module = "io.github.panpf.zoomimage:zoomimage-compose-coil3", version.ref = "zoomimage" }
 
 kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }
 kermit-koin = { module = "co.touchlab:kermit-koin", version.ref = "kermit" }

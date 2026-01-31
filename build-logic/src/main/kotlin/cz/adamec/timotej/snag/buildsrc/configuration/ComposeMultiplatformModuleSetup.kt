@@ -68,6 +68,7 @@ internal fun Project.configureComposeMultiplatformModule() {
                 implementation(library("koin-compose-navigation3"))
                 implementation(library("coil-compose"))
                 implementation(library("coil-network-ktor"))
+                implementation(library("zoomimage-compose-coil3"))
             }
             commonTest.dependencies {
                 implementation(library("kotlin-test"))

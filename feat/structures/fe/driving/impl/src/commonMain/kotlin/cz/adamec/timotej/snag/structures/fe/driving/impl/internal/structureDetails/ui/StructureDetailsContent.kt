@@ -21,8 +21,11 @@ import androidx.compose.material3.ContainedLoadingIndicator
 import androidx.compose.material3.HorizontalFloatingToolbar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -30,9 +33,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import com.github.panpf.zoomimage.CoilZoomAsyncImage
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.BackNavigationIcon
-import cz.adamec.timotej.snag.lib.design.fe.scaffold.CollapsableTopAppBarScaffold
 import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.structureDetails.vm.StructureDetailsUiState
 import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.structureDetails.vm.StructureDetailsUiStatus
 import org.jetbrains.compose.resources.painterResource
@@ -40,6 +44,7 @@ import org.jetbrains.compose.resources.stringResource
 import snag.feat.structures.fe.driving.impl.generated.resources.Res
 import snag.feat.structures.fe.driving.impl.generated.resources.delete_structure_confirmation_text
 import snag.feat.structures.fe.driving.impl.generated.resources.delete_structure_confirmation_title
+import snag.feat.structures.fe.driving.impl.generated.resources.no_floor_plan
 import snag.feat.structures.fe.driving.impl.generated.resources.structure_not_found
 import snag.lib.design.fe.generated.resources.delete
 import snag.lib.design.fe.generated.resources.ic_delete
@@ -71,7 +76,7 @@ internal fun StructureDetailsContent(
 
             StructureDetailsUiStatus.LOADED,
             StructureDetailsUiStatus.DELETED,
-                -> {
+            -> {
                 LoadedStructureDetailsContent(
                     state = state,
                     onBack = onBack,
@@ -93,12 +98,18 @@ private fun LoadedStructureDetailsContent(
     onDelete: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    CollapsableTopAppBarScaffold(
+    Scaffold(
         modifier = modifier,
-        title = state.structure?.name.orEmpty(),
-        topAppBarNavigationIcon = {
-            BackNavigationIcon(
-                onClick = onBack,
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(text = state.structure?.name.orEmpty())
+                },
+                navigationIcon = {
+                    BackNavigationIcon(
+                        onClick = onBack,
+                    )
+                },
             )
         },
     ) { paddingValues ->
@@ -109,6 +120,20 @@ private fun LoadedStructureDetailsContent(
                     .padding(paddingValues)
                     .consumeWindowInsets(paddingValues),
         ) {
+            val floorPlanUrl = state.structure?.floorPlanUrl
+            if (floorPlanUrl != null) {
+                CoilZoomAsyncImage(
+                    model = floorPlanUrl,
+                    contentDescription = state.structure?.name,
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Fit,
+                )
+            } else {
+                FloorPlanPlaceholder(
+                    modifier = Modifier.align(Alignment.Center),
+                )
+            }
+
             var isShowingDeleteConfirmation by remember { mutableStateOf(false) }
             if (isShowingDeleteConfirmation) {
                 StructureDeletionAlertDialog(
@@ -140,6 +165,16 @@ private fun LoadedStructureDetailsContent(
             }
         }
     }
+}
+
+@Composable
+private fun FloorPlanPlaceholder(modifier: Modifier = Modifier) {
+    Text(
+        modifier = modifier,
+        text = stringResource(Res.string.no_floor_plan),
+        style = MaterialTheme.typography.bodyMedium,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+    )
 }
 
 @Composable

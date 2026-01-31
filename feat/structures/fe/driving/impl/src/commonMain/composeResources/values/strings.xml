@@ -6,4 +6,5 @@
     <string name="structure_not_found">Structure not found</string>
     <string name="delete_structure_confirmation_title">Delete structure?</string>
     <string name="delete_structure_confirmation_text">This structure and all its data will be permanently deleted. This action cannot be undone.</string>
+    <string name="no_floor_plan">No floor plan</string>
 </resources>
