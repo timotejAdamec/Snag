@@ -89,9 +89,9 @@ private fun Scope.StructureEditScreenSetup(
 val structuresDrivingImplModule =
     module {
         includes(platformModule)
-        viewModel { (structureId: Uuid?) ->
+        viewModel { (structureId: Uuid) ->
             StructureDetailsViewModel(
-                structureId = structureId!!,
+                structureId = structureId,
                 getStructureUseCase = get(),
                 deleteStructureUseCase = get(),
             )
