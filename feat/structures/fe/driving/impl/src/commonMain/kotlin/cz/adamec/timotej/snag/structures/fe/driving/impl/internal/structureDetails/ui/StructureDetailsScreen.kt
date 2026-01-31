@@ -10,25 +10,23 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.ui
+package cz.adamec.timotej.snag.structures.fe.driving.impl.internal.structureDetails.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cz.adamec.timotej.snag.lib.design.fe.error.ShowSnackbarOnError
 import cz.adamec.timotej.snag.lib.design.fe.events.ObserveAsEvents
-import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.vm.ProjectDetailsViewModel
+import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.structureDetails.vm.StructureDetailsViewModel
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 import kotlin.uuid.Uuid
 
 @Composable
-internal fun ProjectDetailsScreen(
-    projectId: Uuid,
-    onNewStructureClick: () -> Unit,
-    onStructureClick: (structureId: Uuid) -> Unit,
+internal fun StructureDetailsScreen(
+    structureId: Uuid,
     onBack: () -> Unit,
-    viewModel: ProjectDetailsViewModel = koinViewModel { parametersOf(projectId) },
+    viewModel: StructureDetailsViewModel = koinViewModel { parametersOf(structureId) },
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -42,10 +40,8 @@ internal fun ProjectDetailsScreen(
         },
     )
 
-    ProjectDetailsContent(
+    StructureDetailsContent(
         state = state,
-        onNewStructureClick = onNewStructureClick,
-        onStructureClick = onStructureClick,
         onBack = onBack,
         onDelete = viewModel::onDelete,
     )

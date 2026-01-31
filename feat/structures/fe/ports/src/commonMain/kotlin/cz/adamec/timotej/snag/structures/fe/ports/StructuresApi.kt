@@ -20,4 +20,6 @@ interface StructuresApi {
     suspend fun getStructures(projectId: Uuid): OnlineDataResult<List<Structure>>
 
     suspend fun saveStructure(structure: Structure): OnlineDataResult<Structure?>
+
+    suspend fun deleteStructure(id: Uuid): OnlineDataResult<Unit>
 }

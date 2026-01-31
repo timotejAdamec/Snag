@@ -88,6 +88,25 @@ internal class RealStructuresDb(
             )
         }
 
+    override suspend fun deleteStructure(id: Uuid): OfflineFirstDataResult<Unit> =
+        withContext(ioDispatcher) {
+            runCatching {
+                structureEntityQueries.deleteById(id.toString())
+            }.fold(
+                onSuccess = {
+                    OfflineFirstDataResult.Success(
+                        data = Unit,
+                    )
+                },
+                onFailure = { e ->
+                    LH.logger.e { "Error deleting structure $id from DB." }
+                    OfflineFirstDataResult.ProgrammerError(
+                        throwable = e,
+                    )
+                },
+            )
+        }
+
     override fun getStructureFlow(id: Uuid): Flow<OfflineFirstDataResult<Structure?>> =
         structureEntityQueries
             .selectById(id.toString())

@@ -43,3 +43,17 @@ class WebStructureCreationRouteFactory : StructureCreationRouteFactory {
 class WebStructureEditRouteFactory : StructureEditRouteFactory {
     override fun create(structureId: Uuid): StructureEditRoute = WebStructureEditRoute(structureId)
 }
+
+@Serializable
+@Immutable
+data class WebStructureDetailRoute(
+    override val structureId: Uuid,
+) : StructureDetailRoute {
+    companion object {
+        const val URL_NAME = "structure-detail"
+    }
+}
+
+class WebStructureDetailRouteFactory : StructureDetailRouteFactory {
+    override fun create(structureId: Uuid): StructureDetailRoute = WebStructureDetailRoute(structureId)
+}

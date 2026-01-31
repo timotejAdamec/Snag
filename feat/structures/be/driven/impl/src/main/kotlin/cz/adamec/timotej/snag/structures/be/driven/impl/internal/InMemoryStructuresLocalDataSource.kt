@@ -59,6 +59,10 @@ internal class InMemoryStructuresLocalDataSource : StructuresLocalDataSource {
 
     override suspend fun getStructures(projectId: Uuid): List<Structure> = structures.filter { it.projectId == projectId }
 
+    override suspend fun deleteStructure(id: Uuid) {
+        structures.removeIf { it.id == id }
+    }
+
     // TODO check updated timestamp and return the database structure if it is newer
     override suspend fun updateStructure(structure: Structure): Structure? {
         structures.removeIf { it.id == structure.id }

@@ -27,4 +27,12 @@ internal class RealStructuresSync(
             operationType = SyncOperationType.UPSERT,
         )
     }
+
+    override suspend fun enqueueStructureDelete(structureId: Uuid) {
+        enqueueSyncOperationUseCase(
+            entityType = STRUCTURE_SYNC_ENTITY_TYPE,
+            entityId = structureId,
+            operationType = SyncOperationType.DELETE,
+        )
+    }
 }

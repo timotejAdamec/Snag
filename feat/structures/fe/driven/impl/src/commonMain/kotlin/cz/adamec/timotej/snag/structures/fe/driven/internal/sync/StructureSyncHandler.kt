@@ -35,10 +35,7 @@ internal class StructureSyncHandler(
     ): SyncOperationResult =
         when (operationType) {
             SyncOperationType.UPSERT -> executeUpsert(entityId)
-            SyncOperationType.DELETE -> {
-                logger.w { "Delete not yet supported for structures." }
-                SyncOperationResult.Failure
-            }
+            SyncOperationType.DELETE -> executeDelete(entityId)
         }
 
     private suspend fun executeUpsert(entityId: Uuid): SyncOperationResult {
@@ -70,4 +67,16 @@ internal class StructureSyncHandler(
             }
         }
     }
+
+    private suspend fun executeDelete(entityId: Uuid): SyncOperationResult =
+        when (structuresApi.deleteStructure(entityId)) {
+            is OnlineDataResult.Success -> {
+                logger.d { "Deleted structure $entityId from API." }
+                SyncOperationResult.Success
+            }
+            is OnlineDataResult.Failure -> {
+                logger.w { "API failure deleting structure $entityId." }
+                SyncOperationResult.Failure
+            }
+        }
 }

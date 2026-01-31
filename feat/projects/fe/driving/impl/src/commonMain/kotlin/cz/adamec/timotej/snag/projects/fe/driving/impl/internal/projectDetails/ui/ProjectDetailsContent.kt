@@ -56,6 +56,7 @@ import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.v
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.vm.StructuresUiStatus
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import kotlin.uuid.Uuid
 import org.koin.compose.koinInject
 import snag.feat.projects.fe.driving.impl.generated.resources.Res
 import snag.feat.projects.fe.driving.impl.generated.resources.delete_project_confirmation_text
@@ -72,6 +73,7 @@ import snag.lib.design.fe.generated.resources.Res as DesignRes
 internal fun ProjectDetailsContent(
     state: ProjectDetailsUiState,
     onNewStructureClick: () -> Unit,
+    onStructureClick: (structureId: Uuid) -> Unit,
     onBack: () -> Unit,
     onDelete: () -> Unit,
     modifier: Modifier = Modifier,
@@ -99,6 +101,7 @@ internal fun ProjectDetailsContent(
                 LoadedProjectDetailsContent(
                     state = state,
                     onNewStructureClick = onNewStructureClick,
+                    onStructureClick = onStructureClick,
                     onBack = onBack,
                     onDelete = onDelete,
                 )
@@ -112,6 +115,7 @@ internal fun ProjectDetailsContent(
 private fun LoadedProjectDetailsContent(
     state: ProjectDetailsUiState,
     onNewStructureClick: () -> Unit,
+    onStructureClick: (structureId: Uuid) -> Unit,
     onBack: () -> Unit,
     onDelete: () -> Unit,
     modifier: Modifier = Modifier,
@@ -169,7 +173,7 @@ private fun LoadedProjectDetailsContent(
                                         .weight(1f)
                                         .heightIn(min = 200.dp, max = 260.dp),
                                     structure = structure,
-                                    onClick = {},
+                                    onClick = { onStructureClick(structure.id) },
                                 )
                             }
                         }
@@ -273,6 +277,7 @@ private fun LoadedProjectDetailsContentPreview() {
                     )
                 ),
             onNewStructureClick = {},
+            onStructureClick = {},
             onBack = {},
             onDelete = {},
         )

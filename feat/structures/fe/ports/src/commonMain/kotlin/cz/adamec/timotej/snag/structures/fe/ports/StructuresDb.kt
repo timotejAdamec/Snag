@@ -25,4 +25,6 @@ interface StructuresDb {
     suspend fun saveStructure(structure: Structure): OfflineFirstDataResult<Unit>
 
     fun getStructureFlow(id: Uuid): Flow<OfflineFirstDataResult<Structure?>>
+
+    suspend fun deleteStructure(id: Uuid): OfflineFirstDataResult<Unit>
 }

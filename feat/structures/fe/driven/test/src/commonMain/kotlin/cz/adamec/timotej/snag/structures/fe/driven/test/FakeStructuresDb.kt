@@ -49,6 +49,14 @@ class FakeStructuresDb : StructuresDb {
         return OfflineFirstDataResult.Success(Unit)
     }
 
+    override suspend fun deleteStructure(id: Uuid): OfflineFirstDataResult<Unit> {
+        val failure = forcedFailure
+        if (failure != null) return failure
+
+        structures.update { it - id }
+        return OfflineFirstDataResult.Success(Unit)
+    }
+
     override fun getStructureFlow(id: Uuid): Flow<OfflineFirstDataResult<Structure?>> =
         structures.map { map ->
             val failure = forcedFailure

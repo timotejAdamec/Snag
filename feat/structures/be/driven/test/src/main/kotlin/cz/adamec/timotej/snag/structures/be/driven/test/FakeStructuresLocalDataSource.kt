@@ -21,11 +21,17 @@ class FakeStructuresLocalDataSource : StructuresLocalDataSource {
 
     override suspend fun getStructures(projectId: Uuid): List<Structure> = structures.filter { it.projectId == projectId }
 
+    override suspend fun deleteStructure(id: Uuid) {
+        structures.removeIf { it.id == id }
+    }
+
     override suspend fun updateStructure(structure: Structure): Structure? {
         structures.removeIf { it.id == structure.id }
         structures.add(structure)
         return null
     }
+
+    fun getStructure(id: Uuid): Structure? = structures.find { it.id == id }
 
     fun setStructures(vararg items: Structure) {
         structures.addAll(items)

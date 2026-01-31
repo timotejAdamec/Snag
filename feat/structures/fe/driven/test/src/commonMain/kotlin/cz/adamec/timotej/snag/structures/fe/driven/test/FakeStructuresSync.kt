@@ -17,8 +17,13 @@ import kotlin.uuid.Uuid
 
 class FakeStructuresSync : StructuresSync {
     val savedStructureIds = mutableListOf<Uuid>()
+    val deletedStructureIds = mutableListOf<Uuid>()
 
     override suspend fun enqueueStructureSave(structureId: Uuid) {
         savedStructureIds.add(structureId)
+    }
+
+    override suspend fun enqueueStructureDelete(structureId: Uuid) {
+        deletedStructureIds.add(structureId)
     }
 }
