@@ -63,10 +63,15 @@ internal class RealStructuresApi(
                 OnlineDataResult.Success(Unit)
             },
             onFailure = { e ->
-                LH.logger.e { "Error deleting structure $id from API." }
-                OnlineDataResult.Failure.ProgrammerError(
-                    throwable = e,
-                )
+                return if (e is NetworkException) {
+                    e.log()
+                    e.toOnlineDataResult()
+                } else {
+                    LH.logger.e { "Error deleting structure $id from API." }
+                    OnlineDataResult.Failure.ProgrammerError(
+                        throwable = e,
+                    )
+                }
             },
         )
 
