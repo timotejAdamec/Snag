@@ -13,8 +13,10 @@
 package cz.adamec.timotej.snag.feat.structures.fe.driving.api.di
 
 import cz.adamec.timotej.snag.feat.structures.fe.driving.api.NonWebStructureCreationRouteFactory
+import cz.adamec.timotej.snag.feat.structures.fe.driving.api.NonWebStructureDetailRouteFactory
 import cz.adamec.timotej.snag.feat.structures.fe.driving.api.NonWebStructureEditRouteFactory
 import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureCreationRouteFactory
+import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureDetailRouteFactory
 import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureEditRouteFactory
 import org.koin.dsl.bind
 import org.koin.dsl.module
@@ -22,5 +24,6 @@ import org.koin.dsl.module
 internal actual val platformModule =
     module {
         factory { NonWebStructureCreationRouteFactory() } bind StructureCreationRouteFactory::class
+        factory { NonWebStructureDetailRouteFactory() } bind StructureDetailRouteFactory::class
         factory { NonWebStructureEditRouteFactory() } bind StructureEditRouteFactory::class
     }

@@ -14,6 +14,7 @@ package cz.adamec.timotej.snag.structures.be.driving.impl.internal
 
 import cz.adamec.timotej.snag.routing.be.AppRoute
 import cz.adamec.timotej.snag.routing.be.getIdFromParameters
+import cz.adamec.timotej.snag.structures.be.app.api.DeleteStructureUseCase
 import cz.adamec.timotej.snag.structures.be.app.api.GetStructuresUseCase
 import cz.adamec.timotej.snag.structures.be.app.api.SaveStructureUseCase
 import cz.adamec.timotej.snag.structures.be.driving.contract.PutStructureApiDto
@@ -21,16 +22,28 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
+import io.ktor.server.routing.delete
 import io.ktor.server.routing.get
 import io.ktor.server.routing.put
 import io.ktor.server.routing.route
 
 @Suppress("LabeledExpression")
 internal class StructuresRoute(
+    private val deleteStructureUseCase: DeleteStructureUseCase,
     private val getStructuresUseCase: GetStructuresUseCase,
     private val saveStructureUseCase: SaveStructureUseCase,
 ) : AppRoute {
     override fun Route.setup() {
+        route("/structures") {
+            delete("/{id}") {
+                val id = getIdFromParameters()
+
+                deleteStructureUseCase(id)
+
+                call.respond(HttpStatusCode.NoContent)
+            }
+        }
+
         route("/projects/{projectId}/structures") {
             get {
                 val projectId = getIdFromParameters("projectId")

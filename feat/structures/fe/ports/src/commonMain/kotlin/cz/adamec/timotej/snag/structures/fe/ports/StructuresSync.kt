@@ -16,4 +16,6 @@ import kotlin.uuid.Uuid
 
 interface StructuresSync {
     suspend fun enqueueStructureSave(structureId: Uuid)
+
+    suspend fun enqueueStructureDelete(structureId: Uuid)
 }

@@ -30,3 +30,11 @@ interface StructureCreationRouteFactory {
 interface StructureEditRouteFactory {
     fun create(structureId: Uuid): StructureEditRoute
 }
+
+interface StructureDetailRoute : SnagNavRoute {
+    val structureId: Uuid
+}
+
+interface StructureDetailRouteFactory {
+    fun create(structureId: Uuid): StructureDetailRoute
+}

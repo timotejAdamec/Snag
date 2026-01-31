@@ -16,8 +16,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation3.scene.DialogSceneStrategy
 import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureCreationRoute
+import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureDetailRoute
 import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureEditRoute
 import cz.adamec.timotej.snag.lib.navigation.fe.SnagBackStack
+import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.structureDetails.ui.StructureDetailsScreen
+import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.structureDetails.vm.StructureDetailsViewModel
 import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.structureDetailsEdit.ui.StructureDetailsEditScreen
 import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.structureDetailsEdit.vm.StructureDetailsEditViewModel
 import org.koin.core.module.Module
@@ -27,11 +30,11 @@ import org.koin.dsl.module
 import org.koin.dsl.navigation3.navigation
 import kotlin.uuid.Uuid
 
-internal inline fun <reified T : StructureCreationRoute> Module.structureCreationScreenNavigation() =
+internal inline fun <reified T : StructureCreationRoute> Module.structureCreateScreenNav() =
     navigation<T>(
         metadata = DialogSceneStrategy.dialog(DialogProperties(usePlatformDefaultWidth = false)),
     ) { route ->
-        StructureDetailsEditScreenInjection(
+        StructureEditScreenSetup(
             projectId = route.projectId,
             onSaveStructure = { _ ->
                 val backStack = get<SnagBackStack>()
@@ -44,7 +47,7 @@ internal inline fun <reified T : StructureEditRoute> Module.structureEditScreenN
     navigation<T>(
         metadata = DialogSceneStrategy.dialog(DialogProperties(usePlatformDefaultWidth = false)),
     ) { route ->
-        StructureDetailsEditScreenInjection(
+        StructureEditScreenSetup(
             structureId = route.structureId,
             onSaveStructure = { _ ->
                 val backStack = get<SnagBackStack>()
@@ -53,8 +56,19 @@ internal inline fun <reified T : StructureEditRoute> Module.structureEditScreenN
         )
     }
 
+internal inline fun <reified T : StructureDetailRoute> Module.structureDetailScreenNav() =
+    navigation<T> { route ->
+        StructureDetailsScreen(
+            structureId = route.structureId,
+            onBack = {
+                val backStack = get<SnagBackStack>()
+                backStack.removeLastSafely()
+            },
+        )
+    }
+
 @Composable
-private fun Scope.StructureDetailsEditScreenInjection(
+private fun Scope.StructureEditScreenSetup(
     onSaveStructure: (savedStructureId: Uuid) -> Unit,
     structureId: Uuid? = null,
     projectId: Uuid? = null,
@@ -75,6 +89,13 @@ private fun Scope.StructureDetailsEditScreenInjection(
 val structuresDrivingImplModule =
     module {
         includes(platformModule)
+        viewModel { (structureId: Uuid) ->
+            StructureDetailsViewModel(
+                structureId = structureId,
+                getStructureUseCase = get(),
+                deleteStructureUseCase = get(),
+            )
+        }
         viewModel { (structureId: Uuid?, projectId: Uuid?) ->
             StructureDetailsEditViewModel(
                 structureId = structureId,

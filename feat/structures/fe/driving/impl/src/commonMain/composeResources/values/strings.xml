@@ -3,4 +3,7 @@
     <string name="new_structure">New structure</string>
     <string name="structure_name_label">Name</string>
     <string name="required">Required</string>
+    <string name="structure_not_found">Structure not found</string>
+    <string name="delete_structure_confirmation_title">Delete structure?</string>
+    <string name="delete_structure_confirmation_text">This structure and all its data will be permanently deleted. This action cannot be undone.</string>
 </resources>

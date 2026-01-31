@@ -35,3 +35,13 @@ class NonWebStructureCreationRouteFactory : StructureCreationRouteFactory {
 class NonWebStructureEditRouteFactory : StructureEditRouteFactory {
     override fun create(structureId: Uuid): StructureEditRoute = NonWebStructureEditRoute(structureId)
 }
+
+@Serializable
+@Immutable
+data class NonWebStructureDetailRoute(
+    override val structureId: Uuid,
+) : StructureDetailRoute
+
+class NonWebStructureDetailRouteFactory : StructureDetailRouteFactory {
+    override fun create(structureId: Uuid): StructureDetailRoute = NonWebStructureDetailRoute(structureId)
+}

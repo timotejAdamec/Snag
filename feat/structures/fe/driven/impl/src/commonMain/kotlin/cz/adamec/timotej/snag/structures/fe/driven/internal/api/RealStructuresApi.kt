@@ -54,6 +54,22 @@ internal class RealStructuresApi(
             },
         )
 
+    override suspend fun deleteStructure(id: Uuid): OnlineDataResult<Unit> =
+        runCatchingCancellable {
+            httpClient.delete("/structures/$id")
+        }.fold(
+            onSuccess = {
+                LH.logger.d { "Deleted structure $id from API." }
+                OnlineDataResult.Success(Unit)
+            },
+            onFailure = { e ->
+                LH.logger.e { "Error deleting structure $id from API." }
+                OnlineDataResult.Failure.ProgrammerError(
+                    throwable = e,
+                )
+            },
+        )
+
     override suspend fun saveStructure(structure: Structure): OnlineDataResult<Structure?> =
         runCatchingCancellable {
             LH.logger.d { "Saving structure ${structure.id} to API..." }

@@ -28,6 +28,13 @@ class FakeStructuresApi : StructuresApi {
         return OnlineDataResult.Success(structures.values.filter { it.projectId == projectId })
     }
 
+    override suspend fun deleteStructure(id: Uuid): OnlineDataResult<Unit> {
+        val failure = forcedFailure
+        if (failure != null) return failure
+        structures.remove(id)
+        return OnlineDataResult.Success(Unit)
+    }
+
     override suspend fun saveStructure(structure: Structure): OnlineDataResult<Structure?> {
         val failure = forcedFailure
         if (failure != null) return failure

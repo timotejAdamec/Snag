@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation3.scene.DialogSceneStrategy
 import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureCreationRouteFactory
+import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureDetailRouteFactory
 import cz.adamec.timotej.snag.lib.navigation.fe.SnagBackStack
 import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectCreationRoute
 import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectDetailRoute
@@ -104,11 +105,16 @@ private fun Scope.ProjectDetailsEditScreenInjection(
 internal inline fun <reified T : ProjectDetailRoute> Module.projectDetailsScreenNavigation() =
     navigation<T> { route ->
         val newStructureRouteFactory = koinInject<StructureCreationRouteFactory>()
+        val structureDetailRouteFactory = koinInject<StructureDetailRouteFactory>()
         ProjectDetailsScreen(
             projectId = route.projectId,
             onNewStructureClick = {
                 val backStack = get<SnagBackStack>()
                 backStack.value.add(newStructureRouteFactory.create(route.projectId))
+            },
+            onStructureClick = { structureId ->
+                val backStack = get<SnagBackStack>()
+                backStack.value.add(structureDetailRouteFactory.create(structureId))
             },
             onBack = {
                 val backStack = get<SnagBackStack>()
