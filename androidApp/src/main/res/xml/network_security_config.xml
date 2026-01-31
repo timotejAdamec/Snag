@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2026 Timotej Adamec
+  ~ SPDX-License-Identifier: MIT
+  ~
+  ~ This file is part of the thesis:
+  ~ "Multiplatform snagging system with code sharing maximisation"
+  ~
+  ~ Czech Technical University in Prague
+  ~ Faculty of Information Technology
+  ~ Department of Software Engineering
+  -->
+
+<network-security-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <!-- 10.0.2.2 is the special alias to host loopback interface for the Android Emulator -->
+        <domain includeSubdomains="true">10.0.2.2</domain>
+        <domain includeSubdomains="true">0.0.0.0</domain>
+        <domain includeSubdomains="true">localhost</domain>
+    </domain-config>
+</network-security-config>

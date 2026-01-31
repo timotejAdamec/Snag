@@ -67,6 +67,19 @@ internal fun Project.configureKotlinMultiplatformModule() {
                 dependsOn(nonWebMain)
             }
 
+            val nonAndroidMain = create("nonAndroidMain") {
+                dependsOn(commonMain.get())
+            }
+            iosMain {
+                dependsOn(nonAndroidMain)
+            }
+            jvmMain {
+                dependsOn(nonAndroidMain)
+            }
+            webMain {
+                dependsOn(nonAndroidMain)
+            }
+
             commonMain.dependencies {
                 val moduleDirectoryPath = this@configureKotlinMultiplatformModule.path.substringBeforeLast(":")
                 if (this@configureKotlinMultiplatformModule.name == "ports") {

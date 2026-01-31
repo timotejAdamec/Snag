@@ -14,13 +14,20 @@ package cz.adamec.timotej.snag.network.fe.di
 
 import cz.adamec.timotej.snag.network.fe.SnagNetworkHttpClient
 import cz.adamec.timotej.snag.network.fe.internal.HttpClientFactory
+import cz.adamec.timotej.snag.network.fe.internal.SnagNetworkHttpClientImpl
+import org.koin.core.module.Module
+import org.koin.dsl.bind
 import org.koin.dsl.module
 
 val networkModule =
     module {
+        includes(platformModule)
         single {
-            SnagNetworkHttpClient(
+            SnagNetworkHttpClientImpl(
                 httpClient = HttpClientFactory.createHttpClient(),
+                localHostUrlFactory = get(),
             )
-        }
+        } bind SnagNetworkHttpClient::class
     }
+
+internal expect val platformModule: Module

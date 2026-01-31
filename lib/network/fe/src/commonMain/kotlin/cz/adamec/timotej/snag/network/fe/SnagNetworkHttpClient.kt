@@ -12,52 +12,24 @@
 
 package cz.adamec.timotej.snag.network.fe
 
-import cz.adamec.timotej.snag.server.api.Host
-import io.ktor.client.HttpClient
 import io.ktor.client.request.HttpRequestBuilder
-import io.ktor.client.request.delete
-import io.ktor.client.request.get
-import io.ktor.client.request.put
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.ContentType
-import io.ktor.http.contentType
 
-class SnagNetworkHttpClient(
-    private val httpClient: HttpClient,
-) {
+interface SnagNetworkHttpClient {
     suspend fun get(
         path: String,
         block: HttpRequestBuilder.() -> Unit = {},
-    ): HttpResponse =
-        httpClient.get(
-            urlString = BASE_URL + path,
-        ) {
-            block()
-        }
+    ): HttpResponse
 
     suspend fun put(
         path: String,
         contentType: ContentType = ContentType.Application.Json,
         block: HttpRequestBuilder.() -> Unit = {},
-    ): HttpResponse =
-        httpClient.put(
-            urlString = BASE_URL + path,
-        ) {
-            contentType(contentType)
-            block()
-        }
+    ): HttpResponse
 
     suspend fun delete(
         path: String,
         block: HttpRequestBuilder.() -> Unit = {},
-    ): HttpResponse =
-        httpClient.delete(
-            urlString = BASE_URL + path,
-        ) {
-            block()
-        }
-
-    private companion object {
-        const val BASE_URL = "http://0.0.0.0:" + Host.Localhost.PORT
-    }
+    ): HttpResponse
 }
