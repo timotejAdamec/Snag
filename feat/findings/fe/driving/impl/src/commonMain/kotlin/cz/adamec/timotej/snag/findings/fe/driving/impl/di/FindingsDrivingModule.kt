@@ -12,6 +12,8 @@
 
 package cz.adamec.timotej.snag.findings.fe.driving.impl.di
 
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import cz.adamec.timotej.snag.feat.findings.fe.driving.api.FindingDetailRoute
 import cz.adamec.timotej.snag.feat.findings.fe.driving.api.FindingDetailRouteFactory
 import cz.adamec.timotej.snag.feat.findings.fe.driving.api.FindingsListRoute
@@ -31,10 +33,17 @@ internal inline fun <reified T : FindingsListRoute> Module.findingsListScreenNav
     navigation<T>(
         metadata = MapListDetailSceneMetadata.listPane(),
     ) { route ->
+        val backStack = get<StructureDetailBackStack>()
+        val selectedFindingId by derivedStateOf {
+            backStack.value
+                .filterIsInstance<FindingDetailRoute>()
+                .lastOrNull()
+                ?.findingId
+        }
         FindingsListScreen(
             structureId = route.structureId,
+            selectedFindingId = selectedFindingId,
             onFindingClick = { findingId ->
-                val backStack = get<StructureDetailBackStack>()
                 val factory = get<FindingDetailRouteFactory>()
                 if (backStack.value.lastOrNull() is FindingDetailRoute) {
                     backStack.removeLastSafely()

@@ -24,6 +24,7 @@ import kotlin.uuid.Uuid
 @Composable
 internal fun FindingsListScreen(
     structureId: Uuid,
+    selectedFindingId: Uuid?,
     onFindingClick: (findingId: Uuid) -> Unit,
     viewModel: FindingsListViewModel = koinViewModel { parametersOf(structureId) },
 ) {
@@ -33,6 +34,7 @@ internal fun FindingsListScreen(
 
     FindingsListContent(
         state = state,
+        selectedFindingId = selectedFindingId,
         onFindingClick = onFindingClick,
     )
 }
