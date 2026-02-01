@@ -14,14 +14,23 @@ package cz.adamec.timotej.snag.structures.fe.driving.impl.internal.structureDeta
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cz.adamec.timotej.snag.findings.fe.app.api.GetFindingsUseCase
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
+import cz.adamec.timotej.snag.lib.design.fe.error.UiError.Unknown
+import cz.adamec.timotej.snag.lib.design.fe.state.DEFAULT_NO_STATE_SUBSCRIBER_TIMEOUT
 import cz.adamec.timotej.snag.structures.fe.app.api.DeleteStructureUseCase
 import cz.adamec.timotej.snag.structures.fe.app.api.GetStructureUseCase
+import kotlinx.collections.immutable.toPersistentList
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.scan
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.core.annotation.InjectedParam
@@ -31,16 +40,36 @@ internal class StructureDetailsViewModel(
     @InjectedParam private val structureId: Uuid,
     private val getStructureUseCase: GetStructureUseCase,
     private val deleteStructureUseCase: DeleteStructureUseCase,
+    private val getFindingsUseCase: GetFindingsUseCase,
 ) : ViewModel() {
     private val _state: MutableStateFlow<StructureDetailsUiState> =
         MutableStateFlow(StructureDetailsUiState())
-    val state: StateFlow<StructureDetailsUiState> = _state
+    val state: StateFlow<StructureDetailsUiState> =
+        _state
+            .scan(
+                initial = StructureDetailsUiState(),
+            ) { prev, new ->
+                val newStructureId = new.structure?.id ?: return@scan new
+                if (prev.structure?.id != newStructureId) {
+                    collectFindings(newStructureId)
+                }
+                new
+            }.stateIn(
+                scope = viewModelScope,
+                started =
+                    SharingStarted.WhileSubscribed(
+                        stopTimeoutMillis = DEFAULT_NO_STATE_SUBSCRIBER_TIMEOUT,
+                    ),
+                initialValue = StructureDetailsUiState(),
+            )
 
     private val errorEventsChannel = Channel<UiError>()
     val errorsFlow = errorEventsChannel.receiveAsFlow()
 
     private val deletedSuccessfullyEventChannel = Channel<Unit>()
     val deletedSuccessfullyEventFlow = deletedSuccessfullyEventChannel.receiveAsFlow()
+
+    private var collectFindingsJob: Job? = null
 
     init {
         collectStructure()
@@ -54,8 +83,9 @@ internal class StructureDetailsViewModel(
                         _state.update {
                             it.copy(status = StructureDetailsUiStatus.ERROR)
                         }
-                        errorEventsChannel.send(UiError.Unknown)
+                        errorEventsChannel.send(Unknown)
                     }
+
                     is OfflineFirstDataResult.Success -> {
                         result.data?.let { structure ->
                             _state.update {
@@ -76,6 +106,32 @@ internal class StructureDetailsViewModel(
             }
         }
 
+    private fun collectFindings(structureId: Uuid) {
+        if (collectFindingsJob?.isActive == true) collectFindingsJob?.cancel()
+        collectFindingsJob =
+            viewModelScope.launch {
+                getFindingsUseCase(structureId)
+                    .collect { result ->
+                        when (result) {
+                            is OfflineFirstDataResult.Success -> {
+                                _state.update {
+                                    it.copy(
+                                        findings = result.data.toPersistentList(),
+                                    )
+                                }
+                            }
+                            is OfflineFirstDataResult.ProgrammerError -> {
+                                errorEventsChannel.send(Unknown)
+                            }
+                        }
+                    }
+            }
+    }
+
+    fun onFindingSelected(findingId: Uuid?) {
+        _state.update { it.copy(selectedFindingId = findingId) }
+    }
+
     fun onDelete() =
         viewModelScope.launch {
             _state.update {
@@ -86,7 +142,7 @@ internal class StructureDetailsViewModel(
                     _state.update {
                         it.copy(isBeingDeleted = false)
                     }
-                    errorEventsChannel.send(UiError.Unknown)
+                    errorEventsChannel.send(Unknown)
                 }
 
                 is OfflineFirstDataResult.Success -> {

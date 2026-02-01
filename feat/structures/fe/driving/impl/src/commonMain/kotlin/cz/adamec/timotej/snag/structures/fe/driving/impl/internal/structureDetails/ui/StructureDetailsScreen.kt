@@ -13,6 +13,7 @@
 package cz.adamec.timotej.snag.structures.fe.driving.impl.internal.structureDetails.ui
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cz.adamec.timotej.snag.lib.design.fe.error.ShowSnackbarOnError
@@ -25,9 +26,17 @@ import kotlin.uuid.Uuid
 @Composable
 internal fun StructureDetailsScreen(
     structureId: Uuid,
+    getSelectedFindingId: () -> Uuid?,
     onBack: () -> Unit,
-    viewModel: StructureDetailsViewModel = koinViewModel { parametersOf(structureId) },
+    viewModel: StructureDetailsViewModel = koinViewModel {
+        parametersOf(structureId)
+    },
 ) {
+    val selectedFindingId = getSelectedFindingId()
+    LaunchedEffect(selectedFindingId) {
+        viewModel.onFindingSelected(selectedFindingId)
+    }
+
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     ShowSnackbarOnError(

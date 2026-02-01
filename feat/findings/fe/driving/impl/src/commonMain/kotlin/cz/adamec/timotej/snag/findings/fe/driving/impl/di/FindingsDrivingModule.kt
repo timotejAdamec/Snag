@@ -1,0 +1,74 @@
+/*
+ * Copyright (c) 2026 Timotej Adamec
+ * SPDX-License-Identifier: MIT
+ *
+ * This file is part of the thesis:
+ * "Multiplatform snagging system with code sharing maximisation"
+ *
+ * Czech Technical University in Prague
+ * Faculty of Information Technology
+ * Department of Software Engineering
+ */
+
+package cz.adamec.timotej.snag.findings.fe.driving.impl.di
+
+import cz.adamec.timotej.snag.feat.findings.fe.driving.api.FindingDetailRoute
+import cz.adamec.timotej.snag.feat.findings.fe.driving.api.FindingDetailRouteFactory
+import cz.adamec.timotej.snag.feat.findings.fe.driving.api.FindingsListRoute
+import cz.adamec.timotej.snag.feat.findings.fe.driving.api.FindingsSceneMetadata
+import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetail.ui.FindingDetailScreen
+import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetail.vm.FindingDetailViewModel
+import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingsList.ui.FindingsListScreen
+import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingsList.vm.FindingsListViewModel
+import cz.adamec.timotej.snag.lib.navigation.fe.SnagBackStack
+import org.koin.core.module.Module
+import org.koin.core.module.dsl.viewModel
+import org.koin.dsl.module
+import org.koin.dsl.navigation3.navigation
+import kotlin.uuid.Uuid
+
+internal inline fun <reified T : FindingsListRoute> Module.findingsListScreenNav() =
+    navigation<T>(
+        metadata = FindingsSceneMetadata.findingsListPane(),
+    ) { route ->
+        FindingsListScreen(
+            structureId = route.structureId,
+            onFindingClick = { findingId ->
+                val backStack = get<SnagBackStack>()
+                val factory = get<FindingDetailRouteFactory>()
+                backStack.value.add(factory.create(findingId))
+            },
+        )
+    }
+
+internal inline fun <reified T : FindingDetailRoute> Module.findingDetailScreenNav() =
+    navigation<T>(
+        metadata = FindingsSceneMetadata.findingDetailPane(),
+    ) { route ->
+        FindingDetailScreen(
+            findingId = route.findingId,
+            onBack = {
+                val backStack = get<SnagBackStack>()
+                backStack.removeLastSafely()
+            },
+        )
+    }
+
+val findingsDrivingImplModule =
+    module {
+        includes(platformModule)
+        viewModel { (structureId: Uuid) ->
+            FindingsListViewModel(
+                structureId = structureId,
+                getFindingsUseCase = get(),
+            )
+        }
+        viewModel { (findingId: Uuid) ->
+            FindingDetailViewModel(
+                findingId = findingId,
+                getFindingUseCase = get(),
+            )
+        }
+    }
+
+internal expect val platformModule: Module

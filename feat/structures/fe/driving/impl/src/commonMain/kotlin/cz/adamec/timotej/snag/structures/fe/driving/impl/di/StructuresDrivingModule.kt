@@ -13,8 +13,11 @@
 package cz.adamec.timotej.snag.structures.fe.driving.impl.di
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation3.scene.DialogSceneStrategy
+import cz.adamec.timotej.snag.feat.findings.fe.driving.api.FindingDetailRoute
+import cz.adamec.timotej.snag.feat.findings.fe.driving.api.FindingsListRouteFactory
 import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureCreationRoute
 import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureDetailRoute
 import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureEditRoute
@@ -23,6 +26,7 @@ import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.structureDetai
 import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.structureDetails.vm.StructureDetailsViewModel
 import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.structureDetailsEdit.ui.StructureDetailsEditScreen
 import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.structureDetailsEdit.vm.StructureDetailsEditViewModel
+import org.koin.compose.koinInject
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.viewModel
 import org.koin.core.scope.Scope
@@ -58,8 +62,19 @@ internal inline fun <reified T : StructureEditRoute> Module.structureEditScreenN
 
 internal inline fun <reified T : StructureDetailRoute> Module.structureDetailScreenNav() =
     navigation<T> { route ->
+        val backStack: SnagBackStack = koinInject()
+        val findingsListRouteFactory = koinInject<FindingsListRouteFactory>()
+        LaunchedEffect(Unit) {
+            backStack.value.add(findingsListRouteFactory.create(route.structureId))
+        }
         StructureDetailsScreen(
             structureId = route.structureId,
+            getSelectedFindingId = {
+                backStack.value
+                    .filterIsInstance<FindingDetailRoute>()
+                    .lastOrNull()
+                    ?.findingId
+            },
             onBack = {
                 val backStack = get<SnagBackStack>()
                 backStack.removeLastSafely()
@@ -94,6 +109,7 @@ val structuresDrivingImplModule =
                 structureId = structureId,
                 getStructureUseCase = get(),
                 deleteStructureUseCase = get(),
+                getFindingsUseCase = get(),
             )
         }
         viewModel { (structureId: Uuid?, projectId: Uuid?) ->

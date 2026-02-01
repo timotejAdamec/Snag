@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.ui.navigation
 
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -33,7 +34,12 @@ internal fun SnagNavigation(
         backStack = backStack,
     )
     val entryProvider = koinEntryProvider<SnagNavRoute>()
-    val sceneStrategy = remember { DialogSceneStrategy<SnagNavRoute>() }
+    val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
+    val sceneStrategy =
+        remember(windowSizeClass) {
+            DialogSceneStrategy<SnagNavRoute>() then
+                StructureFloorPlanSceneStrategy(windowSizeClass)
+        }
     NavDisplay(
         modifier = modifier,
         backStack = backStack.value,

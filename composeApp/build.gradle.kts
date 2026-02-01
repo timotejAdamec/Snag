@@ -59,8 +59,13 @@ kotlin {
             implementation(projects.feat.structures.fe.driven.impl)
             implementation(projects.feat.structures.fe.driving.api)
             implementation(projects.feat.structures.fe.driving.impl)
+            implementation(projects.feat.findings.fe.app.impl)
+            implementation(projects.feat.findings.fe.driving.api)
+            implementation(projects.feat.findings.fe.driving.impl)
+            implementation(projects.feat.findings.fe.driven.impl)
         }
         commonTest.dependencies {
+            implementation(projects.feat.findings.fe.ports)
             implementation(projects.feat.projects.fe.driving.impl)
         }
         jvmMain.dependencies {

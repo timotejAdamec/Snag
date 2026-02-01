@@ -12,6 +12,9 @@
 
 package cz.adamec.timotej.snag.impl.di
 
+import cz.adamec.timotej.snag.findings.be.app.impl.di.findingsAppModule
+import cz.adamec.timotej.snag.findings.be.driven.impl.di.findingsDrivenModule
+import cz.adamec.timotej.snag.findings.be.driving.impl.di.findingsDrivingModule
 import cz.adamec.timotej.snag.projects.be.app.impl.di.projectsAppModule
 import cz.adamec.timotej.snag.projects.be.driven.impl.di.projectsDrivenModule
 import cz.adamec.timotej.snag.projects.be.driving.impl.di.projectsDrivingModule
@@ -29,5 +32,8 @@ internal val appModule =
             structuresDrivingModule,
             structuresDrivenModule,
             structuresAppModule,
+            findingsDrivingModule,
+            findingsDrivenModule,
+            findingsAppModule,
         )
     }

@@ -13,6 +13,7 @@
 package cz.adamec.timotej.snag.feat.shared.database.fe.di
 
 import app.cash.sqldelight.db.SqlDriver
+import cz.adamec.timotej.snag.feat.shared.database.fe.db.FindingEntityQueries
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.ProjectEntityQueries
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.SnagDatabase
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.StructureEntityQueries
@@ -46,6 +47,11 @@ val databaseModule =
             val snagDatabase = get<SnagDatabase>()
             snagDatabase.structureEntityQueries
         } bind StructureEntityQueries::class
+
+        factory {
+            val snagDatabase = get<SnagDatabase>()
+            snagDatabase.findingEntityQueries
+        } bind FindingEntityQueries::class
 
         factory {
             val snagDatabase = get<SnagDatabase>()

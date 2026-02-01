@@ -41,6 +41,9 @@ dependencies {
     implementation(projects.feat.structures.be.driving.impl)
     implementation(projects.feat.structures.be.driven.impl)
     implementation(projects.feat.structures.be.app.impl)
+    implementation(projects.feat.findings.be.driving.impl)
+    implementation(projects.feat.findings.be.driven.impl)
+    implementation(projects.feat.findings.be.app.impl)
 
     implementation(libs.ktor.server.core)
     implementation(libs.ktor.server.netty)

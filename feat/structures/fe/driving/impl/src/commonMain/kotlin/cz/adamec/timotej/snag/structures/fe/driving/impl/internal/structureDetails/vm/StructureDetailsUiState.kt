@@ -12,12 +12,20 @@
 
 package cz.adamec.timotej.snag.structures.fe.driving.impl.internal.structureDetails.vm
 
+import androidx.compose.runtime.Immutable
+import cz.adamec.timotej.snag.feat.findings.business.Finding
 import cz.adamec.timotej.snag.feat.structures.business.Structure
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
+import kotlin.uuid.Uuid
 
+@Immutable
 internal data class StructureDetailsUiState(
     val status: StructureDetailsUiStatus = StructureDetailsUiStatus.LOADING,
     val isBeingDeleted: Boolean = false,
     val structure: Structure? = null,
+    val findings: ImmutableList<Finding> = persistentListOf(),
+    val selectedFindingId: Uuid? = null,
 ) {
     val canInvokeDeletion = status == StructureDetailsUiStatus.LOADED && !isBeingDeleted
 }

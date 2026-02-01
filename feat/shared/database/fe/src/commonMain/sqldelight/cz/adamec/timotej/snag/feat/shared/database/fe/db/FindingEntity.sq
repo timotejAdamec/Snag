@@ -1,0 +1,28 @@
+CREATE TABLE IF NOT EXISTS FindingEntity (
+    id TEXT NOT NULL PRIMARY KEY,
+    structureId TEXT NOT NULL,
+    name TEXT NOT NULL,
+    description TEXT,
+    coordinates TEXT NOT NULL DEFAULT '[]'
+);
+
+save:
+INSERT INTO FindingEntity(id, structureId, name, description, coordinates)
+VALUES ?
+ON CONFLICT(id) DO UPDATE SET
+    structureId = excluded.structureId,
+    name = excluded.name,
+    description = excluded.description,
+    coordinates = excluded.coordinates;
+
+selectByStructureId:
+SELECT * FROM FindingEntity WHERE structureId = :structureId;
+
+selectById:
+SELECT * FROM FindingEntity WHERE id = :id;
+
+deleteById:
+DELETE FROM FindingEntity WHERE id = :id;
+
+deleteAll:
+DELETE FROM FindingEntity;

@@ -13,6 +13,8 @@
 package cz.adamec.timotej.snag.ui
 
 import cz.adamec.timotej.snag.di.appModule
+import cz.adamec.timotej.snag.findings.fe.ports.FindingsApi
+import cz.adamec.timotej.snag.findings.fe.ports.FindingsDb
 import io.ktor.client.HttpClient
 import io.ktor.client.HttpClientConfig
 import io.ktor.client.engine.HttpClientEngine
@@ -30,6 +32,8 @@ internal class AppModuleTest {
                     HttpClient::class,
                     HttpClientEngine::class,
                     HttpClientConfig::class,
+                    FindingsDb::class,
+                    FindingsApi::class,
                 ),
         )
     }
