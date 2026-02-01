@@ -38,3 +38,12 @@ interface StructureDetailRoute : SnagNavRoute {
 interface StructureDetailRouteFactory {
     fun create(structureId: Uuid): StructureDetailRoute
 }
+
+interface StructureFloorPlanRoute : SnagNavRoute {
+    val structureId: Uuid
+}
+
+@JvmInline
+value class StructureDetailBackStack(
+    val value: MutableList<SnagNavRoute>,
+)
