@@ -13,4 +13,5 @@
 
 <resources>
     <string name="no_findings_yet_message">No findings yet.</string>
+    <string name="finding_not_found_message">Finding not found.</string>
 </resources>

@@ -68,9 +68,9 @@ internal inline fun <reified T : StructureFloorPlanRoute> Module.structureFloorP
     navigation<T>(
         metadata = MapListDetailSceneMetadata.mapPane(),
     ) { route ->
-        val backStack = get<StructureDetailBackStack>()
+        val structureDetailBackStack = get<StructureDetailBackStack>()
         val selectedFindingId by derivedStateOf {
-            backStack.value
+            structureDetailBackStack.value
                 .filterIsInstance<FindingDetailRoute>()
                 .lastOrNull()
                 ?.findingId
@@ -79,7 +79,8 @@ internal inline fun <reified T : StructureFloorPlanRoute> Module.structureFloorP
             structureId = route.structureId,
             selectedFindingId = selectedFindingId,
             onBack = {
-                backStack.removeLastSafely()
+                val rootBackStack = get<SnagBackStack>()
+                rootBackStack.removeLastSafely()
             },
         )
     }

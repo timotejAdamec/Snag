@@ -14,18 +14,30 @@ package cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetail.u
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ContainedLoadingIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetail.vm.FindingDetailUiState
 import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetail.vm.FindingDetailUiStatus
+import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
+import snag.feat.findings.fe.driving.impl.generated.resources.Res
+import snag.feat.findings.fe.driving.impl.generated.resources.finding_not_found_message
+import snag.lib.design.fe.generated.resources.close
+import snag.lib.design.fe.generated.resources.ic_close
+import snag.lib.design.fe.generated.resources.Res as DesignRes
 
 @Composable
 internal fun FindingDetailContent(
@@ -49,7 +61,7 @@ internal fun FindingDetailContent(
                 contentAlignment = Alignment.Center,
             ) {
                 Text(
-                    text = "Finding not found.",
+                    text = stringResource(Res.string.finding_not_found_message),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -62,29 +74,45 @@ internal fun FindingDetailContent(
 
         FindingDetailUiStatus.LOADED -> {
             val finding = state.finding ?: return
-            Column(
-                modifier =
-                    modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-            ) {
-                Text(
-                    text = finding.name,
-                    style = MaterialTheme.typography.headlineSmall,
-                )
-                finding.description?.let { description ->
+            Scaffold(
+                modifier = modifier,
+                topBar = {
+                    TopAppBar(
+                        title = {
+                            Text(text = finding.name)
+                        },
+                        navigationIcon = {
+                            IconButton(onClick = onBack) {
+                                Icon(
+                                    painter = painterResource(DesignRes.drawable.ic_close),
+                                    contentDescription = stringResource(DesignRes.string.close),
+                                )
+                            }
+                        },
+                    )
+                },
+            ) { paddingValues ->
+                Column(
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(paddingValues)
+                            .consumeWindowInsets(paddingValues)
+                            .padding(16.dp),
+                ) {
+                    finding.description?.let { description ->
+                        Text(
+                            text = description,
+                            style = MaterialTheme.typography.bodyMedium,
+                        )
+                    }
                     Text(
-                        text = description,
-                        style = MaterialTheme.typography.bodyMedium,
-                        modifier = Modifier.padding(top = 8.dp),
+                        modifier = Modifier.padding(top = 16.dp),
+                        text = "${finding.coordinates.size} coordinate(s)",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
-                Text(
-                    text = "${finding.coordinates.size} coordinate(s)",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(top = 16.dp),
-                )
             }
         }
     }
