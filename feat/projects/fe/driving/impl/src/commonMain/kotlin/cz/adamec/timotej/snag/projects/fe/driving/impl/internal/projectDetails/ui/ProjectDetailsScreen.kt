@@ -28,6 +28,7 @@ internal fun ProjectDetailsScreen(
     onNewStructureClick: () -> Unit,
     onStructureClick: (structureId: Uuid) -> Unit,
     onBack: () -> Unit,
+    onEditClick: () -> Unit,
     viewModel: ProjectDetailsViewModel = koinViewModel { parametersOf(projectId) },
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -47,6 +48,7 @@ internal fun ProjectDetailsScreen(
         onNewStructureClick = onNewStructureClick,
         onStructureClick = onStructureClick,
         onBack = onBack,
+        onEditClick = onEditClick,
         onDelete = viewModel::onDelete,
     )
 }

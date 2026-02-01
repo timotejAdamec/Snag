@@ -65,8 +65,10 @@ import snag.feat.projects.fe.driving.impl.generated.resources.new_project
 import snag.feat.projects.fe.driving.impl.generated.resources.new_structure
 import snag.feat.projects.fe.driving.impl.generated.resources.project_not_found
 import snag.lib.design.fe.generated.resources.delete
+import snag.lib.design.fe.generated.resources.edit
 import snag.lib.design.fe.generated.resources.ic_add
 import snag.lib.design.fe.generated.resources.ic_delete
+import snag.lib.design.fe.generated.resources.ic_edit
 import snag.lib.design.fe.generated.resources.Res as DesignRes
 
 @Composable
@@ -75,6 +77,7 @@ internal fun ProjectDetailsContent(
     onNewStructureClick: () -> Unit,
     onStructureClick: (structureId: Uuid) -> Unit,
     onBack: () -> Unit,
+    onEditClick: () -> Unit,
     onDelete: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -103,6 +106,7 @@ internal fun ProjectDetailsContent(
                     onNewStructureClick = onNewStructureClick,
                     onStructureClick = onStructureClick,
                     onBack = onBack,
+                    onEditClick = onEditClick,
                     onDelete = onDelete,
                 )
 
@@ -117,6 +121,7 @@ private fun LoadedProjectDetailsContent(
     onNewStructureClick: () -> Unit,
     onStructureClick: (structureId: Uuid) -> Unit,
     onBack: () -> Unit,
+    onEditClick: () -> Unit,
     onDelete: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -211,6 +216,14 @@ private fun LoadedProjectDetailsContent(
                 expanded = true,
             ) {
                 IconButton(
+                    onClick = onEditClick,
+                ) {
+                    Icon(
+                        painter = painterResource(DesignRes.drawable.ic_edit),
+                        contentDescription = stringResource(DesignRes.string.edit),
+                    )
+                }
+                IconButton(
                     enabled = state.canInvokeDeletion,
                     onClick = {
                         isShowingDeleteConfirmation = true
@@ -279,6 +292,7 @@ private fun LoadedProjectDetailsContentPreview() {
             onNewStructureClick = {},
             onStructureClick = {},
             onBack = {},
+            onEditClick = {},
             onDelete = {},
         )
     }

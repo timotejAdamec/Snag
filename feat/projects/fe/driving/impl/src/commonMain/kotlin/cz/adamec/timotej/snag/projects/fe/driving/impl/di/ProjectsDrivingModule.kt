@@ -24,6 +24,7 @@ import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectCreationRoute
 import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectDetailRoute
 import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectDetailRouteFactory
 import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectEditRoute
+import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectEditRouteFactory
 import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectsRoute
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.ui.ProjectDetailsScreen
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.vm.ProjectDetailsViewModel
@@ -78,8 +79,9 @@ internal inline fun <reified T : ProjectCreationRoute> Module.projectCreationScr
 internal inline fun <reified T : ProjectEditRoute> Module.projectEditScreenNavigation() =
     navigation<T>(
         metadata = DialogSceneStrategy.dialog(DialogProperties(usePlatformDefaultWidth = false)),
-    ) { _ ->
+    ) { route ->
         ProjectDetailsEditScreenInjection(
+            projectId = route.projectId,
             onSaveProject = { _ ->
                 val backStack = get<SnagBackStack>()
                 backStack.removeLastSafely()
@@ -89,9 +91,11 @@ internal inline fun <reified T : ProjectEditRoute> Module.projectEditScreenNavig
 
 @Composable
 private fun Scope.ProjectDetailsEditScreenInjection(
+    projectId: Uuid? = null,
     onSaveProject: (savedProjectId: Uuid) -> Unit,
 ) {
     ProjectDetailsEditScreen(
+        projectId = projectId,
         onSaveProject = { savedProjectId ->
             onSaveProject(savedProjectId)
         },
@@ -106,6 +110,7 @@ internal inline fun <reified T : ProjectDetailRoute> Module.projectDetailsScreen
     navigation<T> { route ->
         val newStructureRouteFactory = koinInject<StructureCreationRouteFactory>()
         val structureDetailRouteFactory = koinInject<StructureDetailRouteFactory>()
+        val projectEditRouteFactory = koinInject<ProjectEditRouteFactory>()
         ProjectDetailsScreen(
             projectId = route.projectId,
             onNewStructureClick = {
@@ -119,6 +124,10 @@ internal inline fun <reified T : ProjectDetailRoute> Module.projectDetailsScreen
             onBack = {
                 val backStack = get<SnagBackStack>()
                 backStack.removeLastSafely()
+            },
+            onEditClick = {
+                val backStack = get<SnagBackStack>()
+                backStack.value.add(projectEditRouteFactory.create(route.projectId))
             },
         )
     }
