@@ -17,22 +17,23 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.SheetValue
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.key
+import androidx.compose.runtime.movableContentOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.scene.Scene
 import androidx.navigation3.scene.SceneStrategy
 import androidx.navigation3.scene.SceneStrategyScope
-import androidx.window.core.layout.WindowSizeClass
 import androidx.window.core.layout.WindowSizeClass.Companion.WIDTH_DP_EXPANDED_LOWER_BOUND
 import androidx.window.core.layout.WindowSizeClass.Companion.WIDTH_DP_MEDIUM_LOWER_BOUND
 
-class MapListDetailSceneStrategy<T : Any>(
-    private val windowSizeClass: WindowSizeClass,
-) : SceneStrategy<T> {
+class MapListDetailSceneStrategy<T : Any> : SceneStrategy<T> {
     override fun SceneStrategyScope<T>.calculateScene(
         entries: List<NavEntry<T>>,
     ): Scene<T>? {
@@ -57,13 +58,6 @@ class MapListDetailSceneStrategy<T : Any>(
             }
         if (firstFindingsIndex < 1) return null
 
-        val findingsPanel = detailEntry ?: listEntry ?: return null
-
-        val isExpanded =
-            windowSizeClass.isWidthAtLeastBreakpoint(WIDTH_DP_EXPANDED_LOWER_BOUND)
-        val isMedium =
-            windowSizeClass.isWidthAtLeastBreakpoint(WIDTH_DP_MEDIUM_LOWER_BOUND)
-
         val allSceneEntries =
             buildList {
                 add(mapEntry)
@@ -71,103 +65,84 @@ class MapListDetailSceneStrategy<T : Any>(
                 if (detailEntry != null) add(detailEntry)
             }
 
-        return when {
-            isExpanded && listEntry != null && detailEntry != null ->
-                ThreePaneScene(
-                    key = mapEntry.contentKey,
-                    entries = allSceneEntries,
-                    previousEntries = emptyList(),
-                    hostEntry = mapEntry,
-                    listEntry = listEntry,
-                    detailEntry = detailEntry,
-                )
-
-            isMedium ->
-                TwoPaneScene(
-                    key = mapEntry.contentKey,
-                    entries = allSceneEntries,
-                    previousEntries = emptyList(),
-                    hostEntry = mapEntry,
-                    panelEntry = findingsPanel,
-                )
-
-            else ->
-                BottomSheetScene(
-                    key = mapEntry.contentKey,
-                    entries = allSceneEntries,
-                    previousEntries = emptyList(),
-                    hostEntry = mapEntry,
-                    sheetEntry = findingsPanel,
-                )
-        }
+        return AdaptiveMapListDetailScene(
+            key = mapEntry.contentKey,
+            entries = allSceneEntries,
+            previousEntries = emptyList(),
+            hostEntry = mapEntry,
+            listEntry = listEntry,
+            detailEntry = detailEntry,
+        )
     }
 }
 
-private class ThreePaneScene<T : Any>(
-    override val key: Any,
-    override val entries: List<NavEntry<T>>,
-    override val previousEntries: List<NavEntry<T>> = emptyList(),
-    private val listEntry: NavEntry<T>,
-    private val hostEntry: NavEntry<T>,
-    private val detailEntry: NavEntry<T>,
-) : Scene<T> {
-    override val content: @Composable () -> Unit = {
-        Row(modifier = Modifier.fillMaxSize()) {
-            Column(modifier = Modifier.weight(0.5f)) {
-                hostEntry.Content()
-            }
-            Column(modifier = Modifier.weight(0.25f)) {
-                listEntry.Content()
-            }
-            Column(modifier = Modifier.weight(0.25f)) {
-                detailEntry.Content()
-            }
-        }
-    }
-}
-
-private class TwoPaneScene<T : Any>(
+private class AdaptiveMapListDetailScene<T : Any>(
     override val key: Any,
     override val entries: List<NavEntry<T>>,
     override val previousEntries: List<NavEntry<T>>,
     private val hostEntry: NavEntry<T>,
-    private val panelEntry: NavEntry<T>,
+    private val listEntry: NavEntry<T>?,
+    private val detailEntry: NavEntry<T>?,
 ) : Scene<T> {
     override val content: @Composable () -> Unit = {
-        Row(modifier = Modifier.fillMaxSize()) {
-            Column(modifier = Modifier.weight(0.5f)) {
-                hostEntry.Content()
-            }
-            Column(modifier = Modifier.weight(0.5f)) {
-                panelEntry.Content()
-            }
-        }
-    }
-}
+        val hostPane = remember { movableContentOf<NavEntry<T>> { it.Content() } }
 
-private class BottomSheetScene<T : Any>(
-    override val key: Any,
-    override val entries: List<NavEntry<T>>,
-    override val previousEntries: List<NavEntry<T>>,
-    private val hostEntry: NavEntry<T>,
-    private val sheetEntry: NavEntry<T>,
-) : Scene<T> {
-    override val content: @Composable () -> Unit = {
-        val scaffoldState =
-            rememberBottomSheetScaffoldState(
-                bottomSheetState =
-                    rememberStandardBottomSheetState(
-                        initialValue = SheetValue.PartiallyExpanded,
-                    ),
-            )
-        BottomSheetScaffold(
-            scaffoldState = scaffoldState,
-            sheetPeekHeight = 128.dp,
-            sheetContent = {
-                sheetEntry.Content()
-            },
-        ) {
-            hostEntry.Content()
+        val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
+        val isExpanded =
+            windowSizeClass.isWidthAtLeastBreakpoint(WIDTH_DP_EXPANDED_LOWER_BOUND)
+        val isAtLeastMedium =
+            windowSizeClass.isWidthAtLeastBreakpoint(WIDTH_DP_MEDIUM_LOWER_BOUND)
+
+        when {
+            isExpanded && listEntry != null && detailEntry != null -> {
+                Row(modifier = Modifier.fillMaxSize()) {
+                    Column(modifier = Modifier.weight(0.5f)) {
+                        hostPane(hostEntry)
+                    }
+                    Column(modifier = Modifier.weight(0.25f)) {
+                        listEntry.Content()
+                    }
+                    Column(modifier = Modifier.weight(0.25f)) {
+                        detailEntry.Content()
+                    }
+                }
+            }
+
+            isAtLeastMedium -> {
+                Row(modifier = Modifier.fillMaxSize()) {
+                    Column(modifier = Modifier.weight(0.5f)) {
+                        hostPane(hostEntry)
+                    }
+                    Column(modifier = Modifier.weight(0.5f)) {
+                        if (detailEntry != null) {
+                            detailEntry.Content()
+                        } else listEntry?.Content()
+                    }
+                }
+            }
+
+            else -> {
+                key(detailEntry != null) {
+                    val scaffoldState =
+                        rememberBottomSheetScaffoldState(
+                            bottomSheetState =
+                                rememberStandardBottomSheetState(
+                                    initialValue = SheetValue.PartiallyExpanded,
+                                ),
+                        )
+                    BottomSheetScaffold(
+                        scaffoldState = scaffoldState,
+                        sheetPeekHeight = 128.dp,
+                        sheetContent = {
+                            if (detailEntry != null) {
+                                detailEntry.Content()
+                            } else listEntry?.Content()
+                        },
+                    ) {
+                        hostPane(hostEntry)
+                    }
+                }
+            }
         }
     }
 }

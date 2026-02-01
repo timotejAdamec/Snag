@@ -68,11 +68,9 @@ internal fun StructureDetailNestedNav(
         )
     }
 
-    val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
-    val sceneStrategy =
-        remember(windowSizeClass) {
-            MapListDetailSceneStrategy<StructureDetailNavRoute>(windowSizeClass)
-        }
+    val sceneStrategy = remember {
+        MapListDetailSceneStrategy<StructureDetailNavRoute>()
+    }
 
     NavDisplay(
         backStack = backStack.value,
