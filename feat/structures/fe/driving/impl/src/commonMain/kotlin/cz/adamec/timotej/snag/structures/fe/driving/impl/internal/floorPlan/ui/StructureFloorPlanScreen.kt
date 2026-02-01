@@ -10,7 +10,7 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.structures.fe.driving.impl.internal.structureDetails.ui
+package cz.adamec.timotej.snag.structures.fe.driving.impl.internal.floorPlan.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -18,7 +18,7 @@ import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cz.adamec.timotej.snag.lib.design.fe.error.ShowSnackbarOnError
 import cz.adamec.timotej.snag.lib.design.fe.events.ObserveAsEvents
-import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.structureDetails.vm.StructureDetailsViewModel
+import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.floorPlan.vm.StructureFloorPlanViewModel
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 import kotlin.uuid.Uuid
@@ -28,7 +28,7 @@ internal fun StructureFloorPlanScreen(
     structureId: Uuid,
     getSelectedFindingId: () -> Uuid?,
     onBack: () -> Unit,
-    viewModel: StructureDetailsViewModel = koinViewModel {
+    viewModel: StructureFloorPlanViewModel = koinViewModel {
         parametersOf(structureId)
     },
 ) {
@@ -49,7 +49,7 @@ internal fun StructureFloorPlanScreen(
         },
     )
 
-    StructureDetailsContent(
+    StructureFloorPlanContent(
         state = state,
         onBack = onBack,
         onDelete = viewModel::onDelete,

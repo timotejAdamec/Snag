@@ -10,7 +10,7 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.structures.fe.driving.impl.internal.structureDetails.ui.components
+package cz.adamec.timotej.snag.structures.fe.driving.impl.internal.floorPlan.ui.components
 
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text

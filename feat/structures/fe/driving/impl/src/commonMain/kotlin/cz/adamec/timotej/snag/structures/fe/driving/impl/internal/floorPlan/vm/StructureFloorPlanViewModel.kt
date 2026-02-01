@@ -10,7 +10,7 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.structures.fe.driving.impl.internal.structureDetails.vm
+package cz.adamec.timotej.snag.structures.fe.driving.impl.internal.floorPlan.vm
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -23,7 +23,6 @@ import cz.adamec.timotej.snag.structures.fe.app.api.DeleteStructureUseCase
 import cz.adamec.timotej.snag.structures.fe.app.api.GetStructureUseCase
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -36,7 +35,7 @@ import kotlinx.coroutines.launch
 import org.koin.core.annotation.InjectedParam
 import kotlin.uuid.Uuid
 
-internal class StructureDetailsViewModel(
+internal class StructureFloorPlanViewModel(
     @InjectedParam private val structureId: Uuid,
     private val getStructureUseCase: GetStructureUseCase,
     private val deleteStructureUseCase: DeleteStructureUseCase,

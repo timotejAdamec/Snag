@@ -10,7 +10,7 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.structures.fe.driving.impl.internal.structureDetails.vm
+package cz.adamec.timotej.snag.structures.fe.driving.impl.internal.floorPlan.vm
 
 import androidx.compose.runtime.Immutable
 import cz.adamec.timotej.snag.feat.findings.business.Finding

@@ -25,8 +25,8 @@ import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureFloorPlanR
 import cz.adamec.timotej.snag.lib.design.fe.scenes.MapListDetailSceneMetadata
 import cz.adamec.timotej.snag.lib.navigation.fe.SnagBackStack
 import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.structureDetails.ui.StructureDetailNestedNav
-import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.structureDetails.ui.StructureFloorPlanScreen
-import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.structureDetails.vm.StructureDetailsViewModel
+import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.floorPlan.ui.StructureFloorPlanScreen
+import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.floorPlan.vm.StructureFloorPlanViewModel
 import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.structureDetailsEdit.ui.StructureDetailsEditScreen
 import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.structureDetailsEdit.vm.StructureDetailsEditViewModel
 import org.koin.core.module.Module
@@ -116,7 +116,7 @@ val structuresDrivingImplModule =
         includes(platformModule)
         single { StructureDetailBackStack(mutableStateListOf()) }
         viewModel { (structureId: Uuid) ->
-            StructureDetailsViewModel(
+            StructureFloorPlanViewModel(
                 structureId = structureId,
                 getStructureUseCase = get(),
                 deleteStructureUseCase = get(),

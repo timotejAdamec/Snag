@@ -10,7 +10,7 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.structures.fe.driving.impl.internal.structureDetails.ui
+package cz.adamec.timotej.snag.structures.fe.driving.impl.internal.floorPlan.ui
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.consumeWindowInsets
@@ -32,11 +32,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.BackNavigationIcon
-import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.structureDetails.ui.components.FloorPlanPlaceholder
-import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.structureDetails.ui.components.FloorPlanWithPins
-import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.structureDetails.ui.components.StructureDeletionAlertDialog
-import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.structureDetails.vm.StructureDetailsUiState
-import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.structureDetails.vm.StructureDetailsUiStatus
+import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.floorPlan.ui.components.FloorPlanPlaceholder
+import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.floorPlan.ui.components.FloorPlanWithPins
+import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.floorPlan.ui.components.StructureDeletionAlertDialog
+import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.floorPlan.vm.StructureDetailsUiState
+import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.floorPlan.vm.StructureDetailsUiStatus
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import snag.feat.structures.fe.driving.impl.generated.resources.Res
@@ -46,7 +46,7 @@ import snag.lib.design.fe.generated.resources.ic_delete
 import snag.lib.design.fe.generated.resources.Res as DesignRes
 
 @Composable
-internal fun StructureDetailsContent(
+internal fun StructureFloorPlanContent(
     state: StructureDetailsUiState,
     onBack: () -> Unit,
     onDelete: () -> Unit,

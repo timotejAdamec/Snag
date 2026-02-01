@@ -19,6 +19,9 @@ import cz.adamec.timotej.snag.structures.fe.app.impl.internal.DeleteStructureUse
 import cz.adamec.timotej.snag.structures.fe.app.impl.internal.GetStructureUseCaseImpl
 import cz.adamec.timotej.snag.structures.fe.driven.test.FakeStructuresDb
 import cz.adamec.timotej.snag.structures.fe.driven.test.FakeStructuresSync
+import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.floorPlan.vm.StructureDetailsUiState
+import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.floorPlan.vm.StructureDetailsUiStatus
+import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.floorPlan.vm.StructureFloorPlanViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
@@ -147,7 +150,7 @@ class StructureDetailsViewModelTest {
         }
 
     private fun createViewModel() =
-        StructureDetailsViewModel(
+        StructureFloorPlanViewModel(
             structureId = structureId,
             getStructureUseCase = getStructureUseCase,
             deleteStructureUseCase = deleteStructureUseCase,
