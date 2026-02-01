@@ -29,6 +29,7 @@ data class WebFindingsListRoute(
 @Serializable
 @Immutable
 data class WebFindingDetailRoute(
+    override val structureId: Uuid,
     override val findingId: Uuid,
 ) : FindingDetailRoute {
     companion object {
@@ -41,5 +42,9 @@ class WebFindingsListRouteFactory : FindingsListRouteFactory {
 }
 
 class WebFindingDetailRouteFactory : FindingDetailRouteFactory {
-    override fun create(findingId: Uuid): FindingDetailRoute = WebFindingDetailRoute(findingId)
+    override fun create(structureId: Uuid, findingId: Uuid): FindingDetailRoute =
+        WebFindingDetailRoute(
+            structureId = structureId,
+            findingId = findingId,
+        )
 }

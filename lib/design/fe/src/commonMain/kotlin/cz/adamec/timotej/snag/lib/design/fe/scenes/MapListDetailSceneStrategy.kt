@@ -10,7 +10,7 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.ui.navigation
+package cz.adamec.timotej.snag.lib.design.fe.scenes
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -29,32 +29,34 @@ import androidx.navigation3.scene.SceneStrategyScope
 import androidx.window.core.layout.WindowSizeClass
 import androidx.window.core.layout.WindowSizeClass.Companion.WIDTH_DP_EXPANDED_LOWER_BOUND
 import androidx.window.core.layout.WindowSizeClass.Companion.WIDTH_DP_MEDIUM_LOWER_BOUND
-import cz.adamec.timotej.snag.feat.findings.fe.driving.api.FindingsSceneMetadata
-import cz.adamec.timotej.snag.lib.navigation.fe.SnagNavRoute
 
-internal class StructureFloorPlanSceneStrategy(
+class MapListDetailSceneStrategy<T : Any>(
     private val windowSizeClass: WindowSizeClass,
-) : SceneStrategy<SnagNavRoute> {
-    override fun SceneStrategyScope<SnagNavRoute>.calculateScene(entries: List<NavEntry<SnagNavRoute>>): Scene<SnagNavRoute>? {
+) : SceneStrategy<T> {
+    override fun SceneStrategyScope<T>.calculateScene(
+        entries: List<NavEntry<T>>,
+    ): Scene<T>? {
+        val mapEntry = entries.findLast {
+            it.metadata.containsKey(MapListDetailSceneMetadata.MAP_KEY)
+        }
         val listEntry =
             entries.findLast {
-                it.metadata.containsKey(FindingsSceneMetadata.FINDINGS_LIST_KEY)
+                it.metadata.containsKey(MapListDetailSceneMetadata.LIST_KEY)
             }
         val detailEntry =
             entries.findLast {
-                it.metadata.containsKey(FindingsSceneMetadata.FINDING_DETAIL_KEY)
+                it.metadata.containsKey(MapListDetailSceneMetadata.DETAIL_KEY)
             }
 
-        if (listEntry == null && detailEntry == null) return null
+        if (mapEntry == null || (listEntry == null && detailEntry == null)) return null
 
         val firstFindingsIndex =
             entries.indexOfFirst {
-                it.metadata.containsKey(FindingsSceneMetadata.FINDINGS_LIST_KEY) ||
-                    it.metadata.containsKey(FindingsSceneMetadata.FINDING_DETAIL_KEY)
+                it.metadata.containsKey(MapListDetailSceneMetadata.LIST_KEY) ||
+                        it.metadata.containsKey(MapListDetailSceneMetadata.DETAIL_KEY)
             }
         if (firstFindingsIndex < 1) return null
 
-        val hostEntry = entries[firstFindingsIndex - 1]
         val findingsPanel = detailEntry ?: listEntry ?: return null
 
         val isExpanded =
@@ -64,52 +66,51 @@ internal class StructureFloorPlanSceneStrategy(
 
         val allSceneEntries =
             buildList {
-                add(hostEntry)
+                add(mapEntry)
                 if (listEntry != null) add(listEntry)
                 if (detailEntry != null) add(detailEntry)
             }
-        val previousEntries = entries.take(firstFindingsIndex)
 
         return when {
             isExpanded && listEntry != null && detailEntry != null ->
                 ThreePaneScene(
-                    key = hostEntry.contentKey,
+                    key = mapEntry.contentKey,
                     entries = allSceneEntries,
-                    previousEntries = previousEntries,
+                    previousEntries = emptyList(),
+                    hostEntry = mapEntry,
                     listEntry = listEntry,
-                    hostEntry = hostEntry,
                     detailEntry = detailEntry,
                 )
 
             isMedium ->
                 TwoPaneScene(
-                    key = hostEntry.contentKey,
+                    key = mapEntry.contentKey,
                     entries = allSceneEntries,
-                    previousEntries = previousEntries,
-                    hostEntry = hostEntry,
+                    previousEntries = emptyList(),
+                    hostEntry = mapEntry,
                     panelEntry = findingsPanel,
                 )
 
             else ->
                 BottomSheetScene(
-                    key = hostEntry.contentKey,
+                    key = mapEntry.contentKey,
                     entries = allSceneEntries,
-                    previousEntries = previousEntries,
-                    hostEntry = hostEntry,
+                    previousEntries = emptyList(),
+                    hostEntry = mapEntry,
                     sheetEntry = findingsPanel,
                 )
         }
     }
 }
 
-private class ThreePaneScene(
+private class ThreePaneScene<T : Any>(
     override val key: Any,
-    override val entries: List<NavEntry<SnagNavRoute>>,
-    override val previousEntries: List<NavEntry<SnagNavRoute>>,
-    private val listEntry: NavEntry<SnagNavRoute>,
-    private val hostEntry: NavEntry<SnagNavRoute>,
-    private val detailEntry: NavEntry<SnagNavRoute>,
-) : Scene<SnagNavRoute> {
+    override val entries: List<NavEntry<T>>,
+    override val previousEntries: List<NavEntry<T>> = emptyList(),
+    private val listEntry: NavEntry<T>,
+    private val hostEntry: NavEntry<T>,
+    private val detailEntry: NavEntry<T>,
+) : Scene<T> {
     override val content: @Composable () -> Unit = {
         Row(modifier = Modifier.fillMaxSize()) {
             Column(modifier = Modifier.weight(0.5f)) {
@@ -125,13 +126,13 @@ private class ThreePaneScene(
     }
 }
 
-private class TwoPaneScene(
+private class TwoPaneScene<T : Any>(
     override val key: Any,
-    override val entries: List<NavEntry<SnagNavRoute>>,
-    override val previousEntries: List<NavEntry<SnagNavRoute>>,
-    private val hostEntry: NavEntry<SnagNavRoute>,
-    private val panelEntry: NavEntry<SnagNavRoute>,
-) : Scene<SnagNavRoute> {
+    override val entries: List<NavEntry<T>>,
+    override val previousEntries: List<NavEntry<T>>,
+    private val hostEntry: NavEntry<T>,
+    private val panelEntry: NavEntry<T>,
+) : Scene<T> {
     override val content: @Composable () -> Unit = {
         Row(modifier = Modifier.fillMaxSize()) {
             Column(modifier = Modifier.weight(0.5f)) {
@@ -144,13 +145,13 @@ private class TwoPaneScene(
     }
 }
 
-private class BottomSheetScene(
+private class BottomSheetScene<T : Any>(
     override val key: Any,
-    override val entries: List<NavEntry<SnagNavRoute>>,
-    override val previousEntries: List<NavEntry<SnagNavRoute>>,
-    private val hostEntry: NavEntry<SnagNavRoute>,
-    private val sheetEntry: NavEntry<SnagNavRoute>,
-) : Scene<SnagNavRoute> {
+    override val entries: List<NavEntry<T>>,
+    override val previousEntries: List<NavEntry<T>>,
+    private val hostEntry: NavEntry<T>,
+    private val sheetEntry: NavEntry<T>,
+) : Scene<T> {
     override val content: @Composable () -> Unit = {
         val scaffoldState =
             rememberBottomSheetScaffoldState(
@@ -169,4 +170,16 @@ private class BottomSheetScene(
             hostEntry.Content()
         }
     }
+}
+
+object MapListDetailSceneMetadata {
+    const val MAP_KEY = "MapListDetail-Map"
+    const val LIST_KEY = "MapListDetail-List"
+    const val DETAIL_KEY = "MapListDetail-Detail"
+
+    fun mapPane(): Map<String, Any> = mapOf(MAP_KEY to true)
+
+    fun listPane(): Map<String, Any> = mapOf(LIST_KEY to true)
+
+    fun detailPane(): Map<String, Any> = mapOf(DETAIL_KEY to true)
 }

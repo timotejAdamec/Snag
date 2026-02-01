@@ -126,7 +126,8 @@ private fun LoadedStructureDetailsContent(
                 )
             } else {
                 FloorPlanPlaceholder(
-                    modifier = Modifier.align(Alignment.TopCenter),
+                    modifier = Modifier
+                        .fillMaxSize(),
                 )
             }
 

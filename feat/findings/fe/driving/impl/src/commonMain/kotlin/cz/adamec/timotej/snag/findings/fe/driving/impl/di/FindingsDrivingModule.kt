@@ -15,12 +15,12 @@ package cz.adamec.timotej.snag.findings.fe.driving.impl.di
 import cz.adamec.timotej.snag.feat.findings.fe.driving.api.FindingDetailRoute
 import cz.adamec.timotej.snag.feat.findings.fe.driving.api.FindingDetailRouteFactory
 import cz.adamec.timotej.snag.feat.findings.fe.driving.api.FindingsListRoute
-import cz.adamec.timotej.snag.feat.findings.fe.driving.api.FindingsSceneMetadata
+import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureDetailBackStack
 import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetail.ui.FindingDetailScreen
 import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetail.vm.FindingDetailViewModel
 import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingsList.ui.FindingsListScreen
 import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingsList.vm.FindingsListViewModel
-import cz.adamec.timotej.snag.lib.navigation.fe.SnagBackStack
+import cz.adamec.timotej.snag.lib.design.fe.scenes.MapListDetailSceneMetadata
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
@@ -29,26 +29,34 @@ import kotlin.uuid.Uuid
 
 internal inline fun <reified T : FindingsListRoute> Module.findingsListScreenNav() =
     navigation<T>(
-        metadata = FindingsSceneMetadata.findingsListPane(),
+        metadata = MapListDetailSceneMetadata.listPane(),
     ) { route ->
         FindingsListScreen(
             structureId = route.structureId,
             onFindingClick = { findingId ->
-                val backStack = get<SnagBackStack>()
+                val backStack = get<StructureDetailBackStack>()
                 val factory = get<FindingDetailRouteFactory>()
-                backStack.value.add(factory.create(findingId))
+                if (backStack.value.lastOrNull() is FindingDetailRoute) {
+                    backStack.removeLastSafely()
+                }
+                backStack.value.add(
+                    factory.create(
+                        structureId = route.structureId,
+                        findingId = findingId,
+                    )
+                )
             },
         )
     }
 
 internal inline fun <reified T : FindingDetailRoute> Module.findingDetailScreenNav() =
     navigation<T>(
-        metadata = FindingsSceneMetadata.findingDetailPane(),
+        metadata = MapListDetailSceneMetadata.detailPane(),
     ) { route ->
         FindingDetailScreen(
             findingId = route.findingId,
             onBack = {
-                val backStack = get<SnagBackStack>()
+                val backStack = get<StructureDetailBackStack>()
                 backStack.removeLastSafely()
             },
         )

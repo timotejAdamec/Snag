@@ -15,15 +15,18 @@ package cz.adamec.timotej.snag.feat.structures.fe.driving.api.di
 import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureCreationRouteFactory
 import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureDetailRouteFactory
 import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureEditRouteFactory
+import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureFloorPlanRouteFactory
 import cz.adamec.timotej.snag.feat.structures.fe.driving.api.WebStructureCreationRouteFactory
 import cz.adamec.timotej.snag.feat.structures.fe.driving.api.WebStructureDetailRouteFactory
 import cz.adamec.timotej.snag.feat.structures.fe.driving.api.WebStructureEditRouteFactory
+import cz.adamec.timotej.snag.feat.structures.fe.driving.api.WebStructureFloorPlanRouteFactory
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
 internal actual val platformModule =
     module {
         factory { WebStructureCreationRouteFactory() } bind StructureCreationRouteFactory::class
-        factory { WebStructureDetailRouteFactory() } bind StructureDetailRouteFactory::class
         factory { WebStructureEditRouteFactory() } bind StructureEditRouteFactory::class
+        factory { WebStructureFloorPlanRouteFactory() } bind StructureFloorPlanRouteFactory::class
+        factory { WebStructureDetailRouteFactory() } bind StructureDetailRouteFactory::class
     }

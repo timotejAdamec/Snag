@@ -13,6 +13,7 @@
 package cz.adamec.timotej.snag.feat.structures.fe.driving.api
 
 import androidx.compose.runtime.Immutable
+import cz.adamec.timotej.snag.lib.navigation.fe.SnagNavRoute
 import kotlinx.serialization.Serializable
 import kotlin.uuid.Uuid
 
@@ -28,6 +29,12 @@ data class NonWebStructureEditRoute(
     override val structureId: Uuid,
 ) : StructureEditRoute
 
+@Serializable
+@Immutable
+data class NonWebStructureFloorPlanRoute(
+    override val structureId: Uuid,
+) : StructureFloorPlanRoute
+
 class NonWebStructureCreationRouteFactory : StructureCreationRouteFactory {
     override fun create(projectId: Uuid): StructureCreationRoute = NonWebStructureCreationRoute(projectId)
 }
@@ -36,12 +43,16 @@ class NonWebStructureEditRouteFactory : StructureEditRouteFactory {
     override fun create(structureId: Uuid): StructureEditRoute = NonWebStructureEditRoute(structureId)
 }
 
+class NonWebStructureFloorPlanRouteFactory : StructureFloorPlanRouteFactory {
+    override fun create(structureId: Uuid): StructureFloorPlanRoute = NonWebStructureFloorPlanRoute(structureId)
+}
+
 @Serializable
 @Immutable
-data class NonWebStructureDetailRoute(
+data class NonWebStructureDetailNavRoute(
     override val structureId: Uuid,
-) : StructureDetailRoute
+) : StructureDetailNavRoute
 
 class NonWebStructureDetailRouteFactory : StructureDetailRouteFactory {
-    override fun create(structureId: Uuid): StructureDetailRoute = NonWebStructureDetailRoute(structureId)
+    override fun create(structureId: Uuid): SnagNavRoute = NonWebStructureDetailNavRoute(structureId)
 }
