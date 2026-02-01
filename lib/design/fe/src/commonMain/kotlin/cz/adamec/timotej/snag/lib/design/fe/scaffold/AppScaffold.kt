@@ -12,26 +12,12 @@
 
 package cz.adamec.timotej.snag.lib.design.fe.scaffold
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.Text
-import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteItem
-import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import org.jetbrains.compose.resources.painterResource
-import snag.lib.design.fe.generated.resources.Res
-import snag.lib.design.fe.generated.resources.ic_add
-import snag.lib.design.fe.generated.resources.ic_home_filled
 
 @Composable
 fun AppScaffold(
@@ -41,33 +27,11 @@ fun AppScaffold(
     val appScaffoldState = remember { AppScaffoldState() }
 
     CompositionLocalProvider(LocalAppScaffoldState provides appScaffoldState) {
-        NavigationSuiteScaffold(
+        Scaffold(
             modifier = modifier,
-            navigationItems = {
-                NavigationSuiteItem(
-                    selected = true,
-                    onClick = {},
-                    icon = {
-                        Icon(
-                            painter = painterResource(Res.drawable.ic_home_filled),
-                            contentDescription = "Home",
-                        )
-                    },
-                    label = {
-                        Text(
-                            text = "Home",
-                            style = MaterialTheme.typography.labelMedium,
-                        )
-                    },
-                )
-            },
-            navigationItemVerticalArrangement = Arrangement.Center,
+            snackbarHost = { SnackbarHost(appScaffoldState.snackbarHostState) },
         ) {
-            Scaffold(
-                snackbarHost = { SnackbarHost(appScaffoldState.snackbarHostState) },
-            ) {
-                content()
-            }
+            content()
         }
     }
 }
