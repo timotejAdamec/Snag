@@ -26,13 +26,12 @@ import kotlin.uuid.Uuid
 @Composable
 internal fun StructureFloorPlanScreen(
     structureId: Uuid,
-    getSelectedFindingId: () -> Uuid?,
+    selectedFindingId: Uuid?,
     onBack: () -> Unit,
     viewModel: StructureFloorPlanViewModel = koinViewModel {
         parametersOf(structureId)
     },
 ) {
-    val selectedFindingId = getSelectedFindingId()
     LaunchedEffect(selectedFindingId) {
         viewModel.onFindingSelected(selectedFindingId)
     }

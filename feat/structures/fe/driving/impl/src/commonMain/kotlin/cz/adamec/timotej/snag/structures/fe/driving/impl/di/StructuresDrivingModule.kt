@@ -13,6 +13,8 @@
 package cz.adamec.timotej.snag.structures.fe.driving.impl.di
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation3.scene.DialogSceneStrategy
@@ -67,14 +69,15 @@ internal inline fun <reified T : StructureFloorPlanRoute> Module.structureFloorP
         metadata = MapListDetailSceneMetadata.mapPane(),
     ) { route ->
         val backStack = get<StructureDetailBackStack>()
+        val selectedFindingId by derivedStateOf {
+            backStack.value
+                .filterIsInstance<FindingDetailRoute>()
+                .lastOrNull()
+                ?.findingId
+        }
         StructureFloorPlanScreen(
             structureId = route.structureId,
-            getSelectedFindingId = {
-                backStack.value
-                    .filterIsInstance<FindingDetailRoute>()
-                    .lastOrNull()
-                    ?.findingId
-            },
+            selectedFindingId = selectedFindingId,
             onBack = {
                 backStack.removeLastSafely()
             },
