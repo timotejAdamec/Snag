@@ -36,7 +36,7 @@ class MapListDetailSceneStrategy<T : Any>(
     override fun SceneStrategyScope<T>.calculateScene(
         entries: List<NavEntry<T>>,
     ): Scene<T>? {
-        val floorPlanEntry = entries.findLast {
+        val mapEntry = entries.findLast {
             it.metadata.containsKey(MapListDetailSceneMetadata.MAP_KEY)
         }
         val listEntry =
@@ -48,7 +48,7 @@ class MapListDetailSceneStrategy<T : Any>(
                 it.metadata.containsKey(MapListDetailSceneMetadata.DETAIL_KEY)
             }
 
-        if (floorPlanEntry == null || (listEntry == null && detailEntry == null)) return null
+        if (mapEntry == null || (listEntry == null && detailEntry == null)) return null
 
         val firstFindingsIndex =
             entries.indexOfFirst {
@@ -66,40 +66,37 @@ class MapListDetailSceneStrategy<T : Any>(
 
         val allSceneEntries =
             buildList {
-                add(floorPlanEntry)
+                add(mapEntry)
                 if (listEntry != null) add(listEntry)
                 if (detailEntry != null) add(detailEntry)
             }
 
-        // TODO should be none?
-        val previousEntries = entries.take(firstFindingsIndex)
-
         return when {
             isExpanded && listEntry != null && detailEntry != null ->
                 ThreePaneScene(
-                    key = floorPlanEntry.contentKey,
+                    key = mapEntry.contentKey,
                     entries = allSceneEntries,
-                    previousEntries = previousEntries,
-                    hostEntry = floorPlanEntry,
+                    previousEntries = emptyList(),
+                    hostEntry = mapEntry,
                     listEntry = listEntry,
                     detailEntry = detailEntry,
                 )
 
             isMedium ->
                 TwoPaneScene(
-                    key = floorPlanEntry.contentKey,
+                    key = mapEntry.contentKey,
                     entries = allSceneEntries,
-                    previousEntries = previousEntries,
-                    hostEntry = floorPlanEntry,
+                    previousEntries = emptyList(),
+                    hostEntry = mapEntry,
                     panelEntry = findingsPanel,
                 )
 
             else ->
                 BottomSheetScene(
-                    key = floorPlanEntry.contentKey,
+                    key = mapEntry.contentKey,
                     entries = allSceneEntries,
-                    previousEntries = previousEntries,
-                    hostEntry = floorPlanEntry,
+                    previousEntries = emptyList(),
+                    hostEntry = mapEntry,
                     sheetEntry = findingsPanel,
                 )
         }
@@ -109,7 +106,7 @@ class MapListDetailSceneStrategy<T : Any>(
 private class ThreePaneScene<T : Any>(
     override val key: Any,
     override val entries: List<NavEntry<T>>,
-    override val previousEntries: List<NavEntry<T>>,
+    override val previousEntries: List<NavEntry<T>> = emptyList(),
     private val listEntry: NavEntry<T>,
     private val hostEntry: NavEntry<T>,
     private val detailEntry: NavEntry<T>,
