@@ -17,11 +17,16 @@ import cz.adamec.timotej.snag.feat.findings.business.Finding
 internal data class FindingDetailUiState(
     val status: FindingDetailUiStatus = FindingDetailUiStatus.LOADING,
     val finding: Finding? = null,
-)
+    val isBeingDeleted: Boolean = false,
+) {
+    val canInvokeDeletion: Boolean
+        get() = status == FindingDetailUiStatus.LOADED && !isBeingDeleted
+}
 
 internal enum class FindingDetailUiStatus {
     ERROR,
     NOT_FOUND,
     LOADING,
     LOADED,
+    DELETED,
 }

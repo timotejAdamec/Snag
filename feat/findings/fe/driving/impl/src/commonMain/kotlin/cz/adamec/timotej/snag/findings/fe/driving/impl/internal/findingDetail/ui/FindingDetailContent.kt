@@ -26,9 +26,14 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetail.ui.components.FindingDeletionAlertDialog
 import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetail.vm.FindingDetailUiState
 import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetail.vm.FindingDetailUiStatus
 import org.jetbrains.compose.resources.painterResource
@@ -36,13 +41,16 @@ import org.jetbrains.compose.resources.stringResource
 import snag.feat.findings.fe.driving.impl.generated.resources.Res
 import snag.feat.findings.fe.driving.impl.generated.resources.finding_not_found_message
 import snag.lib.design.fe.generated.resources.close
+import snag.lib.design.fe.generated.resources.delete
 import snag.lib.design.fe.generated.resources.ic_close
+import snag.lib.design.fe.generated.resources.ic_delete
 import snag.lib.design.fe.generated.resources.Res as DesignRes
 
 @Composable
 internal fun FindingDetailContent(
     state: FindingDetailUiState,
     onBack: () -> Unit,
+    onDelete: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     when (state.status) {
@@ -72,8 +80,20 @@ internal fun FindingDetailContent(
             onBack()
         }
 
-        FindingDetailUiStatus.LOADED -> {
+        FindingDetailUiStatus.LOADED,
+        FindingDetailUiStatus.DELETED,
+        -> {
             val finding = state.finding ?: return
+            var isShowingDeleteConfirmation by remember { mutableStateOf(false) }
+            if (isShowingDeleteConfirmation) {
+                FindingDeletionAlertDialog(
+                    areButtonsEnabled = state.canInvokeDeletion,
+                    onDelete = onDelete,
+                    onDismiss = {
+                        isShowingDeleteConfirmation = false
+                    },
+                )
+            }
             Scaffold(
                 modifier = modifier,
                 topBar = {
@@ -86,6 +106,19 @@ internal fun FindingDetailContent(
                                 Icon(
                                     painter = painterResource(DesignRes.drawable.ic_close),
                                     contentDescription = stringResource(DesignRes.string.close),
+                                )
+                            }
+                        },
+                        actions = {
+                            IconButton(
+                                enabled = state.canInvokeDeletion,
+                                onClick = {
+                                    isShowingDeleteConfirmation = true
+                                },
+                            ) {
+                                Icon(
+                                    painter = painterResource(DesignRes.drawable.ic_delete),
+                                    contentDescription = stringResource(DesignRes.string.delete),
                                 )
                             }
                         },

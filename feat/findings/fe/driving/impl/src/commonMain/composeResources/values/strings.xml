@@ -14,4 +14,6 @@
 <resources>
     <string name="no_findings_yet_message">No findings yet.</string>
     <string name="finding_not_found_message">Finding not found.</string>
+    <string name="delete_finding_confirmation_title">Delete finding?</string>
+    <string name="delete_finding_confirmation_text">This finding will be permanently deleted. This action cannot be undone.</string>
 </resources>

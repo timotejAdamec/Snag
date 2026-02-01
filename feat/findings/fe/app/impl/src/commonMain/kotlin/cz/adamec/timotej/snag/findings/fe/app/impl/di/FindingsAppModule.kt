@@ -12,8 +12,10 @@
 
 package cz.adamec.timotej.snag.findings.fe.app.impl.di
 
+import cz.adamec.timotej.snag.findings.fe.app.api.DeleteFindingUseCase
 import cz.adamec.timotej.snag.findings.fe.app.api.GetFindingUseCase
 import cz.adamec.timotej.snag.findings.fe.app.api.GetFindingsUseCase
+import cz.adamec.timotej.snag.findings.fe.app.impl.internal.DeleteFindingUseCaseImpl
 import cz.adamec.timotej.snag.findings.fe.app.impl.internal.GetFindingUseCaseImpl
 import cz.adamec.timotej.snag.findings.fe.app.impl.internal.GetFindingsUseCaseImpl
 import org.koin.core.module.dsl.factoryOf
@@ -22,6 +24,7 @@ import org.koin.dsl.module
 
 val findingsAppModule =
     module {
+        factoryOf(::DeleteFindingUseCaseImpl) bind DeleteFindingUseCase::class
         factoryOf(::GetFindingUseCaseImpl) bind GetFindingUseCase::class
         factoryOf(::GetFindingsUseCaseImpl) bind GetFindingsUseCase::class
     }

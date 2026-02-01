@@ -84,6 +84,7 @@ val findingsDrivingImplModule =
             FindingDetailViewModel(
                 findingId = findingId,
                 getFindingUseCase = get(),
+                deleteFindingUseCase = get(),
             )
         }
     }
