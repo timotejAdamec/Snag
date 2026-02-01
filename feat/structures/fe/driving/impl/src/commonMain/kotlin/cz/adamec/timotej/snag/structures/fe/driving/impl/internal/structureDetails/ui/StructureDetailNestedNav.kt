@@ -14,43 +14,50 @@ package cz.adamec.timotej.snag.structures.fe.driving.impl.internal.structureDeta
 
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
-import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
-import cz.adamec.timotej.snag.feat.findings.fe.driving.api.FindingDetailRoute
 import cz.adamec.timotej.snag.feat.findings.fe.driving.api.FindingsListRouteFactory
 import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureDetailBackStack
-import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureFloorPlanRoute
-import cz.adamec.timotej.snag.lib.navigation.fe.SnagNavRoute
-import kotlinx.serialization.Serializable
+import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureDetailNavRoute
+import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureFloorPlanRouteFactory
+import cz.adamec.timotej.snag.lib.design.fe.scenes.MapListDetailSceneStrategy
 import org.koin.compose.koinInject
 import org.koin.compose.navigation3.koinEntryProvider
 import kotlin.uuid.Uuid
 
-@Serializable
-@Immutable
-internal data class InternalStructureFloorPlanRoute(
-    override val structureId: Uuid,
-) : StructureFloorPlanRoute
-
 @Composable
 internal fun StructureDetailNestedNav(
     structureId: Uuid,
-    onExitFlow: () -> Unit,
+    onExit: () -> Unit,
 ) {
-    val innerBackStack = koinInject<StructureDetailBackStack>()
+    val injectedInnerBackStack = koinInject<StructureDetailBackStack>()
+    val backStack = remember { mutableStateOf(injectedInnerBackStack.value) }
+    val structureFloorPlanRouteFactory = koinInject<StructureFloorPlanRouteFactory>()
     val findingsListRouteFactory = koinInject<FindingsListRouteFactory>()
-    val koinProvider = koinEntryProvider<SnagNavRoute>()
+    val koinEntryProvider = koinEntryProvider<StructureDetailNavRoute>()
+
+    LaunchedEffect(backStack.value) {
+        if (backStack.value.isEmpty() || backStack.value.size == 1) onExit()
+    }
 
     LaunchedEffect(structureId) {
-        innerBackStack.value.clear()
-        innerBackStack.value.addAll(
+        backStack.value.clear()
+        backStack.value.addAll(
             listOf(
-                InternalStructureFloorPlanRoute(structureId),
+                structureFloorPlanRouteFactory.create(structureId),
+                findingsListRouteFactory.create(structureId),
+            ),
+        )
+    }
+
+    if (backStack.value.isEmpty()) {
+        backStack.value.addAll(
+            listOf(
+                structureFloorPlanRouteFactory.create(structureId),
                 findingsListRouteFactory.create(structureId),
             ),
         )
@@ -59,30 +66,12 @@ internal fun StructureDetailNestedNav(
     val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
     val sceneStrategy =
         remember(windowSizeClass) {
-            StructureFloorPlanSceneStrategy(windowSizeClass)
+            MapListDetailSceneStrategy<StructureDetailNavRoute>(windowSizeClass)
         }
 
     NavDisplay(
-        backStack = innerBackStack.value,
-        entryProvider = { route ->
-            when (route) {
-                is StructureFloorPlanRoute ->
-                    NavEntry(route) {
-                        StructureDetailsScreen(
-                            structureId = route.structureId,
-                            getSelectedFindingId = {
-                                innerBackStack.value
-                                    .filterIsInstance<FindingDetailRoute>()
-                                    .lastOrNull()
-                                    ?.findingId
-                            },
-                            onBack = onExitFlow,
-                        )
-                    }
-
-                else -> koinProvider(route)
-            }
-        },
+        backStack = backStack.value,
+        entryProvider = koinEntryProvider,
         sceneStrategy = sceneStrategy,
         entryDecorators =
             listOf(

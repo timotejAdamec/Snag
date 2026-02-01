@@ -16,12 +16,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation3.scene.DialogSceneStrategy
+import cz.adamec.timotej.snag.feat.findings.fe.driving.api.FindingDetailRoute
 import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureCreationRoute
 import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureDetailBackStack
-import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureDetailRoute
+import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureDetailNavRoute
 import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureEditRoute
+import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureFloorPlanRoute
+import cz.adamec.timotej.snag.lib.design.fe.scenes.MapListDetailSceneMetadata
 import cz.adamec.timotej.snag.lib.navigation.fe.SnagBackStack
 import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.structureDetails.ui.StructureDetailNestedNav
+import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.structureDetails.ui.StructureFloorPlanScreen
 import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.structureDetails.vm.StructureDetailsViewModel
 import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.structureDetailsEdit.ui.StructureDetailsEditScreen
 import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.structureDetailsEdit.vm.StructureDetailsEditViewModel
@@ -58,11 +62,30 @@ internal inline fun <reified T : StructureEditRoute> Module.structureEditScreenN
         )
     }
 
-internal inline fun <reified T : StructureDetailRoute> Module.structureDetailScreenNav() =
+internal inline fun <reified T : StructureFloorPlanRoute> Module.structureFloorPlanScreenNavigation() =
+    navigation<T>(
+        metadata = MapListDetailSceneMetadata.mapPane(),
+    ) { route ->
+        val backStack = get<StructureDetailBackStack>()
+        StructureFloorPlanScreen(
+            structureId = route.structureId,
+            getSelectedFindingId = {
+                backStack.value
+                    .filterIsInstance<FindingDetailRoute>()
+                    .lastOrNull()
+                    ?.findingId
+            },
+            onBack = {
+                backStack.removeLastSafely()
+            },
+        )
+    }
+
+internal inline fun <reified T : StructureDetailNavRoute> Module.structureDetailScreenNav() =
     navigation<T> { route ->
         StructureDetailNestedNav(
             structureId = route.structureId,
-            onExitFlow = {
+            onExit = {
                 val backStack = get<SnagBackStack>()
                 backStack.removeLastSafely()
             },

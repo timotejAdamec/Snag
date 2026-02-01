@@ -12,14 +12,14 @@
 
 package cz.adamec.timotej.snag.feat.findings.fe.driving.api
 
-import cz.adamec.timotej.snag.lib.navigation.fe.SnagNavRoute
+import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureDetailNavRoute
 import kotlin.uuid.Uuid
 
-interface FindingsListRoute : SnagNavRoute {
-    val structureId: Uuid
+interface FindingsListRoute : StructureDetailNavRoute {
+    override val structureId: Uuid
 }
 
-interface FindingDetailRoute : SnagNavRoute {
+interface FindingDetailRoute : StructureDetailNavRoute {
     val findingId: Uuid
 }
 
@@ -28,14 +28,8 @@ interface FindingsListRouteFactory {
 }
 
 interface FindingDetailRouteFactory {
-    fun create(findingId: Uuid): FindingDetailRoute
-}
-
-object FindingsSceneMetadata {
-    const val FINDINGS_LIST_KEY = "FloorPlanScene-FindingsList"
-    const val FINDING_DETAIL_KEY = "FloorPlanScene-FindingDetail"
-
-    fun findingsListPane(): Map<String, Any> = mapOf(FINDINGS_LIST_KEY to true)
-
-    fun findingDetailPane(): Map<String, Any> = mapOf(FINDING_DETAIL_KEY to true)
+    fun create(
+        structureId: Uuid,
+        findingId: Uuid,
+    ): FindingDetailRoute
 }

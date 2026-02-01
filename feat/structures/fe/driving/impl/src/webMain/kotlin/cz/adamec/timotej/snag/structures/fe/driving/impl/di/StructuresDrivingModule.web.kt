@@ -13,13 +13,15 @@
 package cz.adamec.timotej.snag.structures.fe.driving.impl.di
 
 import cz.adamec.timotej.snag.feat.structures.fe.driving.api.WebStructureCreationRoute
-import cz.adamec.timotej.snag.feat.structures.fe.driving.api.WebStructureDetailRoute
+import cz.adamec.timotej.snag.feat.structures.fe.driving.api.WebStructureDetailNavRoute
 import cz.adamec.timotej.snag.feat.structures.fe.driving.api.WebStructureEditRoute
+import cz.adamec.timotej.snag.feat.structures.fe.driving.api.WebStructureFloorPlanRoute
 import org.koin.dsl.module
 
 internal actual val platformModule =
     module {
         structureCreateScreenNav<WebStructureCreationRoute>()
-        structureDetailScreenNav<WebStructureDetailRoute>()
+        structureDetailScreenNav<WebStructureDetailNavRoute>()
         structureEditScreenNavigation<WebStructureEditRoute>()
+        structureFloorPlanScreenNavigation<WebStructureFloorPlanRoute>()
     }

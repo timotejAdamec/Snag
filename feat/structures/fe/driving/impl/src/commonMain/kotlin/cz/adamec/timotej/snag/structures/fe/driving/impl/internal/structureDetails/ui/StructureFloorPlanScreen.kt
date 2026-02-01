@@ -24,7 +24,7 @@ import org.koin.core.parameter.parametersOf
 import kotlin.uuid.Uuid
 
 @Composable
-internal fun StructureDetailsScreen(
+internal fun StructureFloorPlanScreen(
     structureId: Uuid,
     getSelectedFindingId: () -> Uuid?,
     onBack: () -> Unit,
