@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.lib.sync.fe.driven.impl
 
+import app.cash.sqldelight.async.coroutines.awaitAsList
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.SyncOperationEntityQueries
 import cz.adamec.timotej.snag.lib.core.common.UuidProvider
 import cz.adamec.timotej.snag.lib.sync.business.SyncOperationType
@@ -46,7 +47,7 @@ internal class RealSyncQueue(
 
     override suspend fun getAllPending(): List<SyncOperation> =
         withContext(ioDispatcher) {
-            syncOperationEntityQueries.selectAllPending().executeAsList().map { entity ->
+            syncOperationEntityQueries.selectAllPending().awaitAsList().map { entity ->
                 SyncOperation(
                     id = Uuid.parse(entity.id),
                     entityType = entity.entityType,
