@@ -15,9 +15,12 @@ package cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetailsE
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cz.adamec.timotej.snag.findings.fe.app.api.GetFindingUseCase
-import cz.adamec.timotej.snag.findings.fe.app.api.SaveFindingUseCase
-import cz.adamec.timotej.snag.findings.fe.app.api.model.SaveFindingRequest
+import cz.adamec.timotej.snag.findings.fe.app.api.SaveFindingDetailsUseCase
+import cz.adamec.timotej.snag.findings.fe.app.api.SaveNewFindingUseCase
+import cz.adamec.timotej.snag.findings.fe.app.api.model.SaveFindingDetailsRequest
+import cz.adamec.timotej.snag.findings.fe.app.api.model.SaveNewFindingRequest
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
+import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstUpdateDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError.CustomUserMessage
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError.Unknown
@@ -35,7 +38,8 @@ internal class FindingDetailsEditViewModel(
     @InjectedParam private val findingId: Uuid?,
     @InjectedParam private val structureId: Uuid?,
     private val getFindingUseCase: GetFindingUseCase,
-    private val saveFindingUseCase: SaveFindingUseCase,
+    private val saveNewFindingUseCase: SaveNewFindingUseCase,
+    private val saveFindingDetailsUseCase: SaveFindingDetailsUseCase,
 ) : ViewModel() {
     private val _state: MutableStateFlow<FindingDetailsEditUiState> =
         MutableStateFlow(FindingDetailsEditUiState())
@@ -46,8 +50,6 @@ internal class FindingDetailsEditViewModel(
 
     private val saveEventChannel = Channel<Uuid>()
     val saveEventFlow = saveEventChannel.receiveAsFlow()
-
-    private var resolvedStructureId: Uuid? = structureId
 
     init {
         require(findingId != null || structureId != null) {
@@ -65,7 +67,6 @@ internal class FindingDetailsEditViewModel(
                     }
                     is OfflineFirstDataResult.Success ->
                         result.data?.let { data ->
-                            resolvedStructureId = data.structureId
                             _state.update {
                                 it.copy(
                                     findingName = data.name,
@@ -93,23 +94,53 @@ internal class FindingDetailsEditViewModel(
                 return@launch
             }
 
-            val result =
-                saveFindingUseCase(
-                    request =
-                        SaveFindingRequest(
-                            id = findingId,
-                            structureId = resolvedStructureId ?: structureId!!,
-                            name = state.value.findingName,
-                            description = state.value.findingDescription.ifBlank { null },
-                        ),
-                )
-            when (result) {
-                is OfflineFirstDataResult.ProgrammerError -> {
-                    errorEventsChannel.send(Unknown)
-                }
-                is OfflineFirstDataResult.Success -> {
-                    saveEventChannel.send(result.data)
-                }
+            val currentFindingId = findingId
+            if (currentFindingId != null) {
+                editFinding(currentFindingId)
+            } else {
+                createFinding()
             }
         }
+
+    private suspend fun createFinding() {
+        val result =
+            saveNewFindingUseCase(
+                request =
+                    SaveNewFindingRequest(
+                        structureId = structureId!!,
+                        name = state.value.findingName,
+                        description = state.value.findingDescription.ifBlank { null },
+                    ),
+            )
+        when (result) {
+            is OfflineFirstDataResult.ProgrammerError -> {
+                errorEventsChannel.send(Unknown)
+            }
+            is OfflineFirstDataResult.Success -> {
+                saveEventChannel.send(result.data)
+            }
+        }
+    }
+
+    private suspend fun editFinding(findingId: Uuid) {
+        val result =
+            saveFindingDetailsUseCase(
+                request =
+                    SaveFindingDetailsRequest(
+                        findingId = findingId,
+                        name = state.value.findingName,
+                        description = state.value.findingDescription.ifBlank { null },
+                    ),
+            )
+        when (result) {
+            is OfflineFirstUpdateDataResult.Success -> {
+                saveEventChannel.send(findingId)
+            }
+            is OfflineFirstUpdateDataResult.NotFound,
+            is OfflineFirstUpdateDataResult.ProgrammerError,
+            -> {
+                errorEventsChannel.send(Unknown)
+            }
+        }
+    }
 }

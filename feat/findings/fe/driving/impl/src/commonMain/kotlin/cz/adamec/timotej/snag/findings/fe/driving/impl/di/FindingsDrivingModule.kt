@@ -144,7 +144,8 @@ val findingsDrivingImplModule =
                 findingId = findingId,
                 structureId = structureId,
                 getFindingUseCase = get(),
-                saveFindingUseCase = get(),
+                saveNewFindingUseCase = get(),
+                saveFindingDetailsUseCase = get(),
             )
         }
     }

@@ -10,12 +10,12 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.findings.fe.app.api
+package cz.adamec.timotej.snag.findings.fe.app.api.model
 
-import cz.adamec.timotej.snag.findings.fe.app.api.model.SaveFindingRequest
-import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
+import cz.adamec.timotej.snag.feat.findings.business.Coordinate
 import kotlin.uuid.Uuid
 
-interface SaveFindingUseCase {
-    suspend operator fun invoke(request: SaveFindingRequest): OfflineFirstDataResult<Uuid>
-}
+data class SaveFindingCoordinatesRequest(
+    val findingId: Uuid,
+    val coordinates: List<Coordinate>,
+)

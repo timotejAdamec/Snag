@@ -26,3 +26,12 @@ DELETE FROM FindingEntity WHERE id = :id;
 
 deleteAll:
 DELETE FROM FindingEntity;
+
+updateDetails:
+UPDATE FindingEntity SET name = :name, description = :description WHERE id = :id;
+
+updateCoordinates:
+UPDATE FindingEntity SET coordinates = :coordinates WHERE id = :id;
+
+selectChanges:
+SELECT changes();

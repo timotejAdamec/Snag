@@ -48,7 +48,7 @@ private fun parseCoordinates(json: String): List<Coordinate> =
         Coordinate(x = it.x, y = it.y)
     }
 
-private fun serializeCoordinates(coordinates: List<Coordinate>): String =
+internal fun serializeCoordinates(coordinates: List<Coordinate>): String =
     Json.encodeToString(
         coordinates.map { CoordinateJson(x = it.x, y = it.y) },
     )

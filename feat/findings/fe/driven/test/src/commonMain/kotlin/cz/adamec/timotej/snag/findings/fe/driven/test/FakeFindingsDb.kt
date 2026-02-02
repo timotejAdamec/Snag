@@ -12,9 +12,11 @@
 
 package cz.adamec.timotej.snag.findings.fe.driven.test
 
+import cz.adamec.timotej.snag.feat.findings.business.Coordinate
 import cz.adamec.timotej.snag.feat.findings.business.Finding
 import cz.adamec.timotej.snag.findings.fe.ports.FindingsDb
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
+import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstUpdateDataResult
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
@@ -69,6 +71,29 @@ class FakeFindingsDb : FindingsDb {
 
     fun setFinding(finding: Finding) {
         findings.update { it + (finding.id to finding) }
+    }
+
+    override suspend fun updateFindingDetails(
+        id: Uuid,
+        name: String,
+        description: String?,
+    ): OfflineFirstUpdateDataResult {
+        val failure = forcedFailure
+        if (failure != null) return OfflineFirstUpdateDataResult.ProgrammerError(failure.throwable)
+        val existing = findings.value[id] ?: return OfflineFirstUpdateDataResult.NotFound
+        findings.update { it + (id to existing.copy(name = name, description = description)) }
+        return OfflineFirstUpdateDataResult.Success
+    }
+
+    override suspend fun updateFindingCoordinates(
+        id: Uuid,
+        coordinates: List<Coordinate>,
+    ): OfflineFirstUpdateDataResult {
+        val failure = forcedFailure
+        if (failure != null) return OfflineFirstUpdateDataResult.ProgrammerError(failure.throwable)
+        val existing = findings.value[id] ?: return OfflineFirstUpdateDataResult.NotFound
+        findings.update { it + (id to existing.copy(coordinates = coordinates)) }
+        return OfflineFirstUpdateDataResult.Success
     }
 
     fun setFindings(findings: List<Finding>) {
