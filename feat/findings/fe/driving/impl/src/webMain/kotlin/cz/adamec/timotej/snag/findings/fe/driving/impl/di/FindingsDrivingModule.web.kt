@@ -13,6 +13,7 @@
 package cz.adamec.timotej.snag.findings.fe.driving.impl.di
 
 import cz.adamec.timotej.snag.feat.findings.fe.driving.api.WebFindingDetailRoute
+import cz.adamec.timotej.snag.feat.findings.fe.driving.api.WebFindingEditRoute
 import cz.adamec.timotej.snag.feat.findings.fe.driving.api.WebFindingsListRoute
 import org.koin.dsl.module
 
@@ -20,4 +21,5 @@ internal actual val platformModule =
     module {
         findingsListScreenNav<WebFindingsListRoute>()
         findingDetailScreenNav<WebFindingDetailRoute>()
+        findingEditScreenNav<WebFindingEditRoute>()
     }

@@ -13,6 +13,7 @@
 package cz.adamec.timotej.snag.feat.findings.fe.driving.api
 
 import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureDetailNavRoute
+import cz.adamec.timotej.snag.lib.navigation.fe.SnagNavRoute
 import kotlin.uuid.Uuid
 
 interface FindingsListRoute : StructureDetailNavRoute {
@@ -20,6 +21,10 @@ interface FindingsListRoute : StructureDetailNavRoute {
 }
 
 interface FindingDetailRoute : StructureDetailNavRoute {
+    val findingId: Uuid
+}
+
+interface FindingEditRoute : SnagNavRoute {
     val findingId: Uuid
 }
 
@@ -32,4 +37,11 @@ interface FindingDetailRouteFactory {
         structureId: Uuid,
         findingId: Uuid,
     ): FindingDetailRoute
+}
+
+interface FindingEditRouteFactory {
+    fun create(
+        structureId: Uuid,
+        findingId: Uuid,
+    ): FindingEditRoute
 }

@@ -13,8 +13,10 @@
 package cz.adamec.timotej.snag.feat.findings.fe.driving.api.di
 
 import cz.adamec.timotej.snag.feat.findings.fe.driving.api.FindingDetailRouteFactory
+import cz.adamec.timotej.snag.feat.findings.fe.driving.api.FindingEditRouteFactory
 import cz.adamec.timotej.snag.feat.findings.fe.driving.api.FindingsListRouteFactory
 import cz.adamec.timotej.snag.feat.findings.fe.driving.api.NonWebFindingDetailRouteFactory
+import cz.adamec.timotej.snag.feat.findings.fe.driving.api.NonWebFindingEditRouteFactory
 import cz.adamec.timotej.snag.feat.findings.fe.driving.api.NonWebFindingsListRouteFactory
 import org.koin.dsl.bind
 import org.koin.dsl.module
@@ -23,4 +25,5 @@ internal actual val platformModule =
     module {
         factory { NonWebFindingsListRouteFactory() } bind FindingsListRouteFactory::class
         factory { NonWebFindingDetailRouteFactory() } bind FindingDetailRouteFactory::class
+        factory { NonWebFindingEditRouteFactory() } bind FindingEditRouteFactory::class
     }

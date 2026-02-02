@@ -48,3 +48,18 @@ class WebFindingDetailRouteFactory : FindingDetailRouteFactory {
             findingId = findingId,
         )
 }
+
+@Serializable
+@Immutable
+data class WebFindingEditRoute(
+    override val findingId: Uuid,
+) : FindingEditRoute {
+    companion object {
+        const val URL_NAME = "edit-finding"
+    }
+}
+
+class WebFindingEditRouteFactory : FindingEditRouteFactory {
+    override fun create(structureId: Uuid, findingId: Uuid): FindingEditRoute =
+        WebFindingEditRoute(findingId = findingId)
+}

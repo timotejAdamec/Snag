@@ -42,3 +42,16 @@ class NonWebFindingDetailRouteFactory : FindingDetailRouteFactory {
         findingId = findingId,
     )
 }
+
+@Serializable
+@Immutable
+data class NonWebFindingEditRoute(
+    override val findingId: Uuid,
+) : FindingEditRoute
+
+class NonWebFindingEditRouteFactory : FindingEditRouteFactory {
+    override fun create(
+        structureId: Uuid,
+        findingId: Uuid,
+    ): FindingEditRoute = NonWebFindingEditRoute(findingId = findingId)
+}
