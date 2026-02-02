@@ -15,7 +15,7 @@ package cz.adamec.timotej.snag.findings.fe.driven.internal.db
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import app.cash.sqldelight.coroutines.mapToOneOrNull
-import cz.adamec.timotej.snag.feat.findings.business.Coordinate
+import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
 import cz.adamec.timotej.snag.feat.findings.business.Finding
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.FindingEntity
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.FindingEntityQueries
@@ -149,7 +149,7 @@ internal class RealFindingsDb(
 
     override suspend fun updateFindingCoordinates(
         id: Uuid,
-        coordinates: List<Coordinate>,
+        coordinates: List<RelativeCoordinate>,
     ): OfflineFirstUpdateDataResult =
         withContext(ioDispatcher) {
             runCatching {

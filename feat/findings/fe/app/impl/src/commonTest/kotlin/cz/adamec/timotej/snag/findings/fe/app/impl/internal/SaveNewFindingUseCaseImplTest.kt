@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.findings.fe.app.impl.internal
 
-import cz.adamec.timotej.snag.feat.findings.business.Coordinate
+import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
 import cz.adamec.timotej.snag.feat.findings.business.Finding
 import cz.adamec.timotej.snag.findings.fe.app.api.model.SaveNewFindingRequest
 import cz.adamec.timotej.snag.findings.fe.driven.test.FakeFindingsDb
@@ -66,7 +66,7 @@ class SaveNewFindingUseCaseImplTest {
 
     @Test
     fun `uses provided coordinates`() = runTest {
-        val coordinates = listOf(Coordinate(0.1f, 0.2f), Coordinate(0.3f, 0.4f))
+        val coordinates = listOf(RelativeCoordinate(0.1f, 0.2f), RelativeCoordinate(0.3f, 0.4f))
         val request = SaveNewFindingRequest(
             structureId = structureId,
             name = "Crack in wall",

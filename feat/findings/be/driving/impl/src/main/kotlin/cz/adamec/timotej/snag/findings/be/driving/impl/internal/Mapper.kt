@@ -12,9 +12,9 @@
 
 package cz.adamec.timotej.snag.findings.be.driving.impl.internal
 
-import cz.adamec.timotej.snag.feat.findings.business.Coordinate
+import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
 import cz.adamec.timotej.snag.feat.findings.business.Finding
-import cz.adamec.timotej.snag.findings.be.driving.contract.CoordinateApiDto
+import cz.adamec.timotej.snag.findings.be.driving.contract.RelativeCoordinateApiDto
 import cz.adamec.timotej.snag.findings.be.driving.contract.FindingApiDto
 import cz.adamec.timotej.snag.findings.be.driving.contract.PutFindingApiDto
 import kotlin.uuid.Uuid
@@ -28,8 +28,8 @@ internal fun Finding.toDto() =
         coordinates = coordinates.map { it.toDto() },
     )
 
-internal fun Coordinate.toDto() =
-    CoordinateApiDto(
+internal fun RelativeCoordinate.toDto() =
+    RelativeCoordinateApiDto(
         x = x,
         y = y,
     )
@@ -43,8 +43,8 @@ internal fun PutFindingApiDto.toBusiness(id: Uuid) =
         coordinates = coordinates.map { it.toBusiness() },
     )
 
-internal fun CoordinateApiDto.toBusiness() =
-    Coordinate(
+internal fun RelativeCoordinateApiDto.toBusiness() =
+    RelativeCoordinate(
         x = x,
         y = y,
     )

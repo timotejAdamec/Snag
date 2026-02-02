@@ -12,9 +12,9 @@
 
 package cz.adamec.timotej.snag.findings.fe.driven.internal.api
 
-import cz.adamec.timotej.snag.feat.findings.business.Coordinate
+import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
 import cz.adamec.timotej.snag.feat.findings.business.Finding
-import cz.adamec.timotej.snag.findings.be.driving.contract.CoordinateApiDto
+import cz.adamec.timotej.snag.findings.be.driving.contract.RelativeCoordinateApiDto
 import cz.adamec.timotej.snag.findings.be.driving.contract.FindingApiDto
 import cz.adamec.timotej.snag.findings.be.driving.contract.PutFindingApiDto
 
@@ -27,8 +27,8 @@ internal fun FindingApiDto.toBusiness() =
         coordinates = coordinates.map { it.toBusiness() },
     )
 
-internal fun CoordinateApiDto.toBusiness() =
-    Coordinate(
+internal fun RelativeCoordinateApiDto.toBusiness() =
+    RelativeCoordinate(
         x = x,
         y = y,
     )
@@ -38,5 +38,5 @@ internal fun Finding.toPutApiDto() =
         structureId = structureId,
         name = name,
         description = description,
-        coordinates = coordinates.map { CoordinateApiDto(x = it.x, y = it.y) },
+        coordinates = coordinates.map { RelativeCoordinateApiDto(x = it.x, y = it.y) },
     )

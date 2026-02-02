@@ -12,12 +12,12 @@
 
 package cz.adamec.timotej.snag.findings.fe.app.api.model
 
-import cz.adamec.timotej.snag.feat.findings.business.Coordinate
+import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
 import kotlin.uuid.Uuid
 
 data class SaveNewFindingRequest(
     val structureId: Uuid,
     val name: String,
     val description: String?,
-    val coordinates: List<Coordinate> = emptyList(),
+    val coordinates: List<RelativeCoordinate> = emptyList(),
 )

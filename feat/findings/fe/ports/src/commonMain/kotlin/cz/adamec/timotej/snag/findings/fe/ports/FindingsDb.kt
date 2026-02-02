@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.findings.fe.ports
 
-import cz.adamec.timotej.snag.feat.findings.business.Coordinate
+import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
 import cz.adamec.timotej.snag.feat.findings.business.Finding
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstUpdateDataResult
@@ -32,5 +32,5 @@ interface FindingsDb {
 
     suspend fun updateFindingDetails(id: Uuid, name: String, description: String?): OfflineFirstUpdateDataResult
 
-    suspend fun updateFindingCoordinates(id: Uuid, coordinates: List<Coordinate>): OfflineFirstUpdateDataResult
+    suspend fun updateFindingCoordinates(id: Uuid, coordinates: List<RelativeCoordinate>): OfflineFirstUpdateDataResult
 }

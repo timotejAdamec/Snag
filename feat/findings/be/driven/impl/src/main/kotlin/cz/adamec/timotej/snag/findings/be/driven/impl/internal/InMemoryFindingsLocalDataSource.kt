@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.findings.be.driven.impl.internal
 
-import cz.adamec.timotej.snag.feat.findings.business.Coordinate
+import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
 import cz.adamec.timotej.snag.feat.findings.business.Finding
 import cz.adamec.timotej.snag.findings.be.ports.FindingsLocalDataSource
 import kotlin.uuid.Uuid
@@ -25,14 +25,14 @@ internal class InMemoryFindingsLocalDataSource : FindingsLocalDataSource {
                 structureId = Uuid.parse(STRUCTURE_1),
                 name = "Cracked wall tile",
                 description = "Visible crack on wall tile near entrance.",
-                coordinates = listOf(Coordinate(x = 0.25f, y = 0.40f)),
+                coordinates = listOf(RelativeCoordinate(x = 0.25f, y = 0.40f)),
             ),
             Finding(
                 id = Uuid.parse(FINDING_2),
                 structureId = Uuid.parse(STRUCTURE_1),
                 name = "Missing paint patch",
                 description = "Unpainted area on the ceiling in hallway.",
-                coordinates = listOf(Coordinate(x = 0.60f, y = 0.15f)),
+                coordinates = listOf(RelativeCoordinate(x = 0.60f, y = 0.15f)),
             ),
             Finding(
                 id = Uuid.parse(FINDING_3),
@@ -41,8 +41,8 @@ internal class InMemoryFindingsLocalDataSource : FindingsLocalDataSource {
                 description = null,
                 coordinates =
                     listOf(
-                        Coordinate(x = 0.80f, y = 0.55f),
-                        Coordinate(x = 0.82f, y = 0.60f),
+                        RelativeCoordinate(x = 0.80f, y = 0.55f),
+                        RelativeCoordinate(x = 0.82f, y = 0.60f),
                     ),
             ),
         )

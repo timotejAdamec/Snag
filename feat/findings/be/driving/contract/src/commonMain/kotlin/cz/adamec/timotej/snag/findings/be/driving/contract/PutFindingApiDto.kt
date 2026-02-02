@@ -20,5 +20,5 @@ data class PutFindingApiDto(
     val structureId: Uuid,
     val name: String,
     val description: String?,
-    val coordinates: List<CoordinateApiDto>,
+    val coordinates: List<RelativeCoordinateApiDto>,
 )

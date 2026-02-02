@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.feat.findings.business
 
-data class Coordinate(
+data class RelativeCoordinate(
     val x: Float,
     val y: Float,
 ) {

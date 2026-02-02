@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.findings.fe.driven.test
 
-import cz.adamec.timotej.snag.feat.findings.business.Coordinate
+import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
 import cz.adamec.timotej.snag.feat.findings.business.Finding
 import cz.adamec.timotej.snag.findings.fe.ports.FindingsDb
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
@@ -87,7 +87,7 @@ class FakeFindingsDb : FindingsDb {
 
     override suspend fun updateFindingCoordinates(
         id: Uuid,
-        coordinates: List<Coordinate>,
+        coordinates: List<RelativeCoordinate>,
     ): OfflineFirstUpdateDataResult {
         val failure = forcedFailure
         if (failure != null) return OfflineFirstUpdateDataResult.ProgrammerError(failure.throwable)

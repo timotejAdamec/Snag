@@ -19,5 +19,5 @@ data class Finding(
     val structureId: Uuid,
     val name: String,
     val description: String?,
-    val coordinates: List<Coordinate>,
+    val coordinates: List<RelativeCoordinate>,
 )

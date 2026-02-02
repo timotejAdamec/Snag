@@ -21,11 +21,11 @@ data class FindingApiDto(
     val structureId: Uuid,
     val name: String,
     val description: String?,
-    val coordinates: List<CoordinateApiDto>,
+    val coordinates: List<RelativeCoordinateApiDto>,
 )
 
 @Serializable
-data class CoordinateApiDto(
+data class RelativeCoordinateApiDto(
     val x: Float,
     val y: Float,
 )

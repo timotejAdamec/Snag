@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.findings.fe.driven.internal.db
 
-import cz.adamec.timotej.snag.feat.findings.business.Coordinate
+import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
 import cz.adamec.timotej.snag.feat.findings.business.Finding
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.FindingEntity
 import kotlinx.serialization.Serializable
@@ -20,7 +20,7 @@ import kotlinx.serialization.json.Json
 import kotlin.uuid.Uuid
 
 @Serializable
-internal data class CoordinateJson(
+internal data class RelativeCoordinateJson(
     val x: Float,
     val y: Float,
 )
@@ -43,12 +43,12 @@ internal fun Finding.toEntity() =
         coordinates = serializeCoordinates(coordinates),
     )
 
-private fun parseCoordinates(json: String): List<Coordinate> =
-    Json.decodeFromString<List<CoordinateJson>>(json).map {
-        Coordinate(x = it.x, y = it.y)
+private fun parseCoordinates(json: String): List<RelativeCoordinate> =
+    Json.decodeFromString<List<RelativeCoordinateJson>>(json).map {
+        RelativeCoordinate(x = it.x, y = it.y)
     }
 
-internal fun serializeCoordinates(coordinates: List<Coordinate>): String =
+internal fun serializeCoordinates(coordinates: List<RelativeCoordinate>): String =
     Json.encodeToString(
-        coordinates.map { CoordinateJson(x = it.x, y = it.y) },
+        coordinates.map { RelativeCoordinateJson(x = it.x, y = it.y) },
     )
