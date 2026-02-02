@@ -20,7 +20,7 @@ import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.core.fe.log
 import kotlin.uuid.Uuid
 
-internal class DeleteFindingUseCaseImpl(
+class DeleteFindingUseCaseImpl(
     private val findingsDb: FindingsDb,
     private val findingsSync: FindingsSync,
 ) : DeleteFindingUseCase {

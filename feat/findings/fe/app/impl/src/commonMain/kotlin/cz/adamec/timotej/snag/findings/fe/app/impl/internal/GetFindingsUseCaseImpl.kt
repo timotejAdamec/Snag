@@ -25,7 +25,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlin.uuid.Uuid
 
-internal class GetFindingsUseCaseImpl(
+class GetFindingsUseCaseImpl(
     private val findingsApi: FindingsApi,
     private val findingsDb: FindingsDb,
     private val applicationScope: ApplicationScope,

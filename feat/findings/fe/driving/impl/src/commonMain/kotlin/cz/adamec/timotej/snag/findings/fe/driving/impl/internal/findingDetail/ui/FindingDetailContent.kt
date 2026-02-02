@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ContainedLoadingIndicator
+import androidx.compose.material3.HorizontalFloatingToolbar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -94,57 +95,64 @@ internal fun FindingDetailContent(
                     },
                 )
             }
-            Scaffold(
-                modifier = modifier,
-                topBar = {
-                    TopAppBar(
-                        title = {
-                            Text(text = finding.name)
-                        },
-                        navigationIcon = {
-                            IconButton(onClick = onBack) {
-                                Icon(
-                                    painter = painterResource(DesignRes.drawable.ic_close),
-                                    contentDescription = stringResource(DesignRes.string.close),
-                                )
-                            }
-                        },
-                        actions = {
-                            IconButton(
-                                enabled = state.canInvokeDeletion,
-                                onClick = {
-                                    isShowingDeleteConfirmation = true
-                                },
-                            ) {
-                                Icon(
-                                    painter = painterResource(DesignRes.drawable.ic_delete),
-                                    contentDescription = stringResource(DesignRes.string.delete),
-                                )
-                            }
-                        },
-                    )
-                },
-            ) { paddingValues ->
-                Column(
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .padding(paddingValues)
-                            .consumeWindowInsets(paddingValues)
-                            .padding(16.dp),
-                ) {
-                    finding.description?.let { description ->
+            Box(modifier = modifier.fillMaxSize()) {
+                Scaffold(
+                    topBar = {
+                        TopAppBar(
+                            title = {
+                                Text(text = finding.name)
+                            },
+                            navigationIcon = {
+                                IconButton(onClick = onBack) {
+                                    Icon(
+                                        painter = painterResource(DesignRes.drawable.ic_close),
+                                        contentDescription = stringResource(DesignRes.string.close),
+                                    )
+                                }
+                            },
+                        )
+                    },
+                ) { paddingValues ->
+                    Column(
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(paddingValues)
+                                .consumeWindowInsets(paddingValues)
+                                .padding(16.dp),
+                    ) {
+                        finding.description?.let { description ->
+                            Text(
+                                text = description,
+                                style = MaterialTheme.typography.bodyMedium,
+                            )
+                        }
                         Text(
-                            text = description,
-                            style = MaterialTheme.typography.bodyMedium,
+                            modifier = Modifier.padding(top = 16.dp),
+                            text = "${finding.coordinates.size} coordinate(s)",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     }
-                    Text(
-                        modifier = Modifier.padding(top = 16.dp),
-                        text = "${finding.coordinates.size} coordinate(s)",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
+                }
+                HorizontalFloatingToolbar(
+                    modifier =
+                        Modifier
+                            .align(Alignment.BottomCenter)
+                            .padding(bottom = 16.dp),
+                    expanded = true,
+                ) {
+                    IconButton(
+                        enabled = state.canInvokeDeletion,
+                        onClick = {
+                            isShowingDeleteConfirmation = true
+                        },
+                    ) {
+                        Icon(
+                            painter = painterResource(DesignRes.drawable.ic_delete),
+                            contentDescription = stringResource(DesignRes.string.delete),
+                        )
+                    }
                 }
             }
         }
