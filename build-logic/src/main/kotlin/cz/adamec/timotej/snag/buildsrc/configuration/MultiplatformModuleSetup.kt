@@ -12,10 +12,11 @@
 
 package cz.adamec.timotej.snag.buildsrc.configuration
 
-import com.android.build.api.dsl.androidLibrary
+import com.android.build.api.dsl.KotlinMultiplatformAndroidLibraryExtension
 import cz.adamec.timotej.snag.buildsrc.extensions.library
 import cz.adamec.timotej.snag.buildsrc.extensions.version
 import org.gradle.api.Project
+import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.invoke
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
@@ -33,7 +34,7 @@ internal fun Project.configureKotlinMultiplatformModule() {
     }
 
     extensions.findByType(KotlinMultiplatformExtension::class.java)?.apply {
-        androidLibrary {
+        extensions.configure<KotlinMultiplatformAndroidLibraryExtension> {
             configureBase(this@configureKotlinMultiplatformModule)
         }
 
@@ -67,6 +68,9 @@ internal fun Project.configureKotlinMultiplatformModule() {
                 dependsOn(nonWebMain)
             }
 
+            // awkward because of upgrade to AGP 9.0.0
+            val webMain = sourceSets.maybeCreate("webMain")
+
             val nonAndroidMain = create("nonAndroidMain") {
                 dependsOn(commonMain.get())
             }
@@ -76,7 +80,7 @@ internal fun Project.configureKotlinMultiplatformModule() {
             jvmMain {
                 dependsOn(nonAndroidMain)
             }
-            webMain {
+            getByName("webMain") {
                 dependsOn(nonAndroidMain)
             }
 
@@ -132,24 +136,5 @@ internal fun Project.configureKotlinMultiplatformModule() {
         configurations.matching { it.name.startsWith("ksp") && it.name != "ksp" }.all {
             add(this.name, koinKspCompilerLib)
         }
-//        add("kspCommonMainMetadata", library("koin-ksp-compiler"))
-//        add("kspCommonMainTest", library("koin-ksp-compiler"))
-//        add("kspAndroid", library("koin-ksp-compiler"))
-//        add("kspAndroidUnitTest", library("koin-ksp-compiler"))
-//        add("kspAndroidInstrumentedTest", library("koin-ksp-compiler"))
-//        add("kspIosArm64", library("koin-ksp-compiler"))
-//        add("kspIosArm64Test", library("koin-ksp-compiler"))
-//        add("kspIosSimulatorArm64", library("koin-ksp-compiler"))
-//        add("kspIosSimulatorArm64Test", library("koin-ksp-compiler"))
-//        add("kspJvm", library("koin-ksp-compiler"))
-//        add("kspJvmTest", library("koin-ksp-compiler"))
-//        add("kspJs", library("koin-ksp-compiler"))
-//        add("kspJsTest", library("koin-ksp-compiler"))
-//        add("kspWasmJs", library("koin-ksp-compiler"))
-//        add("kspWasmJsTest", library("koin-ksp-compiler"))
-//        add("kspNonWebMain", library("koin-ksp-compiler"))
-//        add("kspNonWebMainTest", library("koin-ksp-compiler"))
-//        add("kspWebMain", library("koin-ksp-compiler"))
-//        add("kspWebMainTest", library("koin-ksp-compiler"))
     }
 }

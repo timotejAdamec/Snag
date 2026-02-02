@@ -12,10 +12,11 @@
 
 package cz.adamec.timotej.snag.buildsrc.configuration
 
-import com.android.build.api.dsl.androidLibrary
+import com.android.build.api.dsl.KotlinMultiplatformAndroidLibraryExtension
 import cz.adamec.timotej.snag.buildsrc.extensions.library
 import cz.adamec.timotej.snag.buildsrc.extensions.version
 import org.gradle.api.Project
+import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.invoke
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
@@ -31,7 +32,7 @@ internal fun Project.configureComposeMultiplatformModule() {
     }
 
     extensions.findByType(KotlinMultiplatformExtension::class.java)?.apply {
-        androidLibrary {
+        extensions.configure<KotlinMultiplatformAndroidLibraryExtension> {
             configureBase(this@configureComposeMultiplatformModule)
             experimentalProperties["android.experimental.kmp.enableAndroidResources"] = true
         }
@@ -77,7 +78,7 @@ internal fun Project.configureComposeMultiplatformModule() {
             jvmMain.dependencies {
                 implementation(library("kotlinx-coroutines-swing"))
             }
-            webMain.dependencies {
+            getByName("webMain").dependencies {
                 implementation(library("navigation3-browser"))
             }
             all {
