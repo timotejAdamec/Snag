@@ -14,9 +14,11 @@ package cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetail.v
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cz.adamec.timotej.snag.findings.fe.app.api.DeleteFindingUseCase
 import cz.adamec.timotej.snag.findings.fe.app.api.GetFindingUseCase
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
+import cz.adamec.timotej.snag.lib.design.fe.error.UiError.Unknown
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -29,6 +31,7 @@ import kotlin.uuid.Uuid
 internal class FindingDetailViewModel(
     @InjectedParam private val findingId: Uuid,
     private val getFindingUseCase: GetFindingUseCase,
+    private val deleteFindingUseCase: DeleteFindingUseCase,
 ) : ViewModel() {
     private val _state: MutableStateFlow<FindingDetailUiState> =
         MutableStateFlow(FindingDetailUiState())
@@ -37,9 +40,37 @@ internal class FindingDetailViewModel(
     private val errorEventsChannel = Channel<UiError>()
     val errorsFlow = errorEventsChannel.receiveAsFlow()
 
+    private val deletedSuccessfullyEventChannel = Channel<Unit>()
+    val deletedSuccessfullyEventFlow = deletedSuccessfullyEventChannel.receiveAsFlow()
+
     init {
         collectFinding()
     }
+
+    fun onDelete() =
+        viewModelScope.launch {
+            _state.update {
+                it.copy(isBeingDeleted = true)
+            }
+            when (deleteFindingUseCase(findingId)) {
+                is OfflineFirstDataResult.ProgrammerError -> {
+                    _state.update {
+                        it.copy(isBeingDeleted = false)
+                    }
+                    errorEventsChannel.send(Unknown)
+                }
+
+                is OfflineFirstDataResult.Success -> {
+                    _state.update {
+                        it.copy(
+                            status = FindingDetailUiStatus.DELETED,
+                            isBeingDeleted = false,
+                        )
+                    }
+                    deletedSuccessfullyEventChannel.send(Unit)
+                }
+            }
+        }
 
     private fun collectFinding() {
         viewModelScope.launch {
@@ -53,8 +84,10 @@ internal class FindingDetailViewModel(
 
                     is OfflineFirstDataResult.Success -> {
                         if (result.data == null) {
-                            _state.update {
-                                it.copy(status = FindingDetailUiStatus.NOT_FOUND)
+                            if (_state.value.status != FindingDetailUiStatus.DELETED) {
+                                _state.update {
+                                    it.copy(status = FindingDetailUiStatus.NOT_FOUND)
+                                }
                             }
                         } else {
                             _state.update {

@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ContainedLoadingIndicator
+import androidx.compose.material3.HorizontalFloatingToolbar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -26,9 +27,14 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetail.ui.components.FindingDeletionAlertDialog
 import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetail.vm.FindingDetailUiState
 import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetail.vm.FindingDetailUiStatus
 import org.jetbrains.compose.resources.painterResource
@@ -36,13 +42,16 @@ import org.jetbrains.compose.resources.stringResource
 import snag.feat.findings.fe.driving.impl.generated.resources.Res
 import snag.feat.findings.fe.driving.impl.generated.resources.finding_not_found_message
 import snag.lib.design.fe.generated.resources.close
+import snag.lib.design.fe.generated.resources.delete
 import snag.lib.design.fe.generated.resources.ic_close
+import snag.lib.design.fe.generated.resources.ic_delete
 import snag.lib.design.fe.generated.resources.Res as DesignRes
 
 @Composable
 internal fun FindingDetailContent(
     state: FindingDetailUiState,
     onBack: () -> Unit,
+    onDelete: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     when (state.status) {
@@ -72,46 +81,78 @@ internal fun FindingDetailContent(
             onBack()
         }
 
-        FindingDetailUiStatus.LOADED -> {
+        FindingDetailUiStatus.LOADED,
+        FindingDetailUiStatus.DELETED,
+        -> {
             val finding = state.finding ?: return
-            Scaffold(
-                modifier = modifier,
-                topBar = {
-                    TopAppBar(
-                        title = {
-                            Text(text = finding.name)
-                        },
-                        navigationIcon = {
-                            IconButton(onClick = onBack) {
-                                Icon(
-                                    painter = painterResource(DesignRes.drawable.ic_close),
-                                    contentDescription = stringResource(DesignRes.string.close),
-                                )
-                            }
-                        },
-                    )
-                },
-            ) { paddingValues ->
-                Column(
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .padding(paddingValues)
-                            .consumeWindowInsets(paddingValues)
-                            .padding(16.dp),
-                ) {
-                    finding.description?.let { description ->
+            var isShowingDeleteConfirmation by remember { mutableStateOf(false) }
+            if (isShowingDeleteConfirmation) {
+                FindingDeletionAlertDialog(
+                    areButtonsEnabled = state.canInvokeDeletion,
+                    onDelete = onDelete,
+                    onDismiss = {
+                        isShowingDeleteConfirmation = false
+                    },
+                )
+            }
+            Box(modifier = modifier.fillMaxSize()) {
+                Scaffold(
+                    topBar = {
+                        TopAppBar(
+                            title = {
+                                Text(text = finding.name)
+                            },
+                            navigationIcon = {
+                                IconButton(onClick = onBack) {
+                                    Icon(
+                                        painter = painterResource(DesignRes.drawable.ic_close),
+                                        contentDescription = stringResource(DesignRes.string.close),
+                                    )
+                                }
+                            },
+                        )
+                    },
+                ) { paddingValues ->
+                    Column(
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(paddingValues)
+                                .consumeWindowInsets(paddingValues)
+                                .padding(16.dp),
+                    ) {
+                        finding.description?.let { description ->
+                            Text(
+                                text = description,
+                                style = MaterialTheme.typography.bodyMedium,
+                            )
+                        }
                         Text(
-                            text = description,
-                            style = MaterialTheme.typography.bodyMedium,
+                            modifier = Modifier.padding(top = 16.dp),
+                            text = "${finding.coordinates.size} coordinate(s)",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     }
-                    Text(
-                        modifier = Modifier.padding(top = 16.dp),
-                        text = "${finding.coordinates.size} coordinate(s)",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
+                }
+                HorizontalFloatingToolbar(
+                    modifier =
+                        Modifier
+                            .align(Alignment.BottomCenter)
+                            .padding(bottom = 16.dp),
+                    expanded = true,
+                ) {
+                    IconButton(
+                        enabled = state.canInvokeDeletion,
+                        onClick = {
+                            isShowingDeleteConfirmation = true
+                        },
+                    ) {
+                        Icon(
+                            painter = painterResource(DesignRes.drawable.ic_delete),
+                            contentDescription = stringResource(DesignRes.string.delete),
+                        )
+                    }
                 }
             }
         }

@@ -20,7 +20,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlin.uuid.Uuid
 
-internal class GetFindingUseCaseImpl(
+class GetFindingUseCaseImpl(
     private val findingsDb: FindingsDb,
 ) : GetFindingUseCase {
     override operator fun invoke(findingId: Uuid): Flow<OfflineFirstDataResult<Finding?>> =

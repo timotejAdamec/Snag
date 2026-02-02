@@ -17,6 +17,7 @@ import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetail.vm.FindingDetailViewModel
 import cz.adamec.timotej.snag.lib.design.fe.error.ShowSnackbarOnError
+import cz.adamec.timotej.snag.lib.design.fe.events.ObserveAsEvents
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 import kotlin.uuid.Uuid
@@ -30,9 +31,16 @@ internal fun FindingDetailScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     ShowSnackbarOnError(uiErrorsFlow = viewModel.errorsFlow)
+    ObserveAsEvents(
+        eventsFlow = viewModel.deletedSuccessfullyEventFlow,
+        onEvent = {
+            onBack()
+        },
+    )
 
     FindingDetailContent(
         state = state,
         onBack = onBack,
+        onDelete = viewModel::onDelete,
     )
 }
