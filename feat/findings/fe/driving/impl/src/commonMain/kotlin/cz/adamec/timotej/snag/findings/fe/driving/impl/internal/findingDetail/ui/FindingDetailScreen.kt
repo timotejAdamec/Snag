@@ -26,6 +26,7 @@ import kotlin.uuid.Uuid
 internal fun FindingDetailScreen(
     findingId: Uuid,
     onBack: () -> Unit,
+    onEditClick: () -> Unit,
     viewModel: FindingDetailViewModel = koinViewModel { parametersOf(findingId) },
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -41,6 +42,7 @@ internal fun FindingDetailScreen(
     FindingDetailContent(
         state = state,
         onBack = onBack,
+        onEditClick = onEditClick,
         onDelete = viewModel::onDelete,
     )
 }

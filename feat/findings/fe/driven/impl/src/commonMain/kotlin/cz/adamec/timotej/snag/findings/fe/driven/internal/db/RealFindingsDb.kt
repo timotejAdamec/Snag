@@ -15,12 +15,14 @@ package cz.adamec.timotej.snag.findings.fe.driven.internal.db
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import app.cash.sqldelight.coroutines.mapToOneOrNull
+import cz.adamec.timotej.snag.feat.findings.business.Coordinate
 import cz.adamec.timotej.snag.feat.findings.business.Finding
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.FindingEntity
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.FindingEntityQueries
 import cz.adamec.timotej.snag.findings.fe.driven.internal.LH
 import cz.adamec.timotej.snag.findings.fe.ports.FindingsDb
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
+import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstUpdateDataResult
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -118,4 +120,58 @@ internal class RealFindingsDb(
                 LH.logger.e { "Error loading finding $id from DB." }
                 emit(OfflineFirstDataResult.ProgrammerError(throwable = e))
             }
+
+    override suspend fun updateFindingDetails(
+        id: Uuid,
+        name: String,
+        description: String?,
+    ): OfflineFirstUpdateDataResult =
+        withContext(ioDispatcher) {
+            runCatching {
+                findingEntityQueries.transactionWithResult {
+                    findingEntityQueries.updateDetails(name = name, description = description, id = id.toString())
+                    findingEntityQueries.selectChanges().executeAsOne()
+                }
+            }.fold(
+                onSuccess = { changes ->
+                    if (changes > 0) {
+                        OfflineFirstUpdateDataResult.Success
+                    } else {
+                        OfflineFirstUpdateDataResult.NotFound
+                    }
+                },
+                onFailure = { e ->
+                    LH.logger.e { "Error updating finding details for $id." }
+                    OfflineFirstUpdateDataResult.ProgrammerError(throwable = e)
+                },
+            )
+        }
+
+    override suspend fun updateFindingCoordinates(
+        id: Uuid,
+        coordinates: List<Coordinate>,
+    ): OfflineFirstUpdateDataResult =
+        withContext(ioDispatcher) {
+            runCatching {
+                findingEntityQueries.transactionWithResult {
+                    findingEntityQueries.updateCoordinates(
+                        coordinates = serializeCoordinates(coordinates),
+                        id = id.toString(),
+                    )
+                    findingEntityQueries.selectChanges().executeAsOne()
+                }
+            }.fold(
+                onSuccess = { changes ->
+                    if (changes > 0) {
+                        OfflineFirstUpdateDataResult.Success
+                    } else {
+                        OfflineFirstUpdateDataResult.NotFound
+                    }
+                },
+                onFailure = { e ->
+                    LH.logger.e { "Error updating finding coordinates for $id." }
+                    OfflineFirstUpdateDataResult.ProgrammerError(throwable = e)
+                },
+            )
+        }
 }

@@ -43,14 +43,17 @@ import snag.feat.findings.fe.driving.impl.generated.resources.Res
 import snag.feat.findings.fe.driving.impl.generated.resources.finding_not_found_message
 import snag.lib.design.fe.generated.resources.close
 import snag.lib.design.fe.generated.resources.delete
+import snag.lib.design.fe.generated.resources.edit
 import snag.lib.design.fe.generated.resources.ic_close
 import snag.lib.design.fe.generated.resources.ic_delete
+import snag.lib.design.fe.generated.resources.ic_edit
 import snag.lib.design.fe.generated.resources.Res as DesignRes
 
 @Composable
 internal fun FindingDetailContent(
     state: FindingDetailUiState,
     onBack: () -> Unit,
+    onEditClick: () -> Unit,
     onDelete: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -142,6 +145,14 @@ internal fun FindingDetailContent(
                             .padding(bottom = 16.dp),
                     expanded = true,
                 ) {
+                    IconButton(
+                        onClick = onEditClick,
+                    ) {
+                        Icon(
+                            painter = painterResource(DesignRes.drawable.ic_edit),
+                            contentDescription = stringResource(DesignRes.string.edit),
+                        )
+                    }
                     IconButton(
                         enabled = state.canInvokeDeletion,
                         onClick = {

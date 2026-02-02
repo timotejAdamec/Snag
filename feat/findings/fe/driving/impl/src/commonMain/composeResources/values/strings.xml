@@ -16,4 +16,8 @@
     <string name="finding_not_found_message">Finding not found.</string>
     <string name="delete_finding_confirmation_title">Delete finding?</string>
     <string name="delete_finding_confirmation_text">This finding will be permanently deleted. This action cannot be undone.</string>
+    <string name="new_finding">New finding</string>
+    <string name="finding_name_label">Name</string>
+    <string name="finding_description_label">Description</string>
+    <string name="required">Required</string>
 </resources>

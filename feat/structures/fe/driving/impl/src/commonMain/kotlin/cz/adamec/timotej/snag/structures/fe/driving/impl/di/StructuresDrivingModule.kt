@@ -23,6 +23,7 @@ import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureCreationRo
 import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureDetailBackStack
 import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureDetailNavRoute
 import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureEditRoute
+import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureEditRouteFactory
 import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureFloorPlanRoute
 import cz.adamec.timotej.snag.lib.design.fe.scenes.MapListDetailSceneMetadata
 import cz.adamec.timotej.snag.lib.navigation.fe.SnagBackStack
@@ -31,6 +32,7 @@ import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.floorPlan.ui.S
 import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.floorPlan.vm.StructureFloorPlanViewModel
 import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.structureDetailsEdit.ui.StructureDetailsEditScreen
 import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.structureDetailsEdit.vm.StructureDetailsEditViewModel
+import org.koin.compose.koinInject
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.viewModel
 import org.koin.core.scope.Scope
@@ -69,6 +71,7 @@ internal inline fun <reified T : StructureFloorPlanRoute> Module.structureFloorP
         metadata = MapListDetailSceneMetadata.mapPane(),
     ) { route ->
         val structureDetailBackStack = get<StructureDetailBackStack>()
+        val structureEditRouteFactory = koinInject<StructureEditRouteFactory>()
         val selectedFindingId by derivedStateOf {
             structureDetailBackStack.value
                 .filterIsInstance<FindingDetailRoute>()
@@ -81,6 +84,10 @@ internal inline fun <reified T : StructureFloorPlanRoute> Module.structureFloorP
             onBack = {
                 val rootBackStack = get<SnagBackStack>()
                 rootBackStack.removeLastSafely()
+            },
+            onEditClick = {
+                val rootBackStack = get<SnagBackStack>()
+                rootBackStack.value.add(structureEditRouteFactory.create(route.structureId))
             },
         )
     }

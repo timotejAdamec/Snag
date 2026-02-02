@@ -12,8 +12,10 @@
 
 package cz.adamec.timotej.snag.findings.fe.ports
 
+import cz.adamec.timotej.snag.feat.findings.business.Coordinate
 import cz.adamec.timotej.snag.feat.findings.business.Finding
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
+import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstUpdateDataResult
 import kotlinx.coroutines.flow.Flow
 import kotlin.uuid.Uuid
 
@@ -27,4 +29,8 @@ interface FindingsDb {
     fun getFindingFlow(id: Uuid): Flow<OfflineFirstDataResult<Finding?>>
 
     suspend fun deleteFinding(id: Uuid): OfflineFirstDataResult<Unit>
+
+    suspend fun updateFindingDetails(id: Uuid, name: String, description: String?): OfflineFirstUpdateDataResult
+
+    suspend fun updateFindingCoordinates(id: Uuid, coordinates: List<Coordinate>): OfflineFirstUpdateDataResult
 }

@@ -42,13 +42,16 @@ import org.jetbrains.compose.resources.stringResource
 import snag.feat.structures.fe.driving.impl.generated.resources.Res
 import snag.feat.structures.fe.driving.impl.generated.resources.structure_not_found
 import snag.lib.design.fe.generated.resources.delete
+import snag.lib.design.fe.generated.resources.edit
 import snag.lib.design.fe.generated.resources.ic_delete
+import snag.lib.design.fe.generated.resources.ic_edit
 import snag.lib.design.fe.generated.resources.Res as DesignRes
 
 @Composable
 internal fun StructureFloorPlanContent(
     state: StructureDetailsUiState,
     onBack: () -> Unit,
+    onEditClick: () -> Unit,
     onDelete: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -75,6 +78,7 @@ internal fun StructureFloorPlanContent(
                 LoadedStructureDetailsContent(
                     state = state,
                     onBack = onBack,
+                    onEditClick = onEditClick,
                     onDelete = onDelete,
                 )
             }
@@ -90,6 +94,7 @@ internal fun StructureFloorPlanContent(
 private fun LoadedStructureDetailsContent(
     state: StructureDetailsUiState,
     onBack: () -> Unit,
+    onEditClick: () -> Unit,
     onDelete: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -148,6 +153,14 @@ private fun LoadedStructureDetailsContent(
                         .padding(bottom = 16.dp),
                 expanded = true,
             ) {
+                IconButton(
+                    onClick = onEditClick,
+                ) {
+                    Icon(
+                        painter = painterResource(DesignRes.drawable.ic_edit),
+                        contentDescription = stringResource(DesignRes.string.edit),
+                    )
+                }
                 IconButton(
                     enabled = state.canInvokeDeletion,
                     onClick = {
