@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.findings.fe.app.impl.internal
 
+import cz.adamec.timotej.snag.feat.findings.business.Coordinate
 import cz.adamec.timotej.snag.feat.findings.business.Finding
 import cz.adamec.timotej.snag.findings.fe.app.api.SaveFindingUseCase
 import cz.adamec.timotej.snag.findings.fe.app.api.model.SaveFindingRequest
@@ -31,14 +32,10 @@ class SaveFindingUseCaseImpl(
     private val uuidProvider: UuidProvider,
 ) : SaveFindingUseCase {
     override suspend operator fun invoke(request: SaveFindingRequest): OfflineFirstDataResult<Uuid> {
-        val findingId = request.id
-        val existingCoordinates =
-            if (findingId != null) {
-                val existingResult = findingsDb.getFindingFlow(findingId).firstOrNull()
-                (existingResult as? OfflineFirstDataResult.Success)?.data?.coordinates.orEmpty()
-            } else {
-                emptyList()
-            }
+        val coordinatesResult = resolveCoordinates(request)
+        if (coordinatesResult is OfflineFirstDataResult.ProgrammerError) return coordinatesResult
+
+        val coordinates = (coordinatesResult as OfflineFirstDataResult.Success).data
 
         val finding =
             Finding(
@@ -46,7 +43,7 @@ class SaveFindingUseCaseImpl(
                 structureId = request.structureId,
                 name = request.name,
                 description = request.description,
-                coordinates = existingCoordinates,
+                coordinates = coordinates,
             )
 
         return findingsDb
@@ -62,5 +59,27 @@ class SaveFindingUseCaseImpl(
             }.map {
                 finding.id
             }
+    }
+
+    private suspend fun resolveCoordinates(request: SaveFindingRequest): OfflineFirstDataResult<List<Coordinate>> {
+        val requestCoordinates = request.coordinates
+        if (requestCoordinates != null) {
+            return OfflineFirstDataResult.Success(requestCoordinates)
+        }
+
+        val findingId = request.id ?: return OfflineFirstDataResult.Success(emptyList())
+
+        val existingResult = findingsDb.getFindingFlow(findingId).firstOrNull()
+            ?: return OfflineFirstDataResult.ProgrammerError(
+                IllegalStateException("No emission from getFindingFlow for finding $findingId"),
+            )
+
+        return when (existingResult) {
+            is OfflineFirstDataResult.Success -> {
+                val coordinates = existingResult.data?.coordinates.orEmpty()
+                OfflineFirstDataResult.Success(coordinates)
+            }
+            is OfflineFirstDataResult.ProgrammerError -> existingResult
+        }
     }
 }
