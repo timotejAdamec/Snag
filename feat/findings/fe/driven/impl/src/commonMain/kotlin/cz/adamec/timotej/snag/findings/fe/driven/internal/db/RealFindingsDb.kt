@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.findings.fe.driven.internal.db
 
+import app.cash.sqldelight.async.coroutines.awaitAsOne
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import app.cash.sqldelight.coroutines.mapToOneOrNull
@@ -130,7 +131,7 @@ internal class RealFindingsDb(
             runCatching {
                 findingEntityQueries.transactionWithResult {
                     findingEntityQueries.updateDetails(name = name, description = description, id = id.toString())
-                    findingEntityQueries.selectChanges().executeAsOne()
+                    findingEntityQueries.selectChanges().awaitAsOne()
                 }
             }.fold(
                 onSuccess = { changes ->
@@ -158,7 +159,7 @@ internal class RealFindingsDb(
                         coordinates = serializeCoordinates(coordinates),
                         id = id.toString(),
                     )
-                    findingEntityQueries.selectChanges().executeAsOne()
+                    findingEntityQueries.selectChanges().awaitAsOne()
                 }
             }.fold(
                 onSuccess = { changes ->
