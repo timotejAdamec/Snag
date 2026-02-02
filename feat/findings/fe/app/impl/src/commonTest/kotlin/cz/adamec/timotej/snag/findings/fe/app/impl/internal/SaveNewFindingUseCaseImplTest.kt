@@ -66,7 +66,7 @@ class SaveNewFindingUseCaseImplTest {
 
     @Test
     fun `uses provided coordinates`() = runTest {
-        val coordinates = listOf(Coordinate(1.0f, 2.0f), Coordinate(3.0f, 4.0f))
+        val coordinates = listOf(Coordinate(0.1f, 0.2f), Coordinate(0.3f, 0.4f))
         val request = SaveNewFindingRequest(
             structureId = structureId,
             name = "Crack in wall",

@@ -15,4 +15,9 @@ package cz.adamec.timotej.snag.feat.findings.business
 data class Coordinate(
     val x: Float,
     val y: Float,
-)
+) {
+    init {
+        require(x in 0f..1f) { "x must be between 0 and 1, was $x" }
+        require(y in 0f..1f) { "y must be between 0 and 1, was $y" }
+    }
+}

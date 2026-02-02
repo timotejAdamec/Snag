@@ -38,14 +38,14 @@ class SaveFindingCoordinatesUseCaseImplTest {
         structureId = structureId,
         name = "Finding",
         description = null,
-        coordinates = listOf(Coordinate(1.0f, 2.0f)),
+        coordinates = listOf(Coordinate(0.1f, 0.2f)),
     )
 
     @Test
     fun `updates coordinates`() = runTest {
         findingsDb.setFinding(existingFinding)
 
-        val newCoordinates = listOf(Coordinate(5.0f, 6.0f), Coordinate(7.0f, 8.0f))
+        val newCoordinates = listOf(Coordinate(0.5f, 0.6f), Coordinate(0.7f, 0.8f))
         val request = SaveFindingCoordinatesRequest(
             findingId = findingId,
             coordinates = newCoordinates,
@@ -62,7 +62,7 @@ class SaveFindingCoordinatesUseCaseImplTest {
 
         val request = SaveFindingCoordinatesRequest(
             findingId = findingId,
-            coordinates = listOf(Coordinate(5.0f, 6.0f)),
+            coordinates = listOf(Coordinate(0.5f, 0.6f)),
         )
 
         useCase(request)
@@ -74,7 +74,7 @@ class SaveFindingCoordinatesUseCaseImplTest {
     fun `returns NotFound when finding does not exist`() = runTest {
         val request = SaveFindingCoordinatesRequest(
             findingId = findingId,
-            coordinates = listOf(Coordinate(5.0f, 6.0f)),
+            coordinates = listOf(Coordinate(0.5f, 0.6f)),
         )
 
         val result = useCase(request)
@@ -86,7 +86,7 @@ class SaveFindingCoordinatesUseCaseImplTest {
     fun `does not enqueue sync when not found`() = runTest {
         val request = SaveFindingCoordinatesRequest(
             findingId = findingId,
-            coordinates = listOf(Coordinate(5.0f, 6.0f)),
+            coordinates = listOf(Coordinate(0.5f, 0.6f)),
         )
 
         useCase(request)
@@ -100,7 +100,7 @@ class SaveFindingCoordinatesUseCaseImplTest {
 
         val request = SaveFindingCoordinatesRequest(
             findingId = findingId,
-            coordinates = listOf(Coordinate(5.0f, 6.0f)),
+            coordinates = listOf(Coordinate(0.5f, 0.6f)),
         )
 
         val result = useCase(request)
@@ -114,7 +114,7 @@ class SaveFindingCoordinatesUseCaseImplTest {
 
         val request = SaveFindingCoordinatesRequest(
             findingId = findingId,
-            coordinates = listOf(Coordinate(5.0f, 6.0f)),
+            coordinates = listOf(Coordinate(0.5f, 0.6f)),
         )
 
         useCase(request)
