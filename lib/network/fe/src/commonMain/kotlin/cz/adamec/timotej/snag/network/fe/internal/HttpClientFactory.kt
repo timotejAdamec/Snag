@@ -15,23 +15,21 @@ package cz.adamec.timotej.snag.network.fe.internal
 import cz.adamec.timotej.snag.network.fe.NetworkException
 import cz.adamec.timotej.snag.server.api.configureJson
 import io.ktor.client.HttpClient
-import io.ktor.client.network.sockets.ConnectTimeoutException
-import io.ktor.client.network.sockets.SocketTimeoutException
 import io.ktor.client.plugins.ClientRequestException
-import io.ktor.client.plugins.HttpRequestTimeoutException
 import io.ktor.client.plugins.HttpResponseValidator
 import io.ktor.client.plugins.ServerResponseException
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.http.HttpStatusCode
-import kotlinx.io.IOException
 import kotlin.coroutines.cancellation.CancellationException
 import co.touchlab.kermit.Logger as KermitLogger
 import io.ktor.client.plugins.logging.Logger as KtorLogger
 
-object HttpClientFactory {
-    fun createHttpClient(): HttpClient =
+internal class HttpClientFactory(
+    private val networkErrorClassifier: NetworkErrorClassifier,
+) {
+    internal fun createHttpClient(): HttpClient =
         HttpClient {
             expectSuccess = true
 
@@ -51,16 +49,13 @@ object HttpClientFactory {
 
             HttpResponseValidator {
                 handleResponseExceptionWithRequest { cause, _ ->
-                    when (cause) {
-                        is IOException,
-                        is HttpRequestTimeoutException,
-                        is ConnectTimeoutException,
-                        is SocketTimeoutException,
-                        -> throw NetworkException.NetworkUnavailable(
-                            cause = cause,
-                        )
+                    when {
+                        cause is CancellationException -> throw cause
 
-                        is ClientRequestException ->
+                        networkErrorClassifier.isNetworkUnavailableError(cause) ->
+                            throw NetworkException.NetworkUnavailable(cause = cause)
+
+                        cause is ClientRequestException ->
                             when (cause.response.status) {
                                 HttpStatusCode.Unauthorized -> throw NetworkException.ClientError.Unauthorized(
                                     message = cause.message,
@@ -78,15 +73,12 @@ object HttpClientFactory {
                                 )
                             }
 
-                        is ServerResponseException -> throw NetworkException.ServerError(
+                        cause is ServerResponseException -> throw NetworkException.ServerError(
                             message = cause.message,
                             cause = cause,
                         )
 
-                        is CancellationException -> throw cause
-                        else -> throw NetworkException.ProgrammerError(
-                            cause = cause,
-                        )
+                        else -> throw NetworkException.ProgrammerError(cause = cause)
                     }
                 }
             }

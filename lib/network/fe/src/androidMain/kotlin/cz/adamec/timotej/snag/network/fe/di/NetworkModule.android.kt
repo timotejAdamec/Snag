@@ -18,7 +18,7 @@ import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
-internal actual val platformModule =
+internal actual val localHostPlatformModule =
     module {
         singleOf(::AndroidLocalHostUrlFactory) bind LocalHostUrlFactory::class
     }

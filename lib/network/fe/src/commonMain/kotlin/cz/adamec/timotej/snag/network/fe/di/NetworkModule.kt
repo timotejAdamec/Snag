@@ -21,13 +21,15 @@ import org.koin.dsl.module
 
 val networkModule =
     module {
-        includes(platformModule)
+        includes(localHostPlatformModule)
+        includes(networkErrorClassifierPlatformModule)
         single {
             SnagNetworkHttpClientImpl(
-                httpClient = HttpClientFactory.createHttpClient(),
+                httpClient = HttpClientFactory(get()).createHttpClient(),
                 localHostUrlFactory = get(),
             )
         } bind SnagNetworkHttpClient::class
     }
 
-internal expect val platformModule: Module
+internal expect val localHostPlatformModule: Module
+internal expect val networkErrorClassifierPlatformModule: Module

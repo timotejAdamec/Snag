@@ -12,13 +12,13 @@
 
 package cz.adamec.timotej.snag.network.fe.di
 
-import cz.adamec.timotej.snag.network.fe.internal.LocalHostUrlFactory
-import cz.adamec.timotej.snag.network.fe.internal.NonAndroidLocalHostUrlFactory
+import cz.adamec.timotej.snag.network.fe.internal.DefaultNetworkErrorClassifier
+import cz.adamec.timotej.snag.network.fe.internal.NetworkErrorClassifier
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
-internal actual val localHostPlatformModule =
+internal actual val networkErrorClassifierPlatformModule =
     module {
-        singleOf(::NonAndroidLocalHostUrlFactory) bind LocalHostUrlFactory::class
+        singleOf(::DefaultNetworkErrorClassifier) bind NetworkErrorClassifier::class
     }
