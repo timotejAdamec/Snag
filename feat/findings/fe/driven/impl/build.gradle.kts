@@ -9,6 +9,7 @@ kotlin {
             implementation(project(":feat:findings:business"))
             implementation(project(":lib:sync:fe:app"))
             implementation(project(":lib:sync:business"))
+            implementation(project(":lib:database:fe"))
         }
     }
 }

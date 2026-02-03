@@ -21,6 +21,7 @@ kotlin {
             implementation(project(":feat:projects:business"))
             implementation(project(":lib:sync:fe:app"))
             implementation(project(":lib:sync:business"))
+            implementation(project(":lib:database:fe"))
         }
         commonTest.dependencies {
             implementation(project(":feat:projects:fe:driven:test"))

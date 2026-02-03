@@ -12,71 +12,32 @@
 
 package cz.adamec.timotej.snag.structures.fe.driven.internal.sync
 
+import cz.adamec.timotej.snag.feat.structures.business.Structure
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
-import cz.adamec.timotej.snag.lib.sync.business.SyncOperationType
-import cz.adamec.timotej.snag.lib.sync.fe.app.handler.SyncOperationHandler
-import cz.adamec.timotej.snag.lib.sync.fe.app.handler.SyncOperationResult
-import cz.adamec.timotej.snag.structures.fe.driven.internal.LH.logger
+import cz.adamec.timotej.snag.lib.sync.fe.app.handler.DbApiSyncHandler
+import cz.adamec.timotej.snag.structures.fe.driven.internal.LH
 import cz.adamec.timotej.snag.structures.fe.ports.StructuresApi
 import cz.adamec.timotej.snag.structures.fe.ports.StructuresDb
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.Flow
 import kotlin.uuid.Uuid
 
 internal class StructureSyncHandler(
     private val structuresApi: StructuresApi,
     private val structuresDb: StructuresDb,
-) : SyncOperationHandler {
+) : DbApiSyncHandler<Structure>(LH.logger) {
     override val entityType: String = STRUCTURE_SYNC_ENTITY_TYPE
+    override val entityName: String = "structure"
 
-    override suspend fun execute(
-        entityId: Uuid,
-        operationType: SyncOperationType,
-    ): SyncOperationResult =
-        when (operationType) {
-            SyncOperationType.UPSERT -> executeUpsert(entityId)
-            SyncOperationType.DELETE -> executeDelete(entityId)
-        }
+    override fun getEntityFlow(entityId: Uuid): Flow<OfflineFirstDataResult<Structure?>> =
+        structuresDb.getStructureFlow(entityId)
 
-    private suspend fun executeUpsert(entityId: Uuid): SyncOperationResult {
-        val structureResult = structuresDb.getStructureFlow(entityId).first()
-        val structure =
-            when (structureResult) {
-                is OfflineFirstDataResult.Success -> structureResult.data
-                is OfflineFirstDataResult.ProgrammerError -> {
-                    logger.e { "DB error reading structure $entityId for sync." }
-                    return SyncOperationResult.Failure
-                }
-            }
-        if (structure == null) {
-            logger.d { "Structure $entityId not found in local DB, discarding sync operation." }
-            return SyncOperationResult.EntityNotFound
-        }
+    override suspend fun saveEntityToApi(entity: Structure): OnlineDataResult<Structure?> =
+        structuresApi.saveStructure(entity)
 
-        return when (val apiResult = structuresApi.saveStructure(structure)) {
-            is OnlineDataResult.Success -> {
-                apiResult.data?.let { updatedStructure ->
-                    logger.d { "Saving fresher $updatedStructure from API to DB." }
-                    structuresDb.saveStructure(updatedStructure)
-                }
-                SyncOperationResult.Success
-            }
-            is OnlineDataResult.Failure -> {
-                logger.w { "API failure syncing structure $entityId." }
-                SyncOperationResult.Failure
-            }
-        }
-    }
+    override suspend fun deleteEntityFromApi(entityId: Uuid): OnlineDataResult<Unit> =
+        structuresApi.deleteStructure(entityId)
 
-    private suspend fun executeDelete(entityId: Uuid): SyncOperationResult =
-        when (structuresApi.deleteStructure(entityId)) {
-            is OnlineDataResult.Success -> {
-                logger.d { "Deleted structure $entityId from API." }
-                SyncOperationResult.Success
-            }
-            is OnlineDataResult.Failure -> {
-                logger.w { "API failure deleting structure $entityId." }
-                SyncOperationResult.Failure
-            }
-        }
+    override suspend fun saveEntityToDb(entity: Structure): OfflineFirstDataResult<Unit> =
+        structuresDb.saveStructure(entity)
 }

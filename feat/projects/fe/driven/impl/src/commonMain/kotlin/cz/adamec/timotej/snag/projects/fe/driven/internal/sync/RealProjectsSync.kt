@@ -12,27 +12,18 @@
 
 package cz.adamec.timotej.snag.projects.fe.driven.internal.sync
 
-import cz.adamec.timotej.snag.lib.sync.business.SyncOperationType
-import cz.adamec.timotej.snag.lib.sync.fe.app.EnqueueSyncOperationUseCase
+import cz.adamec.timotej.snag.lib.sync.fe.app.SyncEnqueuer
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsSync
 import kotlin.uuid.Uuid
 
 internal class RealProjectsSync(
-    private val enqueueSyncOperationUseCase: EnqueueSyncOperationUseCase,
+    private val syncEnqueuer: SyncEnqueuer,
 ) : ProjectsSync {
     override suspend fun enqueueProjectSave(projectId: Uuid) {
-        enqueueSyncOperationUseCase(
-            entityType = PROJECT_SYNC_ENTITY_TYPE,
-            entityId = projectId,
-            operationType = SyncOperationType.UPSERT,
-        )
+        syncEnqueuer.enqueueSave(projectId)
     }
 
     override suspend fun enqueueProjectDelete(projectId: Uuid) {
-        enqueueSyncOperationUseCase(
-            entityType = PROJECT_SYNC_ENTITY_TYPE,
-            entityId = projectId,
-            operationType = SyncOperationType.DELETE,
-        )
+        syncEnqueuer.enqueueDelete(projectId)
     }
 }
