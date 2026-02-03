@@ -12,27 +12,20 @@
 
 package cz.adamec.timotej.snag.structures.fe.driven.internal.sync
 
-import cz.adamec.timotej.snag.lib.sync.business.SyncOperationType
-import cz.adamec.timotej.snag.lib.sync.fe.app.EnqueueSyncOperationUseCase
+import cz.adamec.timotej.snag.lib.sync.fe.app.api.EnqueueSyncDeleteUseCase
+import cz.adamec.timotej.snag.lib.sync.fe.app.api.EnqueueSyncSaveUseCase
 import cz.adamec.timotej.snag.structures.fe.ports.StructuresSync
 import kotlin.uuid.Uuid
 
 internal class RealStructuresSync(
-    private val enqueueSyncOperationUseCase: EnqueueSyncOperationUseCase,
+    private val enqueueSyncSaveUseCase: EnqueueSyncSaveUseCase,
+    private val enqueueSyncDeleteUseCase: EnqueueSyncDeleteUseCase,
 ) : StructuresSync {
     override suspend fun enqueueStructureSave(structureId: Uuid) {
-        enqueueSyncOperationUseCase(
-            entityType = STRUCTURE_SYNC_ENTITY_TYPE,
-            entityId = structureId,
-            operationType = SyncOperationType.UPSERT,
-        )
+        enqueueSyncSaveUseCase(STRUCTURE_SYNC_ENTITY_TYPE, structureId)
     }
 
     override suspend fun enqueueStructureDelete(structureId: Uuid) {
-        enqueueSyncOperationUseCase(
-            entityType = STRUCTURE_SYNC_ENTITY_TYPE,
-            entityId = structureId,
-            operationType = SyncOperationType.DELETE,
-        )
+        enqueueSyncDeleteUseCase(STRUCTURE_SYNC_ENTITY_TYPE, structureId)
     }
 }

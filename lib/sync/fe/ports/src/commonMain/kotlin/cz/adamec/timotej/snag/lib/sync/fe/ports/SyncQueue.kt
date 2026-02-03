@@ -17,7 +17,7 @@ import kotlin.uuid.Uuid
 
 interface SyncQueue {
     suspend fun enqueue(
-        entityType: String,
+        entityTypeId: String,
         entityId: Uuid,
         operationType: SyncOperationType,
     )

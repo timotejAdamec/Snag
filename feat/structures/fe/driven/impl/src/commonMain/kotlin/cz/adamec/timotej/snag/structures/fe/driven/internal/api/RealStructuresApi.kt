@@ -13,12 +13,9 @@
 package cz.adamec.timotej.snag.structures.fe.driven.internal.api
 
 import cz.adamec.timotej.snag.feat.structures.business.Structure
-import cz.adamec.timotej.snag.lib.core.common.runCatchingCancellable
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
-import cz.adamec.timotej.snag.network.fe.NetworkException
 import cz.adamec.timotej.snag.network.fe.SnagNetworkHttpClient
-import cz.adamec.timotej.snag.network.fe.log
-import cz.adamec.timotej.snag.network.fe.toOnlineDataResult
+import cz.adamec.timotej.snag.network.fe.safeApiCall
 import cz.adamec.timotej.snag.structures.be.driving.contract.StructureApiDto
 import cz.adamec.timotej.snag.structures.fe.driven.internal.LH
 import cz.adamec.timotej.snag.structures.fe.ports.StructuresApi
@@ -30,54 +27,26 @@ import kotlin.uuid.Uuid
 internal class RealStructuresApi(
     private val httpClient: SnagNetworkHttpClient,
 ) : StructuresApi {
-    override suspend fun getStructures(projectId: Uuid): OnlineDataResult<List<Structure>> =
-        runCatchingCancellable {
-            LH.logger.d { "Fetching structures for project $projectId..." }
+    override suspend fun getStructures(projectId: Uuid): OnlineDataResult<List<Structure>> {
+        LH.logger.d { "Fetching structures for project $projectId..." }
+        return safeApiCall(logger = LH.logger, errorContext = "Error fetching structures for project $projectId.") {
             httpClient.get("/projects/$projectId/structures").body<List<StructureApiDto>>().map {
                 it.toBusiness()
             }
-        }.fold(
-            onSuccess = {
-                LH.logger.d { "Fetched ${it.size} structures for project $projectId." }
-                OnlineDataResult.Success(it)
-            },
-            onFailure = { e ->
-                return if (e is NetworkException) {
-                    e.log()
-                    e.toOnlineDataResult()
-                } else {
-                    LH.logger.e { "Error fetching structures for project $projectId." }
-                    OnlineDataResult.Failure.ProgrammerError(
-                        throwable = e,
-                    )
-                }
-            },
-        )
+        }.also { if (it is OnlineDataResult.Success) LH.logger.d { "Fetched ${it.data.size} structures for project $projectId." } }
+    }
 
-    override suspend fun deleteStructure(id: Uuid): OnlineDataResult<Unit> =
-        runCatchingCancellable {
+    override suspend fun deleteStructure(id: Uuid): OnlineDataResult<Unit> {
+        LH.logger.d { "Deleting structure $id from API..." }
+        return safeApiCall(logger = LH.logger, errorContext = "Error deleting structure $id from API.") {
             httpClient.delete("/structures/$id")
-        }.fold(
-            onSuccess = {
-                LH.logger.d { "Deleted structure $id from API." }
-                OnlineDataResult.Success(Unit)
-            },
-            onFailure = { e ->
-                return if (e is NetworkException) {
-                    e.log()
-                    e.toOnlineDataResult()
-                } else {
-                    LH.logger.e { "Error deleting structure $id from API." }
-                    OnlineDataResult.Failure.ProgrammerError(
-                        throwable = e,
-                    )
-                }
-            },
-        )
+            Unit
+        }.also { if (it is OnlineDataResult.Success) LH.logger.d { "Deleted structure $id from API." } }
+    }
 
-    override suspend fun saveStructure(structure: Structure): OnlineDataResult<Structure?> =
-        runCatchingCancellable {
-            LH.logger.d { "Saving structure ${structure.id} to API..." }
+    override suspend fun saveStructure(structure: Structure): OnlineDataResult<Structure?> {
+        LH.logger.d { "Saving structure ${structure.id} to API..." }
+        return safeApiCall(logger = LH.logger, errorContext = "Error saving structure ${structure.id} to API.") {
             val structureDto = structure.toPutApiDto()
             val response =
                 httpClient.put("/projects/${structure.projectId}/structures/${structure.id}") {
@@ -88,21 +57,6 @@ internal class RealStructuresApi(
             } else {
                 null
             }
-        }.fold(
-            onSuccess = {
-                LH.logger.d { "Saved structure ${structure.id} to API." }
-                OnlineDataResult.Success(it)
-            },
-            onFailure = { e ->
-                return if (e is NetworkException) {
-                    e.log()
-                    e.toOnlineDataResult()
-                } else {
-                    LH.logger.e { "Error saving structure ${structure.id} to API." }
-                    OnlineDataResult.Failure.ProgrammerError(
-                        throwable = e,
-                    )
-                }
-            },
-        )
+        }.also { if (it is OnlineDataResult.Success) LH.logger.d { "Saved structure ${structure.id} to API." } }
+    }
 }

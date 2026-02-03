@@ -21,18 +21,18 @@ class FakeSyncQueue : SyncQueue {
     private val operations = mutableListOf<SyncOperation>()
 
     override suspend fun enqueue(
-        entityType: String,
+        entityTypeId: String,
         entityId: Uuid,
         operationType: SyncOperationType,
     ) {
-        val existing = operations.indexOfFirst { it.entityType == entityType && it.entityId == entityId }
+        val existing = operations.indexOfFirst { it.entityTypeId == entityTypeId && it.entityId == entityId }
         if (existing >= 0) {
             operations[existing] = operations[existing].copy(operationType = operationType)
         } else {
             operations.add(
                 SyncOperation(
                     id = Uuid.random(),
-                    entityType = entityType,
+                    entityTypeId = entityTypeId,
                     entityId = entityId,
                     operationType = operationType,
                 ),

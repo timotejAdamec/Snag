@@ -24,6 +24,7 @@ import cz.adamec.timotej.snag.findings.fe.driven.internal.LH
 import cz.adamec.timotej.snag.findings.fe.ports.FindingsDb
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstUpdateDataResult
+import cz.adamec.timotej.snag.lib.database.fe.safeDbWrite
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -50,64 +51,22 @@ internal class RealFindingsDb(
             }
 
     override suspend fun saveFindings(findings: List<Finding>): OfflineFirstDataResult<Unit> =
-        withContext(ioDispatcher) {
-            runCatching {
-                findingEntityQueries.transaction {
-                    findings.forEach {
-                        findingEntityQueries.save(it.toEntity())
-                    }
+        safeDbWrite(ioDispatcher = ioDispatcher, logger = LH.logger, errorMessage = "Error saving findings $findings to DB.") {
+            findingEntityQueries.transaction {
+                findings.forEach {
+                    findingEntityQueries.save(it.toEntity())
                 }
-            }.fold(
-                onSuccess = {
-                    OfflineFirstDataResult.Success(
-                        data = Unit,
-                    )
-                },
-                onFailure = { e ->
-                    LH.logger.e { "Error saving findings $findings to DB." }
-                    OfflineFirstDataResult.ProgrammerError(
-                        throwable = e,
-                    )
-                },
-            )
+            }
         }
 
     override suspend fun saveFinding(finding: Finding): OfflineFirstDataResult<Unit> =
-        withContext(ioDispatcher) {
-            runCatching {
-                findingEntityQueries.save(finding.toEntity())
-            }.fold(
-                onSuccess = {
-                    OfflineFirstDataResult.Success(
-                        data = Unit,
-                    )
-                },
-                onFailure = { e ->
-                    LH.logger.e { "Error saving finding $finding to DB." }
-                    OfflineFirstDataResult.ProgrammerError(
-                        throwable = e,
-                    )
-                },
-            )
+        safeDbWrite(ioDispatcher = ioDispatcher, logger = LH.logger, errorMessage = "Error saving finding $finding to DB.") {
+            findingEntityQueries.save(finding.toEntity())
         }
 
     override suspend fun deleteFinding(id: Uuid): OfflineFirstDataResult<Unit> =
-        withContext(ioDispatcher) {
-            runCatching {
-                findingEntityQueries.deleteById(id.toString())
-            }.fold(
-                onSuccess = {
-                    OfflineFirstDataResult.Success(
-                        data = Unit,
-                    )
-                },
-                onFailure = { e ->
-                    LH.logger.e { "Error deleting finding $id from DB." }
-                    OfflineFirstDataResult.ProgrammerError(
-                        throwable = e,
-                    )
-                },
-            )
+        safeDbWrite(ioDispatcher = ioDispatcher, logger = LH.logger, errorMessage = "Error deleting finding $id from DB.") {
+            findingEntityQueries.deleteById(id.toString())
         }
 
     override fun getFindingFlow(id: Uuid): Flow<OfflineFirstDataResult<Finding?>> =

@@ -19,13 +19,13 @@ import cz.adamec.timotej.snag.feat.shared.database.fe.db.StructureEntity
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.StructureEntityQueries
 import cz.adamec.timotej.snag.feat.structures.business.Structure
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
+import cz.adamec.timotej.snag.lib.database.fe.safeDbWrite
 import cz.adamec.timotej.snag.structures.fe.driven.internal.LH
 import cz.adamec.timotej.snag.structures.fe.ports.StructuresDb
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.withContext
 import kotlin.uuid.Uuid
 
 internal class RealStructuresDb(
@@ -47,64 +47,22 @@ internal class RealStructuresDb(
             }
 
     override suspend fun saveStructures(structures: List<Structure>): OfflineFirstDataResult<Unit> =
-        withContext(ioDispatcher) {
-            runCatching {
-                structureEntityQueries.transaction {
-                    structures.forEach {
-                        structureEntityQueries.save(it.toEntity())
-                    }
+        safeDbWrite(ioDispatcher = ioDispatcher, logger = LH.logger, errorMessage = "Error saving structures $structures to DB.") {
+            structureEntityQueries.transaction {
+                structures.forEach {
+                    structureEntityQueries.save(it.toEntity())
                 }
-            }.fold(
-                onSuccess = {
-                    OfflineFirstDataResult.Success(
-                        data = Unit,
-                    )
-                },
-                onFailure = { e ->
-                    LH.logger.e { "Error saving structures $structures to DB." }
-                    OfflineFirstDataResult.ProgrammerError(
-                        throwable = e,
-                    )
-                },
-            )
+            }
         }
 
     override suspend fun saveStructure(structure: Structure): OfflineFirstDataResult<Unit> =
-        withContext(ioDispatcher) {
-            runCatching {
-                structureEntityQueries.save(structure.toEntity())
-            }.fold(
-                onSuccess = {
-                    OfflineFirstDataResult.Success(
-                        data = Unit,
-                    )
-                },
-                onFailure = { e ->
-                    LH.logger.e { "Error saving structure $structure to DB." }
-                    OfflineFirstDataResult.ProgrammerError(
-                        throwable = e,
-                    )
-                },
-            )
+        safeDbWrite(ioDispatcher = ioDispatcher, logger = LH.logger, errorMessage = "Error saving structure $structure to DB.") {
+            structureEntityQueries.save(structure.toEntity())
         }
 
     override suspend fun deleteStructure(id: Uuid): OfflineFirstDataResult<Unit> =
-        withContext(ioDispatcher) {
-            runCatching {
-                structureEntityQueries.deleteById(id.toString())
-            }.fold(
-                onSuccess = {
-                    OfflineFirstDataResult.Success(
-                        data = Unit,
-                    )
-                },
-                onFailure = { e ->
-                    LH.logger.e { "Error deleting structure $id from DB." }
-                    OfflineFirstDataResult.ProgrammerError(
-                        throwable = e,
-                    )
-                },
-            )
+        safeDbWrite(ioDispatcher = ioDispatcher, logger = LH.logger, errorMessage = "Error deleting structure $id from DB.") {
+            structureEntityQueries.deleteById(id.toString())
         }
 
     override fun getStructureFlow(id: Uuid): Flow<OfflineFirstDataResult<Structure?>> =

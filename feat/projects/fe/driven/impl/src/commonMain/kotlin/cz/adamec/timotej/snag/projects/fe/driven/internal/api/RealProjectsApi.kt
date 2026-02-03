@@ -12,12 +12,9 @@
 
 package cz.adamec.timotej.snag.projects.fe.driven.internal.api
 
-import cz.adamec.timotej.snag.lib.core.common.runCatchingCancellable
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
-import cz.adamec.timotej.snag.network.fe.NetworkException
 import cz.adamec.timotej.snag.network.fe.SnagNetworkHttpClient
-import cz.adamec.timotej.snag.network.fe.log
-import cz.adamec.timotej.snag.network.fe.toOnlineDataResult
+import cz.adamec.timotej.snag.network.fe.safeApiCall
 import cz.adamec.timotej.snag.projects.be.driving.contract.ProjectApiDto
 import cz.adamec.timotej.snag.projects.business.Project
 import cz.adamec.timotej.snag.projects.fe.driven.internal.LH
@@ -30,55 +27,25 @@ import kotlin.uuid.Uuid
 internal class RealProjectsApi(
     private val httpClient: SnagNetworkHttpClient,
 ) : ProjectsApi {
-    override suspend fun getProjects(): OnlineDataResult<List<Project>> =
-        runCatchingCancellable {
-            LH.logger.d { "Fetching projects..." }
+    override suspend fun getProjects(): OnlineDataResult<List<Project>> {
+        LH.logger.d { "Fetching projects..." }
+        return safeApiCall(logger = LH.logger, errorContext = "Error fetching projects.") {
             httpClient.get("/projects").body<List<ProjectApiDto>>().map {
                 it.toBusiness()
             }
-        }.fold(
-            onSuccess = {
-                LH.logger.d { "Fetched ${it.size} projects." }
-                OnlineDataResult.Success(it)
-            },
-            onFailure = { e ->
-                return if (e is NetworkException) {
-                    e.log()
-                    e.toOnlineDataResult()
-                } else {
-                    LH.logger.e { "Error fetching projects." }
-                    OnlineDataResult.Failure.ProgrammerError(
-                        throwable = e,
-                    )
-                }
-            },
-        )
+        }.also { if (it is OnlineDataResult.Success) LH.logger.d { "Fetched ${it.data.size} projects." } }
+    }
 
-    override suspend fun getProject(id: Uuid): OnlineDataResult<Project> =
-        runCatchingCancellable {
-            LH.logger.d { "Fetching project $id..." }
+    override suspend fun getProject(id: Uuid): OnlineDataResult<Project> {
+        LH.logger.d { "Fetching project $id..." }
+        return safeApiCall(logger = LH.logger, errorContext = "Error fetching project $id.") {
             httpClient.get("/projects/$id").body<ProjectApiDto>().toBusiness()
-        }.fold(
-            onSuccess = {
-                LH.logger.d { "Fetched project $id." }
-                OnlineDataResult.Success(it)
-            },
-            onFailure = { e ->
-                return if (e is NetworkException) {
-                    e.log()
-                    e.toOnlineDataResult()
-                } else {
-                    LH.logger.e { "Error fetching project $id." }
-                    OnlineDataResult.Failure.ProgrammerError(
-                        throwable = e,
-                    )
-                }
-            },
-        )
+        }.also { if (it is OnlineDataResult.Success) LH.logger.d { "Fetched project $id." } }
+    }
 
-    override suspend fun saveProject(project: Project): OnlineDataResult<Project?> =
-        runCatchingCancellable {
-            LH.logger.d { "Saving project ${project.id} to API..." }
+    override suspend fun saveProject(project: Project): OnlineDataResult<Project?> {
+        LH.logger.d { "Saving project ${project.id} to API..." }
+        return safeApiCall(logger = LH.logger, errorContext = "Error saving project ${project.id} to API.") {
             val projectDto = project.toPutApiDto()
             val response =
                 httpClient.put("/projects/${project.id}") {
@@ -89,42 +56,14 @@ internal class RealProjectsApi(
             } else {
                 null
             }
-        }.fold(
-            onSuccess = {
-                LH.logger.d { "Saved project ${project.id} to API." }
-                OnlineDataResult.Success(it)
-            },
-            onFailure = { e ->
-                return if (e is NetworkException) {
-                    e.log()
-                    e.toOnlineDataResult()
-                } else {
-                    LH.logger.e { "Error saving project ${project.id} to API." }
-                    OnlineDataResult.Failure.ProgrammerError(
-                        throwable = e,
-                    )
-                }
-            },
-        )
+        }.also { if (it is OnlineDataResult.Success) LH.logger.d { "Saved project ${project.id} to API." } }
+    }
 
-    override suspend fun deleteProject(id: Uuid): OnlineDataResult<Unit> =
-        runCatchingCancellable {
+    override suspend fun deleteProject(id: Uuid): OnlineDataResult<Unit> {
+        LH.logger.d { "Deleting project $id from API..." }
+        return safeApiCall(logger = LH.logger, errorContext = "Error deleting project $id from API.") {
             httpClient.delete("/projects/$id")
-        }.fold(
-            onSuccess = {
-                LH.logger.d { "Deleted project $id from API." }
-                OnlineDataResult.Success(Unit)
-            },
-            onFailure = { e ->
-                return if (e is NetworkException) {
-                    e.log()
-                    e.toOnlineDataResult()
-                } else {
-                    LH.logger.e { "Error deleting project $id from API." }
-                    OnlineDataResult.Failure.ProgrammerError(
-                        throwable = e,
-                    )
-                }
-            },
-        )
+            Unit
+        }.also { if (it is OnlineDataResult.Success) LH.logger.d { "Deleted project $id from API." } }
+    }
 }

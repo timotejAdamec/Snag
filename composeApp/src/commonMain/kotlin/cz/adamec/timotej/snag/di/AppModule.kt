@@ -19,7 +19,7 @@ import cz.adamec.timotej.snag.findings.fe.app.impl.di.findingsAppModule
 import cz.adamec.timotej.snag.findings.fe.driven.di.findingsDrivenModule
 import cz.adamec.timotej.snag.findings.fe.driving.impl.di.findingsDrivingImplModule
 import cz.adamec.timotej.snag.lib.core.fe.di.frontendCoreModule
-import cz.adamec.timotej.snag.lib.sync.fe.app.di.syncAppModule
+import cz.adamec.timotej.snag.lib.sync.fe.app.impl.di.syncAppModule
 import cz.adamec.timotej.snag.lib.sync.fe.driven.impl.di.syncDrivenModule
 import cz.adamec.timotej.snag.logging.loggerModule
 import cz.adamec.timotej.snag.network.fe.di.networkModule

@@ -18,6 +18,7 @@ import app.cash.sqldelight.coroutines.mapToOneOrNull
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.ProjectEntity
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.ProjectEntityQueries
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
+import cz.adamec.timotej.snag.lib.database.fe.safeDbWrite
 import cz.adamec.timotej.snag.projects.business.Project
 import cz.adamec.timotej.snag.projects.fe.driven.internal.LH
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsDb
@@ -25,7 +26,6 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.withContext
 import kotlin.uuid.Uuid
 
 internal class RealProjectsDb(
@@ -47,26 +47,12 @@ internal class RealProjectsDb(
             }
 
     override suspend fun saveProjects(projects: List<Project>): OfflineFirstDataResult<Unit> =
-        withContext(ioDispatcher) {
-            runCatching {
-                projectEntityQueries.transaction {
-                    projects.forEach {
-                        projectEntityQueries.save(it.toEntity())
-                    }
+        safeDbWrite(ioDispatcher = ioDispatcher, logger = LH.logger, errorMessage = "Error saving projects $projects to DB.") {
+            projectEntityQueries.transaction {
+                projects.forEach {
+                    projectEntityQueries.save(it.toEntity())
                 }
-            }.fold(
-                onSuccess = {
-                    OfflineFirstDataResult.Success(
-                        data = Unit,
-                    )
-                },
-                onFailure = { e ->
-                    LH.logger.e { "Error saving projects $projects to DB." }
-                    OfflineFirstDataResult.ProgrammerError(
-                        throwable = e,
-                    )
-                },
-            )
+            }
         }
 
     override fun getProjectFlow(id: Uuid): Flow<OfflineFirstDataResult<Project?>> =
@@ -82,40 +68,12 @@ internal class RealProjectsDb(
             }
 
     override suspend fun saveProject(project: Project): OfflineFirstDataResult<Unit> =
-        withContext(ioDispatcher) {
-            runCatching {
-                projectEntityQueries.save(project.toEntity())
-            }.fold(
-                onSuccess = {
-                    OfflineFirstDataResult.Success(
-                        data = Unit,
-                    )
-                },
-                onFailure = { e ->
-                    LH.logger.e { "Error saving project $project to DB." }
-                    OfflineFirstDataResult.ProgrammerError(
-                        throwable = e,
-                    )
-                },
-            )
+        safeDbWrite(ioDispatcher = ioDispatcher, logger = LH.logger, errorMessage = "Error saving project $project to DB.") {
+            projectEntityQueries.save(project.toEntity())
         }
 
     override suspend fun deleteProject(id: Uuid): OfflineFirstDataResult<Unit> =
-        withContext(ioDispatcher) {
-            runCatching {
-                projectEntityQueries.deleteById(id.toString())
-            }.fold(
-                onSuccess = {
-                    OfflineFirstDataResult.Success(
-                        data = Unit,
-                    )
-                },
-                onFailure = { e ->
-                    LH.logger.e { "Error deleting project $id from DB." }
-                    OfflineFirstDataResult.ProgrammerError(
-                        throwable = e,
-                    )
-                },
-            )
+        safeDbWrite(ioDispatcher = ioDispatcher, logger = LH.logger, errorMessage = "Error deleting project $id from DB.") {
+            projectEntityQueries.deleteById(id.toString())
         }
 }

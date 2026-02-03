@@ -18,7 +18,7 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                api(project(":lib:sync:fe:app"))
+                api(project(":lib:sync:fe:app:api"))
             }
         }
     }
