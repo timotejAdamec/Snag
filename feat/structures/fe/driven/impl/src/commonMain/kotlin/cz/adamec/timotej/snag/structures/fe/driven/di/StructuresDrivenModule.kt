@@ -13,12 +13,10 @@
 package cz.adamec.timotej.snag.structures.fe.driven.di
 
 import cz.adamec.timotej.snag.lib.core.common.di.getIoDispatcher
-import cz.adamec.timotej.snag.lib.sync.fe.app.SyncEnqueuer
 import cz.adamec.timotej.snag.lib.sync.fe.app.handler.SyncOperationHandler
 import cz.adamec.timotej.snag.structures.fe.driven.internal.api.RealStructuresApi
 import cz.adamec.timotej.snag.structures.fe.driven.internal.db.RealStructuresDb
 import cz.adamec.timotej.snag.structures.fe.driven.internal.sync.RealStructuresSync
-import cz.adamec.timotej.snag.structures.fe.driven.internal.sync.STRUCTURE_SYNC_ENTITY_TYPE
 import cz.adamec.timotej.snag.structures.fe.driven.internal.sync.StructureSyncHandler
 import cz.adamec.timotej.snag.structures.fe.ports.StructuresApi
 import cz.adamec.timotej.snag.structures.fe.ports.StructuresDb
@@ -37,12 +35,5 @@ val structuresDrivenModule =
         } bind StructuresDb::class
         factoryOf(::RealStructuresApi) bind StructuresApi::class
         factoryOf(::StructureSyncHandler) bind SyncOperationHandler::class
-        factory {
-            RealStructuresSync(
-                syncEnqueuer = SyncEnqueuer(
-                    enqueueSyncOperationUseCase = get(),
-                    entityType = STRUCTURE_SYNC_ENTITY_TYPE,
-                ),
-            )
-        } bind StructuresSync::class
+        factoryOf(::RealStructuresSync) bind StructuresSync::class
     }

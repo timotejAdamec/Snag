@@ -10,19 +10,12 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.lib.sync.fe.app
+package cz.adamec.timotej.snag.lib.sync.fe.app.internal
 
 import cz.adamec.timotej.snag.lib.sync.business.SyncOperationType
 import kotlin.uuid.Uuid
 
-/**
- * Make sure all [cz.adamec.timotej.snag.lib.sync.fe.app.handler.SyncOperationHandler]s are implemented for all [SyncOperationType]s you invoke
- * [EnqueueSyncOperationUseCase] with.
- */
-interface EnqueueSyncOperationUseCase {
-    /**
-     * @throws IllegalArgumentException if [cz.adamec.timotej.snag.lib.sync.fe.app.handler.SyncOperationHandler] is not registered for given [operationType].
-     */
+internal interface EnqueueSyncOperationUseCase {
     suspend operator fun invoke(
         entityType: String,
         entityId: Uuid,

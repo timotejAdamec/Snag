@@ -13,17 +13,19 @@
 package cz.adamec.timotej.snag.findings.fe.driven.internal.sync
 
 import cz.adamec.timotej.snag.findings.fe.ports.FindingsSync
-import cz.adamec.timotej.snag.lib.sync.fe.app.SyncEnqueuer
+import cz.adamec.timotej.snag.lib.sync.fe.app.EnqueueSyncDeleteUseCase
+import cz.adamec.timotej.snag.lib.sync.fe.app.EnqueueSyncSaveUseCase
 import kotlin.uuid.Uuid
 
 internal class RealFindingsSync(
-    private val syncEnqueuer: SyncEnqueuer,
+    private val enqueueSyncSaveUseCase: EnqueueSyncSaveUseCase,
+    private val enqueueSyncDeleteUseCase: EnqueueSyncDeleteUseCase,
 ) : FindingsSync {
     override suspend fun enqueueFindingSave(findingId: Uuid) {
-        syncEnqueuer.enqueueSave(findingId)
+        enqueueSyncSaveUseCase(FINDING_SYNC_ENTITY_TYPE, findingId)
     }
 
     override suspend fun enqueueFindingDelete(findingId: Uuid) {
-        syncEnqueuer.enqueueDelete(findingId)
+        enqueueSyncDeleteUseCase(FINDING_SYNC_ENTITY_TYPE, findingId)
     }
 }

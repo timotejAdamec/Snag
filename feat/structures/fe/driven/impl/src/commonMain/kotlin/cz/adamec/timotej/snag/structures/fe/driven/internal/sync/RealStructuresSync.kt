@@ -12,18 +12,20 @@
 
 package cz.adamec.timotej.snag.structures.fe.driven.internal.sync
 
-import cz.adamec.timotej.snag.lib.sync.fe.app.SyncEnqueuer
+import cz.adamec.timotej.snag.lib.sync.fe.app.EnqueueSyncDeleteUseCase
+import cz.adamec.timotej.snag.lib.sync.fe.app.EnqueueSyncSaveUseCase
 import cz.adamec.timotej.snag.structures.fe.ports.StructuresSync
 import kotlin.uuid.Uuid
 
 internal class RealStructuresSync(
-    private val syncEnqueuer: SyncEnqueuer,
+    private val enqueueSyncSaveUseCase: EnqueueSyncSaveUseCase,
+    private val enqueueSyncDeleteUseCase: EnqueueSyncDeleteUseCase,
 ) : StructuresSync {
     override suspend fun enqueueStructureSave(structureId: Uuid) {
-        syncEnqueuer.enqueueSave(structureId)
+        enqueueSyncSaveUseCase(STRUCTURE_SYNC_ENTITY_TYPE, structureId)
     }
 
     override suspend fun enqueueStructureDelete(structureId: Uuid) {
-        syncEnqueuer.enqueueDelete(structureId)
+        enqueueSyncDeleteUseCase(STRUCTURE_SYNC_ENTITY_TYPE, structureId)
     }
 }

@@ -13,11 +13,9 @@
 package cz.adamec.timotej.snag.projects.fe.driven.di
 
 import cz.adamec.timotej.snag.lib.core.common.di.getIoDispatcher
-import cz.adamec.timotej.snag.lib.sync.fe.app.SyncEnqueuer
 import cz.adamec.timotej.snag.lib.sync.fe.app.handler.SyncOperationHandler
 import cz.adamec.timotej.snag.projects.fe.driven.internal.api.RealProjectsApi
 import cz.adamec.timotej.snag.projects.fe.driven.internal.db.RealProjectsDb
-import cz.adamec.timotej.snag.projects.fe.driven.internal.sync.PROJECT_SYNC_ENTITY_TYPE
 import cz.adamec.timotej.snag.projects.fe.driven.internal.sync.ProjectSyncHandler
 import cz.adamec.timotej.snag.projects.fe.driven.internal.sync.RealProjectsSync
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsApi
@@ -37,12 +35,5 @@ val projectsDrivenModule =
         } bind ProjectsDb::class
         factoryOf(::RealProjectsApi) bind ProjectsApi::class
         factoryOf(::ProjectSyncHandler) bind SyncOperationHandler::class
-        factory {
-            RealProjectsSync(
-                syncEnqueuer = SyncEnqueuer(
-                    enqueueSyncOperationUseCase = get(),
-                    entityType = PROJECT_SYNC_ENTITY_TYPE,
-                ),
-            )
-        } bind ProjectsSync::class
+        factoryOf(::RealProjectsSync) bind ProjectsSync::class
     }
