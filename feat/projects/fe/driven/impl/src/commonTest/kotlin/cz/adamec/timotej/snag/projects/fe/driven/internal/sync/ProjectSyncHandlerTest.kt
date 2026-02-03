@@ -19,30 +19,41 @@ import cz.adamec.timotej.snag.lib.sync.fe.app.api.handler.SyncOperationResult
 import cz.adamec.timotej.snag.projects.business.Project
 import cz.adamec.timotej.snag.projects.fe.driven.test.FakeProjectsApi
 import cz.adamec.timotej.snag.projects.fe.driven.test.FakeProjectsDb
+import cz.adamec.timotej.snag.projects.fe.ports.ProjectsApi
+import cz.adamec.timotej.snag.projects.fe.ports.ProjectsDb
+import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
-import kotlin.test.BeforeTest
+import org.koin.core.module.Module
+import org.koin.core.module.dsl.singleOf
+import org.koin.dsl.bind
+import org.koin.dsl.module
+import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.uuid.Uuid
 
-class ProjectSyncHandlerTest {
-    private lateinit var projectsApi: FakeProjectsApi
-    private lateinit var projectsDb: FakeProjectsDb
-    private lateinit var handler: ProjectSyncHandler
+class ProjectSyncHandlerTest : FrontendKoinInitializedTest() {
 
-    @BeforeTest
-    fun setUp() {
-        projectsApi = FakeProjectsApi()
-        projectsDb = FakeProjectsDb()
-        handler = ProjectSyncHandler(projectsApi, projectsDb)
-    }
+    private val fakeProjectsApi: FakeProjectsApi by inject()
+    private val fakeProjectsDb: FakeProjectsDb by inject()
+
+    private val handler: ProjectSyncHandler by inject()
+
+    override fun additionalKoinModules(): List<Module> =
+        listOf(
+            module {
+                singleOf(::FakeProjectsApi) bind ProjectsApi::class
+                singleOf(::FakeProjectsDb) bind ProjectsDb::class
+                singleOf(::ProjectSyncHandler)
+            },
+        )
 
     @Test
     fun `upsert reads from db and calls api`() =
-        runTest {
+        runTest(testDispatcher) {
             val project = Project(Uuid.random(), "Test Project", "123 Street")
-            projectsDb.setProject(project)
+            fakeProjectsDb.setProject(project)
 
             val result = handler.execute(project.id, SyncOperationType.UPSERT)
 
@@ -51,24 +62,24 @@ class ProjectSyncHandlerTest {
 
     @Test
     fun `upsert saves fresher dto from api to db`() =
-        runTest {
+        runTest(testDispatcher) {
             val project = Project(Uuid.random(), "Original", "123 Street")
-            projectsDb.setProject(project)
+            fakeProjectsDb.setProject(project)
 
             val fresherProject = project.copy(name = "Updated by API")
-            projectsApi.saveProjectResponseOverride = { OnlineDataResult.Success(fresherProject) }
+            fakeProjectsApi.saveProjectResponseOverride = { OnlineDataResult.Success(fresherProject) }
 
             val result = handler.execute(project.id, SyncOperationType.UPSERT)
 
             assertEquals(SyncOperationResult.Success, result)
-            val dbResult = projectsDb.getProjectFlow(project.id).first()
+            val dbResult = fakeProjectsDb.getProjectFlow(project.id).first()
             val savedProject = (dbResult as OfflineFirstDataResult.Success).data
             assertEquals("Updated by API", savedProject?.name)
         }
 
     @Test
     fun `upsert when entity not in db returns entity not found`() =
-        runTest {
+        runTest(testDispatcher) {
             val result = handler.execute(Uuid.random(), SyncOperationType.UPSERT)
 
             assertEquals(SyncOperationResult.EntityNotFound, result)
@@ -76,10 +87,10 @@ class ProjectSyncHandlerTest {
 
     @Test
     fun `upsert when api fails returns failure`() =
-        runTest {
+        runTest(testDispatcher) {
             val project = Project(Uuid.random(), "Test Project", "123 Street")
-            projectsDb.setProject(project)
-            projectsApi.forcedFailure =
+            fakeProjectsDb.setProject(project)
+            fakeProjectsApi.forcedFailure =
                 OnlineDataResult.Failure.ProgrammerError(Exception("API error"))
 
             val result = handler.execute(project.id, SyncOperationType.UPSERT)
@@ -89,7 +100,7 @@ class ProjectSyncHandlerTest {
 
     @Test
     fun `delete calls api and returns success`() =
-        runTest {
+        runTest(testDispatcher) {
             val result = handler.execute(Uuid.random(), SyncOperationType.DELETE)
 
             assertEquals(SyncOperationResult.Success, result)
@@ -97,8 +108,8 @@ class ProjectSyncHandlerTest {
 
     @Test
     fun `delete when api fails returns failure`() =
-        runTest {
-            projectsApi.forcedFailure =
+        runTest(testDispatcher) {
+            fakeProjectsApi.forcedFailure =
                 OnlineDataResult.Failure.ProgrammerError(Exception("API error"))
 
             val result = handler.execute(Uuid.random(), SyncOperationType.DELETE)

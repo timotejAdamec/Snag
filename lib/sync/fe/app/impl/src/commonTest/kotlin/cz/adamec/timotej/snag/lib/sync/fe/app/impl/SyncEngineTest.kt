@@ -18,16 +18,16 @@ import cz.adamec.timotej.snag.lib.sync.fe.app.api.handler.SyncOperationHandler
 import cz.adamec.timotej.snag.lib.sync.fe.app.api.handler.SyncOperationResult
 import cz.adamec.timotej.snag.lib.sync.fe.app.impl.internal.SyncEngine
 import cz.adamec.timotej.snag.lib.sync.fe.driven.test.FakeSyncQueue
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import cz.adamec.timotej.snag.lib.sync.fe.ports.SyncQueue
+import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
-import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
-import kotlinx.coroutines.test.setMain
-import kotlin.test.AfterTest
-import kotlin.test.BeforeTest
+import org.koin.core.module.Module
+import org.koin.core.module.dsl.singleOf
+import org.koin.dsl.bind
+import org.koin.dsl.module
+import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -35,66 +35,60 @@ import kotlin.test.assertTrue
 import kotlin.uuid.Uuid
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class SyncEngineTest {
-    private val testDispatcher = StandardTestDispatcher()
-    private val applicationScope =
-        object : ApplicationScope, CoroutineScope by CoroutineScope(testDispatcher) {}
+class SyncEngineTest : FrontendKoinInitializedTest() {
 
-    private lateinit var syncQueue: FakeSyncQueue
+    private val fakeSyncQueue: FakeSyncQueue by inject()
+    private val applicationScope: ApplicationScope by inject()
 
-    @BeforeTest
-    fun setUp() {
-        Dispatchers.setMain(testDispatcher)
-        syncQueue = FakeSyncQueue()
-    }
-
-    @AfterTest
-    fun tearDown() {
-        Dispatchers.resetMain()
-    }
+    override fun additionalKoinModules(): List<Module> =
+        listOf(
+            module {
+                singleOf(::FakeSyncQueue) bind SyncQueue::class
+            },
+        )
 
     private fun createEngine(handlers: List<SyncOperationHandler> = emptyList()) =
         SyncEngine(
-            syncQueue = syncQueue,
+            syncQueue = fakeSyncQueue,
             handlers = handlers,
             applicationScope = applicationScope,
         )
 
     @Test
     fun `successful operation is removed from queue`() =
-        runTest {
+        runTest(testDispatcher) {
             val handler = TestSyncHandler("project", SyncOperationResult.Success)
             val engine = createEngine(listOf(handler))
 
             engine.invoke("project", Uuid.random(), SyncOperationType.UPSERT)
             advanceUntilIdle()
 
-            assertTrue(syncQueue.getAllPending().isEmpty())
+            assertTrue(fakeSyncQueue.getAllPending().isEmpty())
             assertEquals(1, handler.executedOperations.size)
         }
 
     @Test
     fun `failed operation stays in queue and stops processing`() =
-        runTest {
+        runTest(testDispatcher) {
             val handler = TestSyncHandler("project", SyncOperationResult.Failure)
             val engine = createEngine(listOf(handler))
             val id1 = Uuid.random()
             val id2 = Uuid.random()
 
-            syncQueue.enqueue("project", id1, SyncOperationType.UPSERT)
-            syncQueue.enqueue("project", id2, SyncOperationType.UPSERT)
+            fakeSyncQueue.enqueue("project", id1, SyncOperationType.UPSERT)
+            fakeSyncQueue.enqueue("project", id2, SyncOperationType.UPSERT)
             engine.invoke("project", Uuid.random(), SyncOperationType.UPSERT)
             advanceUntilIdle()
 
             // First op failed, processing stopped — all 3 remain
-            assertEquals(3, syncQueue.getAllPending().size)
+            assertEquals(3, fakeSyncQueue.getAllPending().size)
             // Only first operation was attempted
             assertEquals(1, handler.executedOperations.size)
         }
 
     @Test
     fun `entity not found discards operation and continues`() =
-        runTest {
+        runTest(testDispatcher) {
             val handler = TestSyncHandler("project", SyncOperationResult.EntityNotFound)
             val engine = createEngine(listOf(handler))
 
@@ -102,16 +96,16 @@ class SyncEngineTest {
             engine.invoke("project", Uuid.random(), SyncOperationType.UPSERT)
             advanceUntilIdle()
 
-            assertTrue(syncQueue.getAllPending().isEmpty())
+            assertTrue(fakeSyncQueue.getAllPending().isEmpty())
             assertEquals(2, handler.executedOperations.size)
         }
 
     @Test
     fun `missing handler throws`() =
-        runTest {
+        runTest(testDispatcher) {
             val engine =
                 SyncEngine(
-                    syncQueue = syncQueue,
+                    syncQueue = fakeSyncQueue,
                     handlers = emptyList(),
                     applicationScope = applicationScope,
                 )
@@ -123,7 +117,7 @@ class SyncEngineTest {
 
     @Test
     fun `deduplication replaces operation type`() =
-        runTest {
+        runTest(testDispatcher) {
             val handler = TestSyncHandler("project", SyncOperationResult.Success)
             val engine = createEngine(listOf(handler))
             val entityId = Uuid.random()
@@ -132,14 +126,14 @@ class SyncEngineTest {
             engine.invoke("project", entityId, SyncOperationType.DELETE)
             advanceUntilIdle()
 
-            assertTrue(syncQueue.getAllPending().isEmpty())
+            assertTrue(fakeSyncQueue.getAllPending().isEmpty())
             assertEquals(1, handler.executedOperations.size)
             assertEquals(SyncOperationType.DELETE, handler.executedOperations[0].second)
         }
 
     @Test
     fun `new enqueue triggers retry of previously failed ops`() =
-        runTest {
+        runTest(testDispatcher) {
             var shouldFail = true
             val handler =
                 object : SyncOperationHandler {
@@ -159,14 +153,14 @@ class SyncEngineTest {
 
             engine.invoke("project", id1, SyncOperationType.UPSERT)
             advanceUntilIdle()
-            assertEquals(1, syncQueue.getAllPending().size)
+            assertEquals(1, fakeSyncQueue.getAllPending().size)
 
             shouldFail = false
             val id2 = Uuid.random()
             engine.invoke("project", id2, SyncOperationType.UPSERT)
             advanceUntilIdle()
 
-            assertTrue(syncQueue.getAllPending().isEmpty())
+            assertTrue(fakeSyncQueue.getAllPending().isEmpty())
             assertEquals(3, handler.executedOperations.size)
         }
 

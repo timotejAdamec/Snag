@@ -12,23 +12,42 @@
 
 package cz.adamec.timotej.snag.findings.fe.app.impl.internal
 
-import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
 import cz.adamec.timotej.snag.feat.findings.business.Finding
+import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
+import cz.adamec.timotej.snag.findings.fe.app.api.SaveFindingCoordinatesUseCase
 import cz.adamec.timotej.snag.findings.fe.app.api.model.SaveFindingCoordinatesRequest
 import cz.adamec.timotej.snag.findings.fe.driven.test.FakeFindingsDb
 import cz.adamec.timotej.snag.findings.fe.driven.test.FakeFindingsSync
+import cz.adamec.timotej.snag.findings.fe.ports.FindingsDb
+import cz.adamec.timotej.snag.findings.fe.ports.FindingsSync
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstUpdateDataResult
+import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
 import kotlinx.coroutines.test.runTest
+import org.koin.core.module.Module
+import org.koin.core.module.dsl.singleOf
+import org.koin.dsl.bind
+import org.koin.dsl.module
+import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertIs
 import kotlin.test.assertTrue
 import kotlin.uuid.Uuid
 
-class SaveFindingCoordinatesUseCaseImplTest {
-    private val findingsDb = FakeFindingsDb()
-    private val findingsSync = FakeFindingsSync()
-    private val useCase = SaveFindingCoordinatesUseCaseImpl(findingsDb, findingsSync)
+class SaveFindingCoordinatesUseCaseImplTest : FrontendKoinInitializedTest() {
+
+    private val fakeFindingsDb: FakeFindingsDb by inject()
+    private val fakeFindingsSync: FakeFindingsSync by inject()
+
+    private val useCase: SaveFindingCoordinatesUseCase by inject()
+
+    override fun additionalKoinModules(): List<Module> =
+        listOf(
+            module {
+                singleOf(::FakeFindingsDb) bind FindingsDb::class
+                singleOf(::FakeFindingsSync) bind FindingsSync::class
+            },
+        )
 
     private val structureId = Uuid.parse("00000000-0000-0000-0000-000000000001")
     private val findingId = Uuid.parse("00000000-0000-0000-0001-000000000001")
@@ -42,8 +61,8 @@ class SaveFindingCoordinatesUseCaseImplTest {
     )
 
     @Test
-    fun `updates coordinates`() = runTest {
-        findingsDb.setFinding(existingFinding)
+    fun `updates coordinates`() = runTest(testDispatcher) {
+        fakeFindingsDb.setFinding(existingFinding)
 
         val newCoordinates = listOf(RelativeCoordinate(0.5f, 0.6f), RelativeCoordinate(0.7f, 0.8f))
         val request = SaveFindingCoordinatesRequest(
@@ -57,8 +76,8 @@ class SaveFindingCoordinatesUseCaseImplTest {
     }
 
     @Test
-    fun `enqueues sync on success`() = runTest {
-        findingsDb.setFinding(existingFinding)
+    fun `enqueues sync on success`() = runTest(testDispatcher) {
+        fakeFindingsDb.setFinding(existingFinding)
 
         val request = SaveFindingCoordinatesRequest(
             findingId = findingId,
@@ -67,11 +86,11 @@ class SaveFindingCoordinatesUseCaseImplTest {
 
         useCase(request)
 
-        assertTrue(findingsSync.savedFindingIds.contains(findingId))
+        assertTrue(fakeFindingsSync.savedFindingIds.contains(findingId))
     }
 
     @Test
-    fun `returns NotFound when finding does not exist`() = runTest {
+    fun `returns NotFound when finding does not exist`() = runTest(testDispatcher) {
         val request = SaveFindingCoordinatesRequest(
             findingId = findingId,
             coordinates = listOf(RelativeCoordinate(0.5f, 0.6f)),
@@ -83,7 +102,7 @@ class SaveFindingCoordinatesUseCaseImplTest {
     }
 
     @Test
-    fun `does not enqueue sync when not found`() = runTest {
+    fun `does not enqueue sync when not found`() = runTest(testDispatcher) {
         val request = SaveFindingCoordinatesRequest(
             findingId = findingId,
             coordinates = listOf(RelativeCoordinate(0.5f, 0.6f)),
@@ -91,12 +110,12 @@ class SaveFindingCoordinatesUseCaseImplTest {
 
         useCase(request)
 
-        assertTrue(findingsSync.savedFindingIds.isEmpty())
+        assertTrue(fakeFindingsSync.savedFindingIds.isEmpty())
     }
 
     @Test
-    fun `returns error when db fails`() = runTest {
-        findingsDb.forcedFailure = OfflineFirstDataResult.ProgrammerError(RuntimeException("DB error"))
+    fun `returns error when db fails`() = runTest(testDispatcher) {
+        fakeFindingsDb.forcedFailure = OfflineFirstDataResult.ProgrammerError(RuntimeException("DB error"))
 
         val request = SaveFindingCoordinatesRequest(
             findingId = findingId,
@@ -109,8 +128,8 @@ class SaveFindingCoordinatesUseCaseImplTest {
     }
 
     @Test
-    fun `does not enqueue sync when update fails`() = runTest {
-        findingsDb.forcedFailure = OfflineFirstDataResult.ProgrammerError(RuntimeException("DB error"))
+    fun `does not enqueue sync when update fails`() = runTest(testDispatcher) {
+        fakeFindingsDb.forcedFailure = OfflineFirstDataResult.ProgrammerError(RuntimeException("DB error"))
 
         val request = SaveFindingCoordinatesRequest(
             findingId = findingId,
@@ -119,6 +138,6 @@ class SaveFindingCoordinatesUseCaseImplTest {
 
         useCase(request)
 
-        assertTrue(findingsSync.savedFindingIds.isEmpty())
+        assertTrue(fakeFindingsSync.savedFindingIds.isEmpty())
     }
 }
