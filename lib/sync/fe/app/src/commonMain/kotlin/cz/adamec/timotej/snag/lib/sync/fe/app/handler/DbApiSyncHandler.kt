@@ -23,6 +23,9 @@ import kotlin.uuid.Uuid
 abstract class DbApiSyncHandler<T>(
     private val logger: Logger,
 ) : SyncOperationHandler {
+    /**
+     * Freeform string used for logging.
+     */
     protected abstract val entityName: String
 
     protected abstract fun getEntityFlow(entityId: Uuid): Flow<OfflineFirstDataResult<T?>>
