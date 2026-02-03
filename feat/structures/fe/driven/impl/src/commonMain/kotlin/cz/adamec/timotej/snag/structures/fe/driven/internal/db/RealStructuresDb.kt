@@ -47,7 +47,7 @@ internal class RealStructuresDb(
             }
 
     override suspend fun saveStructures(structures: List<Structure>): OfflineFirstDataResult<Unit> =
-        safeDbWrite(ioDispatcher, LH.logger, "Error saving structures $structures to DB.") {
+        safeDbWrite(ioDispatcher = ioDispatcher, logger = LH.logger, errorMessage = "Error saving structures $structures to DB.") {
             structureEntityQueries.transaction {
                 structures.forEach {
                     structureEntityQueries.save(it.toEntity())
@@ -56,12 +56,12 @@ internal class RealStructuresDb(
         }
 
     override suspend fun saveStructure(structure: Structure): OfflineFirstDataResult<Unit> =
-        safeDbWrite(ioDispatcher, LH.logger, "Error saving structure $structure to DB.") {
+        safeDbWrite(ioDispatcher = ioDispatcher, logger = LH.logger, errorMessage = "Error saving structure $structure to DB.") {
             structureEntityQueries.save(structure.toEntity())
         }
 
     override suspend fun deleteStructure(id: Uuid): OfflineFirstDataResult<Unit> =
-        safeDbWrite(ioDispatcher, LH.logger, "Error deleting structure $id from DB.") {
+        safeDbWrite(ioDispatcher = ioDispatcher, logger = LH.logger, errorMessage = "Error deleting structure $id from DB.") {
             structureEntityQueries.deleteById(id.toString())
         }
 

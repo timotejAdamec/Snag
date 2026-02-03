@@ -29,7 +29,7 @@ internal class RealFindingsApi(
 ) : FindingsApi {
     override suspend fun getFindings(structureId: Uuid): OnlineDataResult<List<Finding>> {
         LH.logger.d { "Fetching findings for structure $structureId..." }
-        return safeApiCall(LH.logger, "Error fetching findings for structure $structureId.") {
+        return safeApiCall(logger = LH.logger, errorContext = "Error fetching findings for structure $structureId.") {
             httpClient.get("/structures/$structureId/findings").body<List<FindingApiDto>>().map {
                 it.toBusiness()
             }
@@ -37,14 +37,14 @@ internal class RealFindingsApi(
     }
 
     override suspend fun deleteFinding(id: Uuid): OnlineDataResult<Unit> =
-        safeApiCall(LH.logger, "Error deleting finding $id from API.") {
+        safeApiCall(logger = LH.logger, errorContext = "Error deleting finding $id from API.") {
             httpClient.delete("/findings/$id")
             Unit
         }.also { if (it is OnlineDataResult.Success) LH.logger.d { "Deleted finding $id from API." } }
 
     override suspend fun saveFinding(finding: Finding): OnlineDataResult<Finding?> {
         LH.logger.d { "Saving finding ${finding.id} to API..." }
-        return safeApiCall(LH.logger, "Error saving finding ${finding.id} to API.") {
+        return safeApiCall(logger = LH.logger, errorContext = "Error saving finding ${finding.id} to API.") {
             val findingDto = finding.toPutApiDto()
             val response =
                 httpClient.put("/structures/${finding.structureId}/findings/${finding.id}") {

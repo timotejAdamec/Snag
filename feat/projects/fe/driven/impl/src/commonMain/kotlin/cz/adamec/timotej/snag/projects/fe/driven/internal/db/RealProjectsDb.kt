@@ -47,7 +47,7 @@ internal class RealProjectsDb(
             }
 
     override suspend fun saveProjects(projects: List<Project>): OfflineFirstDataResult<Unit> =
-        safeDbWrite(ioDispatcher, LH.logger, "Error saving projects $projects to DB.") {
+        safeDbWrite(ioDispatcher = ioDispatcher, logger = LH.logger, errorMessage = "Error saving projects $projects to DB.") {
             projectEntityQueries.transaction {
                 projects.forEach {
                     projectEntityQueries.save(it.toEntity())
@@ -68,12 +68,12 @@ internal class RealProjectsDb(
             }
 
     override suspend fun saveProject(project: Project): OfflineFirstDataResult<Unit> =
-        safeDbWrite(ioDispatcher, LH.logger, "Error saving project $project to DB.") {
+        safeDbWrite(ioDispatcher = ioDispatcher, logger = LH.logger, errorMessage = "Error saving project $project to DB.") {
             projectEntityQueries.save(project.toEntity())
         }
 
     override suspend fun deleteProject(id: Uuid): OfflineFirstDataResult<Unit> =
-        safeDbWrite(ioDispatcher, LH.logger, "Error deleting project $id from DB.") {
+        safeDbWrite(ioDispatcher = ioDispatcher, logger = LH.logger, errorMessage = "Error deleting project $id from DB.") {
             projectEntityQueries.deleteById(id.toString())
         }
 }

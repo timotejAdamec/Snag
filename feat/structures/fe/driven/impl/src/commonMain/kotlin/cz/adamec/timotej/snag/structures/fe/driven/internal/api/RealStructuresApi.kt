@@ -29,7 +29,7 @@ internal class RealStructuresApi(
 ) : StructuresApi {
     override suspend fun getStructures(projectId: Uuid): OnlineDataResult<List<Structure>> {
         LH.logger.d { "Fetching structures for project $projectId..." }
-        return safeApiCall(LH.logger, "Error fetching structures for project $projectId.") {
+        return safeApiCall(logger = LH.logger, errorContext = "Error fetching structures for project $projectId.") {
             httpClient.get("/projects/$projectId/structures").body<List<StructureApiDto>>().map {
                 it.toBusiness()
             }
@@ -37,14 +37,14 @@ internal class RealStructuresApi(
     }
 
     override suspend fun deleteStructure(id: Uuid): OnlineDataResult<Unit> =
-        safeApiCall(LH.logger, "Error deleting structure $id from API.") {
+        safeApiCall(logger = LH.logger, errorContext = "Error deleting structure $id from API.") {
             httpClient.delete("/structures/$id")
             Unit
         }.also { if (it is OnlineDataResult.Success) LH.logger.d { "Deleted structure $id from API." } }
 
     override suspend fun saveStructure(structure: Structure): OnlineDataResult<Structure?> {
         LH.logger.d { "Saving structure ${structure.id} to API..." }
-        return safeApiCall(LH.logger, "Error saving structure ${structure.id} to API.") {
+        return safeApiCall(logger = LH.logger, errorContext = "Error saving structure ${structure.id} to API.") {
             val structureDto = structure.toPutApiDto()
             val response =
                 httpClient.put("/projects/${structure.projectId}/structures/${structure.id}") {

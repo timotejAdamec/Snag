@@ -29,7 +29,7 @@ internal class RealProjectsApi(
 ) : ProjectsApi {
     override suspend fun getProjects(): OnlineDataResult<List<Project>> {
         LH.logger.d { "Fetching projects..." }
-        return safeApiCall(LH.logger, "Error fetching projects.") {
+        return safeApiCall(logger = LH.logger, errorContext = "Error fetching projects.") {
             httpClient.get("/projects").body<List<ProjectApiDto>>().map {
                 it.toBusiness()
             }
@@ -38,14 +38,14 @@ internal class RealProjectsApi(
 
     override suspend fun getProject(id: Uuid): OnlineDataResult<Project> {
         LH.logger.d { "Fetching project $id..." }
-        return safeApiCall(LH.logger, "Error fetching project $id.") {
+        return safeApiCall(logger = LH.logger, errorContext = "Error fetching project $id.") {
             httpClient.get("/projects/$id").body<ProjectApiDto>().toBusiness()
         }.also { if (it is OnlineDataResult.Success) LH.logger.d { "Fetched project $id." } }
     }
 
     override suspend fun saveProject(project: Project): OnlineDataResult<Project?> {
         LH.logger.d { "Saving project ${project.id} to API..." }
-        return safeApiCall(LH.logger, "Error saving project ${project.id} to API.") {
+        return safeApiCall(logger = LH.logger, errorContext = "Error saving project ${project.id} to API.") {
             val projectDto = project.toPutApiDto()
             val response =
                 httpClient.put("/projects/${project.id}") {
@@ -60,7 +60,7 @@ internal class RealProjectsApi(
     }
 
     override suspend fun deleteProject(id: Uuid): OnlineDataResult<Unit> =
-        safeApiCall(LH.logger, "Error deleting project $id from API.") {
+        safeApiCall(logger = LH.logger, errorContext = "Error deleting project $id from API.") {
             httpClient.delete("/projects/$id")
             Unit
         }.also { if (it is OnlineDataResult.Success) LH.logger.d { "Deleted project $id from API." } }

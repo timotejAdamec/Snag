@@ -51,7 +51,7 @@ internal class RealFindingsDb(
             }
 
     override suspend fun saveFindings(findings: List<Finding>): OfflineFirstDataResult<Unit> =
-        safeDbWrite(ioDispatcher, LH.logger, "Error saving findings $findings to DB.") {
+        safeDbWrite(ioDispatcher = ioDispatcher, logger = LH.logger, errorMessage = "Error saving findings $findings to DB.") {
             findingEntityQueries.transaction {
                 findings.forEach {
                     findingEntityQueries.save(it.toEntity())
@@ -60,12 +60,12 @@ internal class RealFindingsDb(
         }
 
     override suspend fun saveFinding(finding: Finding): OfflineFirstDataResult<Unit> =
-        safeDbWrite(ioDispatcher, LH.logger, "Error saving finding $finding to DB.") {
+        safeDbWrite(ioDispatcher = ioDispatcher, logger = LH.logger, errorMessage = "Error saving finding $finding to DB.") {
             findingEntityQueries.save(finding.toEntity())
         }
 
     override suspend fun deleteFinding(id: Uuid): OfflineFirstDataResult<Unit> =
-        safeDbWrite(ioDispatcher, LH.logger, "Error deleting finding $id from DB.") {
+        safeDbWrite(ioDispatcher = ioDispatcher, logger = LH.logger, errorMessage = "Error deleting finding $id from DB.") {
             findingEntityQueries.deleteById(id.toString())
         }
 
