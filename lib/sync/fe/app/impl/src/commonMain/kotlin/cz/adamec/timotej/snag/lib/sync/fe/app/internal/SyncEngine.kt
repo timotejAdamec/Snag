@@ -30,14 +30,14 @@ internal class SyncEngine(
     private val mutex = Mutex()
 
     override suspend fun invoke(
-        entityType: String,
+        entityTypeId: String,
         entityId: Uuid,
         operationType: SyncOperationType,
     ) {
-        require(handlers.any { it.entityType == entityType }) {
-            "No SyncOperationHandler registered for entityType='$entityType'"
+        require(handlers.any { it.entityTypeId == entityTypeId }) {
+            "No SyncOperationHandler registered for entityTypeId='$entityTypeId'"
         }
-        syncQueue.enqueue(entityType, entityId, operationType)
+        syncQueue.enqueue(entityTypeId, entityId, operationType)
         applicationScope.launch {
             processAll()
         }
@@ -48,9 +48,9 @@ internal class SyncEngine(
             val pending = syncQueue.getAllPending()
             for (operation in pending) {
                 val handler =
-                    handlers.find { it.entityType == operation.entityType }
+                    handlers.find { it.entityTypeId == operation.entityTypeId }
                         ?: error(
-                            "No SyncOperationHandler registered for entityType='${operation.entityType}'",
+                            "No SyncOperationHandler registered for entityTypeId='${operation.entityTypeId}'",
                         )
                 when (handler.execute(operation.entityId, operation.operationType)) {
                     SyncOperationResult.Success -> {

@@ -16,7 +16,7 @@ import kotlin.uuid.Uuid
 
 interface EnqueueSyncDeleteUseCase {
     suspend operator fun invoke(
-        entityType: String,
+        entityTypeId: String,
         entityId: Uuid,
     )
 }

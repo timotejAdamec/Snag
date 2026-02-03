@@ -19,9 +19,9 @@ class FakeEnqueueSyncSaveUseCase : EnqueueSyncSaveUseCase {
     val enqueuedOperations = mutableListOf<Pair<String, Uuid>>()
 
     override suspend fun invoke(
-        entityType: String,
+        entityTypeId: String,
         entityId: Uuid,
     ) {
-        enqueuedOperations.add(entityType to entityId)
+        enqueuedOperations.add(entityTypeId to entityId)
     }
 }

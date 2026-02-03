@@ -26,7 +26,7 @@ internal class ProjectSyncHandler(
     private val projectsApi: ProjectsApi,
     private val projectsDb: ProjectsDb,
 ) : DbApiSyncHandler<Project>(LH.logger) {
-    override val entityType: String = PROJECT_SYNC_ENTITY_TYPE
+    override val entityTypeId: String = PROJECT_SYNC_ENTITY_TYPE
     override val entityName: String = "project"
 
     override fun getEntityFlow(entityId: Uuid): Flow<OfflineFirstDataResult<Project?>> =

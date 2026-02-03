@@ -20,9 +20,9 @@ internal class EnqueueSyncSaveUseCaseImpl(
     private val enqueueSyncOperationUseCase: EnqueueSyncOperationUseCase,
 ) : EnqueueSyncSaveUseCase {
     override suspend fun invoke(
-        entityType: String,
+        entityTypeId: String,
         entityId: Uuid,
     ) {
-        enqueueSyncOperationUseCase(entityType, entityId, SyncOperationType.UPSERT)
+        enqueueSyncOperationUseCase(entityTypeId, entityId, SyncOperationType.UPSERT)
     }
 }

@@ -26,7 +26,7 @@ internal class FindingSyncHandler(
     private val findingsApi: FindingsApi,
     private val findingsDb: FindingsDb,
 ) : DbApiSyncHandler<Finding>(LH.logger) {
-    override val entityType: String = FINDING_SYNC_ENTITY_TYPE
+    override val entityTypeId: String = FINDING_SYNC_ENTITY_TYPE
     override val entityName: String = "finding"
 
     override fun getEntityFlow(entityId: Uuid): Flow<OfflineFirstDataResult<Finding?>> =

@@ -20,9 +20,9 @@ internal class EnqueueSyncDeleteUseCaseImpl(
     private val enqueueSyncOperationUseCase: EnqueueSyncOperationUseCase,
 ) : EnqueueSyncDeleteUseCase {
     override suspend fun invoke(
-        entityType: String,
+        entityTypeId: String,
         entityId: Uuid,
     ) {
-        enqueueSyncOperationUseCase(entityType, entityId, SyncOperationType.DELETE)
+        enqueueSyncOperationUseCase(entityTypeId, entityId, SyncOperationType.DELETE)
     }
 }

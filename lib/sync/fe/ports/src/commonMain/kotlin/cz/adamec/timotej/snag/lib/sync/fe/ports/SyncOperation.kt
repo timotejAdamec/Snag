@@ -17,7 +17,7 @@ import kotlin.uuid.Uuid
 
 data class SyncOperation(
     val id: Uuid,
-    val entityType: String,
+    val entityTypeId: String,
     val entityId: Uuid,
     val operationType: SyncOperationType,
 )

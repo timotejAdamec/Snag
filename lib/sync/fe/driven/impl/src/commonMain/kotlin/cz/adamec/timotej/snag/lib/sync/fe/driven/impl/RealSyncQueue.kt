@@ -30,19 +30,19 @@ internal class RealSyncQueue(
 ) : SyncQueue {
 
     override suspend fun enqueue(
-        entityType: String,
+        entityTypeId: String,
         entityId: Uuid,
         operationType: SyncOperationType,
     ) {
         withContext(ioDispatcher) {
             syncOperationEntityQueries.enqueue(
                 id = uuidProvider.getUuid().toString(),
-                entityType = entityType,
+                entityType = entityTypeId,
                 entityId = entityId.toString(),
                 operationType = operationType.name,
             )
         }
-        logger.d { "Enqueued sync operation: entityType=$entityType, entityId=$entityId, operationType=$operationType" }
+        logger.d { "Enqueued sync operation: entityTypeId=$entityTypeId, entityId=$entityId, operationType=$operationType" }
     }
 
     override suspend fun getAllPending(): List<SyncOperation> =
@@ -50,7 +50,7 @@ internal class RealSyncQueue(
             syncOperationEntityQueries.selectAllPending().awaitAsList().map { entity ->
                 SyncOperation(
                     id = Uuid.parse(entity.id),
-                    entityType = entity.entityType,
+                    entityTypeId = entity.entityType,
                     entityId = Uuid.parse(entity.entityId),
                     operationType = entity.operationType.let { SyncOperationType.valueOf(it) },
                 )

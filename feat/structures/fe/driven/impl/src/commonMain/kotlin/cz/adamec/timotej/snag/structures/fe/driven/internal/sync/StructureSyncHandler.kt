@@ -26,7 +26,7 @@ internal class StructureSyncHandler(
     private val structuresApi: StructuresApi,
     private val structuresDb: StructuresDb,
 ) : DbApiSyncHandler<Structure>(LH.logger) {
-    override val entityType: String = STRUCTURE_SYNC_ENTITY_TYPE
+    override val entityTypeId: String = STRUCTURE_SYNC_ENTITY_TYPE
     override val entityName: String = "structure"
 
     override fun getEntityFlow(entityId: Uuid): Flow<OfflineFirstDataResult<Structure?>> =

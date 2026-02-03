@@ -143,7 +143,7 @@ class SyncEngineTest {
             var shouldFail = true
             val handler =
                 object : SyncOperationHandler {
-                    override val entityType = "project"
+                    override val entityTypeId = "project"
                     val executedOperations = mutableListOf<Pair<Uuid, SyncOperationType>>()
 
                     override suspend fun execute(
@@ -171,7 +171,7 @@ class SyncEngineTest {
         }
 
     private class TestSyncHandler(
-        override val entityType: String,
+        override val entityTypeId: String,
         private val result: SyncOperationResult,
     ) : SyncOperationHandler {
         val executedOperations = mutableListOf<Pair<Uuid, SyncOperationType>>()

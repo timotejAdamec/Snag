@@ -16,7 +16,7 @@ import cz.adamec.timotej.snag.lib.sync.business.SyncOperationType
 import kotlin.uuid.Uuid
 
 interface SyncOperationHandler {
-    val entityType: String
+    val entityTypeId: String
 
     suspend fun execute(
         entityId: Uuid,

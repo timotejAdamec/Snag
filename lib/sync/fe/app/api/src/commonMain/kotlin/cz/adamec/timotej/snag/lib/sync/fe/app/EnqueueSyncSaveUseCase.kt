@@ -16,7 +16,7 @@ import kotlin.uuid.Uuid
 
 interface EnqueueSyncSaveUseCase {
     suspend operator fun invoke(
-        entityType: String,
+        entityTypeId: String,
         entityId: Uuid,
     )
 }
