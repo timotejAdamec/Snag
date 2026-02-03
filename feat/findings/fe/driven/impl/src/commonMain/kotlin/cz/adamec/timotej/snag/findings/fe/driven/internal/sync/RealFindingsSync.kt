@@ -13,8 +13,8 @@
 package cz.adamec.timotej.snag.findings.fe.driven.internal.sync
 
 import cz.adamec.timotej.snag.findings.fe.ports.FindingsSync
-import cz.adamec.timotej.snag.lib.sync.fe.app.EnqueueSyncDeleteUseCase
-import cz.adamec.timotej.snag.lib.sync.fe.app.EnqueueSyncSaveUseCase
+import cz.adamec.timotej.snag.lib.sync.fe.app.api.EnqueueSyncDeleteUseCase
+import cz.adamec.timotej.snag.lib.sync.fe.app.api.EnqueueSyncSaveUseCase
 import kotlin.uuid.Uuid
 
 internal class RealFindingsSync(

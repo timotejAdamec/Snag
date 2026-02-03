@@ -10,7 +10,7 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.lib.sync.fe.app.handler
+package cz.adamec.timotej.snag.lib.sync.fe.app.api.handler
 
 import co.touchlab.kermit.Logger
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult

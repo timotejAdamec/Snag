@@ -15,7 +15,7 @@ package cz.adamec.timotej.snag.structures.fe.driven.internal.sync
 import cz.adamec.timotej.snag.feat.structures.business.Structure
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
-import cz.adamec.timotej.snag.lib.sync.fe.app.handler.DbApiSyncHandler
+import cz.adamec.timotej.snag.lib.sync.fe.app.api.handler.DbApiSyncHandler
 import cz.adamec.timotej.snag.structures.fe.driven.internal.LH
 import cz.adamec.timotej.snag.structures.fe.ports.StructuresApi
 import cz.adamec.timotej.snag.structures.fe.ports.StructuresDb

@@ -10,12 +10,12 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.lib.sync.fe.app.internal
+package cz.adamec.timotej.snag.lib.sync.fe.app.impl.internal
 
 import cz.adamec.timotej.snag.lib.core.common.ApplicationScope
 import cz.adamec.timotej.snag.lib.sync.business.SyncOperationType
-import cz.adamec.timotej.snag.lib.sync.fe.app.handler.SyncOperationHandler
-import cz.adamec.timotej.snag.lib.sync.fe.app.handler.SyncOperationResult
+import cz.adamec.timotej.snag.lib.sync.fe.app.api.handler.SyncOperationHandler
+import cz.adamec.timotej.snag.lib.sync.fe.app.api.handler.SyncOperationResult
 import cz.adamec.timotej.snag.lib.sync.fe.ports.SyncQueue
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex

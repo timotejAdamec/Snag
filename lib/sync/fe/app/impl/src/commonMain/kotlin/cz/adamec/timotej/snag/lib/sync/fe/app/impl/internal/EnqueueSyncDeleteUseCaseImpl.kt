@@ -10,10 +10,10 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.lib.sync.fe.app.internal
+package cz.adamec.timotej.snag.lib.sync.fe.app.impl.internal
 
 import cz.adamec.timotej.snag.lib.sync.business.SyncOperationType
-import cz.adamec.timotej.snag.lib.sync.fe.app.EnqueueSyncDeleteUseCase
+import cz.adamec.timotej.snag.lib.sync.fe.app.api.EnqueueSyncDeleteUseCase
 import kotlin.uuid.Uuid
 
 internal class EnqueueSyncDeleteUseCaseImpl(

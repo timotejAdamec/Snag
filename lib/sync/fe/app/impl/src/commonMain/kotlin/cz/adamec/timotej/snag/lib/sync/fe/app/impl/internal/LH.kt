@@ -10,13 +10,10 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.lib.sync.fe.app
+package cz.adamec.timotej.snag.lib.sync.fe.app.impl.internal
 
-import kotlin.uuid.Uuid
+import co.touchlab.kermit.Logger
 
-interface EnqueueSyncSaveUseCase {
-    suspend operator fun invoke(
-        entityTypeId: String,
-        entityId: Uuid,
-    )
+internal object LH {
+    val logger = Logger.withTag("lib-sync-fe-app")
 }

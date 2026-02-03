@@ -13,7 +13,7 @@
 package cz.adamec.timotej.snag.projects.fe.driven.di
 
 import cz.adamec.timotej.snag.lib.core.common.di.getIoDispatcher
-import cz.adamec.timotej.snag.lib.sync.fe.app.handler.SyncOperationHandler
+import cz.adamec.timotej.snag.lib.sync.fe.app.api.handler.SyncOperationHandler
 import cz.adamec.timotej.snag.projects.fe.driven.internal.api.RealProjectsApi
 import cz.adamec.timotej.snag.projects.fe.driven.internal.db.RealProjectsDb
 import cz.adamec.timotej.snag.projects.fe.driven.internal.sync.ProjectSyncHandler

@@ -10,15 +10,15 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.lib.sync.fe.app.di
+package cz.adamec.timotej.snag.lib.sync.fe.app.impl.di
 
-import cz.adamec.timotej.snag.lib.sync.fe.app.EnqueueSyncDeleteUseCase
-import cz.adamec.timotej.snag.lib.sync.fe.app.EnqueueSyncSaveUseCase
-import cz.adamec.timotej.snag.lib.sync.fe.app.handler.SyncOperationHandler
-import cz.adamec.timotej.snag.lib.sync.fe.app.internal.EnqueueSyncDeleteUseCaseImpl
-import cz.adamec.timotej.snag.lib.sync.fe.app.internal.EnqueueSyncOperationUseCase
-import cz.adamec.timotej.snag.lib.sync.fe.app.internal.EnqueueSyncSaveUseCaseImpl
-import cz.adamec.timotej.snag.lib.sync.fe.app.internal.SyncEngine
+import cz.adamec.timotej.snag.lib.sync.fe.app.api.EnqueueSyncDeleteUseCase
+import cz.adamec.timotej.snag.lib.sync.fe.app.api.EnqueueSyncSaveUseCase
+import cz.adamec.timotej.snag.lib.sync.fe.app.api.handler.SyncOperationHandler
+import cz.adamec.timotej.snag.lib.sync.fe.app.impl.internal.EnqueueSyncDeleteUseCaseImpl
+import cz.adamec.timotej.snag.lib.sync.fe.app.impl.internal.EnqueueSyncOperationUseCase
+import cz.adamec.timotej.snag.lib.sync.fe.app.impl.internal.EnqueueSyncSaveUseCaseImpl
+import cz.adamec.timotej.snag.lib.sync.fe.app.impl.internal.SyncEngine
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
 import org.koin.dsl.module

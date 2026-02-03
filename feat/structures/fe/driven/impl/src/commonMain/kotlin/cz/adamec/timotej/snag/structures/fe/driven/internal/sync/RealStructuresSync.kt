@@ -12,8 +12,8 @@
 
 package cz.adamec.timotej.snag.structures.fe.driven.internal.sync
 
-import cz.adamec.timotej.snag.lib.sync.fe.app.EnqueueSyncDeleteUseCase
-import cz.adamec.timotej.snag.lib.sync.fe.app.EnqueueSyncSaveUseCase
+import cz.adamec.timotej.snag.lib.sync.fe.app.api.EnqueueSyncDeleteUseCase
+import cz.adamec.timotej.snag.lib.sync.fe.app.api.EnqueueSyncSaveUseCase
 import cz.adamec.timotej.snag.structures.fe.ports.StructuresSync
 import kotlin.uuid.Uuid
 

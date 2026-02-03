@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.lib.sync.fe.driven.test
 
-import cz.adamec.timotej.snag.lib.sync.fe.app.EnqueueSyncDeleteUseCase
+import cz.adamec.timotej.snag.lib.sync.fe.app.api.EnqueueSyncDeleteUseCase
 import kotlin.uuid.Uuid
 
 class FakeEnqueueSyncDeleteUseCase : EnqueueSyncDeleteUseCase {

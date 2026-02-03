@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.lib.sync.fe.driven.test
 
-import cz.adamec.timotej.snag.lib.sync.fe.app.EnqueueSyncSaveUseCase
+import cz.adamec.timotej.snag.lib.sync.fe.app.api.EnqueueSyncSaveUseCase
 import kotlin.uuid.Uuid
 
 class FakeEnqueueSyncSaveUseCase : EnqueueSyncSaveUseCase {

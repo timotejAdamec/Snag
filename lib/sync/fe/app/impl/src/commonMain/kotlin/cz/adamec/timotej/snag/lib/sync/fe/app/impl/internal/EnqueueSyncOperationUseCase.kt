@@ -10,16 +10,15 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.lib.sync.fe.app.handler
+package cz.adamec.timotej.snag.lib.sync.fe.app.impl.internal
 
 import cz.adamec.timotej.snag.lib.sync.business.SyncOperationType
 import kotlin.uuid.Uuid
 
-interface SyncOperationHandler {
-    val entityTypeId: String
-
-    suspend fun execute(
+internal interface EnqueueSyncOperationUseCase {
+    suspend operator fun invoke(
+        entityTypeId: String,
         entityId: Uuid,
         operationType: SyncOperationType,
-    ): SyncOperationResult
+    )
 }

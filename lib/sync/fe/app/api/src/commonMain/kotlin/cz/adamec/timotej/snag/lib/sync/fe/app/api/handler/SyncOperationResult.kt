@@ -10,10 +10,12 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.lib.sync.fe.app.internal
+package cz.adamec.timotej.snag.lib.sync.fe.app.api.handler
 
-import co.touchlab.kermit.Logger
+sealed interface SyncOperationResult {
+    data object Success : SyncOperationResult
 
-internal object LH {
-    val logger = Logger.withTag("lib-sync-fe-app")
+    data object EntityNotFound : SyncOperationResult
+
+    data object Failure : SyncOperationResult
 }
