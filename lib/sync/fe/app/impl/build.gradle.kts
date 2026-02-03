@@ -16,10 +16,11 @@ plugins {
 
 kotlin {
     sourceSets {
-        commonMain {
-            dependencies {
-                api(project(":lib:sync:fe:app:api"))
-            }
+        commonMain.dependencies {
+            api(project(":lib:sync:fe:app:api"))
+        }
+        commonTest.dependencies {
+            implementation(project(":lib:sync:fe:driven:test"))
         }
     }
 }

@@ -13,13 +13,3 @@
 plugins {
     alias(libs.plugins.snagFrontendMultiplatformModule)
 }
-
-kotlin {
-    sourceSets {
-        commonTest {
-            dependencies {
-                implementation(project(":lib:sync:fe:driven:test"))
-            }
-        }
-    }
-}
