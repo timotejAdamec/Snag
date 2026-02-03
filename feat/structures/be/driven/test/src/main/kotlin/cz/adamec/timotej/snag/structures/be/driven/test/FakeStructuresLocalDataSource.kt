@@ -12,28 +12,41 @@
 
 package cz.adamec.timotej.snag.structures.be.driven.test
 
-import cz.adamec.timotej.snag.feat.structures.business.Structure
+import cz.adamec.timotej.snag.feat.structures.be.model.BackendStructure
+import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.structures.be.ports.StructuresLocalDataSource
 import kotlin.uuid.Uuid
 
 class FakeStructuresLocalDataSource : StructuresLocalDataSource {
-    private val structures = mutableListOf<Structure>()
+    private val structures = mutableListOf<BackendStructure>()
 
-    override suspend fun getStructures(projectId: Uuid): List<Structure> = structures.filter { it.projectId == projectId }
+    override suspend fun getStructures(projectId: Uuid): List<BackendStructure> =
+        structures.filter { it.structure.projectId == projectId }
 
-    override suspend fun deleteStructure(id: Uuid) {
-        structures.removeIf { it.id == id }
-    }
+    override suspend fun deleteStructure(id: Uuid, deletedAt: Timestamp): BackendStructure? {
+        val foundStructure = structures.find { it.structure.id == id }
+        if (foundStructure != null && foundStructure.structure.updatedAt >= deletedAt) {
+            return foundStructure
+        }
 
-    override suspend fun updateStructure(structure: Structure): Structure? {
-        structures.removeIf { it.id == structure.id }
-        structures.add(structure)
+        structures.removeIf { it.structure.id == id && it.structure.updatedAt < deletedAt }
         return null
     }
 
-    fun getStructure(id: Uuid): Structure? = structures.find { it.id == id }
+    override suspend fun saveStructure(backendStructure: BackendStructure): BackendStructure? {
+        val foundStructure = structures.find { it.structure.id == backendStructure.structure.id }
+        if (foundStructure != null && foundStructure.structure.updatedAt >= backendStructure.structure.updatedAt) {
+            return foundStructure
+        }
 
-    fun setStructures(vararg items: Structure) {
+        structures.removeIf { it.structure.id == backendStructure.structure.id }
+        structures.add(backendStructure)
+        return null
+    }
+
+    fun getStructure(id: Uuid): BackendStructure? = structures.find { it.structure.id == id }
+
+    fun setStructures(vararg items: BackendStructure) {
         structures.addAll(items)
     }
 }

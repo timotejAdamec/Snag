@@ -13,6 +13,7 @@
 package cz.adamec.timotej.snag.feat.structures.fe.driving.api
 
 import cz.adamec.timotej.snag.lib.navigation.fe.SnagNavRoute
+import org.koin.core.annotation.Provided
 import kotlin.jvm.JvmInline
 import kotlin.uuid.Uuid
 
@@ -21,7 +22,7 @@ import kotlin.uuid.Uuid
  */
 @JvmInline
 value class StructureDetailBackStack(
-    val value: MutableList<StructureDetailNavRoute>,
+    @Provided val value: MutableList<StructureDetailNavRoute>,
 ) {
     fun removeLastSafely() {
         if (value.size > 1) value.removeLastOrNull()

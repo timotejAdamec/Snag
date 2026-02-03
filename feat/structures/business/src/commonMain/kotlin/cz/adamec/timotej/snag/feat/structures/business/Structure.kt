@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.feat.structures.business
 
+import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import kotlin.uuid.Uuid
 
 data class Structure(
@@ -19,4 +20,5 @@ data class Structure(
     val projectId: Uuid,
     val name: String,
     val floorPlanUrl: String?,
+    val updatedAt: Timestamp,
 )

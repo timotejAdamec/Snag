@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.routing.be
 
+import io.ktor.server.request.receive
 import io.ktor.server.routing.RoutingContext
 import kotlin.uuid.Uuid
 
@@ -22,3 +23,7 @@ fun RoutingContext.getIdFromParameters(parameterName: String): Uuid {
         runCatching { Uuid.parse(it) }.getOrNull()
     } ?: throw InvalidIdException()
 }
+
+suspend inline fun <reified T : Any> RoutingContext.getDtoFromBody(): T =
+    runCatching { call.receive<T>() }.getOrNull()
+        ?: throw InvalidBodyException()

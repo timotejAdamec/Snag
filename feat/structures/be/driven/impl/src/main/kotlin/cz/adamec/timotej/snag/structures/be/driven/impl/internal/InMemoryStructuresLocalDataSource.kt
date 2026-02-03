@@ -12,61 +12,98 @@
 
 package cz.adamec.timotej.snag.structures.be.driven.impl.internal
 
+import cz.adamec.timotej.snag.feat.structures.be.model.BackendStructure
 import cz.adamec.timotej.snag.feat.structures.business.Structure
+import cz.adamec.timotej.snag.lib.core.common.Timestamp
+import cz.adamec.timotej.snag.lib.core.common.TimestampProvider
 import cz.adamec.timotej.snag.structures.be.ports.StructuresLocalDataSource
 import kotlin.uuid.Uuid
 
-internal class InMemoryStructuresLocalDataSource : StructuresLocalDataSource {
+internal class InMemoryStructuresLocalDataSource(
+    timestampProvider: TimestampProvider,
+) : StructuresLocalDataSource {
     private val structures =
         mutableListOf(
-            Structure(
-                id = Uuid.parse("00000000-0000-0000-0001-000000000001"),
-                projectId = Uuid.parse(PROJECT_1),
-                name = "Block A - Ground Floor",
-                floorPlanUrl = "https://upload.wikimedia.org/wikipedia/commons/9/9a/Sample_Floorplan.jpg",
+            BackendStructure(
+                structure = Structure(
+                    id = Uuid.parse("00000000-0000-0000-0001-000000000001"),
+                    projectId = Uuid.parse(PROJECT_1),
+                    name = "Block A - Ground Floor",
+                    floorPlanUrl = "https://upload.wikimedia.org/wikipedia/commons/9/9a/Sample_Floorplan.jpg",
+                    updatedAt = timestampProvider.getNowTimestamp(),
+                ),
             ),
-            Structure(
-                id = Uuid.parse("00000000-0000-0000-0001-000000000002"),
-                projectId = Uuid.parse(PROJECT_1),
-                name = "Block A - First Floor",
-                floorPlanUrl = "https://saterdesign.com/cdn/shop/products/6842.M_1200x.jpeg?v=1547874083",
+            BackendStructure(
+                structure = Structure(
+                    id = Uuid.parse("00000000-0000-0000-0001-000000000002"),
+                    projectId = Uuid.parse(PROJECT_1),
+                    name = "Block A - First Floor",
+                    floorPlanUrl = "https://saterdesign.com/cdn/shop/products/6842.M_1200x.jpeg?v=1547874083",
+                    updatedAt = timestampProvider.getNowTimestamp(),
+                ),
             ),
-            Structure(
-                id = Uuid.parse("00000000-0000-0000-0001-000000000003"),
-                projectId = Uuid.parse(PROJECT_1),
-                name = "Block B - Ground Floor",
-                floorPlanUrl = null,
+            BackendStructure(
+                structure = Structure(
+                    id = Uuid.parse("00000000-0000-0000-0001-000000000003"),
+                    projectId = Uuid.parse(PROJECT_1),
+                    name = "Block B - Ground Floor",
+                    floorPlanUrl = null,
+                    updatedAt = timestampProvider.getNowTimestamp(),
+                ),
             ),
-            Structure(
-                id = Uuid.parse("00000000-0000-0000-0001-000000000004"),
-                projectId = Uuid.parse(PROJECT_2),
-                name = "Main Building - Basement",
-                floorPlanUrl = null,
+            BackendStructure(
+                structure = Structure(
+                    id = Uuid.parse("00000000-0000-0000-0001-000000000004"),
+                    projectId = Uuid.parse(PROJECT_2),
+                    name = "Main Building - Basement",
+                    floorPlanUrl = null,
+                    updatedAt = timestampProvider.getNowTimestamp(),
+                ),
             ),
-            Structure(
-                id = Uuid.parse("00000000-0000-0000-0001-000000000005"),
-                projectId = Uuid.parse(PROJECT_2),
-                name = "Main Building - Ground Floor",
-                floorPlanUrl = "https://www.thehousedesigners.com/images/plans/01/SCA/bulk/9333/1st-floor_m.webp",
+            BackendStructure(
+                structure = Structure(
+                    id = Uuid.parse("00000000-0000-0000-0001-000000000005"),
+                    projectId = Uuid.parse(PROJECT_2),
+                    name = "Main Building - Ground Floor",
+                    floorPlanUrl = "https://www.thehousedesigners.com/images/plans/01/SCA/bulk/9333/1st-floor_m.webp",
+                    updatedAt = timestampProvider.getNowTimestamp(),
+                ),
             ),
-            Structure(
-                id = Uuid.parse("00000000-0000-0000-0001-000000000006"),
-                projectId = Uuid.parse(PROJECT_3),
-                name = "Reading Hall - Level 1",
-                floorPlanUrl = null,
+            BackendStructure(
+                structure = Structure(
+                    id = Uuid.parse("00000000-0000-0000-0001-000000000006"),
+                    projectId = Uuid.parse(PROJECT_3),
+                    name = "Reading Hall - Level 1",
+                    floorPlanUrl = null,
+                    updatedAt = timestampProvider.getNowTimestamp(),
+                ),
             ),
         )
 
-    override suspend fun getStructures(projectId: Uuid): List<Structure> = structures.filter { it.projectId == projectId }
+    override suspend fun getStructures(projectId: Uuid): List<BackendStructure> =
+        structures.filter { it.structure.projectId == projectId }
 
-    override suspend fun deleteStructure(id: Uuid) {
-        structures.removeIf { it.id == id }
+    override suspend fun deleteStructure(
+        id: Uuid,
+        deletedAt: Timestamp,
+    ): BackendStructure? {
+        val foundStructure = structures.find { it.structure.id == id }
+        if (foundStructure != null && foundStructure.structure.updatedAt >= deletedAt) {
+            return foundStructure
+        }
+
+        structures.removeIf { it.structure.id == id && it.structure.updatedAt < deletedAt }
+        return null
     }
 
-    // TODO check updated timestamp and return the database structure if it is newer
-    override suspend fun updateStructure(structure: Structure): Structure? {
-        structures.removeIf { it.id == structure.id }
-        structures.add(structure)
+    override suspend fun saveStructure(backendStructure: BackendStructure): BackendStructure? {
+        val foundStructure = structures.find { it.structure.id == backendStructure.structure.id }
+        if (foundStructure != null && foundStructure.structure.updatedAt >= backendStructure.structure.updatedAt) {
+            return foundStructure
+        }
+
+        structures.removeIf { it.structure.id == backendStructure.structure.id }
+        structures.add(backendStructure)
         return null
     }
 

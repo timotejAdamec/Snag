@@ -12,20 +12,21 @@
 
 package cz.adamec.timotej.snag.structures.fe.driven.test
 
+import FrontendStructure
 import cz.adamec.timotej.snag.feat.structures.business.Structure
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
 import cz.adamec.timotej.snag.structures.fe.ports.StructuresApi
 import kotlin.uuid.Uuid
 
 class FakeStructuresApi : StructuresApi {
-    private val structures = mutableMapOf<Uuid, Structure>()
+    private val structures = mutableMapOf<Uuid, FrontendStructure>()
     var forcedFailure: OnlineDataResult.Failure? = null
-    var saveStructureResponseOverride: ((Structure) -> OnlineDataResult<Structure?>)? = null
+    var saveStructureResponseOverride: ((FrontendStructure) -> OnlineDataResult<FrontendStructure?>)? = null
 
-    override suspend fun getStructures(projectId: Uuid): OnlineDataResult<List<Structure>> {
+    override suspend fun getStructures(projectId: Uuid): OnlineDataResult<List<FrontendStructure>> {
         val failure = forcedFailure
         if (failure != null) return failure
-        return OnlineDataResult.Success(structures.values.filter { it.projectId == projectId })
+        return OnlineDataResult.Success(structures.values.filter { it.structure.projectId == projectId })
     }
 
     override suspend fun deleteStructure(id: Uuid): OnlineDataResult<Unit> {
@@ -35,20 +36,20 @@ class FakeStructuresApi : StructuresApi {
         return OnlineDataResult.Success(Unit)
     }
 
-    override suspend fun saveStructure(structure: Structure): OnlineDataResult<Structure?> {
+    override suspend fun saveStructure(frontendStructure: FrontendStructure): OnlineDataResult<FrontendStructure?> {
         val failure = forcedFailure
         if (failure != null) return failure
         val override = saveStructureResponseOverride
-        if (override != null) return override(structure)
-        structures[structure.id] = structure
-        return OnlineDataResult.Success(structure)
+        if (override != null) return override(frontendStructure)
+        structures[frontendStructure.structure.id] = frontendStructure
+        return OnlineDataResult.Success(frontendStructure)
     }
 
-    fun setStructure(structure: Structure) {
-        structures[structure.id] = structure
+    fun setStructure(structure: FrontendStructure) {
+        structures[structure.structure.id] = structure
     }
 
-    fun setStructures(structures: List<Structure>) {
-        structures.forEach { this.structures[it.id] = it }
+    fun setStructures(structures: List<FrontendStructure>) {
+        structures.forEach { this.structures[it.structure.id] = it }
     }
 }

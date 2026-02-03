@@ -17,5 +17,5 @@ import cz.adamec.timotej.snag.lib.core.common.TimestampProvider
 import kotlin.time.Clock
 
 class SystemTimestampProvider : TimestampProvider {
-    override fun getTimestamp(): Timestamp = Timestamp(Clock.System.now().toEpochMilliseconds())
+    override fun getNowTimestamp(): Timestamp = Timestamp(Clock.System.now().toEpochMilliseconds())
 }

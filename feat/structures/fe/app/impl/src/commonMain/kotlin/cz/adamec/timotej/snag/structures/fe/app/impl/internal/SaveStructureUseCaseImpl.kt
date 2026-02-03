@@ -12,7 +12,9 @@
 
 package cz.adamec.timotej.snag.structures.fe.app.impl.internal
 
+import FrontendStructure
 import cz.adamec.timotej.snag.feat.structures.business.Structure
+import cz.adamec.timotej.snag.lib.core.common.TimestampProvider
 import cz.adamec.timotej.snag.lib.core.common.UuidProvider
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.core.fe.log
@@ -28,28 +30,32 @@ class SaveStructureUseCaseImpl(
     private val structuresDb: StructuresDb,
     private val structuresSync: StructuresSync,
     private val uuidProvider: UuidProvider,
+    private val timestampProvider: TimestampProvider,
 ) : SaveStructureUseCase {
     override suspend operator fun invoke(request: SaveStructureRequest): OfflineFirstDataResult<Uuid> {
-        val structure =
-            Structure(
-                id = request.id ?: uuidProvider.getUuid(),
-                projectId = request.projectId,
-                name = request.name,
-                floorPlanUrl = null,
+        val feStructure =
+            FrontendStructure(
+                structure = Structure(
+                    id = request.id ?: uuidProvider.getUuid(),
+                    projectId = request.projectId,
+                    name = request.name,
+                    floorPlanUrl = null,
+                    updatedAt = timestampProvider.getNowTimestamp(),
+                )
             )
 
         return structuresDb
-            .saveStructure(structure)
+            .saveStructure(feStructure)
             .also {
                 logger.log(
                     offlineFirstDataResult = it,
-                    additionalInfo = "SaveStructureUseCase, structuresDb.saveStructure($structure)",
+                    additionalInfo = "SaveStructureUseCase, structuresDb.saveStructure($feStructure)",
                 )
                 if (it is OfflineFirstDataResult.Success) {
-                    structuresSync.enqueueStructureSave(structure.id)
+                    structuresSync.enqueueStructureSave(feStructure.structure.id)
                 }
             }.map {
-                structure.id
+                feStructure.structure.id
             }
     }
 }

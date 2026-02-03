@@ -1,17 +1,21 @@
+import cz.adamec.timotej.snag.lib.core.common.Timestamp;
+
 CREATE TABLE IF NOT EXISTS StructureEntity (
     id TEXT NOT NULL PRIMARY KEY,
     projectId TEXT NOT NULL,
     name TEXT NOT NULL,
-    floorPlanUrl TEXT
+    floorPlanUrl TEXT,
+    updatedAt INTEGER NOT NULL
 );
 
 save:
-INSERT INTO StructureEntity(id, projectId, name, floorPlanUrl)
+INSERT INTO StructureEntity(id, projectId, name, floorPlanUrl, updatedAt)
 VALUES ?
 ON CONFLICT(id) DO UPDATE SET
     projectId = excluded.projectId,
     name = excluded.name,
-    floorPlanUrl = excluded.floorPlanUrl;
+    floorPlanUrl = excluded.floorPlanUrl,
+    updatedAt = excluded.updatedAt;
 
 selectByProjectId:
 SELECT * FROM StructureEntity WHERE projectId = :projectId;

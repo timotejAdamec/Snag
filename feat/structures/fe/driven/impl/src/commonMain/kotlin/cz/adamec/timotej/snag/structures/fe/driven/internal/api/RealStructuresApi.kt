@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.structures.fe.driven.internal.api
 
-import cz.adamec.timotej.snag.feat.structures.business.Structure
+import FrontendStructure
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
 import cz.adamec.timotej.snag.network.fe.SnagNetworkHttpClient
 import cz.adamec.timotej.snag.network.fe.safeApiCall
@@ -27,11 +27,11 @@ import kotlin.uuid.Uuid
 internal class RealStructuresApi(
     private val httpClient: SnagNetworkHttpClient,
 ) : StructuresApi {
-    override suspend fun getStructures(projectId: Uuid): OnlineDataResult<List<Structure>> {
+    override suspend fun getStructures(projectId: Uuid): OnlineDataResult<List<FrontendStructure>> {
         LH.logger.d { "Fetching structures for project $projectId..." }
         return safeApiCall(logger = LH.logger, errorContext = "Error fetching structures for project $projectId.") {
             httpClient.get("/projects/$projectId/structures").body<List<StructureApiDto>>().map {
-                it.toBusiness()
+                it.toModel()
             }
         }.also { if (it is OnlineDataResult.Success) LH.logger.d { "Fetched ${it.data.size} structures for project $projectId." } }
     }
@@ -44,19 +44,19 @@ internal class RealStructuresApi(
         }.also { if (it is OnlineDataResult.Success) LH.logger.d { "Deleted structure $id from API." } }
     }
 
-    override suspend fun saveStructure(structure: Structure): OnlineDataResult<Structure?> {
-        LH.logger.d { "Saving structure ${structure.id} to API..." }
-        return safeApiCall(logger = LH.logger, errorContext = "Error saving structure ${structure.id} to API.") {
-            val structureDto = structure.toPutApiDto()
+    override suspend fun saveStructure(frontendStructure: FrontendStructure): OnlineDataResult<FrontendStructure?> {
+        LH.logger.d { "Saving structure ${frontendStructure.structure.id} to API..." }
+        return safeApiCall(logger = LH.logger, errorContext = "Error saving structure ${frontendStructure.structure.id} to API.") {
+            val structureDto = frontendStructure.toPutApiDto()
             val response =
-                httpClient.put("/projects/${structure.projectId}/structures/${structure.id}") {
+                httpClient.put("/projects/${frontendStructure.structure.projectId}/structures/${frontendStructure.structure.id}") {
                     setBody(structureDto)
                 }
             if (response.status != HttpStatusCode.NoContent) {
-                response.body<StructureApiDto>().toBusiness()
+                response.body<StructureApiDto>().toModel()
             } else {
                 null
             }
-        }.also { if (it is OnlineDataResult.Success) LH.logger.d { "Saved structure ${structure.id} to API." } }
+        }.also { if (it is OnlineDataResult.Success) LH.logger.d { "Saved structure ${frontendStructure.structure.id} to API." } }
     }
 }

@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.structures.fe.app.impl.internal
 
-import cz.adamec.timotej.snag.feat.structures.business.Structure
+import FrontendStructure
 import cz.adamec.timotej.snag.lib.core.common.ApplicationScope
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
@@ -31,7 +31,7 @@ internal class GetStructuresUseCaseImpl(
     private val structuresDb: StructuresDb,
     private val applicationScope: ApplicationScope,
 ) : GetStructuresUseCase {
-    override operator fun invoke(projectId: Uuid): Flow<OfflineFirstDataResult<List<Structure>>> {
+    override operator fun invoke(projectId: Uuid): Flow<OfflineFirstDataResult<List<FrontendStructure>>> {
         applicationScope.launch {
             when (val remoteStructuresResult = structuresApi.getStructures(projectId)) {
                 is OnlineDataResult.Failure ->

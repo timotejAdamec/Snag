@@ -12,7 +12,10 @@
 
 package cz.adamec.timotej.snag.structures.fe.driving.impl.internal.structureDetailsEdit.vm
 
+import FrontendStructure
 import cz.adamec.timotej.snag.feat.structures.business.Structure
+import cz.adamec.timotej.snag.lib.core.common.Timestamp
+import cz.adamec.timotej.snag.lib.core.common.TimestampProvider
 import cz.adamec.timotej.snag.lib.core.common.UuidProvider
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
@@ -28,6 +31,7 @@ import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
+import org.koin.test.KoinTest
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -38,17 +42,26 @@ import kotlin.test.assertNotNull
 import kotlin.uuid.Uuid
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class StructureDetailsEditViewModelTest {
+class StructureDetailsEditViewModelTest : KoinTest {
+
     private val testDispatcher = StandardTestDispatcher()
 
     private val structuresDb = FakeStructuresDb()
     private val structuresSync = FakeStructuresSync()
 
     private val getStructureUseCase = GetStructureUseCaseImpl(structuresDb)
-    private val saveStructureUseCase = SaveStructureUseCaseImpl(structuresDb, structuresSync, UuidProvider)
+    private val saveStructureUseCase =
+        SaveStructureUseCaseImpl(structuresDb, structuresSync, UuidProvider, TODO("Use koin DI for tests too"))
 
     @BeforeTest
     fun setUp() {
+        startKoin {
+            modules(
+                module {
+                    single { ComponentA() }
+                    single { ComponentB(get()) }
+                })
+        }
         Dispatchers.setMain(testDispatcher)
     }
 
@@ -58,7 +71,7 @@ class StructureDetailsEditViewModelTest {
     }
 
     @Test
-    fun `initial state is empty when creating (projectId provided, structureId null)`() =
+    fun `initial state is empty when creating with projectId provided and structureId null`() =
         runTest {
             val projectId = UuidProvider.getUuid()
             val viewModel =
@@ -74,11 +87,19 @@ class StructureDetailsEditViewModelTest {
         }
 
     @Test
-    fun `loading structure data updates state and projectId when editing (structureId provided)`() =
+    fun `loading structure data updates state and projectId when editing with structureId provided`() =
         runTest {
             val projectId = UuidProvider.getUuid()
             val structureId = UuidProvider.getUuid()
-            val structure = Structure(structureId, projectId, "Test Structure", null)
+            val structure = FrontendStructure(
+                Structure(
+                    id = structureId,
+                    projectId = projectId,
+                    name = "Test Structure",
+                    floorPlanUrl = null,
+                    updatedAt = Timestamp(10L),
+                )
+            )
             structuresDb.setStructures(listOf(structure))
 
             val viewModel =
@@ -100,7 +121,12 @@ class StructureDetailsEditViewModelTest {
         runTest {
             val projectId = UuidProvider.getUuid()
             val viewModel =
-                StructureDetailsEditViewModel(null, projectId, getStructureUseCase, saveStructureUseCase)
+                StructureDetailsEditViewModel(
+                    null,
+                    projectId,
+                    getStructureUseCase,
+                    saveStructureUseCase
+                )
 
             viewModel.onStructureNameChange("New Name")
 
@@ -112,7 +138,12 @@ class StructureDetailsEditViewModelTest {
         runTest {
             val projectId = UuidProvider.getUuid()
             val viewModel =
-                StructureDetailsEditViewModel(null, projectId, getStructureUseCase, saveStructureUseCase)
+                StructureDetailsEditViewModel(
+                    null,
+                    projectId,
+                    getStructureUseCase,
+                    saveStructureUseCase
+                )
 
             viewModel.onSaveStructure()
 
@@ -126,7 +157,12 @@ class StructureDetailsEditViewModelTest {
         runTest {
             val projectId = UuidProvider.getUuid()
             val viewModel =
-                StructureDetailsEditViewModel(null, projectId, getStructureUseCase, saveStructureUseCase)
+                StructureDetailsEditViewModel(
+                    null,
+                    projectId,
+                    getStructureUseCase,
+                    saveStructureUseCase
+                )
             viewModel.onStructureNameChange("Name")
 
             viewModel.onSaveStructure()
@@ -147,11 +183,24 @@ class StructureDetailsEditViewModelTest {
         runTest {
             val projectId = UuidProvider.getUuid()
             val structureId = UuidProvider.getUuid()
-            val structure = Structure(structureId, projectId, "Original Name", null)
+            val structure = FrontendStructure(
+                structure = Structure(
+                    id = structureId,
+                    projectId = projectId,
+                    name = "Original Name",
+                    floorPlanUrl = null,
+                    updatedAt = Timestamp(10L),
+                )
+            )
             structuresDb.setStructures(listOf(structure))
 
             val viewModel =
-                StructureDetailsEditViewModel(structureId, null, getStructureUseCase, saveStructureUseCase)
+                StructureDetailsEditViewModel(
+                    structureId,
+                    null,
+                    getStructureUseCase,
+                    saveStructureUseCase
+                )
 
             advanceUntilIdle()
 
@@ -175,10 +224,16 @@ class StructureDetailsEditViewModelTest {
         runTest {
             val projectId = UuidProvider.getUuid()
             val viewModel =
-                StructureDetailsEditViewModel(null, projectId, getStructureUseCase, saveStructureUseCase)
+                StructureDetailsEditViewModel(
+                    null,
+                    projectId,
+                    getStructureUseCase,
+                    saveStructureUseCase
+                )
             viewModel.onStructureNameChange("Name")
 
-            structuresDb.forcedFailure = OfflineFirstDataResult.ProgrammerError(RuntimeException("Failed"))
+            structuresDb.forcedFailure =
+                OfflineFirstDataResult.ProgrammerError(RuntimeException("Failed"))
 
             viewModel.onSaveStructure()
 

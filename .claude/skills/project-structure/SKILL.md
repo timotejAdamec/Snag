@@ -41,4 +41,5 @@ Domain-agnostic reusable code used by `driven` and `driving` feature modules.
 
 ### Dependency direction
 
-`driving` -> `app` -> `ports` -> `business` <- `driven`
+`driving` -> `app` -> `ports` -> `model` -> `business`
+`driven` -> `app` -> `model` -> `business`

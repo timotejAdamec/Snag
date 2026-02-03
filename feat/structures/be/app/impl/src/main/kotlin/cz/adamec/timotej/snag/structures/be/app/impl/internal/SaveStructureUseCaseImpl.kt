@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.structures.be.app.impl.internal
 
-import cz.adamec.timotej.snag.feat.structures.business.Structure
+import cz.adamec.timotej.snag.feat.structures.be.model.BackendStructure
 import cz.adamec.timotej.snag.structures.be.app.api.SaveStructureUseCase
 import cz.adamec.timotej.snag.structures.be.app.impl.internal.LH.logger
 import cz.adamec.timotej.snag.structures.be.ports.StructuresLocalDataSource
@@ -20,10 +20,10 @@ import cz.adamec.timotej.snag.structures.be.ports.StructuresLocalDataSource
 internal class SaveStructureUseCaseImpl(
     private val structuresLocalDataSource: StructuresLocalDataSource,
 ) : SaveStructureUseCase {
-    override suspend operator fun invoke(structure: Structure): Structure? {
-        logger.debug("Saving structure {} to local storage.", structure)
-        return structuresLocalDataSource.updateStructure(structure).also {
-            logger.debug("Saved structure {} to local storage.", structure)
+    override suspend operator fun invoke(backendStructure: BackendStructure): BackendStructure? {
+        logger.debug("Saving structure {} to local storage.", backendStructure)
+        return structuresLocalDataSource.saveStructure(backendStructure).also {
+            logger.debug("Saved structure {} to local storage.", backendStructure)
         }
     }
 }

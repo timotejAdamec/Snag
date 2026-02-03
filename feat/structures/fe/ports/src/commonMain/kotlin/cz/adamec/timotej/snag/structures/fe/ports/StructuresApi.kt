@@ -12,14 +12,15 @@
 
 package cz.adamec.timotej.snag.structures.fe.ports
 
+import FrontendStructure
 import cz.adamec.timotej.snag.feat.structures.business.Structure
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
 import kotlin.uuid.Uuid
 
 interface StructuresApi {
-    suspend fun getStructures(projectId: Uuid): OnlineDataResult<List<Structure>>
+    suspend fun getStructures(projectId: Uuid): OnlineDataResult<List<FrontendStructure>>
 
-    suspend fun saveStructure(structure: Structure): OnlineDataResult<Structure?>
+    suspend fun saveStructure(frontendStructure: FrontendStructure): OnlineDataResult<FrontendStructure?>
 
     suspend fun deleteStructure(id: Uuid): OnlineDataResult<Unit>
 }

@@ -13,13 +13,15 @@
 package cz.adamec.timotej.snag.structures.be.driving.impl.internal
 
 import cz.adamec.timotej.snag.routing.be.AppRoute
+import cz.adamec.timotej.snag.routing.be.getDtoFromBody
 import cz.adamec.timotej.snag.routing.be.getIdFromParameters
 import cz.adamec.timotej.snag.structures.be.app.api.DeleteStructureUseCase
 import cz.adamec.timotej.snag.structures.be.app.api.GetStructuresUseCase
 import cz.adamec.timotej.snag.structures.be.app.api.SaveStructureUseCase
+import cz.adamec.timotej.snag.structures.be.app.api.model.DeleteStructureRequest
+import cz.adamec.timotej.snag.structures.be.driving.contract.DeleteStructureApiDto
 import cz.adamec.timotej.snag.structures.be.driving.contract.PutStructureApiDto
 import io.ktor.http.HttpStatusCode
-import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.delete
@@ -37,10 +39,18 @@ internal class StructuresRoute(
         route("/structures") {
             delete("/{id}") {
                 val id = getIdFromParameters()
+                val deleteStructureDto = getDtoFromBody<DeleteStructureApiDto>()
 
-                deleteStructureUseCase(id)
+                val newerStructure = deleteStructureUseCase(
+                    DeleteStructureRequest(
+                        structureId = id,
+                        deletedAt = deleteStructureDto.deletedAt,
+                    )
+                )
 
-                call.respond(HttpStatusCode.NoContent)
+                newerStructure?.let {
+                    call.respond(it.toDto())
+                } ?: call.respond(HttpStatusCode.NoContent)
             }
         }
 
@@ -56,15 +66,9 @@ internal class StructuresRoute(
 
             put("/{id}") {
                 val id = getIdFromParameters()
+                val putStructureDto = getDtoFromBody<PutStructureApiDto>()
 
-                val putStructureDto =
-                    runCatching { call.receive<PutStructureApiDto>() }.getOrNull()
-                        ?: return@put call.respond(
-                            status = HttpStatusCode.BadRequest,
-                            message = "Invalid request body.",
-                        )
-
-                val updatedStructure = saveStructureUseCase(putStructureDto.toBusiness(id))
+                val updatedStructure = saveStructureUseCase(putStructureDto.toModel(id))
 
                 updatedStructure?.let {
                     call.respond(it.toDto())

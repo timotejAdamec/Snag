@@ -13,6 +13,7 @@
 package cz.adamec.timotej.snag.buildsrc.configuration
 
 import cz.adamec.timotej.snag.buildsrc.extensions.api
+import cz.adamec.timotej.snag.buildsrc.extensions.hasFolderInPath
 import cz.adamec.timotej.snag.buildsrc.extensions.implementation
 import cz.adamec.timotej.snag.buildsrc.extensions.library
 import cz.adamec.timotej.snag.buildsrc.extensions.libs
@@ -28,15 +29,25 @@ internal fun Project.configureBackendModule() {
         }
 
         val moduleDirectoryPath = path.substringBeforeLast(":")
-        if (name == "ports") {
-            val businessDirectoryPath = moduleDirectoryPath.substringBeforeLast(":")
-            api(project("$businessDirectoryPath:business"))
+        val modulePreDirectoryPath = moduleDirectoryPath.substringBeforeLast(":")
+        if (name == "model") {
+            api(project("$modulePreDirectoryPath:business"))
+        } else if (name == "ports") {
+            if (hasFolderInPath(moduleDirectoryPath, "model")) {
+                api(project("$moduleDirectoryPath:model"))
+            } else {
+                api(project("$modulePreDirectoryPath:business"))
+            }
         } else if (name == "app") {
             implementation(project("$moduleDirectoryPath:ports"))
         } else if (path.contains(":app:") && name == "api") {
             val feOrBeDirectoryPath = moduleDirectoryPath.substringBeforeLast(":app")
             val businessDirectoryPath = feOrBeDirectoryPath.substringBeforeLast(":")
-            api(project("$businessDirectoryPath:business"))
+            if (hasFolderInPath(feOrBeDirectoryPath, "model")) {
+                api(project("$feOrBeDirectoryPath:model"))
+            } else {
+                api(project("$businessDirectoryPath:business"))
+            }
         } else if (path.contains(":app:") && name == "impl") {
             val feOrBeDirectoryPath = moduleDirectoryPath.substringBeforeLast(":app")
             implementation(project("$moduleDirectoryPath:api"))

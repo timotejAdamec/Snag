@@ -12,10 +12,15 @@
 
 package cz.adamec.timotej.snag.structures.be.app.impl.internal
 
+import cz.adamec.timotej.snag.feat.structures.be.model.BackendStructure
 import cz.adamec.timotej.snag.feat.structures.business.Structure
+import cz.adamec.timotej.snag.lib.core.common.Timestamp
+import cz.adamec.timotej.snag.structures.be.app.api.model.DeleteStructureRequest
 import cz.adamec.timotej.snag.structures.be.driven.test.FakeStructuresLocalDataSource
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.uuid.Uuid
 
@@ -26,11 +31,14 @@ class DeleteStructureUseCaseImplTest {
     private val projectId = Uuid.parse("00000000-0000-0000-0000-000000000001")
     private val structureId = Uuid.parse("00000000-0000-0000-0001-000000000001")
     private val structure =
-        Structure(
-            id = structureId,
-            projectId = projectId,
-            name = "Ground Floor",
-            floorPlanUrl = null,
+        BackendStructure(
+            structure = Structure(
+                id = structureId,
+                projectId = projectId,
+                name = "Ground Floor",
+                floorPlanUrl = null,
+                updatedAt = Timestamp(value = 10L),
+            ),
         )
 
     @Test
@@ -38,8 +46,57 @@ class DeleteStructureUseCaseImplTest {
         runTest {
             dataSource.setStructures(structure)
 
-            useCase(structureId)
+            useCase(
+                DeleteStructureRequest(
+                    structureId = structureId,
+                    deletedAt = Timestamp(value = 20L)
+                )
+            )
 
             assertNull(dataSource.getStructure(structureId))
+        }
+
+    @Test
+    fun `does not delete structure when saved updated at is later than deleted at`() =
+        runTest {
+            dataSource.setStructures(structure)
+
+            useCase(
+                DeleteStructureRequest(
+                    structureId = structureId,
+                    deletedAt = Timestamp(value = 1L)
+                )
+            )
+
+            assertNotNull(dataSource.getStructure(structureId))
+        }
+
+    @Test
+    fun `returns saved structure when saved updated at is later than deleted at`() =
+        runTest {
+            dataSource.setStructures(structure)
+
+            val result = useCase(
+                DeleteStructureRequest(
+                    structureId = structureId,
+                    deletedAt = Timestamp(value = 1L)
+                )
+            )
+
+            assertNotNull(result)
+            assertEquals(structure, result)
+        }
+
+    @Test
+    fun `returns null if no structure was saved`() =
+        runTest {
+            val result = useCase(
+                DeleteStructureRequest(
+                    structureId = structureId,
+                    deletedAt = Timestamp(value = 20L)
+                )
+            )
+
+            assertNull(result)
         }
 }

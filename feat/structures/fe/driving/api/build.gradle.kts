@@ -6,7 +6,7 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation(project(":feat:structures:business"))
+                implementation(project(":feat:structures:fe:model"))
             }
         }
     }

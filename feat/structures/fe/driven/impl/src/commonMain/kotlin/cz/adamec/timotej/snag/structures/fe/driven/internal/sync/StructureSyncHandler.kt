@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.structures.fe.driven.internal.sync
 
+import FrontendStructure
 import cz.adamec.timotej.snag.feat.structures.business.Structure
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
@@ -25,19 +26,19 @@ import kotlin.uuid.Uuid
 internal class StructureSyncHandler(
     private val structuresApi: StructuresApi,
     private val structuresDb: StructuresDb,
-) : DbApiSyncHandler<Structure>(LH.logger) {
+) : DbApiSyncHandler<FrontendStructure>(LH.logger) {
     override val entityTypeId: String = STRUCTURE_SYNC_ENTITY_TYPE
     override val entityName: String = "structure"
 
-    override fun getEntityFlow(entityId: Uuid): Flow<OfflineFirstDataResult<Structure?>> =
+    override fun getEntityFlow(entityId: Uuid): Flow<OfflineFirstDataResult<FrontendStructure?>> =
         structuresDb.getStructureFlow(entityId)
 
-    override suspend fun saveEntityToApi(entity: Structure): OnlineDataResult<Structure?> =
+    override suspend fun saveEntityToApi(entity: FrontendStructure): OnlineDataResult<FrontendStructure?> =
         structuresApi.saveStructure(entity)
 
     override suspend fun deleteEntityFromApi(entityId: Uuid): OnlineDataResult<Unit> =
         structuresApi.deleteStructure(entityId)
 
-    override suspend fun saveEntityToDb(entity: Structure): OfflineFirstDataResult<Unit> =
+    override suspend fun saveEntityToDb(entity: FrontendStructure): OfflineFirstDataResult<Unit> =
         structuresDb.saveStructure(entity)
 }

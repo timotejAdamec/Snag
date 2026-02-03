@@ -103,7 +103,7 @@ private fun LoadedStructureDetailsContent(
         topBar = {
             TopAppBar(
                 title = {
-                    Text(text = state.structure?.name.orEmpty())
+                    Text(text = state.feStructure?.structure?.name.orEmpty())
                 },
                 navigationIcon = {
                     BackNavigationIcon(
@@ -120,12 +120,12 @@ private fun LoadedStructureDetailsContent(
                     .padding(paddingValues)
                     .consumeWindowInsets(paddingValues),
         ) {
-            val floorPlanUrl = state.structure?.floorPlanUrl
+            val floorPlanUrl = state.feStructure?.structure?.floorPlanUrl
             if (floorPlanUrl != null) {
                 FloorPlanWithPins(
                     modifier = Modifier.fillMaxSize(),
                     floorPlanUrl = floorPlanUrl,
-                    contentDescription = state.structure.name,
+                    contentDescription = state.feStructure.structure.name,
                     findings = state.findings,
                     selectedFindingId = state.selectedFindingId,
                 )

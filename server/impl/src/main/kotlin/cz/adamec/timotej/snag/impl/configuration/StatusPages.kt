@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.impl.configuration
 
+import cz.adamec.timotej.snag.routing.be.InvalidBodyException
 import cz.adamec.timotej.snag.routing.be.InvalidIdException
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
@@ -25,6 +26,12 @@ internal fun Application.configureStatusPages() {
             call.respond(
                 status = HttpStatusCode.BadRequest,
                 message = "Invalid ID format.",
+            )
+        }
+        exception<InvalidBodyException> { call, _ ->
+            call.respond(
+                status = HttpStatusCode.BadRequest,
+                message = "Invalid request body.",
             )
         }
     }

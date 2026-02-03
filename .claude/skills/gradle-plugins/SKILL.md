@@ -17,6 +17,7 @@ When creating a new module at `feat/<feature>/<path>`, use this mapping:
 feat/<feature>/
 ├── business/                → snagMultiplatformModule
 ├── fe/
+    ├── model/               → snagFrontendMultiplatformModule
 │   ├── ports/               → snagFrontendMultiplatformModule
 │   ├── app/
 │   │   ├── api/             → snagFrontendMultiplatformModule
@@ -28,6 +29,7 @@ feat/<feature>/
 │       ├── impl/            → snagDrivenFrontendMultiplatformModule
 │       └── test/            → snagDrivenFrontendMultiplatformModule
 └── be/
+    ├── model/               → snagBackendModule
     ├── ports/               → snagBackendModule
     ├── app/
     │   ├── api/             → snagBackendModule

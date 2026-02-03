@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.structures.fe.driven.internal.db
 
+import FrontendStructure
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import app.cash.sqldelight.coroutines.mapToOneOrNull
@@ -32,21 +33,21 @@ internal class RealStructuresDb(
     private val structureEntityQueries: StructureEntityQueries,
     private val ioDispatcher: CoroutineDispatcher,
 ) : StructuresDb {
-    override fun getStructuresFlow(projectId: Uuid): Flow<OfflineFirstDataResult<List<Structure>>> =
+    override fun getStructuresFlow(projectId: Uuid): Flow<OfflineFirstDataResult<List<FrontendStructure>>> =
         structureEntityQueries
             .selectByProjectId(projectId.toString())
             .asFlow()
             .mapToList(ioDispatcher)
-            .map<List<StructureEntity>, OfflineFirstDataResult<List<Structure>>> { entities ->
+            .map<List<StructureEntity>, OfflineFirstDataResult<List<FrontendStructure>>> { entities ->
                 OfflineFirstDataResult.Success(
-                    entities.map { it.toBusiness() },
+                    entities.map { it.toModel() },
                 )
             }.catch { e ->
                 LH.logger.e { "Error loading structures for project $projectId from DB." }
                 emit(OfflineFirstDataResult.ProgrammerError(throwable = e))
             }
 
-    override suspend fun saveStructures(structures: List<Structure>): OfflineFirstDataResult<Unit> =
+    override suspend fun saveStructures(structures: List<FrontendStructure>): OfflineFirstDataResult<Unit> =
         safeDbWrite(ioDispatcher = ioDispatcher, logger = LH.logger, errorMessage = "Error saving structures $structures to DB.") {
             structureEntityQueries.transaction {
                 structures.forEach {
@@ -55,7 +56,7 @@ internal class RealStructuresDb(
             }
         }
 
-    override suspend fun saveStructure(structure: Structure): OfflineFirstDataResult<Unit> =
+    override suspend fun saveStructure(structure: FrontendStructure): OfflineFirstDataResult<Unit> =
         safeDbWrite(ioDispatcher = ioDispatcher, logger = LH.logger, errorMessage = "Error saving structure $structure to DB.") {
             structureEntityQueries.save(structure.toEntity())
         }
@@ -65,13 +66,13 @@ internal class RealStructuresDb(
             structureEntityQueries.deleteById(id.toString())
         }
 
-    override fun getStructureFlow(id: Uuid): Flow<OfflineFirstDataResult<Structure?>> =
+    override fun getStructureFlow(id: Uuid): Flow<OfflineFirstDataResult<FrontendStructure?>> =
         structureEntityQueries
             .selectById(id.toString())
             .asFlow()
             .mapToOneOrNull(ioDispatcher)
-            .map<StructureEntity?, OfflineFirstDataResult<Structure?>> { entity ->
-                OfflineFirstDataResult.Success(entity?.toBusiness())
+            .map<StructureEntity?, OfflineFirstDataResult<FrontendStructure?>> { entity ->
+                OfflineFirstDataResult.Success(entity?.toModel())
             }.catch { e ->
                 LH.logger.e { "Error loading structure $id from DB." }
                 emit(OfflineFirstDataResult.ProgrammerError(throwable = e))

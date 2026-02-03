@@ -12,13 +12,14 @@
 
 package cz.adamec.timotej.snag.structures.be.ports
 
-import cz.adamec.timotej.snag.feat.structures.business.Structure
+import cz.adamec.timotej.snag.feat.structures.be.model.BackendStructure
+import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import kotlin.uuid.Uuid
 
 interface StructuresLocalDataSource {
-    suspend fun getStructures(projectId: Uuid): List<Structure>
+    suspend fun getStructures(projectId: Uuid): List<BackendStructure>
 
-    suspend fun updateStructure(structure: Structure): Structure?
+    suspend fun saveStructure(backendStructure: BackendStructure): BackendStructure?
 
-    suspend fun deleteStructure(id: Uuid)
+    suspend fun deleteStructure(id: Uuid, deletedAt: Timestamp): BackendStructure?
 }

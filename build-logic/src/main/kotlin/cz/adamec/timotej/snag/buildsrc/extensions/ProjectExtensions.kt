@@ -16,6 +16,7 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.VersionCatalog
 import org.gradle.api.artifacts.VersionCatalogsExtension
 import org.gradle.kotlin.dsl.getByType
+import java.io.File
 
 /**
  * Returns the version catalog for the project.
@@ -33,3 +34,9 @@ fun Project.dotFormattedPath(): String = path
     .removePrefix(":")
     .replace(":", ".")
     .replace("-", "")
+
+fun Project.hasFolderInPath(gradlePath: String, subFolder: String): Boolean {
+    val physicalPath = gradlePath.removePrefix(":").replace(":", "/")
+    val targetDir = File(rootDir, "$physicalPath/$subFolder")
+    return targetDir.exists() && targetDir.isDirectory
+}

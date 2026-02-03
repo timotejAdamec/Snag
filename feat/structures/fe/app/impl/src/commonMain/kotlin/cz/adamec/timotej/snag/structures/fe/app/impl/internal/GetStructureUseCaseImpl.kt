@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.structures.fe.app.impl.internal
 
-import cz.adamec.timotej.snag.feat.structures.business.Structure
+import FrontendStructure
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.structures.fe.app.api.GetStructureUseCase
 import cz.adamec.timotej.snag.structures.fe.ports.StructuresDb
@@ -23,7 +23,7 @@ import kotlin.uuid.Uuid
 class GetStructureUseCaseImpl(
     private val structuresDb: StructuresDb,
 ) : GetStructureUseCase {
-    override operator fun invoke(structureId: Uuid): Flow<OfflineFirstDataResult<Structure?>> =
+    override operator fun invoke(structureId: Uuid): Flow<OfflineFirstDataResult<FrontendStructure?>> =
         structuresDb.getStructureFlow(structureId)
             .distinctUntilChanged()
 }

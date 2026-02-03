@@ -12,17 +12,24 @@
 
 package cz.adamec.timotej.snag.structures.be.app.impl.internal
 
+import cz.adamec.timotej.snag.feat.structures.be.model.BackendStructure
 import cz.adamec.timotej.snag.structures.be.app.api.DeleteStructureUseCase
+import cz.adamec.timotej.snag.structures.be.app.api.model.DeleteStructureRequest
 import cz.adamec.timotej.snag.structures.be.app.impl.internal.LH.logger
 import cz.adamec.timotej.snag.structures.be.ports.StructuresLocalDataSource
-import kotlin.uuid.Uuid
 
 internal class DeleteStructureUseCaseImpl(
     private val structuresLocalDataSource: StructuresLocalDataSource,
 ) : DeleteStructureUseCase {
-    override suspend operator fun invoke(structureId: Uuid) {
-        logger.debug("Deleting structure {} from local storage.", structureId)
-        structuresLocalDataSource.deleteStructure(structureId)
-        logger.debug("Deleted structure {} from local storage.", structureId)
+    override suspend operator fun invoke(
+        request: DeleteStructureRequest,
+    ): BackendStructure? {
+        logger.debug("Deleting structure {} from local storage.", request.structureId)
+        return structuresLocalDataSource.deleteStructure(
+            id = request.structureId,
+            deletedAt = request.deletedAt,
+        ).also {
+            logger.debug("Deleted structure {} from local storage.", request.structureId)
+        }
     }
 }

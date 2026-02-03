@@ -12,8 +12,8 @@
 
 package cz.adamec.timotej.snag.structures.be.app.api
 
-import cz.adamec.timotej.snag.feat.structures.business.Structure
+import cz.adamec.timotej.snag.feat.structures.be.model.BackendStructure
 
 interface SaveStructureUseCase {
-    suspend operator fun invoke(structure: Structure): Structure?
+    suspend operator fun invoke(backendStructure: BackendStructure): BackendStructure?
 }

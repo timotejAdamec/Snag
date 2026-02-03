@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.structures.fe.driven.test
 
+import FrontendStructure
 import cz.adamec.timotej.snag.feat.structures.business.Structure
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.structures.fe.ports.StructuresDb
@@ -22,30 +23,30 @@ import kotlinx.coroutines.flow.update
 import kotlin.uuid.Uuid
 
 class FakeStructuresDb : StructuresDb {
-    private val structures = MutableStateFlow<Map<Uuid, Structure>>(emptyMap())
+    private val structures = MutableStateFlow<Map<Uuid, FrontendStructure>>(emptyMap())
     var forcedFailure: OfflineFirstDataResult.ProgrammerError? = null
 
-    override fun getStructuresFlow(projectId: Uuid): Flow<OfflineFirstDataResult<List<Structure>>> =
+    override fun getStructuresFlow(projectId: Uuid): Flow<OfflineFirstDataResult<List<FrontendStructure>>> =
         structures.map { map ->
             val failure = forcedFailure
-            failure ?: OfflineFirstDataResult.Success(map.values.filter { it.projectId == projectId })
+            failure ?: OfflineFirstDataResult.Success(map.values.filter { it.structure.projectId == projectId })
         }
 
-    override suspend fun saveStructures(structures: List<Structure>): OfflineFirstDataResult<Unit> {
+    override suspend fun saveStructures(structures: List<FrontendStructure>): OfflineFirstDataResult<Unit> {
         val failure = forcedFailure
         if (failure != null) return failure
 
         this.structures.update { current ->
-            current + structures.associateBy { it.id }
+            current + structures.associateBy { it.structure.id }
         }
         return OfflineFirstDataResult.Success(Unit)
     }
 
-    override suspend fun saveStructure(structure: Structure): OfflineFirstDataResult<Unit> {
+    override suspend fun saveStructure(structure: FrontendStructure): OfflineFirstDataResult<Unit> {
         val failure = forcedFailure
         if (failure != null) return failure
 
-        structures.update { it + (structure.id to structure) }
+        structures.update { it + (structure.structure.id to structure) }
         return OfflineFirstDataResult.Success(Unit)
     }
 
@@ -57,7 +58,7 @@ class FakeStructuresDb : StructuresDb {
         return OfflineFirstDataResult.Success(Unit)
     }
 
-    override fun getStructureFlow(id: Uuid): Flow<OfflineFirstDataResult<Structure?>> =
+    override fun getStructureFlow(id: Uuid): Flow<OfflineFirstDataResult<FrontendStructure?>> =
         structures.map { map ->
             val failure = forcedFailure
             if (failure != null) {
@@ -67,13 +68,13 @@ class FakeStructuresDb : StructuresDb {
             }
         }
 
-    fun setStructure(structure: Structure) {
-        structures.update { it + (structure.id to structure) }
+    fun setStructure(structure: FrontendStructure) {
+        structures.update { it + (structure.structure.id to structure) }
     }
 
-    fun setStructures(structures: List<Structure>) {
+    fun setStructures(structures: List<FrontendStructure>) {
         this.structures.update { current ->
-            current + structures.associateBy { it.id }
+            current + structures.associateBy { it.structure.id }
         }
     }
 }

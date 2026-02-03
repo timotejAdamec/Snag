@@ -12,9 +12,9 @@
 
 package cz.adamec.timotej.snag.structures.fe.driving.impl.internal.floorPlan.vm
 
+import FrontendStructure
 import androidx.compose.runtime.Immutable
 import cz.adamec.timotej.snag.feat.findings.business.Finding
-import cz.adamec.timotej.snag.feat.structures.business.Structure
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlin.uuid.Uuid
@@ -23,7 +23,7 @@ import kotlin.uuid.Uuid
 internal data class StructureDetailsUiState(
     val status: StructureDetailsUiStatus = StructureDetailsUiStatus.LOADING,
     val isBeingDeleted: Boolean = false,
-    val structure: Structure? = null,
+    val feStructure: FrontendStructure? = null,
     val findings: ImmutableList<Finding> = persistentListOf(),
     val selectedFindingId: Uuid? = null,
 ) {

@@ -18,6 +18,8 @@ kotlin {
             dependencies {
                 implementation(project(":feat:structures:fe:app:impl"))
                 implementation(project(":feat:structures:fe:driven:test"))
+                implementation(project(":feat:findings:fe:app:impl"))
+                implementation(project(":feat:findings:fe:driven:test"))
             }
         }
     }

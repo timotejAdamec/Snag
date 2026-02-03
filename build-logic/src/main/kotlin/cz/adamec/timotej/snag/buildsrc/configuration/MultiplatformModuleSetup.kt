@@ -13,6 +13,7 @@
 package cz.adamec.timotej.snag.buildsrc.configuration
 
 import com.android.build.api.dsl.KotlinMultiplatformAndroidLibraryExtension
+import cz.adamec.timotej.snag.buildsrc.extensions.hasFolderInPath
 import cz.adamec.timotej.snag.buildsrc.extensions.library
 import cz.adamec.timotej.snag.buildsrc.extensions.version
 import org.gradle.api.Project
@@ -86,9 +87,15 @@ internal fun Project.configureKotlinMultiplatformModule() {
 
             commonMain.dependencies {
                 val moduleDirectoryPath = this@configureKotlinMultiplatformModule.path.substringBeforeLast(":")
-                if (this@configureKotlinMultiplatformModule.name == "ports") {
-                    val businessDirectoryPath = moduleDirectoryPath.substringBeforeLast(":")
-                    api(project("$businessDirectoryPath:business"))
+                val modulePreDirectoryPath = moduleDirectoryPath.substringBeforeLast(":")
+                if (this@configureKotlinMultiplatformModule.name == "model") {
+                    api(project("$modulePreDirectoryPath:business"))
+                } else if (this@configureKotlinMultiplatformModule.name == "ports") {
+                    if (hasFolderInPath(moduleDirectoryPath, "model")) {
+                        api(project("$moduleDirectoryPath:model"))
+                    } else {
+                        api(project("$modulePreDirectoryPath:business"))
+                    }
                 } else if (this@configureKotlinMultiplatformModule.name == "app") {
                     implementation(project("$moduleDirectoryPath:ports"))
                 } else if (this@configureKotlinMultiplatformModule.path.contains(":app:") &&
@@ -96,7 +103,11 @@ internal fun Project.configureKotlinMultiplatformModule() {
                 ) {
                     val feOrBeDirectoryPath = moduleDirectoryPath.substringBeforeLast(":app")
                     val businessDirectoryPath = feOrBeDirectoryPath.substringBeforeLast(":")
-                    api(project("$businessDirectoryPath:business"))
+                    if (hasFolderInPath(feOrBeDirectoryPath, "model")) {
+                        api(project("$feOrBeDirectoryPath:model"))
+                    } else {
+                        api(project("$businessDirectoryPath:business"))
+                    }
                 } else if (this@configureKotlinMultiplatformModule.path.contains(":app:") &&
                     this@configureKotlinMultiplatformModule.name == "impl"
                 ) {
@@ -120,6 +131,7 @@ internal fun Project.configureKotlinMultiplatformModule() {
                 implementation(library("kotlin-test"))
                 implementation(library("kotlinx-coroutines-test"))
                 implementation(library("koin-test"))
+                implementation(library("koin-test-coroutines"))
             }
             androidMain.dependencies {
                 implementation(library("kotlinx-coroutines-android"))

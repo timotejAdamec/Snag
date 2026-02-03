@@ -57,11 +57,9 @@ import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.v
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import kotlin.uuid.Uuid
-import org.koin.compose.koinInject
 import snag.feat.projects.fe.driving.impl.generated.resources.Res
 import snag.feat.projects.fe.driving.impl.generated.resources.delete_project_confirmation_text
 import snag.feat.projects.fe.driving.impl.generated.resources.delete_project_confirmation_title
-import snag.feat.projects.fe.driving.impl.generated.resources.new_project
 import snag.feat.projects.fe.driving.impl.generated.resources.new_structure
 import snag.feat.projects.fe.driving.impl.generated.resources.project_not_found
 import snag.lib.design.fe.generated.resources.delete
@@ -177,8 +175,8 @@ private fun LoadedProjectDetailsContent(
                                         .widthIn(min = 150.dp)
                                         .weight(1f)
                                         .heightIn(min = 200.dp, max = 260.dp),
-                                    structure = structure,
-                                    onClick = { onStructureClick(structure.id) },
+                                    feStructure = structure,
+                                    onClick = { onStructureClick(structure.structure.id) },
                                 )
                             }
                         }

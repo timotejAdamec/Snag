@@ -48,8 +48,8 @@ internal class StructureFloorPlanViewModel(
             .scan(
                 initial = StructureDetailsUiState(),
             ) { prev, new ->
-                val newStructureId = new.structure?.id ?: return@scan new
-                if (prev.structure?.id != newStructureId) {
+                val newStructureId = new.feStructure?.structure?.id ?: return@scan new
+                if (prev.feStructure?.structure?.id != newStructureId) {
                     collectFindings(newStructureId)
                 }
                 new
@@ -90,7 +90,7 @@ internal class StructureFloorPlanViewModel(
                             _state.update {
                                 it.copy(
                                     status = StructureDetailsUiStatus.LOADED,
-                                    structure = structure,
+                                    feStructure = structure,
                                 )
                             }
                         } ?: if (state.value.status != StructureDetailsUiStatus.DELETED) {

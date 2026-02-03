@@ -12,8 +12,9 @@
 
 package cz.adamec.timotej.snag.structures.be.app.api
 
-import kotlin.uuid.Uuid
+import cz.adamec.timotej.snag.feat.structures.be.model.BackendStructure
+import cz.adamec.timotej.snag.structures.be.app.api.model.DeleteStructureRequest
 
 interface DeleteStructureUseCase {
-    suspend operator fun invoke(structureId: Uuid)
+    suspend operator fun invoke(request: DeleteStructureRequest) : BackendStructure?
 }

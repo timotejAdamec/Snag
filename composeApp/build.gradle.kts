@@ -55,7 +55,7 @@ kotlin {
             implementation(projects.feat.structures.fe.app.impl)
             implementation(projects.feat.projects.fe.app.impl)
             implementation(projects.lib.sync.fe.driven.impl)
-            implementation(projects.lib.sync.fe.app)
+            implementation(projects.lib.sync.fe.app.impl)
             implementation(projects.feat.structures.fe.driven.impl)
             implementation(projects.feat.structures.fe.driving.api)
             implementation(projects.feat.structures.fe.driving.impl)

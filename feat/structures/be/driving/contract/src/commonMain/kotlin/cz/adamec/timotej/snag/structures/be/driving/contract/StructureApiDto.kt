@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.structures.be.driving.contract
 
+import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import kotlinx.serialization.Serializable
 import kotlin.uuid.Uuid
 
@@ -21,4 +22,5 @@ data class StructureApiDto(
     val projectId: Uuid,
     val name: String,
     val floorPlanUrl: String?,
+    val updatedAt: Timestamp,
 )

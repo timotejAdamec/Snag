@@ -12,9 +12,9 @@
 
 package cz.adamec.timotej.snag.structures.be.app.api
 
-import cz.adamec.timotej.snag.feat.structures.business.Structure
+import cz.adamec.timotej.snag.feat.structures.be.model.BackendStructure
 import kotlin.uuid.Uuid
 
 interface GetStructuresUseCase {
-    suspend operator fun invoke(projectId: Uuid): List<Structure>
+    suspend operator fun invoke(projectId: Uuid): List<BackendStructure>
 }

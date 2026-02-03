@@ -12,13 +12,17 @@
 
 package cz.adamec.timotej.snag.lib.core.common
 
+import kotlinx.serialization.Serializable
 import kotlin.jvm.JvmInline
 
 interface TimestampProvider {
-    fun getTimestamp(): Timestamp
+    fun getNowTimestamp(): Timestamp
 }
 
+@Serializable
 @JvmInline
 value class Timestamp(
     val value: Long,
-)
+) : Comparable<Timestamp> {
+    override fun compareTo(other: Timestamp): Int = value.compareTo(other.value)
+}
