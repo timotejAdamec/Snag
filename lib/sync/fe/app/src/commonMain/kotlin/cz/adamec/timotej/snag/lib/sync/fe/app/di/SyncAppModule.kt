@@ -19,6 +19,7 @@ import cz.adamec.timotej.snag.lib.sync.fe.app.internal.EnqueueSyncDeleteUseCaseI
 import cz.adamec.timotej.snag.lib.sync.fe.app.internal.EnqueueSyncOperationUseCase
 import cz.adamec.timotej.snag.lib.sync.fe.app.internal.EnqueueSyncSaveUseCaseImpl
 import cz.adamec.timotej.snag.lib.sync.fe.app.internal.SyncEngine
+import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
@@ -31,6 +32,6 @@ val syncAppModule =
                 applicationScope = get(),
             )
         } bind EnqueueSyncOperationUseCase::class
-        single { EnqueueSyncSaveUseCaseImpl(get()) } bind EnqueueSyncSaveUseCase::class
-        single { EnqueueSyncDeleteUseCaseImpl(get()) } bind EnqueueSyncDeleteUseCase::class
+        singleOf(::EnqueueSyncSaveUseCaseImpl) bind EnqueueSyncSaveUseCase::class
+        singleOf(::EnqueueSyncDeleteUseCaseImpl) bind EnqueueSyncDeleteUseCase::class
     }
