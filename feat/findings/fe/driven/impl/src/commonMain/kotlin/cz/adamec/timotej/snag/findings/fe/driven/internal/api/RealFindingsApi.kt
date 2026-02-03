@@ -36,11 +36,13 @@ internal class RealFindingsApi(
         }.also { if (it is OnlineDataResult.Success) LH.logger.d { "Fetched ${it.data.size} findings for structure $structureId." } }
     }
 
-    override suspend fun deleteFinding(id: Uuid): OnlineDataResult<Unit> =
-        safeApiCall(logger = LH.logger, errorContext = "Error deleting finding $id from API.") {
+    override suspend fun deleteFinding(id: Uuid): OnlineDataResult<Unit> {
+        LH.logger.d { "Deleting finding $id from API..." }
+        return safeApiCall(logger = LH.logger, errorContext = "Error deleting finding $id from API.") {
             httpClient.delete("/findings/$id")
             Unit
         }.also { if (it is OnlineDataResult.Success) LH.logger.d { "Deleted finding $id from API." } }
+    }
 
     override suspend fun saveFinding(finding: Finding): OnlineDataResult<Finding?> {
         LH.logger.d { "Saving finding ${finding.id} to API..." }

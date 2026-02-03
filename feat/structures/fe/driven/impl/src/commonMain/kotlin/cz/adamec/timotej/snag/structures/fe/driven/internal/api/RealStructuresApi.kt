@@ -36,11 +36,13 @@ internal class RealStructuresApi(
         }.also { if (it is OnlineDataResult.Success) LH.logger.d { "Fetched ${it.data.size} structures for project $projectId." } }
     }
 
-    override suspend fun deleteStructure(id: Uuid): OnlineDataResult<Unit> =
-        safeApiCall(logger = LH.logger, errorContext = "Error deleting structure $id from API.") {
+    override suspend fun deleteStructure(id: Uuid): OnlineDataResult<Unit> {
+        LH.logger.d { "Deleting structure $id from API..." }
+        return safeApiCall(logger = LH.logger, errorContext = "Error deleting structure $id from API.") {
             httpClient.delete("/structures/$id")
             Unit
         }.also { if (it is OnlineDataResult.Success) LH.logger.d { "Deleted structure $id from API." } }
+    }
 
     override suspend fun saveStructure(structure: Structure): OnlineDataResult<Structure?> {
         LH.logger.d { "Saving structure ${structure.id} to API..." }
