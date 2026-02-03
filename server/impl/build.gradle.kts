@@ -35,15 +35,7 @@ ktor {
 
 dependencies {
     implementation(projects.server.api)
-    implementation(projects.feat.projects.be.driving.impl)
-    implementation(projects.feat.projects.be.driven.impl)
-    implementation(projects.feat.projects.be.app.impl)
-    implementation(projects.feat.structures.be.driving.impl)
-    implementation(projects.feat.structures.be.driven.impl)
-    implementation(projects.feat.structures.be.app.impl)
-    implementation(projects.feat.findings.be.driving.impl)
-    implementation(projects.feat.findings.be.driven.impl)
-    implementation(projects.feat.findings.be.app.impl)
+    implementation(projects.koinModulesAggregate.be)
 
     implementation(libs.ktor.server.core)
     implementation(libs.ktor.server.netty)

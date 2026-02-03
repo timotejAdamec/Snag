@@ -21,7 +21,6 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.factoryOf
-import org.koin.core.module.dsl.singleOf
 import org.koin.core.qualifier.named
 import org.koin.core.scope.Scope
 import org.koin.dsl.bind
@@ -35,14 +34,14 @@ val commonCoreModule =
         factory(named(DispatcherDiQualifiers.DEFAULT)) { Dispatchers.Default }
         factory(named(DispatcherDiQualifiers.UNCONFINED)) { Dispatchers.Unconfined }
 
-        singleOf(::DefaultApplicationScope) bind ApplicationScope::class
+        single<ApplicationScope> { DefaultApplicationScope(getDefaultDispatcher()) }
         factoryOf(::SystemTimestampProvider) bind TimestampProvider::class
         factory { UuidProvider }
     }
 
 internal expect val platformModule: Module
 
-internal object DispatcherDiQualifiers {
+object DispatcherDiQualifiers {
     const val IO = "io"
     const val MAIN = "main"
     const val DEFAULT = "default"

@@ -12,7 +12,9 @@
 
 package cz.adamec.timotej.snag.structures.be.app.impl.internal
 
+import cz.adamec.timotej.snag.feat.structures.be.model.BackendStructure
 import cz.adamec.timotej.snag.feat.structures.business.Structure
+import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.structures.be.driven.test.FakeStructuresLocalDataSource
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
@@ -27,25 +29,34 @@ class GetStructuresUseCaseImplTest {
     private val otherProjectId = Uuid.parse("00000000-0000-0000-0000-000000000002")
 
     private val structure1 =
-        Structure(
-            id = Uuid.parse("00000000-0000-0000-0001-000000000001"),
-            projectId = projectId,
-            name = "Ground Floor",
-            floorPlanUrl = null,
+        BackendStructure(
+            Structure(
+                id = Uuid.parse("00000000-0000-0000-0001-000000000001"),
+                projectId = projectId,
+                name = "Ground Floor",
+                floorPlanUrl = null,
+                updatedAt = Timestamp(1L),
+            )
         )
     private val structure2 =
-        Structure(
-            id = Uuid.parse("00000000-0000-0000-0001-000000000002"),
-            projectId = projectId,
-            name = "First Floor",
-            floorPlanUrl = "https://example.com/plan.jpg",
+        BackendStructure(
+            Structure(
+                id = Uuid.parse("00000000-0000-0000-0001-000000000002"),
+                projectId = projectId,
+                name = "First Floor",
+                floorPlanUrl = "https://example.com/plan.jpg",
+                updatedAt = Timestamp(2L),
+            )
         )
     private val otherStructure =
-        Structure(
-            id = Uuid.parse("00000000-0000-0000-0001-000000000003"),
-            projectId = otherProjectId,
-            name = "Other Building",
-            floorPlanUrl = null,
+        BackendStructure(
+            Structure(
+                id = Uuid.parse("00000000-0000-0000-0001-000000000003"),
+                projectId = otherProjectId,
+                name = "Other Building",
+                floorPlanUrl = null,
+                updatedAt = Timestamp(3L),
+            )
         )
 
     @Test

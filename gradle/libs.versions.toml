@@ -38,6 +38,7 @@ detekt = "2.0.0-alpha.2"
 ktlint = "14.0.1"
 compose-rules = "0.5.6"
 ksp = "2.3.4"
+turbine = "1.2.0"
 
 [libraries]
 kotlin-gradle = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlinGradlePlugin" }
@@ -136,6 +137,8 @@ sqldelight-sqlite-dialect = { module = "app.cash.sqldelight:sqlite-3-38-dialect"
 
 compose-rules-detekt = { group = "io.nlopez.compose.rules", name = "detekt", version.ref = "compose-rules" }
 compose-rules-ktlint = { group = "io.nlopez.compose.rules", name = "ktlint", version.ref = "compose-rules" }
+
+turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 
 [plugins]
 snagMultiplatformModule = { id = "libs.plugins.snag.multiplatform.module" }

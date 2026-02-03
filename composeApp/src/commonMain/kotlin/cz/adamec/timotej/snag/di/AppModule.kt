@@ -12,49 +12,17 @@
 
 package cz.adamec.timotej.snag.di
 
-import cz.adamec.timotej.snag.feat.findings.fe.driving.api.di.findingsDrivingApiModule
-import cz.adamec.timotej.snag.feat.shared.database.fe.di.databaseModule
-import cz.adamec.timotej.snag.feat.structures.fe.driving.api.di.structuresDrivingApiModule
-import cz.adamec.timotej.snag.findings.fe.app.impl.di.findingsAppModule
-import cz.adamec.timotej.snag.findings.fe.driven.di.findingsDrivenModule
-import cz.adamec.timotej.snag.findings.fe.driving.impl.di.findingsDrivingImplModule
-import cz.adamec.timotej.snag.lib.core.fe.di.frontendCoreModule
-import cz.adamec.timotej.snag.lib.sync.fe.app.impl.di.syncAppModule
-import cz.adamec.timotej.snag.lib.sync.fe.driven.impl.di.syncDrivenModule
+import cz.adamec.timotej.snag.di.aggregate.fe.frontendModulesAggregate
 import cz.adamec.timotej.snag.logging.loggerModule
-import cz.adamec.timotej.snag.network.fe.di.networkModule
-import cz.adamec.timotej.snag.projects.fe.app.impl.di.projectsAppModule
-import cz.adamec.timotej.snag.projects.fe.driven.di.projectsDrivenModule
-import cz.adamec.timotej.snag.projects.fe.driving.api.di.projectsDrivingApiModule
-import cz.adamec.timotej.snag.projects.fe.driving.impl.di.projectsDrivingImplModule
-import cz.adamec.timotej.snag.structures.fe.app.impl.di.structuresAppModule
-import cz.adamec.timotej.snag.structures.fe.driven.di.structuresDrivenModule
-import cz.adamec.timotej.snag.structures.fe.driving.impl.di.structuresDrivingImplModule
 import cz.adamec.timotej.snag.ui.navigation.navigationModule
 import org.koin.dsl.module
 
 val appModule =
     module {
         includes(
-            frontendCoreModule,
+            frontendModulesAggregate,
             loggerModule,
             navigationModule,
-            databaseModule,
-            networkModule,
-            syncDrivenModule,
-            syncAppModule,
             mainModule,
-            projectsDrivingApiModule,
-            projectsDrivingImplModule,
-            projectsDrivenModule,
-            projectsAppModule,
-            structuresDrivingApiModule,
-            structuresDrivingImplModule,
-            structuresDrivenModule,
-            structuresAppModule,
-            findingsDrivingApiModule,
-            findingsDrivingImplModule,
-            findingsDrivenModule,
-            findingsAppModule,
         )
     }

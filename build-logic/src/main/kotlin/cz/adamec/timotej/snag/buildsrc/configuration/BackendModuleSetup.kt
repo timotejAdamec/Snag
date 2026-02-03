@@ -60,6 +60,10 @@ internal fun Project.configureBackendModule() {
         implementation(libs.library("kotlinx-coroutines-core"))
         implementation(libs.library("koin-core"))
         implementation(libs.library("slf4j-api"))
+
+        if (!path.contains("testInfra")) {
+            testImplementation(project(":testInfra:be"))
+        }
         testImplementation(libs.library("kotlin-test-junit"))
         testImplementation(libs.library("kotlinx-coroutines-test"))
     }

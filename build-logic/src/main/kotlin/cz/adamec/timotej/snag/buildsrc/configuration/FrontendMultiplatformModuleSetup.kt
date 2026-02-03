@@ -27,6 +27,11 @@ internal fun Project.configureFrontendMultiplatformModule() {
                 implementation(library("kermit"))
                 implementation(library("kermit-koin"))
             }
+            commonTest.dependencies {
+                if (!path.contains("testInfra")) {
+                    implementation(project(":testInfra:fe"))
+                }
+            }
         }
     }
 }

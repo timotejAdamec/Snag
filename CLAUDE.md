@@ -70,7 +70,10 @@ Detailed description is available in [Project Structure](docs/project_structure.
 - `OfflineFirstDataResult<T>` (Success | ProgrammerError) - offline-first frontend operations
 - `OnlineDataResult<T>` (Success | Failure) - online-only operations
 
-**Testing:** Fake implementations in `driven/test/` modules allow testing without real HTTP/DB. Tests use `StandardTestDispatcher` with `Dispatchers.setMain(testDispatcher)` setup.
+**Testing:** Fake implementations in `driven/test/` modules. Tests extend `FrontendKoinInitializedTest`
+or `BackendKoinInitializedTest` which handle all DI setup including dispatcher setup. Override
+`additionalKoinModules()` to bind fakes: `singleOf(::FakeXxxDb) bind XxxDb::class`. Use Turbine for
+StateFlow testing.
 
 ## Tech Stack
 

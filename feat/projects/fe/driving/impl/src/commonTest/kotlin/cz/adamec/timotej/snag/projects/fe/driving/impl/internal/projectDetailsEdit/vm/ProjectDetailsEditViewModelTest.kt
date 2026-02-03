@@ -12,63 +12,60 @@
 
 package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetailsEdit.vm
 
-import cz.adamec.timotej.snag.lib.core.common.ApplicationScope
-import cz.adamec.timotej.snag.lib.core.common.UuidProvider
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.projects.business.Project
-import cz.adamec.timotej.snag.projects.fe.app.impl.internal.GetProjectUseCaseImpl
-import cz.adamec.timotej.snag.projects.fe.app.impl.internal.SaveProjectUseCaseImpl
+import cz.adamec.timotej.snag.projects.fe.app.api.GetProjectUseCase
+import cz.adamec.timotej.snag.projects.fe.app.api.SaveProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.driven.test.FakeProjectsApi
 import cz.adamec.timotej.snag.projects.fe.driven.test.FakeProjectsDb
 import cz.adamec.timotej.snag.projects.fe.driven.test.FakeProjectsSync
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import cz.adamec.timotej.snag.projects.fe.ports.ProjectsApi
+import cz.adamec.timotej.snag.projects.fe.ports.ProjectsDb
+import cz.adamec.timotej.snag.projects.fe.ports.ProjectsSync
+import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
-import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
-import kotlinx.coroutines.test.setMain
-import kotlin.test.AfterTest
-import kotlin.test.BeforeTest
+import org.koin.core.module.Module
+import org.koin.core.module.dsl.singleOf
+import org.koin.dsl.bind
+import org.koin.dsl.module
+import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
 import kotlin.uuid.Uuid
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class ProjectDetailsEditViewModelTest {
-    private val testDispatcher = StandardTestDispatcher()
+class ProjectDetailsEditViewModelTest : FrontendKoinInitializedTest() {
 
-    private val projectsApi = FakeProjectsApi()
-    private val projectsDb = FakeProjectsDb()
-    private val projectsSync = FakeProjectsSync()
-    private val applicationScope = object : ApplicationScope, CoroutineScope by CoroutineScope(testDispatcher) {}
+    private val fakeProjectsDb: FakeProjectsDb by inject()
 
-    private val getProjectUseCase = GetProjectUseCaseImpl(projectsApi, projectsDb, applicationScope)
-    private val saveProjectUseCase = SaveProjectUseCaseImpl(projectsDb, projectsSync, UuidProvider)
+    private val getProjectUseCase: GetProjectUseCase by inject()
+    private val saveProjectUseCase: SaveProjectUseCase by inject()
 
-    @BeforeTest
-    fun setUp() {
-        Dispatchers.setMain(testDispatcher)
-    }
+    override fun additionalKoinModules(): List<Module> =
+        listOf(
+            module {
+                singleOf(::FakeProjectsApi) bind ProjectsApi::class
+                singleOf(::FakeProjectsDb) bind ProjectsDb::class
+                singleOf(::FakeProjectsSync) bind ProjectsSync::class
+            },
+        )
 
-    @AfterTest
-    fun tearDown() {
-        Dispatchers.resetMain()
-    }
+    private fun createViewModel(projectId: Uuid? = null) =
+        ProjectDetailsEditViewModel(
+            projectId = projectId,
+            getProjectUseCase = getProjectUseCase,
+            saveProjectUseCase = saveProjectUseCase,
+        )
 
     @Test
     fun `initial state is empty when projectId is null`() =
         runTest {
-            val viewModel =
-                ProjectDetailsEditViewModel(
-                    projectId = null,
-                    getProjectUseCase = getProjectUseCase,
-                    saveProjectUseCase = saveProjectUseCase,
-                )
+            val viewModel = createViewModel(projectId = null)
 
             assertEquals("", viewModel.state.value.projectName)
             assertEquals("", viewModel.state.value.projectAddress)
@@ -79,14 +76,9 @@ class ProjectDetailsEditViewModelTest {
         runTest {
             val projectId = Uuid.random()
             val project = Project(projectId, "Test Project", "Test Address")
-            projectsDb.setProject(project)
+            fakeProjectsDb.setProject(project)
 
-            val viewModel =
-                ProjectDetailsEditViewModel(
-                    projectId = projectId,
-                    getProjectUseCase = getProjectUseCase,
-                    saveProjectUseCase = saveProjectUseCase,
-                )
+            val viewModel = createViewModel(projectId = projectId)
 
             advanceUntilIdle()
 
@@ -97,7 +89,7 @@ class ProjectDetailsEditViewModelTest {
     @Test
     fun `onProjectNameChange updates state`() =
         runTest {
-            val viewModel = ProjectDetailsEditViewModel(null, getProjectUseCase, saveProjectUseCase)
+            val viewModel = createViewModel()
 
             viewModel.onProjectNameChange("New Name")
 
@@ -107,7 +99,7 @@ class ProjectDetailsEditViewModelTest {
     @Test
     fun `onProjectAddressChange updates state`() =
         runTest {
-            val viewModel = ProjectDetailsEditViewModel(null, getProjectUseCase, saveProjectUseCase)
+            val viewModel = createViewModel()
 
             viewModel.onProjectAddressChange("New Address")
 
@@ -117,7 +109,7 @@ class ProjectDetailsEditViewModelTest {
     @Test
     fun `onSaveProject with empty name sends error`() =
         runTest {
-            val viewModel = ProjectDetailsEditViewModel(null, getProjectUseCase, saveProjectUseCase)
+            val viewModel = createViewModel()
             viewModel.onProjectAddressChange("Address")
 
             viewModel.onSaveProject()
@@ -130,7 +122,7 @@ class ProjectDetailsEditViewModelTest {
     @Test
     fun `onSaveProject with empty address sends error`() =
         runTest {
-            val viewModel = ProjectDetailsEditViewModel(null, getProjectUseCase, saveProjectUseCase)
+            val viewModel = createViewModel()
             viewModel.onProjectNameChange("Name")
 
             viewModel.onSaveProject()
@@ -143,7 +135,7 @@ class ProjectDetailsEditViewModelTest {
     @Test
     fun `onSaveProject successful sends save event`() =
         runTest {
-            val viewModel = ProjectDetailsEditViewModel(null, getProjectUseCase, saveProjectUseCase)
+            val viewModel = createViewModel()
             viewModel.onProjectNameChange("Name")
             viewModel.onProjectAddressChange("Address")
 
@@ -152,7 +144,7 @@ class ProjectDetailsEditViewModelTest {
             val savedId = viewModel.saveEventFlow.first()
 
             // Verify project is saved in DB
-            val savedProjectResult = projectsDb.getProjectFlow(savedId).first()
+            val savedProjectResult = fakeProjectsDb.getProjectFlow(savedId).first()
             assertIs<OfflineFirstDataResult.Success<Project?>>(savedProjectResult)
             val savedProject = savedProjectResult.data
             assertEquals("Name", savedProject?.name)
@@ -162,11 +154,11 @@ class ProjectDetailsEditViewModelTest {
     @Test
     fun `onSaveProject failure sends error`() =
         runTest {
-            val viewModel = ProjectDetailsEditViewModel(null, getProjectUseCase, saveProjectUseCase)
+            val viewModel = createViewModel()
             viewModel.onProjectNameChange("Name")
             viewModel.onProjectAddressChange("Address")
 
-            projectsDb.forcedFailure = OfflineFirstDataResult.ProgrammerError(RuntimeException("Failed"))
+            fakeProjectsDb.forcedFailure = OfflineFirstDataResult.ProgrammerError(RuntimeException("Failed"))
 
             viewModel.onSaveProject()
 

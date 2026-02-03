@@ -12,23 +12,26 @@
 
 package cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetail.vm
 
+import app.cash.turbine.test
 import cz.adamec.timotej.snag.feat.findings.business.Finding
-import cz.adamec.timotej.snag.findings.fe.app.impl.internal.DeleteFindingUseCaseImpl
-import cz.adamec.timotej.snag.findings.fe.app.impl.internal.GetFindingUseCaseImpl
+import cz.adamec.timotej.snag.findings.fe.app.api.DeleteFindingUseCase
+import cz.adamec.timotej.snag.findings.fe.app.api.GetFindingUseCase
 import cz.adamec.timotej.snag.findings.fe.driven.test.FakeFindingsDb
 import cz.adamec.timotej.snag.findings.fe.driven.test.FakeFindingsSync
+import cz.adamec.timotej.snag.findings.fe.ports.FindingsDb
+import cz.adamec.timotej.snag.findings.fe.ports.FindingsSync
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
-import kotlinx.coroutines.Dispatchers
+import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
-import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
-import kotlinx.coroutines.test.setMain
-import kotlin.test.AfterTest
-import kotlin.test.BeforeTest
+import org.koin.core.module.Module
+import org.koin.core.module.dsl.singleOf
+import org.koin.dsl.bind
+import org.koin.dsl.module
+import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -37,32 +40,35 @@ import kotlin.test.assertNotNull
 import kotlin.uuid.Uuid
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class FindingDetailViewModelTest {
-    private val testDispatcher = StandardTestDispatcher()
+class FindingDetailViewModelTest : FrontendKoinInitializedTest() {
 
-    private val findingsDb = FakeFindingsDb()
-    private val findingsSync = FakeFindingsSync()
+    private val fakeFindingsDb: FakeFindingsDb by inject()
 
-    private val getFindingUseCase = GetFindingUseCaseImpl(findingsDb)
-    private val deleteFindingUseCase = DeleteFindingUseCaseImpl(findingsDb, findingsSync)
+    private val getFindingUseCase: GetFindingUseCase by inject()
+    private val deleteFindingUseCase: DeleteFindingUseCase by inject()
 
     private val structureId = Uuid.parse("00000000-0000-0000-0000-000000000001")
     private val findingId = Uuid.parse("00000000-0000-0000-0001-000000000001")
     private val finding = Finding(findingId, structureId, "Crack in wall", "A large crack", emptyList())
 
-    @BeforeTest
-    fun setUp() {
-        Dispatchers.setMain(testDispatcher)
-    }
+    override fun additionalKoinModules(): List<Module> =
+        listOf(
+            module {
+                singleOf(::FakeFindingsDb) bind FindingsDb::class
+                singleOf(::FakeFindingsSync) bind FindingsSync::class
+            },
+        )
 
-    @AfterTest
-    fun tearDown() {
-        Dispatchers.resetMain()
-    }
+    private fun createViewModel() =
+        FindingDetailViewModel(
+            findingId = findingId,
+            getFindingUseCase = getFindingUseCase,
+            deleteFindingUseCase = deleteFindingUseCase,
+        )
 
     @Test
     fun `initial state is loading`() =
-        runTest {
+        runTest(testDispatcher) {
             val viewModel = createViewModel()
 
             assertEquals(FindingDetailUiStatus.LOADING, viewModel.state.value.status)
@@ -70,32 +76,42 @@ class FindingDetailViewModelTest {
 
     @Test
     fun `loading finding data updates state`() =
-        runTest {
-            findingsDb.setFinding(finding)
+        runTest(testDispatcher) {
+            fakeFindingsDb.setFinding(finding)
 
             val viewModel = createViewModel()
 
-            advanceUntilIdle()
+            viewModel.state.test {
+                skipItems(1) // Skip initial loading state
 
-            assertEquals(FindingDetailUiStatus.LOADED, viewModel.state.value.status)
-            assertNotNull(viewModel.state.value.finding)
-            assertEquals("Crack in wall", viewModel.state.value.finding?.name)
+                val loadedState = awaitItem()
+                assertEquals(FindingDetailUiStatus.LOADED, loadedState.status)
+                assertNotNull(loadedState.finding)
+                assertEquals("Crack in wall", loadedState.finding?.name)
+
+                cancelAndIgnoreRemainingEvents()
+            }
         }
 
     @Test
     fun `finding not found updates status`() =
-        runTest {
+        runTest(testDispatcher) {
             val viewModel = createViewModel()
 
-            advanceUntilIdle()
+            viewModel.state.test {
+                skipItems(1) // Skip initial loading state
 
-            assertEquals(FindingDetailUiStatus.NOT_FOUND, viewModel.state.value.status)
+                val notFoundState = awaitItem()
+                assertEquals(FindingDetailUiStatus.NOT_FOUND, notFoundState.status)
+
+                cancelAndIgnoreRemainingEvents()
+            }
         }
 
     @Test
     fun `onDelete success triggers deleted event`() =
-        runTest {
-            findingsDb.setFinding(finding)
+        runTest(testDispatcher) {
+            fakeFindingsDb.setFinding(finding)
 
             val viewModel = createViewModel()
 
@@ -103,6 +119,7 @@ class FindingDetailViewModelTest {
 
             viewModel.onDelete()
 
+            // Verify deleted event is sent
             val event = viewModel.deletedSuccessfullyEventFlow.first()
             assertEquals(Unit, event)
             assertEquals(FindingDetailUiStatus.DELETED, viewModel.state.value.status)
@@ -111,14 +128,14 @@ class FindingDetailViewModelTest {
 
     @Test
     fun `onDelete failure sends error and resets isBeingDeleted`() =
-        runTest {
-            findingsDb.setFinding(finding)
+        runTest(testDispatcher) {
+            fakeFindingsDb.setFinding(finding)
 
             val viewModel = createViewModel()
 
             advanceUntilIdle()
 
-            findingsDb.forcedFailure = OfflineFirstDataResult.ProgrammerError(RuntimeException("Failed"))
+            fakeFindingsDb.forcedFailure = OfflineFirstDataResult.ProgrammerError(RuntimeException("Failed"))
 
             viewModel.onDelete()
 
@@ -129,17 +146,10 @@ class FindingDetailViewModelTest {
 
     @Test
     fun `canInvokeDeletion is false while loading`() =
-        runTest {
+        runTest(testDispatcher) {
             val viewModel = createViewModel()
 
             assertEquals(FindingDetailUiStatus.LOADING, viewModel.state.value.status)
             assertFalse(viewModel.state.value.canInvokeDeletion)
         }
-
-    private fun createViewModel() =
-        FindingDetailViewModel(
-            findingId = findingId,
-            getFindingUseCase = getFindingUseCase,
-            deleteFindingUseCase = deleteFindingUseCase,
-        )
 }

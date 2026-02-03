@@ -13,32 +13,33 @@
 package cz.adamec.timotej.snag.structures.fe.driving.impl.internal.structureDetails.vm
 
 import FrontendStructure
+import app.cash.turbine.test
 import cz.adamec.timotej.snag.feat.structures.business.Structure
-import cz.adamec.timotej.snag.findings.fe.app.impl.internal.GetFindingsUseCaseImpl
+import cz.adamec.timotej.snag.findings.fe.app.api.GetFindingsUseCase
 import cz.adamec.timotej.snag.findings.fe.driven.test.FakeFindingsApi
 import cz.adamec.timotej.snag.findings.fe.driven.test.FakeFindingsDb
-import cz.adamec.timotej.snag.lib.core.common.ApplicationScope
+import cz.adamec.timotej.snag.findings.fe.ports.FindingsApi
+import cz.adamec.timotej.snag.findings.fe.ports.FindingsDb
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
-import cz.adamec.timotej.snag.structures.fe.app.impl.internal.DeleteStructureUseCaseImpl
-import cz.adamec.timotej.snag.structures.fe.app.impl.internal.GetStructureUseCaseImpl
+import cz.adamec.timotej.snag.structures.fe.app.api.DeleteStructureUseCase
+import cz.adamec.timotej.snag.structures.fe.app.api.GetStructureUseCase
 import cz.adamec.timotej.snag.structures.fe.driven.test.FakeStructuresDb
 import cz.adamec.timotej.snag.structures.fe.driven.test.FakeStructuresSync
 import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.floorPlan.vm.StructureDetailsUiState
 import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.floorPlan.vm.StructureDetailsUiStatus
 import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.floorPlan.vm.StructureFloorPlanViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import cz.adamec.timotej.snag.structures.fe.ports.StructuresDb
+import cz.adamec.timotej.snag.structures.fe.ports.StructuresSync
+import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.advanceUntilIdle
-import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
-import kotlinx.coroutines.test.setMain
-import kotlin.test.AfterTest
-import kotlin.test.BeforeTest
+import org.koin.core.module.Module
+import org.koin.core.module.dsl.singleOf
+import org.koin.dsl.bind
+import org.koin.dsl.module
+import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -47,23 +48,13 @@ import kotlin.test.assertNotNull
 import kotlin.uuid.Uuid
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class StructureDetailsViewModelTest {
-    private val testDispatcher = StandardTestDispatcher()
-    private val applicationScope =
-        object : ApplicationScope, CoroutineScope by CoroutineScope(testDispatcher) {}
+class StructureDetailsViewModelTest : FrontendKoinInitializedTest() {
 
-    private val structuresDb = FakeStructuresDb()
-    private val structuresSync = FakeStructuresSync()
-    private val findingsDb = FakeFindingsDb()
-    private val findingsApi = FakeFindingsApi()
+    private val fakeStructuresDb: FakeStructuresDb by inject()
 
-    private val getStructureUseCase = GetStructureUseCaseImpl(structuresDb)
-    private val deleteStructureUseCase = DeleteStructureUseCaseImpl(structuresDb, structuresSync)
-    private val getFindingsUseCase = GetFindingsUseCaseImpl(
-        findingsDb = findingsDb,
-        findingsApi = findingsApi,
-        applicationScope = applicationScope,
-    )
+    private val getStructureUseCase: GetStructureUseCase by inject()
+    private val deleteStructureUseCase: DeleteStructureUseCase by inject()
+    private val getFindingsUseCase: GetFindingsUseCase by inject()
 
     private val projectId = Uuid.parse("00000000-0000-0000-0000-000000000001")
     private val structureId = Uuid.parse("00000000-0000-0000-0001-000000000001")
@@ -77,102 +68,15 @@ class StructureDetailsViewModelTest {
         )
     )
 
-    @BeforeTest
-    fun setUp() {
-        Dispatchers.setMain(testDispatcher)
-    }
-
-    @AfterTest
-    fun tearDown() {
-        Dispatchers.resetMain()
-    }
-
-    @Test
-    fun `initial state is loading`() =
-        runTest {
-            val viewModel = createViewModel()
-
-            assertEquals(StructureDetailsUiStatus.LOADING, viewModel.state.value.status)
-        }
-
-    @Test
-    fun `loading structure data updates state`() =
-        runTest {
-            structuresDb.setStructure(structure)
-
-            val viewModel = createViewModel()
-
-            advanceUntilIdle()
-
-            assertEquals(StructureDetailsUiStatus.LOADED, viewModel.state.value.status)
-            assertNotNull(viewModel.state.value.feStructure)
-            assertEquals("Ground Floor", viewModel.state.value.feStructure?.structure?.name)
-        }
-
-    @Test
-    fun `structure not found updates status`() =
-        runTest {
-            val viewModel = createViewModel()
-
-            advanceUntilIdle()
-
-            assertEquals(StructureDetailsUiStatus.NOT_FOUND, viewModel.state.value.status)
-        }
-
-    @Test
-    fun `onDelete success triggers deleted event`() =
-        runTest {
-            structuresDb.setStructure(structure)
-
-            val viewModel = createViewModel()
-
-            advanceUntilIdle()
-
-            viewModel.onDelete()
-
-            val event = viewModel.deletedSuccessfullyEventFlow.first()
-            assertEquals(Unit, event)
-            assertEquals(StructureDetailsUiStatus.DELETED, viewModel.state.value.status)
-            assertFalse(viewModel.state.value.isBeingDeleted)
-        }
-
-    @Test
-    fun `onDelete failure sends error and resets isBeingDeleted`() =
-        runTest {
-            structuresDb.setStructure(structure)
-
-            val viewModel = createViewModel()
-
-            advanceUntilIdle()
-
-            structuresDb.forcedFailure =
-                OfflineFirstDataResult.ProgrammerError(RuntimeException("Failed"))
-
-            viewModel.onDelete()
-
-            val error = viewModel.errorsFlow.first()
-            assertIs<UiError.Unknown>(error)
-            assertFalse(viewModel.state.value.isBeingDeleted)
-        }
-
-    @Test
-    fun `canInvokeDeletion is false while deleting`() =
-        runTest {
-            structuresDb.setStructure(structure)
-
-            val viewModel = createViewModel()
-
-            advanceUntilIdle()
-
-            // Before deletion
-            assertEquals(true, viewModel.state.value.canInvokeDeletion)
-
-            // While loading
-            assertEquals(StructureDetailsUiStatus.LOADING, StructureDetailsUiState().let {
-                assertFalse(it.canInvokeDeletion)
-                it.status
-            })
-        }
+    override fun additionalKoinModules(): List<Module> =
+        listOf(
+            module {
+                singleOf(::FakeStructuresDb) bind StructuresDb::class
+                singleOf(::FakeStructuresSync) bind StructuresSync::class
+                singleOf(::FakeFindingsDb) bind FindingsDb::class
+                singleOf(::FakeFindingsApi) bind FindingsApi::class
+            },
+        )
 
     private fun createViewModel() =
         StructureFloorPlanViewModel(
@@ -181,4 +85,128 @@ class StructureDetailsViewModelTest {
             deleteStructureUseCase = deleteStructureUseCase,
             getFindingsUseCase = getFindingsUseCase,
         )
+
+    @Test
+    fun `initial state is loading`() =
+        runTest(testDispatcher) {
+            val viewModel = createViewModel()
+
+            assertEquals(StructureDetailsUiStatus.LOADING, viewModel.state.value.status)
+        }
+
+    @Test
+    fun `loading structure data updates state`() =
+        runTest(testDispatcher) {
+            fakeStructuresDb.setStructure(structure)
+
+            val viewModel = createViewModel()
+
+            viewModel.state.test {
+                // Skip initial loading state
+                skipItems(1)
+
+                val loadedState = awaitItem()
+                assertEquals(StructureDetailsUiStatus.LOADED, loadedState.status)
+                assertNotNull(loadedState.feStructure)
+                assertEquals("Ground Floor", loadedState.feStructure?.structure?.name)
+
+                cancelAndIgnoreRemainingEvents()
+            }
+        }
+
+    @Test
+    fun `structure not found updates status`() =
+        runTest(testDispatcher) {
+            val viewModel = createViewModel()
+
+            viewModel.state.test {
+                // Skip initial loading state
+                skipItems(1)
+
+                val notFoundState = awaitItem()
+                assertEquals(StructureDetailsUiStatus.NOT_FOUND, notFoundState.status)
+
+                cancelAndIgnoreRemainingEvents()
+            }
+        }
+
+    @Test
+    fun `onDelete success triggers deleted event`() =
+        runTest(testDispatcher) {
+            fakeStructuresDb.setStructure(structure)
+
+            val viewModel = createViewModel()
+
+            viewModel.state.test {
+                // Wait for loaded state
+                skipItems(1)
+                awaitItem() // LOADED state
+
+                viewModel.onDelete()
+
+                // Verify deleted event
+                viewModel.deletedSuccessfullyEventFlow.test {
+                    assertEquals(Unit, awaitItem())
+                    cancelAndIgnoreRemainingEvents()
+                }
+
+                val deletedState = awaitItem()
+                assertEquals(StructureDetailsUiStatus.DELETED, deletedState.status)
+                assertFalse(deletedState.isBeingDeleted)
+
+                cancelAndIgnoreRemainingEvents()
+            }
+        }
+
+    @Test
+    fun `onDelete failure sends error and resets isBeingDeleted`() =
+        runTest(testDispatcher) {
+            fakeStructuresDb.setStructure(structure)
+
+            val viewModel = createViewModel()
+
+            viewModel.state.test {
+                // Wait for loaded state
+                skipItems(1)
+                awaitItem() // LOADED state
+
+                fakeStructuresDb.forcedFailure =
+                    OfflineFirstDataResult.ProgrammerError(RuntimeException("Failed"))
+
+                viewModel.onDelete()
+
+                viewModel.errorsFlow.test {
+                    assertIs<UiError.Unknown>(awaitItem())
+                    cancelAndIgnoreRemainingEvents()
+                }
+
+                cancelAndIgnoreRemainingEvents()
+            }
+
+            assertFalse(viewModel.state.value.isBeingDeleted)
+        }
+
+    @Test
+    fun `canInvokeDeletion is false while deleting`() =
+        runTest(testDispatcher) {
+            fakeStructuresDb.setStructure(structure)
+
+            val viewModel = createViewModel()
+
+            viewModel.state.test {
+                // Skip initial loading state
+                skipItems(1)
+
+                val loadedState = awaitItem()
+                assertEquals(true, loadedState.canInvokeDeletion)
+
+                cancelAndIgnoreRemainingEvents()
+            }
+
+            // While loading
+            assertEquals(StructureDetailsUiStatus.LOADING, StructureDetailsUiState().let {
+                assertFalse(it.canInvokeDeletion)
+                it.status
+            })
+        }
 }

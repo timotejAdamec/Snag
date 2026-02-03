@@ -45,24 +45,9 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            implementation(projects.lib.core.fe)
-            implementation(projects.lib.network.fe)
+            implementation(projects.koinModulesAggregate.fe)
             implementation(projects.lib.design.fe)
-            implementation(projects.feat.shared.database.fe)
             implementation(projects.feat.projects.fe.driving.api)
-            implementation(projects.feat.projects.fe.driving.impl)
-            implementation(projects.feat.projects.fe.driven.impl)
-            implementation(projects.feat.structures.fe.app.impl)
-            implementation(projects.feat.projects.fe.app.impl)
-            implementation(projects.lib.sync.fe.driven.impl)
-            implementation(projects.lib.sync.fe.app.impl)
-            implementation(projects.feat.structures.fe.driven.impl)
-            implementation(projects.feat.structures.fe.driving.api)
-            implementation(projects.feat.structures.fe.driving.impl)
-            implementation(projects.feat.findings.fe.app.impl)
-            implementation(projects.feat.findings.fe.driving.api)
-            implementation(projects.feat.findings.fe.driving.impl)
-            implementation(projects.feat.findings.fe.driven.impl)
         }
         commonTest.dependencies {
             implementation(projects.feat.findings.fe.ports)

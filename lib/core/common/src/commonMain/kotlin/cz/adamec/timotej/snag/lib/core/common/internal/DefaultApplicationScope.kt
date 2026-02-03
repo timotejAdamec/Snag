@@ -13,9 +13,11 @@
 package cz.adamec.timotej.snag.lib.core.common.internal
 
 import cz.adamec.timotej.snag.lib.core.common.ApplicationScope
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.SupervisorJob
 
-internal class DefaultApplicationScope : ApplicationScope {
-    override val coroutineContext = SupervisorJob() + Dispatchers.Default
+internal class DefaultApplicationScope(
+    dispatcher: CoroutineDispatcher,
+) : ApplicationScope {
+    override val coroutineContext = SupervisorJob() + dispatcher
 }

@@ -49,18 +49,16 @@ class SaveStructureUseCaseImplTest {
     @Test
     fun `does not save structure if saved updated at is later than the new one`() =
         runTest {
-            dataSource.setStructures(backendStructure)
-
-            useCase(
-                backendStructure.copy(
-                    structure = backendStructure.structure.copy(
-                        name = "New name",
-                        updatedAt = Timestamp(value = 20L),
-                    ),
-                )
+            val savedStructure = backendStructure.copy(
+                structure = backendStructure.structure.copy(
+                    updatedAt = Timestamp(value = 20L),
+                ),
             )
+            dataSource.setStructures(savedStructure)
 
-            assertEquals(listOf(backendStructure), dataSource.getStructures(projectId))
+            useCase(backendStructure)
+
+            assertEquals(listOf(savedStructure), dataSource.getStructures(projectId))
         }
 
     @Test
@@ -74,18 +72,16 @@ class SaveStructureUseCaseImplTest {
     @Test
     fun `returns saved structure if saved updated at is later than the new one`() =
         runTest {
-            dataSource.setStructures(backendStructure)
-
-            val result = useCase(
-                backendStructure.copy(
-                    structure = backendStructure.structure.copy(
-                        name = "New name",
-                        updatedAt = Timestamp(value = 20L),
-                    ),
-                )
+            val savedStructure = backendStructure.copy(
+                structure = backendStructure.structure.copy(
+                    updatedAt = Timestamp(value = 20L),
+                ),
             )
+            dataSource.setStructures(savedStructure)
 
-            assertEquals(backendStructure, result)
+            val result = useCase(backendStructure)
+
+            assertEquals(savedStructure, result)
         }
 
     @Test
@@ -93,14 +89,14 @@ class SaveStructureUseCaseImplTest {
         runTest {
             dataSource.setStructures(backendStructure)
 
-            val result = useCase(
-                backendStructure.copy(
-                    structure = backendStructure.structure.copy(
-                        name = "New name",
-                        updatedAt = Timestamp(value = 5L),
-                    ),
-                )
+            val newerStructure = backendStructure.copy(
+                structure = backendStructure.structure.copy(
+                    name = "New name",
+                    updatedAt = Timestamp(value = 20L),
+                ),
             )
+
+            val result = useCase(newerStructure)
 
             assertNull(result)
         }

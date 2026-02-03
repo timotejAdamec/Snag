@@ -15,72 +15,62 @@ package cz.adamec.timotej.snag.structures.fe.driving.impl.internal.structureDeta
 import FrontendStructure
 import cz.adamec.timotej.snag.feat.structures.business.Structure
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
-import cz.adamec.timotej.snag.lib.core.common.TimestampProvider
 import cz.adamec.timotej.snag.lib.core.common.UuidProvider
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
-import cz.adamec.timotej.snag.structures.fe.app.impl.internal.GetStructureUseCaseImpl
-import cz.adamec.timotej.snag.structures.fe.app.impl.internal.SaveStructureUseCaseImpl
+import cz.adamec.timotej.snag.structures.fe.app.api.GetStructureUseCase
+import cz.adamec.timotej.snag.structures.fe.app.api.SaveStructureUseCase
 import cz.adamec.timotej.snag.structures.fe.driven.test.FakeStructuresDb
 import cz.adamec.timotej.snag.structures.fe.driven.test.FakeStructuresSync
-import kotlinx.coroutines.Dispatchers
+import cz.adamec.timotej.snag.structures.fe.ports.StructuresDb
+import cz.adamec.timotej.snag.structures.fe.ports.StructuresSync
+import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
-import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
-import kotlinx.coroutines.test.setMain
-import org.koin.test.KoinTest
-import kotlin.test.AfterTest
-import kotlin.test.BeforeTest
+import org.koin.core.module.Module
+import org.koin.core.module.dsl.singleOf
+import org.koin.dsl.bind
+import org.koin.dsl.module
+import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertIs
 import kotlin.test.assertNotNull
-import kotlin.uuid.Uuid
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class StructureDetailsEditViewModelTest : KoinTest {
+class StructureDetailsEditViewModelTest : FrontendKoinInitializedTest() {
 
-    private val testDispatcher = StandardTestDispatcher()
+    private val fakeStructuresDb: FakeStructuresDb by inject()
 
-    private val structuresDb = FakeStructuresDb()
-    private val structuresSync = FakeStructuresSync()
+    private val getStructureUseCase: GetStructureUseCase by inject()
+    private val saveStructureUseCase: SaveStructureUseCase by inject()
 
-    private val getStructureUseCase = GetStructureUseCaseImpl(structuresDb)
-    private val saveStructureUseCase =
-        SaveStructureUseCaseImpl(structuresDb, structuresSync, UuidProvider, TODO("Use koin DI for tests too"))
+    override fun additionalKoinModules(): List<Module> =
+        listOf(
+            module {
+                singleOf(::FakeStructuresDb) bind StructuresDb::class
+                singleOf(::FakeStructuresSync) bind StructuresSync::class
+            },
+        )
 
-    @BeforeTest
-    fun setUp() {
-        startKoin {
-            modules(
-                module {
-                    single { ComponentA() }
-                    single { ComponentB(get()) }
-                })
-        }
-        Dispatchers.setMain(testDispatcher)
-    }
-
-    @AfterTest
-    fun tearDown() {
-        Dispatchers.resetMain()
-    }
+    private fun createViewModel(
+        structureId: kotlin.uuid.Uuid? = null,
+        projectId: kotlin.uuid.Uuid? = null,
+    ) = StructureDetailsEditViewModel(
+        structureId = structureId,
+        projectId = projectId,
+        getStructureUseCase = getStructureUseCase,
+        saveStructureUseCase = saveStructureUseCase,
+    )
 
     @Test
     fun `initial state is empty when creating with projectId provided and structureId null`() =
         runTest {
             val projectId = UuidProvider.getUuid()
-            val viewModel =
-                StructureDetailsEditViewModel(
-                    structureId = null,
-                    projectId = projectId,
-                    getStructureUseCase = getStructureUseCase,
-                    saveStructureUseCase = saveStructureUseCase,
-                )
+            val viewModel = createViewModel(structureId = null, projectId = projectId)
 
             assertEquals("", viewModel.state.value.structureName)
             assertEquals(projectId, viewModel.state.value.projectId)
@@ -100,15 +90,9 @@ class StructureDetailsEditViewModelTest : KoinTest {
                     updatedAt = Timestamp(10L),
                 )
             )
-            structuresDb.setStructures(listOf(structure))
+            fakeStructuresDb.setStructures(listOf(structure))
 
-            val viewModel =
-                StructureDetailsEditViewModel(
-                    structureId = structureId,
-                    projectId = null,
-                    getStructureUseCase = getStructureUseCase,
-                    saveStructureUseCase = saveStructureUseCase,
-                )
+            val viewModel = createViewModel(structureId = structureId, projectId = null)
 
             advanceUntilIdle()
 
@@ -120,13 +104,7 @@ class StructureDetailsEditViewModelTest : KoinTest {
     fun `onStructureNameChange updates state`() =
         runTest {
             val projectId = UuidProvider.getUuid()
-            val viewModel =
-                StructureDetailsEditViewModel(
-                    null,
-                    projectId,
-                    getStructureUseCase,
-                    saveStructureUseCase
-                )
+            val viewModel = createViewModel(projectId = projectId)
 
             viewModel.onStructureNameChange("New Name")
 
@@ -137,13 +115,7 @@ class StructureDetailsEditViewModelTest : KoinTest {
     fun `onSaveStructure with empty name sends error`() =
         runTest {
             val projectId = UuidProvider.getUuid()
-            val viewModel =
-                StructureDetailsEditViewModel(
-                    null,
-                    projectId,
-                    getStructureUseCase,
-                    saveStructureUseCase
-                )
+            val viewModel = createViewModel(projectId = projectId)
 
             viewModel.onSaveStructure()
 
@@ -156,13 +128,7 @@ class StructureDetailsEditViewModelTest : KoinTest {
     fun `onSaveStructure successful in create mode sends save event`() =
         runTest {
             val projectId = UuidProvider.getUuid()
-            val viewModel =
-                StructureDetailsEditViewModel(
-                    null,
-                    projectId,
-                    getStructureUseCase,
-                    saveStructureUseCase
-                )
+            val viewModel = createViewModel(projectId = projectId)
             viewModel.onStructureNameChange("Name")
 
             viewModel.onSaveStructure()
@@ -170,12 +136,12 @@ class StructureDetailsEditViewModelTest : KoinTest {
             val savedId = viewModel.saveEventFlow.first()
 
             // Verify structure is saved in DB
-            val savedStructureResult = structuresDb.getStructureFlow(savedId).first()
-            assertIs<OfflineFirstDataResult.Success<Structure?>>(savedStructureResult)
+            val savedStructureResult = fakeStructuresDb.getStructureFlow(savedId).first()
+            assertIs<OfflineFirstDataResult.Success<FrontendStructure?>>(savedStructureResult)
             val savedStructure = savedStructureResult.data
             assertNotNull(savedStructure)
-            assertEquals("Name", savedStructure.name)
-            assertEquals(projectId, savedStructure.projectId)
+            assertEquals("Name", savedStructure.structure.name)
+            assertEquals(projectId, savedStructure.structure.projectId)
         }
 
     @Test
@@ -192,15 +158,9 @@ class StructureDetailsEditViewModelTest : KoinTest {
                     updatedAt = Timestamp(10L),
                 )
             )
-            structuresDb.setStructures(listOf(structure))
+            fakeStructuresDb.setStructures(listOf(structure))
 
-            val viewModel =
-                StructureDetailsEditViewModel(
-                    structureId,
-                    null,
-                    getStructureUseCase,
-                    saveStructureUseCase
-                )
+            val viewModel = createViewModel(structureId = structureId)
 
             advanceUntilIdle()
 
@@ -211,28 +171,22 @@ class StructureDetailsEditViewModelTest : KoinTest {
             assertEquals(structureId, savedId)
 
             // Verify structure is updated in DB
-            val savedStructureResult = structuresDb.getStructureFlow(structureId).first()
-            assertIs<OfflineFirstDataResult.Success<Structure?>>(savedStructureResult)
+            val savedStructureResult = fakeStructuresDb.getStructureFlow(structureId).first()
+            assertIs<OfflineFirstDataResult.Success<FrontendStructure?>>(savedStructureResult)
             val savedStructure = savedStructureResult.data
             assertNotNull(savedStructure)
-            assertEquals("Updated Name", savedStructure.name)
-            assertEquals(projectId, savedStructure.projectId)
+            assertEquals("Updated Name", savedStructure.structure.name)
+            assertEquals(projectId, savedStructure.structure.projectId)
         }
 
     @Test
     fun `onSaveStructure failure sends error`() =
         runTest {
             val projectId = UuidProvider.getUuid()
-            val viewModel =
-                StructureDetailsEditViewModel(
-                    null,
-                    projectId,
-                    getStructureUseCase,
-                    saveStructureUseCase
-                )
+            val viewModel = createViewModel(projectId = projectId)
             viewModel.onStructureNameChange("Name")
 
-            structuresDb.forcedFailure =
+            fakeStructuresDb.forcedFailure =
                 OfflineFirstDataResult.ProgrammerError(RuntimeException("Failed"))
 
             viewModel.onSaveStructure()
@@ -244,12 +198,7 @@ class StructureDetailsEditViewModelTest : KoinTest {
     @Test
     fun `constructor requires either structureId or projectId`() {
         assertFailsWith<IllegalArgumentException> {
-            StructureDetailsEditViewModel(
-                structureId = null,
-                projectId = null,
-                getStructureUseCase = getStructureUseCase,
-                saveStructureUseCase = saveStructureUseCase,
-            )
+            createViewModel(structureId = null, projectId = null)
         }
     }
 }
