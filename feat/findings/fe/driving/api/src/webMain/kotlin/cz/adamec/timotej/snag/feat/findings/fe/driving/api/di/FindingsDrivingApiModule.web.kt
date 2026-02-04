@@ -14,10 +14,13 @@ package cz.adamec.timotej.snag.feat.findings.fe.driving.api.di
 
 import cz.adamec.timotej.snag.feat.findings.fe.driving.api.FindingDetailRouteFactory
 import cz.adamec.timotej.snag.feat.findings.fe.driving.api.FindingEditRouteFactory
+import cz.adamec.timotej.snag.feat.findings.fe.driving.api.FindingsBrowserHistoryFragmentBuilder
 import cz.adamec.timotej.snag.feat.findings.fe.driving.api.FindingsListRouteFactory
 import cz.adamec.timotej.snag.feat.findings.fe.driving.api.WebFindingDetailRouteFactory
 import cz.adamec.timotej.snag.feat.findings.fe.driving.api.WebFindingEditRouteFactory
 import cz.adamec.timotej.snag.feat.findings.fe.driving.api.WebFindingsListRouteFactory
+import cz.adamec.timotej.snag.lib.navigation.fe.BrowserHistoryFragmentBuilder
+import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
@@ -26,4 +29,5 @@ internal actual val platformModule =
         factory { WebFindingsListRouteFactory() } bind FindingsListRouteFactory::class
         factory { WebFindingDetailRouteFactory() } bind FindingDetailRouteFactory::class
         factory { WebFindingEditRouteFactory() } bind FindingEditRouteFactory::class
+        factoryOf(::FindingsBrowserHistoryFragmentBuilder) bind BrowserHistoryFragmentBuilder::class
     }

@@ -16,58 +16,22 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.remember
 import com.github.terrakok.navigation3.browser.HierarchicalBrowserNavigation
-import com.github.terrakok.navigation3.browser.buildBrowserHistoryFragment
-import cz.adamec.timotej.snag.feat.findings.fe.driving.api.WebFindingEditRoute
-import cz.adamec.timotej.snag.feat.structures.fe.driving.api.WebStructureCreationRoute
-import cz.adamec.timotej.snag.feat.structures.fe.driving.api.WebStructureDetailNavRoute
-import cz.adamec.timotej.snag.feat.structures.fe.driving.api.WebStructureEditRoute
+import cz.adamec.timotej.snag.lib.navigation.fe.BrowserHistoryFragmentBuilder
 import cz.adamec.timotej.snag.lib.navigation.fe.SnagBackStack
-import cz.adamec.timotej.snag.projects.fe.driving.api.WebProjectCreationRoute
-import cz.adamec.timotej.snag.projects.fe.driving.api.WebProjectDetailRoute
-import cz.adamec.timotej.snag.projects.fe.driving.api.WebProjectEditRoute
-import cz.adamec.timotej.snag.projects.fe.driving.api.WebProjectsRoute
+import org.koin.compose.getKoin
 
-@Suppress("UseIfInsteadOfWhen")
 @Composable
 internal actual fun SnagNavigationPreparation(backStack: SnagBackStack) {
+    val builders = getKoin().getAll<BrowserHistoryFragmentBuilder>()
+
     HierarchicalBrowserNavigation(
         currentDestination = remember { derivedStateOf { backStack.value.lastOrNull() } },
-        currentDestinationName = { key ->
-            when (key) {
-                is WebProjectsRoute -> buildBrowserHistoryFragment(key.URL_NAME)
-                is WebProjectCreationRoute -> buildBrowserHistoryFragment(key.URL_NAME)
-                is WebProjectEditRoute ->
-                    buildBrowserHistoryFragment(
-                        WebProjectEditRoute.URL_NAME,
-                        mapOf("id" to key.projectId.toString()),
-                    )
-                is WebProjectDetailRoute ->
-                    buildBrowserHistoryFragment(
-                        WebProjectDetailRoute.URL_NAME,
-                        mapOf("id" to key.projectId.toString()),
-                    )
-                is WebStructureCreationRoute ->
-                    buildBrowserHistoryFragment(
-                        WebStructureCreationRoute.URL_NAME,
-                        mapOf("projectId" to key.projectId.toString()),
-                    )
-                is WebStructureDetailNavRoute ->
-                    buildBrowserHistoryFragment(
-                        WebStructureDetailNavRoute.URL_NAME,
-                        mapOf("id" to key.structureId.toString()),
-                    )
-                is WebStructureEditRoute ->
-                    buildBrowserHistoryFragment(
-                        WebStructureEditRoute.URL_NAME,
-                        mapOf("id" to key.structureId.toString()),
-                    )
-                is WebFindingEditRoute ->
-                    buildBrowserHistoryFragment(
-                        WebFindingEditRoute.URL_NAME,
-                        mapOf("id" to key.findingId.toString()),
-                    )
-                else -> error("Unknown web route $key")
-            }
+        currentDestinationName = { route ->
+            if (route == null) return@HierarchicalBrowserNavigation ""
+            val builder =
+                builders.find { it.handles(route) }
+                    ?: error("No BrowserHistoryFragmentBuilder found for route $route")
+            builder.build(route)
         },
     )
 }
