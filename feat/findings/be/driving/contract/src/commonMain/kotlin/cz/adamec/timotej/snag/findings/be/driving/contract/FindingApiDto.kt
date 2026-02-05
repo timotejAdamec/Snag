@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.findings.be.driving.contract
 
+import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import kotlinx.serialization.Serializable
 import kotlin.uuid.Uuid
 
@@ -22,6 +23,7 @@ data class FindingApiDto(
     val name: String,
     val description: String?,
     val coordinates: List<RelativeCoordinateApiDto>,
+    val updatedAt: Timestamp,
 )
 
 @Serializable

@@ -3,17 +3,19 @@ CREATE TABLE IF NOT EXISTS FindingEntity (
     structureId TEXT NOT NULL,
     name TEXT NOT NULL,
     description TEXT,
-    coordinates TEXT NOT NULL DEFAULT '[]'
+    coordinates TEXT NOT NULL DEFAULT '[]',
+    updatedAt INTEGER NOT NULL
 );
 
 save:
-INSERT INTO FindingEntity(id, structureId, name, description, coordinates)
+INSERT INTO FindingEntity(id, structureId, name, description, coordinates, updatedAt)
 VALUES ?
 ON CONFLICT(id) DO UPDATE SET
     structureId = excluded.structureId,
     name = excluded.name,
     description = excluded.description,
-    coordinates = excluded.coordinates;
+    coordinates = excluded.coordinates,
+    updatedAt = excluded.updatedAt;
 
 selectByStructureId:
 SELECT * FROM FindingEntity WHERE structureId = :structureId;
@@ -28,10 +30,10 @@ deleteAll:
 DELETE FROM FindingEntity;
 
 updateDetails:
-UPDATE FindingEntity SET name = :name, description = :description WHERE id = :id;
+UPDATE FindingEntity SET name = :name, description = :description, updatedAt = :updatedAt WHERE id = :id;
 
 updateCoordinates:
-UPDATE FindingEntity SET coordinates = :coordinates WHERE id = :id;
+UPDATE FindingEntity SET coordinates = :coordinates, updatedAt = :updatedAt WHERE id = :id;
 
 selectChanges:
 SELECT changes();

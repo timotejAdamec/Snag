@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.projects.be.ports
 
+import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.projects.be.model.BackendProject
 import kotlin.uuid.Uuid
 
@@ -21,5 +22,5 @@ interface ProjectsLocalDataSource {
     suspend fun getProject(id: Uuid): BackendProject?
 
     suspend fun updateProject(project: BackendProject): BackendProject?
-    suspend fun deleteProject(id: Uuid)
+    suspend fun deleteProject(id: Uuid, deletedAt: Timestamp): BackendProject?
 }

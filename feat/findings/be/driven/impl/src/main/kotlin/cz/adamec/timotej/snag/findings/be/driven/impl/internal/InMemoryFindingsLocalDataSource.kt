@@ -16,9 +16,13 @@ import cz.adamec.timotej.snag.feat.findings.be.model.BackendFinding
 import cz.adamec.timotej.snag.feat.findings.business.Finding
 import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
 import cz.adamec.timotej.snag.findings.be.ports.FindingsLocalDataSource
+import cz.adamec.timotej.snag.lib.core.common.Timestamp
+import cz.adamec.timotej.snag.lib.core.common.TimestampProvider
 import kotlin.uuid.Uuid
 
-internal class InMemoryFindingsLocalDataSource : FindingsLocalDataSource {
+internal class InMemoryFindingsLocalDataSource(
+    timestampProvider: TimestampProvider,
+) : FindingsLocalDataSource {
     private val findings =
         mutableListOf(
             BackendFinding(
@@ -28,6 +32,7 @@ internal class InMemoryFindingsLocalDataSource : FindingsLocalDataSource {
                     name = "Cracked wall tile",
                     description = "Visible crack on wall tile near entrance.",
                     coordinates = listOf(RelativeCoordinate(x = 0.25f, y = 0.40f)),
+                    updatedAt = timestampProvider.getNowTimestamp(),
                 ),
             ),
             BackendFinding(
@@ -37,6 +42,7 @@ internal class InMemoryFindingsLocalDataSource : FindingsLocalDataSource {
                     name = "Missing paint patch",
                     description = "Unpainted area on the ceiling in hallway.",
                     coordinates = listOf(RelativeCoordinate(x = 0.60f, y = 0.15f)),
+                    updatedAt = timestampProvider.getNowTimestamp(),
                 ),
             ),
             BackendFinding(
@@ -50,6 +56,7 @@ internal class InMemoryFindingsLocalDataSource : FindingsLocalDataSource {
                             RelativeCoordinate(x = 0.80f, y = 0.55f),
                             RelativeCoordinate(x = 0.82f, y = 0.60f),
                         ),
+                    updatedAt = timestampProvider.getNowTimestamp(),
                 ),
             ),
         )
@@ -57,11 +64,22 @@ internal class InMemoryFindingsLocalDataSource : FindingsLocalDataSource {
     override suspend fun getFindings(structureId: Uuid): List<BackendFinding> =
         findings.filter { it.finding.structureId == structureId }
 
-    override suspend fun deleteFinding(id: Uuid) {
-        findings.removeIf { it.finding.id == id }
+    override suspend fun deleteFinding(id: Uuid, deletedAt: Timestamp): BackendFinding? {
+        val foundFinding = findings.find { it.finding.id == id }
+        if (foundFinding != null && foundFinding.finding.updatedAt >= deletedAt) {
+            return foundFinding
+        }
+
+        findings.removeIf { it.finding.id == id && it.finding.updatedAt < deletedAt }
+        return null
     }
 
     override suspend fun updateFinding(finding: BackendFinding): BackendFinding? {
+        val foundFinding = findings.find { it.finding.id == finding.finding.id }
+        if (foundFinding != null && foundFinding.finding.updatedAt >= finding.finding.updatedAt) {
+            return foundFinding
+        }
+
         findings.removeIf { it.finding.id == finding.finding.id }
         findings.add(finding)
         return null

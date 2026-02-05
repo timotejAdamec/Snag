@@ -16,18 +16,19 @@ import cz.adamec.timotej.snag.projects.be.app.api.DeleteProjectUseCase
 import cz.adamec.timotej.snag.projects.be.app.api.GetProjectUseCase
 import cz.adamec.timotej.snag.projects.be.app.api.GetProjectsUseCase
 import cz.adamec.timotej.snag.projects.be.app.api.SaveProjectUseCase
+import cz.adamec.timotej.snag.projects.be.app.api.model.DeleteProjectRequest
+import cz.adamec.timotej.snag.projects.be.driving.contract.DeleteProjectApiDto
 import cz.adamec.timotej.snag.projects.be.driving.contract.PutProjectApiDto
 import cz.adamec.timotej.snag.routing.be.AppRoute
+import cz.adamec.timotej.snag.routing.be.getDtoFromBody
 import cz.adamec.timotej.snag.routing.be.getIdFromParameters
 import io.ktor.http.HttpStatusCode
-import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.delete
 import io.ktor.server.routing.get
 import io.ktor.server.routing.put
 import io.ktor.server.routing.route
-import kotlin.uuid.Uuid
 
 @Suppress("LabeledExpression")
 internal class ProjectsRoute(
@@ -62,12 +63,7 @@ internal class ProjectsRoute(
             put("/{id}") {
                 val id = getIdFromParameters()
 
-                val putProjectDto =
-                    runCatching { call.receive<PutProjectApiDto>() }.getOrNull()
-                        ?: return@put call.respond(
-                            status = HttpStatusCode.BadRequest,
-                            message = "Invalid request body.",
-                        )
+                val putProjectDto = getDtoFromBody<PutProjectApiDto>()
 
                 val updatedProject = saveProjectUseCase(putProjectDto.toModel(id))
 
@@ -78,10 +74,18 @@ internal class ProjectsRoute(
 
             delete("/{id}") {
                 val id = getIdFromParameters()
+                val deleteProjectDto = getDtoFromBody<DeleteProjectApiDto>()
 
-                deleteProjectUseCase(id)
+                val newerProject = deleteProjectUseCase(
+                    DeleteProjectRequest(
+                        projectId = id,
+                        deletedAt = deleteProjectDto.deletedAt,
+                    ),
+                )
 
-                call.respond(HttpStatusCode.NoContent)
+                newerProject?.let {
+                    call.respond(it.toDto())
+                } ?: call.respond(HttpStatusCode.NoContent)
             }
         }
     }

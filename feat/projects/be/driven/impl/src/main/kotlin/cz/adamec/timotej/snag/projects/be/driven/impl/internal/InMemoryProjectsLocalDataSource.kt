@@ -12,12 +12,16 @@
 
 package cz.adamec.timotej.snag.projects.be.driven.impl.internal
 
+import cz.adamec.timotej.snag.lib.core.common.Timestamp
+import cz.adamec.timotej.snag.lib.core.common.TimestampProvider
 import cz.adamec.timotej.snag.projects.be.model.BackendProject
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsLocalDataSource
 import cz.adamec.timotej.snag.projects.business.Project
 import kotlin.uuid.Uuid
 
-internal class InMemoryProjectsLocalDataSource : ProjectsLocalDataSource {
+internal class InMemoryProjectsLocalDataSource(
+    timestampProvider: TimestampProvider,
+) : ProjectsLocalDataSource {
     private val projects =
         mutableListOf(
             BackendProject(
@@ -25,6 +29,7 @@ internal class InMemoryProjectsLocalDataSource : ProjectsLocalDataSource {
                     id = Uuid.parse("00000000-0000-0000-0000-000000000001"),
                     name = "Strahov Dormitories Renovation",
                     address = "Chaloupeckého 1917/9, 160 17 Praha 6",
+                    updatedAt = timestampProvider.getNowTimestamp(),
                 ),
             ),
             BackendProject(
@@ -32,6 +37,7 @@ internal class InMemoryProjectsLocalDataSource : ProjectsLocalDataSource {
                     id = Uuid.parse("00000000-0000-0000-0000-000000000002"),
                     name = "FIT CTU New Building",
                     address = "Thákurova 9, 160 00 Praha 6",
+                    updatedAt = timestampProvider.getNowTimestamp(),
                 ),
             ),
             BackendProject(
@@ -39,48 +45,10 @@ internal class InMemoryProjectsLocalDataSource : ProjectsLocalDataSource {
                     id = Uuid.parse("00000000-0000-0000-0000-000000000003"),
                     name = "National Library of Technology",
                     address = "Technická 2710/6, 160 00 Praha 6",
+                    updatedAt = timestampProvider.getNowTimestamp(),
                 ),
             ),
         )
-
-//    val now = Instant.parse("2023-10-27T10:00:00Z")
-//    projects.addAll(
-//    listOf(
-//    Project(
-//    id = UuidProvider.getUuid(),
-//    name = "Central Park Renovation",
-//    address = "New York, NY 10024",
-// //                    client = ClientImpl(1, "City Parks Dept", "830 5th Ave"),
-// //                    inspector = InspectorImpl(1, "John Doe", "+12125550199"),
-// //                    inspection = InspectionImpl(
-// //                        start = now,
-// //                        end = now + 2.hours,
-// //                        otherParticipants = persistentListOf("Alice Freeman", "Bob Smith"),
-// //                        climateConditions = "Sunny, 20°C",
-// //                        note = "Initial site survey completed."
-// //                    ),
-// //                    findingCategories = persistentListOf("Safety", "Landscaping")
-//    ),
-//    Project(
-//    id = UuidProvider.getUuid(),
-//    name = "Golden Gate Bridge Painting",
-//    address = "San Francisco, CA 94129",
-// //                    client = ClientImpl(2, "Caltrans", "1120 N St, Sacramento"),
-// //                    inspector = InspectorImpl(2, "Jane Smith", "+14155550122"),
-// //                    inspection = null,
-// //                    findingCategories = persistentListOf("Structure", "Paint Quality")
-//    ),
-//    Project(
-//    id = UuidProvider.getUuid(),
-//    name = "Space Needle Maintenance",
-//    address = "400 Broad St, Seattle, WA 98109",
-// //                    client = ClientImpl(3, "Space Needle Corp", null),
-// //                    inspector = InspectorImpl(3, "Bob Wilson", "+12065550144"),
-// //                    inspection = null,
-// //                    findingCategories = persistentListOf("Elevators", "Structural")
-//    ),
-//    ),
-//    )
 
     override suspend fun getProjects(): List<BackendProject> = projects
 
@@ -88,14 +56,24 @@ internal class InMemoryProjectsLocalDataSource : ProjectsLocalDataSource {
         projects
             .find { it.project.id == id }
 
-    // TODO check updated timestamp and return the database project if it is newer
     override suspend fun updateProject(project: BackendProject): BackendProject? {
+        val foundProject = projects.find { it.project.id == project.project.id }
+        if (foundProject != null && foundProject.project.updatedAt >= project.project.updatedAt) {
+            return foundProject
+        }
+
         projects.removeIf { it.project.id == project.project.id }
         projects.add(project)
         return null
     }
 
-    override suspend fun deleteProject(id: Uuid) {
-        projects.removeIf { it.project.id == id }
+    override suspend fun deleteProject(id: Uuid, deletedAt: Timestamp): BackendProject? {
+        val foundProject = projects.find { it.project.id == id }
+        if (foundProject != null && foundProject.project.updatedAt >= deletedAt) {
+            return foundProject
+        }
+
+        projects.removeIf { it.project.id == id && it.project.updatedAt < deletedAt }
+        return null
     }
 }

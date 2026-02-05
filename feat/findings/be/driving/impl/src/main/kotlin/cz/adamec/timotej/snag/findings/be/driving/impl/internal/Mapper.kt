@@ -21,13 +21,16 @@ import cz.adamec.timotej.snag.findings.be.driving.contract.RelativeCoordinateApi
 import kotlin.uuid.Uuid
 
 internal fun BackendFinding.toDto() =
-    FindingApiDto(
-        id = finding.id,
-        structureId = finding.structureId,
-        name = finding.name,
-        description = finding.description,
-        coordinates = finding.coordinates.map { it.toDto() },
-    )
+    with(finding) {
+        FindingApiDto(
+            id = id,
+            structureId = structureId,
+            name = name,
+            description = description,
+            coordinates = coordinates.map { it.toDto() },
+            updatedAt = updatedAt,
+        )
+    }
 
 internal fun RelativeCoordinate.toDto() =
     RelativeCoordinateApiDto(
@@ -43,6 +46,7 @@ internal fun PutFindingApiDto.toModel(id: Uuid) =
             name = name,
             description = description,
             coordinates = coordinates.map { it.toBusiness() },
+            updatedAt = updatedAt,
         ),
     )
 

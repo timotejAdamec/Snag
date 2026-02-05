@@ -16,8 +16,6 @@ import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class PutProjectApiDto(
-    val name: String,
-    val address: String,
-    val updatedAt: Timestamp,
+data class DeleteProjectApiDto(
+    val deletedAt: Timestamp,
 )

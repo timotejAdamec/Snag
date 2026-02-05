@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.projects.be.app.impl.internal
 
+import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.projects.be.driven.test.FakeProjectsLocalDataSource
 import cz.adamec.timotej.snag.projects.be.model.BackendProject
 import cz.adamec.timotej.snag.projects.business.Project
@@ -32,6 +33,7 @@ class GetProjectUseCaseImplTest {
                 id = projectId,
                 name = "Test Project",
                 address = "Test Address",
+                updatedAt = Timestamp(10L),
             ),
         )
 

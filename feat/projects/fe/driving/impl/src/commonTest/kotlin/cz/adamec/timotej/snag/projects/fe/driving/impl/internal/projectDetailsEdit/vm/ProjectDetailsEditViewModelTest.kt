@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetailsEdit.vm
 
+import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.projects.business.Project
@@ -76,7 +77,7 @@ class ProjectDetailsEditViewModelTest : FrontendKoinInitializedTest() {
     fun `loading project data updates state when projectId is provided`() =
         runTest {
             val projectId = Uuid.random()
-            val project = FrontendProject(project = Project(projectId, "Test Project", "Test Address"))
+            val project = FrontendProject(project = Project(projectId, "Test Project", "Test Address", Timestamp(10L)))
             fakeProjectsDb.setProject(project)
 
             val viewModel = createViewModel(projectId = projectId)

@@ -22,6 +22,7 @@ import cz.adamec.timotej.snag.feat.shared.database.fe.db.FindingEntity
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.FindingEntityQueries
 import cz.adamec.timotej.snag.findings.fe.driven.internal.LH
 import cz.adamec.timotej.snag.findings.fe.ports.FindingsDb
+import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstUpdateDataResult
 import cz.adamec.timotej.snag.lib.database.fe.safeDbWrite
@@ -85,11 +86,12 @@ internal class RealFindingsDb(
         id: Uuid,
         name: String,
         description: String?,
+        updatedAt: Timestamp,
     ): OfflineFirstUpdateDataResult =
         withContext(ioDispatcher) {
             runCatching {
                 findingEntityQueries.transactionWithResult {
-                    findingEntityQueries.updateDetails(name = name, description = description, id = id.toString())
+                    findingEntityQueries.updateDetails(name = name, description = description, updatedAt = updatedAt.value, id = id.toString())
                     findingEntityQueries.selectChanges().awaitAsOne()
                 }
             }.fold(
@@ -110,12 +112,14 @@ internal class RealFindingsDb(
     override suspend fun updateFindingCoordinates(
         id: Uuid,
         coordinates: List<RelativeCoordinate>,
+        updatedAt: Timestamp,
     ): OfflineFirstUpdateDataResult =
         withContext(ioDispatcher) {
             runCatching {
                 findingEntityQueries.transactionWithResult {
                     findingEntityQueries.updateCoordinates(
                         coordinates = serializeCoordinates(coordinates),
+                        updatedAt = updatedAt.value,
                         id = id.toString(),
                     )
                     findingEntityQueries.selectChanges().awaitAsOne()

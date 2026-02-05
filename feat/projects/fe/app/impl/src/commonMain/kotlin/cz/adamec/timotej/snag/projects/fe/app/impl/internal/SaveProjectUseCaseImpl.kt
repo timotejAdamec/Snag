@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.projects.fe.app.impl.internal
 
+import cz.adamec.timotej.snag.lib.core.common.TimestampProvider
 import cz.adamec.timotej.snag.lib.core.common.UuidProvider
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.core.fe.log
@@ -29,6 +30,7 @@ class SaveProjectUseCaseImpl(
     private val projectsDb: ProjectsDb,
     private val projectsSync: ProjectsSync,
     private val uuidProvider: UuidProvider,
+    private val timestampProvider: TimestampProvider,
 ) : SaveProjectUseCase {
     override suspend operator fun invoke(request: SaveProjectRequest): OfflineFirstDataResult<Uuid> {
         val project =
@@ -37,6 +39,7 @@ class SaveProjectUseCaseImpl(
                     id = request.id ?: uuidProvider.getUuid(),
                     name = request.name,
                     address = request.address,
+                    updatedAt = timestampProvider.getNowTimestamp(),
                 ),
             )
 

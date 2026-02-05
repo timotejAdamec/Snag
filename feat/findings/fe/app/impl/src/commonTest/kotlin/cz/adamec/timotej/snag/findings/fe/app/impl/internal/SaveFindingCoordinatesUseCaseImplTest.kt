@@ -15,6 +15,7 @@ package cz.adamec.timotej.snag.findings.fe.app.impl.internal
 import cz.adamec.timotej.snag.feat.findings.business.Finding
 import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
 import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
+import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.findings.fe.app.api.SaveFindingCoordinatesUseCase
 import cz.adamec.timotej.snag.findings.fe.app.api.model.SaveFindingCoordinatesRequest
 import cz.adamec.timotej.snag.findings.fe.driven.test.FakeFindingsDb
@@ -60,6 +61,7 @@ class SaveFindingCoordinatesUseCaseImplTest : FrontendKoinInitializedTest() {
             name = "Finding",
             description = null,
             coordinates = listOf(RelativeCoordinate(0.1f, 0.2f)),
+            updatedAt = Timestamp(10L),
         ),
     )
 

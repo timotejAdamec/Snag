@@ -13,6 +13,7 @@
 package cz.adamec.timotej.snag.findings.be.ports
 
 import cz.adamec.timotej.snag.feat.findings.be.model.BackendFinding
+import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import kotlin.uuid.Uuid
 
 interface FindingsLocalDataSource {
@@ -20,5 +21,5 @@ interface FindingsLocalDataSource {
 
     suspend fun updateFinding(finding: BackendFinding): BackendFinding?
 
-    suspend fun deleteFinding(id: Uuid)
+    suspend fun deleteFinding(id: Uuid, deletedAt: Timestamp): BackendFinding?
 }

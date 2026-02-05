@@ -12,8 +12,9 @@
 
 package cz.adamec.timotej.snag.findings.be.app.api
 
-import kotlin.uuid.Uuid
+import cz.adamec.timotej.snag.feat.findings.be.model.BackendFinding
+import cz.adamec.timotej.snag.findings.be.app.api.model.DeleteFindingRequest
 
 interface DeleteFindingUseCase {
-    suspend operator fun invoke(findingId: Uuid)
+    suspend operator fun invoke(request: DeleteFindingRequest): BackendFinding?
 }

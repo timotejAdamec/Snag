@@ -13,16 +13,21 @@
 package cz.adamec.timotej.snag.projects.be.app.impl.internal
 
 import cz.adamec.timotej.snag.projects.be.app.api.DeleteProjectUseCase
+import cz.adamec.timotej.snag.projects.be.app.api.model.DeleteProjectRequest
 import cz.adamec.timotej.snag.projects.be.app.impl.internal.LH.logger
+import cz.adamec.timotej.snag.projects.be.model.BackendProject
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsLocalDataSource
-import kotlin.uuid.Uuid
 
 internal class DeleteProjectUseCaseImpl(
     private val projectsLocalDataSource: ProjectsLocalDataSource,
 ) : DeleteProjectUseCase {
-    override suspend operator fun invoke(projectId: Uuid) {
-        logger.debug("Deleting project {} from local storage.", projectId)
-        projectsLocalDataSource.deleteProject(projectId)
-        logger.debug("Deleted project {} from local storage.", projectId)
+    override suspend operator fun invoke(request: DeleteProjectRequest): BackendProject? {
+        logger.debug("Deleting project {} from local storage.", request.projectId)
+        return projectsLocalDataSource.deleteProject(
+            id = request.projectId,
+            deletedAt = request.deletedAt,
+        ).also {
+            logger.debug("Deleted project {} from local storage.", request.projectId)
+        }
     }
 }

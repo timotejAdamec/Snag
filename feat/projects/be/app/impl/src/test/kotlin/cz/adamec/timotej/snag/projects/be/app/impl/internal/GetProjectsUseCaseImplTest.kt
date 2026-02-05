@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.projects.be.app.impl.internal
 
+import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.projects.be.driven.test.FakeProjectsLocalDataSource
 import cz.adamec.timotej.snag.projects.be.model.BackendProject
 import cz.adamec.timotej.snag.projects.business.Project
@@ -41,6 +42,7 @@ class GetProjectsUseCaseImplTest {
                         id = Uuid.parse("00000000-0000-0000-0000-000000000001"),
                         name = "Project 1",
                         address = "Address 1",
+                        updatedAt = Timestamp(10L),
                     ),
                 )
             val project2 =
@@ -49,6 +51,7 @@ class GetProjectsUseCaseImplTest {
                         id = Uuid.parse("00000000-0000-0000-0000-000000000002"),
                         name = "Project 2",
                         address = "Address 2",
+                        updatedAt = Timestamp(10L),
                     ),
                 )
             dataSource.setProject(project1)

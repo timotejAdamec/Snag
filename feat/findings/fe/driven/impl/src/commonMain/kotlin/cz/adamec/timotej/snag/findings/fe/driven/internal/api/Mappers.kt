@@ -27,6 +27,7 @@ internal fun FindingApiDto.toModel() =
             name = name,
             description = description,
             coordinates = coordinates.map { it.toBusiness() },
+            updatedAt = updatedAt,
         ),
     )
 
@@ -42,4 +43,5 @@ internal fun FrontendFinding.toPutApiDto() =
         name = finding.name,
         description = finding.description,
         coordinates = finding.coordinates.map { RelativeCoordinateApiDto(x = it.x, y = it.y) },
+        updatedAt = finding.updatedAt,
     )

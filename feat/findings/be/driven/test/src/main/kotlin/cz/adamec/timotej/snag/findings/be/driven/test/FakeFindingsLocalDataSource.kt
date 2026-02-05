@@ -14,6 +14,7 @@ package cz.adamec.timotej.snag.findings.be.driven.test
 
 import cz.adamec.timotej.snag.feat.findings.be.model.BackendFinding
 import cz.adamec.timotej.snag.findings.be.ports.FindingsLocalDataSource
+import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import kotlin.uuid.Uuid
 
 class FakeFindingsLocalDataSource : FindingsLocalDataSource {
@@ -23,12 +24,23 @@ class FakeFindingsLocalDataSource : FindingsLocalDataSource {
         findings.values.filter { it.finding.structureId == structureId }
 
     override suspend fun updateFinding(finding: BackendFinding): BackendFinding? {
+        val foundFinding = findings[finding.finding.id]
+        if (foundFinding != null && foundFinding.finding.updatedAt >= finding.finding.updatedAt) {
+            return foundFinding
+        }
+
         findings[finding.finding.id] = finding
         return null
     }
 
-    override suspend fun deleteFinding(id: Uuid) {
+    override suspend fun deleteFinding(id: Uuid, deletedAt: Timestamp): BackendFinding? {
+        val foundFinding = findings[id]
+        if (foundFinding != null && foundFinding.finding.updatedAt >= deletedAt) {
+            return foundFinding
+        }
+
         findings.remove(id)
+        return null
     }
 
     fun setFinding(finding: BackendFinding) {
