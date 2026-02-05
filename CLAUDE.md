@@ -5,6 +5,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Build Commands
 
 ```bash
+# Build to verify compilation and checks
+./gradlew build
+
 # Run all checks (lint, detekt, ktlint, tests)
 ./gradlew check --no-daemon
 

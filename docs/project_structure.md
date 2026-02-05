@@ -50,6 +50,10 @@ The `test` and `impl` split is typical for driven code so that tests in `driving
 can run with non-production unit-test-friendly adapter `ports`.
 The `contract` and `impl` split is typical for backend driving code.
 
+### Cross-feature dependencies
+
+Dependencies between features is handled by accessing use cases (`app/api`) from the different feature.
+
 ## Library modules
 Library modules are located in the `lib` directory. These contain "domain-agnostic" code.
 "Domain-agnostic" means it can theoretically be used in other projects. From features POV,
