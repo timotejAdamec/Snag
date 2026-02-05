@@ -12,8 +12,8 @@
 
 package cz.adamec.timotej.snag.findings.fe.app.impl.internal
 
-import cz.adamec.timotej.snag.feat.findings.business.Finding
 import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
+import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
 import cz.adamec.timotej.snag.findings.fe.app.api.SaveNewFindingUseCase
 import cz.adamec.timotej.snag.findings.fe.app.api.model.SaveNewFindingRequest
 import cz.adamec.timotej.snag.findings.fe.driven.test.FakeFindingsDb
@@ -79,7 +79,7 @@ class SaveNewFindingUseCaseImplTest : FrontendKoinInitializedTest() {
 
         assertIs<OfflineFirstDataResult.Success<Uuid>>(result)
         val savedFinding = getSavedFinding(result.data)
-        assertEquals(emptyList(), savedFinding.coordinates)
+        assertEquals(emptyList(), savedFinding.finding.coordinates)
     }
 
     @Test
@@ -96,7 +96,7 @@ class SaveNewFindingUseCaseImplTest : FrontendKoinInitializedTest() {
 
         assertIs<OfflineFirstDataResult.Success<Uuid>>(result)
         val savedFinding = getSavedFinding(result.data)
-        assertEquals(coordinates, savedFinding.coordinates)
+        assertEquals(coordinates, savedFinding.finding.coordinates)
     }
 
     @Test
@@ -141,12 +141,12 @@ class SaveNewFindingUseCaseImplTest : FrontendKoinInitializedTest() {
 
         assertIs<OfflineFirstDataResult.Success<Uuid>>(result)
         val savedFinding = getSavedFinding(result.data)
-        assertEquals("Finding name", savedFinding.name)
-        assertEquals("Finding description", savedFinding.description)
-        assertEquals(structureId, savedFinding.structureId)
+        assertEquals("Finding name", savedFinding.finding.name)
+        assertEquals("Finding description", savedFinding.finding.description)
+        assertEquals(structureId, savedFinding.finding.structureId)
     }
 
-    private suspend fun getSavedFinding(id: Uuid): Finding {
+    private suspend fun getSavedFinding(id: Uuid): FrontendFinding {
         fakeFindingsDb.forcedFailure = null
         val result = fakeFindingsDb.getFindingFlow(id).first()
         return (result as OfflineFirstDataResult.Success).data!!

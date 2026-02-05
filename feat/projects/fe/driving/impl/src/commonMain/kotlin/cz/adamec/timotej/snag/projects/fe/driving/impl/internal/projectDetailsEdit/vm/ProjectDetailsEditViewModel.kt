@@ -61,8 +61,8 @@ internal class ProjectDetailsEditViewModel(
                         result.data?.let { data ->
                             _state.update {
                                 it.copy(
-                                    projectName = data.name,
-                                    projectAddress = data.address,
+                                    projectName = data.project.name,
+                                    projectAddress = data.project.address,
                                 )
                             }
                             cancel()

@@ -18,6 +18,7 @@ import cz.adamec.timotej.snag.lib.sync.fe.model.SyncOperationType
 import cz.adamec.timotej.snag.lib.sync.fe.app.api.handler.SyncOperationResult
 import cz.adamec.timotej.snag.projects.business.Project
 import cz.adamec.timotej.snag.projects.fe.driven.test.FakeProjectsApi
+import cz.adamec.timotej.snag.projects.fe.model.FrontendProject
 import cz.adamec.timotej.snag.projects.fe.driven.test.FakeProjectsDb
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsApi
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsDb
@@ -52,10 +53,10 @@ class ProjectSyncHandlerTest : FrontendKoinInitializedTest() {
     @Test
     fun `upsert reads from db and calls api`() =
         runTest(testDispatcher) {
-            val project = Project(Uuid.random(), "Test Project", "123 Street")
+            val project = FrontendProject(project = Project(Uuid.random(), "Test Project", "123 Street"))
             fakeProjectsDb.setProject(project)
 
-            val result = handler.execute(project.id, SyncOperationType.UPSERT)
+            val result = handler.execute(project.project.id, SyncOperationType.UPSERT)
 
             assertEquals(SyncOperationResult.Success, result)
         }
@@ -63,18 +64,18 @@ class ProjectSyncHandlerTest : FrontendKoinInitializedTest() {
     @Test
     fun `upsert saves fresher dto from api to db`() =
         runTest(testDispatcher) {
-            val project = Project(Uuid.random(), "Original", "123 Street")
+            val project = FrontendProject(project = Project(Uuid.random(), "Original", "123 Street"))
             fakeProjectsDb.setProject(project)
 
-            val fresherProject = project.copy(name = "Updated by API")
+            val fresherProject = project.copy(project = project.project.copy(name = "Updated by API"))
             fakeProjectsApi.saveProjectResponseOverride = { OnlineDataResult.Success(fresherProject) }
 
-            val result = handler.execute(project.id, SyncOperationType.UPSERT)
+            val result = handler.execute(project.project.id, SyncOperationType.UPSERT)
 
             assertEquals(SyncOperationResult.Success, result)
-            val dbResult = fakeProjectsDb.getProjectFlow(project.id).first()
+            val dbResult = fakeProjectsDb.getProjectFlow(project.project.id).first()
             val savedProject = (dbResult as OfflineFirstDataResult.Success).data
-            assertEquals("Updated by API", savedProject?.name)
+            assertEquals("Updated by API", savedProject?.project?.name)
         }
 
     @Test
@@ -88,12 +89,12 @@ class ProjectSyncHandlerTest : FrontendKoinInitializedTest() {
     @Test
     fun `upsert when api fails returns failure`() =
         runTest(testDispatcher) {
-            val project = Project(Uuid.random(), "Test Project", "123 Street")
+            val project = FrontendProject(project = Project(Uuid.random(), "Test Project", "123 Street"))
             fakeProjectsDb.setProject(project)
             fakeProjectsApi.forcedFailure =
                 OnlineDataResult.Failure.ProgrammerError(Exception("API error"))
 
-            val result = handler.execute(project.id, SyncOperationType.UPSERT)
+            val result = handler.execute(project.project.id, SyncOperationType.UPSERT)
 
             assertEquals(SyncOperationResult.Failure, result)
         }

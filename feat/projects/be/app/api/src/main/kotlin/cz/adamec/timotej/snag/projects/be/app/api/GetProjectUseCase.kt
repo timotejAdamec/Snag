@@ -12,9 +12,9 @@
 
 package cz.adamec.timotej.snag.projects.be.app.api
 
-import cz.adamec.timotej.snag.projects.business.Project
+import cz.adamec.timotej.snag.projects.be.model.BackendProject
 import kotlin.uuid.Uuid
 
 interface GetProjectUseCase {
-    suspend operator fun invoke(id: Uuid): Project?
+    suspend operator fun invoke(id: Uuid): BackendProject?
 }

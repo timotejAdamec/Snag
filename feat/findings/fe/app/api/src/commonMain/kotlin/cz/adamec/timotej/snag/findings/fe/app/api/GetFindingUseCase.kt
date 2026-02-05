@@ -12,11 +12,11 @@
 
 package cz.adamec.timotej.snag.findings.fe.app.api
 
-import cz.adamec.timotej.snag.feat.findings.business.Finding
+import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import kotlinx.coroutines.flow.Flow
 import kotlin.uuid.Uuid
 
 interface GetFindingUseCase {
-    operator fun invoke(findingId: Uuid): Flow<OfflineFirstDataResult<Finding?>>
+    operator fun invoke(findingId: Uuid): Flow<OfflineFirstDataResult<FrontendFinding?>>
 }

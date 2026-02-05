@@ -12,17 +12,18 @@
 
 package cz.adamec.timotej.snag.findings.be.driven.test
 
-import cz.adamec.timotej.snag.feat.findings.business.Finding
+import cz.adamec.timotej.snag.feat.findings.be.model.BackendFinding
 import cz.adamec.timotej.snag.findings.be.ports.FindingsLocalDataSource
 import kotlin.uuid.Uuid
 
 class FakeFindingsLocalDataSource : FindingsLocalDataSource {
-    private val findings = mutableMapOf<Uuid, Finding>()
+    private val findings = mutableMapOf<Uuid, BackendFinding>()
 
-    override suspend fun getFindings(structureId: Uuid): List<Finding> = findings.values.filter { it.structureId == structureId }
+    override suspend fun getFindings(structureId: Uuid): List<BackendFinding> =
+        findings.values.filter { it.finding.structureId == structureId }
 
-    override suspend fun updateFinding(finding: Finding): Finding? {
-        findings[finding.id] = finding
+    override suspend fun updateFinding(finding: BackendFinding): BackendFinding? {
+        findings[finding.finding.id] = finding
         return null
     }
 
@@ -30,11 +31,11 @@ class FakeFindingsLocalDataSource : FindingsLocalDataSource {
         findings.remove(id)
     }
 
-    fun setFinding(finding: Finding) {
-        findings[finding.id] = finding
+    fun setFinding(finding: BackendFinding) {
+        findings[finding.finding.id] = finding
     }
 
-    fun setFindings(findings: List<Finding>) {
-        findings.forEach { this.findings[it.id] = it }
+    fun setFindings(findings: List<BackendFinding>) {
+        findings.forEach { this.findings[it.finding.id] = it }
     }
 }

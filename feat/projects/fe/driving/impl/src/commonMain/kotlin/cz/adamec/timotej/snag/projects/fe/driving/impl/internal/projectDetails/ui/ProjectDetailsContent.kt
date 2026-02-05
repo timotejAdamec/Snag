@@ -52,6 +52,7 @@ import cz.adamec.timotej.snag.lib.design.fe.scaffold.CollapsableTopAppBarScaffol
 import cz.adamec.timotej.snag.lib.design.fe.theme.SnagTheme
 import cz.adamec.timotej.snag.projects.business.Project
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.vm.ProjectDetailsUiState
+import cz.adamec.timotej.snag.projects.fe.model.FrontendProject
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.vm.ProjectDetailsUiStatus
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.vm.StructuresUiStatus
 import org.jetbrains.compose.resources.painterResource
@@ -125,8 +126,8 @@ private fun LoadedProjectDetailsContent(
 ) {
     CollapsableTopAppBarScaffold(
         modifier = modifier,
-        title = state.project?.name.orEmpty(),
-        subtitle = state.project?.address.orEmpty(),
+        title = state.project?.project?.name.orEmpty(),
+        subtitle = state.project?.project?.address.orEmpty(),
         topAppBarNavigationIcon = {
             BackNavigationIcon(
                 onClick = onBack,
@@ -281,10 +282,12 @@ private fun LoadedProjectDetailsContentPreview() {
             state =
                 ProjectDetailsUiState(
                     projectStatus = ProjectDetailsUiStatus.LOADED,
-                    project = Project(
-                        id = UuidProvider.getUuid(),
-                        name = "Example project name",
-                        address = "Example project address",
+                    project = FrontendProject(
+                        project = Project(
+                            id = UuidProvider.getUuid(),
+                            name = "Example project name",
+                            address = "Example project address",
+                        ),
                     )
                 ),
             onNewStructureClick = {},

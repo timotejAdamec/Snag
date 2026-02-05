@@ -31,7 +31,9 @@ internal fun Project.configureBackendModule() {
         val moduleDirectoryPath = path.substringBeforeLast(":")
         val modulePreDirectoryPath = moduleDirectoryPath.substringBeforeLast(":")
         if (name == "model") {
-            api(project("$modulePreDirectoryPath:business"))
+            if (hasFolderInPath(modulePreDirectoryPath, "business")) {
+                api(project("$modulePreDirectoryPath:business"))
+            }
         } else if (name == "ports") {
             if (hasFolderInPath(moduleDirectoryPath, "model")) {
                 api(project("$moduleDirectoryPath:model"))

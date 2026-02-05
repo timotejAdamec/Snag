@@ -13,12 +13,12 @@
 package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projects.vm
 
 import androidx.compose.runtime.Immutable
-import cz.adamec.timotej.snag.projects.business.Project
+import cz.adamec.timotej.snag.projects.fe.model.FrontendProject
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
 @Immutable
 data class ProjectsUiState(
-    val projects: ImmutableList<Project> = persistentListOf(),
+    val projects: ImmutableList<FrontendProject> = persistentListOf(),
     val isLoading: Boolean = false,
 )

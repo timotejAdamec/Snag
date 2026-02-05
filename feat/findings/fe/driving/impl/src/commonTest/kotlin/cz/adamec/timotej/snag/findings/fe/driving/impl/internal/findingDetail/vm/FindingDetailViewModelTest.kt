@@ -14,6 +14,7 @@ package cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetail.v
 
 import app.cash.turbine.test
 import cz.adamec.timotej.snag.feat.findings.business.Finding
+import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
 import cz.adamec.timotej.snag.findings.fe.app.api.DeleteFindingUseCase
 import cz.adamec.timotej.snag.findings.fe.app.api.GetFindingUseCase
 import cz.adamec.timotej.snag.findings.fe.driven.test.FakeFindingsDb
@@ -49,7 +50,7 @@ class FindingDetailViewModelTest : FrontendKoinInitializedTest() {
 
     private val structureId = Uuid.parse("00000000-0000-0000-0000-000000000001")
     private val findingId = Uuid.parse("00000000-0000-0000-0001-000000000001")
-    private val finding = Finding(findingId, structureId, "Crack in wall", "A large crack", emptyList())
+    private val finding = FrontendFinding(finding = Finding(findingId, structureId, "Crack in wall", "A large crack", emptyList()))
 
     override fun additionalKoinModules(): List<Module> =
         listOf(
@@ -87,7 +88,7 @@ class FindingDetailViewModelTest : FrontendKoinInitializedTest() {
                 val loadedState = awaitItem()
                 assertEquals(FindingDetailUiStatus.LOADED, loadedState.status)
                 assertNotNull(loadedState.finding)
-                assertEquals("Crack in wall", loadedState.finding?.name)
+                assertEquals("Crack in wall", loadedState.finding?.finding?.name)
 
                 cancelAndIgnoreRemainingEvents()
             }

@@ -15,16 +15,19 @@ package cz.adamec.timotej.snag.projects.fe.driven.internal.api
 import cz.adamec.timotej.snag.projects.be.driving.contract.ProjectApiDto
 import cz.adamec.timotej.snag.projects.be.driving.contract.PutProjectApiDto
 import cz.adamec.timotej.snag.projects.business.Project
+import cz.adamec.timotej.snag.projects.fe.model.FrontendProject
 
-internal fun ProjectApiDto.toBusiness() =
-    Project(
-        id = id,
-        name = name,
-        address = address,
+internal fun ProjectApiDto.toModel() =
+    FrontendProject(
+        project = Project(
+            id = id,
+            name = name,
+            address = address,
+        ),
     )
 
-internal fun Project.toPutApiDto() =
+internal fun FrontendProject.toPutApiDto() =
     PutProjectApiDto(
-        name = name,
-        address = address,
+        name = project.name,
+        address = project.address,
     )

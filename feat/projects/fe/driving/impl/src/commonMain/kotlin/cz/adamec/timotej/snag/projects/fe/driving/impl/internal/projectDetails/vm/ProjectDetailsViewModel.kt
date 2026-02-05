@@ -16,7 +16,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
-import cz.adamec.timotej.snag.projects.business.Project
 import cz.adamec.timotej.snag.projects.fe.app.api.DeleteProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.GetProjectUseCase
 import cz.adamec.timotej.snag.structures.fe.app.api.GetStructuresUseCase
@@ -63,7 +62,7 @@ internal class ProjectDetailsViewModel(
                         }
                         errorEventsChannel.send(UiError.Unknown)
                     }
-                    is OfflineFirstDataResult.Success<Project?> ->
+                    is OfflineFirstDataResult.Success ->
                         result.data?.let { project ->
                             _state.update {
                                 it.copy(

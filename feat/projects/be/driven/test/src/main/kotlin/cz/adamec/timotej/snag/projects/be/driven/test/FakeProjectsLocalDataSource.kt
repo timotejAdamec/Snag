@@ -12,19 +12,19 @@
 
 package cz.adamec.timotej.snag.projects.be.driven.test
 
+import cz.adamec.timotej.snag.projects.be.model.BackendProject
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsLocalDataSource
-import cz.adamec.timotej.snag.projects.business.Project
 import kotlin.uuid.Uuid
 
 class FakeProjectsLocalDataSource : ProjectsLocalDataSource {
-    private val projects = mutableMapOf<Uuid, Project>()
+    private val projects = mutableMapOf<Uuid, BackendProject>()
 
-    override suspend fun getProjects(): List<Project> = projects.values.toList()
+    override suspend fun getProjects(): List<BackendProject> = projects.values.toList()
 
-    override suspend fun getProject(id: Uuid): Project? = projects[id]
+    override suspend fun getProject(id: Uuid): BackendProject? = projects[id]
 
-    override suspend fun updateProject(project: Project): Project? {
-        projects[project.id] = project
+    override suspend fun updateProject(project: BackendProject): BackendProject? {
+        projects[project.project.id] = project
         return null
     }
 
@@ -32,7 +32,7 @@ class FakeProjectsLocalDataSource : ProjectsLocalDataSource {
         projects.remove(id)
     }
 
-    fun setProject(project: Project) {
-        projects[project.id] = project
+    fun setProject(project: BackendProject) {
+        projects[project.project.id] = project
     }
 }

@@ -15,8 +15,8 @@ package cz.adamec.timotej.snag.projects.fe.driven.internal.sync
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
 import cz.adamec.timotej.snag.lib.sync.fe.app.api.handler.DbApiSyncHandler
-import cz.adamec.timotej.snag.projects.business.Project
 import cz.adamec.timotej.snag.projects.fe.driven.internal.LH
+import cz.adamec.timotej.snag.projects.fe.model.FrontendProject
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsApi
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsDb
 import kotlinx.coroutines.flow.Flow
@@ -25,19 +25,19 @@ import kotlin.uuid.Uuid
 internal class ProjectSyncHandler(
     private val projectsApi: ProjectsApi,
     private val projectsDb: ProjectsDb,
-) : DbApiSyncHandler<Project>(LH.logger) {
+) : DbApiSyncHandler<FrontendProject>(LH.logger) {
     override val entityTypeId: String = PROJECT_SYNC_ENTITY_TYPE
     override val entityName: String = "project"
 
-    override fun getEntityFlow(entityId: Uuid): Flow<OfflineFirstDataResult<Project?>> =
+    override fun getEntityFlow(entityId: Uuid): Flow<OfflineFirstDataResult<FrontendProject?>> =
         projectsDb.getProjectFlow(entityId)
 
-    override suspend fun saveEntityToApi(entity: Project): OnlineDataResult<Project?> =
+    override suspend fun saveEntityToApi(entity: FrontendProject): OnlineDataResult<FrontendProject?> =
         projectsApi.saveProject(entity)
 
     override suspend fun deleteEntityFromApi(entityId: Uuid): OnlineDataResult<Unit> =
         projectsApi.deleteProject(entityId)
 
-    override suspend fun saveEntityToDb(entity: Project): OfflineFirstDataResult<Unit> =
+    override suspend fun saveEntityToDb(entity: FrontendProject): OfflineFirstDataResult<Unit> =
         projectsDb.saveProject(entity)
 }

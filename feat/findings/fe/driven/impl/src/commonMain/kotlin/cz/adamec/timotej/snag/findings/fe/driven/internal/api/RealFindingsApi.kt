@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.findings.fe.driven.internal.api
 
-import cz.adamec.timotej.snag.feat.findings.business.Finding
+import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
 import cz.adamec.timotej.snag.findings.be.driving.contract.FindingApiDto
 import cz.adamec.timotej.snag.findings.fe.driven.internal.LH
 import cz.adamec.timotej.snag.findings.fe.ports.FindingsApi
@@ -27,11 +27,11 @@ import kotlin.uuid.Uuid
 internal class RealFindingsApi(
     private val httpClient: SnagNetworkHttpClient,
 ) : FindingsApi {
-    override suspend fun getFindings(structureId: Uuid): OnlineDataResult<List<Finding>> {
+    override suspend fun getFindings(structureId: Uuid): OnlineDataResult<List<FrontendFinding>> {
         LH.logger.d { "Fetching findings for structure $structureId..." }
         return safeApiCall(logger = LH.logger, errorContext = "Error fetching findings for structure $structureId.") {
             httpClient.get("/structures/$structureId/findings").body<List<FindingApiDto>>().map {
-                it.toBusiness()
+                it.toModel()
             }
         }.also { if (it is OnlineDataResult.Success) LH.logger.d { "Fetched ${it.data.size} findings for structure $structureId." } }
     }
@@ -44,19 +44,19 @@ internal class RealFindingsApi(
         }.also { if (it is OnlineDataResult.Success) LH.logger.d { "Deleted finding $id from API." } }
     }
 
-    override suspend fun saveFinding(finding: Finding): OnlineDataResult<Finding?> {
-        LH.logger.d { "Saving finding ${finding.id} to API..." }
-        return safeApiCall(logger = LH.logger, errorContext = "Error saving finding ${finding.id} to API.") {
+    override suspend fun saveFinding(finding: FrontendFinding): OnlineDataResult<FrontendFinding?> {
+        LH.logger.d { "Saving finding ${finding.finding.id} to API..." }
+        return safeApiCall(logger = LH.logger, errorContext = "Error saving finding ${finding.finding.id} to API.") {
             val findingDto = finding.toPutApiDto()
             val response =
-                httpClient.put("/structures/${finding.structureId}/findings/${finding.id}") {
+                httpClient.put("/structures/${finding.finding.structureId}/findings/${finding.finding.id}") {
                     setBody(findingDto)
                 }
             if (response.status != HttpStatusCode.NoContent) {
-                response.body<FindingApiDto>().toBusiness()
+                response.body<FindingApiDto>().toModel()
             } else {
                 null
             }
-        }.also { if (it is OnlineDataResult.Success) LH.logger.d { "Saved finding ${finding.id} to API." } }
+        }.also { if (it is OnlineDataResult.Success) LH.logger.d { "Saved finding ${finding.finding.id} to API." } }
     }
 }

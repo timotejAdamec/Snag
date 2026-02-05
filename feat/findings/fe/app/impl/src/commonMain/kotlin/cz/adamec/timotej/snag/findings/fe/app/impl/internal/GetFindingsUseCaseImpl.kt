@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.findings.fe.app.impl.internal
 
-import cz.adamec.timotej.snag.feat.findings.business.Finding
+import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
 import cz.adamec.timotej.snag.findings.fe.app.api.GetFindingsUseCase
 import cz.adamec.timotej.snag.findings.fe.ports.FindingsApi
 import cz.adamec.timotej.snag.findings.fe.ports.FindingsDb
@@ -30,7 +30,7 @@ class GetFindingsUseCaseImpl(
     private val findingsDb: FindingsDb,
     private val applicationScope: ApplicationScope,
 ) : GetFindingsUseCase {
-    override operator fun invoke(structureId: Uuid): Flow<OfflineFirstDataResult<List<Finding>>> {
+    override operator fun invoke(structureId: Uuid): Flow<OfflineFirstDataResult<List<FrontendFinding>>> {
         applicationScope.launch {
             when (val remoteFindingsResult = findingsApi.getFindings(structureId)) {
                 is OnlineDataResult.Failure -> {

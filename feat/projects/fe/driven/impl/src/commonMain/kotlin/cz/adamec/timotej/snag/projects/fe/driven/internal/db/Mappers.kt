@@ -14,18 +14,21 @@ package cz.adamec.timotej.snag.projects.fe.driven.internal.db
 
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.ProjectEntity
 import cz.adamec.timotej.snag.projects.business.Project
+import cz.adamec.timotej.snag.projects.fe.model.FrontendProject
 import kotlin.uuid.Uuid
 
-internal fun Project.toEntity() =
+internal fun FrontendProject.toEntity() =
     ProjectEntity(
-        id = id.toString(),
-        name = name,
-        address = address,
+        id = project.id.toString(),
+        name = project.name,
+        address = project.address,
     )
 
-internal fun ProjectEntity.toBusiness() =
-    Project(
-        id = Uuid.parse(id),
-        name = name,
-        address = address,
+internal fun ProjectEntity.toModel() =
+    FrontendProject(
+        project = Project(
+            id = Uuid.parse(id),
+            name = name,
+            address = address,
+        ),
     )

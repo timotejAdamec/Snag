@@ -12,9 +12,9 @@
 
 package cz.adamec.timotej.snag.findings.be.app.api
 
-import cz.adamec.timotej.snag.feat.findings.business.Finding
+import cz.adamec.timotej.snag.feat.findings.be.model.BackendFinding
 import kotlin.uuid.Uuid
 
 interface GetFindingsUseCase {
-    suspend operator fun invoke(structureId: Uuid): List<Finding>
+    suspend operator fun invoke(structureId: Uuid): List<BackendFinding>
 }

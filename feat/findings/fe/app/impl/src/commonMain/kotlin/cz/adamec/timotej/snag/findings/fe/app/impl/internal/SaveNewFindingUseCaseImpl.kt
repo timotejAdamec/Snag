@@ -13,6 +13,7 @@
 package cz.adamec.timotej.snag.findings.fe.app.impl.internal
 
 import cz.adamec.timotej.snag.feat.findings.business.Finding
+import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
 import cz.adamec.timotej.snag.findings.fe.app.api.SaveNewFindingUseCase
 import cz.adamec.timotej.snag.findings.fe.app.api.model.SaveNewFindingRequest
 import cz.adamec.timotej.snag.findings.fe.app.impl.internal.LH.logger
@@ -39,12 +40,14 @@ class SaveNewFindingUseCaseImpl(
                 coordinates = request.coordinates,
             )
 
+        val frontendFinding = FrontendFinding(finding = finding)
+
         return findingsDb
-            .saveFinding(finding)
+            .saveFinding(frontendFinding)
             .also {
                 logger.log(
                     offlineFirstDataResult = it,
-                    additionalInfo = "SaveNewFindingUseCase, findingsDb.saveFinding($finding)",
+                    additionalInfo = "SaveNewFindingUseCase, findingsDb.saveFinding($frontendFinding)",
                 )
                 if (it is OfflineFirstDataResult.Success) {
                     findingsSync.enqueueFindingSave(finding.id)

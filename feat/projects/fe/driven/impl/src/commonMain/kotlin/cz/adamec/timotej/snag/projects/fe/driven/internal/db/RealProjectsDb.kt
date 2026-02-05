@@ -19,8 +19,8 @@ import cz.adamec.timotej.snag.feat.shared.database.fe.db.ProjectEntity
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.ProjectEntityQueries
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.database.fe.safeDbWrite
-import cz.adamec.timotej.snag.projects.business.Project
 import cz.adamec.timotej.snag.projects.fe.driven.internal.LH
+import cz.adamec.timotej.snag.projects.fe.model.FrontendProject
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsDb
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
@@ -32,21 +32,21 @@ internal class RealProjectsDb(
     private val projectEntityQueries: ProjectEntityQueries,
     private val ioDispatcher: CoroutineDispatcher,
 ) : ProjectsDb {
-    override fun getAllProjectsFlow(): Flow<OfflineFirstDataResult<List<Project>>> =
+    override fun getAllProjectsFlow(): Flow<OfflineFirstDataResult<List<FrontendProject>>> =
         projectEntityQueries
             .selectAll()
             .asFlow()
             .mapToList(ioDispatcher)
-            .map<List<ProjectEntity>, OfflineFirstDataResult<List<Project>>> { entities ->
+            .map<List<ProjectEntity>, OfflineFirstDataResult<List<FrontendProject>>> { entities ->
                 OfflineFirstDataResult.Success(
-                    entities.map { it.toBusiness() },
+                    entities.map { it.toModel() },
                 )
             }.catch { e ->
                 LH.logger.e { "Error loading projects from DB." }
                 emit(OfflineFirstDataResult.ProgrammerError(throwable = e))
             }
 
-    override suspend fun saveProjects(projects: List<Project>): OfflineFirstDataResult<Unit> =
+    override suspend fun saveProjects(projects: List<FrontendProject>): OfflineFirstDataResult<Unit> =
         safeDbWrite(ioDispatcher = ioDispatcher, logger = LH.logger, errorMessage = "Error saving projects $projects to DB.") {
             projectEntityQueries.transaction {
                 projects.forEach {
@@ -55,19 +55,19 @@ internal class RealProjectsDb(
             }
         }
 
-    override fun getProjectFlow(id: Uuid): Flow<OfflineFirstDataResult<Project?>> =
+    override fun getProjectFlow(id: Uuid): Flow<OfflineFirstDataResult<FrontendProject?>> =
         projectEntityQueries
             .selectById(id.toString())
             .asFlow()
             .mapToOneOrNull(ioDispatcher)
-            .map<ProjectEntity?, OfflineFirstDataResult<Project?>> {
-                OfflineFirstDataResult.Success(it?.toBusiness())
+            .map<ProjectEntity?, OfflineFirstDataResult<FrontendProject?>> {
+                OfflineFirstDataResult.Success(it?.toModel())
             }.catch { e ->
                 LH.logger.e { "Error loading project $id from DB." }
                 emit(OfflineFirstDataResult.ProgrammerError(throwable = e))
             }
 
-    override suspend fun saveProject(project: Project): OfflineFirstDataResult<Unit> =
+    override suspend fun saveProject(project: FrontendProject): OfflineFirstDataResult<Unit> =
         safeDbWrite(ioDispatcher = ioDispatcher, logger = LH.logger, errorMessage = "Error saving project $project to DB.") {
             projectEntityQueries.save(project.toEntity())
         }

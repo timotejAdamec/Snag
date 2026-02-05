@@ -16,6 +16,7 @@ import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.projects.business.Project
 import cz.adamec.timotej.snag.projects.fe.app.api.GetProjectUseCase
+import cz.adamec.timotej.snag.projects.fe.model.FrontendProject
 import cz.adamec.timotej.snag.projects.fe.app.api.SaveProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.driven.test.FakeProjectsApi
 import cz.adamec.timotej.snag.projects.fe.driven.test.FakeProjectsDb
@@ -75,7 +76,7 @@ class ProjectDetailsEditViewModelTest : FrontendKoinInitializedTest() {
     fun `loading project data updates state when projectId is provided`() =
         runTest {
             val projectId = Uuid.random()
-            val project = Project(projectId, "Test Project", "Test Address")
+            val project = FrontendProject(project = Project(projectId, "Test Project", "Test Address"))
             fakeProjectsDb.setProject(project)
 
             val viewModel = createViewModel(projectId = projectId)
@@ -145,10 +146,10 @@ class ProjectDetailsEditViewModelTest : FrontendKoinInitializedTest() {
 
             // Verify project is saved in DB
             val savedProjectResult = fakeProjectsDb.getProjectFlow(savedId).first()
-            assertIs<OfflineFirstDataResult.Success<Project?>>(savedProjectResult)
+            assertIs<OfflineFirstDataResult.Success<FrontendProject?>>(savedProjectResult)
             val savedProject = savedProjectResult.data
-            assertEquals("Name", savedProject?.name)
-            assertEquals("Address", savedProject?.address)
+            assertEquals("Name", savedProject?.project?.name)
+            assertEquals("Address", savedProject?.project?.address)
         }
 
     @Test

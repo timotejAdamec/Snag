@@ -12,19 +12,22 @@
 
 package cz.adamec.timotej.snag.findings.fe.driven.internal.api
 
-import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
 import cz.adamec.timotej.snag.feat.findings.business.Finding
-import cz.adamec.timotej.snag.findings.be.driving.contract.RelativeCoordinateApiDto
+import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
+import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
 import cz.adamec.timotej.snag.findings.be.driving.contract.FindingApiDto
 import cz.adamec.timotej.snag.findings.be.driving.contract.PutFindingApiDto
+import cz.adamec.timotej.snag.findings.be.driving.contract.RelativeCoordinateApiDto
 
-internal fun FindingApiDto.toBusiness() =
-    Finding(
-        id = id,
-        structureId = structureId,
-        name = name,
-        description = description,
-        coordinates = coordinates.map { it.toBusiness() },
+internal fun FindingApiDto.toModel() =
+    FrontendFinding(
+        finding = Finding(
+            id = id,
+            structureId = structureId,
+            name = name,
+            description = description,
+            coordinates = coordinates.map { it.toBusiness() },
+        ),
     )
 
 internal fun RelativeCoordinateApiDto.toBusiness() =
@@ -33,10 +36,10 @@ internal fun RelativeCoordinateApiDto.toBusiness() =
         y = y,
     )
 
-internal fun Finding.toPutApiDto() =
+internal fun FrontendFinding.toPutApiDto() =
     PutFindingApiDto(
-        structureId = structureId,
-        name = name,
-        description = description,
-        coordinates = coordinates.map { RelativeCoordinateApiDto(x = it.x, y = it.y) },
+        structureId = finding.structureId,
+        name = finding.name,
+        description = finding.description,
+        coordinates = finding.coordinates.map { RelativeCoordinateApiDto(x = it.x, y = it.y) },
     )

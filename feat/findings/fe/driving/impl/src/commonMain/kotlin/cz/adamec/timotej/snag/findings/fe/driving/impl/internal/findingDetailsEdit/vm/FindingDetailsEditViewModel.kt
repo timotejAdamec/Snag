@@ -69,8 +69,8 @@ internal class FindingDetailsEditViewModel(
                         result.data?.let { data ->
                             _state.update {
                                 it.copy(
-                                    findingName = data.name,
-                                    findingDescription = data.description.orEmpty(),
+                                    findingName = data.finding.name,
+                                    findingDescription = data.finding.description.orEmpty(),
                                 )
                             }
                             cancel()

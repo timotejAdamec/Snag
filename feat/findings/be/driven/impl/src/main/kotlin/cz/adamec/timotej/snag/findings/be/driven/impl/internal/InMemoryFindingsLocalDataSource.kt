@@ -12,49 +12,57 @@
 
 package cz.adamec.timotej.snag.findings.be.driven.impl.internal
 
-import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
+import cz.adamec.timotej.snag.feat.findings.be.model.BackendFinding
 import cz.adamec.timotej.snag.feat.findings.business.Finding
+import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
 import cz.adamec.timotej.snag.findings.be.ports.FindingsLocalDataSource
 import kotlin.uuid.Uuid
 
 internal class InMemoryFindingsLocalDataSource : FindingsLocalDataSource {
     private val findings =
         mutableListOf(
-            Finding(
-                id = Uuid.parse(FINDING_1),
-                structureId = Uuid.parse(STRUCTURE_1),
-                name = "Cracked wall tile",
-                description = "Visible crack on wall tile near entrance.",
-                coordinates = listOf(RelativeCoordinate(x = 0.25f, y = 0.40f)),
+            BackendFinding(
+                finding = Finding(
+                    id = Uuid.parse(FINDING_1),
+                    structureId = Uuid.parse(STRUCTURE_1),
+                    name = "Cracked wall tile",
+                    description = "Visible crack on wall tile near entrance.",
+                    coordinates = listOf(RelativeCoordinate(x = 0.25f, y = 0.40f)),
+                ),
             ),
-            Finding(
-                id = Uuid.parse(FINDING_2),
-                structureId = Uuid.parse(STRUCTURE_1),
-                name = "Missing paint patch",
-                description = "Unpainted area on the ceiling in hallway.",
-                coordinates = listOf(RelativeCoordinate(x = 0.60f, y = 0.15f)),
+            BackendFinding(
+                finding = Finding(
+                    id = Uuid.parse(FINDING_2),
+                    structureId = Uuid.parse(STRUCTURE_1),
+                    name = "Missing paint patch",
+                    description = "Unpainted area on the ceiling in hallway.",
+                    coordinates = listOf(RelativeCoordinate(x = 0.60f, y = 0.15f)),
+                ),
             ),
-            Finding(
-                id = Uuid.parse(FINDING_3),
-                structureId = Uuid.parse(STRUCTURE_2),
-                name = "Loose handrail",
-                description = null,
-                coordinates =
-                    listOf(
-                        RelativeCoordinate(x = 0.80f, y = 0.55f),
-                        RelativeCoordinate(x = 0.82f, y = 0.60f),
-                    ),
+            BackendFinding(
+                finding = Finding(
+                    id = Uuid.parse(FINDING_3),
+                    structureId = Uuid.parse(STRUCTURE_2),
+                    name = "Loose handrail",
+                    description = null,
+                    coordinates =
+                        listOf(
+                            RelativeCoordinate(x = 0.80f, y = 0.55f),
+                            RelativeCoordinate(x = 0.82f, y = 0.60f),
+                        ),
+                ),
             ),
         )
 
-    override suspend fun getFindings(structureId: Uuid): List<Finding> = findings.filter { it.structureId == structureId }
+    override suspend fun getFindings(structureId: Uuid): List<BackendFinding> =
+        findings.filter { it.finding.structureId == structureId }
 
     override suspend fun deleteFinding(id: Uuid) {
-        findings.removeIf { it.id == id }
+        findings.removeIf { it.finding.id == id }
     }
 
-    override suspend fun updateFinding(finding: Finding): Finding? {
-        findings.removeIf { it.id == finding.id }
+    override suspend fun updateFinding(finding: BackendFinding): BackendFinding? {
+        findings.removeIf { it.finding.id == finding.finding.id }
         findings.add(finding)
         return null
     }

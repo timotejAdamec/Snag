@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.findings.be.app.impl.internal
 
-import cz.adamec.timotej.snag.feat.findings.business.Finding
+import cz.adamec.timotej.snag.feat.findings.be.model.BackendFinding
 import cz.adamec.timotej.snag.findings.be.app.api.GetFindingsUseCase
 import cz.adamec.timotej.snag.findings.be.app.impl.internal.LH.logger
 import cz.adamec.timotej.snag.findings.be.ports.FindingsLocalDataSource
@@ -21,7 +21,7 @@ import kotlin.uuid.Uuid
 internal class GetFindingsUseCaseImpl(
     private val findingsLocalDataSource: FindingsLocalDataSource,
 ) : GetFindingsUseCase {
-    override suspend operator fun invoke(structureId: Uuid): List<Finding> {
+    override suspend operator fun invoke(structureId: Uuid): List<BackendFinding> {
         logger.debug("Getting findings for structure $structureId from local storage.")
         return findingsLocalDataSource.getFindings(structureId).also {
             logger.debug("Got ${it.size} findings for structure $structureId from local storage.")

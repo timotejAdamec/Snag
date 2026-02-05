@@ -13,34 +13,34 @@
 package cz.adamec.timotej.snag.projects.fe.driven.test
 
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
-import cz.adamec.timotej.snag.projects.business.Project
+import cz.adamec.timotej.snag.projects.fe.model.FrontendProject
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsApi
 import kotlin.uuid.Uuid
 
 class FakeProjectsApi : ProjectsApi {
-    private val projects = mutableMapOf<Uuid, Project>()
+    private val projects = mutableMapOf<Uuid, FrontendProject>()
     var forcedFailure: OnlineDataResult.Failure? = null
-    var saveProjectResponseOverride: ((Project) -> OnlineDataResult<Project?>)? = null
+    var saveProjectResponseOverride: ((FrontendProject) -> OnlineDataResult<FrontendProject?>)? = null
 
-    override suspend fun getProjects(): OnlineDataResult<List<Project>> {
+    override suspend fun getProjects(): OnlineDataResult<List<FrontendProject>> {
         val failure = forcedFailure
         if (failure != null) return failure
         return OnlineDataResult.Success(projects.values.toList())
     }
 
-    override suspend fun getProject(id: Uuid): OnlineDataResult<Project> {
+    override suspend fun getProject(id: Uuid): OnlineDataResult<FrontendProject> {
         val failure = forcedFailure
         if (failure != null) return failure
         val project = projects[id] ?: return OnlineDataResult.Failure.ProgrammerError(Exception("Not found"))
         return OnlineDataResult.Success(project)
     }
 
-    override suspend fun saveProject(project: Project): OnlineDataResult<Project?> {
+    override suspend fun saveProject(project: FrontendProject): OnlineDataResult<FrontendProject?> {
         val failure = forcedFailure
         if (failure != null) return failure
         val override = saveProjectResponseOverride
         if (override != null) return override(project)
-        projects[project.id] = project
+        projects[project.project.id] = project
         return OnlineDataResult.Success(project)
     }
 
@@ -51,7 +51,7 @@ class FakeProjectsApi : ProjectsApi {
         return OnlineDataResult.Success(Unit)
     }
 
-    fun setProject(project: Project) {
-        projects[project.id] = project
+    fun setProject(project: FrontendProject) {
+        projects[project.project.id] = project
     }
 }

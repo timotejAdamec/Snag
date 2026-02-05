@@ -12,13 +12,13 @@
 
 package cz.adamec.timotej.snag.findings.be.ports
 
-import cz.adamec.timotej.snag.feat.findings.business.Finding
+import cz.adamec.timotej.snag.feat.findings.be.model.BackendFinding
 import kotlin.uuid.Uuid
 
 interface FindingsLocalDataSource {
-    suspend fun getFindings(structureId: Uuid): List<Finding>
+    suspend fun getFindings(structureId: Uuid): List<BackendFinding>
 
-    suspend fun updateFinding(finding: Finding): Finding?
+    suspend fun updateFinding(finding: BackendFinding): BackendFinding?
 
     suspend fun deleteFinding(id: Uuid)
 }

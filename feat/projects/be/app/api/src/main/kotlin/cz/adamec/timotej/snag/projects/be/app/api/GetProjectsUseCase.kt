@@ -12,8 +12,8 @@
 
 package cz.adamec.timotej.snag.projects.be.app.api
 
-import cz.adamec.timotej.snag.projects.business.Project
+import cz.adamec.timotej.snag.projects.be.model.BackendProject
 
 interface GetProjectsUseCase {
-    suspend operator fun invoke(): List<Project>
+    suspend operator fun invoke(): List<BackendProject>
 }

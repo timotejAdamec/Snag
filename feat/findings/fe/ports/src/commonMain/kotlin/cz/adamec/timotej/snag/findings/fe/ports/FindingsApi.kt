@@ -12,14 +12,14 @@
 
 package cz.adamec.timotej.snag.findings.fe.ports
 
-import cz.adamec.timotej.snag.feat.findings.business.Finding
+import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
 import kotlin.uuid.Uuid
 
 interface FindingsApi {
-    suspend fun getFindings(structureId: Uuid): OnlineDataResult<List<Finding>>
+    suspend fun getFindings(structureId: Uuid): OnlineDataResult<List<FrontendFinding>>
 
-    suspend fun saveFinding(finding: Finding): OnlineDataResult<Finding?>
+    suspend fun saveFinding(finding: FrontendFinding): OnlineDataResult<FrontendFinding?>
 
     suspend fun deleteFinding(id: Uuid): OnlineDataResult<Unit>
 }

@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.projects.be.driven.impl.internal
 
+import cz.adamec.timotej.snag.projects.be.model.BackendProject
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsLocalDataSource
 import cz.adamec.timotej.snag.projects.business.Project
 import kotlin.uuid.Uuid
@@ -19,20 +20,26 @@ import kotlin.uuid.Uuid
 internal class InMemoryProjectsLocalDataSource : ProjectsLocalDataSource {
     private val projects =
         mutableListOf(
-            Project(
-                id = Uuid.parse("00000000-0000-0000-0000-000000000001"),
-                name = "Strahov Dormitories Renovation",
-                address = "Chaloupeckého 1917/9, 160 17 Praha 6",
+            BackendProject(
+                project = Project(
+                    id = Uuid.parse("00000000-0000-0000-0000-000000000001"),
+                    name = "Strahov Dormitories Renovation",
+                    address = "Chaloupeckého 1917/9, 160 17 Praha 6",
+                ),
             ),
-            Project(
-                id = Uuid.parse("00000000-0000-0000-0000-000000000002"),
-                name = "FIT CTU New Building",
-                address = "Thákurova 9, 160 00 Praha 6",
+            BackendProject(
+                project = Project(
+                    id = Uuid.parse("00000000-0000-0000-0000-000000000002"),
+                    name = "FIT CTU New Building",
+                    address = "Thákurova 9, 160 00 Praha 6",
+                ),
             ),
-            Project(
-                id = Uuid.parse("00000000-0000-0000-0000-000000000003"),
-                name = "National Library of Technology",
-                address = "Technická 2710/6, 160 00 Praha 6",
+            BackendProject(
+                project = Project(
+                    id = Uuid.parse("00000000-0000-0000-0000-000000000003"),
+                    name = "National Library of Technology",
+                    address = "Technická 2710/6, 160 00 Praha 6",
+                ),
             ),
         )
 
@@ -75,20 +82,20 @@ internal class InMemoryProjectsLocalDataSource : ProjectsLocalDataSource {
 //    ),
 //    )
 
-    override suspend fun getProjects(): List<Project> = projects
+    override suspend fun getProjects(): List<BackendProject> = projects
 
-    override suspend fun getProject(id: Uuid): Project? =
+    override suspend fun getProject(id: Uuid): BackendProject? =
         projects
-            .find { it.id == id }
+            .find { it.project.id == id }
 
     // TODO check updated timestamp and return the database project if it is newer
-    override suspend fun updateProject(project: Project): Project? {
-        projects.removeIf { it.id == project.id }
+    override suspend fun updateProject(project: BackendProject): BackendProject? {
+        projects.removeIf { it.project.id == project.project.id }
         projects.add(project)
         return null
     }
 
     override suspend fun deleteProject(id: Uuid) {
-        projects.removeIf { it.id == id }
+        projects.removeIf { it.project.id == id }
     }
 }

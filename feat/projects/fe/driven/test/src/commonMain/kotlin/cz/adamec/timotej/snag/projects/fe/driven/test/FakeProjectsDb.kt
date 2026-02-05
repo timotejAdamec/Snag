@@ -13,7 +13,7 @@
 package cz.adamec.timotej.snag.projects.fe.driven.test
 
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
-import cz.adamec.timotej.snag.projects.business.Project
+import cz.adamec.timotej.snag.projects.fe.model.FrontendProject
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsDb
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,23 +22,23 @@ import kotlinx.coroutines.flow.update
 import kotlin.uuid.Uuid
 
 class FakeProjectsDb : ProjectsDb {
-    private val projects = MutableStateFlow<Map<Uuid, Project>>(emptyMap())
+    private val projects = MutableStateFlow<Map<Uuid, FrontendProject>>(emptyMap())
     var forcedFailure: OfflineFirstDataResult.ProgrammerError? = null
 
-    override fun getAllProjectsFlow(): Flow<OfflineFirstDataResult<List<Project>>> =
+    override fun getAllProjectsFlow(): Flow<OfflineFirstDataResult<List<FrontendProject>>> =
         projects.map { OfflineFirstDataResult.Success(it.values.toList()) }
 
-    override suspend fun saveProjects(projects: List<Project>): OfflineFirstDataResult<Unit> {
+    override suspend fun saveProjects(projects: List<FrontendProject>): OfflineFirstDataResult<Unit> {
         val failure = forcedFailure
         if (failure != null) return failure
 
         this.projects.update { current ->
-            current + projects.associateBy { it.id }
+            current + projects.associateBy { it.project.id }
         }
         return OfflineFirstDataResult.Success(Unit)
     }
 
-    override fun getProjectFlow(id: Uuid): Flow<OfflineFirstDataResult<Project?>> =
+    override fun getProjectFlow(id: Uuid): Flow<OfflineFirstDataResult<FrontendProject?>> =
         projects.map { map ->
             val failure = forcedFailure
             if (failure != null) {
@@ -48,11 +48,11 @@ class FakeProjectsDb : ProjectsDb {
             }
         }
 
-    override suspend fun saveProject(project: Project): OfflineFirstDataResult<Unit> {
+    override suspend fun saveProject(project: FrontendProject): OfflineFirstDataResult<Unit> {
         val failure = forcedFailure
         if (failure != null) return failure
 
-        projects.update { it + (project.id to project) }
+        projects.update { it + (project.project.id to project) }
         return OfflineFirstDataResult.Success(Unit)
     }
 
@@ -64,7 +64,7 @@ class FakeProjectsDb : ProjectsDb {
         return OfflineFirstDataResult.Success(Unit)
     }
 
-    fun setProject(project: Project) {
-        projects.update { it + (project.id to project) }
+    fun setProject(project: FrontendProject) {
+        projects.update { it + (project.project.id to project) }
     }
 }

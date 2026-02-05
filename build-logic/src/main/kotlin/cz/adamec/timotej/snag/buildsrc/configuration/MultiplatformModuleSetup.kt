@@ -89,7 +89,9 @@ internal fun Project.configureKotlinMultiplatformModule() {
                 val moduleDirectoryPath = this@configureKotlinMultiplatformModule.path.substringBeforeLast(":")
                 val modulePreDirectoryPath = moduleDirectoryPath.substringBeforeLast(":")
                 if (this@configureKotlinMultiplatformModule.name == "model") {
-                    api(project("$modulePreDirectoryPath:business"))
+                    if (hasFolderInPath(modulePreDirectoryPath, "business")) {
+                        api(project("$modulePreDirectoryPath:business"))
+                    }
                 } else if (this@configureKotlinMultiplatformModule.name == "ports") {
                     if (hasFolderInPath(moduleDirectoryPath, "model")) {
                         api(project("$moduleDirectoryPath:model"))

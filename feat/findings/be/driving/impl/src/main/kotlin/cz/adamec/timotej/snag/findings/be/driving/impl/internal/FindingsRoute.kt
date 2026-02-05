@@ -64,7 +64,7 @@ internal class FindingsRoute(
                             message = "Invalid request body.",
                         )
 
-                val updatedFinding = saveFindingUseCase(putFindingDto.toBusiness(id))
+                val updatedFinding = saveFindingUseCase(putFindingDto.toModel(id))
 
                 updatedFinding?.let {
                     call.respond(it.toDto())

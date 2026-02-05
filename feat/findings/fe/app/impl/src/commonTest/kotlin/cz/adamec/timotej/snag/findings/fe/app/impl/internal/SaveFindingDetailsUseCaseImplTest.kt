@@ -13,6 +13,7 @@
 package cz.adamec.timotej.snag.findings.fe.app.impl.internal
 
 import cz.adamec.timotej.snag.feat.findings.business.Finding
+import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
 import cz.adamec.timotej.snag.findings.fe.app.api.SaveFindingDetailsUseCase
 import cz.adamec.timotej.snag.findings.fe.app.api.model.SaveFindingDetailsRequest
 import cz.adamec.timotej.snag.findings.fe.driven.test.FakeFindingsDb
@@ -51,12 +52,14 @@ class SaveFindingDetailsUseCaseImplTest : FrontendKoinInitializedTest() {
     private val structureId = Uuid.parse("00000000-0000-0000-0000-000000000001")
     private val findingId = Uuid.parse("00000000-0000-0000-0001-000000000001")
 
-    private val existingFinding = Finding(
-        id = findingId,
-        structureId = structureId,
-        name = "Old name",
-        description = "Old description",
-        coordinates = emptyList(),
+    private val existingFinding = FrontendFinding(
+        finding = Finding(
+            id = findingId,
+            structureId = structureId,
+            name = "Old name",
+            description = "Old description",
+            coordinates = emptyList(),
+        ),
     )
 
     @Test

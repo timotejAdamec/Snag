@@ -14,7 +14,7 @@ package cz.adamec.timotej.snag.structures.fe.driving.impl.internal.floorPlan.vm
 
 import cz.adamec.timotej.snag.feat.structures.fe.model.FrontendStructure
 import androidx.compose.runtime.Immutable
-import cz.adamec.timotej.snag.feat.findings.business.Finding
+import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlin.uuid.Uuid
@@ -24,7 +24,7 @@ internal data class StructureDetailsUiState(
     val status: StructureDetailsUiStatus = StructureDetailsUiStatus.LOADING,
     val isBeingDeleted: Boolean = false,
     val feStructure: FrontendStructure? = null,
-    val findings: ImmutableList<Finding> = persistentListOf(),
+    val findings: ImmutableList<FrontendFinding> = persistentListOf(),
     val selectedFindingId: Uuid? = null,
 ) {
     val canInvokeDeletion = status == StructureDetailsUiStatus.LOADED && !isBeingDeleted

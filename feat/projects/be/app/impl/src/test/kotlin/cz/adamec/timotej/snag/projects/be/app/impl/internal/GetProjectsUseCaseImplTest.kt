@@ -13,6 +13,7 @@
 package cz.adamec.timotej.snag.projects.be.app.impl.internal
 
 import cz.adamec.timotej.snag.projects.be.driven.test.FakeProjectsLocalDataSource
+import cz.adamec.timotej.snag.projects.be.model.BackendProject
 import cz.adamec.timotej.snag.projects.business.Project
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
@@ -35,16 +36,20 @@ class GetProjectsUseCaseImplTest {
     fun `returns all projects`() =
         runTest {
             val project1 =
-                Project(
-                    id = Uuid.parse("00000000-0000-0000-0000-000000000001"),
-                    name = "Project 1",
-                    address = "Address 1",
+                BackendProject(
+                    project = Project(
+                        id = Uuid.parse("00000000-0000-0000-0000-000000000001"),
+                        name = "Project 1",
+                        address = "Address 1",
+                    ),
                 )
             val project2 =
-                Project(
-                    id = Uuid.parse("00000000-0000-0000-0000-000000000002"),
-                    name = "Project 2",
-                    address = "Address 2",
+                BackendProject(
+                    project = Project(
+                        id = Uuid.parse("00000000-0000-0000-0000-000000000002"),
+                        name = "Project 2",
+                        address = "Address 2",
+                    ),
                 )
             dataSource.setProject(project1)
             dataSource.setProject(project2)

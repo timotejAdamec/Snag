@@ -16,9 +16,9 @@ import cz.adamec.timotej.snag.lib.core.common.ApplicationScope
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
 import cz.adamec.timotej.snag.lib.core.fe.log
-import cz.adamec.timotej.snag.projects.business.Project
 import cz.adamec.timotej.snag.projects.fe.app.api.GetProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.LH.logger
+import cz.adamec.timotej.snag.projects.fe.model.FrontendProject
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsApi
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsDb
 import kotlinx.coroutines.flow.Flow
@@ -32,7 +32,7 @@ class GetProjectUseCaseImpl(
     private val projectsDb: ProjectsDb,
     private val applicationScope: ApplicationScope,
 ) : GetProjectUseCase {
-    override operator fun invoke(projectId: Uuid): Flow<OfflineFirstDataResult<Project?>> {
+    override operator fun invoke(projectId: Uuid): Flow<OfflineFirstDataResult<FrontendProject?>> {
         applicationScope.launch {
             when (val remoteProjectResult = projectsApi.getProject(projectId)) {
                 is OnlineDataResult.Failure ->

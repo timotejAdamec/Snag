@@ -12,8 +12,8 @@
 
 package cz.adamec.timotej.snag.findings.be.app.api
 
-import cz.adamec.timotej.snag.feat.findings.business.Finding
+import cz.adamec.timotej.snag.feat.findings.be.model.BackendFinding
 
 interface SaveFindingUseCase {
-    suspend operator fun invoke(finding: Finding): Finding?
+    suspend operator fun invoke(finding: BackendFinding): BackendFinding?
 }

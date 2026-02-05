@@ -69,7 +69,7 @@ internal class ProjectsRoute(
                             message = "Invalid request body.",
                         )
 
-                val updatedProject = saveProjectUseCase(putProjectDto.toBusiness(id))
+                val updatedProject = saveProjectUseCase(putProjectDto.toModel(id))
 
                 updatedProject?.let {
                     call.respond(it.toDto())

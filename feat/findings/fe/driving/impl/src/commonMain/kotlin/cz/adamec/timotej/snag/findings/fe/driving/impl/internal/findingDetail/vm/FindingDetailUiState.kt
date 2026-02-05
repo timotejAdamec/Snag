@@ -12,11 +12,11 @@
 
 package cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetail.vm
 
-import cz.adamec.timotej.snag.feat.findings.business.Finding
+import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
 
 internal data class FindingDetailUiState(
     val status: FindingDetailUiStatus = FindingDetailUiStatus.LOADING,
-    val finding: Finding? = null,
+    val finding: FrontendFinding? = null,
     val isBeingDeleted: Boolean = false,
 ) {
     val canInvokeDeletion: Boolean

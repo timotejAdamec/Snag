@@ -12,8 +12,9 @@
 
 package cz.adamec.timotej.snag.findings.fe.driven.internal.db
 
-import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
 import cz.adamec.timotej.snag.feat.findings.business.Finding
+import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
+import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.FindingEntity
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
@@ -25,22 +26,24 @@ internal data class RelativeCoordinateJson(
     val y: Float,
 )
 
-internal fun FindingEntity.toBusiness() =
-    Finding(
-        id = Uuid.parse(id),
-        structureId = Uuid.parse(structureId),
-        name = name,
-        description = description,
-        coordinates = parseCoordinates(coordinates),
+internal fun FindingEntity.toModel() =
+    FrontendFinding(
+        finding = Finding(
+            id = Uuid.parse(id),
+            structureId = Uuid.parse(structureId),
+            name = name,
+            description = description,
+            coordinates = parseCoordinates(coordinates),
+        ),
     )
 
-internal fun Finding.toEntity() =
+internal fun FrontendFinding.toEntity() =
     FindingEntity(
-        id = id.toString(),
-        structureId = structureId.toString(),
-        name = name,
-        description = description,
-        coordinates = serializeCoordinates(coordinates),
+        id = finding.id.toString(),
+        structureId = finding.structureId.toString(),
+        name = finding.name,
+        description = finding.description,
+        coordinates = serializeCoordinates(finding.coordinates),
     )
 
 private fun parseCoordinates(json: String): List<RelativeCoordinate> =

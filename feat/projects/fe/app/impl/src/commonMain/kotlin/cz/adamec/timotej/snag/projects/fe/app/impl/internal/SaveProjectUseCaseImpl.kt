@@ -20,6 +20,7 @@ import cz.adamec.timotej.snag.projects.business.Project
 import cz.adamec.timotej.snag.projects.fe.app.api.SaveProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.model.SaveProjectRequest
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.LH.logger
+import cz.adamec.timotej.snag.projects.fe.model.FrontendProject
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsDb
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsSync
 import kotlin.uuid.Uuid
@@ -31,10 +32,12 @@ class SaveProjectUseCaseImpl(
 ) : SaveProjectUseCase {
     override suspend operator fun invoke(request: SaveProjectRequest): OfflineFirstDataResult<Uuid> {
         val project =
-            Project(
-                id = request.id ?: uuidProvider.getUuid(),
-                name = request.name,
-                address = request.address,
+            FrontendProject(
+                project = Project(
+                    id = request.id ?: uuidProvider.getUuid(),
+                    name = request.name,
+                    address = request.address,
+                ),
             )
 
         return projectsDb
@@ -45,10 +48,10 @@ class SaveProjectUseCaseImpl(
                     additionalInfo = "SaveProjectUseCase, projectsDb.saveProject($project)",
                 )
                 if (it is OfflineFirstDataResult.Success) {
-                    projectsSync.enqueueProjectSave(project.id)
+                    projectsSync.enqueueProjectSave(project.project.id)
                 }
             }.map {
-                project.id
+                project.project.id
             }
     }
 }

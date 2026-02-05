@@ -85,11 +85,11 @@ internal fun ProjectsContent(
         ) {
             items(
                 items = state.projects,
-                key = { it.id },
+                key = { it.project.id },
             ) { project ->
                 ProjectListItem(
                     modifier = Modifier,
-                    onClick = { onProjectClick(project.id) },
+                    onClick = { onProjectClick(project.project.id) },
                     project = project,
                 )
             }

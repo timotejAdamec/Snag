@@ -24,12 +24,13 @@ import androidx.compose.ui.unit.dp
 import cz.adamec.timotej.snag.lib.core.common.UuidProvider
 import cz.adamec.timotej.snag.lib.design.fe.theme.SnagTheme
 import cz.adamec.timotej.snag.projects.business.Project
+import cz.adamec.timotej.snag.projects.fe.model.FrontendProject
 import org.koin.compose.koinInject
 import kotlin.uuid.Uuid
 
 @Composable
 internal fun ProjectListItem(
-    project: Project,
+    project: FrontendProject,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -39,13 +40,13 @@ internal fun ProjectListItem(
                 .clickable(onClick = onClick),
         headlineContent = {
             Text(
-                text = project.name,
+                text = project.project.name,
                 style = MaterialTheme.typography.titleLargeEmphasized,
             )
         },
         supportingContent = {
             Text(
-                text = project.address,
+                text = project.project.address,
                 style = MaterialTheme.typography.bodyLarge,
                 maxLines = 2,
             )
@@ -64,10 +65,12 @@ internal fun ProjectListItemPreview() {
                     height = 100.dp,
                 ),
             project =
-                Project(
-                    id = UuidProvider.getUuid(),
-                    name = "Project A",
-                    address = "Client A",
+                FrontendProject(
+                    project = Project(
+                        id = UuidProvider.getUuid(),
+                        name = "Project A",
+                        address = "Client A",
+                    ),
                 ),
             onClick = {},
         )

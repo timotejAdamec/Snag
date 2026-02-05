@@ -103,7 +103,7 @@ internal fun FindingDetailContent(
                     topBar = {
                         TopAppBar(
                             title = {
-                                Text(text = finding.name)
+                                Text(text = finding.finding.name)
                             },
                             navigationIcon = {
                                 IconButton(onClick = onBack) {
@@ -124,7 +124,7 @@ internal fun FindingDetailContent(
                                 .consumeWindowInsets(paddingValues)
                                 .padding(16.dp),
                     ) {
-                        finding.description?.let { description ->
+                        finding.finding.description?.let { description ->
                             Text(
                                 text = description,
                                 style = MaterialTheme.typography.bodyMedium,
@@ -132,7 +132,7 @@ internal fun FindingDetailContent(
                         }
                         Text(
                             modifier = Modifier.padding(top = 16.dp),
-                            text = "${finding.coordinates.size} coordinate(s)",
+                            text = "${finding.finding.coordinates.size} coordinate(s)",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )

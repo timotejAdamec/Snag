@@ -14,6 +14,7 @@ package cz.adamec.timotej.snag.findings.fe.app.impl.internal
 
 import cz.adamec.timotej.snag.feat.findings.business.Finding
 import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
+import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
 import cz.adamec.timotej.snag.findings.fe.app.api.SaveFindingCoordinatesUseCase
 import cz.adamec.timotej.snag.findings.fe.app.api.model.SaveFindingCoordinatesRequest
 import cz.adamec.timotej.snag.findings.fe.driven.test.FakeFindingsDb
@@ -52,12 +53,14 @@ class SaveFindingCoordinatesUseCaseImplTest : FrontendKoinInitializedTest() {
     private val structureId = Uuid.parse("00000000-0000-0000-0000-000000000001")
     private val findingId = Uuid.parse("00000000-0000-0000-0001-000000000001")
 
-    private val existingFinding = Finding(
-        id = findingId,
-        structureId = structureId,
-        name = "Finding",
-        description = null,
-        coordinates = listOf(RelativeCoordinate(0.1f, 0.2f)),
+    private val existingFinding = FrontendFinding(
+        finding = Finding(
+            id = findingId,
+            structureId = structureId,
+            name = "Finding",
+            description = null,
+            coordinates = listOf(RelativeCoordinate(0.1f, 0.2f)),
+        ),
     )
 
     @Test

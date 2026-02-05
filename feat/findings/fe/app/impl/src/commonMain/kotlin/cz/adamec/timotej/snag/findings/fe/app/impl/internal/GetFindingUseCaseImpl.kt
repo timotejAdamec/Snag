@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.findings.fe.app.impl.internal
 
-import cz.adamec.timotej.snag.feat.findings.business.Finding
+import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
 import cz.adamec.timotej.snag.findings.fe.app.api.GetFindingUseCase
 import cz.adamec.timotej.snag.findings.fe.ports.FindingsDb
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
@@ -23,7 +23,7 @@ import kotlin.uuid.Uuid
 class GetFindingUseCaseImpl(
     private val findingsDb: FindingsDb,
 ) : GetFindingUseCase {
-    override operator fun invoke(findingId: Uuid): Flow<OfflineFirstDataResult<Finding?>> =
+    override operator fun invoke(findingId: Uuid): Flow<OfflineFirstDataResult<FrontendFinding?>> =
         findingsDb
             .getFindingFlow(findingId)
             .distinctUntilChanged()

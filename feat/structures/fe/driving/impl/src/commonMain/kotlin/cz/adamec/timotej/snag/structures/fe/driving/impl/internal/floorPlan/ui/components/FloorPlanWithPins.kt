@@ -27,7 +27,7 @@ import androidx.compose.ui.layout.ContentScale
 import com.github.panpf.zoomimage.CoilZoomAsyncImage
 import com.github.panpf.zoomimage.CoilZoomState
 import com.github.panpf.zoomimage.rememberCoilZoomState
-import cz.adamec.timotej.snag.feat.findings.business.Finding
+import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
 import kotlinx.collections.immutable.ImmutableList
 import kotlin.uuid.Uuid
 
@@ -35,7 +35,7 @@ import kotlin.uuid.Uuid
 internal fun FloorPlanWithPins(
     floorPlanUrl: String,
     contentDescription: String,
-    findings: ImmutableList<Finding>,
+    findings: ImmutableList<FrontendFinding>,
     selectedFindingId: Uuid?,
     modifier: Modifier = Modifier,
 ) {
@@ -62,7 +62,7 @@ internal fun FloorPlanWithPins(
 @Composable
 private fun FindingsPinsOverlay(
     zoomableState: CoilZoomState,
-    findings: List<Finding>,
+    findings: List<FrontendFinding>,
     selectedFindingId: Uuid?,
     modifier: Modifier = Modifier,
 ) {
@@ -71,7 +71,7 @@ private fun FindingsPinsOverlay(
 
     val displayedFindings =
         if (selectedFindingId != null) {
-            findings.filter { it.id == selectedFindingId }
+            findings.filter { it.finding.id == selectedFindingId }
         } else {
             findings
         }
@@ -82,13 +82,13 @@ private fun FindingsPinsOverlay(
 
     Canvas(modifier = modifier.fillMaxSize()) {
         displayedFindings.forEach { finding ->
-            finding.coordinates.forEach { coord ->
+            finding.finding.coordinates.forEach { coord ->
                 val drawPoint =
                     Offset(
                         x = displayRect.left + coord.x * displayRect.width,
                         y = displayRect.top + coord.y * displayRect.height,
                     )
-                val isSelected = finding.id == selectedFindingId
+                val isSelected = finding.finding.id == selectedFindingId
 
                 drawFindingPin(
                     center = drawPoint,

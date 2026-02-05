@@ -12,20 +12,20 @@
 
 package cz.adamec.timotej.snag.findings.fe.driven.test
 
-import cz.adamec.timotej.snag.feat.findings.business.Finding
+import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
 import cz.adamec.timotej.snag.findings.fe.ports.FindingsApi
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
 import kotlin.uuid.Uuid
 
 class FakeFindingsApi : FindingsApi {
-    private val findings = mutableMapOf<Uuid, Finding>()
+    private val findings = mutableMapOf<Uuid, FrontendFinding>()
     var forcedFailure: OnlineDataResult.Failure? = null
-    var saveFindingResponseOverride: ((Finding) -> OnlineDataResult<Finding?>)? = null
+    var saveFindingResponseOverride: ((FrontendFinding) -> OnlineDataResult<FrontendFinding?>)? = null
 
-    override suspend fun getFindings(structureId: Uuid): OnlineDataResult<List<Finding>> {
+    override suspend fun getFindings(structureId: Uuid): OnlineDataResult<List<FrontendFinding>> {
         val failure = forcedFailure
         if (failure != null) return failure
-        return OnlineDataResult.Success(findings.values.filter { it.structureId == structureId })
+        return OnlineDataResult.Success(findings.values.filter { it.finding.structureId == structureId })
     }
 
     override suspend fun deleteFinding(id: Uuid): OnlineDataResult<Unit> {
@@ -35,20 +35,20 @@ class FakeFindingsApi : FindingsApi {
         return OnlineDataResult.Success(Unit)
     }
 
-    override suspend fun saveFinding(finding: Finding): OnlineDataResult<Finding?> {
+    override suspend fun saveFinding(finding: FrontendFinding): OnlineDataResult<FrontendFinding?> {
         val failure = forcedFailure
         if (failure != null) return failure
         val override = saveFindingResponseOverride
         if (override != null) return override(finding)
-        findings[finding.id] = finding
+        findings[finding.finding.id] = finding
         return OnlineDataResult.Success(finding)
     }
 
-    fun setFinding(finding: Finding) {
-        findings[finding.id] = finding
+    fun setFinding(finding: FrontendFinding) {
+        findings[finding.finding.id] = finding
     }
 
-    fun setFindings(findings: List<Finding>) {
-        findings.forEach { this.findings[it.id] = it }
+    fun setFindings(findings: List<FrontendFinding>) {
+        findings.forEach { this.findings[it.finding.id] = it }
     }
 }

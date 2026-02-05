@@ -30,7 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import cz.adamec.timotej.snag.feat.findings.business.Finding
+import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
 import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingsList.vm.FindingsListUiState
 import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingsList.vm.FindingsListUiStatus
 import org.jetbrains.compose.resources.stringResource
@@ -94,7 +94,7 @@ internal fun FindingsListContent(
 
 @Composable
 private fun FindingsList(
-    findings: List<Finding>,
+    findings: List<FrontendFinding>,
     selectedFindingId: Uuid?,
     onFindingClick: (findingId: Uuid) -> Unit,
     modifier: Modifier = Modifier,
@@ -105,16 +105,16 @@ private fun FindingsList(
     ) {
         items(
             items = findings,
-            key = { it.id },
+            key = { it.finding.id },
         ) { finding ->
-            val isSelected = finding.id == selectedFindingId
+            val isSelected = finding.finding.id == selectedFindingId
             val shape = if (isSelected) MaterialTheme.shapes.medium else MaterialTheme.shapes.extraSmall
             ListItem(
                 modifier =
                     Modifier
                         .padding(horizontal = 8.dp, vertical = 2.dp)
                         .clip(shape)
-                        .clickable { onFindingClick(finding.id) },
+                        .clickable { onFindingClick(finding.finding.id) },
                 colors =
                     if (isSelected) {
                         ListItemDefaults.colors(
@@ -124,10 +124,10 @@ private fun FindingsList(
                         ListItemDefaults.colors()
                     },
                 headlineContent = {
-                    Text(text = finding.name)
+                    Text(text = finding.finding.name)
                 },
                 supportingContent =
-                    finding.description?.let {
+                    finding.finding.description?.let {
                         { Text(text = it) }
                     },
             )

@@ -13,15 +13,15 @@
 package cz.adamec.timotej.snag.projects.fe.ports
 
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
-import cz.adamec.timotej.snag.projects.business.Project
+import cz.adamec.timotej.snag.projects.fe.model.FrontendProject
 import kotlin.uuid.Uuid
 
 interface ProjectsApi {
-    suspend fun getProjects(): OnlineDataResult<List<Project>>
+    suspend fun getProjects(): OnlineDataResult<List<FrontendProject>>
 
-    suspend fun getProject(id: Uuid): OnlineDataResult<Project>
+    suspend fun getProject(id: Uuid): OnlineDataResult<FrontendProject>
 
-    suspend fun saveProject(project: Project): OnlineDataResult<Project?>
+    suspend fun saveProject(project: FrontendProject): OnlineDataResult<FrontendProject?>
 
     suspend fun deleteProject(id: Uuid): OnlineDataResult<Unit>
 }

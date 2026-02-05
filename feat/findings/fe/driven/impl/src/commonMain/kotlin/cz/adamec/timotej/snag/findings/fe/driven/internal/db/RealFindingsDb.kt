@@ -17,7 +17,7 @@ import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import app.cash.sqldelight.coroutines.mapToOneOrNull
 import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
-import cz.adamec.timotej.snag.feat.findings.business.Finding
+import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.FindingEntity
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.FindingEntityQueries
 import cz.adamec.timotej.snag.findings.fe.driven.internal.LH
@@ -36,21 +36,21 @@ internal class RealFindingsDb(
     private val findingEntityQueries: FindingEntityQueries,
     private val ioDispatcher: CoroutineDispatcher,
 ) : FindingsDb {
-    override fun getFindingsFlow(structureId: Uuid): Flow<OfflineFirstDataResult<List<Finding>>> =
+    override fun getFindingsFlow(structureId: Uuid): Flow<OfflineFirstDataResult<List<FrontendFinding>>> =
         findingEntityQueries
             .selectByStructureId(structureId.toString())
             .asFlow()
             .mapToList(ioDispatcher)
-            .map<List<FindingEntity>, OfflineFirstDataResult<List<Finding>>> { entities ->
+            .map<List<FindingEntity>, OfflineFirstDataResult<List<FrontendFinding>>> { entities ->
                 OfflineFirstDataResult.Success(
-                    entities.map { it.toBusiness() },
+                    entities.map { it.toModel() },
                 )
             }.catch { e ->
                 LH.logger.e { "Error loading findings for structure $structureId from DB." }
                 emit(OfflineFirstDataResult.ProgrammerError(throwable = e))
             }
 
-    override suspend fun saveFindings(findings: List<Finding>): OfflineFirstDataResult<Unit> =
+    override suspend fun saveFindings(findings: List<FrontendFinding>): OfflineFirstDataResult<Unit> =
         safeDbWrite(ioDispatcher = ioDispatcher, logger = LH.logger, errorMessage = "Error saving findings $findings to DB.") {
             findingEntityQueries.transaction {
                 findings.forEach {
@@ -59,7 +59,7 @@ internal class RealFindingsDb(
             }
         }
 
-    override suspend fun saveFinding(finding: Finding): OfflineFirstDataResult<Unit> =
+    override suspend fun saveFinding(finding: FrontendFinding): OfflineFirstDataResult<Unit> =
         safeDbWrite(ioDispatcher = ioDispatcher, logger = LH.logger, errorMessage = "Error saving finding $finding to DB.") {
             findingEntityQueries.save(finding.toEntity())
         }
@@ -69,13 +69,13 @@ internal class RealFindingsDb(
             findingEntityQueries.deleteById(id.toString())
         }
 
-    override fun getFindingFlow(id: Uuid): Flow<OfflineFirstDataResult<Finding?>> =
+    override fun getFindingFlow(id: Uuid): Flow<OfflineFirstDataResult<FrontendFinding?>> =
         findingEntityQueries
             .selectById(id.toString())
             .asFlow()
             .mapToOneOrNull(ioDispatcher)
-            .map<FindingEntity?, OfflineFirstDataResult<Finding?>> { entity ->
-                OfflineFirstDataResult.Success(entity?.toBusiness())
+            .map<FindingEntity?, OfflineFirstDataResult<FrontendFinding?>> { entity ->
+                OfflineFirstDataResult.Success(entity?.toModel())
             }.catch { e ->
                 LH.logger.e { "Error loading finding $id from DB." }
                 emit(OfflineFirstDataResult.ProgrammerError(throwable = e))
