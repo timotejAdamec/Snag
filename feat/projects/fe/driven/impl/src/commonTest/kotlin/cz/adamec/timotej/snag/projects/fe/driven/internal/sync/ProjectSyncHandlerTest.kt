@@ -14,7 +14,7 @@ package cz.adamec.timotej.snag.projects.fe.driven.internal.sync
 
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
-import cz.adamec.timotej.snag.lib.sync.business.SyncOperationType
+import cz.adamec.timotej.snag.lib.sync.fe.model.SyncOperationType
 import cz.adamec.timotej.snag.lib.sync.fe.app.api.handler.SyncOperationResult
 import cz.adamec.timotej.snag.projects.business.Project
 import cz.adamec.timotej.snag.projects.fe.driven.test.FakeProjectsApi

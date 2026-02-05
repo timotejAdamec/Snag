@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.lib.sync.fe.driven.test
 
-import cz.adamec.timotej.snag.lib.sync.business.SyncOperationType
+import cz.adamec.timotej.snag.lib.sync.fe.model.SyncOperationType
 import cz.adamec.timotej.snag.lib.sync.fe.ports.SyncOperation
 import cz.adamec.timotej.snag.lib.sync.fe.ports.SyncQueue
 import kotlin.uuid.Uuid

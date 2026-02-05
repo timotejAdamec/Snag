@@ -10,7 +10,7 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.lib.sync.business
+package cz.adamec.timotej.snag.lib.sync.fe.model
 
 enum class SyncOperationType {
     UPSERT,

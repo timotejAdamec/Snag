@@ -15,7 +15,7 @@ package cz.adamec.timotej.snag.lib.sync.fe.app.api.handler
 import co.touchlab.kermit.Logger
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
-import cz.adamec.timotej.snag.lib.sync.business.SyncOperationType
+import cz.adamec.timotej.snag.lib.sync.fe.model.SyncOperationType
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlin.uuid.Uuid

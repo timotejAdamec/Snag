@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.lib.sync.fe.ports
 
-import cz.adamec.timotej.snag.lib.sync.business.SyncOperationType
+import cz.adamec.timotej.snag.lib.sync.fe.model.SyncOperationType
 import kotlin.uuid.Uuid
 
 interface SyncQueue {

@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.lib.sync.fe.app.impl.internal
 
-import cz.adamec.timotej.snag.lib.sync.business.SyncOperationType
+import cz.adamec.timotej.snag.lib.sync.fe.model.SyncOperationType
 import cz.adamec.timotej.snag.lib.sync.fe.app.api.EnqueueSyncDeleteUseCase
 import kotlin.uuid.Uuid
 
