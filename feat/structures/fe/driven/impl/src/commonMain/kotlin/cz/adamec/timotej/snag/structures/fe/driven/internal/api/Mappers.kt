@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.structures.fe.driven.internal.api
 
-import FrontendStructure
+import cz.adamec.timotej.snag.feat.structures.fe.model.FrontendStructure
 import cz.adamec.timotej.snag.feat.structures.business.Structure
 import cz.adamec.timotej.snag.structures.be.driving.contract.PutStructureApiDto
 import cz.adamec.timotej.snag.structures.be.driving.contract.StructureApiDto

@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.structures.fe.driven.internal.api
 
-import FrontendStructure
+import cz.adamec.timotej.snag.feat.structures.fe.model.FrontendStructure
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
 import cz.adamec.timotej.snag.network.fe.SnagNetworkHttpClient
 import cz.adamec.timotej.snag.network.fe.safeApiCall

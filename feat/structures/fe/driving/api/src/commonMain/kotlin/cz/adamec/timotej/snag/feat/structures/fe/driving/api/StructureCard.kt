@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.feat.structures.fe.driving.api
 
-import FrontendStructure
+import cz.adamec.timotej.snag.feat.structures.fe.model.FrontendStructure
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize

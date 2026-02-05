@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.structures.fe.driving.impl.internal.floorPlan.vm
 
-import FrontendStructure
+import cz.adamec.timotej.snag.feat.structures.fe.model.FrontendStructure
 import androidx.compose.runtime.Immutable
 import cz.adamec.timotej.snag.feat.findings.business.Finding
 import kotlinx.collections.immutable.ImmutableList

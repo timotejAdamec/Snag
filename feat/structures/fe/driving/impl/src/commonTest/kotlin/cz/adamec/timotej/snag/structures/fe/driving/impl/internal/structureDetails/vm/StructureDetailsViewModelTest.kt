@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.structures.fe.driving.impl.internal.structureDetails.vm
 
-import FrontendStructure
+import cz.adamec.timotej.snag.feat.structures.fe.model.FrontendStructure
 import app.cash.turbine.test
 import cz.adamec.timotej.snag.feat.structures.business.Structure
 import cz.adamec.timotej.snag.findings.fe.app.api.GetFindingsUseCase

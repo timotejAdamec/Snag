@@ -12,8 +12,7 @@
 
 package cz.adamec.timotej.snag.structures.fe.ports
 
-import FrontendStructure
-import cz.adamec.timotej.snag.feat.structures.business.Structure
+import cz.adamec.timotej.snag.feat.structures.fe.model.FrontendStructure
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
 import kotlin.uuid.Uuid
 

@@ -1,3 +1,5 @@
+package cz.adamec.timotej.snag.feat.structures.fe.model
+
 import cz.adamec.timotej.snag.feat.structures.business.Structure
 
 /*
