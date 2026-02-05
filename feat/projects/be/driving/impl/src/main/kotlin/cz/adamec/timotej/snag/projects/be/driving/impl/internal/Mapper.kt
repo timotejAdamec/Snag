@@ -25,6 +25,7 @@ internal fun BackendProject.toDto() =
             name = name,
             address = address,
             updatedAt = updatedAt,
+            deletedAt = this@toDto.deletedAt,
         )
     }
 

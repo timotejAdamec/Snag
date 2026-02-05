@@ -13,8 +13,15 @@
 package cz.adamec.timotej.snag.findings.fe.ports
 
 import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
+import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
 import kotlin.uuid.Uuid
+
+data class FindingSyncResult(
+    val id: Uuid,
+    val deletedAt: Timestamp?,
+    val finding: FrontendFinding?,
+)
 
 interface FindingsApi {
     suspend fun getFindings(structureId: Uuid): OnlineDataResult<List<FrontendFinding>>
@@ -22,4 +29,6 @@ interface FindingsApi {
     suspend fun saveFinding(finding: FrontendFinding): OnlineDataResult<FrontendFinding?>
 
     suspend fun deleteFinding(id: Uuid): OnlineDataResult<Unit>
+
+    suspend fun getFindingsModifiedSince(structureId: Uuid, since: Timestamp): OnlineDataResult<List<FindingSyncResult>>
 }

@@ -42,7 +42,7 @@ class DeleteStructureUseCaseImplTest {
         )
 
     @Test
-    fun `deletes structure from storage`() =
+    fun `soft-deletes structure in storage`() =
         runTest {
             dataSource.setStructures(structure)
 
@@ -53,7 +53,9 @@ class DeleteStructureUseCaseImplTest {
                 )
             )
 
-            assertNull(dataSource.getStructure(structureId))
+            val deletedStructure = dataSource.getStructure(structureId)
+            assertNotNull(deletedStructure)
+            assertEquals(Timestamp(20L), deletedStructure.deletedAt)
         }
 
     @Test

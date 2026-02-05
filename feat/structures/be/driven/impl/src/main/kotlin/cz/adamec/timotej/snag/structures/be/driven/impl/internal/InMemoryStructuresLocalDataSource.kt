@@ -88,24 +88,37 @@ internal class InMemoryStructuresLocalDataSource(
         deletedAt: Timestamp,
     ): BackendStructure? {
         val foundStructure = structures.find { it.structure.id == id }
-        if (foundStructure != null && foundStructure.structure.updatedAt >= deletedAt) {
-            return foundStructure
-        }
+            ?: return null
+        if (foundStructure.deletedAt != null) return null
+        if (foundStructure.structure.updatedAt >= deletedAt) return foundStructure
 
-        structures.removeIf { it.structure.id == id && it.structure.updatedAt < deletedAt }
+        val index = structures.indexOfFirst { it.structure.id == id }
+        structures[index] = foundStructure.copy(deletedAt = deletedAt)
         return null
     }
 
     override suspend fun saveStructure(backendStructure: BackendStructure): BackendStructure? {
         val foundStructure = structures.find { it.structure.id == backendStructure.structure.id }
-        if (foundStructure != null && foundStructure.structure.updatedAt >= backendStructure.structure.updatedAt) {
-            return foundStructure
+        if (foundStructure != null) {
+            val serverTimestamp = maxOf(
+                foundStructure.structure.updatedAt,
+                foundStructure.deletedAt ?: Timestamp(0),
+            )
+            if (serverTimestamp >= backendStructure.structure.updatedAt) {
+                return foundStructure
+            }
         }
 
         structures.removeIf { it.structure.id == backendStructure.structure.id }
         structures.add(backendStructure)
         return null
     }
+
+    override suspend fun getStructuresModifiedSince(projectId: Uuid, since: Timestamp): List<BackendStructure> =
+        structures.filter {
+            it.structure.projectId == projectId &&
+                (it.structure.updatedAt > since || it.deletedAt?.let { d -> d > since } == true)
+        }
 
     private companion object {
         private const val PROJECT_1 = "00000000-0000-0000-0000-000000000001"

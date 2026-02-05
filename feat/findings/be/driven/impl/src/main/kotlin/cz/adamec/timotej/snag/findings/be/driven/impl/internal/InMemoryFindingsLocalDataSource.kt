@@ -66,24 +66,37 @@ internal class InMemoryFindingsLocalDataSource(
 
     override suspend fun deleteFinding(id: Uuid, deletedAt: Timestamp): BackendFinding? {
         val foundFinding = findings.find { it.finding.id == id }
-        if (foundFinding != null && foundFinding.finding.updatedAt >= deletedAt) {
-            return foundFinding
-        }
+            ?: return null
+        if (foundFinding.deletedAt != null) return null
+        if (foundFinding.finding.updatedAt >= deletedAt) return foundFinding
 
-        findings.removeIf { it.finding.id == id && it.finding.updatedAt < deletedAt }
+        val index = findings.indexOfFirst { it.finding.id == id }
+        findings[index] = foundFinding.copy(deletedAt = deletedAt)
         return null
     }
 
     override suspend fun updateFinding(finding: BackendFinding): BackendFinding? {
         val foundFinding = findings.find { it.finding.id == finding.finding.id }
-        if (foundFinding != null && foundFinding.finding.updatedAt >= finding.finding.updatedAt) {
-            return foundFinding
+        if (foundFinding != null) {
+            val serverTimestamp = maxOf(
+                foundFinding.finding.updatedAt,
+                foundFinding.deletedAt ?: Timestamp(0),
+            )
+            if (serverTimestamp >= finding.finding.updatedAt) {
+                return foundFinding
+            }
         }
 
         findings.removeIf { it.finding.id == finding.finding.id }
         findings.add(finding)
         return null
     }
+
+    override suspend fun getFindingsModifiedSince(structureId: Uuid, since: Timestamp): List<BackendFinding> =
+        findings.filter {
+            it.finding.structureId == structureId &&
+                (it.finding.updatedAt > since || it.deletedAt?.let { d -> d > since } == true)
+        }
 
     private companion object {
         private const val STRUCTURE_1 = "00000000-0000-0000-0001-000000000001"

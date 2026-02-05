@@ -13,9 +13,10 @@
 package cz.adamec.timotej.snag.lib.sync.fe.app.impl.internal
 
 import cz.adamec.timotej.snag.lib.core.common.ApplicationScope
-import cz.adamec.timotej.snag.lib.sync.fe.model.SyncOperationType
+import cz.adamec.timotej.snag.lib.sync.fe.app.api.SyncCoordinator
 import cz.adamec.timotej.snag.lib.sync.fe.app.api.handler.SyncOperationHandler
 import cz.adamec.timotej.snag.lib.sync.fe.app.api.handler.SyncOperationResult
+import cz.adamec.timotej.snag.lib.sync.fe.model.SyncOperationType
 import cz.adamec.timotej.snag.lib.sync.fe.ports.SyncQueue
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
@@ -26,7 +27,7 @@ internal class SyncEngine(
     private val syncQueue: SyncQueue,
     private val handlers: List<SyncOperationHandler>,
     private val applicationScope: ApplicationScope,
-) : EnqueueSyncOperationUseCase {
+) : EnqueueSyncOperationUseCase, SyncCoordinator {
     private val mutex = Mutex()
 
     override suspend fun invoke(
@@ -43,28 +44,38 @@ internal class SyncEngine(
         }
     }
 
+    override suspend fun <T> withFlushedQueue(block: suspend () -> T): T =
+        mutex.withLock {
+            processAllPending()
+            block()
+        }
+
     private suspend fun processAll() {
         mutex.withLock {
-            val pending = syncQueue.getAllPending()
-            for (operation in pending) {
-                val handler =
-                    handlers.find { it.entityTypeId == operation.entityTypeId }
-                        ?: error(
-                            "No SyncOperationHandler registered for entityTypeId='${operation.entityTypeId}'",
-                        )
-                when (handler.execute(operation.entityId, operation.operationType)) {
-                    SyncOperationResult.Success -> {
-                        LH.logger.d { "Sync operation ${operation.id} succeeded, removing from queue." }
-                        syncQueue.remove(operation.id)
-                    }
-                    SyncOperationResult.EntityNotFound -> {
-                        LH.logger.d { "Entity not found for operation ${operation.id}, discarding." }
-                        syncQueue.remove(operation.id)
-                    }
-                    SyncOperationResult.Failure -> {
-                        LH.logger.w { "Sync operation ${operation.id} failed, stopping processing." }
-                        return
-                    }
+            processAllPending()
+        }
+    }
+
+    private suspend fun processAllPending() {
+        val pending = syncQueue.getAllPending()
+        for (operation in pending) {
+            val handler =
+                handlers.find { it.entityTypeId == operation.entityTypeId }
+                    ?: error(
+                        "No SyncOperationHandler registered for entityTypeId='${operation.entityTypeId}'",
+                    )
+            when (handler.execute(operation.entityId, operation.operationType)) {
+                SyncOperationResult.Success -> {
+                    LH.logger.d { "Sync operation ${operation.id} succeeded, removing from queue." }
+                    syncQueue.remove(operation.id)
+                }
+                SyncOperationResult.EntityNotFound -> {
+                    LH.logger.d { "Entity not found for operation ${operation.id}, discarding." }
+                    syncQueue.remove(operation.id)
+                }
+                SyncOperationResult.Failure -> {
+                    LH.logger.w { "Sync operation ${operation.id} failed, stopping processing." }
+                    return
                 }
             }
         }

@@ -58,8 +58,14 @@ internal class InMemoryProjectsLocalDataSource(
 
     override suspend fun updateProject(project: BackendProject): BackendProject? {
         val foundProject = projects.find { it.project.id == project.project.id }
-        if (foundProject != null && foundProject.project.updatedAt >= project.project.updatedAt) {
-            return foundProject
+        if (foundProject != null) {
+            val serverTimestamp = maxOf(
+                foundProject.project.updatedAt,
+                foundProject.deletedAt ?: Timestamp(0),
+            )
+            if (serverTimestamp >= project.project.updatedAt) {
+                return foundProject
+            }
         }
 
         projects.removeIf { it.project.id == project.project.id }
@@ -69,11 +75,17 @@ internal class InMemoryProjectsLocalDataSource(
 
     override suspend fun deleteProject(id: Uuid, deletedAt: Timestamp): BackendProject? {
         val foundProject = projects.find { it.project.id == id }
-        if (foundProject != null && foundProject.project.updatedAt >= deletedAt) {
-            return foundProject
-        }
+            ?: return null
+        if (foundProject.deletedAt != null) return null
+        if (foundProject.project.updatedAt >= deletedAt) return foundProject
 
-        projects.removeIf { it.project.id == id && it.project.updatedAt < deletedAt }
+        val index = projects.indexOfFirst { it.project.id == id }
+        projects[index] = foundProject.copy(deletedAt = deletedAt)
         return null
     }
+
+    override suspend fun getProjectsModifiedSince(since: Timestamp): List<BackendProject> =
+        projects.filter {
+            it.project.updatedAt > since || it.deletedAt?.let { d -> d > since } == true
+        }
 }

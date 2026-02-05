@@ -23,4 +23,6 @@ interface ProjectsLocalDataSource {
 
     suspend fun updateProject(project: BackendProject): BackendProject?
     suspend fun deleteProject(id: Uuid, deletedAt: Timestamp): BackendProject?
+
+    suspend fun getProjectsModifiedSince(since: Timestamp): List<BackendProject>
 }

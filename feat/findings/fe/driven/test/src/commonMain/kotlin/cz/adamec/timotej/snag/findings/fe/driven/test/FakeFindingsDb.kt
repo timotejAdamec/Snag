@@ -101,6 +101,13 @@ class FakeFindingsDb : FindingsDb {
         return OfflineFirstUpdateDataResult.Success
     }
 
+    override suspend fun deleteFindingsByStructureId(structureId: Uuid): OfflineFirstDataResult<Unit> {
+        val failure = forcedFailure
+        if (failure != null) return failure
+        findings.update { current -> current.filterValues { it.finding.structureId != structureId } }
+        return OfflineFirstDataResult.Success(Unit)
+    }
+
     fun setFindings(findings: List<FrontendFinding>) {
         this.findings.update { current ->
             current + findings.associateBy { it.finding.id }

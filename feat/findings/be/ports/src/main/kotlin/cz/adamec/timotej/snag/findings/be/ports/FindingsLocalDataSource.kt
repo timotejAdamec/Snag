@@ -22,4 +22,6 @@ interface FindingsLocalDataSource {
     suspend fun updateFinding(finding: BackendFinding): BackendFinding?
 
     suspend fun deleteFinding(id: Uuid, deletedAt: Timestamp): BackendFinding?
+
+    suspend fun getFindingsModifiedSince(structureId: Uuid, since: Timestamp): List<BackendFinding>
 }

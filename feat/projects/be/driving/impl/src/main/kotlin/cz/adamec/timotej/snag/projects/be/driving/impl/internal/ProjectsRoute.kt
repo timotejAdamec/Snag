@@ -12,8 +12,10 @@
 
 package cz.adamec.timotej.snag.projects.be.driving.impl.internal
 
+import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.projects.be.app.api.DeleteProjectUseCase
 import cz.adamec.timotej.snag.projects.be.app.api.GetProjectUseCase
+import cz.adamec.timotej.snag.projects.be.app.api.GetProjectsModifiedSinceUseCase
 import cz.adamec.timotej.snag.projects.be.app.api.GetProjectsUseCase
 import cz.adamec.timotej.snag.projects.be.app.api.SaveProjectUseCase
 import cz.adamec.timotej.snag.projects.be.app.api.model.DeleteProjectRequest
@@ -33,6 +35,7 @@ import io.ktor.server.routing.route
 @Suppress("LabeledExpression")
 internal class ProjectsRoute(
     private val getProjectsUseCase: GetProjectsUseCase,
+    private val getProjectsModifiedSinceUseCase: GetProjectsModifiedSinceUseCase,
     private val getProjectUseCase: GetProjectUseCase,
     private val saveProjectUseCase: SaveProjectUseCase,
     private val deleteProjectUseCase: DeleteProjectUseCase,
@@ -40,11 +43,15 @@ internal class ProjectsRoute(
     override fun Route.setup() {
         route("/projects") {
             get {
-                val dtoProjects =
-                    getProjectsUseCase().map {
-                        it.toDto()
-                    }
-                call.respond(dtoProjects)
+                val sinceParam = call.request.queryParameters["since"]
+                if (sinceParam != null) {
+                    val since = Timestamp(sinceParam.toLong())
+                    val modified = getProjectsModifiedSinceUseCase(since).map { it.toDto() }
+                    call.respond(modified)
+                } else {
+                    val dtoProjects = getProjectsUseCase().map { it.toDto() }
+                    call.respond(dtoProjects)
+                }
             }
 
             get("/{id}") {

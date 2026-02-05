@@ -14,34 +14,23 @@ package cz.adamec.timotej.snag.findings.fe.app.impl.internal
 
 import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
 import cz.adamec.timotej.snag.findings.fe.app.api.GetFindingsUseCase
-import cz.adamec.timotej.snag.findings.fe.ports.FindingsApi
+import cz.adamec.timotej.snag.findings.fe.app.api.PullFindingChangesUseCase
 import cz.adamec.timotej.snag.findings.fe.ports.FindingsDb
 import cz.adamec.timotej.snag.lib.core.common.ApplicationScope
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
-import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlin.uuid.Uuid
 
 class GetFindingsUseCaseImpl(
-    private val findingsApi: FindingsApi,
+    private val pullFindingChangesUseCase: PullFindingChangesUseCase,
     private val findingsDb: FindingsDb,
     private val applicationScope: ApplicationScope,
 ) : GetFindingsUseCase {
     override operator fun invoke(structureId: Uuid): Flow<OfflineFirstDataResult<List<FrontendFinding>>> {
         applicationScope.launch {
-            when (val remoteFindingsResult = findingsApi.getFindings(structureId)) {
-                is OnlineDataResult.Failure -> {
-                    LH.logger.w("Error fetching findings for structure $structureId, not updating local DB.")
-                }
-
-                is OnlineDataResult.Success -> {
-                    LH.logger.d { "Fetched ${remoteFindingsResult.data.size} findings for structure $structureId." }
-                    findingsDb.saveFindings(remoteFindingsResult.data)
-                }
-            }
+            pullFindingChangesUseCase(structureId)
         }
         return findingsDb
             .getFindingsFlow(structureId)

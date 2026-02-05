@@ -13,8 +13,10 @@
 package cz.adamec.timotej.snag.findings.be.driving.impl.internal
 
 import cz.adamec.timotej.snag.findings.be.app.api.DeleteFindingUseCase
+import cz.adamec.timotej.snag.findings.be.app.api.GetFindingsModifiedSinceUseCase
 import cz.adamec.timotej.snag.findings.be.app.api.GetFindingsUseCase
 import cz.adamec.timotej.snag.findings.be.app.api.SaveFindingUseCase
+import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.findings.be.app.api.model.DeleteFindingRequest
 import cz.adamec.timotej.snag.findings.be.driving.contract.DeleteFindingApiDto
 import cz.adamec.timotej.snag.findings.be.driving.contract.PutFindingApiDto
@@ -33,6 +35,7 @@ import io.ktor.server.routing.route
 internal class FindingsRoute(
     private val deleteFindingUseCase: DeleteFindingUseCase,
     private val getFindingsUseCase: GetFindingsUseCase,
+    private val getFindingsModifiedSinceUseCase: GetFindingsModifiedSinceUseCase,
     private val saveFindingUseCase: SaveFindingUseCase,
 ) : AppRoute {
     override fun Route.setup() {
@@ -57,11 +60,15 @@ internal class FindingsRoute(
         route("/structures/{structureId}/findings") {
             get {
                 val structureId = getIdFromParameters("structureId")
-                val dtoFindings =
-                    getFindingsUseCase(structureId).map {
-                        it.toDto()
-                    }
-                call.respond(dtoFindings)
+                val sinceParam = call.request.queryParameters["since"]
+                if (sinceParam != null) {
+                    val since = Timestamp(sinceParam.toLong())
+                    val modified = getFindingsModifiedSinceUseCase(structureId, since).map { it.toDto() }
+                    call.respond(modified)
+                } else {
+                    val dtoFindings = getFindingsUseCase(structureId).map { it.toDto() }
+                    call.respond(dtoFindings)
+                }
             }
 
             put("/{id}") {

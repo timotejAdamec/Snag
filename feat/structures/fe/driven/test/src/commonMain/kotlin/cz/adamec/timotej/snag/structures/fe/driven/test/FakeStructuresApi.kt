@@ -13,7 +13,9 @@
 package cz.adamec.timotej.snag.structures.fe.driven.test
 
 import cz.adamec.timotej.snag.feat.structures.fe.model.FrontendStructure
+import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
+import cz.adamec.timotej.snag.structures.fe.ports.StructureSyncResult
 import cz.adamec.timotej.snag.structures.fe.ports.StructuresApi
 import kotlin.uuid.Uuid
 
@@ -46,6 +48,14 @@ class FakeStructuresApi : StructuresApi {
 
     fun setStructure(structure: FrontendStructure) {
         structures[structure.structure.id] = structure
+    }
+
+    var modifiedSinceResults: List<StructureSyncResult> = emptyList()
+
+    override suspend fun getStructuresModifiedSince(projectId: Uuid, since: Timestamp): OnlineDataResult<List<StructureSyncResult>> {
+        val failure = forcedFailure
+        if (failure != null) return failure
+        return OnlineDataResult.Success(modifiedSinceResults)
     }
 
     fun setStructures(structures: List<FrontendStructure>) {

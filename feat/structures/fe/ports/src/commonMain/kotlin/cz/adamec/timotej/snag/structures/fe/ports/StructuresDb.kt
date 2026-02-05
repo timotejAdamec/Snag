@@ -27,4 +27,8 @@ interface StructuresDb {
     fun getStructureFlow(id: Uuid): Flow<OfflineFirstDataResult<FrontendStructure?>>
 
     suspend fun deleteStructure(id: Uuid): OfflineFirstDataResult<Unit>
+
+    suspend fun getStructureIdsByProjectId(projectId: Uuid): List<Uuid>
+
+    suspend fun deleteStructuresByProjectId(projectId: Uuid): OfflineFirstDataResult<Unit>
 }

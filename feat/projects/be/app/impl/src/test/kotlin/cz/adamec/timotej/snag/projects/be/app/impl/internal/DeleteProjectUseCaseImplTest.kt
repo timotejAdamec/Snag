@@ -40,13 +40,15 @@ class DeleteProjectUseCaseImplTest {
         )
 
     @Test
-    fun `deletes project from storage`() =
+    fun `soft-deletes project in storage`() =
         runTest {
             dataSource.setProject(project)
 
             useCase(DeleteProjectRequest(projectId = projectId, deletedAt = Timestamp(20L)))
 
-            assertNull(dataSource.getProject(projectId))
+            val deletedProject = dataSource.getProject(projectId)
+            assertNotNull(deletedProject)
+            assertEquals(Timestamp(20L), deletedProject.deletedAt)
         }
 
     @Test

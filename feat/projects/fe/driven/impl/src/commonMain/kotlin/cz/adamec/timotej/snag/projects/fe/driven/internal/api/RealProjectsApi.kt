@@ -12,12 +12,14 @@
 
 package cz.adamec.timotej.snag.projects.fe.driven.internal.api
 
+import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
 import cz.adamec.timotej.snag.network.fe.SnagNetworkHttpClient
 import cz.adamec.timotej.snag.network.fe.safeApiCall
 import cz.adamec.timotej.snag.projects.be.driving.contract.ProjectApiDto
 import cz.adamec.timotej.snag.projects.fe.driven.internal.LH
 import cz.adamec.timotej.snag.projects.fe.model.FrontendProject
+import cz.adamec.timotej.snag.projects.fe.ports.ProjectSyncResult
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsApi
 import io.ktor.client.call.body
 import io.ktor.client.request.setBody
@@ -65,5 +67,18 @@ internal class RealProjectsApi(
             httpClient.delete("/projects/$id")
             Unit
         }.also { if (it is OnlineDataResult.Success) LH.logger.d { "Deleted project $id from API." } }
+    }
+
+    override suspend fun getProjectsModifiedSince(since: Timestamp): OnlineDataResult<List<ProjectSyncResult>> {
+        LH.logger.d { "Fetching projects modified since $since..." }
+        return safeApiCall(logger = LH.logger, errorContext = "Error fetching projects modified since $since.") {
+            httpClient.get("/projects?since=${since.value}").body<List<ProjectApiDto>>().map { dto ->
+                ProjectSyncResult(
+                    id = dto.id,
+                    deletedAt = dto.deletedAt,
+                    project = if (dto.deletedAt == null) dto.toModel() else null,
+                )
+            }
+        }.also { if (it is OnlineDataResult.Success) LH.logger.d { "Fetched ${it.data.size} modified projects." } }
     }
 }

@@ -138,4 +138,9 @@ internal class RealFindingsDb(
                 },
             )
         }
+
+    override suspend fun deleteFindingsByStructureId(structureId: Uuid): OfflineFirstDataResult<Unit> =
+        safeDbWrite(ioDispatcher = ioDispatcher, logger = LH.logger, errorMessage = "Error deleting findings for structure $structureId from DB.") {
+            findingEntityQueries.deleteByStructureId(structureId.toString())
+        }
 }

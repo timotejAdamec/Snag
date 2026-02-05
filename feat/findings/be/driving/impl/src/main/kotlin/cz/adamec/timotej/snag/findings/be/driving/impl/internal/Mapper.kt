@@ -29,6 +29,7 @@ internal fun BackendFinding.toDto() =
             description = description,
             coordinates = coordinates.map { it.toDto() },
             updatedAt = updatedAt,
+            deletedAt = this@toDto.deletedAt,
         )
     }
 

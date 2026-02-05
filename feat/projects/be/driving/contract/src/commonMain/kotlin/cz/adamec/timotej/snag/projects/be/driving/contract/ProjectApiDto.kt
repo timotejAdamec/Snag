@@ -22,4 +22,5 @@ data class ProjectApiDto(
     val name: String,
     val address: String,
     val updatedAt: Timestamp,
+    val deletedAt: Timestamp? = null,
 )

@@ -19,6 +19,7 @@ import cz.adamec.timotej.snag.projects.business.Project
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.uuid.Uuid
 
@@ -99,5 +100,45 @@ class SaveProjectUseCaseImplTest {
             val result = useCase(newerProject)
 
             assertNull(result)
+        }
+
+    @Test
+    fun `restores soft-deleted project when saved with newer updatedAt`() =
+        runTest {
+            val deletedProject = project.copy(deletedAt = Timestamp(15L))
+            dataSource.setProject(deletedProject)
+
+            val restoredProject = project.copy(
+                project = project.project.copy(
+                    name = "Restored",
+                    updatedAt = Timestamp(value = 20L),
+                ),
+            )
+
+            val result = useCase(restoredProject)
+
+            assertNull(result)
+            val stored = dataSource.getProject(projectId)
+            assertNotNull(stored)
+            assertNull(stored.deletedAt)
+            assertEquals("Restored", stored.project.name)
+        }
+
+    @Test
+    fun `does not restore soft-deleted project when saved with older updatedAt`() =
+        runTest {
+            val deletedProject = project.copy(deletedAt = Timestamp(15L))
+            dataSource.setProject(deletedProject)
+
+            val olderProject = project.copy(
+                project = project.project.copy(
+                    updatedAt = Timestamp(value = 5L),
+                ),
+            )
+
+            val result = useCase(olderProject)
+
+            assertNotNull(result)
+            assertEquals(deletedProject, result)
         }
 }

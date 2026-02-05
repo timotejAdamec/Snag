@@ -26,6 +26,9 @@ SELECT * FROM FindingEntity WHERE id = :id;
 deleteById:
 DELETE FROM FindingEntity WHERE id = :id;
 
+deleteByStructureId:
+DELETE FROM FindingEntity WHERE structureId = :structureId;
+
 deleteAll:
 DELETE FROM FindingEntity;
 

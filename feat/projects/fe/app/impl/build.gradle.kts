@@ -13,3 +13,16 @@
 plugins {
     alias(libs.plugins.snagFrontendMultiplatformModule)
 }
+
+kotlin {
+    sourceSets {
+        commonMain.dependencies {
+            implementation(project(":feat:structures:fe:app:api"))
+        }
+        commonTest {
+            dependencies {
+                implementation(project(":feat:projects:fe:driven:test"))
+            }
+        }
+    }
+}

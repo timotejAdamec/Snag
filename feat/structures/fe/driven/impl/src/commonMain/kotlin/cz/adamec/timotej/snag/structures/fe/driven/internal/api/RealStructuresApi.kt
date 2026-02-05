@@ -13,11 +13,13 @@
 package cz.adamec.timotej.snag.structures.fe.driven.internal.api
 
 import cz.adamec.timotej.snag.feat.structures.fe.model.FrontendStructure
+import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
 import cz.adamec.timotej.snag.network.fe.SnagNetworkHttpClient
 import cz.adamec.timotej.snag.network.fe.safeApiCall
 import cz.adamec.timotej.snag.structures.be.driving.contract.StructureApiDto
 import cz.adamec.timotej.snag.structures.fe.driven.internal.LH
+import cz.adamec.timotej.snag.structures.fe.ports.StructureSyncResult
 import cz.adamec.timotej.snag.structures.fe.ports.StructuresApi
 import io.ktor.client.call.body
 import io.ktor.client.request.setBody
@@ -58,5 +60,18 @@ internal class RealStructuresApi(
                 null
             }
         }.also { if (it is OnlineDataResult.Success) LH.logger.d { "Saved structure ${frontendStructure.structure.id} to API." } }
+    }
+
+    override suspend fun getStructuresModifiedSince(projectId: Uuid, since: Timestamp): OnlineDataResult<List<StructureSyncResult>> {
+        LH.logger.d { "Fetching structures modified since $since for project $projectId..." }
+        return safeApiCall(logger = LH.logger, errorContext = "Error fetching structures modified since $since for project $projectId.") {
+            httpClient.get("/projects/$projectId/structures?since=${since.value}").body<List<StructureApiDto>>().map { dto ->
+                StructureSyncResult(
+                    id = dto.id,
+                    deletedAt = dto.deletedAt,
+                    structure = if (dto.deletedAt == null) dto.toModel() else null,
+                )
+            }
+        }.also { if (it is OnlineDataResult.Success) LH.logger.d { "Fetched ${it.data.size} modified structures for project $projectId." } }
     }
 }

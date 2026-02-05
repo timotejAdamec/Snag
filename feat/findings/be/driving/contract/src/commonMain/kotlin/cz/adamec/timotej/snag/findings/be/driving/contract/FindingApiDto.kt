@@ -24,6 +24,7 @@ data class FindingApiDto(
     val description: String?,
     val coordinates: List<RelativeCoordinateApiDto>,
     val updatedAt: Timestamp,
+    val deletedAt: Timestamp? = null,
 )
 
 @Serializable

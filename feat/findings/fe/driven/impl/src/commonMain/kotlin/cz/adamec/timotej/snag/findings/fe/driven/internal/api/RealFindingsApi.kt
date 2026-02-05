@@ -15,7 +15,9 @@ package cz.adamec.timotej.snag.findings.fe.driven.internal.api
 import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
 import cz.adamec.timotej.snag.findings.be.driving.contract.FindingApiDto
 import cz.adamec.timotej.snag.findings.fe.driven.internal.LH
+import cz.adamec.timotej.snag.findings.fe.ports.FindingSyncResult
 import cz.adamec.timotej.snag.findings.fe.ports.FindingsApi
+import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
 import cz.adamec.timotej.snag.network.fe.SnagNetworkHttpClient
 import cz.adamec.timotej.snag.network.fe.safeApiCall
@@ -58,5 +60,18 @@ internal class RealFindingsApi(
                 null
             }
         }.also { if (it is OnlineDataResult.Success) LH.logger.d { "Saved finding ${finding.finding.id} to API." } }
+    }
+
+    override suspend fun getFindingsModifiedSince(structureId: Uuid, since: Timestamp): OnlineDataResult<List<FindingSyncResult>> {
+        LH.logger.d { "Fetching findings modified since $since for structure $structureId..." }
+        return safeApiCall(logger = LH.logger, errorContext = "Error fetching findings modified since $since for structure $structureId.") {
+            httpClient.get("/structures/$structureId/findings?since=${since.value}").body<List<FindingApiDto>>().map { dto ->
+                FindingSyncResult(
+                    id = dto.id,
+                    deletedAt = dto.deletedAt,
+                    finding = if (dto.deletedAt == null) dto.toModel() else null,
+                )
+            }
+        }.also { if (it is OnlineDataResult.Success) LH.logger.d { "Fetched ${it.data.size} modified findings for structure $structureId." } }
     }
 }

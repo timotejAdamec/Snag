@@ -17,9 +17,13 @@ import cz.adamec.timotej.snag.lib.sync.fe.app.api.handler.SyncOperationHandler
 import cz.adamec.timotej.snag.projects.fe.driven.internal.api.RealProjectsApi
 import cz.adamec.timotej.snag.projects.fe.driven.internal.db.RealProjectsDb
 import cz.adamec.timotej.snag.projects.fe.driven.internal.sync.ProjectSyncHandler
+import cz.adamec.timotej.snag.projects.fe.driven.internal.sync.RealProjectsPullSyncCoordinator
+import cz.adamec.timotej.snag.projects.fe.driven.internal.sync.RealProjectsPullSyncTimestampDataSource
 import cz.adamec.timotej.snag.projects.fe.driven.internal.sync.RealProjectsSync
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsApi
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsDb
+import cz.adamec.timotej.snag.projects.fe.ports.ProjectsPullSyncCoordinator
+import cz.adamec.timotej.snag.projects.fe.ports.ProjectsPullSyncTimestampDataSource
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsSync
 import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.bind
@@ -36,4 +40,11 @@ val projectsDrivenModule =
         factoryOf(::RealProjectsApi) bind ProjectsApi::class
         factoryOf(::ProjectSyncHandler) bind SyncOperationHandler::class
         factoryOf(::RealProjectsSync) bind ProjectsSync::class
+        factory {
+            RealProjectsPullSyncTimestampDataSource(
+                queries = get(),
+                ioDispatcher = getIoDispatcher(),
+            )
+        } bind ProjectsPullSyncTimestampDataSource::class
+        factoryOf(::RealProjectsPullSyncCoordinator) bind ProjectsPullSyncCoordinator::class
     }

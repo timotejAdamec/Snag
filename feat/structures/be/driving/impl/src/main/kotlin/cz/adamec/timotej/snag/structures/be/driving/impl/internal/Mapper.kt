@@ -26,6 +26,7 @@ internal fun BackendStructure.toDto() =
             name = name,
             floorPlanUrl = floorPlanUrl,
             updatedAt = updatedAt,
+            deletedAt = this@toDto.deletedAt,
         )
     }
 

@@ -26,8 +26,14 @@ class FakeProjectsLocalDataSource : ProjectsLocalDataSource {
 
     override suspend fun updateProject(project: BackendProject): BackendProject? {
         val foundProject = projects[project.project.id]
-        if (foundProject != null && foundProject.project.updatedAt >= project.project.updatedAt) {
-            return foundProject
+        if (foundProject != null) {
+            val serverTimestamp = maxOf(
+                foundProject.project.updatedAt,
+                foundProject.deletedAt ?: Timestamp(0),
+            )
+            if (serverTimestamp >= project.project.updatedAt) {
+                return foundProject
+            }
         }
 
         projects[project.project.id] = project
@@ -36,13 +42,18 @@ class FakeProjectsLocalDataSource : ProjectsLocalDataSource {
 
     override suspend fun deleteProject(id: Uuid, deletedAt: Timestamp): BackendProject? {
         val foundProject = projects[id]
-        if (foundProject != null && foundProject.project.updatedAt >= deletedAt) {
-            return foundProject
-        }
+            ?: return null
+        if (foundProject.deletedAt != null) return null
+        if (foundProject.project.updatedAt >= deletedAt) return foundProject
 
-        projects.remove(id)
+        projects[id] = foundProject.copy(deletedAt = deletedAt)
         return null
     }
+
+    override suspend fun getProjectsModifiedSince(since: Timestamp): List<BackendProject> =
+        projects.values.filter {
+            it.project.updatedAt > since || it.deletedAt?.let { d -> d > since } == true
+        }
 
     fun setProject(project: BackendProject) {
         projects[project.project.id] = project
