@@ -19,7 +19,6 @@ import cz.adamec.timotej.snag.structures.be.app.api.GetStructuresUseCase
 import cz.adamec.timotej.snag.structures.be.driven.test.FakeStructuresLocalDataSource
 import cz.adamec.timotej.snag.structures.be.ports.StructuresLocalDataSource
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.singleOf
@@ -30,7 +29,6 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.uuid.Uuid
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class GetStructuresUseCaseImplTest : BackendKoinInitializedTest() {
     private val dataSource: FakeStructuresLocalDataSource by inject()
     private val useCase: GetStructuresUseCase by inject()

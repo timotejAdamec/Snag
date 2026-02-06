@@ -19,7 +19,6 @@ import cz.adamec.timotej.snag.findings.be.driven.test.FakeFindingsLocalDataSourc
 import cz.adamec.timotej.snag.findings.be.ports.FindingsLocalDataSource
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.singleOf
@@ -31,7 +30,6 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 import kotlin.uuid.Uuid
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class GetFindingsModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
     private val dataSource: FakeFindingsLocalDataSource by inject()
     private val useCase: GetFindingsModifiedSinceUseCase by inject()

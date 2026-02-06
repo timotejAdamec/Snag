@@ -19,7 +19,6 @@ import cz.adamec.timotej.snag.projects.be.model.BackendProject
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsLocalDataSource
 import cz.adamec.timotej.snag.projects.business.Project
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.singleOf
@@ -32,7 +31,6 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.uuid.Uuid
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class SaveProjectUseCaseImplTest : BackendKoinInitializedTest() {
     private val dataSource: FakeProjectsLocalDataSource by inject()
     private val useCase: SaveProjectUseCase by inject()

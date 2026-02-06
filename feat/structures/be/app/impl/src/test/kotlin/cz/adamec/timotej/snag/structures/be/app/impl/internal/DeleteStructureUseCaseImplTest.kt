@@ -20,7 +20,6 @@ import cz.adamec.timotej.snag.structures.be.app.api.model.DeleteStructureRequest
 import cz.adamec.timotej.snag.structures.be.driven.test.FakeStructuresLocalDataSource
 import cz.adamec.timotej.snag.structures.be.ports.StructuresLocalDataSource
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.singleOf
@@ -33,7 +32,6 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.uuid.Uuid
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class DeleteStructureUseCaseImplTest : BackendKoinInitializedTest() {
     private val dataSource: FakeStructuresLocalDataSource by inject()
     private val useCase: DeleteStructureUseCase by inject()
