@@ -19,6 +19,7 @@ import cz.adamec.timotej.snag.structures.be.app.api.SaveStructureUseCase
 import cz.adamec.timotej.snag.structures.be.driven.test.FakeStructuresLocalDataSource
 import cz.adamec.timotej.snag.structures.be.ports.StructuresLocalDataSource
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.singleOf
@@ -30,6 +31,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNull
 import kotlin.uuid.Uuid
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class SaveStructureUseCaseImplTest : BackendKoinInitializedTest() {
     private val dataSource: FakeStructuresLocalDataSource by inject()
     private val useCase: SaveStructureUseCase by inject()
@@ -55,7 +57,7 @@ class SaveStructureUseCaseImplTest : BackendKoinInitializedTest() {
 
     @Test
     fun `saves structure to data source`() =
-        runTest {
+        runTest(testDispatcher) {
             useCase(backendStructure)
 
             assertEquals(listOf(backendStructure), dataSource.getStructures(projectId))
@@ -63,7 +65,7 @@ class SaveStructureUseCaseImplTest : BackendKoinInitializedTest() {
 
     @Test
     fun `does not save structure if saved updated at is later than the new one`() =
-        runTest {
+        runTest(testDispatcher) {
             val savedStructure = backendStructure.copy(
                 structure = backendStructure.structure.copy(
                     updatedAt = Timestamp(value = 20L),
@@ -78,7 +80,7 @@ class SaveStructureUseCaseImplTest : BackendKoinInitializedTest() {
 
     @Test
     fun `returns null if structure was not present`() =
-        runTest {
+        runTest(testDispatcher) {
             val result = useCase(backendStructure)
 
             assertNull(result)
@@ -86,7 +88,7 @@ class SaveStructureUseCaseImplTest : BackendKoinInitializedTest() {
 
     @Test
     fun `returns saved structure if saved updated at is later than the new one`() =
-        runTest {
+        runTest(testDispatcher) {
             val savedStructure = backendStructure.copy(
                 structure = backendStructure.structure.copy(
                     updatedAt = Timestamp(value = 20L),
@@ -101,7 +103,7 @@ class SaveStructureUseCaseImplTest : BackendKoinInitializedTest() {
 
     @Test
     fun `returns null if saved updated at is earlier than the new one`() =
-        runTest {
+        runTest(testDispatcher) {
             dataSource.setStructures(backendStructure)
 
             val newerStructure = backendStructure.copy(

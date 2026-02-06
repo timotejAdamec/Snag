@@ -19,6 +19,7 @@ import cz.adamec.timotej.snag.projects.be.model.BackendProject
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsLocalDataSource
 import cz.adamec.timotej.snag.projects.business.Project
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.singleOf
@@ -30,6 +31,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 import kotlin.uuid.Uuid
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class GetProjectsModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
     private val dataSource: FakeProjectsLocalDataSource by inject()
     private val useCase: GetProjectsModifiedSinceUseCase by inject()
@@ -43,7 +45,7 @@ class GetProjectsModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
 
     @Test
     fun `returns empty list when no projects exist`() =
-        runTest {
+        runTest(testDispatcher) {
             val result = useCase(since = Timestamp(100L))
 
             assertTrue(result.isEmpty())
@@ -51,7 +53,7 @@ class GetProjectsModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
 
     @Test
     fun `returns projects with updatedAt after since`() =
-        runTest {
+        runTest(testDispatcher) {
             val project =
                 BackendProject(
                     project = Project(
@@ -70,7 +72,7 @@ class GetProjectsModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
 
     @Test
     fun `excludes projects with updatedAt before since`() =
-        runTest {
+        runTest(testDispatcher) {
             val project =
                 BackendProject(
                     project = Project(
@@ -89,7 +91,7 @@ class GetProjectsModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
 
     @Test
     fun `returns deleted projects when deletedAt is after since`() =
-        runTest {
+        runTest(testDispatcher) {
             val project =
                 BackendProject(
                     project = Project(
@@ -109,7 +111,7 @@ class GetProjectsModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
 
     @Test
     fun `excludes deleted projects when deletedAt is before since`() =
-        runTest {
+        runTest(testDispatcher) {
             val project =
                 BackendProject(
                     project = Project(

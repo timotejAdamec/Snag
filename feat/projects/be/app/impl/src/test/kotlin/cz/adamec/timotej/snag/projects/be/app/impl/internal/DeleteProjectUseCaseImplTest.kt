@@ -20,6 +20,7 @@ import cz.adamec.timotej.snag.projects.be.model.BackendProject
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsLocalDataSource
 import cz.adamec.timotej.snag.projects.business.Project
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.singleOf
@@ -32,6 +33,7 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.uuid.Uuid
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class DeleteProjectUseCaseImplTest : BackendKoinInitializedTest() {
     private val dataSource: FakeProjectsLocalDataSource by inject()
     private val useCase: DeleteProjectUseCase by inject()
@@ -56,7 +58,7 @@ class DeleteProjectUseCaseImplTest : BackendKoinInitializedTest() {
 
     @Test
     fun `soft-deletes project in storage`() =
-        runTest {
+        runTest(testDispatcher) {
             dataSource.setProject(project)
 
             useCase(DeleteProjectRequest(projectId = projectId, deletedAt = Timestamp(20L)))
@@ -68,7 +70,7 @@ class DeleteProjectUseCaseImplTest : BackendKoinInitializedTest() {
 
     @Test
     fun `does not delete project when saved updated at is later than deleted at`() =
-        runTest {
+        runTest(testDispatcher) {
             dataSource.setProject(project)
 
             useCase(
@@ -83,7 +85,7 @@ class DeleteProjectUseCaseImplTest : BackendKoinInitializedTest() {
 
     @Test
     fun `returns saved project when saved updated at is later than deleted at`() =
-        runTest {
+        runTest(testDispatcher) {
             dataSource.setProject(project)
 
             val result = useCase(
@@ -99,7 +101,7 @@ class DeleteProjectUseCaseImplTest : BackendKoinInitializedTest() {
 
     @Test
     fun `returns null if no project was saved`() =
-        runTest {
+        runTest(testDispatcher) {
             val result = useCase(
                 DeleteProjectRequest(
                     projectId = projectId,

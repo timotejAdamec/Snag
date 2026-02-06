@@ -19,6 +19,7 @@ import cz.adamec.timotej.snag.projects.be.model.BackendProject
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsLocalDataSource
 import cz.adamec.timotej.snag.projects.business.Project
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.singleOf
@@ -30,6 +31,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNull
 import kotlin.uuid.Uuid
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class GetProjectUseCaseImplTest : BackendKoinInitializedTest() {
     private val dataSource: FakeProjectsLocalDataSource by inject()
     private val useCase: GetProjectUseCase by inject()
@@ -54,7 +56,7 @@ class GetProjectUseCaseImplTest : BackendKoinInitializedTest() {
 
     @Test
     fun `returns project when it exists`() =
-        runTest {
+        runTest(testDispatcher) {
             dataSource.setProject(project)
 
             val result = useCase(projectId)
@@ -64,7 +66,7 @@ class GetProjectUseCaseImplTest : BackendKoinInitializedTest() {
 
     @Test
     fun `returns null when not found`() =
-        runTest {
+        runTest(testDispatcher) {
             val result = useCase(projectId)
 
             assertNull(result)

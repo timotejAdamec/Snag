@@ -19,6 +19,7 @@ import cz.adamec.timotej.snag.structures.be.app.api.GetStructuresUseCase
 import cz.adamec.timotej.snag.structures.be.driven.test.FakeStructuresLocalDataSource
 import cz.adamec.timotej.snag.structures.be.ports.StructuresLocalDataSource
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.singleOf
@@ -29,6 +30,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.uuid.Uuid
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class GetStructuresUseCaseImplTest : BackendKoinInitializedTest() {
     private val dataSource: FakeStructuresLocalDataSource by inject()
     private val useCase: GetStructuresUseCase by inject()
@@ -76,7 +78,7 @@ class GetStructuresUseCaseImplTest : BackendKoinInitializedTest() {
 
     @Test
     fun `returns empty list when none`() =
-        runTest {
+        runTest(testDispatcher) {
             val result = useCase(projectId)
 
             assertEquals(emptyList(), result)
@@ -84,7 +86,7 @@ class GetStructuresUseCaseImplTest : BackendKoinInitializedTest() {
 
     @Test
     fun `returns structures for project`() =
-        runTest {
+        runTest(testDispatcher) {
             dataSource.setStructures(structure1, structure2, otherStructure)
 
             val result = useCase(projectId)
@@ -94,7 +96,7 @@ class GetStructuresUseCaseImplTest : BackendKoinInitializedTest() {
 
     @Test
     fun `excludes other project structures`() =
-        runTest {
+        runTest(testDispatcher) {
             dataSource.setStructures(otherStructure)
 
             val result = useCase(projectId)

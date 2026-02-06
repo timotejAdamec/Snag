@@ -20,6 +20,7 @@ import cz.adamec.timotej.snag.structures.be.app.api.model.DeleteStructureRequest
 import cz.adamec.timotej.snag.structures.be.driven.test.FakeStructuresLocalDataSource
 import cz.adamec.timotej.snag.structures.be.ports.StructuresLocalDataSource
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.singleOf
@@ -32,6 +33,7 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.uuid.Uuid
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class DeleteStructureUseCaseImplTest : BackendKoinInitializedTest() {
     private val dataSource: FakeStructuresLocalDataSource by inject()
     private val useCase: DeleteStructureUseCase by inject()
@@ -58,7 +60,7 @@ class DeleteStructureUseCaseImplTest : BackendKoinInitializedTest() {
 
     @Test
     fun `soft-deletes structure in storage`() =
-        runTest {
+        runTest(testDispatcher) {
             dataSource.setStructures(structure)
 
             useCase(
@@ -75,7 +77,7 @@ class DeleteStructureUseCaseImplTest : BackendKoinInitializedTest() {
 
     @Test
     fun `does not delete structure when saved updated at is later than deleted at`() =
-        runTest {
+        runTest(testDispatcher) {
             dataSource.setStructures(structure)
 
             useCase(
@@ -90,7 +92,7 @@ class DeleteStructureUseCaseImplTest : BackendKoinInitializedTest() {
 
     @Test
     fun `returns saved structure when saved updated at is later than deleted at`() =
-        runTest {
+        runTest(testDispatcher) {
             dataSource.setStructures(structure)
 
             val result = useCase(
@@ -106,7 +108,7 @@ class DeleteStructureUseCaseImplTest : BackendKoinInitializedTest() {
 
     @Test
     fun `returns null if no structure was saved`() =
-        runTest {
+        runTest(testDispatcher) {
             val result = useCase(
                 DeleteStructureRequest(
                     structureId = structureId,

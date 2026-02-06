@@ -19,6 +19,7 @@ import cz.adamec.timotej.snag.findings.be.driven.test.FakeFindingsLocalDataSourc
 import cz.adamec.timotej.snag.findings.be.ports.FindingsLocalDataSource
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.singleOf
@@ -30,6 +31,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 import kotlin.uuid.Uuid
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class GetFindingsModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
     private val dataSource: FakeFindingsLocalDataSource by inject()
     private val useCase: GetFindingsModifiedSinceUseCase by inject()
@@ -46,7 +48,7 @@ class GetFindingsModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
 
     @Test
     fun `returns empty list when no findings exist`() =
-        runTest {
+        runTest(testDispatcher) {
             val result = useCase(structureId = structureId, since = Timestamp(100L))
 
             assertTrue(result.isEmpty())
@@ -54,7 +56,7 @@ class GetFindingsModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
 
     @Test
     fun `returns findings with updatedAt after since`() =
-        runTest {
+        runTest(testDispatcher) {
             val finding =
                 BackendFinding(
                     finding = Finding(
@@ -75,7 +77,7 @@ class GetFindingsModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
 
     @Test
     fun `excludes findings from different structure`() =
-        runTest {
+        runTest(testDispatcher) {
             val finding =
                 BackendFinding(
                     finding = Finding(
@@ -96,7 +98,7 @@ class GetFindingsModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
 
     @Test
     fun `returns deleted findings when deletedAt is after since`() =
-        runTest {
+        runTest(testDispatcher) {
             val finding =
                 BackendFinding(
                     finding = Finding(
@@ -118,7 +120,7 @@ class GetFindingsModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
 
     @Test
     fun `excludes unchanged findings`() =
-        runTest {
+        runTest(testDispatcher) {
             val finding =
                 BackendFinding(
                     finding = Finding(
