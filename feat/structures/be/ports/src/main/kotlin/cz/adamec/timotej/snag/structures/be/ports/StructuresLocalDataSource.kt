@@ -21,7 +21,13 @@ interface StructuresLocalDataSource {
 
     suspend fun saveStructure(backendStructure: BackendStructure): BackendStructure?
 
-    suspend fun deleteStructure(id: Uuid, deletedAt: Timestamp): BackendStructure?
+    suspend fun deleteStructure(
+        id: Uuid,
+        deletedAt: Timestamp,
+    ): BackendStructure?
 
-    suspend fun getStructuresModifiedSince(projectId: Uuid, since: Timestamp): List<BackendStructure>
+    suspend fun getStructuresModifiedSince(
+        projectId: Uuid,
+        since: Timestamp,
+    ): List<BackendStructure>
 }

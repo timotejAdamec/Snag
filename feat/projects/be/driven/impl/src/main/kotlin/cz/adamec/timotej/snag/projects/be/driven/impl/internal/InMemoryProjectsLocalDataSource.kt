@@ -25,28 +25,31 @@ internal class InMemoryProjectsLocalDataSource(
     private val projects =
         mutableListOf(
             BackendProject(
-                project = Project(
-                    id = Uuid.parse("00000000-0000-0000-0000-000000000001"),
-                    name = "Strahov Dormitories Renovation",
-                    address = "Chaloupeckého 1917/9, 160 17 Praha 6",
-                    updatedAt = timestampProvider.getNowTimestamp(),
-                ),
+                project =
+                    Project(
+                        id = Uuid.parse("00000000-0000-0000-0000-000000000001"),
+                        name = "Strahov Dormitories Renovation",
+                        address = "Chaloupeckého 1917/9, 160 17 Praha 6",
+                        updatedAt = timestampProvider.getNowTimestamp(),
+                    ),
             ),
             BackendProject(
-                project = Project(
-                    id = Uuid.parse("00000000-0000-0000-0000-000000000002"),
-                    name = "FIT CTU New Building",
-                    address = "Thákurova 9, 160 00 Praha 6",
-                    updatedAt = timestampProvider.getNowTimestamp(),
-                ),
+                project =
+                    Project(
+                        id = Uuid.parse("00000000-0000-0000-0000-000000000002"),
+                        name = "FIT CTU New Building",
+                        address = "Thákurova 9, 160 00 Praha 6",
+                        updatedAt = timestampProvider.getNowTimestamp(),
+                    ),
             ),
             BackendProject(
-                project = Project(
-                    id = Uuid.parse("00000000-0000-0000-0000-000000000003"),
-                    name = "National Library of Technology",
-                    address = "Technická 2710/6, 160 00 Praha 6",
-                    updatedAt = timestampProvider.getNowTimestamp(),
-                ),
+                project =
+                    Project(
+                        id = Uuid.parse("00000000-0000-0000-0000-000000000003"),
+                        name = "National Library of Technology",
+                        address = "Technická 2710/6, 160 00 Praha 6",
+                        updatedAt = timestampProvider.getNowTimestamp(),
+                    ),
             ),
         )
 
@@ -59,10 +62,11 @@ internal class InMemoryProjectsLocalDataSource(
     override suspend fun updateProject(project: BackendProject): BackendProject? {
         val foundProject = projects.find { it.project.id == project.project.id }
         if (foundProject != null) {
-            val serverTimestamp = maxOf(
-                foundProject.project.updatedAt,
-                foundProject.deletedAt ?: Timestamp(0),
-            )
+            val serverTimestamp =
+                maxOf(
+                    foundProject.project.updatedAt,
+                    foundProject.deletedAt ?: Timestamp(0),
+                )
             if (serverTimestamp >= project.project.updatedAt) {
                 return foundProject
             }
@@ -73,9 +77,13 @@ internal class InMemoryProjectsLocalDataSource(
         return null
     }
 
-    override suspend fun deleteProject(id: Uuid, deletedAt: Timestamp): BackendProject? {
-        val foundProject = projects.find { it.project.id == id }
-            ?: return null
+    override suspend fun deleteProject(
+        id: Uuid,
+        deletedAt: Timestamp,
+    ): BackendProject? {
+        val foundProject =
+            projects.find { it.project.id == id }
+                ?: return null
         if (foundProject.deletedAt != null) return null
         if (foundProject.project.updatedAt >= deletedAt) return foundProject
 

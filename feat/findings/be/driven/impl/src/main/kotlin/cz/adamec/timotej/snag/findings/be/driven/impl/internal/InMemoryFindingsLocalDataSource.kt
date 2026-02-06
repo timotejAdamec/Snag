@@ -26,47 +26,53 @@ internal class InMemoryFindingsLocalDataSource(
     private val findings =
         mutableListOf(
             BackendFinding(
-                finding = Finding(
-                    id = Uuid.parse(FINDING_1),
-                    structureId = Uuid.parse(STRUCTURE_1),
-                    name = "Cracked wall tile",
-                    description = "Visible crack on wall tile near entrance.",
-                    coordinates = listOf(RelativeCoordinate(x = 0.25f, y = 0.40f)),
-                    updatedAt = timestampProvider.getNowTimestamp(),
-                ),
+                finding =
+                    Finding(
+                        id = Uuid.parse(FINDING_1),
+                        structureId = Uuid.parse(STRUCTURE_1),
+                        name = "Cracked wall tile",
+                        description = "Visible crack on wall tile near entrance.",
+                        coordinates = listOf(RelativeCoordinate(x = 0.25f, y = 0.40f)),
+                        updatedAt = timestampProvider.getNowTimestamp(),
+                    ),
             ),
             BackendFinding(
-                finding = Finding(
-                    id = Uuid.parse(FINDING_2),
-                    structureId = Uuid.parse(STRUCTURE_1),
-                    name = "Missing paint patch",
-                    description = "Unpainted area on the ceiling in hallway.",
-                    coordinates = listOf(RelativeCoordinate(x = 0.60f, y = 0.15f)),
-                    updatedAt = timestampProvider.getNowTimestamp(),
-                ),
+                finding =
+                    Finding(
+                        id = Uuid.parse(FINDING_2),
+                        structureId = Uuid.parse(STRUCTURE_1),
+                        name = "Missing paint patch",
+                        description = "Unpainted area on the ceiling in hallway.",
+                        coordinates = listOf(RelativeCoordinate(x = 0.60f, y = 0.15f)),
+                        updatedAt = timestampProvider.getNowTimestamp(),
+                    ),
             ),
             BackendFinding(
-                finding = Finding(
-                    id = Uuid.parse(FINDING_3),
-                    structureId = Uuid.parse(STRUCTURE_2),
-                    name = "Loose handrail",
-                    description = null,
-                    coordinates =
-                        listOf(
-                            RelativeCoordinate(x = 0.80f, y = 0.55f),
-                            RelativeCoordinate(x = 0.82f, y = 0.60f),
-                        ),
-                    updatedAt = timestampProvider.getNowTimestamp(),
-                ),
+                finding =
+                    Finding(
+                        id = Uuid.parse(FINDING_3),
+                        structureId = Uuid.parse(STRUCTURE_2),
+                        name = "Loose handrail",
+                        description = null,
+                        coordinates =
+                            listOf(
+                                RelativeCoordinate(x = 0.80f, y = 0.55f),
+                                RelativeCoordinate(x = 0.82f, y = 0.60f),
+                            ),
+                        updatedAt = timestampProvider.getNowTimestamp(),
+                    ),
             ),
         )
 
-    override suspend fun getFindings(structureId: Uuid): List<BackendFinding> =
-        findings.filter { it.finding.structureId == structureId }
+    override suspend fun getFindings(structureId: Uuid): List<BackendFinding> = findings.filter { it.finding.structureId == structureId }
 
-    override suspend fun deleteFinding(id: Uuid, deletedAt: Timestamp): BackendFinding? {
-        val foundFinding = findings.find { it.finding.id == id }
-            ?: return null
+    override suspend fun deleteFinding(
+        id: Uuid,
+        deletedAt: Timestamp,
+    ): BackendFinding? {
+        val foundFinding =
+            findings.find { it.finding.id == id }
+                ?: return null
         if (foundFinding.deletedAt != null) return null
         if (foundFinding.finding.updatedAt >= deletedAt) return foundFinding
 
@@ -78,10 +84,11 @@ internal class InMemoryFindingsLocalDataSource(
     override suspend fun updateFinding(finding: BackendFinding): BackendFinding? {
         val foundFinding = findings.find { it.finding.id == finding.finding.id }
         if (foundFinding != null) {
-            val serverTimestamp = maxOf(
-                foundFinding.finding.updatedAt,
-                foundFinding.deletedAt ?: Timestamp(0),
-            )
+            val serverTimestamp =
+                maxOf(
+                    foundFinding.finding.updatedAt,
+                    foundFinding.deletedAt ?: Timestamp(0),
+                )
             if (serverTimestamp >= finding.finding.updatedAt) {
                 return foundFinding
             }
@@ -92,7 +99,10 @@ internal class InMemoryFindingsLocalDataSource(
         return null
     }
 
-    override suspend fun getFindingsModifiedSince(structureId: Uuid, since: Timestamp): List<BackendFinding> =
+    override suspend fun getFindingsModifiedSince(
+        structureId: Uuid,
+        since: Timestamp,
+    ): List<BackendFinding> =
         findings.filter {
             it.finding.structureId == structureId &&
                 (it.finding.updatedAt > since || it.deletedAt?.let { d -> d > since } == true)
