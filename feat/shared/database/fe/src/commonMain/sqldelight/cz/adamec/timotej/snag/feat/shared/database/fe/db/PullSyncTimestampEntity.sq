@@ -1,12 +1,12 @@
 CREATE TABLE IF NOT EXISTS PullSyncTimestampEntity (
     entityType TEXT NOT NULL,
-    scopeId TEXT,
+    scopeId TEXT NOT NULL,
     lastSyncedAt INTEGER NOT NULL,
     PRIMARY KEY (entityType, scopeId)
 );
 
 getByEntityTypeAndScope:
-SELECT lastSyncedAt FROM PullSyncTimestampEntity WHERE entityType = :entityType AND scopeId IS :scopeId;
+SELECT lastSyncedAt FROM PullSyncTimestampEntity WHERE entityType = :entityType AND scopeId = :scopeId;
 
 upsert:
 INSERT INTO PullSyncTimestampEntity(entityType, scopeId, lastSyncedAt) VALUES (?, ?, ?)
