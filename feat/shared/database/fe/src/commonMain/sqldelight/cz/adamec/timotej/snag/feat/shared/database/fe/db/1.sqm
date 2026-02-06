@@ -1,0 +1,22 @@
+CREATE TABLE IF NOT EXISTS FindingCoordinateEntity (
+    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    findingId TEXT NOT NULL,
+    x REAL NOT NULL,
+    y REAL NOT NULL,
+    FOREIGN KEY (findingId) REFERENCES FindingEntity(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS FindingEntity_new (
+    id TEXT NOT NULL PRIMARY KEY,
+    structureId TEXT NOT NULL,
+    name TEXT NOT NULL,
+    description TEXT,
+    updatedAt INTEGER NOT NULL
+);
+
+INSERT INTO FindingEntity_new (id, structureId, name, description, updatedAt)
+SELECT id, structureId, name, description, updatedAt FROM FindingEntity;
+
+DROP TABLE FindingEntity;
+
+ALTER TABLE FindingEntity_new RENAME TO FindingEntity;

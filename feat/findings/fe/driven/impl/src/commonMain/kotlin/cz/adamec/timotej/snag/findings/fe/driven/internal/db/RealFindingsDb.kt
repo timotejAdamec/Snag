@@ -15,10 +15,9 @@ package cz.adamec.timotej.snag.findings.fe.driven.internal.db
 import app.cash.sqldelight.async.coroutines.awaitAsOne
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
-import app.cash.sqldelight.coroutines.mapToOneOrNull
 import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
 import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
-import cz.adamec.timotej.snag.feat.shared.database.fe.db.FindingEntity
+import cz.adamec.timotej.snag.feat.shared.database.fe.db.FindingCoordinateEntityQueries
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.FindingEntityQueries
 import cz.adamec.timotej.snag.findings.fe.driven.internal.LH
 import cz.adamec.timotej.snag.findings.fe.ports.FindingsDb
@@ -35,6 +34,7 @@ import kotlin.uuid.Uuid
 
 internal class RealFindingsDb(
     private val findingEntityQueries: FindingEntityQueries,
+    private val findingCoordinateEntityQueries: FindingCoordinateEntityQueries,
     private val ioDispatcher: CoroutineDispatcher,
 ) : FindingsDb {
     override fun getFindingsFlow(structureId: Uuid): Flow<OfflineFirstDataResult<List<FrontendFinding>>> =
@@ -42,10 +42,8 @@ internal class RealFindingsDb(
             .selectByStructureId(structureId.toString())
             .asFlow()
             .mapToList(ioDispatcher)
-            .map<List<FindingEntity>, OfflineFirstDataResult<List<FrontendFinding>>> { entities ->
-                OfflineFirstDataResult.Success(
-                    entities.map { it.toModel() },
-                )
+            .map { rows ->
+                OfflineFirstDataResult.Success(rows.toFindingModels())
             }.catch { e ->
                 LH.logger.e { "Error loading findings for structure $structureId from DB." }
                 emit(OfflineFirstDataResult.ProgrammerError(throwable = e))
@@ -54,29 +52,36 @@ internal class RealFindingsDb(
     override suspend fun saveFindings(findings: List<FrontendFinding>): OfflineFirstDataResult<Unit> =
         safeDbWrite(ioDispatcher = ioDispatcher, logger = LH.logger, errorMessage = "Error saving findings $findings to DB.") {
             findingEntityQueries.transaction {
-                findings.forEach {
-                    findingEntityQueries.save(it.toEntity())
+                findings.forEach { finding ->
+                    findingEntityQueries.save(finding.toEntity())
+                    saveCoordinates(finding)
                 }
             }
         }
 
     override suspend fun saveFinding(finding: FrontendFinding): OfflineFirstDataResult<Unit> =
         safeDbWrite(ioDispatcher = ioDispatcher, logger = LH.logger, errorMessage = "Error saving finding $finding to DB.") {
-            findingEntityQueries.save(finding.toEntity())
+            findingEntityQueries.transaction {
+                findingEntityQueries.save(finding.toEntity())
+                saveCoordinates(finding)
+            }
         }
 
     override suspend fun deleteFinding(id: Uuid): OfflineFirstDataResult<Unit> =
         safeDbWrite(ioDispatcher = ioDispatcher, logger = LH.logger, errorMessage = "Error deleting finding $id from DB.") {
-            findingEntityQueries.deleteById(id.toString())
+            findingEntityQueries.transaction {
+                findingCoordinateEntityQueries.deleteByFindingId(id.toString())
+                findingEntityQueries.deleteById(id.toString())
+            }
         }
 
     override fun getFindingFlow(id: Uuid): Flow<OfflineFirstDataResult<FrontendFinding?>> =
         findingEntityQueries
             .selectById(id.toString())
             .asFlow()
-            .mapToOneOrNull(ioDispatcher)
-            .map<FindingEntity?, OfflineFirstDataResult<FrontendFinding?>> { entity ->
-                OfflineFirstDataResult.Success(entity?.toModel())
+            .mapToList(ioDispatcher)
+            .map { rows ->
+                OfflineFirstDataResult.Success(rows.toFindingModel())
             }.catch { e ->
                 LH.logger.e { "Error loading finding $id from DB." }
                 emit(OfflineFirstDataResult.ProgrammerError(throwable = e))
@@ -117,12 +122,19 @@ internal class RealFindingsDb(
         withContext(ioDispatcher) {
             runCatching {
                 findingEntityQueries.transactionWithResult {
-                    findingEntityQueries.updateCoordinates(
-                        coordinates = serializeCoordinates(coordinates),
-                        updatedAt = updatedAt.value,
-                        id = id.toString(),
-                    )
-                    findingEntityQueries.selectChanges().awaitAsOne()
+                    findingEntityQueries.updateTimestamp(updatedAt = updatedAt.value, id = id.toString())
+                    findingEntityQueries.selectChanges().awaitAsOne().also { changes ->
+                        if (changes > 0L) {
+                            findingCoordinateEntityQueries.deleteByFindingId(id.toString())
+                            coordinates.forEach { coord ->
+                                findingCoordinateEntityQueries.insert(
+                                    findingId = id.toString(),
+                                    x = coord.x.toDouble(),
+                                    y = coord.y.toDouble(),
+                                )
+                            }
+                        }
+                    }
                 }
             }.fold(
                 onSuccess = { changes ->
@@ -141,6 +153,21 @@ internal class RealFindingsDb(
 
     override suspend fun deleteFindingsByStructureId(structureId: Uuid): OfflineFirstDataResult<Unit> =
         safeDbWrite(ioDispatcher = ioDispatcher, logger = LH.logger, errorMessage = "Error deleting findings for structure $structureId from DB.") {
-            findingEntityQueries.deleteByStructureId(structureId.toString())
+            findingEntityQueries.transaction {
+                findingCoordinateEntityQueries.deleteByStructureId(structureId.toString())
+                findingEntityQueries.deleteByStructureId(structureId.toString())
+            }
         }
+
+    private fun saveCoordinates(finding: FrontendFinding) {
+        val findingId = finding.finding.id.toString()
+        findingCoordinateEntityQueries.deleteByFindingId(findingId)
+        finding.finding.coordinates.forEach { coord ->
+            findingCoordinateEntityQueries.insert(
+                findingId = findingId,
+                x = coord.x.toDouble(),
+                y = coord.y.toDouble(),
+            )
+        }
+    }
 }

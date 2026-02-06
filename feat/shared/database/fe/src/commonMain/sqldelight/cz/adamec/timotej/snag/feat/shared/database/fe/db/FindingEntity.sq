@@ -3,25 +3,29 @@ CREATE TABLE IF NOT EXISTS FindingEntity (
     structureId TEXT NOT NULL,
     name TEXT NOT NULL,
     description TEXT,
-    coordinates TEXT NOT NULL DEFAULT '[]',
     updatedAt INTEGER NOT NULL
 );
 
 save:
-INSERT INTO FindingEntity(id, structureId, name, description, coordinates, updatedAt)
+INSERT INTO FindingEntity(id, structureId, name, description, updatedAt)
 VALUES ?
 ON CONFLICT(id) DO UPDATE SET
     structureId = excluded.structureId,
     name = excluded.name,
     description = excluded.description,
-    coordinates = excluded.coordinates,
     updatedAt = excluded.updatedAt;
 
 selectByStructureId:
-SELECT * FROM FindingEntity WHERE structureId = :structureId;
+SELECT f.id, f.structureId, f.name, f.description, f.updatedAt, c.x, c.y
+FROM FindingEntity f
+LEFT JOIN FindingCoordinateEntity c ON f.id = c.findingId
+WHERE f.structureId = :structureId;
 
 selectById:
-SELECT * FROM FindingEntity WHERE id = :id;
+SELECT f.id, f.structureId, f.name, f.description, f.updatedAt, c.x, c.y
+FROM FindingEntity f
+LEFT JOIN FindingCoordinateEntity c ON f.id = c.findingId
+WHERE f.id = :id;
 
 deleteById:
 DELETE FROM FindingEntity WHERE id = :id;
@@ -35,8 +39,8 @@ DELETE FROM FindingEntity;
 updateDetails:
 UPDATE FindingEntity SET name = :name, description = :description, updatedAt = :updatedAt WHERE id = :id;
 
-updateCoordinates:
-UPDATE FindingEntity SET coordinates = :coordinates, updatedAt = :updatedAt WHERE id = :id;
+updateTimestamp:
+UPDATE FindingEntity SET updatedAt = :updatedAt WHERE id = :id;
 
 selectChanges:
 SELECT changes();

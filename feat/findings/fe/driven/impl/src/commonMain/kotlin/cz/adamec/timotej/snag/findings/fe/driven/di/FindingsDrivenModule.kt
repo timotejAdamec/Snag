@@ -34,6 +34,7 @@ val findingsDrivenModule =
         factory {
             RealFindingsDb(
                 findingEntityQueries = get(),
+                findingCoordinateEntityQueries = get(),
                 ioDispatcher = getIoDispatcher(),
             )
         } bind FindingsDb::class

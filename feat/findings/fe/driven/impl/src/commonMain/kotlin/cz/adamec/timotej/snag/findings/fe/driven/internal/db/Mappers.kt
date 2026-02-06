@@ -16,28 +16,10 @@ import cz.adamec.timotej.snag.feat.findings.business.Finding
 import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
 import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.FindingEntity
+import cz.adamec.timotej.snag.feat.shared.database.fe.db.SelectById
+import cz.adamec.timotej.snag.feat.shared.database.fe.db.SelectByStructureId
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.Json
 import kotlin.uuid.Uuid
-
-@Serializable
-internal data class RelativeCoordinateJson(
-    val x: Float,
-    val y: Float,
-)
-
-internal fun FindingEntity.toModel() =
-    FrontendFinding(
-        finding = Finding(
-            id = Uuid.parse(id),
-            structureId = Uuid.parse(structureId),
-            name = name,
-            description = description,
-            coordinates = parseCoordinates(coordinates),
-            updatedAt = Timestamp(updatedAt),
-        ),
-    )
 
 internal fun FrontendFinding.toEntity() =
     FindingEntity(
@@ -45,16 +27,53 @@ internal fun FrontendFinding.toEntity() =
         structureId = finding.structureId.toString(),
         name = finding.name,
         description = finding.description,
-        coordinates = serializeCoordinates(finding.coordinates),
         updatedAt = finding.updatedAt.value,
     )
 
-private fun parseCoordinates(json: String): List<RelativeCoordinate> =
-    Json.decodeFromString<List<RelativeCoordinateJson>>(json).map {
-        RelativeCoordinate(x = it.x, y = it.y)
+internal fun List<SelectByStructureId>.toFindingModels(): List<FrontendFinding> =
+    groupBy { it.id }.map { (_, rows) ->
+        val first = rows.first()
+        FrontendFinding(
+            finding = Finding(
+                id = Uuid.parse(first.id),
+                structureId = Uuid.parse(first.structureId),
+                name = first.name,
+                description = first.description,
+                coordinates = rows.toCoordinates(),
+                updatedAt = Timestamp(first.updatedAt),
+            ),
+        )
     }
 
-internal fun serializeCoordinates(coordinates: List<RelativeCoordinate>): String =
-    Json.encodeToString(
-        coordinates.map { RelativeCoordinateJson(x = it.x, y = it.y) },
+internal fun List<SelectById>.toFindingModel(): FrontendFinding? {
+    if (isEmpty()) return null
+    val first = first()
+    return FrontendFinding(
+        finding = Finding(
+            id = Uuid.parse(first.id),
+            structureId = Uuid.parse(first.structureId),
+            name = first.name,
+            description = first.description,
+            coordinates = toCoordinatesFromSelectById(),
+            updatedAt = Timestamp(first.updatedAt),
+        ),
     )
+}
+
+private fun List<SelectByStructureId>.toCoordinates(): List<RelativeCoordinate> =
+    mapNotNull { row ->
+        if (row.x != null && row.y != null) {
+            RelativeCoordinate(x = row.x.toFloat(), y = row.y.toFloat())
+        } else {
+            null
+        }
+    }
+
+private fun List<SelectById>.toCoordinatesFromSelectById(): List<RelativeCoordinate> =
+    mapNotNull { row ->
+        if (row.x != null && row.y != null) {
+            RelativeCoordinate(x = row.x.toFloat(), y = row.y.toFloat())
+        } else {
+            null
+        }
+    }
