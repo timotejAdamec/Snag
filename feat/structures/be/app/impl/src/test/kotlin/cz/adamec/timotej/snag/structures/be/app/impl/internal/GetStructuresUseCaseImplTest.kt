@@ -15,15 +15,30 @@ package cz.adamec.timotej.snag.structures.be.app.impl.internal
 import cz.adamec.timotej.snag.feat.structures.be.model.BackendStructure
 import cz.adamec.timotej.snag.feat.structures.business.Structure
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
+import cz.adamec.timotej.snag.structures.be.app.api.GetStructuresUseCase
 import cz.adamec.timotej.snag.structures.be.driven.test.FakeStructuresLocalDataSource
+import cz.adamec.timotej.snag.structures.be.ports.StructuresLocalDataSource
+import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
 import kotlinx.coroutines.test.runTest
+import org.koin.core.module.Module
+import org.koin.core.module.dsl.singleOf
+import org.koin.dsl.bind
+import org.koin.dsl.module
+import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.uuid.Uuid
 
-class GetStructuresUseCaseImplTest {
-    private val dataSource = FakeStructuresLocalDataSource()
-    private val useCase = GetStructuresUseCaseImpl(dataSource)
+class GetStructuresUseCaseImplTest : BackendKoinInitializedTest() {
+    private val dataSource: FakeStructuresLocalDataSource by inject()
+    private val useCase: GetStructuresUseCase by inject()
+
+    override fun additionalKoinModules(): List<Module> =
+        listOf(
+            module {
+                singleOf(::FakeStructuresLocalDataSource) bind StructuresLocalDataSource::class
+            },
+        )
 
     private val projectId = Uuid.parse("00000000-0000-0000-0000-000000000001")
     private val otherProjectId = Uuid.parse("00000000-0000-0000-0000-000000000002")
@@ -61,7 +76,7 @@ class GetStructuresUseCaseImplTest {
 
     @Test
     fun `returns empty list when none`() =
-        runTest {
+        runTest(testDispatcher) {
             val result = useCase(projectId)
 
             assertEquals(emptyList(), result)
@@ -69,7 +84,7 @@ class GetStructuresUseCaseImplTest {
 
     @Test
     fun `returns structures for project`() =
-        runTest {
+        runTest(testDispatcher) {
             dataSource.setStructures(structure1, structure2, otherStructure)
 
             val result = useCase(projectId)
@@ -79,7 +94,7 @@ class GetStructuresUseCaseImplTest {
 
     @Test
     fun `excludes other project structures`() =
-        runTest {
+        runTest(testDispatcher) {
             dataSource.setStructures(otherStructure)
 
             val result = useCase(projectId)

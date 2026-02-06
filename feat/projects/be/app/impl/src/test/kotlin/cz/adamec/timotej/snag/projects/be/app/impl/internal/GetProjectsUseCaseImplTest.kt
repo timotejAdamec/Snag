@@ -13,21 +13,36 @@
 package cz.adamec.timotej.snag.projects.be.app.impl.internal
 
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
+import cz.adamec.timotej.snag.projects.be.app.api.GetProjectsUseCase
 import cz.adamec.timotej.snag.projects.be.driven.test.FakeProjectsLocalDataSource
 import cz.adamec.timotej.snag.projects.be.model.BackendProject
+import cz.adamec.timotej.snag.projects.be.ports.ProjectsLocalDataSource
 import cz.adamec.timotej.snag.projects.business.Project
+import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
 import kotlinx.coroutines.test.runTest
+import org.koin.core.module.Module
+import org.koin.core.module.dsl.singleOf
+import org.koin.dsl.bind
+import org.koin.dsl.module
+import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.uuid.Uuid
 
-class GetProjectsUseCaseImplTest {
-    private val dataSource = FakeProjectsLocalDataSource()
-    private val useCase = GetProjectsUseCaseImpl(dataSource)
+class GetProjectsUseCaseImplTest : BackendKoinInitializedTest() {
+    private val dataSource: FakeProjectsLocalDataSource by inject()
+    private val useCase: GetProjectsUseCase by inject()
+
+    override fun additionalKoinModules(): List<Module> =
+        listOf(
+            module {
+                singleOf(::FakeProjectsLocalDataSource) bind ProjectsLocalDataSource::class
+            },
+        )
 
     @Test
     fun `returns empty list when none exist`() =
-        runTest {
+        runTest(testDispatcher) {
             val result = useCase()
 
             assertEquals(emptyList(), result)
@@ -35,7 +50,7 @@ class GetProjectsUseCaseImplTest {
 
     @Test
     fun `returns all projects`() =
-        runTest {
+        runTest(testDispatcher) {
             val project1 =
                 BackendProject(
                     project = Project(

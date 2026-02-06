@@ -15,23 +15,38 @@ package cz.adamec.timotej.snag.structures.be.app.impl.internal
 import cz.adamec.timotej.snag.feat.structures.be.model.BackendStructure
 import cz.adamec.timotej.snag.feat.structures.business.Structure
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
+import cz.adamec.timotej.snag.structures.be.app.api.GetStructuresModifiedSinceUseCase
 import cz.adamec.timotej.snag.structures.be.driven.test.FakeStructuresLocalDataSource
+import cz.adamec.timotej.snag.structures.be.ports.StructuresLocalDataSource
+import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
 import kotlinx.coroutines.test.runTest
+import org.koin.core.module.Module
+import org.koin.core.module.dsl.singleOf
+import org.koin.dsl.bind
+import org.koin.dsl.module
+import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 import kotlin.uuid.Uuid
 
-class GetStructuresModifiedSinceUseCaseImplTest {
-    private val dataSource = FakeStructuresLocalDataSource()
-    private val useCase = GetStructuresModifiedSinceUseCaseImpl(dataSource)
+class GetStructuresModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
+    private val dataSource: FakeStructuresLocalDataSource by inject()
+    private val useCase: GetStructuresModifiedSinceUseCase by inject()
+
+    override fun additionalKoinModules(): List<Module> =
+        listOf(
+            module {
+                singleOf(::FakeStructuresLocalDataSource) bind StructuresLocalDataSource::class
+            },
+        )
 
     private val projectId = Uuid.parse("00000000-0000-0000-0000-000000000001")
     private val otherProjectId = Uuid.parse("00000000-0000-0000-0000-000000000002")
 
     @Test
     fun `returns empty list when no structures exist`() =
-        runTest {
+        runTest(testDispatcher) {
             val result = useCase(projectId = projectId, since = Timestamp(100L))
 
             assertTrue(result.isEmpty())
@@ -39,7 +54,7 @@ class GetStructuresModifiedSinceUseCaseImplTest {
 
     @Test
     fun `returns structures with updatedAt after since`() =
-        runTest {
+        runTest(testDispatcher) {
             val structure =
                 BackendStructure(
                     structure = Structure(
@@ -59,7 +74,7 @@ class GetStructuresModifiedSinceUseCaseImplTest {
 
     @Test
     fun `excludes structures from different project`() =
-        runTest {
+        runTest(testDispatcher) {
             val structure =
                 BackendStructure(
                     structure = Structure(
@@ -79,7 +94,7 @@ class GetStructuresModifiedSinceUseCaseImplTest {
 
     @Test
     fun `returns deleted structures when deletedAt is after since`() =
-        runTest {
+        runTest(testDispatcher) {
             val structure =
                 BackendStructure(
                     structure = Structure(
@@ -100,7 +115,7 @@ class GetStructuresModifiedSinceUseCaseImplTest {
 
     @Test
     fun `excludes unchanged structures`() =
-        runTest {
+        runTest(testDispatcher) {
             val structure =
                 BackendStructure(
                     structure = Structure(

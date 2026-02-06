@@ -13,19 +13,34 @@
 package cz.adamec.timotej.snag.projects.be.app.impl.internal
 
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
+import cz.adamec.timotej.snag.projects.be.app.api.SaveProjectUseCase
 import cz.adamec.timotej.snag.projects.be.driven.test.FakeProjectsLocalDataSource
 import cz.adamec.timotej.snag.projects.be.model.BackendProject
+import cz.adamec.timotej.snag.projects.be.ports.ProjectsLocalDataSource
 import cz.adamec.timotej.snag.projects.business.Project
+import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
 import kotlinx.coroutines.test.runTest
+import org.koin.core.module.Module
+import org.koin.core.module.dsl.singleOf
+import org.koin.dsl.bind
+import org.koin.dsl.module
+import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.uuid.Uuid
 
-class SaveProjectUseCaseImplTest {
-    private val dataSource = FakeProjectsLocalDataSource()
-    private val useCase = SaveProjectUseCaseImpl(dataSource)
+class SaveProjectUseCaseImplTest : BackendKoinInitializedTest() {
+    private val dataSource: FakeProjectsLocalDataSource by inject()
+    private val useCase: SaveProjectUseCase by inject()
+
+    override fun additionalKoinModules(): List<Module> =
+        listOf(
+            module {
+                singleOf(::FakeProjectsLocalDataSource) bind ProjectsLocalDataSource::class
+            },
+        )
 
     private val projectId = Uuid.parse("00000000-0000-0000-0000-000000000001")
     private val project =
@@ -40,7 +55,7 @@ class SaveProjectUseCaseImplTest {
 
     @Test
     fun `saves project to data source`() =
-        runTest {
+        runTest(testDispatcher) {
             useCase(project)
 
             val stored = dataSource.getProject(projectId)
@@ -49,7 +64,7 @@ class SaveProjectUseCaseImplTest {
 
     @Test
     fun `does not save project if saved updated at is later than the new one`() =
-        runTest {
+        runTest(testDispatcher) {
             val savedProject = project.copy(
                 project = project.project.copy(
                     updatedAt = Timestamp(value = 20L),
@@ -64,7 +79,7 @@ class SaveProjectUseCaseImplTest {
 
     @Test
     fun `returns null if project was not present`() =
-        runTest {
+        runTest(testDispatcher) {
             val result = useCase(project)
 
             assertNull(result)
@@ -72,7 +87,7 @@ class SaveProjectUseCaseImplTest {
 
     @Test
     fun `returns saved project if saved updated at is later than the new one`() =
-        runTest {
+        runTest(testDispatcher) {
             val savedProject = project.copy(
                 project = project.project.copy(
                     updatedAt = Timestamp(value = 20L),
@@ -87,7 +102,7 @@ class SaveProjectUseCaseImplTest {
 
     @Test
     fun `returns null if saved updated at is earlier than the new one`() =
-        runTest {
+        runTest(testDispatcher) {
             dataSource.setProject(project)
 
             val newerProject = project.copy(
@@ -104,7 +119,7 @@ class SaveProjectUseCaseImplTest {
 
     @Test
     fun `restores soft-deleted project when saved with newer updatedAt`() =
-        runTest {
+        runTest(testDispatcher) {
             val deletedProject = project.copy(deletedAt = Timestamp(15L))
             dataSource.setProject(deletedProject)
 
@@ -126,7 +141,7 @@ class SaveProjectUseCaseImplTest {
 
     @Test
     fun `does not restore soft-deleted project when saved with older updatedAt`() =
-        runTest {
+        runTest(testDispatcher) {
             val deletedProject = project.copy(deletedAt = Timestamp(15L))
             dataSource.setProject(deletedProject)
 

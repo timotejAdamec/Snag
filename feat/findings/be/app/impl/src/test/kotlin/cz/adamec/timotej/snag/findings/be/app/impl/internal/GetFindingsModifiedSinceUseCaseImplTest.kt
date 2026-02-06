@@ -14,24 +14,39 @@ package cz.adamec.timotej.snag.findings.be.app.impl.internal
 
 import cz.adamec.timotej.snag.feat.findings.be.model.BackendFinding
 import cz.adamec.timotej.snag.feat.findings.business.Finding
+import cz.adamec.timotej.snag.findings.be.app.api.GetFindingsModifiedSinceUseCase
 import cz.adamec.timotej.snag.findings.be.driven.test.FakeFindingsLocalDataSource
+import cz.adamec.timotej.snag.findings.be.ports.FindingsLocalDataSource
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
+import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
 import kotlinx.coroutines.test.runTest
+import org.koin.core.module.Module
+import org.koin.core.module.dsl.singleOf
+import org.koin.dsl.bind
+import org.koin.dsl.module
+import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 import kotlin.uuid.Uuid
 
-class GetFindingsModifiedSinceUseCaseImplTest {
-    private val dataSource = FakeFindingsLocalDataSource()
-    private val useCase = GetFindingsModifiedSinceUseCaseImpl(dataSource)
+class GetFindingsModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
+    private val dataSource: FakeFindingsLocalDataSource by inject()
+    private val useCase: GetFindingsModifiedSinceUseCase by inject()
+
+    override fun additionalKoinModules(): List<Module> =
+        listOf(
+            module {
+                singleOf(::FakeFindingsLocalDataSource) bind FindingsLocalDataSource::class
+            },
+        )
 
     private val structureId = Uuid.parse("00000000-0000-0000-0001-000000000001")
     private val otherStructureId = Uuid.parse("00000000-0000-0000-0001-000000000002")
 
     @Test
     fun `returns empty list when no findings exist`() =
-        runTest {
+        runTest(testDispatcher) {
             val result = useCase(structureId = structureId, since = Timestamp(100L))
 
             assertTrue(result.isEmpty())
@@ -39,7 +54,7 @@ class GetFindingsModifiedSinceUseCaseImplTest {
 
     @Test
     fun `returns findings with updatedAt after since`() =
-        runTest {
+        runTest(testDispatcher) {
             val finding =
                 BackendFinding(
                     finding = Finding(
@@ -60,7 +75,7 @@ class GetFindingsModifiedSinceUseCaseImplTest {
 
     @Test
     fun `excludes findings from different structure`() =
-        runTest {
+        runTest(testDispatcher) {
             val finding =
                 BackendFinding(
                     finding = Finding(
@@ -81,7 +96,7 @@ class GetFindingsModifiedSinceUseCaseImplTest {
 
     @Test
     fun `returns deleted findings when deletedAt is after since`() =
-        runTest {
+        runTest(testDispatcher) {
             val finding =
                 BackendFinding(
                     finding = Finding(
@@ -103,7 +118,7 @@ class GetFindingsModifiedSinceUseCaseImplTest {
 
     @Test
     fun `excludes unchanged findings`() =
-        runTest {
+        runTest(testDispatcher) {
             val finding =
                 BackendFinding(
                     finding = Finding(
