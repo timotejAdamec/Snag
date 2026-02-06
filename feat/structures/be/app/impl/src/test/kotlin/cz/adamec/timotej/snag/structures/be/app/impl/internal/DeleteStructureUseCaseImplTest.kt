@@ -15,18 +15,33 @@ package cz.adamec.timotej.snag.structures.be.app.impl.internal
 import cz.adamec.timotej.snag.feat.structures.be.model.BackendStructure
 import cz.adamec.timotej.snag.feat.structures.business.Structure
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
+import cz.adamec.timotej.snag.structures.be.app.api.DeleteStructureUseCase
 import cz.adamec.timotej.snag.structures.be.app.api.model.DeleteStructureRequest
 import cz.adamec.timotej.snag.structures.be.driven.test.FakeStructuresLocalDataSource
+import cz.adamec.timotej.snag.structures.be.ports.StructuresLocalDataSource
+import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
 import kotlinx.coroutines.test.runTest
+import org.koin.core.module.Module
+import org.koin.core.module.dsl.singleOf
+import org.koin.dsl.bind
+import org.koin.dsl.module
+import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.uuid.Uuid
 
-class DeleteStructureUseCaseImplTest {
-    private val dataSource = FakeStructuresLocalDataSource()
-    private val useCase = DeleteStructureUseCaseImpl(dataSource)
+class DeleteStructureUseCaseImplTest : BackendKoinInitializedTest() {
+    private val dataSource: FakeStructuresLocalDataSource by inject()
+    private val useCase: DeleteStructureUseCase by inject()
+
+    override fun additionalKoinModules(): List<Module> =
+        listOf(
+            module {
+                singleOf(::FakeStructuresLocalDataSource) bind StructuresLocalDataSource::class
+            },
+        )
 
     private val projectId = Uuid.parse("00000000-0000-0000-0000-000000000001")
     private val structureId = Uuid.parse("00000000-0000-0000-0001-000000000001")
