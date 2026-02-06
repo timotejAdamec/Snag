@@ -30,7 +30,7 @@ class FakeFindingsApi : FindingsApi {
         return OnlineDataResult.Success(findings.values.filter { it.finding.structureId == structureId })
     }
 
-    override suspend fun deleteFinding(id: Uuid): OnlineDataResult<Unit> {
+    override suspend fun deleteFinding(id: Uuid, deletedAt: Timestamp): OnlineDataResult<Unit> {
         val failure = forcedFailure
         if (failure != null) return failure
         findings.remove(id)

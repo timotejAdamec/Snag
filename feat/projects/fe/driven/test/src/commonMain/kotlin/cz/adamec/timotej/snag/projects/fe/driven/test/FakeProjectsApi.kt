@@ -46,7 +46,7 @@ class FakeProjectsApi : ProjectsApi {
         return OnlineDataResult.Success(project)
     }
 
-    override suspend fun deleteProject(id: Uuid): OnlineDataResult<Unit> {
+    override suspend fun deleteProject(id: Uuid, deletedAt: Timestamp): OnlineDataResult<Unit> {
         val failure = forcedFailure
         if (failure != null) return failure
         projects.remove(id)

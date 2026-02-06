@@ -12,6 +12,8 @@
 
 package cz.adamec.timotej.snag.projects.fe.driven.internal.sync
 
+import cz.adamec.timotej.snag.lib.core.common.Timestamp
+import cz.adamec.timotej.snag.lib.core.common.TimestampProvider
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
 import cz.adamec.timotej.snag.lib.sync.fe.app.api.handler.DbApiSyncHandler
@@ -25,7 +27,8 @@ import kotlin.uuid.Uuid
 internal class ProjectSyncHandler(
     private val projectsApi: ProjectsApi,
     private val projectsDb: ProjectsDb,
-) : DbApiSyncHandler<FrontendProject>(LH.logger) {
+    timestampProvider: TimestampProvider,
+) : DbApiSyncHandler<FrontendProject>(LH.logger, timestampProvider) {
     override val entityTypeId: String = PROJECT_SYNC_ENTITY_TYPE
     override val entityName: String = "project"
 
@@ -35,8 +38,8 @@ internal class ProjectSyncHandler(
     override suspend fun saveEntityToApi(entity: FrontendProject): OnlineDataResult<FrontendProject?> =
         projectsApi.saveProject(entity)
 
-    override suspend fun deleteEntityFromApi(entityId: Uuid): OnlineDataResult<Unit> =
-        projectsApi.deleteProject(entityId)
+    override suspend fun deleteEntityFromApi(entityId: Uuid, deletedAt: Timestamp): OnlineDataResult<Unit> =
+        projectsApi.deleteProject(entityId, deletedAt)
 
     override suspend fun saveEntityToDb(entity: FrontendProject): OfflineFirstDataResult<Unit> =
         projectsDb.saveProject(entity)

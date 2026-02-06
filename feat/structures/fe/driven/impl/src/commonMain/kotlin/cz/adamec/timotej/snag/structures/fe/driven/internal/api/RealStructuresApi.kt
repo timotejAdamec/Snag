@@ -17,6 +17,7 @@ import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
 import cz.adamec.timotej.snag.network.fe.SnagNetworkHttpClient
 import cz.adamec.timotej.snag.network.fe.safeApiCall
+import cz.adamec.timotej.snag.structures.be.driving.contract.DeleteStructureApiDto
 import cz.adamec.timotej.snag.structures.be.driving.contract.StructureApiDto
 import cz.adamec.timotej.snag.structures.fe.driven.internal.LH
 import cz.adamec.timotej.snag.structures.fe.ports.StructureSyncResult
@@ -38,10 +39,12 @@ internal class RealStructuresApi(
         }.also { if (it is OnlineDataResult.Success) LH.logger.d { "Fetched ${it.data.size} structures for project $projectId." } }
     }
 
-    override suspend fun deleteStructure(id: Uuid): OnlineDataResult<Unit> {
+    override suspend fun deleteStructure(id: Uuid, deletedAt: Timestamp): OnlineDataResult<Unit> {
         LH.logger.d { "Deleting structure $id from API..." }
         return safeApiCall(logger = LH.logger, errorContext = "Error deleting structure $id from API.") {
-            httpClient.delete("/structures/$id")
+            httpClient.delete("/structures/$id") {
+                setBody(DeleteStructureApiDto(deletedAt = deletedAt))
+            }
             Unit
         }.also { if (it is OnlineDataResult.Success) LH.logger.d { "Deleted structure $id from API." } }
     }

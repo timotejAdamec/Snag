@@ -27,7 +27,7 @@ interface StructuresApi {
 
     suspend fun saveStructure(frontendStructure: FrontendStructure): OnlineDataResult<FrontendStructure?>
 
-    suspend fun deleteStructure(id: Uuid): OnlineDataResult<Unit>
+    suspend fun deleteStructure(id: Uuid, deletedAt: Timestamp): OnlineDataResult<Unit>
 
     suspend fun getStructuresModifiedSince(projectId: Uuid, since: Timestamp): OnlineDataResult<List<StructureSyncResult>>
 }

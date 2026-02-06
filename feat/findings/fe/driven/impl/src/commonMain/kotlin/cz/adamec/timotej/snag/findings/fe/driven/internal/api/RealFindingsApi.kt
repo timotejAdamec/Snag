@@ -13,6 +13,7 @@
 package cz.adamec.timotej.snag.findings.fe.driven.internal.api
 
 import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
+import cz.adamec.timotej.snag.findings.be.driving.contract.DeleteFindingApiDto
 import cz.adamec.timotej.snag.findings.be.driving.contract.FindingApiDto
 import cz.adamec.timotej.snag.findings.fe.driven.internal.LH
 import cz.adamec.timotej.snag.findings.fe.ports.FindingSyncResult
@@ -38,10 +39,12 @@ internal class RealFindingsApi(
         }.also { if (it is OnlineDataResult.Success) LH.logger.d { "Fetched ${it.data.size} findings for structure $structureId." } }
     }
 
-    override suspend fun deleteFinding(id: Uuid): OnlineDataResult<Unit> {
+    override suspend fun deleteFinding(id: Uuid, deletedAt: Timestamp): OnlineDataResult<Unit> {
         LH.logger.d { "Deleting finding $id from API..." }
         return safeApiCall(logger = LH.logger, errorContext = "Error deleting finding $id from API.") {
-            httpClient.delete("/findings/$id")
+            httpClient.delete("/findings/$id") {
+                setBody(DeleteFindingApiDto(deletedAt = deletedAt))
+            }
             Unit
         }.also { if (it is OnlineDataResult.Success) LH.logger.d { "Deleted finding $id from API." } }
     }

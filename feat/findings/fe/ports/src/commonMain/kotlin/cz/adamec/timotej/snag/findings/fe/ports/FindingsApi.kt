@@ -27,7 +27,7 @@ interface FindingsApi {
 
     suspend fun saveFinding(finding: FrontendFinding): OnlineDataResult<FrontendFinding?>
 
-    suspend fun deleteFinding(id: Uuid): OnlineDataResult<Unit>
+    suspend fun deleteFinding(id: Uuid, deletedAt: Timestamp): OnlineDataResult<Unit>
 
     suspend fun getFindingsModifiedSince(structureId: Uuid, since: Timestamp): OnlineDataResult<List<FindingSyncResult>>
 }

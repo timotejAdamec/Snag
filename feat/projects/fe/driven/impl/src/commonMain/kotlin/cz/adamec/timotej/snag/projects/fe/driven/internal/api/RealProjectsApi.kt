@@ -16,6 +16,7 @@ import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
 import cz.adamec.timotej.snag.network.fe.SnagNetworkHttpClient
 import cz.adamec.timotej.snag.network.fe.safeApiCall
+import cz.adamec.timotej.snag.projects.be.driving.contract.DeleteProjectApiDto
 import cz.adamec.timotej.snag.projects.be.driving.contract.ProjectApiDto
 import cz.adamec.timotej.snag.projects.fe.driven.internal.LH
 import cz.adamec.timotej.snag.projects.fe.model.FrontendProject
@@ -61,10 +62,12 @@ internal class RealProjectsApi(
         }.also { if (it is OnlineDataResult.Success) LH.logger.d { "Saved project ${project.project.id} to API." } }
     }
 
-    override suspend fun deleteProject(id: Uuid): OnlineDataResult<Unit> {
+    override suspend fun deleteProject(id: Uuid, deletedAt: Timestamp): OnlineDataResult<Unit> {
         LH.logger.d { "Deleting project $id from API..." }
         return safeApiCall(logger = LH.logger, errorContext = "Error deleting project $id from API.") {
-            httpClient.delete("/projects/$id")
+            httpClient.delete("/projects/$id") {
+                setBody(DeleteProjectApiDto(deletedAt = deletedAt))
+            }
             Unit
         }.also { if (it is OnlineDataResult.Success) LH.logger.d { "Deleted project $id from API." } }
     }
