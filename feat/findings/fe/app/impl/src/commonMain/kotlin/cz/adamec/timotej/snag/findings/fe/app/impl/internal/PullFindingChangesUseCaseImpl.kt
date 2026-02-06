@@ -31,26 +31,33 @@ internal class PullFindingChangesUseCaseImpl(
     private val timestampProvider: TimestampProvider,
 ) : PullFindingChangesUseCase {
     override suspend operator fun invoke(structureId: Uuid) {
+        LH.logger.d { "Starting pull sync for findings in structure $structureId." }
         findingsPullSyncCoordinator.withFlushedQueue {
             val since = findingsPullSyncTimestampDataSource.getLastSyncedAt(structureId) ?: Timestamp(0)
             val now = timestampProvider.getNowTimestamp()
+            LH.logger.d { "Pulling finding changes for structure $structureId since=$since, now=$now." }
 
             when (val result = findingsApi.getFindingsModifiedSince(structureId, since)) {
                 is OnlineDataResult.Failure -> {
-                    LH.logger.w("Error pulling finding changes for structure $structureId.")
+                    LH.logger.w { "Error pulling finding changes for structure $structureId." }
                 }
                 is OnlineDataResult.Success -> {
-                    result.data.forEach { syncResult ->
+                    val changes = result.data
+                    LH.logger.d { "Received ${changes.size} finding change(s) for structure $structureId." }
+                    changes.forEach { syncResult ->
                         when (syncResult) {
                             is FindingSyncResult.Deleted -> {
+                                LH.logger.d { "Processing deleted finding ${syncResult.id}." }
                                 findingsDb.deleteFinding(syncResult.id)
                             }
                             is FindingSyncResult.Updated -> {
+                                LH.logger.d { "Processing updated finding ${syncResult.finding.finding.id}." }
                                 findingsDb.saveFinding(syncResult.finding)
                             }
                         }
                     }
                     findingsPullSyncTimestampDataSource.setLastSyncedAt(structureId, now)
+                    LH.logger.d { "Pull sync for findings in structure $structureId completed, updated lastSyncedAt=$now." }
                 }
             }
         }

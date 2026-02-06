@@ -32,27 +32,34 @@ internal class PullProjectChangesUseCaseImpl(
     private val timestampProvider: TimestampProvider,
 ) : PullProjectChangesUseCase {
     override suspend operator fun invoke() {
+        LH.logger.d { "Starting pull sync for projects." }
         projectsPullSyncCoordinator.withFlushedQueue {
             val since = projectsPullSyncTimestampDataSource.getLastSyncedAt() ?: Timestamp(0)
             val now = timestampProvider.getNowTimestamp()
+            LH.logger.d { "Pulling project changes since=$since, now=$now." }
 
             when (val result = projectsApi.getProjectsModifiedSince(since)) {
                 is OnlineDataResult.Failure -> {
-                    LH.logger.w("Error pulling project changes.")
+                    LH.logger.w { "Error pulling project changes." }
                 }
                 is OnlineDataResult.Success -> {
-                    result.data.forEach { syncResult ->
+                    val changes = result.data
+                    LH.logger.d { "Received ${changes.size} project change(s)." }
+                    changes.forEach { syncResult ->
                         when (syncResult) {
                             is ProjectSyncResult.Deleted -> {
+                                LH.logger.d { "Processing deleted project ${syncResult.id}." }
                                 cascadeDeleteLocalStructuresByProjectIdUseCase(syncResult.id)
                                 projectsDb.deleteProject(syncResult.id)
                             }
                             is ProjectSyncResult.Updated -> {
+                                LH.logger.d { "Processing updated project ${syncResult.project.project.id}." }
                                 projectsDb.saveProject(syncResult.project)
                             }
                         }
                     }
                     projectsPullSyncTimestampDataSource.setLastSyncedAt(now)
+                    LH.logger.d { "Pull sync for projects completed, updated lastSyncedAt=$now." }
                 }
             }
         }

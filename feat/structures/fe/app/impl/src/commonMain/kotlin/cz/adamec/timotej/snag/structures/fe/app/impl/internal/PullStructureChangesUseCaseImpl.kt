@@ -33,27 +33,34 @@ internal class PullStructureChangesUseCaseImpl(
     private val timestampProvider: TimestampProvider,
 ) : PullStructureChangesUseCase {
     override suspend operator fun invoke(projectId: Uuid) {
+        LH.logger.d { "Starting pull sync for structures in project $projectId." }
         structuresPullSyncCoordinator.withFlushedQueue {
             val since = structuresPullSyncTimestampDataSource.getLastSyncedAt(projectId) ?: Timestamp(0)
             val now = timestampProvider.getNowTimestamp()
+            LH.logger.d { "Pulling structure changes for project $projectId since=$since, now=$now." }
 
             when (val result = structuresApi.getStructuresModifiedSince(projectId, since)) {
                 is OnlineDataResult.Failure -> {
-                    LH.logger.w("Error pulling structure changes for project $projectId.")
+                    LH.logger.w { "Error pulling structure changes for project $projectId." }
                 }
                 is OnlineDataResult.Success -> {
-                    result.data.forEach { syncResult ->
+                    val changes = result.data
+                    LH.logger.d { "Received ${changes.size} structure change(s) for project $projectId." }
+                    changes.forEach { syncResult ->
                         when (syncResult) {
                             is StructureSyncResult.Deleted -> {
+                                LH.logger.d { "Processing deleted structure ${syncResult.id}." }
                                 deleteLocalFindingsByStructureIdUseCase(syncResult.id)
                                 structuresDb.deleteStructure(syncResult.id)
                             }
                             is StructureSyncResult.Updated -> {
+                                LH.logger.d { "Processing updated structure ${syncResult.structure.structure.id}." }
                                 structuresDb.saveStructure(syncResult.structure)
                             }
                         }
                     }
                     structuresPullSyncTimestampDataSource.setLastSyncedAt(projectId, now)
+                    LH.logger.d { "Pull sync for structures in project $projectId completed, updated lastSyncedAt=$now." }
                 }
             }
         }
