@@ -12,12 +12,15 @@
 
 package cz.adamec.timotej.snag.projects.fe.driven.internal.api
 
+import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
 import cz.adamec.timotej.snag.network.fe.SnagNetworkHttpClient
 import cz.adamec.timotej.snag.network.fe.safeApiCall
+import cz.adamec.timotej.snag.projects.be.driving.contract.DeleteProjectApiDto
 import cz.adamec.timotej.snag.projects.be.driving.contract.ProjectApiDto
 import cz.adamec.timotej.snag.projects.fe.driven.internal.LH
 import cz.adamec.timotej.snag.projects.fe.model.FrontendProject
+import cz.adamec.timotej.snag.projects.fe.ports.ProjectSyncResult
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsApi
 import io.ktor.client.call.body
 import io.ktor.client.request.setBody
@@ -59,11 +62,26 @@ internal class RealProjectsApi(
         }.also { if (it is OnlineDataResult.Success) LH.logger.d { "Saved project ${project.project.id} to API." } }
     }
 
-    override suspend fun deleteProject(id: Uuid): OnlineDataResult<Unit> {
+    override suspend fun deleteProject(id: Uuid, deletedAt: Timestamp): OnlineDataResult<Unit> {
         LH.logger.d { "Deleting project $id from API..." }
         return safeApiCall(logger = LH.logger, errorContext = "Error deleting project $id from API.") {
-            httpClient.delete("/projects/$id")
+            httpClient.delete("/projects/$id") {
+                setBody(DeleteProjectApiDto(deletedAt = deletedAt))
+            }
             Unit
         }.also { if (it is OnlineDataResult.Success) LH.logger.d { "Deleted project $id from API." } }
+    }
+
+    override suspend fun getProjectsModifiedSince(since: Timestamp): OnlineDataResult<List<ProjectSyncResult>> {
+        LH.logger.d { "Fetching projects modified since $since..." }
+        return safeApiCall(logger = LH.logger, errorContext = "Error fetching projects modified since $since.") {
+            httpClient.get("/projects?since=${since.value}").body<List<ProjectApiDto>>().map { dto ->
+                if (dto.deletedAt != null) {
+                    ProjectSyncResult.Deleted(id = dto.id)
+                } else {
+                    ProjectSyncResult.Updated(project = dto.toModel())
+                }
+            }
+        }.also { if (it is OnlineDataResult.Success) LH.logger.d { "Fetched ${it.data.size} modified projects." } }
     }
 }

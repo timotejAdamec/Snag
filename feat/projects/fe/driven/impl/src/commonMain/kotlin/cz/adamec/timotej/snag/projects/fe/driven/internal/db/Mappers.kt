@@ -13,6 +13,7 @@
 package cz.adamec.timotej.snag.projects.fe.driven.internal.db
 
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.ProjectEntity
+import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.projects.business.Project
 import cz.adamec.timotej.snag.projects.fe.model.FrontendProject
 import kotlin.uuid.Uuid
@@ -22,6 +23,7 @@ internal fun FrontendProject.toEntity() =
         id = project.id.toString(),
         name = project.name,
         address = project.address,
+        updatedAt = project.updatedAt.value,
     )
 
 internal fun ProjectEntity.toModel() =
@@ -30,5 +32,6 @@ internal fun ProjectEntity.toModel() =
             id = Uuid.parse(id),
             name = name,
             address = address,
+            updatedAt = Timestamp(updatedAt),
         ),
     )

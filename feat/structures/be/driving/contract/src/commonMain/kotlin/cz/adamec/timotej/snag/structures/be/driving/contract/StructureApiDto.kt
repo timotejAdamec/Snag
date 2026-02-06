@@ -23,4 +23,5 @@ data class StructureApiDto(
     val name: String,
     val floorPlanUrl: String?,
     val updatedAt: Timestamp,
+    val deletedAt: Timestamp? = null,
 )

@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.projects.fe.driven.internal.sync
 
+import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
 import cz.adamec.timotej.snag.lib.sync.fe.model.SyncOperationType
@@ -53,7 +54,7 @@ class ProjectSyncHandlerTest : FrontendKoinInitializedTest() {
     @Test
     fun `upsert reads from db and calls api`() =
         runTest(testDispatcher) {
-            val project = FrontendProject(project = Project(Uuid.random(), "Test Project", "123 Street"))
+            val project = FrontendProject(project = Project(Uuid.random(), "Test Project", "123 Street", Timestamp(10L)))
             fakeProjectsDb.setProject(project)
 
             val result = handler.execute(project.project.id, SyncOperationType.UPSERT)
@@ -64,7 +65,7 @@ class ProjectSyncHandlerTest : FrontendKoinInitializedTest() {
     @Test
     fun `upsert saves fresher dto from api to db`() =
         runTest(testDispatcher) {
-            val project = FrontendProject(project = Project(Uuid.random(), "Original", "123 Street"))
+            val project = FrontendProject(project = Project(Uuid.random(), "Original", "123 Street", Timestamp(10L)))
             fakeProjectsDb.setProject(project)
 
             val fresherProject = project.copy(project = project.project.copy(name = "Updated by API"))
@@ -89,7 +90,7 @@ class ProjectSyncHandlerTest : FrontendKoinInitializedTest() {
     @Test
     fun `upsert when api fails returns failure`() =
         runTest(testDispatcher) {
-            val project = FrontendProject(project = Project(Uuid.random(), "Test Project", "123 Street"))
+            val project = FrontendProject(project = Project(Uuid.random(), "Test Project", "123 Street", Timestamp(10L)))
             fakeProjectsDb.setProject(project)
             fakeProjectsApi.forcedFailure =
                 OnlineDataResult.Failure.ProgrammerError(Exception("API error"))

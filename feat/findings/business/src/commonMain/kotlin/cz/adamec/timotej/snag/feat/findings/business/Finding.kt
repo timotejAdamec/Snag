@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.feat.findings.business
 
+import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import kotlin.uuid.Uuid
 
 data class Finding(
@@ -20,4 +21,5 @@ data class Finding(
     val name: String,
     val description: String?,
     val coordinates: List<RelativeCoordinate>,
+    val updatedAt: Timestamp,
 )

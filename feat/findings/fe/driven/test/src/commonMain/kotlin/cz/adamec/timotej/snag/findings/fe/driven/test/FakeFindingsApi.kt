@@ -13,7 +13,9 @@
 package cz.adamec.timotej.snag.findings.fe.driven.test
 
 import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
+import cz.adamec.timotej.snag.findings.fe.ports.FindingSyncResult
 import cz.adamec.timotej.snag.findings.fe.ports.FindingsApi
+import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
 import kotlin.uuid.Uuid
 
@@ -28,7 +30,7 @@ class FakeFindingsApi : FindingsApi {
         return OnlineDataResult.Success(findings.values.filter { it.finding.structureId == structureId })
     }
 
-    override suspend fun deleteFinding(id: Uuid): OnlineDataResult<Unit> {
+    override suspend fun deleteFinding(id: Uuid, deletedAt: Timestamp): OnlineDataResult<Unit> {
         val failure = forcedFailure
         if (failure != null) return failure
         findings.remove(id)
@@ -46,6 +48,14 @@ class FakeFindingsApi : FindingsApi {
 
     fun setFinding(finding: FrontendFinding) {
         findings[finding.finding.id] = finding
+    }
+
+    var modifiedSinceResults: List<FindingSyncResult> = emptyList()
+
+    override suspend fun getFindingsModifiedSince(structureId: Uuid, since: Timestamp): OnlineDataResult<List<FindingSyncResult>> {
+        val failure = forcedFailure
+        if (failure != null) return failure
+        return OnlineDataResult.Success(modifiedSinceResults)
     }
 
     fun setFindings(findings: List<FrontendFinding>) {

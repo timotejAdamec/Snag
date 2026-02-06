@@ -12,8 +12,9 @@
 
 package cz.adamec.timotej.snag.projects.be.app.api
 
-import kotlin.uuid.Uuid
+import cz.adamec.timotej.snag.projects.be.app.api.model.DeleteProjectRequest
+import cz.adamec.timotej.snag.projects.be.model.BackendProject
 
 interface DeleteProjectUseCase {
-    suspend operator fun invoke(projectId: Uuid)
+    suspend operator fun invoke(request: DeleteProjectRequest): BackendProject?
 }

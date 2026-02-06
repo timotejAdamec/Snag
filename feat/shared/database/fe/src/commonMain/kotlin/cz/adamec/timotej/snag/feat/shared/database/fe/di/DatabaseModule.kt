@@ -15,6 +15,7 @@ package cz.adamec.timotej.snag.feat.shared.database.fe.di
 import app.cash.sqldelight.db.SqlDriver
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.FindingEntityQueries
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.ProjectEntityQueries
+import cz.adamec.timotej.snag.feat.shared.database.fe.db.PullSyncTimestampEntityQueries
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.SnagDatabase
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.StructureEntityQueries
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.SyncOperationEntityQueries
@@ -57,6 +58,11 @@ val databaseModule =
             val snagDatabase = get<SnagDatabase>()
             snagDatabase.syncOperationEntityQueries
         } bind SyncOperationEntityQueries::class
+
+        factory {
+            val snagDatabase = get<SnagDatabase>()
+            snagDatabase.pullSyncTimestampEntityQueries
+        } bind PullSyncTimestampEntityQueries::class
 
         single {
             DatabaseInitializer(

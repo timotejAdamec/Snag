@@ -13,7 +13,9 @@
 package cz.adamec.timotej.snag.feat.findings.be.model
 
 import cz.adamec.timotej.snag.feat.findings.business.Finding
+import cz.adamec.timotej.snag.lib.core.common.Timestamp
 
 data class BackendFinding(
     val finding: Finding,
+    val deletedAt: Timestamp? = null,
 )

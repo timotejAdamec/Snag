@@ -15,7 +15,6 @@ package cz.adamec.timotej.snag.lib.design.fe.scaffold
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 
 class AppScaffoldState(

@@ -40,14 +40,16 @@ fun AdaptiveTonalButton(
     modifier: Modifier = Modifier,
 ) {
     val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
-    val isScreenWide = windowSizeClass.isWidthAtLeastBreakpoint(
-        widthDpBreakpoint = WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND,
-    )
+    val isScreenWide =
+        windowSizeClass.isWidthAtLeastBreakpoint(
+            widthDpBreakpoint = WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND,
+        )
 
     if (isScreenWide) {
         FilledTonalButton(
-            modifier = modifier
-                .padding(end = 4.dp),
+            modifier =
+                modifier
+                    .padding(end = 4.dp),
             onClick = onClick,
             contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
         ) {

@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.projects.be.driving.contract
 
+import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import kotlinx.serialization.Serializable
 import kotlin.uuid.Uuid
 
@@ -20,4 +21,6 @@ data class ProjectApiDto(
     val id: Uuid,
     val name: String,
     val address: String,
+    val updatedAt: Timestamp,
+    val deletedAt: Timestamp? = null,
 )

@@ -12,10 +12,12 @@
 
 package cz.adamec.timotej.snag.projects.be.driving.contract
 
+import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class PutProjectApiDto(
     val name: String,
     val address: String,
+    val updatedAt: Timestamp,
 )

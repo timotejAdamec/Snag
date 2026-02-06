@@ -14,6 +14,7 @@ package cz.adamec.timotej.snag.findings.be.driven.test
 
 import cz.adamec.timotej.snag.feat.findings.be.model.BackendFinding
 import cz.adamec.timotej.snag.findings.be.ports.FindingsLocalDataSource
+import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import kotlin.uuid.Uuid
 
 class FakeFindingsLocalDataSource : FindingsLocalDataSource {
@@ -23,13 +24,45 @@ class FakeFindingsLocalDataSource : FindingsLocalDataSource {
         findings.values.filter { it.finding.structureId == structureId }
 
     override suspend fun updateFinding(finding: BackendFinding): BackendFinding? {
+        val foundFinding = findings[finding.finding.id]
+        if (foundFinding != null) {
+            val serverTimestamp =
+                maxOf(
+                    foundFinding.finding.updatedAt,
+                    foundFinding.deletedAt ?: Timestamp(0),
+                )
+            if (serverTimestamp >= finding.finding.updatedAt) {
+                return foundFinding
+            }
+        }
+
         findings[finding.finding.id] = finding
         return null
     }
 
-    override suspend fun deleteFinding(id: Uuid) {
-        findings.remove(id)
+    @Suppress("ReturnCount")
+    override suspend fun deleteFinding(
+        id: Uuid,
+        deletedAt: Timestamp,
+    ): BackendFinding? {
+        val foundFinding =
+            findings[id]
+                ?: return null
+        if (foundFinding.deletedAt != null) return null
+        if (foundFinding.finding.updatedAt >= deletedAt) return foundFinding
+
+        findings[id] = foundFinding.copy(deletedAt = deletedAt)
+        return null
     }
+
+    override suspend fun getFindingsModifiedSince(
+        structureId: Uuid,
+        since: Timestamp,
+    ): List<BackendFinding> =
+        findings.values.filter {
+            it.finding.structureId == structureId &&
+                (it.finding.updatedAt > since || it.deletedAt?.let { d -> d > since } == true)
+        }
 
     fun setFinding(finding: BackendFinding) {
         findings[finding.finding.id] = finding

@@ -25,87 +25,111 @@ internal class InMemoryStructuresLocalDataSource(
     private val structures =
         mutableListOf(
             BackendStructure(
-                structure = Structure(
-                    id = Uuid.parse("00000000-0000-0000-0001-000000000001"),
-                    projectId = Uuid.parse(PROJECT_1),
-                    name = "Block A - Ground Floor",
-                    floorPlanUrl = "https://upload.wikimedia.org/wikipedia/commons/9/9a/Sample_Floorplan.jpg",
-                    updatedAt = timestampProvider.getNowTimestamp(),
-                ),
+                structure =
+                    Structure(
+                        id = Uuid.parse("00000000-0000-0000-0001-000000000001"),
+                        projectId = Uuid.parse(PROJECT_1),
+                        name = "Block A - Ground Floor",
+                        floorPlanUrl = "https://upload.wikimedia.org/wikipedia/commons/9/9a/Sample_Floorplan.jpg",
+                        updatedAt = timestampProvider.getNowTimestamp(),
+                    ),
             ),
             BackendStructure(
-                structure = Structure(
-                    id = Uuid.parse("00000000-0000-0000-0001-000000000002"),
-                    projectId = Uuid.parse(PROJECT_1),
-                    name = "Block A - First Floor",
-                    floorPlanUrl = "https://saterdesign.com/cdn/shop/products/6842.M_1200x.jpeg?v=1547874083",
-                    updatedAt = timestampProvider.getNowTimestamp(),
-                ),
+                structure =
+                    Structure(
+                        id = Uuid.parse("00000000-0000-0000-0001-000000000002"),
+                        projectId = Uuid.parse(PROJECT_1),
+                        name = "Block A - First Floor",
+                        floorPlanUrl = "https://saterdesign.com/cdn/shop/products/6842.M_1200x.jpeg?v=1547874083",
+                        updatedAt = timestampProvider.getNowTimestamp(),
+                    ),
             ),
             BackendStructure(
-                structure = Structure(
-                    id = Uuid.parse("00000000-0000-0000-0001-000000000003"),
-                    projectId = Uuid.parse(PROJECT_1),
-                    name = "Block B - Ground Floor",
-                    floorPlanUrl = null,
-                    updatedAt = timestampProvider.getNowTimestamp(),
-                ),
+                structure =
+                    Structure(
+                        id = Uuid.parse("00000000-0000-0000-0001-000000000003"),
+                        projectId = Uuid.parse(PROJECT_1),
+                        name = "Block B - Ground Floor",
+                        floorPlanUrl = null,
+                        updatedAt = timestampProvider.getNowTimestamp(),
+                    ),
             ),
             BackendStructure(
-                structure = Structure(
-                    id = Uuid.parse("00000000-0000-0000-0001-000000000004"),
-                    projectId = Uuid.parse(PROJECT_2),
-                    name = "Main Building - Basement",
-                    floorPlanUrl = null,
-                    updatedAt = timestampProvider.getNowTimestamp(),
-                ),
+                structure =
+                    Structure(
+                        id = Uuid.parse("00000000-0000-0000-0001-000000000004"),
+                        projectId = Uuid.parse(PROJECT_2),
+                        name = "Main Building - Basement",
+                        floorPlanUrl = null,
+                        updatedAt = timestampProvider.getNowTimestamp(),
+                    ),
             ),
             BackendStructure(
-                structure = Structure(
-                    id = Uuid.parse("00000000-0000-0000-0001-000000000005"),
-                    projectId = Uuid.parse(PROJECT_2),
-                    name = "Main Building - Ground Floor",
-                    floorPlanUrl = "https://www.thehousedesigners.com/images/plans/01/SCA/bulk/9333/1st-floor_m.webp",
-                    updatedAt = timestampProvider.getNowTimestamp(),
-                ),
+                structure =
+                    Structure(
+                        id = Uuid.parse("00000000-0000-0000-0001-000000000005"),
+                        projectId = Uuid.parse(PROJECT_2),
+                        name = "Main Building - Ground Floor",
+                        floorPlanUrl = "https://www.thehousedesigners.com/images/plans/01/SCA/bulk/9333/1st-floor_m.webp",
+                        updatedAt = timestampProvider.getNowTimestamp(),
+                    ),
             ),
             BackendStructure(
-                structure = Structure(
-                    id = Uuid.parse("00000000-0000-0000-0001-000000000006"),
-                    projectId = Uuid.parse(PROJECT_3),
-                    name = "Reading Hall - Level 1",
-                    floorPlanUrl = null,
-                    updatedAt = timestampProvider.getNowTimestamp(),
-                ),
+                structure =
+                    Structure(
+                        id = Uuid.parse("00000000-0000-0000-0001-000000000006"),
+                        projectId = Uuid.parse(PROJECT_3),
+                        name = "Reading Hall - Level 1",
+                        floorPlanUrl = null,
+                        updatedAt = timestampProvider.getNowTimestamp(),
+                    ),
             ),
         )
 
-    override suspend fun getStructures(projectId: Uuid): List<BackendStructure> =
-        structures.filter { it.structure.projectId == projectId }
+    override suspend fun getStructures(projectId: Uuid): List<BackendStructure> = structures.filter { it.structure.projectId == projectId }
 
+    @Suppress("ReturnCount")
     override suspend fun deleteStructure(
         id: Uuid,
         deletedAt: Timestamp,
     ): BackendStructure? {
-        val foundStructure = structures.find { it.structure.id == id }
-        if (foundStructure != null && foundStructure.structure.updatedAt >= deletedAt) {
-            return foundStructure
-        }
+        val foundStructure =
+            structures.find { it.structure.id == id }
+                ?: return null
+        if (foundStructure.deletedAt != null) return null
+        if (foundStructure.structure.updatedAt >= deletedAt) return foundStructure
 
-        structures.removeIf { it.structure.id == id && it.structure.updatedAt < deletedAt }
+        val index = structures.indexOfFirst { it.structure.id == id }
+        structures[index] = foundStructure.copy(deletedAt = deletedAt)
         return null
     }
 
     override suspend fun saveStructure(backendStructure: BackendStructure): BackendStructure? {
         val foundStructure = structures.find { it.structure.id == backendStructure.structure.id }
-        if (foundStructure != null && foundStructure.structure.updatedAt >= backendStructure.structure.updatedAt) {
-            return foundStructure
+        if (foundStructure != null) {
+            val serverTimestamp =
+                maxOf(
+                    foundStructure.structure.updatedAt,
+                    foundStructure.deletedAt ?: Timestamp(0),
+                )
+            if (serverTimestamp >= backendStructure.structure.updatedAt) {
+                return foundStructure
+            }
         }
 
         structures.removeIf { it.structure.id == backendStructure.structure.id }
         structures.add(backendStructure)
         return null
     }
+
+    override suspend fun getStructuresModifiedSince(
+        projectId: Uuid,
+        since: Timestamp,
+    ): List<BackendStructure> =
+        structures.filter {
+            it.structure.projectId == projectId &&
+                (it.structure.updatedAt > since || it.deletedAt?.let { d -> d > since } == true)
+        }
 
     private companion object {
         private const val PROJECT_1 = "00000000-0000-0000-0000-000000000001"

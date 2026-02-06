@@ -13,13 +13,17 @@
 package cz.adamec.timotej.snag.findings.be.driving.impl.internal
 
 import cz.adamec.timotej.snag.findings.be.app.api.DeleteFindingUseCase
+import cz.adamec.timotej.snag.findings.be.app.api.GetFindingsModifiedSinceUseCase
 import cz.adamec.timotej.snag.findings.be.app.api.GetFindingsUseCase
 import cz.adamec.timotej.snag.findings.be.app.api.SaveFindingUseCase
+import cz.adamec.timotej.snag.lib.core.common.Timestamp
+import cz.adamec.timotej.snag.findings.be.app.api.model.DeleteFindingRequest
+import cz.adamec.timotej.snag.findings.be.driving.contract.DeleteFindingApiDto
 import cz.adamec.timotej.snag.findings.be.driving.contract.PutFindingApiDto
 import cz.adamec.timotej.snag.routing.be.AppRoute
+import cz.adamec.timotej.snag.routing.be.getDtoFromBody
 import cz.adamec.timotej.snag.routing.be.getIdFromParameters
 import io.ktor.http.HttpStatusCode
-import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.delete
@@ -31,38 +35,46 @@ import io.ktor.server.routing.route
 internal class FindingsRoute(
     private val deleteFindingUseCase: DeleteFindingUseCase,
     private val getFindingsUseCase: GetFindingsUseCase,
+    private val getFindingsModifiedSinceUseCase: GetFindingsModifiedSinceUseCase,
     private val saveFindingUseCase: SaveFindingUseCase,
 ) : AppRoute {
     override fun Route.setup() {
         route("/findings") {
             delete("/{id}") {
                 val id = getIdFromParameters()
+                val deleteFindingDto = getDtoFromBody<DeleteFindingApiDto>()
 
-                deleteFindingUseCase(id)
+                val newerFinding = deleteFindingUseCase(
+                    DeleteFindingRequest(
+                        findingId = id,
+                        deletedAt = deleteFindingDto.deletedAt,
+                    ),
+                )
 
-                call.respond(HttpStatusCode.NoContent)
+                newerFinding?.let {
+                    call.respond(it.toDto())
+                } ?: call.respond(HttpStatusCode.NoContent)
             }
         }
 
         route("/structures/{structureId}/findings") {
             get {
                 val structureId = getIdFromParameters("structureId")
-                val dtoFindings =
-                    getFindingsUseCase(structureId).map {
-                        it.toDto()
-                    }
-                call.respond(dtoFindings)
+                val sinceParam = call.request.queryParameters["since"]
+                if (sinceParam != null) {
+                    val since = Timestamp(sinceParam.toLong())
+                    val modified = getFindingsModifiedSinceUseCase(structureId, since).map { it.toDto() }
+                    call.respond(modified)
+                } else {
+                    val dtoFindings = getFindingsUseCase(structureId).map { it.toDto() }
+                    call.respond(dtoFindings)
+                }
             }
 
             put("/{id}") {
                 val id = getIdFromParameters()
 
-                val putFindingDto =
-                    runCatching { call.receive<PutFindingApiDto>() }.getOrNull()
-                        ?: return@put call.respond(
-                            status = HttpStatusCode.BadRequest,
-                            message = "Invalid request body.",
-                        )
+                val putFindingDto = getDtoFromBody<PutFindingApiDto>()
 
                 val updatedFinding = saveFindingUseCase(putFindingDto.toModel(id))
 

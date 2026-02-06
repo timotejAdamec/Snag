@@ -13,6 +13,8 @@
 package cz.adamec.timotej.snag.lib.sync.fe.app.api.handler
 
 import co.touchlab.kermit.Logger
+import cz.adamec.timotej.snag.lib.core.common.Timestamp
+import cz.adamec.timotej.snag.lib.core.common.TimestampProvider
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
 import cz.adamec.timotej.snag.lib.sync.fe.model.SyncOperationType
@@ -22,6 +24,7 @@ import kotlin.uuid.Uuid
 
 abstract class DbApiSyncHandler<T>(
     private val logger: Logger,
+    private val timestampProvider: TimestampProvider,
 ) : SyncOperationHandler {
     /**
      * Freeform string used for logging.
@@ -32,7 +35,7 @@ abstract class DbApiSyncHandler<T>(
 
     protected abstract suspend fun saveEntityToApi(entity: T): OnlineDataResult<T?>
 
-    protected abstract suspend fun deleteEntityFromApi(entityId: Uuid): OnlineDataResult<Unit>
+    protected abstract suspend fun deleteEntityFromApi(entityId: Uuid, deletedAt: Timestamp): OnlineDataResult<Unit>
 
     protected abstract suspend fun saveEntityToDb(entity: T): OfflineFirstDataResult<Unit>
 
@@ -81,7 +84,7 @@ abstract class DbApiSyncHandler<T>(
     }
 
     private suspend fun executeDelete(entityId: Uuid): SyncOperationResult =
-        when (deleteEntityFromApi(entityId)) {
+        when (deleteEntityFromApi(entityId, timestampProvider.getNowTimestamp())) {
             is OnlineDataResult.Success -> {
                 logger.d { "Deleted $entityName $entityId from API." }
                 SyncOperationResult.Success

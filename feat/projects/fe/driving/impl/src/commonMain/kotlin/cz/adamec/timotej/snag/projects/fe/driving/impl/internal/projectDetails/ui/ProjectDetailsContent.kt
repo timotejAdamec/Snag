@@ -45,6 +45,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
 import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureCard
+import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.common.UuidProvider
 import cz.adamec.timotej.snag.lib.design.fe.button.AdaptiveTonalButton
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.BackNavigationIcon
@@ -287,6 +288,7 @@ private fun LoadedProjectDetailsContentPreview() {
                             id = UuidProvider.getUuid(),
                             name = "Example project name",
                             address = "Example project address",
+                            updatedAt = Timestamp(0L),
                         ),
                     )
                 ),

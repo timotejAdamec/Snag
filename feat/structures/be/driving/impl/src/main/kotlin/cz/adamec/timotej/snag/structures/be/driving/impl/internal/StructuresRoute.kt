@@ -12,10 +12,12 @@
 
 package cz.adamec.timotej.snag.structures.be.driving.impl.internal
 
+import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.routing.be.AppRoute
 import cz.adamec.timotej.snag.routing.be.getDtoFromBody
 import cz.adamec.timotej.snag.routing.be.getIdFromParameters
 import cz.adamec.timotej.snag.structures.be.app.api.DeleteStructureUseCase
+import cz.adamec.timotej.snag.structures.be.app.api.GetStructuresModifiedSinceUseCase
 import cz.adamec.timotej.snag.structures.be.app.api.GetStructuresUseCase
 import cz.adamec.timotej.snag.structures.be.app.api.SaveStructureUseCase
 import cz.adamec.timotej.snag.structures.be.app.api.model.DeleteStructureRequest
@@ -33,6 +35,7 @@ import io.ktor.server.routing.route
 internal class StructuresRoute(
     private val deleteStructureUseCase: DeleteStructureUseCase,
     private val getStructuresUseCase: GetStructuresUseCase,
+    private val getStructuresModifiedSinceUseCase: GetStructuresModifiedSinceUseCase,
     private val saveStructureUseCase: SaveStructureUseCase,
 ) : AppRoute {
     override fun Route.setup() {
@@ -57,11 +60,15 @@ internal class StructuresRoute(
         route("/projects/{projectId}/structures") {
             get {
                 val projectId = getIdFromParameters("projectId")
-                val dtoStructures =
-                    getStructuresUseCase(projectId).map {
-                        it.toDto()
-                    }
-                call.respond(dtoStructures)
+                val sinceParam = call.request.queryParameters["since"]
+                if (sinceParam != null) {
+                    val since = Timestamp(sinceParam.toLong())
+                    val modified = getStructuresModifiedSinceUseCase(projectId, since).map { it.toDto() }
+                    call.respond(modified)
+                } else {
+                    val dtoStructures = getStructuresUseCase(projectId).map { it.toDto() }
+                    call.respond(dtoStructures)
+                }
             }
 
             put("/{id}") {

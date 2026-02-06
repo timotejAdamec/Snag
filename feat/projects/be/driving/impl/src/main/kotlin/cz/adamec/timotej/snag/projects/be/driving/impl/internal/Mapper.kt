@@ -19,11 +19,15 @@ import cz.adamec.timotej.snag.projects.business.Project
 import kotlin.uuid.Uuid
 
 internal fun BackendProject.toDto() =
-    ProjectApiDto(
-        id = project.id,
-        name = project.name,
-        address = project.address,
-    )
+    with(project) {
+        ProjectApiDto(
+            id = id,
+            name = name,
+            address = address,
+            updatedAt = updatedAt,
+            deletedAt = this@toDto.deletedAt,
+        )
+    }
 
 internal fun PutProjectApiDto.toModel(id: Uuid) =
     BackendProject(
@@ -31,5 +35,6 @@ internal fun PutProjectApiDto.toModel(id: Uuid) =
             id = id,
             name = name,
             address = address,
+            updatedAt = updatedAt,
         ),
     )

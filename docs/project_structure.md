@@ -48,7 +48,13 @@ Each feature module/directory can be split into submodules if there is a need fo
 The `api` and `impl` split is typical for frontend `driving` code and for `app` layer.
 The `test` and `impl` split is typical for driven code so that tests in `driving` and `app` layers
 can run with non-production unit-test-friendly adapter `ports`.
+The `app/test` split provides fake use case implementations for cross-feature testing. When feature A
+depends on feature B's use case (via `app/api`), feature A's tests can use feature B's `app/test` fakes.
 The `contract` and `impl` split is typical for backend driving code.
+
+### Cross-feature dependencies
+
+Dependencies between features is handled by accessing use cases (`app/api`) from the different feature.
 
 ## Library modules
 Library modules are located in the `lib` directory. These contain "domain-agnostic" code.

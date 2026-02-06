@@ -12,13 +12,17 @@
 
 package cz.adamec.timotej.snag.structures.fe.app.impl.di
 
+import cz.adamec.timotej.snag.structures.fe.app.api.CascadeDeleteLocalStructuresByProjectIdUseCase
 import cz.adamec.timotej.snag.structures.fe.app.api.DeleteStructureUseCase
 import cz.adamec.timotej.snag.structures.fe.app.api.GetStructureUseCase
 import cz.adamec.timotej.snag.structures.fe.app.api.GetStructuresUseCase
+import cz.adamec.timotej.snag.structures.fe.app.api.PullStructureChangesUseCase
 import cz.adamec.timotej.snag.structures.fe.app.api.SaveStructureUseCase
+import cz.adamec.timotej.snag.structures.fe.app.impl.internal.CascadeDeleteLocalStructuresByProjectIdUseCaseImpl
 import cz.adamec.timotej.snag.structures.fe.app.impl.internal.DeleteStructureUseCaseImpl
 import cz.adamec.timotej.snag.structures.fe.app.impl.internal.GetStructureUseCaseImpl
 import cz.adamec.timotej.snag.structures.fe.app.impl.internal.GetStructuresUseCaseImpl
+import cz.adamec.timotej.snag.structures.fe.app.impl.internal.PullStructureChangesUseCaseImpl
 import cz.adamec.timotej.snag.structures.fe.app.impl.internal.SaveStructureUseCaseImpl
 import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.bind
@@ -30,4 +34,6 @@ val structuresAppModule =
         factoryOf(::GetStructureUseCaseImpl) bind GetStructureUseCase::class
         factoryOf(::GetStructuresUseCaseImpl) bind GetStructuresUseCase::class
         factoryOf(::SaveStructureUseCaseImpl) bind SaveStructureUseCase::class
+        factoryOf(::CascadeDeleteLocalStructuresByProjectIdUseCaseImpl) bind CascadeDeleteLocalStructuresByProjectIdUseCase::class
+        factoryOf(::PullStructureChangesUseCaseImpl) bind PullStructureChangesUseCase::class
     }

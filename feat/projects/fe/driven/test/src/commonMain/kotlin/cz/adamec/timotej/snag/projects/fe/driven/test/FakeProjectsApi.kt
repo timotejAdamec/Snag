@@ -12,8 +12,10 @@
 
 package cz.adamec.timotej.snag.projects.fe.driven.test
 
+import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
 import cz.adamec.timotej.snag.projects.fe.model.FrontendProject
+import cz.adamec.timotej.snag.projects.fe.ports.ProjectSyncResult
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsApi
 import kotlin.uuid.Uuid
 
@@ -44,11 +46,19 @@ class FakeProjectsApi : ProjectsApi {
         return OnlineDataResult.Success(project)
     }
 
-    override suspend fun deleteProject(id: Uuid): OnlineDataResult<Unit> {
+    override suspend fun deleteProject(id: Uuid, deletedAt: Timestamp): OnlineDataResult<Unit> {
         val failure = forcedFailure
         if (failure != null) return failure
         projects.remove(id)
         return OnlineDataResult.Success(Unit)
+    }
+
+    var modifiedSinceResults: List<ProjectSyncResult> = emptyList()
+
+    override suspend fun getProjectsModifiedSince(since: Timestamp): OnlineDataResult<List<ProjectSyncResult>> {
+        val failure = forcedFailure
+        if (failure != null) return failure
+        return OnlineDataResult.Success(modifiedSinceResults)
     }
 
     fun setProject(project: FrontendProject) {

@@ -30,6 +30,7 @@ interface SnagNetworkHttpClient {
 
     suspend fun delete(
         path: String,
+        contentType: ContentType = ContentType.Application.Json,
         block: HttpRequestBuilder.() -> Unit = {},
     ): HttpResponse
 }

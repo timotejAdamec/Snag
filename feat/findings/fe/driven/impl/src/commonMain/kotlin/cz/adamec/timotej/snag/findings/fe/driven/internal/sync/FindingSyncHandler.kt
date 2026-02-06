@@ -16,6 +16,8 @@ import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
 import cz.adamec.timotej.snag.findings.fe.driven.internal.LH
 import cz.adamec.timotej.snag.findings.fe.ports.FindingsApi
 import cz.adamec.timotej.snag.findings.fe.ports.FindingsDb
+import cz.adamec.timotej.snag.lib.core.common.Timestamp
+import cz.adamec.timotej.snag.lib.core.common.TimestampProvider
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
 import cz.adamec.timotej.snag.lib.sync.fe.app.api.handler.DbApiSyncHandler
@@ -25,7 +27,8 @@ import kotlin.uuid.Uuid
 internal class FindingSyncHandler(
     private val findingsApi: FindingsApi,
     private val findingsDb: FindingsDb,
-) : DbApiSyncHandler<FrontendFinding>(LH.logger) {
+    timestampProvider: TimestampProvider,
+) : DbApiSyncHandler<FrontendFinding>(LH.logger, timestampProvider) {
     override val entityTypeId: String = FINDING_SYNC_ENTITY_TYPE
     override val entityName: String = "finding"
 
@@ -35,8 +38,8 @@ internal class FindingSyncHandler(
     override suspend fun saveEntityToApi(entity: FrontendFinding): OnlineDataResult<FrontendFinding?> =
         findingsApi.saveFinding(entity)
 
-    override suspend fun deleteEntityFromApi(entityId: Uuid): OnlineDataResult<Unit> =
-        findingsApi.deleteFinding(entityId)
+    override suspend fun deleteEntityFromApi(entityId: Uuid, deletedAt: Timestamp): OnlineDataResult<Unit> =
+        findingsApi.deleteFinding(entityId, deletedAt)
 
     override suspend fun saveEntityToDb(entity: FrontendFinding): OfflineFirstDataResult<Unit> =
         findingsDb.saveFinding(entity)

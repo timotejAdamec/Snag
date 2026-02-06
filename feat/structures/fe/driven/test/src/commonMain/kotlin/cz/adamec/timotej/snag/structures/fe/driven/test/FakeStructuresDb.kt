@@ -67,6 +67,16 @@ class FakeStructuresDb : StructuresDb {
             }
         }
 
+    override suspend fun getStructureIdsByProjectId(projectId: Uuid): List<Uuid> =
+        structures.value.values.filter { it.structure.projectId == projectId }.map { it.structure.id }
+
+    override suspend fun deleteStructuresByProjectId(projectId: Uuid): OfflineFirstDataResult<Unit> {
+        val failure = forcedFailure
+        if (failure != null) return failure
+        structures.update { current -> current.filterValues { it.structure.projectId != projectId } }
+        return OfflineFirstDataResult.Success(Unit)
+    }
+
     fun setStructure(structure: FrontendStructure) {
         structures.update { it + (structure.structure.id to structure) }
     }

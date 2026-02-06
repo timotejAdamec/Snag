@@ -21,7 +21,8 @@ feat/<feature>/
 │   ├── ports/               → snagFrontendMultiplatformModule
 │   ├── app/
 │   │   ├── api/             → snagFrontendMultiplatformModule
-│   │   └── impl/            → snagFrontendMultiplatformModule
+│   │   ├── impl/            → snagFrontendMultiplatformModule
+│   │   └── test/            → snagFrontendMultiplatformModule
 │   ├── driving/
 │   │   ├── api/             → snagDrivingFrontendMultiplatformModule
 │   │   └── impl/            → snagDrivingFrontendMultiplatformModule
@@ -33,7 +34,8 @@ feat/<feature>/
     ├── ports/               → snagBackendModule
     ├── app/
     │   ├── api/             → snagBackendModule
-    │   └── impl/            → snagBackendModule
+    │   ├── impl/            → snagBackendModule
+    │   └── test/            → snagBackendModule
     ├── driving/
     │   ├── contract/        → snagContractDrivingBackendMultiplatformModule
     │   └── impl/            → snagImplDrivingBackendModule

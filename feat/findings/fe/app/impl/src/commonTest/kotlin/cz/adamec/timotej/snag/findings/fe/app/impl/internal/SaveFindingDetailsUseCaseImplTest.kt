@@ -14,6 +14,7 @@ package cz.adamec.timotej.snag.findings.fe.app.impl.internal
 
 import cz.adamec.timotej.snag.feat.findings.business.Finding
 import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
+import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.findings.fe.app.api.SaveFindingDetailsUseCase
 import cz.adamec.timotej.snag.findings.fe.app.api.model.SaveFindingDetailsRequest
 import cz.adamec.timotej.snag.findings.fe.driven.test.FakeFindingsDb
@@ -59,6 +60,7 @@ class SaveFindingDetailsUseCaseImplTest : FrontendKoinInitializedTest() {
             name = "Old name",
             description = "Old description",
             coordinates = emptyList(),
+            updatedAt = Timestamp(10L),
         ),
     )
 

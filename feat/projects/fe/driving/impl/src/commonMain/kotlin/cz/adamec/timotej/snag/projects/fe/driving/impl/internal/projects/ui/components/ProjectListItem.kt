@@ -21,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.common.UuidProvider
 import cz.adamec.timotej.snag.lib.design.fe.theme.SnagTheme
 import cz.adamec.timotej.snag.projects.business.Project
@@ -70,6 +71,7 @@ internal fun ProjectListItemPreview() {
                         id = UuidProvider.getUuid(),
                         name = "Project A",
                         address = "Client A",
+                        updatedAt = Timestamp(0L),
                     ),
                 ),
             onClick = {},

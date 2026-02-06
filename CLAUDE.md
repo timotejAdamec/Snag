@@ -5,6 +5,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Build Commands
 
 ```bash
+# Build to verify compilation and checks
+./gradlew build
+
 # Run all checks (lint, detekt, ktlint, tests)
 ./gradlew check --no-daemon
 
@@ -40,8 +43,9 @@ feat/<feature>/
 │       └── impl/      # Route implementations
 └── fe/           # Frontend
     ├── app/      # Use cases
-        ├── api/  # Public use case interfaces
-        └── impl/ # Use case implementations
+    │   ├── api/  # Public use case interfaces
+    │   ├── impl/ # Use case implementations
+    │   └── test/ # Fake use cases for cross-feature testing
     ├── ports/    # API and DB interfaces
     ├── driven/   # Implementations
     │   ├── impl/ # Production (HTTP, SQLite)
@@ -70,7 +74,8 @@ Detailed description is available in [Project Structure](docs/project_structure.
 - `OfflineFirstDataResult<T>` (Success | ProgrammerError) - offline-first frontend operations
 - `OnlineDataResult<T>` (Success | Failure) - online-only operations
 
-**Testing:** Fake implementations in `driven/test/` modules. Tests extend `FrontendKoinInitializedTest`
+**Testing:** Fake implementations in `driven/test/` modules for port fakes (DB, API interfaces) and
+`app/test/` modules for use case fakes (cross-feature dependencies). Tests extend `FrontendKoinInitializedTest`
 or `BackendKoinInitializedTest` which handle all DI setup including dispatcher setup. Override
 `additionalKoinModules()` to bind fakes: `singleOf(::FakeXxxDb) bind XxxDb::class`. Use Turbine for
 StateFlow testing.

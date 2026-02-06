@@ -13,9 +13,12 @@
 package cz.adamec.timotej.snag.findings.fe.driven.internal.api
 
 import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
+import cz.adamec.timotej.snag.findings.be.driving.contract.DeleteFindingApiDto
 import cz.adamec.timotej.snag.findings.be.driving.contract.FindingApiDto
 import cz.adamec.timotej.snag.findings.fe.driven.internal.LH
+import cz.adamec.timotej.snag.findings.fe.ports.FindingSyncResult
 import cz.adamec.timotej.snag.findings.fe.ports.FindingsApi
+import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
 import cz.adamec.timotej.snag.network.fe.SnagNetworkHttpClient
 import cz.adamec.timotej.snag.network.fe.safeApiCall
@@ -36,10 +39,12 @@ internal class RealFindingsApi(
         }.also { if (it is OnlineDataResult.Success) LH.logger.d { "Fetched ${it.data.size} findings for structure $structureId." } }
     }
 
-    override suspend fun deleteFinding(id: Uuid): OnlineDataResult<Unit> {
+    override suspend fun deleteFinding(id: Uuid, deletedAt: Timestamp): OnlineDataResult<Unit> {
         LH.logger.d { "Deleting finding $id from API..." }
         return safeApiCall(logger = LH.logger, errorContext = "Error deleting finding $id from API.") {
-            httpClient.delete("/findings/$id")
+            httpClient.delete("/findings/$id") {
+                setBody(DeleteFindingApiDto(deletedAt = deletedAt))
+            }
             Unit
         }.also { if (it is OnlineDataResult.Success) LH.logger.d { "Deleted finding $id from API." } }
     }
@@ -58,5 +63,18 @@ internal class RealFindingsApi(
                 null
             }
         }.also { if (it is OnlineDataResult.Success) LH.logger.d { "Saved finding ${finding.finding.id} to API." } }
+    }
+
+    override suspend fun getFindingsModifiedSince(structureId: Uuid, since: Timestamp): OnlineDataResult<List<FindingSyncResult>> {
+        LH.logger.d { "Fetching findings modified since $since for structure $structureId..." }
+        return safeApiCall(logger = LH.logger, errorContext = "Error fetching findings modified since $since for structure $structureId.") {
+            httpClient.get("/structures/$structureId/findings?since=${since.value}").body<List<FindingApiDto>>().map { dto ->
+                if (dto.deletedAt != null) {
+                    FindingSyncResult.Deleted(id = dto.id)
+                } else {
+                    FindingSyncResult.Updated(finding = dto.toModel())
+                }
+            }
+        }.also { if (it is OnlineDataResult.Success) LH.logger.d { "Fetched ${it.data.size} modified findings for structure $structureId." } }
     }
 }

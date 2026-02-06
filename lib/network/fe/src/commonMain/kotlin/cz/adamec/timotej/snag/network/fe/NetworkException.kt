@@ -65,6 +65,6 @@ fun NetworkException.log() {
         is NetworkException.ClientError.NotFound -> LH.logger.w { "Not found: $message" }
         is NetworkException.ClientError.OtherClientError -> LH.logger.w { "Other client error: $message" }
         is NetworkException.NetworkUnavailable -> LH.logger.i { "Network unavailable: $message" }
-        is NetworkException.ProgrammerError -> LH.logger.e { "Programmer error: $message" }
+        is NetworkException.ProgrammerError -> LH.logger.e(throwable = this) { "Programmer error: $message" }
     }
 }

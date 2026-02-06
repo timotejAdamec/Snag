@@ -26,5 +26,11 @@ SELECT * FROM StructureEntity WHERE id = :id;
 deleteById:
 DELETE FROM StructureEntity WHERE id = :id;
 
+selectIdsByProjectId:
+SELECT id FROM StructureEntity WHERE projectId = :projectId;
+
+deleteByProjectId:
+DELETE FROM StructureEntity WHERE projectId = :projectId;
+
 deleteAll:
 DELETE FROM StructureEntity;

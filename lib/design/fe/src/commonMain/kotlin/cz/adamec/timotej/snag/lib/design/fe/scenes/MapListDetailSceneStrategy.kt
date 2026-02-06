@@ -34,12 +34,11 @@ import androidx.window.core.layout.WindowSizeClass.Companion.WIDTH_DP_EXPANDED_L
 import androidx.window.core.layout.WindowSizeClass.Companion.WIDTH_DP_MEDIUM_LOWER_BOUND
 
 class MapListDetailSceneStrategy<T : Any> : SceneStrategy<T> {
-    override fun SceneStrategyScope<T>.calculateScene(
-        entries: List<NavEntry<T>>,
-    ): Scene<T>? {
-        val mapEntry = entries.findLast {
-            it.metadata.containsKey(MapListDetailSceneMetadata.MAP_KEY)
-        }
+    override fun SceneStrategyScope<T>.calculateScene(entries: List<NavEntry<T>>): Scene<T>? {
+        val mapEntry =
+            entries.findLast {
+                it.metadata.containsKey(MapListDetailSceneMetadata.MAP_KEY)
+            }
         val listEntry =
             entries.findLast {
                 it.metadata.containsKey(MapListDetailSceneMetadata.LIST_KEY)
@@ -54,7 +53,7 @@ class MapListDetailSceneStrategy<T : Any> : SceneStrategy<T> {
         val firstFindingsIndex =
             entries.indexOfFirst {
                 it.metadata.containsKey(MapListDetailSceneMetadata.LIST_KEY) ||
-                        it.metadata.containsKey(MapListDetailSceneMetadata.DETAIL_KEY)
+                    it.metadata.containsKey(MapListDetailSceneMetadata.DETAIL_KEY)
             }
         if (firstFindingsIndex < 1) return null
 
@@ -116,7 +115,9 @@ private class AdaptiveMapListDetailScene<T : Any>(
                     Column(modifier = Modifier.weight(0.5f)) {
                         if (detailEntry != null) {
                             detailEntry.Content()
-                        } else listEntry?.Content()
+                        } else {
+                            listEntry?.Content()
+                        }
                     }
                 }
             }
@@ -136,7 +137,9 @@ private class AdaptiveMapListDetailScene<T : Any>(
                         sheetContent = {
                             if (detailEntry != null) {
                                 detailEntry.Content()
-                            } else listEntry?.Content()
+                            } else {
+                                listEntry?.Content()
+                            }
                         },
                     ) {
                         hostPane(hostEntry)

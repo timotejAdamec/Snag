@@ -19,9 +19,10 @@ import org.koin.core.module.Module
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
-fun createTestDispatchersModule(testDispatcher: TestDispatcher): Module = module {
-    factory<CoroutineDispatcher>(named(DispatcherDiQualifiers.MAIN)) { testDispatcher }
-    factory<CoroutineDispatcher>(named(DispatcherDiQualifiers.DEFAULT)) { testDispatcher }
-    factory<CoroutineDispatcher>(named(DispatcherDiQualifiers.IO)) { testDispatcher }
-    factory<CoroutineDispatcher>(named(DispatcherDiQualifiers.UNCONFINED)) { testDispatcher }
-}
+fun createTestDispatchersModule(testDispatcher: TestDispatcher): Module =
+    module {
+        factory<CoroutineDispatcher>(named(DispatcherDiQualifiers.MAIN)) { testDispatcher }
+        factory<CoroutineDispatcher>(named(DispatcherDiQualifiers.DEFAULT)) { testDispatcher }
+        factory<CoroutineDispatcher>(named(DispatcherDiQualifiers.IO)) { testDispatcher }
+        factory<CoroutineDispatcher>(named(DispatcherDiQualifiers.UNCONFINED)) { testDispatcher }
+    }

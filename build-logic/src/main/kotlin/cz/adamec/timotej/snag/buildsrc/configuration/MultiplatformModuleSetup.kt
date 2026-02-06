@@ -116,6 +116,10 @@ internal fun Project.configureKotlinMultiplatformModule() {
                     val feOrBeDirectoryPath = moduleDirectoryPath.substringBeforeLast(":app")
                     implementation(project("$moduleDirectoryPath:api"))
                     implementation(project("$feOrBeDirectoryPath:ports"))
+                } else if (this@configureKotlinMultiplatformModule.path.contains(":app:") &&
+                    this@configureKotlinMultiplatformModule.name == "test"
+                ) {
+                    api(project("$moduleDirectoryPath:api"))
                 } else if (this@configureKotlinMultiplatformModule.path.contains("driven")) {
                     val drivenDirectoryPath = moduleDirectoryPath.substringBeforeLast(":driven")
                     api(project("$drivenDirectoryPath:ports"))

@@ -26,6 +26,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 import kotlin.uuid.Uuid
 
 internal class RealStructuresDb(
@@ -76,4 +77,16 @@ internal class RealStructuresDb(
                 LH.logger.e { "Error loading structure $id from DB." }
                 emit(OfflineFirstDataResult.ProgrammerError(throwable = e))
             }
+
+    override suspend fun getStructureIdsByProjectId(projectId: Uuid): List<Uuid> =
+        withContext(ioDispatcher) {
+            structureEntityQueries.selectIdsByProjectId(projectId.toString())
+                .executeAsList()
+                .map { Uuid.parse(it) }
+        }
+
+    override suspend fun deleteStructuresByProjectId(projectId: Uuid): OfflineFirstDataResult<Unit> =
+        safeDbWrite(ioDispatcher = ioDispatcher, logger = LH.logger, errorMessage = "Error deleting structures for project $projectId from DB.") {
+            structureEntityQueries.deleteByProjectId(projectId.toString())
+        }
 }

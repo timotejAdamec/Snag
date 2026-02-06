@@ -15,6 +15,7 @@ package cz.adamec.timotej.snag.findings.fe.driven.test
 import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
 import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
 import cz.adamec.timotej.snag.findings.fe.ports.FindingsDb
+import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstUpdateDataResult
 import kotlinx.coroutines.flow.Flow
@@ -77,11 +78,12 @@ class FakeFindingsDb : FindingsDb {
         id: Uuid,
         name: String,
         description: String?,
+        updatedAt: Timestamp,
     ): OfflineFirstUpdateDataResult {
         val failure = forcedFailure
         if (failure != null) return OfflineFirstUpdateDataResult.ProgrammerError(failure.throwable)
         val existing = findings.value[id] ?: return OfflineFirstUpdateDataResult.NotFound
-        val updatedFinding = FrontendFinding(finding = existing.finding.copy(name = name, description = description))
+        val updatedFinding = FrontendFinding(finding = existing.finding.copy(name = name, description = description, updatedAt = updatedAt))
         findings.update { it + (id to updatedFinding) }
         return OfflineFirstUpdateDataResult.Success
     }
@@ -89,13 +91,21 @@ class FakeFindingsDb : FindingsDb {
     override suspend fun updateFindingCoordinates(
         id: Uuid,
         coordinates: List<RelativeCoordinate>,
+        updatedAt: Timestamp,
     ): OfflineFirstUpdateDataResult {
         val failure = forcedFailure
         if (failure != null) return OfflineFirstUpdateDataResult.ProgrammerError(failure.throwable)
         val existing = findings.value[id] ?: return OfflineFirstUpdateDataResult.NotFound
-        val updatedFinding = FrontendFinding(finding = existing.finding.copy(coordinates = coordinates))
+        val updatedFinding = FrontendFinding(finding = existing.finding.copy(coordinates = coordinates, updatedAt = updatedAt))
         findings.update { it + (id to updatedFinding) }
         return OfflineFirstUpdateDataResult.Success
+    }
+
+    override suspend fun deleteFindingsByStructureId(structureId: Uuid): OfflineFirstDataResult<Unit> {
+        val failure = forcedFailure
+        if (failure != null) return failure
+        findings.update { current -> current.filterValues { it.finding.structureId != structureId } }
+        return OfflineFirstDataResult.Success(Unit)
     }
 
     fun setFindings(findings: List<FrontendFinding>) {

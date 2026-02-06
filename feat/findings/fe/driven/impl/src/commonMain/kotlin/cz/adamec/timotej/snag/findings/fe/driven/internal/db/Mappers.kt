@@ -16,6 +16,7 @@ import cz.adamec.timotej.snag.feat.findings.business.Finding
 import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
 import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.FindingEntity
+import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlin.uuid.Uuid
@@ -34,6 +35,7 @@ internal fun FindingEntity.toModel() =
             name = name,
             description = description,
             coordinates = parseCoordinates(coordinates),
+            updatedAt = Timestamp(updatedAt),
         ),
     )
 
@@ -44,6 +46,7 @@ internal fun FrontendFinding.toEntity() =
         name = finding.name,
         description = finding.description,
         coordinates = serializeCoordinates(finding.coordinates),
+        updatedAt = finding.updatedAt.value,
     )
 
 private fun parseCoordinates(json: String): List<RelativeCoordinate> =

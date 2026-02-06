@@ -1,15 +1,17 @@
 CREATE TABLE IF NOT EXISTS ProjectEntity (
     id TEXT NOT NULL PRIMARY KEY,
     name TEXT NOT NULL,
-    address TEXT NOT NULL
+    address TEXT NOT NULL,
+    updatedAt INTEGER NOT NULL
 );
 
 save:
-INSERT INTO ProjectEntity(id, name, address)
+INSERT INTO ProjectEntity(id, name, address, updatedAt)
 VALUES ?
 ON CONFLICT(id) DO UPDATE SET
     name = excluded.name,
-    address = excluded.address;
+    address = excluded.address,
+    updatedAt = excluded.updatedAt;
 
 selectAll:
 SELECT * FROM ProjectEntity;
