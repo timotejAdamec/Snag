@@ -12,10 +12,10 @@
 
 package cz.adamec.timotej.snag.findings.fe.app.test
 
-import cz.adamec.timotej.snag.findings.fe.app.api.DeleteFindingsByStructureIdUseCase
+import cz.adamec.timotej.snag.findings.fe.app.api.DeleteLocalFindingsByStructureIdUseCase
 import kotlin.uuid.Uuid
 
-class FakeDeleteFindingsByStructureIdUseCase : DeleteFindingsByStructureIdUseCase {
+class FakeDeleteLocalFindingsByStructureIdUseCase : DeleteLocalFindingsByStructureIdUseCase {
     val deletedStructureIds = mutableListOf<Uuid>()
 
     override suspend fun invoke(structureId: Uuid) {

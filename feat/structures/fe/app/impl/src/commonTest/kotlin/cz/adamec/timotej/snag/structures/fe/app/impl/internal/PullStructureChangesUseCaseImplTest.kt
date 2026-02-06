@@ -14,8 +14,8 @@ package cz.adamec.timotej.snag.structures.fe.app.impl.internal
 
 import cz.adamec.timotej.snag.feat.structures.business.Structure
 import cz.adamec.timotej.snag.feat.structures.fe.model.FrontendStructure
-import cz.adamec.timotej.snag.findings.fe.app.api.DeleteFindingsByStructureIdUseCase
-import cz.adamec.timotej.snag.findings.fe.app.test.FakeDeleteFindingsByStructureIdUseCase
+import cz.adamec.timotej.snag.findings.fe.app.api.DeleteLocalFindingsByStructureIdUseCase
+import cz.adamec.timotej.snag.findings.fe.app.test.FakeDeleteLocalFindingsByStructureIdUseCase
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
@@ -55,7 +55,7 @@ class PullStructureChangesUseCaseImplTest : FrontendKoinInitializedTest() {
 
     private val useCase: PullStructureChangesUseCase by inject()
 
-    private val fakeDeleteFindings = FakeDeleteFindingsByStructureIdUseCase()
+    private val fakeDeleteFindings = FakeDeleteLocalFindingsByStructureIdUseCase()
 
     override fun additionalKoinModules(): List<Module> =
         listOf(
@@ -65,7 +65,7 @@ class PullStructureChangesUseCaseImplTest : FrontendKoinInitializedTest() {
                 singleOf(::FakeStructuresSync) bind StructuresSync::class
                 singleOf(::FakeStructuresPullSyncCoordinator) bind StructuresPullSyncCoordinator::class
                 singleOf(::FakeStructuresPullSyncTimestampDataSource) bind StructuresPullSyncTimestampDataSource::class
-                single { fakeDeleteFindings } bind DeleteFindingsByStructureIdUseCase::class
+                single { fakeDeleteFindings } bind DeleteLocalFindingsByStructureIdUseCase::class
             },
         )
 

@@ -21,12 +21,12 @@ import cz.adamec.timotej.snag.projects.fe.ports.ProjectsApi
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsDb
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsPullSyncCoordinator
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsPullSyncTimestampDataSource
-import cz.adamec.timotej.snag.structures.fe.app.api.CascadeDeleteStructuresByProjectIdUseCase
+import cz.adamec.timotej.snag.structures.fe.app.api.CascadeDeleteLocalStructuresByProjectIdUseCase
 
 internal class PullProjectChangesUseCaseImpl(
     private val projectsApi: ProjectsApi,
     private val projectsDb: ProjectsDb,
-    private val cascadeDeleteStructuresByProjectIdUseCase: CascadeDeleteStructuresByProjectIdUseCase,
+    private val cascadeDeleteLocalStructuresByProjectIdUseCase: CascadeDeleteLocalStructuresByProjectIdUseCase,
     private val projectsPullSyncTimestampDataSource: ProjectsPullSyncTimestampDataSource,
     private val projectsPullSyncCoordinator: ProjectsPullSyncCoordinator,
     private val timestampProvider: TimestampProvider,
@@ -44,7 +44,7 @@ internal class PullProjectChangesUseCaseImpl(
                     result.data.forEach { syncResult ->
                         when (syncResult) {
                             is ProjectSyncResult.Deleted -> {
-                                cascadeDeleteStructuresByProjectIdUseCase(syncResult.id)
+                                cascadeDeleteLocalStructuresByProjectIdUseCase(syncResult.id)
                                 projectsDb.deleteProject(syncResult.id)
                             }
                             is ProjectSyncResult.Updated -> {

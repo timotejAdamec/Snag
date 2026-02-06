@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.structures.fe.app.impl.internal
 
-import cz.adamec.timotej.snag.findings.fe.app.api.DeleteFindingsByStructureIdUseCase
+import cz.adamec.timotej.snag.findings.fe.app.api.DeleteLocalFindingsByStructureIdUseCase
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.common.TimestampProvider
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
@@ -27,7 +27,7 @@ import kotlin.uuid.Uuid
 internal class PullStructureChangesUseCaseImpl(
     private val structuresApi: StructuresApi,
     private val structuresDb: StructuresDb,
-    private val deleteFindingsByStructureIdUseCase: DeleteFindingsByStructureIdUseCase,
+    private val deleteLocalFindingsByStructureIdUseCase: DeleteLocalFindingsByStructureIdUseCase,
     private val structuresPullSyncTimestampDataSource: StructuresPullSyncTimestampDataSource,
     private val structuresPullSyncCoordinator: StructuresPullSyncCoordinator,
     private val timestampProvider: TimestampProvider,
@@ -45,7 +45,7 @@ internal class PullStructureChangesUseCaseImpl(
                     result.data.forEach { syncResult ->
                         when (syncResult) {
                             is StructureSyncResult.Deleted -> {
-                                deleteFindingsByStructureIdUseCase(syncResult.id)
+                                deleteLocalFindingsByStructureIdUseCase(syncResult.id)
                                 structuresDb.deleteStructure(syncResult.id)
                             }
                             is StructureSyncResult.Updated -> {

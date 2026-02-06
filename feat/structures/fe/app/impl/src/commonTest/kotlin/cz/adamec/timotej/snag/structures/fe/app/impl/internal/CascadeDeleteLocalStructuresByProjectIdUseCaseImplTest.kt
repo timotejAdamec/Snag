@@ -14,11 +14,11 @@ package cz.adamec.timotej.snag.structures.fe.app.impl.internal
 
 import cz.adamec.timotej.snag.feat.structures.business.Structure
 import cz.adamec.timotej.snag.feat.structures.fe.model.FrontendStructure
-import cz.adamec.timotej.snag.findings.fe.app.api.DeleteFindingsByStructureIdUseCase
-import cz.adamec.timotej.snag.findings.fe.app.test.FakeDeleteFindingsByStructureIdUseCase
+import cz.adamec.timotej.snag.findings.fe.app.api.DeleteLocalFindingsByStructureIdUseCase
+import cz.adamec.timotej.snag.findings.fe.app.test.FakeDeleteLocalFindingsByStructureIdUseCase
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
-import cz.adamec.timotej.snag.structures.fe.app.api.CascadeDeleteStructuresByProjectIdUseCase
+import cz.adamec.timotej.snag.structures.fe.app.api.CascadeDeleteLocalStructuresByProjectIdUseCase
 import cz.adamec.timotej.snag.structures.fe.driven.test.FakeStructuresDb
 import cz.adamec.timotej.snag.structures.fe.driven.test.FakeStructuresPullSyncCoordinator
 import cz.adamec.timotej.snag.structures.fe.driven.test.FakeStructuresPullSyncTimestampDataSource
@@ -40,13 +40,13 @@ import kotlin.test.assertIs
 import kotlin.test.assertTrue
 import kotlin.uuid.Uuid
 
-class CascadeDeleteStructuresByProjectIdUseCaseImplTest : FrontendKoinInitializedTest() {
+class CascadeDeleteLocalStructuresByProjectIdUseCaseImplTest : FrontendKoinInitializedTest() {
 
     private val fakeStructuresDb: FakeStructuresDb by inject()
 
-    private val useCase: CascadeDeleteStructuresByProjectIdUseCase by inject()
+    private val useCase: CascadeDeleteLocalStructuresByProjectIdUseCase by inject()
 
-    private val fakeDeleteFindings = FakeDeleteFindingsByStructureIdUseCase()
+    private val fakeDeleteFindings = FakeDeleteLocalFindingsByStructureIdUseCase()
 
     override fun additionalKoinModules(): List<Module> =
         listOf(
@@ -55,7 +55,7 @@ class CascadeDeleteStructuresByProjectIdUseCaseImplTest : FrontendKoinInitialize
                 singleOf(::FakeStructuresSync) bind StructuresSync::class
                 singleOf(::FakeStructuresPullSyncCoordinator) bind StructuresPullSyncCoordinator::class
                 singleOf(::FakeStructuresPullSyncTimestampDataSource) bind StructuresPullSyncTimestampDataSource::class
-                single { fakeDeleteFindings } bind DeleteFindingsByStructureIdUseCase::class
+                single { fakeDeleteFindings } bind DeleteLocalFindingsByStructureIdUseCase::class
             },
         )
 

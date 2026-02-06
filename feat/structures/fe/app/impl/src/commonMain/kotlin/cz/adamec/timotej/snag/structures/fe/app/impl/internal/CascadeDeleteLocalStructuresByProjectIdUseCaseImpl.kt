@@ -12,19 +12,19 @@
 
 package cz.adamec.timotej.snag.structures.fe.app.impl.internal
 
-import cz.adamec.timotej.snag.findings.fe.app.api.DeleteFindingsByStructureIdUseCase
-import cz.adamec.timotej.snag.structures.fe.app.api.CascadeDeleteStructuresByProjectIdUseCase
+import cz.adamec.timotej.snag.findings.fe.app.api.DeleteLocalFindingsByStructureIdUseCase
+import cz.adamec.timotej.snag.structures.fe.app.api.CascadeDeleteLocalStructuresByProjectIdUseCase
 import cz.adamec.timotej.snag.structures.fe.ports.StructuresDb
 import kotlin.uuid.Uuid
 
-internal class CascadeDeleteStructuresByProjectIdUseCaseImpl(
+internal class CascadeDeleteLocalStructuresByProjectIdUseCaseImpl(
     private val structuresDb: StructuresDb,
-    private val deleteFindingsByStructureIdUseCase: DeleteFindingsByStructureIdUseCase,
-) : CascadeDeleteStructuresByProjectIdUseCase {
+    private val deleteLocalFindingsByStructureIdUseCase: DeleteLocalFindingsByStructureIdUseCase,
+) : CascadeDeleteLocalStructuresByProjectIdUseCase {
     override suspend operator fun invoke(projectId: Uuid) {
         val structureIds = structuresDb.getStructureIdsByProjectId(projectId)
         structureIds.forEach { structureId ->
-            deleteFindingsByStructureIdUseCase(structureId)
+            deleteLocalFindingsByStructureIdUseCase(structureId)
         }
         structuresDb.deleteStructuresByProjectId(projectId)
     }

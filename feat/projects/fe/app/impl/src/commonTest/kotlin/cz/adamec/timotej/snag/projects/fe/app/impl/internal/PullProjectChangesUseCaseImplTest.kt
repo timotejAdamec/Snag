@@ -29,8 +29,8 @@ import cz.adamec.timotej.snag.projects.fe.ports.ProjectsDb
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsPullSyncCoordinator
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsPullSyncTimestampDataSource
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsSync
-import cz.adamec.timotej.snag.structures.fe.app.api.CascadeDeleteStructuresByProjectIdUseCase
-import cz.adamec.timotej.snag.structures.fe.app.test.FakeCascadeDeleteStructuresByProjectIdUseCase
+import cz.adamec.timotej.snag.structures.fe.app.api.CascadeDeleteLocalStructuresByProjectIdUseCase
+import cz.adamec.timotej.snag.structures.fe.app.test.FakeCascadeDeleteLocalStructuresByProjectIdUseCase
 import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
@@ -55,7 +55,7 @@ class PullProjectChangesUseCaseImplTest : FrontendKoinInitializedTest() {
 
     private val useCase: PullProjectChangesUseCase by inject()
 
-    private val fakeCascadeDelete = FakeCascadeDeleteStructuresByProjectIdUseCase()
+    private val fakeCascadeDelete = FakeCascadeDeleteLocalStructuresByProjectIdUseCase()
 
     override fun additionalKoinModules(): List<Module> =
         listOf(
@@ -65,7 +65,7 @@ class PullProjectChangesUseCaseImplTest : FrontendKoinInitializedTest() {
                 singleOf(::FakeProjectsSync) bind ProjectsSync::class
                 singleOf(::FakeProjectsPullSyncTimestampDataSource) bind ProjectsPullSyncTimestampDataSource::class
                 singleOf(::FakeProjectsPullSyncCoordinator) bind ProjectsPullSyncCoordinator::class
-                single { fakeCascadeDelete } bind CascadeDeleteStructuresByProjectIdUseCase::class
+                single { fakeCascadeDelete } bind CascadeDeleteLocalStructuresByProjectIdUseCase::class
             },
         )
 

@@ -14,6 +14,6 @@ package cz.adamec.timotej.snag.structures.fe.app.api
 
 import kotlin.uuid.Uuid
 
-interface CascadeDeleteStructuresByProjectIdUseCase {
+interface CascadeDeleteLocalStructuresByProjectIdUseCase {
     suspend operator fun invoke(projectId: Uuid)
 }

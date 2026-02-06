@@ -12,10 +12,10 @@
 
 package cz.adamec.timotej.snag.structures.fe.app.test
 
-import cz.adamec.timotej.snag.structures.fe.app.api.CascadeDeleteStructuresByProjectIdUseCase
+import cz.adamec.timotej.snag.structures.fe.app.api.CascadeDeleteLocalStructuresByProjectIdUseCase
 import kotlin.uuid.Uuid
 
-class FakeCascadeDeleteStructuresByProjectIdUseCase : CascadeDeleteStructuresByProjectIdUseCase {
+class FakeCascadeDeleteLocalStructuresByProjectIdUseCase : CascadeDeleteLocalStructuresByProjectIdUseCase {
     val deletedProjectIds = mutableListOf<Uuid>()
 
     override suspend fun invoke(projectId: Uuid) {

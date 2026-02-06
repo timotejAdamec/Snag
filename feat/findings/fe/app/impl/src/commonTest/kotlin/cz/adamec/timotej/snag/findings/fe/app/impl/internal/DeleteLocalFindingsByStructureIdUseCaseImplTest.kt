@@ -14,7 +14,7 @@ package cz.adamec.timotej.snag.findings.fe.app.impl.internal
 
 import cz.adamec.timotej.snag.feat.findings.business.Finding
 import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
-import cz.adamec.timotej.snag.findings.fe.app.api.DeleteFindingsByStructureIdUseCase
+import cz.adamec.timotej.snag.findings.fe.app.api.DeleteLocalFindingsByStructureIdUseCase
 import cz.adamec.timotej.snag.findings.fe.driven.test.FakeFindingsDb
 import cz.adamec.timotej.snag.findings.fe.driven.test.FakeFindingsPullSyncCoordinator
 import cz.adamec.timotej.snag.findings.fe.driven.test.FakeFindingsPullSyncTimestampDataSource
@@ -38,11 +38,11 @@ import kotlin.test.assertIs
 import kotlin.test.assertTrue
 import kotlin.uuid.Uuid
 
-class DeleteFindingsByStructureIdUseCaseImplTest : FrontendKoinInitializedTest() {
+class DeleteLocalFindingsByStructureIdUseCaseImplTest : FrontendKoinInitializedTest() {
 
     private val fakeFindingsDb: FakeFindingsDb by inject()
 
-    private val useCase: DeleteFindingsByStructureIdUseCase by inject()
+    private val useCase: DeleteLocalFindingsByStructureIdUseCase by inject()
 
     override fun additionalKoinModules(): List<Module> =
         listOf(
