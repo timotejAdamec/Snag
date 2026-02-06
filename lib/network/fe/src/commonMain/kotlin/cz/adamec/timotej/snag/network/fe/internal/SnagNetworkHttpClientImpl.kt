@@ -52,11 +52,13 @@ internal class SnagNetworkHttpClientImpl(
 
     override suspend fun delete(
         path: String,
+        contentType: ContentType,
         block: HttpRequestBuilder.() -> Unit,
     ): HttpResponse =
         httpClient.delete(
             urlString = localHostUrlFactory.createUrl() + path,
         ) {
+            contentType(contentType)
             block()
         }
 }

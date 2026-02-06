@@ -40,7 +40,7 @@ internal class HttpClientFactory(
                             KermitLogger.withTag("HTTP Client").v(message)
                         }
                     }
-                level = LogLevel.HEADERS
+                level = LogLevel.BODY
             }
 
             install(ContentNegotiation) {
