@@ -41,6 +41,7 @@ class FakeProjectsLocalDataSource : ProjectsLocalDataSource {
         return null
     }
 
+    @Suppress("ReturnCount")
     override suspend fun deleteProject(
         id: Uuid,
         deletedAt: Timestamp,

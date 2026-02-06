@@ -66,6 +66,7 @@ internal class InMemoryFindingsLocalDataSource(
 
     override suspend fun getFindings(structureId: Uuid): List<BackendFinding> = findings.filter { it.finding.structureId == structureId }
 
+    @Suppress("ReturnCount")
     override suspend fun deleteFinding(
         id: Uuid,
         deletedAt: Timestamp,

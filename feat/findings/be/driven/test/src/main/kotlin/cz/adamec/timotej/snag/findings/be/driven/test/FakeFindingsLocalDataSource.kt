@@ -40,6 +40,7 @@ class FakeFindingsLocalDataSource : FindingsLocalDataSource {
         return null
     }
 
+    @Suppress("ReturnCount")
     override suspend fun deleteFinding(
         id: Uuid,
         deletedAt: Timestamp,

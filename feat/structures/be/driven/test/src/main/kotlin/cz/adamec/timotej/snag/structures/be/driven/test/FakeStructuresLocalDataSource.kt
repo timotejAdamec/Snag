@@ -22,6 +22,7 @@ class FakeStructuresLocalDataSource : StructuresLocalDataSource {
 
     override suspend fun getStructures(projectId: Uuid): List<BackendStructure> = structures.filter { it.structure.projectId == projectId }
 
+    @Suppress("ReturnCount")
     override suspend fun deleteStructure(
         id: Uuid,
         deletedAt: Timestamp,
