@@ -26,7 +26,6 @@ import kotlin.test.BeforeTest
 
 @OptIn(ExperimentalCoroutinesApi::class)
 abstract class KoinInitializedTest : KoinTest {
-
     protected val testDispatcher = StandardTestDispatcher()
 
     protected abstract fun koinModules(): List<Module>

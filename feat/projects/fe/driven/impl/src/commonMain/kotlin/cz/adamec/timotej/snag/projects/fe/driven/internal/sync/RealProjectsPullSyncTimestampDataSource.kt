@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.projects.fe.driven.internal.sync
 
+import app.cash.sqldelight.async.coroutines.awaitAsOneOrNull
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.PullSyncTimestampEntityQueries
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsPullSyncTimestampDataSource
@@ -24,7 +25,7 @@ internal class RealProjectsPullSyncTimestampDataSource(
 ) : ProjectsPullSyncTimestampDataSource {
     override suspend fun getLastSyncedAt(): Timestamp? =
         withContext(ioDispatcher) {
-            queries.getByEntityTypeAndScope(ENTITY_TYPE, null).executeAsOneOrNull()?.let {
+            queries.getByEntityTypeAndScope(ENTITY_TYPE, null).awaitAsOneOrNull()?.let {
                 Timestamp(it)
             }
         }
