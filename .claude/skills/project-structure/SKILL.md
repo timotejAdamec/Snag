@@ -32,7 +32,9 @@ Each feature follows hexagonal architecture with these layers:
 
 - `api/` or `contract/` — Public interfaces (typical for `app/` and `driving/`)
 - `impl/` — Production implementations
-- `test/` — Fake/in-memory implementations for unit tests (typical for `driven/`)
+- `test/` — Fake/in-memory implementations for unit tests
+  - `driven/test/` — Fakes for port interfaces (DB, API)
+  - `app/test/` — Fakes for use case interfaces (cross-feature testing)
 
 ### Library modules (`lib/`)
 

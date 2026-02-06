@@ -22,6 +22,7 @@ kotlin {
         commonTest {
             dependencies {
                 implementation(project(":feat:structures:fe:driven:test"))
+                implementation(project(":feat:findings:fe:app:test"))
             }
         }
     }

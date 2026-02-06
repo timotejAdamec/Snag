@@ -30,6 +30,7 @@ import cz.adamec.timotej.snag.projects.fe.ports.ProjectsPullSyncCoordinator
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsPullSyncTimestampDataSource
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsSync
 import cz.adamec.timotej.snag.structures.fe.app.api.CascadeDeleteStructuresByProjectIdUseCase
+import cz.adamec.timotej.snag.structures.fe.app.test.FakeCascadeDeleteStructuresByProjectIdUseCase
 import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
@@ -54,7 +55,7 @@ class PullProjectChangesUseCaseImplTest : FrontendKoinInitializedTest() {
 
     private val useCase: PullProjectChangesUseCase by inject()
 
-    private val fakeCascadeDelete = FakeCascadeDeleteStructures()
+    private val fakeCascadeDelete = FakeCascadeDeleteStructuresByProjectIdUseCase()
 
     override fun additionalKoinModules(): List<Module> =
         listOf(
@@ -129,13 +130,5 @@ class PullProjectChangesUseCaseImplTest : FrontendKoinInitializedTest() {
         useCase()
 
         assertNull(fakePullSyncTimestampDataSource.getLastSyncedAt())
-    }
-
-    private class FakeCascadeDeleteStructures : CascadeDeleteStructuresByProjectIdUseCase {
-        val deletedProjectIds = mutableListOf<Uuid>()
-
-        override suspend fun invoke(projectId: Uuid) {
-            deletedProjectIds.add(projectId)
-        }
     }
 }

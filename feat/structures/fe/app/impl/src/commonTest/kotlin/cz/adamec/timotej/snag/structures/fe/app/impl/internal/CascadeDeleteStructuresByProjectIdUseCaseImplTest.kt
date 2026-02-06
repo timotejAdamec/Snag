@@ -15,6 +15,7 @@ package cz.adamec.timotej.snag.structures.fe.app.impl.internal
 import cz.adamec.timotej.snag.feat.structures.business.Structure
 import cz.adamec.timotej.snag.feat.structures.fe.model.FrontendStructure
 import cz.adamec.timotej.snag.findings.fe.app.api.DeleteFindingsByStructureIdUseCase
+import cz.adamec.timotej.snag.findings.fe.app.test.FakeDeleteFindingsByStructureIdUseCase
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.structures.fe.app.api.CascadeDeleteStructuresByProjectIdUseCase
@@ -45,7 +46,7 @@ class CascadeDeleteStructuresByProjectIdUseCaseImplTest : FrontendKoinInitialize
 
     private val useCase: CascadeDeleteStructuresByProjectIdUseCase by inject()
 
-    private val fakeDeleteFindings = FakeDeleteFindingsByStructureId()
+    private val fakeDeleteFindings = FakeDeleteFindingsByStructureIdUseCase()
 
     override fun additionalKoinModules(): List<Module> =
         listOf(
@@ -111,13 +112,5 @@ class CascadeDeleteStructuresByProjectIdUseCaseImplTest : FrontendKoinInitialize
         val result = fakeStructuresDb.getStructuresFlow(projectId2).first()
         assertIs<OfflineFirstDataResult.Success<List<FrontendStructure>>>(result)
         assertTrue(result.data.size == 1)
-    }
-
-    private class FakeDeleteFindingsByStructureId : DeleteFindingsByStructureIdUseCase {
-        val deletedStructureIds = mutableListOf<Uuid>()
-
-        override suspend fun invoke(structureId: Uuid) {
-            deletedStructureIds.add(structureId)
-        }
     }
 }
