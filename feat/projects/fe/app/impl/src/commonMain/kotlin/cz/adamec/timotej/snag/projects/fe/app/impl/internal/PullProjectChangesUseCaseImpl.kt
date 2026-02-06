@@ -16,6 +16,7 @@ import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.common.TimestampProvider
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
 import cz.adamec.timotej.snag.projects.fe.app.api.PullProjectChangesUseCase
+import cz.adamec.timotej.snag.projects.fe.ports.ProjectSyncResult
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsApi
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsDb
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsPullSyncCoordinator
@@ -41,11 +42,14 @@ internal class PullProjectChangesUseCaseImpl(
                 }
                 is OnlineDataResult.Success -> {
                     result.data.forEach { syncResult ->
-                        if (syncResult.deletedAt != null) {
-                            cascadeDeleteStructuresByProjectIdUseCase(syncResult.id)
-                            projectsDb.deleteProject(syncResult.id)
-                        } else {
-                            syncResult.project?.let { projectsDb.saveProject(it) }
+                        when (syncResult) {
+                            is ProjectSyncResult.Deleted -> {
+                                cascadeDeleteStructuresByProjectIdUseCase(syncResult.id)
+                                projectsDb.deleteProject(syncResult.id)
+                            }
+                            is ProjectSyncResult.Updated -> {
+                                projectsDb.saveProject(syncResult.project)
+                            }
                         }
                     }
                     projectsPullSyncTimestampDataSource.setLastSyncedAt(now)

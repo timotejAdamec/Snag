@@ -17,11 +17,10 @@ import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
 import kotlin.uuid.Uuid
 
-data class StructureSyncResult(
-    val id: Uuid,
-    val deletedAt: Timestamp?,
-    val structure: FrontendStructure?,
-)
+sealed interface StructureSyncResult {
+    data class Deleted(val id: Uuid) : StructureSyncResult
+    data class Updated(val structure: FrontendStructure) : StructureSyncResult
+}
 
 interface StructuresApi {
     suspend fun getStructures(projectId: Uuid): OnlineDataResult<List<FrontendStructure>>

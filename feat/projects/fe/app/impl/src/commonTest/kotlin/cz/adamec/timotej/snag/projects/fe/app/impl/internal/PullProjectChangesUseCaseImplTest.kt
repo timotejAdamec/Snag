@@ -84,7 +84,7 @@ class PullProjectChangesUseCaseImplTest : FrontendKoinInitializedTest() {
     fun `upserts alive projects to db`() = runTest(testDispatcher) {
         val project = createProject(projectId)
         fakeProjectsApi.modifiedSinceResults = listOf(
-            ProjectSyncResult(id = projectId, deletedAt = null, project = project),
+            ProjectSyncResult.Updated(project = project),
         )
 
         useCase()
@@ -101,7 +101,7 @@ class PullProjectChangesUseCaseImplTest : FrontendKoinInitializedTest() {
         fakeProjectsDb.setProject(project)
 
         fakeProjectsApi.modifiedSinceResults = listOf(
-            ProjectSyncResult(id = projectId, deletedAt = Timestamp(200L), project = null),
+            ProjectSyncResult.Deleted(id = projectId),
         )
 
         useCase()

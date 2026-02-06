@@ -17,11 +17,10 @@ import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
 import cz.adamec.timotej.snag.projects.fe.model.FrontendProject
 import kotlin.uuid.Uuid
 
-data class ProjectSyncResult(
-    val id: Uuid,
-    val deletedAt: Timestamp?,
-    val project: FrontendProject?,
-)
+sealed interface ProjectSyncResult {
+    data class Deleted(val id: Uuid) : ProjectSyncResult
+    data class Updated(val project: FrontendProject) : ProjectSyncResult
+}
 
 interface ProjectsApi {
     suspend fun getProjects(): OnlineDataResult<List<FrontendProject>>

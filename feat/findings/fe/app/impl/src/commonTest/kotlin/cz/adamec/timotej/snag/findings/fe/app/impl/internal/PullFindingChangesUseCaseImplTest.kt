@@ -82,7 +82,7 @@ class PullFindingChangesUseCaseImplTest : FrontendKoinInitializedTest() {
     fun `upserts alive findings to db`() = runTest(testDispatcher) {
         val finding = createFinding(findingId)
         fakeFindingsApi.modifiedSinceResults = listOf(
-            FindingSyncResult(id = findingId, deletedAt = null, finding = finding),
+            FindingSyncResult.Updated(finding = finding),
         )
 
         useCase(structureId)
@@ -99,7 +99,7 @@ class PullFindingChangesUseCaseImplTest : FrontendKoinInitializedTest() {
         fakeFindingsDb.setFinding(finding)
 
         fakeFindingsApi.modifiedSinceResults = listOf(
-            FindingSyncResult(id = findingId, deletedAt = Timestamp(200L), finding = null),
+            FindingSyncResult.Deleted(id = findingId),
         )
 
         useCase(structureId)

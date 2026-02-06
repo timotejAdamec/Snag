@@ -66,11 +66,11 @@ internal class RealStructuresApi(
         LH.logger.d { "Fetching structures modified since $since for project $projectId..." }
         return safeApiCall(logger = LH.logger, errorContext = "Error fetching structures modified since $since for project $projectId.") {
             httpClient.get("/projects/$projectId/structures?since=${since.value}").body<List<StructureApiDto>>().map { dto ->
-                StructureSyncResult(
-                    id = dto.id,
-                    deletedAt = dto.deletedAt,
-                    structure = if (dto.deletedAt == null) dto.toModel() else null,
-                )
+                if (dto.deletedAt != null) {
+                    StructureSyncResult.Deleted(id = dto.id)
+                } else {
+                    StructureSyncResult.Updated(structure = dto.toModel())
+                }
             }
         }.also { if (it is OnlineDataResult.Success) LH.logger.d { "Fetched ${it.data.size} modified structures for project $projectId." } }
     }

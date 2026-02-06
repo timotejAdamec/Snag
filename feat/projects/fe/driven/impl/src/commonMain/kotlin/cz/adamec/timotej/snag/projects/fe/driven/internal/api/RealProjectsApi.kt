@@ -73,11 +73,11 @@ internal class RealProjectsApi(
         LH.logger.d { "Fetching projects modified since $since..." }
         return safeApiCall(logger = LH.logger, errorContext = "Error fetching projects modified since $since.") {
             httpClient.get("/projects?since=${since.value}").body<List<ProjectApiDto>>().map { dto ->
-                ProjectSyncResult(
-                    id = dto.id,
-                    deletedAt = dto.deletedAt,
-                    project = if (dto.deletedAt == null) dto.toModel() else null,
-                )
+                if (dto.deletedAt != null) {
+                    ProjectSyncResult.Deleted(id = dto.id)
+                } else {
+                    ProjectSyncResult.Updated(project = dto.toModel())
+                }
             }
         }.also { if (it is OnlineDataResult.Success) LH.logger.d { "Fetched ${it.data.size} modified projects." } }
     }

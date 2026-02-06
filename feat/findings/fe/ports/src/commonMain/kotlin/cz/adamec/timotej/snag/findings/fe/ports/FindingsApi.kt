@@ -17,11 +17,10 @@ import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
 import kotlin.uuid.Uuid
 
-data class FindingSyncResult(
-    val id: Uuid,
-    val deletedAt: Timestamp?,
-    val finding: FrontendFinding?,
-)
+sealed interface FindingSyncResult {
+    data class Deleted(val id: Uuid) : FindingSyncResult
+    data class Updated(val finding: FrontendFinding) : FindingSyncResult
+}
 
 interface FindingsApi {
     suspend fun getFindings(structureId: Uuid): OnlineDataResult<List<FrontendFinding>>

@@ -66,11 +66,11 @@ internal class RealFindingsApi(
         LH.logger.d { "Fetching findings modified since $since for structure $structureId..." }
         return safeApiCall(logger = LH.logger, errorContext = "Error fetching findings modified since $since for structure $structureId.") {
             httpClient.get("/structures/$structureId/findings?since=${since.value}").body<List<FindingApiDto>>().map { dto ->
-                FindingSyncResult(
-                    id = dto.id,
-                    deletedAt = dto.deletedAt,
-                    finding = if (dto.deletedAt == null) dto.toModel() else null,
-                )
+                if (dto.deletedAt != null) {
+                    FindingSyncResult.Deleted(id = dto.id)
+                } else {
+                    FindingSyncResult.Updated(finding = dto.toModel())
+                }
             }
         }.also { if (it is OnlineDataResult.Success) LH.logger.d { "Fetched ${it.data.size} modified findings for structure $structureId." } }
     }

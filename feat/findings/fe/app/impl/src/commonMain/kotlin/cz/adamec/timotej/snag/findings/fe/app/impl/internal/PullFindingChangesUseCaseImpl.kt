@@ -13,6 +13,7 @@
 package cz.adamec.timotej.snag.findings.fe.app.impl.internal
 
 import cz.adamec.timotej.snag.findings.fe.app.api.PullFindingChangesUseCase
+import cz.adamec.timotej.snag.findings.fe.ports.FindingSyncResult
 import cz.adamec.timotej.snag.findings.fe.ports.FindingsApi
 import cz.adamec.timotej.snag.findings.fe.ports.FindingsDb
 import cz.adamec.timotej.snag.findings.fe.ports.FindingsPullSyncCoordinator
@@ -40,10 +41,13 @@ internal class PullFindingChangesUseCaseImpl(
                 }
                 is OnlineDataResult.Success -> {
                     result.data.forEach { syncResult ->
-                        if (syncResult.deletedAt != null) {
-                            findingsDb.deleteFinding(syncResult.id)
-                        } else {
-                            syncResult.finding?.let { findingsDb.saveFinding(it) }
+                        when (syncResult) {
+                            is FindingSyncResult.Deleted -> {
+                                findingsDb.deleteFinding(syncResult.id)
+                            }
+                            is FindingSyncResult.Updated -> {
+                                findingsDb.saveFinding(syncResult.finding)
+                            }
                         }
                     }
                     findingsPullSyncTimestampDataSource.setLastSyncedAt(structureId, now)

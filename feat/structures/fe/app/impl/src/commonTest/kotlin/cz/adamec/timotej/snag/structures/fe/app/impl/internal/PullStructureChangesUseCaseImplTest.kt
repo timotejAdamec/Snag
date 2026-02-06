@@ -15,6 +15,7 @@ package cz.adamec.timotej.snag.structures.fe.app.impl.internal
 import cz.adamec.timotej.snag.feat.structures.business.Structure
 import cz.adamec.timotej.snag.feat.structures.fe.model.FrontendStructure
 import cz.adamec.timotej.snag.findings.fe.app.api.DeleteFindingsByStructureIdUseCase
+import cz.adamec.timotej.snag.findings.fe.app.test.FakeDeleteFindingsByStructureIdUseCase
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
@@ -54,7 +55,7 @@ class PullStructureChangesUseCaseImplTest : FrontendKoinInitializedTest() {
 
     private val useCase: PullStructureChangesUseCase by inject()
 
-    private val fakeDeleteFindings = FakeDeleteFindingsByStructureId()
+    private val fakeDeleteFindings = FakeDeleteFindingsByStructureIdUseCase()
 
     override fun additionalKoinModules(): List<Module> =
         listOf(
@@ -85,7 +86,7 @@ class PullStructureChangesUseCaseImplTest : FrontendKoinInitializedTest() {
     fun `upserts alive structures to db`() = runTest(testDispatcher) {
         val structure = createStructure(structureId)
         fakeStructuresApi.modifiedSinceResults = listOf(
-            StructureSyncResult(id = structureId, deletedAt = null, structure = structure),
+            StructureSyncResult.Updated(structure = structure),
         )
 
         useCase(projectId)
@@ -102,7 +103,7 @@ class PullStructureChangesUseCaseImplTest : FrontendKoinInitializedTest() {
         fakeStructuresDb.setStructure(structure)
 
         fakeStructuresApi.modifiedSinceResults = listOf(
-            StructureSyncResult(id = structureId, deletedAt = Timestamp(200L), structure = null),
+            StructureSyncResult.Deleted(id = structureId),
         )
 
         useCase(projectId)
@@ -131,13 +132,5 @@ class PullStructureChangesUseCaseImplTest : FrontendKoinInitializedTest() {
         useCase(projectId)
 
         assertNull(fakePullSyncTimestampDataSource.getLastSyncedAt(projectId))
-    }
-
-    private class FakeDeleteFindingsByStructureId : DeleteFindingsByStructureIdUseCase {
-        val deletedStructureIds = mutableListOf<Uuid>()
-
-        override suspend fun invoke(structureId: Uuid) {
-            deletedStructureIds.add(structureId)
-        }
     }
 }
