@@ -40,6 +40,8 @@ import org.koin.dsl.module
 import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
+import kotlin.test.assertNull
 import kotlin.uuid.Uuid
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation as ClientContentNegotiation
 
@@ -92,6 +94,36 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
             }
 
             assertEquals(HttpStatusCode.NoContent, response.status)
+        }
+
+    @Test
+    fun `DELETE structure sets deletedAt on successful deletion`() =
+        testApplication {
+            configureApp()
+            dataSource.setStructures(
+                BackendStructure(
+                    structure = Structure(
+                        id = TEST_ID_1,
+                        projectId = PROJECT_ID,
+                        name = "To Delete",
+                        floorPlanUrl = null,
+                        updatedAt = Timestamp(100L),
+                    ),
+                ),
+            )
+            val client = jsonClient()
+
+            client.delete("/structures/$TEST_ID_1") {
+                contentType(ContentType.Application.Json)
+                setBody(DeleteStructureApiDto(deletedAt = Timestamp(200L)))
+            }
+
+            val getResponse = client.get("/projects/$PROJECT_ID/structures")
+            assertEquals(HttpStatusCode.OK, getResponse.status)
+            val body = getResponse.body<List<StructureApiDto>>()
+            assertEquals(1, body.size)
+            assertNotNull(body[0].deletedAt)
+            assertEquals(Timestamp(200L), body[0].deletedAt)
         }
 
     @Test
@@ -201,6 +233,70 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
         }
 
     @Test
+    fun `GET structures includes deletedAt for soft-deleted structures`() =
+        testApplication {
+            configureApp()
+            dataSource.setStructures(
+                BackendStructure(
+                    structure = Structure(
+                        id = TEST_ID_1,
+                        projectId = PROJECT_ID,
+                        name = "Active",
+                        floorPlanUrl = null,
+                        updatedAt = Timestamp(100L),
+                    ),
+                ),
+                BackendStructure(
+                    structure = Structure(
+                        id = TEST_ID_2,
+                        projectId = PROJECT_ID,
+                        name = "Deleted",
+                        floorPlanUrl = null,
+                        updatedAt = Timestamp(100L),
+                    ),
+                    deletedAt = Timestamp(200L),
+                ),
+            )
+            val client = jsonClient()
+
+            val response = client.get("/projects/$PROJECT_ID/structures")
+
+            assertEquals(HttpStatusCode.OK, response.status)
+            val body = response.body<List<StructureApiDto>>()
+            assertEquals(2, body.size)
+            val active = body.first { it.id == TEST_ID_1 }
+            val deleted = body.first { it.id == TEST_ID_2 }
+            assertNull(active.deletedAt)
+            assertEquals(Timestamp(200L), deleted.deletedAt)
+        }
+
+    @Test
+    fun `GET structures with since returns soft-deleted structures with deletedAt`() =
+        testApplication {
+            configureApp()
+            dataSource.setStructures(
+                BackendStructure(
+                    structure = Structure(
+                        id = TEST_ID_1,
+                        projectId = PROJECT_ID,
+                        name = "Deleted After Since",
+                        floorPlanUrl = null,
+                        updatedAt = Timestamp(50L),
+                    ),
+                    deletedAt = Timestamp(150L),
+                ),
+            )
+            val client = jsonClient()
+
+            val response = client.get("/projects/$PROJECT_ID/structures?since=100")
+
+            assertEquals(HttpStatusCode.OK, response.status)
+            val body = response.body<List<StructureApiDto>>()
+            assertEquals(1, body.size)
+            assertEquals(Timestamp(150L), body[0].deletedAt)
+        }
+
+    @Test
     fun `GET structures with since parameter returns modified structures`() =
         testApplication {
             configureApp()
@@ -303,6 +399,42 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
             val body = response.body<StructureApiDto>()
             assertEquals("Existing", body.name)
             assertEquals(Timestamp(200L), body.updatedAt)
+        }
+
+    @Test
+    fun `PUT structure conflict includes deletedAt when existing is soft-deleted`() =
+        testApplication {
+            configureApp()
+            dataSource.setStructures(
+                BackendStructure(
+                    structure = Structure(
+                        id = TEST_ID_1,
+                        projectId = PROJECT_ID,
+                        name = "Deleted",
+                        floorPlanUrl = null,
+                        updatedAt = Timestamp(200L),
+                    ),
+                    deletedAt = Timestamp(300L),
+                ),
+            )
+            val client = jsonClient()
+
+            val response = client.put("/projects/$PROJECT_ID/structures/$TEST_ID_1") {
+                contentType(ContentType.Application.Json)
+                setBody(
+                    PutStructureApiDto(
+                        projectId = PROJECT_ID,
+                        name = "New",
+                        floorPlanUrl = null,
+                        updatedAt = Timestamp(100L),
+                    ),
+                )
+            }
+
+            assertEquals(HttpStatusCode.OK, response.status)
+            val body = response.body<StructureApiDto>()
+            assertEquals("Deleted", body.name)
+            assertEquals(Timestamp(300L), body.deletedAt)
         }
 
     @Test

@@ -42,6 +42,8 @@ import org.koin.dsl.module
 import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
+import kotlin.test.assertNull
 import kotlin.uuid.Uuid
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation as ClientContentNegotiation
 
@@ -95,6 +97,37 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
             }
 
             assertEquals(HttpStatusCode.NoContent, response.status)
+        }
+
+    @Test
+    fun `DELETE finding sets deletedAt on successful deletion`() =
+        testApplication {
+            configureApp()
+            dataSource.setFinding(
+                BackendFinding(
+                    finding = Finding(
+                        id = TEST_ID_1,
+                        structureId = STRUCTURE_ID,
+                        name = "To Delete",
+                        description = null,
+                        coordinates = emptyList(),
+                        updatedAt = Timestamp(100L),
+                    ),
+                ),
+            )
+            val client = jsonClient()
+
+            client.delete("/findings/$TEST_ID_1") {
+                contentType(ContentType.Application.Json)
+                setBody(DeleteFindingApiDto(deletedAt = Timestamp(200L)))
+            }
+
+            val getResponse = client.get("/structures/$STRUCTURE_ID/findings")
+            assertEquals(HttpStatusCode.OK, getResponse.status)
+            val body = getResponse.body<List<FindingApiDto>>()
+            assertEquals(1, body.size)
+            assertNotNull(body[0].deletedAt)
+            assertEquals(Timestamp(200L), body[0].deletedAt)
         }
 
     @Test
@@ -207,6 +240,75 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
         }
 
     @Test
+    fun `GET findings includes deletedAt for soft-deleted findings`() =
+        testApplication {
+            configureApp()
+            dataSource.setFinding(
+                BackendFinding(
+                    finding = Finding(
+                        id = TEST_ID_1,
+                        structureId = STRUCTURE_ID,
+                        name = "Active",
+                        description = null,
+                        coordinates = emptyList(),
+                        updatedAt = Timestamp(100L),
+                    ),
+                ),
+            )
+            dataSource.setFinding(
+                BackendFinding(
+                    finding = Finding(
+                        id = TEST_ID_2,
+                        structureId = STRUCTURE_ID,
+                        name = "Deleted",
+                        description = null,
+                        coordinates = emptyList(),
+                        updatedAt = Timestamp(100L),
+                    ),
+                    deletedAt = Timestamp(200L),
+                ),
+            )
+            val client = jsonClient()
+
+            val response = client.get("/structures/$STRUCTURE_ID/findings")
+
+            assertEquals(HttpStatusCode.OK, response.status)
+            val body = response.body<List<FindingApiDto>>()
+            assertEquals(2, body.size)
+            val active = body.first { it.id == TEST_ID_1 }
+            val deleted = body.first { it.id == TEST_ID_2 }
+            assertNull(active.deletedAt)
+            assertEquals(Timestamp(200L), deleted.deletedAt)
+        }
+
+    @Test
+    fun `GET findings with since returns soft-deleted findings with deletedAt`() =
+        testApplication {
+            configureApp()
+            dataSource.setFinding(
+                BackendFinding(
+                    finding = Finding(
+                        id = TEST_ID_1,
+                        structureId = STRUCTURE_ID,
+                        name = "Deleted After Since",
+                        description = null,
+                        coordinates = emptyList(),
+                        updatedAt = Timestamp(50L),
+                    ),
+                    deletedAt = Timestamp(150L),
+                ),
+            )
+            val client = jsonClient()
+
+            val response = client.get("/structures/$STRUCTURE_ID/findings?since=100")
+
+            assertEquals(HttpStatusCode.OK, response.status)
+            val body = response.body<List<FindingApiDto>>()
+            assertEquals(1, body.size)
+            assertEquals(Timestamp(150L), body[0].deletedAt)
+        }
+
+    @Test
     fun `GET findings with since parameter returns modified findings`() =
         testApplication {
             configureApp()
@@ -316,6 +418,44 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
             val body = response.body<FindingApiDto>()
             assertEquals("Existing", body.name)
             assertEquals(Timestamp(200L), body.updatedAt)
+        }
+
+    @Test
+    fun `PUT finding conflict includes deletedAt when existing is soft-deleted`() =
+        testApplication {
+            configureApp()
+            dataSource.setFinding(
+                BackendFinding(
+                    finding = Finding(
+                        id = TEST_ID_1,
+                        structureId = STRUCTURE_ID,
+                        name = "Deleted",
+                        description = null,
+                        coordinates = emptyList(),
+                        updatedAt = Timestamp(200L),
+                    ),
+                    deletedAt = Timestamp(300L),
+                ),
+            )
+            val client = jsonClient()
+
+            val response = client.put("/structures/$STRUCTURE_ID/findings/$TEST_ID_1") {
+                contentType(ContentType.Application.Json)
+                setBody(
+                    PutFindingApiDto(
+                        structureId = STRUCTURE_ID,
+                        name = "New",
+                        description = null,
+                        coordinates = emptyList(),
+                        updatedAt = Timestamp(100L),
+                    ),
+                )
+            }
+
+            assertEquals(HttpStatusCode.OK, response.status)
+            val body = response.body<FindingApiDto>()
+            assertEquals("Deleted", body.name)
+            assertEquals(Timestamp(300L), body.deletedAt)
         }
 
     @Test

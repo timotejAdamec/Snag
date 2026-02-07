@@ -40,6 +40,8 @@ import org.koin.dsl.module
 import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
+import kotlin.test.assertNull
 import kotlin.uuid.Uuid
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation as ClientContentNegotiation
 
@@ -113,6 +115,44 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
         }
 
     @Test
+    fun `GET projects includes deletedAt for soft-deleted projects`() =
+        testApplication {
+            configureApp()
+            dataSource.setProject(
+                BackendProject(
+                    project = Project(
+                        id = TEST_ID_1,
+                        name = "Active",
+                        address = "Addr",
+                        updatedAt = Timestamp(100L),
+                    ),
+                ),
+            )
+            dataSource.setProject(
+                BackendProject(
+                    project = Project(
+                        id = TEST_ID_2,
+                        name = "Deleted",
+                        address = "Addr",
+                        updatedAt = Timestamp(100L),
+                    ),
+                    deletedAt = Timestamp(200L),
+                ),
+            )
+            val client = jsonClient()
+
+            val response = client.get("/projects")
+
+            assertEquals(HttpStatusCode.OK, response.status)
+            val body = response.body<List<ProjectApiDto>>()
+            assertEquals(2, body.size)
+            val active = body.first { it.id == TEST_ID_1 }
+            val deleted = body.first { it.id == TEST_ID_2 }
+            assertNull(active.deletedAt)
+            assertEquals(Timestamp(200L), deleted.deletedAt)
+        }
+
+    @Test
     fun `GET projects with since parameter returns modified projects`() =
         testApplication {
             configureApp()
@@ -147,6 +187,31 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
         }
 
     @Test
+    fun `GET projects with since returns soft-deleted projects with deletedAt`() =
+        testApplication {
+            configureApp()
+            dataSource.setProject(
+                BackendProject(
+                    project = Project(
+                        id = TEST_ID_1,
+                        name = "Deleted After Since",
+                        address = "Addr",
+                        updatedAt = Timestamp(50L),
+                    ),
+                    deletedAt = Timestamp(150L),
+                ),
+            )
+            val client = jsonClient()
+
+            val response = client.get("/projects?since=100")
+
+            assertEquals(HttpStatusCode.OK, response.status)
+            val body = response.body<List<ProjectApiDto>>()
+            assertEquals(1, body.size)
+            assertEquals(Timestamp(150L), body[0].deletedAt)
+        }
+
+    @Test
     fun `GET project by id returns project when found`() =
         testApplication {
             configureApp()
@@ -168,6 +233,31 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
             val body = response.body<ProjectApiDto>()
             assertEquals("Found Project", body.name)
             assertEquals(TEST_ID_1, body.id)
+        }
+
+    @Test
+    fun `GET project by id includes deletedAt when soft-deleted`() =
+        testApplication {
+            configureApp()
+            dataSource.setProject(
+                BackendProject(
+                    project = Project(
+                        id = TEST_ID_1,
+                        name = "Deleted Project",
+                        address = "Addr",
+                        updatedAt = Timestamp(100L),
+                    ),
+                    deletedAt = Timestamp(200L),
+                ),
+            )
+            val client = jsonClient()
+
+            val response = client.get("/projects/$TEST_ID_1")
+
+            assertEquals(HttpStatusCode.OK, response.status)
+            val body = response.body<ProjectApiDto>()
+            assertEquals("Deleted Project", body.name)
+            assertEquals(Timestamp(200L), body.deletedAt)
         }
 
     @Test
@@ -234,6 +324,34 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
         }
 
     @Test
+    fun `PUT project conflict includes deletedAt when existing is soft-deleted`() =
+        testApplication {
+            configureApp()
+            dataSource.setProject(
+                BackendProject(
+                    project = Project(
+                        id = TEST_ID_1,
+                        name = "Deleted",
+                        address = "Addr",
+                        updatedAt = Timestamp(200L),
+                    ),
+                    deletedAt = Timestamp(300L),
+                ),
+            )
+            val client = jsonClient()
+
+            val response = client.put("/projects/$TEST_ID_1") {
+                contentType(ContentType.Application.Json)
+                setBody(PutProjectApiDto(name = "New", address = "Addr", updatedAt = Timestamp(100L)))
+            }
+
+            assertEquals(HttpStatusCode.OK, response.status)
+            val body = response.body<ProjectApiDto>()
+            assertEquals("Deleted", body.name)
+            assertEquals(Timestamp(300L), body.deletedAt)
+        }
+
+    @Test
     fun `PUT project with invalid id returns 400`() =
         testApplication {
             configureApp()
@@ -283,6 +401,34 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
             }
 
             assertEquals(HttpStatusCode.NoContent, response.status)
+        }
+
+    @Test
+    fun `DELETE project sets deletedAt on successful deletion`() =
+        testApplication {
+            configureApp()
+            dataSource.setProject(
+                BackendProject(
+                    project = Project(
+                        id = TEST_ID_1,
+                        name = "To Delete",
+                        address = "Addr",
+                        updatedAt = Timestamp(100L),
+                    ),
+                ),
+            )
+            val client = jsonClient()
+
+            client.delete("/projects/$TEST_ID_1") {
+                contentType(ContentType.Application.Json)
+                setBody(DeleteProjectApiDto(deletedAt = Timestamp(200L)))
+            }
+
+            val getResponse = client.get("/projects/$TEST_ID_1")
+            assertEquals(HttpStatusCode.OK, getResponse.status)
+            val body = getResponse.body<ProjectApiDto>()
+            assertNotNull(body.deletedAt)
+            assertEquals(Timestamp(200L), body.deletedAt)
         }
 
     @Test
