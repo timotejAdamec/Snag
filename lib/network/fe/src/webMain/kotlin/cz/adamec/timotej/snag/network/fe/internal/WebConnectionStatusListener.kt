@@ -17,6 +17,7 @@ import kotlinx.browser.window
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.onEach
 import org.w3c.dom.events.Event
 
 internal class WebConnectionStatusListener : ConnectionStatusListener {
@@ -34,5 +35,5 @@ internal class WebConnectionStatusListener : ConnectionStatusListener {
                 window.removeEventListener("online", onlineHandler)
                 window.removeEventListener("offline", offlineHandler)
             }
-        }
+        }.onEach { isConnected -> LH.logger.i { "Connection status changed: isConnected=$isConnected" } }
 }

@@ -15,9 +15,12 @@ package cz.adamec.timotej.snag.network.fe.internal
 import cz.adamec.timotej.snag.network.fe.ConnectionStatusListener
 import dev.tmapps.konnection.Konnection
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.onEach
 
 internal class KonnectionConnectionStatusListener(
     private val konnection: Konnection,
 ) : ConnectionStatusListener {
-    override fun isConnectedFlow(): Flow<Boolean> = konnection.observeHasConnection()
+    override fun isConnectedFlow(): Flow<Boolean> =
+        konnection.observeHasConnection()
+            .onEach { isConnected -> LH.logger.i { "Connection status changed: isConnected=$isConnected" } }
 }
