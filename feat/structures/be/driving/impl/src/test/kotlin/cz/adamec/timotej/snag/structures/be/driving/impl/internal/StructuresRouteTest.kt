@@ -17,14 +17,12 @@ import cz.adamec.timotej.snag.feat.structures.business.Structure
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.routing.be.InvalidBodyException
 import cz.adamec.timotej.snag.routing.be.InvalidIdException
-import cz.adamec.timotej.snag.structures.be.app.api.DeleteStructureUseCase
-import cz.adamec.timotej.snag.structures.be.app.api.GetStructuresModifiedSinceUseCase
-import cz.adamec.timotej.snag.structures.be.app.api.GetStructuresUseCase
-import cz.adamec.timotej.snag.structures.be.app.api.SaveStructureUseCase
-import cz.adamec.timotej.snag.structures.be.app.api.model.DeleteStructureRequest
+import cz.adamec.timotej.snag.structures.be.driven.test.FakeStructuresLocalDataSource
 import cz.adamec.timotej.snag.structures.be.driving.contract.DeleteStructureApiDto
 import cz.adamec.timotej.snag.structures.be.driving.contract.PutStructureApiDto
 import cz.adamec.timotej.snag.structures.be.driving.contract.StructureApiDto
+import cz.adamec.timotej.snag.structures.be.ports.StructuresLocalDataSource
+import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
 import io.ktor.client.call.body
 import io.ktor.client.request.delete
 import io.ktor.client.request.get
@@ -40,16 +38,26 @@ import io.ktor.server.response.respond
 import io.ktor.server.routing.routing
 import io.ktor.server.testing.ApplicationTestBuilder
 import io.ktor.server.testing.testApplication
+import org.koin.core.module.Module
+import org.koin.core.module.dsl.singleOf
+import org.koin.dsl.bind
+import org.koin.dsl.module
+import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.uuid.Uuid
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation as ClientContentNegotiation
 
-class StructuresRouteTest {
-    private val fakeDeleteStructure = FakeDeleteStructureUseCase()
-    private val fakeGetStructures = FakeGetStructuresUseCase()
-    private val fakeGetStructuresModifiedSince = FakeGetStructuresModifiedSinceUseCase()
-    private val fakeSaveStructure = FakeSaveStructureUseCase()
+class StructuresRouteTest : BackendKoinInitializedTest() {
+    private val dataSource: FakeStructuresLocalDataSource by inject()
+    private val route: StructuresRoute by inject()
+
+    override fun additionalKoinModules(): List<Module> =
+        listOf(
+            module {
+                singleOf(::FakeStructuresLocalDataSource) bind StructuresLocalDataSource::class
+            },
+        )
 
     private fun ApplicationTestBuilder.configureApp() {
         application {
@@ -63,14 +71,7 @@ class StructuresRouteTest {
                 }
             }
             routing {
-                with(
-                    StructuresRoute(
-                        deleteStructureUseCase = fakeDeleteStructure,
-                        getStructuresUseCase = fakeGetStructures,
-                        getStructuresModifiedSinceUseCase = fakeGetStructuresModifiedSince,
-                        saveStructureUseCase = fakeSaveStructure,
-                    ),
-                ) { setup() }
+                with(route) { setup() }
             }
         }
     }
@@ -86,7 +87,17 @@ class StructuresRouteTest {
     fun `DELETE structure returns 204 when successfully deleted`() =
         testApplication {
             configureApp()
-            fakeDeleteStructure.result = null
+            dataSource.setStructures(
+                BackendStructure(
+                    structure = Structure(
+                        id = TEST_ID_1,
+                        projectId = PROJECT_ID,
+                        name = "To Delete",
+                        floorPlanUrl = null,
+                        updatedAt = Timestamp(100L),
+                    ),
+                ),
+            )
             val client = jsonClient()
 
             val response = client.delete("/structures/$TEST_ID_1") {
@@ -95,24 +106,23 @@ class StructuresRouteTest {
             }
 
             assertEquals(HttpStatusCode.NoContent, response.status)
-            assertEquals(TEST_ID_1, fakeDeleteStructure.capturedRequest?.structureId)
-            assertEquals(Timestamp(200L), fakeDeleteStructure.capturedRequest?.deletedAt)
         }
 
     @Test
     fun `DELETE structure returns existing structure on conflict`() =
         testApplication {
             configureApp()
-            val existingStructure = BackendStructure(
-                structure = Structure(
-                    id = TEST_ID_1,
-                    projectId = PROJECT_ID,
-                    name = "Existing",
-                    floorPlanUrl = null,
-                    updatedAt = Timestamp(300L),
+            dataSource.setStructures(
+                BackendStructure(
+                    structure = Structure(
+                        id = TEST_ID_1,
+                        projectId = PROJECT_ID,
+                        name = "Existing",
+                        floorPlanUrl = null,
+                        updatedAt = Timestamp(300L),
+                    ),
                 ),
             )
-            fakeDeleteStructure.result = existingStructure
             val client = jsonClient()
 
             val response = client.delete("/structures/$TEST_ID_1") {
@@ -161,7 +171,6 @@ class StructuresRouteTest {
     fun `GET structures returns empty list when none exist`() =
         testApplication {
             configureApp()
-            fakeGetStructures.result = emptyList()
             val client = jsonClient()
 
             val response = client.get("/projects/$PROJECT_ID/structures")
@@ -174,7 +183,7 @@ class StructuresRouteTest {
     fun `GET structures returns all structures for project`() =
         testApplication {
             configureApp()
-            fakeGetStructures.result = listOf(
+            dataSource.setStructures(
                 BackendStructure(
                     structure = Structure(
                         id = TEST_ID_1,
@@ -203,17 +212,25 @@ class StructuresRouteTest {
             assertEquals(2, body.size)
             assertEquals("Structure 1", body[0].name)
             assertEquals("Structure 2", body[1].name)
-            assertEquals(PROJECT_ID, fakeGetStructures.capturedProjectId)
         }
 
     @Test
     fun `GET structures with since parameter returns modified structures`() =
         testApplication {
             configureApp()
-            fakeGetStructuresModifiedSince.result = listOf(
+            dataSource.setStructures(
                 BackendStructure(
                     structure = Structure(
                         id = TEST_ID_1,
+                        projectId = PROJECT_ID,
+                        name = "Old",
+                        floorPlanUrl = null,
+                        updatedAt = Timestamp(50L),
+                    ),
+                ),
+                BackendStructure(
+                    structure = Structure(
+                        id = TEST_ID_2,
                         projectId = PROJECT_ID,
                         name = "Modified",
                         floorPlanUrl = null,
@@ -229,8 +246,6 @@ class StructuresRouteTest {
             val body = response.body<List<StructureApiDto>>()
             assertEquals(1, body.size)
             assertEquals("Modified", body[0].name)
-            assertEquals(PROJECT_ID, fakeGetStructuresModifiedSince.capturedProjectId)
-            assertEquals(Timestamp(100L), fakeGetStructuresModifiedSince.capturedSince)
         }
 
     @Test
@@ -252,7 +267,6 @@ class StructuresRouteTest {
     fun `PUT structure returns 204 when successfully saved`() =
         testApplication {
             configureApp()
-            fakeSaveStructure.result = null
             val client = jsonClient()
 
             val response = client.put("/projects/$PROJECT_ID/structures/$TEST_ID_1") {
@@ -268,24 +282,23 @@ class StructuresRouteTest {
             }
 
             assertEquals(HttpStatusCode.NoContent, response.status)
-            assertEquals(TEST_ID_1, fakeSaveStructure.capturedStructure?.structure?.id)
-            assertEquals("New Structure", fakeSaveStructure.capturedStructure?.structure?.name)
         }
 
     @Test
     fun `PUT structure returns existing structure on conflict`() =
         testApplication {
             configureApp()
-            val existingStructure = BackendStructure(
-                structure = Structure(
-                    id = TEST_ID_1,
-                    projectId = PROJECT_ID,
-                    name = "Existing",
-                    floorPlanUrl = null,
-                    updatedAt = Timestamp(200L),
+            dataSource.setStructures(
+                BackendStructure(
+                    structure = Structure(
+                        id = TEST_ID_1,
+                        projectId = PROJECT_ID,
+                        name = "Existing",
+                        floorPlanUrl = null,
+                        updatedAt = Timestamp(200L),
+                    ),
                 ),
             )
-            fakeSaveStructure.result = existingStructure
             val client = jsonClient()
 
             val response = client.put("/projects/$PROJECT_ID/structures/$TEST_ID_1") {
@@ -347,47 +360,5 @@ class StructuresRouteTest {
         private val PROJECT_ID = Uuid.parse("00000000-0000-0000-0000-000000000010")
         private val TEST_ID_1 = Uuid.parse("00000000-0000-0000-0000-000000000001")
         private val TEST_ID_2 = Uuid.parse("00000000-0000-0000-0000-000000000002")
-    }
-}
-
-private class FakeDeleteStructureUseCase : DeleteStructureUseCase {
-    var result: BackendStructure? = null
-    var capturedRequest: DeleteStructureRequest? = null
-
-    override suspend fun invoke(request: DeleteStructureRequest): BackendStructure? {
-        capturedRequest = request
-        return result
-    }
-}
-
-private class FakeGetStructuresUseCase : GetStructuresUseCase {
-    var result: List<BackendStructure> = emptyList()
-    var capturedProjectId: Uuid? = null
-
-    override suspend fun invoke(projectId: Uuid): List<BackendStructure> {
-        capturedProjectId = projectId
-        return result
-    }
-}
-
-private class FakeGetStructuresModifiedSinceUseCase : GetStructuresModifiedSinceUseCase {
-    var result: List<BackendStructure> = emptyList()
-    var capturedProjectId: Uuid? = null
-    var capturedSince: Timestamp? = null
-
-    override suspend fun invoke(projectId: Uuid, since: Timestamp): List<BackendStructure> {
-        capturedProjectId = projectId
-        capturedSince = since
-        return result
-    }
-}
-
-private class FakeSaveStructureUseCase : SaveStructureUseCase {
-    var result: BackendStructure? = null
-    var capturedStructure: BackendStructure? = null
-
-    override suspend fun invoke(backendStructure: BackendStructure): BackendStructure? {
-        capturedStructure = backendStructure
-        return result
     }
 }

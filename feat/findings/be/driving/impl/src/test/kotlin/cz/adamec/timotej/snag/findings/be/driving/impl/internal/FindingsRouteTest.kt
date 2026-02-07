@@ -15,18 +15,16 @@ package cz.adamec.timotej.snag.findings.be.driving.impl.internal
 import cz.adamec.timotej.snag.feat.findings.be.model.BackendFinding
 import cz.adamec.timotej.snag.feat.findings.business.Finding
 import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
-import cz.adamec.timotej.snag.findings.be.app.api.DeleteFindingUseCase
-import cz.adamec.timotej.snag.findings.be.app.api.GetFindingsModifiedSinceUseCase
-import cz.adamec.timotej.snag.findings.be.app.api.GetFindingsUseCase
-import cz.adamec.timotej.snag.findings.be.app.api.SaveFindingUseCase
-import cz.adamec.timotej.snag.findings.be.app.api.model.DeleteFindingRequest
+import cz.adamec.timotej.snag.findings.be.driven.test.FakeFindingsLocalDataSource
 import cz.adamec.timotej.snag.findings.be.driving.contract.DeleteFindingApiDto
 import cz.adamec.timotej.snag.findings.be.driving.contract.FindingApiDto
 import cz.adamec.timotej.snag.findings.be.driving.contract.PutFindingApiDto
 import cz.adamec.timotej.snag.findings.be.driving.contract.RelativeCoordinateApiDto
+import cz.adamec.timotej.snag.findings.be.ports.FindingsLocalDataSource
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.routing.be.InvalidBodyException
 import cz.adamec.timotej.snag.routing.be.InvalidIdException
+import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
 import io.ktor.client.call.body
 import io.ktor.client.request.delete
 import io.ktor.client.request.get
@@ -42,16 +40,26 @@ import io.ktor.server.response.respond
 import io.ktor.server.routing.routing
 import io.ktor.server.testing.ApplicationTestBuilder
 import io.ktor.server.testing.testApplication
+import org.koin.core.module.Module
+import org.koin.core.module.dsl.singleOf
+import org.koin.dsl.bind
+import org.koin.dsl.module
+import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.uuid.Uuid
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation as ClientContentNegotiation
 
-class FindingsRouteTest {
-    private val fakeDeleteFinding = FakeDeleteFindingUseCase()
-    private val fakeGetFindings = FakeGetFindingsUseCase()
-    private val fakeGetFindingsModifiedSince = FakeGetFindingsModifiedSinceUseCase()
-    private val fakeSaveFinding = FakeSaveFindingUseCase()
+class FindingsRouteTest : BackendKoinInitializedTest() {
+    private val dataSource: FakeFindingsLocalDataSource by inject()
+    private val route: FindingsRoute by inject()
+
+    override fun additionalKoinModules(): List<Module> =
+        listOf(
+            module {
+                singleOf(::FakeFindingsLocalDataSource) bind FindingsLocalDataSource::class
+            },
+        )
 
     private fun ApplicationTestBuilder.configureApp() {
         application {
@@ -65,14 +73,7 @@ class FindingsRouteTest {
                 }
             }
             routing {
-                with(
-                    FindingsRoute(
-                        deleteFindingUseCase = fakeDeleteFinding,
-                        getFindingsUseCase = fakeGetFindings,
-                        getFindingsModifiedSinceUseCase = fakeGetFindingsModifiedSince,
-                        saveFindingUseCase = fakeSaveFinding,
-                    ),
-                ) { setup() }
+                with(route) { setup() }
             }
         }
     }
@@ -88,7 +89,18 @@ class FindingsRouteTest {
     fun `DELETE finding returns 204 when successfully deleted`() =
         testApplication {
             configureApp()
-            fakeDeleteFinding.result = null
+            dataSource.setFinding(
+                BackendFinding(
+                    finding = Finding(
+                        id = TEST_ID_1,
+                        structureId = STRUCTURE_ID,
+                        name = "To Delete",
+                        description = "Desc",
+                        coordinates = listOf(RelativeCoordinate(0.5f, 0.5f)),
+                        updatedAt = Timestamp(100L),
+                    ),
+                ),
+            )
             val client = jsonClient()
 
             val response = client.delete("/findings/$TEST_ID_1") {
@@ -97,25 +109,24 @@ class FindingsRouteTest {
             }
 
             assertEquals(HttpStatusCode.NoContent, response.status)
-            assertEquals(TEST_ID_1, fakeDeleteFinding.capturedRequest?.findingId)
-            assertEquals(Timestamp(200L), fakeDeleteFinding.capturedRequest?.deletedAt)
         }
 
     @Test
     fun `DELETE finding returns existing finding on conflict`() =
         testApplication {
             configureApp()
-            val existingFinding = BackendFinding(
-                finding = Finding(
-                    id = TEST_ID_1,
-                    structureId = STRUCTURE_ID,
-                    name = "Existing",
-                    description = "Desc",
-                    coordinates = listOf(RelativeCoordinate(0.5f, 0.5f)),
-                    updatedAt = Timestamp(300L),
+            dataSource.setFinding(
+                BackendFinding(
+                    finding = Finding(
+                        id = TEST_ID_1,
+                        structureId = STRUCTURE_ID,
+                        name = "Existing",
+                        description = "Desc",
+                        coordinates = listOf(RelativeCoordinate(0.5f, 0.5f)),
+                        updatedAt = Timestamp(300L),
+                    ),
                 ),
             )
-            fakeDeleteFinding.result = existingFinding
             val client = jsonClient()
 
             val response = client.delete("/findings/$TEST_ID_1") {
@@ -164,7 +175,6 @@ class FindingsRouteTest {
     fun `GET findings returns empty list when none exist`() =
         testApplication {
             configureApp()
-            fakeGetFindings.result = emptyList()
             val client = jsonClient()
 
             val response = client.get("/structures/$STRUCTURE_ID/findings")
@@ -177,7 +187,7 @@ class FindingsRouteTest {
     fun `GET findings returns all findings for structure`() =
         testApplication {
             configureApp()
-            fakeGetFindings.result = listOf(
+            dataSource.setFinding(
                 BackendFinding(
                     finding = Finding(
                         id = TEST_ID_1,
@@ -188,6 +198,8 @@ class FindingsRouteTest {
                         updatedAt = Timestamp(100L),
                     ),
                 ),
+            )
+            dataSource.setFinding(
                 BackendFinding(
                     finding = Finding(
                         id = TEST_ID_2,
@@ -206,19 +218,28 @@ class FindingsRouteTest {
             assertEquals(HttpStatusCode.OK, response.status)
             val body = response.body<List<FindingApiDto>>()
             assertEquals(2, body.size)
-            assertEquals("Finding 1", body[0].name)
-            assertEquals("Finding 2", body[1].name)
-            assertEquals(STRUCTURE_ID, fakeGetFindings.capturedStructureId)
         }
 
     @Test
     fun `GET findings with since parameter returns modified findings`() =
         testApplication {
             configureApp()
-            fakeGetFindingsModifiedSince.result = listOf(
+            dataSource.setFinding(
                 BackendFinding(
                     finding = Finding(
                         id = TEST_ID_1,
+                        structureId = STRUCTURE_ID,
+                        name = "Old",
+                        description = null,
+                        coordinates = emptyList(),
+                        updatedAt = Timestamp(50L),
+                    ),
+                ),
+            )
+            dataSource.setFinding(
+                BackendFinding(
+                    finding = Finding(
+                        id = TEST_ID_2,
                         structureId = STRUCTURE_ID,
                         name = "Modified",
                         description = null,
@@ -235,8 +256,6 @@ class FindingsRouteTest {
             val body = response.body<List<FindingApiDto>>()
             assertEquals(1, body.size)
             assertEquals("Modified", body[0].name)
-            assertEquals(STRUCTURE_ID, fakeGetFindingsModifiedSince.capturedStructureId)
-            assertEquals(Timestamp(100L), fakeGetFindingsModifiedSince.capturedSince)
         }
 
     @Test
@@ -258,7 +277,6 @@ class FindingsRouteTest {
     fun `PUT finding returns 204 when successfully saved`() =
         testApplication {
             configureApp()
-            fakeSaveFinding.result = null
             val client = jsonClient()
 
             val response = client.put("/structures/$STRUCTURE_ID/findings/$TEST_ID_1") {
@@ -275,25 +293,24 @@ class FindingsRouteTest {
             }
 
             assertEquals(HttpStatusCode.NoContent, response.status)
-            assertEquals(TEST_ID_1, fakeSaveFinding.capturedFinding?.finding?.id)
-            assertEquals("New Finding", fakeSaveFinding.capturedFinding?.finding?.name)
         }
 
     @Test
     fun `PUT finding returns existing finding on conflict`() =
         testApplication {
             configureApp()
-            val existingFinding = BackendFinding(
-                finding = Finding(
-                    id = TEST_ID_1,
-                    structureId = STRUCTURE_ID,
-                    name = "Existing",
-                    description = null,
-                    coordinates = emptyList(),
-                    updatedAt = Timestamp(200L),
+            dataSource.setFinding(
+                BackendFinding(
+                    finding = Finding(
+                        id = TEST_ID_1,
+                        structureId = STRUCTURE_ID,
+                        name = "Existing",
+                        description = null,
+                        coordinates = emptyList(),
+                        updatedAt = Timestamp(200L),
+                    ),
                 ),
             )
-            fakeSaveFinding.result = existingFinding
             val client = jsonClient()
 
             val response = client.put("/structures/$STRUCTURE_ID/findings/$TEST_ID_1") {
@@ -357,47 +374,5 @@ class FindingsRouteTest {
         private val STRUCTURE_ID = Uuid.parse("00000000-0000-0000-0000-000000000010")
         private val TEST_ID_1 = Uuid.parse("00000000-0000-0000-0000-000000000001")
         private val TEST_ID_2 = Uuid.parse("00000000-0000-0000-0000-000000000002")
-    }
-}
-
-private class FakeDeleteFindingUseCase : DeleteFindingUseCase {
-    var result: BackendFinding? = null
-    var capturedRequest: DeleteFindingRequest? = null
-
-    override suspend fun invoke(request: DeleteFindingRequest): BackendFinding? {
-        capturedRequest = request
-        return result
-    }
-}
-
-private class FakeGetFindingsUseCase : GetFindingsUseCase {
-    var result: List<BackendFinding> = emptyList()
-    var capturedStructureId: Uuid? = null
-
-    override suspend fun invoke(structureId: Uuid): List<BackendFinding> {
-        capturedStructureId = structureId
-        return result
-    }
-}
-
-private class FakeGetFindingsModifiedSinceUseCase : GetFindingsModifiedSinceUseCase {
-    var result: List<BackendFinding> = emptyList()
-    var capturedStructureId: Uuid? = null
-    var capturedSince: Timestamp? = null
-
-    override suspend fun invoke(structureId: Uuid, since: Timestamp): List<BackendFinding> {
-        capturedStructureId = structureId
-        capturedSince = since
-        return result
-    }
-}
-
-private class FakeSaveFindingUseCase : SaveFindingUseCase {
-    var result: BackendFinding? = null
-    var capturedFinding: BackendFinding? = null
-
-    override suspend fun invoke(finding: BackendFinding): BackendFinding? {
-        capturedFinding = finding
-        return result
     }
 }

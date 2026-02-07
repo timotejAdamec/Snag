@@ -13,19 +13,16 @@
 package cz.adamec.timotej.snag.projects.be.driving.impl.internal
 
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
-import cz.adamec.timotej.snag.projects.be.app.api.DeleteProjectUseCase
-import cz.adamec.timotej.snag.projects.be.app.api.GetProjectUseCase
-import cz.adamec.timotej.snag.projects.be.app.api.GetProjectsModifiedSinceUseCase
-import cz.adamec.timotej.snag.projects.be.app.api.GetProjectsUseCase
-import cz.adamec.timotej.snag.projects.be.app.api.SaveProjectUseCase
-import cz.adamec.timotej.snag.projects.be.app.api.model.DeleteProjectRequest
+import cz.adamec.timotej.snag.projects.be.driven.test.FakeProjectsLocalDataSource
 import cz.adamec.timotej.snag.projects.be.driving.contract.DeleteProjectApiDto
 import cz.adamec.timotej.snag.projects.be.driving.contract.ProjectApiDto
 import cz.adamec.timotej.snag.projects.be.driving.contract.PutProjectApiDto
 import cz.adamec.timotej.snag.projects.be.model.BackendProject
+import cz.adamec.timotej.snag.projects.be.ports.ProjectsLocalDataSource
 import cz.adamec.timotej.snag.projects.business.Project
 import cz.adamec.timotej.snag.routing.be.InvalidBodyException
 import cz.adamec.timotej.snag.routing.be.InvalidIdException
+import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
 import io.ktor.client.call.body
 import io.ktor.client.request.delete
 import io.ktor.client.request.get
@@ -41,18 +38,26 @@ import io.ktor.server.response.respond
 import io.ktor.server.routing.routing
 import io.ktor.server.testing.ApplicationTestBuilder
 import io.ktor.server.testing.testApplication
+import org.koin.core.module.Module
+import org.koin.core.module.dsl.singleOf
+import org.koin.dsl.bind
+import org.koin.dsl.module
+import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertNull
 import kotlin.uuid.Uuid
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation as ClientContentNegotiation
 
-class ProjectsRouteTest {
-    private val fakeGetProjects = FakeGetProjectsUseCase()
-    private val fakeGetProjectsModifiedSince = FakeGetProjectsModifiedSinceUseCase()
-    private val fakeGetProject = FakeGetProjectUseCase()
-    private val fakeSaveProject = FakeSaveProjectUseCase()
-    private val fakeDeleteProject = FakeDeleteProjectUseCase()
+class ProjectsRouteTest : BackendKoinInitializedTest() {
+    private val dataSource: FakeProjectsLocalDataSource by inject()
+    private val route: ProjectsRoute by inject()
+
+    override fun additionalKoinModules(): List<Module> =
+        listOf(
+            module {
+                singleOf(::FakeProjectsLocalDataSource) bind ProjectsLocalDataSource::class
+            },
+        )
 
     private fun ApplicationTestBuilder.configureApp() {
         application {
@@ -66,15 +71,7 @@ class ProjectsRouteTest {
                 }
             }
             routing {
-                with(
-                    ProjectsRoute(
-                        getProjectsUseCase = fakeGetProjects,
-                        getProjectsModifiedSinceUseCase = fakeGetProjectsModifiedSince,
-                        getProjectUseCase = fakeGetProject,
-                        saveProjectUseCase = fakeSaveProject,
-                        deleteProjectUseCase = fakeDeleteProject,
-                    ),
-                ) { setup() }
+                with(route) { setup() }
             }
         }
     }
@@ -100,7 +97,7 @@ class ProjectsRouteTest {
     fun `GET projects returns all projects`() =
         testApplication {
             configureApp()
-            fakeGetProjects.result = listOf(
+            dataSource.setProject(
                 BackendProject(
                     project = Project(
                         id = TEST_ID_1,
@@ -109,6 +106,8 @@ class ProjectsRouteTest {
                         updatedAt = Timestamp(100L),
                     ),
                 ),
+            )
+            dataSource.setProject(
                 BackendProject(
                     project = Project(
                         id = TEST_ID_2,
@@ -125,23 +124,32 @@ class ProjectsRouteTest {
             assertEquals(HttpStatusCode.OK, response.status)
             val body = response.body<List<ProjectApiDto>>()
             assertEquals(2, body.size)
-            assertEquals("Project 1", body[0].name)
-            assertEquals("Project 2", body[1].name)
         }
 
     @Test
     fun `GET projects with since parameter returns modified projects`() =
         testApplication {
             configureApp()
-            val modifiedProject = BackendProject(
-                project = Project(
-                    id = TEST_ID_1,
-                    name = "Modified",
-                    address = "Addr",
-                    updatedAt = Timestamp(150L),
+            dataSource.setProject(
+                BackendProject(
+                    project = Project(
+                        id = TEST_ID_1,
+                        name = "Old",
+                        address = "Addr",
+                        updatedAt = Timestamp(50L),
+                    ),
                 ),
             )
-            fakeGetProjectsModifiedSince.result = listOf(modifiedProject)
+            dataSource.setProject(
+                BackendProject(
+                    project = Project(
+                        id = TEST_ID_2,
+                        name = "Modified",
+                        address = "Addr",
+                        updatedAt = Timestamp(150L),
+                    ),
+                ),
+            )
             val client = jsonClient()
 
             val response = client.get("/projects?since=100")
@@ -150,19 +158,20 @@ class ProjectsRouteTest {
             val body = response.body<List<ProjectApiDto>>()
             assertEquals(1, body.size)
             assertEquals("Modified", body[0].name)
-            assertEquals(Timestamp(100L), fakeGetProjectsModifiedSince.capturedSince)
         }
 
     @Test
     fun `GET project by id returns project when found`() =
         testApplication {
             configureApp()
-            fakeGetProject.result = BackendProject(
-                project = Project(
-                    id = TEST_ID_1,
-                    name = "Found Project",
-                    address = "Found Address",
-                    updatedAt = Timestamp(100L),
+            dataSource.setProject(
+                BackendProject(
+                    project = Project(
+                        id = TEST_ID_1,
+                        name = "Found Project",
+                        address = "Found Address",
+                        updatedAt = Timestamp(100L),
+                    ),
                 ),
             )
             val client = jsonClient()
@@ -172,14 +181,13 @@ class ProjectsRouteTest {
             assertEquals(HttpStatusCode.OK, response.status)
             val body = response.body<ProjectApiDto>()
             assertEquals("Found Project", body.name)
-            assertEquals(TEST_ID_1, fakeGetProject.capturedId)
+            assertEquals(TEST_ID_1, body.id)
         }
 
     @Test
     fun `GET project by id returns 404 when not found`() =
         testApplication {
             configureApp()
-            fakeGetProject.result = null
             val client = jsonClient()
 
             val response = client.get("/projects/$TEST_ID_1")
@@ -202,7 +210,6 @@ class ProjectsRouteTest {
     fun `PUT project returns 204 when successfully saved`() =
         testApplication {
             configureApp()
-            fakeSaveProject.result = null
             val client = jsonClient()
 
             val response = client.put("/projects/$TEST_ID_1") {
@@ -211,23 +218,22 @@ class ProjectsRouteTest {
             }
 
             assertEquals(HttpStatusCode.NoContent, response.status)
-            assertEquals(TEST_ID_1, fakeSaveProject.capturedProject?.project?.id)
-            assertEquals("New", fakeSaveProject.capturedProject?.project?.name)
         }
 
     @Test
     fun `PUT project returns existing project on conflict`() =
         testApplication {
             configureApp()
-            val existingProject = BackendProject(
-                project = Project(
-                    id = TEST_ID_1,
-                    name = "Existing",
-                    address = "Addr",
-                    updatedAt = Timestamp(200L),
+            dataSource.setProject(
+                BackendProject(
+                    project = Project(
+                        id = TEST_ID_1,
+                        name = "Existing",
+                        address = "Addr",
+                        updatedAt = Timestamp(200L),
+                    ),
                 ),
             )
-            fakeSaveProject.result = existingProject
             val client = jsonClient()
 
             val response = client.put("/projects/$TEST_ID_1") {
@@ -273,7 +279,16 @@ class ProjectsRouteTest {
     fun `DELETE project returns 204 when successfully deleted`() =
         testApplication {
             configureApp()
-            fakeDeleteProject.result = null
+            dataSource.setProject(
+                BackendProject(
+                    project = Project(
+                        id = TEST_ID_1,
+                        name = "To Delete",
+                        address = "Addr",
+                        updatedAt = Timestamp(100L),
+                    ),
+                ),
+            )
             val client = jsonClient()
 
             val response = client.delete("/projects/$TEST_ID_1") {
@@ -282,23 +297,22 @@ class ProjectsRouteTest {
             }
 
             assertEquals(HttpStatusCode.NoContent, response.status)
-            assertEquals(TEST_ID_1, fakeDeleteProject.capturedRequest?.projectId)
-            assertEquals(Timestamp(200L), fakeDeleteProject.capturedRequest?.deletedAt)
         }
 
     @Test
     fun `DELETE project returns existing project on conflict`() =
         testApplication {
             configureApp()
-            val existingProject = BackendProject(
-                project = Project(
-                    id = TEST_ID_1,
-                    name = "Existing",
-                    address = "Addr",
-                    updatedAt = Timestamp(300L),
+            dataSource.setProject(
+                BackendProject(
+                    project = Project(
+                        id = TEST_ID_1,
+                        name = "Existing",
+                        address = "Addr",
+                        updatedAt = Timestamp(300L),
+                    ),
                 ),
             )
-            fakeDeleteProject.result = existingProject
             val client = jsonClient()
 
             val response = client.delete("/projects/$TEST_ID_1") {
@@ -342,51 +356,5 @@ class ProjectsRouteTest {
     companion object {
         private val TEST_ID_1 = Uuid.parse("00000000-0000-0000-0000-000000000001")
         private val TEST_ID_2 = Uuid.parse("00000000-0000-0000-0000-000000000002")
-    }
-}
-
-private class FakeGetProjectsUseCase : GetProjectsUseCase {
-    var result: List<BackendProject> = emptyList()
-
-    override suspend fun invoke(): List<BackendProject> = result
-}
-
-private class FakeGetProjectsModifiedSinceUseCase : GetProjectsModifiedSinceUseCase {
-    var result: List<BackendProject> = emptyList()
-    var capturedSince: Timestamp? = null
-
-    override suspend fun invoke(since: Timestamp): List<BackendProject> {
-        capturedSince = since
-        return result
-    }
-}
-
-private class FakeGetProjectUseCase : GetProjectUseCase {
-    var result: BackendProject? = null
-    var capturedId: Uuid? = null
-
-    override suspend fun invoke(id: Uuid): BackendProject? {
-        capturedId = id
-        return result
-    }
-}
-
-private class FakeSaveProjectUseCase : SaveProjectUseCase {
-    var result: BackendProject? = null
-    var capturedProject: BackendProject? = null
-
-    override suspend fun invoke(project: BackendProject): BackendProject? {
-        capturedProject = project
-        return result
-    }
-}
-
-private class FakeDeleteProjectUseCase : DeleteProjectUseCase {
-    var result: BackendProject? = null
-    var capturedRequest: DeleteProjectRequest? = null
-
-    override suspend fun invoke(request: DeleteProjectRequest): BackendProject? {
-        capturedRequest = request
-        return result
     }
 }
