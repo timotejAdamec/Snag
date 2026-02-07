@@ -23,6 +23,9 @@ kotlin {
             api(libs.kotlinx.coroutines.test)
             api(libs.turbine)
         }
+        androidMain.dependencies {
+            api(libs.kotlin.test.junit)
+        }
         jvmMain.dependencies {
             api(libs.kotlin.test.junit)
         }
