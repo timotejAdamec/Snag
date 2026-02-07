@@ -54,8 +54,6 @@ internal fun Project.configureBackendModule() {
             val feOrBeDirectoryPath = moduleDirectoryPath.substringBeforeLast(":app")
             implementation(project("$moduleDirectoryPath:api"))
             implementation(project("$feOrBeDirectoryPath:ports"))
-        } else if (path.contains(":app:") && name == "test") {
-            api(project("$moduleDirectoryPath:api"))
         } else if (path.contains("driven")) {
             val drivenDirectoryPath = moduleDirectoryPath.substringBeforeLast(":driven")
             api(project("$drivenDirectoryPath:ports"))

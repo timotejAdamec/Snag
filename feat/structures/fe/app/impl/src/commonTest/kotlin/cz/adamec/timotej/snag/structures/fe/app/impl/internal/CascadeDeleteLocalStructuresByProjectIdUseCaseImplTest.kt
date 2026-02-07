@@ -12,10 +12,12 @@
 
 package cz.adamec.timotej.snag.structures.fe.app.impl.internal
 
+import cz.adamec.timotej.snag.feat.findings.business.Finding
+import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
 import cz.adamec.timotej.snag.feat.structures.business.Structure
 import cz.adamec.timotej.snag.feat.structures.fe.model.FrontendStructure
-import cz.adamec.timotej.snag.findings.fe.app.api.DeleteLocalFindingsByStructureIdUseCase
-import cz.adamec.timotej.snag.findings.fe.app.test.FakeDeleteLocalFindingsByStructureIdUseCase
+import cz.adamec.timotej.snag.findings.fe.driven.test.FakeFindingsDb
+import cz.adamec.timotej.snag.findings.fe.ports.FindingsDb
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.structures.fe.app.api.CascadeDeleteLocalStructuresByProjectIdUseCase
@@ -43,10 +45,9 @@ import kotlin.uuid.Uuid
 class CascadeDeleteLocalStructuresByProjectIdUseCaseImplTest : FrontendKoinInitializedTest() {
 
     private val fakeStructuresDb: FakeStructuresDb by inject()
+    private val fakeFindingsDb: FakeFindingsDb by inject()
 
     private val useCase: CascadeDeleteLocalStructuresByProjectIdUseCase by inject()
-
-    private val fakeDeleteFindings = FakeDeleteLocalFindingsByStructureIdUseCase()
 
     override fun additionalKoinModules(): List<Module> =
         listOf(
@@ -55,7 +56,7 @@ class CascadeDeleteLocalStructuresByProjectIdUseCaseImplTest : FrontendKoinIniti
                 singleOf(::FakeStructuresSync) bind StructuresSync::class
                 singleOf(::FakeStructuresPullSyncCoordinator) bind StructuresPullSyncCoordinator::class
                 singleOf(::FakeStructuresPullSyncTimestampDataSource) bind StructuresPullSyncTimestampDataSource::class
-                single { fakeDeleteFindings } bind DeleteLocalFindingsByStructureIdUseCase::class
+                singleOf(::FakeFindingsDb) bind FindingsDb::class
             },
         )
 
@@ -66,12 +67,26 @@ class CascadeDeleteLocalStructuresByProjectIdUseCaseImplTest : FrontendKoinIniti
     private val structureId2 = Uuid.parse("00000000-0000-0000-0001-000000000002")
     private val structureId3 = Uuid.parse("00000000-0000-0000-0001-000000000003")
 
+    private val findingId1 = Uuid.parse("00000000-0000-0000-0002-000000000001")
+    private val findingId2 = Uuid.parse("00000000-0000-0000-0002-000000000002")
+
     private fun createStructure(id: Uuid, projectId: Uuid) = FrontendStructure(
         structure = Structure(
             id = id,
             projectId = projectId,
             name = "Structure",
             floorPlanUrl = null,
+            updatedAt = Timestamp(1L),
+        ),
+    )
+
+    private fun createFinding(id: Uuid, structureId: Uuid) = FrontendFinding(
+        finding = Finding(
+            id = id,
+            structureId = structureId,
+            name = "Finding",
+            description = null,
+            coordinates = emptyList(),
             updatedAt = Timestamp(1L),
         ),
     )
@@ -90,15 +105,24 @@ class CascadeDeleteLocalStructuresByProjectIdUseCaseImplTest : FrontendKoinIniti
     }
 
     @Test
-    fun `calls delete findings for each structure`() = runTest(testDispatcher) {
+    fun `deletes findings for each structure`() = runTest(testDispatcher) {
         val structure1 = createStructure(id = structureId1, projectId = projectId1)
         val structure2 = createStructure(id = structureId2, projectId = projectId1)
         fakeStructuresDb.setStructures(listOf(structure1, structure2))
 
+        val finding1 = createFinding(id = findingId1, structureId = structureId1)
+        val finding2 = createFinding(id = findingId2, structureId = structureId2)
+        fakeFindingsDb.setFindings(listOf(finding1, finding2))
+
         useCase(projectId1)
 
-        assertTrue(fakeDeleteFindings.deletedStructureIds.contains(structureId1))
-        assertTrue(fakeDeleteFindings.deletedStructureIds.contains(structureId2))
+        val findings1Result = fakeFindingsDb.getFindingsFlow(structureId1).first()
+        assertIs<OfflineFirstDataResult.Success<List<FrontendFinding>>>(findings1Result)
+        assertTrue(findings1Result.data.isEmpty())
+
+        val findings2Result = fakeFindingsDb.getFindingsFlow(structureId2).first()
+        assertIs<OfflineFirstDataResult.Success<List<FrontendFinding>>>(findings2Result)
+        assertTrue(findings2Result.data.isEmpty())
     }
 
     @Test

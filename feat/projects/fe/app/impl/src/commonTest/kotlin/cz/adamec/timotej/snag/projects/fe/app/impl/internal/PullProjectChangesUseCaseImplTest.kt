@@ -12,6 +12,10 @@
 
 package cz.adamec.timotej.snag.projects.fe.app.impl.internal
 
+import cz.adamec.timotej.snag.feat.structures.business.Structure
+import cz.adamec.timotej.snag.feat.structures.fe.model.FrontendStructure
+import cz.adamec.timotej.snag.findings.fe.driven.test.FakeFindingsDb
+import cz.adamec.timotej.snag.findings.fe.ports.FindingsDb
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
@@ -29,8 +33,14 @@ import cz.adamec.timotej.snag.projects.fe.ports.ProjectsDb
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsPullSyncCoordinator
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsPullSyncTimestampDataSource
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsSync
-import cz.adamec.timotej.snag.structures.fe.app.api.CascadeDeleteLocalStructuresByProjectIdUseCase
-import cz.adamec.timotej.snag.structures.fe.app.test.FakeCascadeDeleteLocalStructuresByProjectIdUseCase
+import cz.adamec.timotej.snag.structures.fe.driven.test.FakeStructuresDb
+import cz.adamec.timotej.snag.structures.fe.driven.test.FakeStructuresPullSyncCoordinator
+import cz.adamec.timotej.snag.structures.fe.driven.test.FakeStructuresPullSyncTimestampDataSource
+import cz.adamec.timotej.snag.structures.fe.driven.test.FakeStructuresSync
+import cz.adamec.timotej.snag.structures.fe.ports.StructuresDb
+import cz.adamec.timotej.snag.structures.fe.ports.StructuresPullSyncCoordinator
+import cz.adamec.timotej.snag.structures.fe.ports.StructuresPullSyncTimestampDataSource
+import cz.adamec.timotej.snag.structures.fe.ports.StructuresSync
 import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
@@ -52,10 +62,9 @@ class PullProjectChangesUseCaseImplTest : FrontendKoinInitializedTest() {
     private val fakeProjectsApi: FakeProjectsApi by inject()
     private val fakeProjectsDb: FakeProjectsDb by inject()
     private val fakePullSyncTimestampDataSource: FakeProjectsPullSyncTimestampDataSource by inject()
+    private val fakeStructuresDb: FakeStructuresDb by inject()
 
     private val useCase: PullProjectChangesUseCase by inject()
-
-    private val fakeCascadeDelete = FakeCascadeDeleteLocalStructuresByProjectIdUseCase()
 
     override fun additionalKoinModules(): List<Module> =
         listOf(
@@ -65,11 +74,16 @@ class PullProjectChangesUseCaseImplTest : FrontendKoinInitializedTest() {
                 singleOf(::FakeProjectsSync) bind ProjectsSync::class
                 singleOf(::FakeProjectsPullSyncTimestampDataSource) bind ProjectsPullSyncTimestampDataSource::class
                 singleOf(::FakeProjectsPullSyncCoordinator) bind ProjectsPullSyncCoordinator::class
-                single { fakeCascadeDelete } bind CascadeDeleteLocalStructuresByProjectIdUseCase::class
+                singleOf(::FakeStructuresDb) bind StructuresDb::class
+                singleOf(::FakeStructuresSync) bind StructuresSync::class
+                singleOf(::FakeStructuresPullSyncCoordinator) bind StructuresPullSyncCoordinator::class
+                singleOf(::FakeStructuresPullSyncTimestampDataSource) bind StructuresPullSyncTimestampDataSource::class
+                singleOf(::FakeFindingsDb) bind FindingsDb::class
             },
         )
 
     private val projectId = Uuid.parse("00000000-0000-0000-0000-000000000001")
+    private val structureId = Uuid.parse("00000000-0000-0000-0001-000000000001")
 
     private fun createProject(id: Uuid) = FrontendProject(
         project = Project(
@@ -77,6 +91,16 @@ class PullProjectChangesUseCaseImplTest : FrontendKoinInitializedTest() {
             name = "Test Project",
             address = "Test Address",
             updatedAt = Timestamp(100L),
+        ),
+    )
+
+    private fun createStructure(id: Uuid, projectId: Uuid) = FrontendStructure(
+        structure = Structure(
+            id = id,
+            projectId = projectId,
+            name = "Structure",
+            floorPlanUrl = null,
+            updatedAt = Timestamp(1L),
         ),
     )
 
@@ -100,13 +124,18 @@ class PullProjectChangesUseCaseImplTest : FrontendKoinInitializedTest() {
         val project = createProject(projectId)
         fakeProjectsDb.setProject(project)
 
+        val structure = createStructure(id = structureId, projectId = projectId)
+        fakeStructuresDb.setStructure(structure)
+
         fakeProjectsApi.modifiedSinceResults = listOf(
             ProjectSyncResult.Deleted(id = projectId),
         )
 
         useCase()
 
-        assertTrue(fakeCascadeDelete.deletedProjectIds.contains(projectId))
+        val structuresResult = fakeStructuresDb.getStructuresFlow(projectId).first()
+        assertIs<OfflineFirstDataResult.Success<List<FrontendStructure>>>(structuresResult)
+        assertTrue(structuresResult.data.isEmpty())
 
         val result = fakeProjectsDb.getProjectFlow(projectId).first()
         assertIs<OfflineFirstDataResult.Success<FrontendProject?>>(result)

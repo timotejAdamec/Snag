@@ -12,10 +12,12 @@
 
 package cz.adamec.timotej.snag.structures.fe.app.impl.internal
 
+import cz.adamec.timotej.snag.feat.findings.business.Finding
+import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
 import cz.adamec.timotej.snag.feat.structures.business.Structure
 import cz.adamec.timotej.snag.feat.structures.fe.model.FrontendStructure
-import cz.adamec.timotej.snag.findings.fe.app.api.DeleteLocalFindingsByStructureIdUseCase
-import cz.adamec.timotej.snag.findings.fe.app.test.FakeDeleteLocalFindingsByStructureIdUseCase
+import cz.adamec.timotej.snag.findings.fe.driven.test.FakeFindingsDb
+import cz.adamec.timotej.snag.findings.fe.ports.FindingsDb
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
@@ -52,10 +54,9 @@ class PullStructureChangesUseCaseImplTest : FrontendKoinInitializedTest() {
     private val fakeStructuresApi: FakeStructuresApi by inject()
     private val fakeStructuresDb: FakeStructuresDb by inject()
     private val fakePullSyncTimestampDataSource: FakeStructuresPullSyncTimestampDataSource by inject()
+    private val fakeFindingsDb: FakeFindingsDb by inject()
 
     private val useCase: PullStructureChangesUseCase by inject()
-
-    private val fakeDeleteFindings = FakeDeleteLocalFindingsByStructureIdUseCase()
 
     override fun additionalKoinModules(): List<Module> =
         listOf(
@@ -65,12 +66,13 @@ class PullStructureChangesUseCaseImplTest : FrontendKoinInitializedTest() {
                 singleOf(::FakeStructuresSync) bind StructuresSync::class
                 singleOf(::FakeStructuresPullSyncCoordinator) bind StructuresPullSyncCoordinator::class
                 singleOf(::FakeStructuresPullSyncTimestampDataSource) bind StructuresPullSyncTimestampDataSource::class
-                single { fakeDeleteFindings } bind DeleteLocalFindingsByStructureIdUseCase::class
+                singleOf(::FakeFindingsDb) bind FindingsDb::class
             },
         )
 
     private val projectId = Uuid.parse("00000000-0000-0000-0000-000000000001")
     private val structureId = Uuid.parse("00000000-0000-0000-0001-000000000001")
+    private val findingId = Uuid.parse("00000000-0000-0000-0002-000000000001")
 
     private fun createStructure(id: Uuid) = FrontendStructure(
         structure = Structure(
@@ -79,6 +81,17 @@ class PullStructureChangesUseCaseImplTest : FrontendKoinInitializedTest() {
             name = "Test Structure",
             floorPlanUrl = null,
             updatedAt = Timestamp(100L),
+        ),
+    )
+
+    private fun createFinding(id: Uuid, structureId: Uuid) = FrontendFinding(
+        finding = Finding(
+            id = id,
+            structureId = structureId,
+            name = "Finding",
+            description = null,
+            coordinates = emptyList(),
+            updatedAt = Timestamp(1L),
         ),
     )
 
@@ -102,13 +115,18 @@ class PullStructureChangesUseCaseImplTest : FrontendKoinInitializedTest() {
         val structure = createStructure(structureId)
         fakeStructuresDb.setStructure(structure)
 
+        val finding = createFinding(id = findingId, structureId = structureId)
+        fakeFindingsDb.setFinding(finding)
+
         fakeStructuresApi.modifiedSinceResults = listOf(
             StructureSyncResult.Deleted(id = structureId),
         )
 
         useCase(projectId)
 
-        assertTrue(fakeDeleteFindings.deletedStructureIds.contains(structureId))
+        val findingsResult = fakeFindingsDb.getFindingsFlow(structureId).first()
+        assertIs<OfflineFirstDataResult.Success<List<FrontendFinding>>>(findingsResult)
+        assertTrue(findingsResult.data.isEmpty())
 
         val result = fakeStructuresDb.getStructureFlow(structureId).first()
         assertIs<OfflineFirstDataResult.Success<FrontendStructure?>>(result)
