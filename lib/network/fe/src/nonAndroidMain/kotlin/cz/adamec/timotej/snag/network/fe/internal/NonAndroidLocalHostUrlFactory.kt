@@ -15,7 +15,5 @@ package cz.adamec.timotej.snag.network.fe.internal
 import cz.adamec.timotej.snag.server.api.Host
 
 internal class NonAndroidLocalHostUrlFactory : LocalHostUrlFactory {
-    override fun createUrl(): String {
-        return "http://localhost:${Host.Localhost.PORT}"
-    }
+    override fun createUrl(): String = "http://localhost:${Host.Localhost.PORT}"
 }

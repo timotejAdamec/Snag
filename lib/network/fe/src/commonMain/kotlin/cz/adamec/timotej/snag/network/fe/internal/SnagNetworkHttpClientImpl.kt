@@ -13,7 +13,6 @@
 package cz.adamec.timotej.snag.network.fe.internal
 
 import cz.adamec.timotej.snag.network.fe.SnagNetworkHttpClient
-import cz.adamec.timotej.snag.server.api.Host
 import io.ktor.client.HttpClient
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.delete
@@ -27,7 +26,6 @@ internal class SnagNetworkHttpClientImpl(
     private val httpClient: HttpClient,
     private val localHostUrlFactory: LocalHostUrlFactory,
 ) : SnagNetworkHttpClient {
-
     override suspend fun get(
         path: String,
         block: HttpRequestBuilder.() -> Unit,

@@ -15,6 +15,7 @@ package cz.adamec.timotej.snag.lib.core.be
 import cz.adamec.timotej.snag.lib.core.common.di.commonCoreModule
 import org.koin.dsl.module
 
-val backendCoreModule = module {
-    includes(commonCoreModule)
-}
+val backendCoreModule =
+    module {
+        includes(commonCoreModule)
+    }

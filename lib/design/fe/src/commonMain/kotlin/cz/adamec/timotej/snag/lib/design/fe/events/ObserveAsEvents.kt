@@ -14,6 +14,7 @@ package cz.adamec.timotej.snag.lib.design.fe.events
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
@@ -27,10 +28,11 @@ fun <T> ObserveAsEvents(
     onEvent: (T) -> Unit,
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
+    val currentOnEvent = rememberUpdatedState(onEvent)
     LaunchedEffect(eventsFlow, lifecycleOwner) {
         lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
             withContext(Dispatchers.Main.immediate) {
-                eventsFlow.collect { onEvent(it) }
+                eventsFlow.collect { currentOnEvent.value(it) }
             }
         }
     }
