@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.structures.be.driven.impl.di
 
-import cz.adamec.timotej.snag.structures.be.driven.impl.internal.InMemoryStructuresLocalDataSource
+import cz.adamec.timotej.snag.structures.be.driven.impl.internal.ExposedStructuresLocalDataSource
 import cz.adamec.timotej.snag.structures.be.ports.StructuresLocalDataSource
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
@@ -20,5 +20,5 @@ import org.koin.dsl.module
 
 val structuresDrivenModule =
     module {
-        singleOf(::InMemoryStructuresLocalDataSource) bind StructuresLocalDataSource::class
+        singleOf(::ExposedStructuresLocalDataSource) bind StructuresLocalDataSource::class
     }

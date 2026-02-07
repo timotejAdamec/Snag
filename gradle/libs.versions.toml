@@ -39,6 +39,8 @@ ktlint = "14.0.1"
 compose-rules = "0.5.6"
 ksp = "2.3.4"
 turbine = "1.2.0"
+exposed = "1.0.0"
+h2 = "2.4.240"
 
 [libraries]
 kotlin-gradle = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlinGradlePlugin" }
@@ -138,6 +140,10 @@ compose-rules-detekt = { group = "io.nlopez.compose.rules", name = "detekt", ver
 compose-rules-ktlint = { group = "io.nlopez.compose.rules", name = "ktlint", version.ref = "compose-rules" }
 
 turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
+
+exposed-core = { module = "org.jetbrains.exposed:exposed-core", version.ref = "exposed" }
+exposed-jdbc = { module = "org.jetbrains.exposed:exposed-jdbc", version.ref = "exposed" }
+h2 = { module = "com.h2database:h2", version.ref = "h2" }
 
 [plugins]
 snagMultiplatformModule = { id = "libs.plugins.snag.multiplatform.module" }
