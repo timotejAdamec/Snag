@@ -16,16 +16,16 @@ import cz.adamec.timotej.snag.feat.structures.be.model.BackendStructure
 import cz.adamec.timotej.snag.structures.be.app.api.DeleteStructureUseCase
 import cz.adamec.timotej.snag.structures.be.app.api.model.DeleteStructureRequest
 import cz.adamec.timotej.snag.structures.be.app.impl.internal.LH.logger
-import cz.adamec.timotej.snag.structures.be.ports.StructuresLocalDataSource
+import cz.adamec.timotej.snag.structures.be.ports.StructuresDb
 
 internal class DeleteStructureUseCaseImpl(
-    private val structuresLocalDataSource: StructuresLocalDataSource,
+    private val structuresDb: StructuresDb,
 ) : DeleteStructureUseCase {
     override suspend operator fun invoke(
         request: DeleteStructureRequest,
     ): BackendStructure? {
         logger.debug("Deleting structure {} from local storage.", request.structureId)
-        return structuresLocalDataSource.deleteStructure(
+        return structuresDb.deleteStructure(
             id = request.structureId,
             deletedAt = request.deletedAt,
         ).also {

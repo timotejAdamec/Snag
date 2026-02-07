@@ -15,14 +15,14 @@ package cz.adamec.timotej.snag.findings.be.app.impl.internal
 import cz.adamec.timotej.snag.feat.findings.be.model.BackendFinding
 import cz.adamec.timotej.snag.findings.be.app.api.SaveFindingUseCase
 import cz.adamec.timotej.snag.findings.be.app.impl.internal.LH.logger
-import cz.adamec.timotej.snag.findings.be.ports.FindingsLocalDataSource
+import cz.adamec.timotej.snag.findings.be.ports.FindingsDb
 
 internal class SaveFindingUseCaseImpl(
-    private val findingsLocalDataSource: FindingsLocalDataSource,
+    private val findingsDb: FindingsDb,
 ) : SaveFindingUseCase {
     override suspend operator fun invoke(finding: BackendFinding): BackendFinding? {
         logger.debug("Saving finding {} to local storage.", finding)
-        return findingsLocalDataSource.updateFinding(finding).also {
+        return findingsDb.updateFinding(finding).also {
             logger.debug("Saved finding {} to local storage.", finding)
         }
     }

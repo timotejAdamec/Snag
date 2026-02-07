@@ -15,15 +15,15 @@ package cz.adamec.timotej.snag.structures.be.app.impl.internal
 import cz.adamec.timotej.snag.feat.structures.be.model.BackendStructure
 import cz.adamec.timotej.snag.structures.be.app.api.GetStructuresUseCase
 import cz.adamec.timotej.snag.structures.be.app.impl.internal.LH.logger
-import cz.adamec.timotej.snag.structures.be.ports.StructuresLocalDataSource
+import cz.adamec.timotej.snag.structures.be.ports.StructuresDb
 import kotlin.uuid.Uuid
 
 internal class GetStructuresUseCaseImpl(
-    private val structuresLocalDataSource: StructuresLocalDataSource,
+    private val structuresDb: StructuresDb,
 ) : GetStructuresUseCase {
     override suspend operator fun invoke(projectId: Uuid): List<BackendStructure> {
         logger.debug("Getting structures for project {} from local storage.", projectId)
-        return structuresLocalDataSource.getStructures(projectId).also {
+        return structuresDb.getStructures(projectId).also {
             logger.debug("Got {} structures for project {} from local storage.", it.size, projectId)
         }
     }

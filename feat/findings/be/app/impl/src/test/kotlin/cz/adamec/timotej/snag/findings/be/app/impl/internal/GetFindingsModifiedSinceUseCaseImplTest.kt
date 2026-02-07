@@ -15,8 +15,8 @@ package cz.adamec.timotej.snag.findings.be.app.impl.internal
 import cz.adamec.timotej.snag.feat.findings.be.model.BackendFinding
 import cz.adamec.timotej.snag.feat.findings.business.Finding
 import cz.adamec.timotej.snag.findings.be.app.api.GetFindingsModifiedSinceUseCase
-import cz.adamec.timotej.snag.findings.be.driven.test.FakeFindingsLocalDataSource
-import cz.adamec.timotej.snag.findings.be.ports.FindingsLocalDataSource
+import cz.adamec.timotej.snag.findings.be.driven.test.FakeFindingsDb
+import cz.adamec.timotej.snag.findings.be.ports.FindingsDb
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
 import kotlinx.coroutines.test.runTest
@@ -31,13 +31,13 @@ import kotlin.test.assertTrue
 import kotlin.uuid.Uuid
 
 class GetFindingsModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
-    private val dataSource: FakeFindingsLocalDataSource by inject()
+    private val dataSource: FakeFindingsDb by inject()
     private val useCase: GetFindingsModifiedSinceUseCase by inject()
 
     override fun additionalKoinModules(): List<Module> =
         listOf(
             module {
-                singleOf(::FakeFindingsLocalDataSource) bind FindingsLocalDataSource::class
+                singleOf(::FakeFindingsDb) bind FindingsDb::class
             },
         )
 

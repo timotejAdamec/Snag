@@ -16,14 +16,14 @@ import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.projects.be.app.api.GetProjectsModifiedSinceUseCase
 import cz.adamec.timotej.snag.projects.be.app.impl.internal.LH.logger
 import cz.adamec.timotej.snag.projects.be.model.BackendProject
-import cz.adamec.timotej.snag.projects.be.ports.ProjectsLocalDataSource
+import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
 
 internal class GetProjectsModifiedSinceUseCaseImpl(
-    private val projectsLocalDataSource: ProjectsLocalDataSource,
+    private val projectsDb: ProjectsDb,
 ) : GetProjectsModifiedSinceUseCase {
     override suspend operator fun invoke(since: Timestamp): List<BackendProject> {
         logger.debug("Getting projects modified since {} from local storage.", since)
-        return projectsLocalDataSource.getProjectsModifiedSince(since).also {
+        return projectsDb.getProjectsModifiedSince(since).also {
             logger.debug("Got {} projects modified since {} from local storage.", it.size, since)
         }
     }

@@ -16,8 +16,8 @@ import cz.adamec.timotej.snag.feat.structures.be.model.BackendStructure
 import cz.adamec.timotej.snag.feat.structures.business.Structure
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.structures.be.app.api.SaveStructureUseCase
-import cz.adamec.timotej.snag.structures.be.driven.test.FakeStructuresLocalDataSource
-import cz.adamec.timotej.snag.structures.be.ports.StructuresLocalDataSource
+import cz.adamec.timotej.snag.structures.be.driven.test.FakeStructuresDb
+import cz.adamec.timotej.snag.structures.be.ports.StructuresDb
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
 import kotlinx.coroutines.test.runTest
 import org.koin.core.module.Module
@@ -31,13 +31,13 @@ import kotlin.test.assertNull
 import kotlin.uuid.Uuid
 
 class SaveStructureUseCaseImplTest : BackendKoinInitializedTest() {
-    private val dataSource: FakeStructuresLocalDataSource by inject()
+    private val dataSource: FakeStructuresDb by inject()
     private val useCase: SaveStructureUseCase by inject()
 
     override fun additionalKoinModules(): List<Module> =
         listOf(
             module {
-                singleOf(::FakeStructuresLocalDataSource) bind StructuresLocalDataSource::class
+                singleOf(::FakeStructuresDb) bind StructuresDb::class
             },
         )
 

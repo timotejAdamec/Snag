@@ -14,7 +14,7 @@ package cz.adamec.timotej.snag.projects.be.driven.impl.internal
 
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.projects.be.model.BackendProject
-import cz.adamec.timotej.snag.projects.be.ports.ProjectsLocalDataSource
+import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
 import cz.adamec.timotej.snag.projects.business.Project
 import kotlin.uuid.Uuid
 import org.jetbrains.exposed.sql.Database
@@ -26,9 +26,9 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 import org.jetbrains.exposed.sql.upsert
 
-internal class ExposedProjectsLocalDataSource(
+internal class ExposedProjectsDb(
     private val database: Database,
-) : ProjectsLocalDataSource {
+) : ProjectsDb {
     init {
         transaction(database) {
             SchemaUtils.create(ProjectsTable)

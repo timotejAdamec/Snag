@@ -15,13 +15,13 @@ package cz.adamec.timotej.snag.projects.be.driven.impl.internal
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.common.TimestampProvider
 import cz.adamec.timotej.snag.projects.be.model.BackendProject
-import cz.adamec.timotej.snag.projects.be.ports.ProjectsLocalDataSource
+import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
 import cz.adamec.timotej.snag.projects.business.Project
 import kotlin.uuid.Uuid
 
-internal class InMemoryProjectsLocalDataSource(
+internal class InMemoryProjectsDb(
     timestampProvider: TimestampProvider,
-) : ProjectsLocalDataSource {
+) : ProjectsDb {
     private val projects =
         mutableListOf(
             BackendProject(

@@ -14,10 +14,10 @@ package cz.adamec.timotej.snag.projects.be.driven.test
 
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.projects.be.model.BackendProject
-import cz.adamec.timotej.snag.projects.be.ports.ProjectsLocalDataSource
+import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
 import kotlin.uuid.Uuid
 
-class FakeProjectsLocalDataSource : ProjectsLocalDataSource {
+class FakeProjectsDb : ProjectsDb {
     private val projects = mutableMapOf<Uuid, BackendProject>()
 
     override suspend fun getProjects(): List<BackendProject> = projects.values.toList()

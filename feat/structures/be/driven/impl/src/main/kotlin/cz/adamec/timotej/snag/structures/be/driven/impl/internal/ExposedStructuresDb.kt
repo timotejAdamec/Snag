@@ -15,7 +15,7 @@ package cz.adamec.timotej.snag.structures.be.driven.impl.internal
 import cz.adamec.timotej.snag.feat.structures.be.model.BackendStructure
 import cz.adamec.timotej.snag.feat.structures.business.Structure
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
-import cz.adamec.timotej.snag.structures.be.ports.StructuresLocalDataSource
+import cz.adamec.timotej.snag.structures.be.ports.StructuresDb
 import kotlin.uuid.Uuid
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.ResultRow
@@ -27,9 +27,9 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 import org.jetbrains.exposed.sql.upsert
 
-internal class ExposedStructuresLocalDataSource(
+internal class ExposedStructuresDb(
     private val database: Database,
-) : StructuresLocalDataSource {
+) : StructuresDb {
     init {
         transaction(database) {
             SchemaUtils.create(StructuresTable)

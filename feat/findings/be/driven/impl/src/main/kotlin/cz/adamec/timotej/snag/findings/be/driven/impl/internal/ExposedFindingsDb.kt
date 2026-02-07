@@ -15,7 +15,7 @@ package cz.adamec.timotej.snag.findings.be.driven.impl.internal
 import cz.adamec.timotej.snag.feat.findings.be.model.BackendFinding
 import cz.adamec.timotej.snag.feat.findings.business.Finding
 import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
-import cz.adamec.timotej.snag.findings.be.ports.FindingsLocalDataSource
+import cz.adamec.timotej.snag.findings.be.ports.FindingsDb
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import kotlin.uuid.Uuid
 import org.jetbrains.exposed.sql.Database
@@ -31,9 +31,9 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 import org.jetbrains.exposed.sql.upsert
 
-internal class ExposedFindingsLocalDataSource(
+internal class ExposedFindingsDb(
     private val database: Database,
-) : FindingsLocalDataSource {
+) : FindingsDb {
     init {
         transaction(database) {
             SchemaUtils.create(FindingsTable, FindingCoordinatesTable)
