@@ -40,8 +40,6 @@ dependencies {
     implementation(libs.ktor.server.core)
     implementation(libs.ktor.server.netty)
     implementation(libs.ktor.server.config.yaml)
-    implementation(libs.ktor.server.swagger)
-    implementation(libs.ktor.server.routing.openapi)
     implementation(libs.logback)
     implementation(libs.koin.logger.slf4j)
 }

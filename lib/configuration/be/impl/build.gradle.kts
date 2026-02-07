@@ -9,4 +9,6 @@ dependencies {
     implementation(libs.ktor.server.status.pages)
     implementation(libs.ktor.server.cors)
     implementation(libs.ktor.server.call.logging)
+    implementation(libs.ktor.server.swagger)
+    implementation(libs.ktor.server.routing.openapi)
 }

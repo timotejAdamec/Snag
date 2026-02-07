@@ -16,6 +16,7 @@ import cz.adamec.timotej.snag.configuration.be.AppConfiguration
 import cz.adamec.timotej.snag.configuration.be.impl.internal.CallLoggingConfiguration
 import cz.adamec.timotej.snag.configuration.be.impl.internal.ContentNegotiationConfiguration
 import cz.adamec.timotej.snag.configuration.be.impl.internal.CorsConfiguration
+import cz.adamec.timotej.snag.configuration.be.impl.internal.RoutingConfiguration
 import cz.adamec.timotej.snag.configuration.be.impl.internal.StatusPagesConfiguration
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
@@ -27,4 +28,5 @@ val configurationModule =
         singleOf(::StatusPagesConfiguration) bind AppConfiguration::class
         singleOf(::CorsConfiguration) bind AppConfiguration::class
         singleOf(::CallLoggingConfiguration) bind AppConfiguration::class
+        singleOf(::RoutingConfiguration) bind AppConfiguration::class
     }

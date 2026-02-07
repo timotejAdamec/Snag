@@ -31,7 +31,6 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
-import io.ktor.server.routing.routing
 import io.ktor.server.testing.ApplicationTestBuilder
 import io.ktor.server.testing.testApplication
 import org.koin.core.module.Module
@@ -46,7 +45,6 @@ import io.ktor.client.plugins.contentnegotiation.ContentNegotiation as ClientCon
 
 class ProjectsRouteTest : BackendKoinInitializedTest() {
     private val dataSource: FakeProjectsLocalDataSource by inject()
-    private val route: ProjectsRoute by inject()
 
     override fun additionalKoinModules(): List<Module> =
         listOf(
@@ -60,9 +58,6 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
         application {
             configurations.forEach { config ->
                 with(config) { setup() }
-            }
-            routing {
-                with(route) { setup() }
             }
         }
     }

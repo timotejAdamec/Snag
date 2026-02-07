@@ -13,7 +13,6 @@
 package cz.adamec.timotej.snag.impl
 
 import cz.adamec.timotej.snag.configuration.be.AppConfiguration
-import cz.adamec.timotej.snag.impl.configuration.configureRouting
 import cz.adamec.timotej.snag.impl.di.appModule
 import cz.adamec.timotej.snag.server.api.Host
 import io.ktor.server.application.Application
@@ -41,5 +40,4 @@ fun Application.main() {
     getKoin().getAll<AppConfiguration>().forEach { config ->
         with(config) { setup() }
     }
-    configureRouting()
 }
