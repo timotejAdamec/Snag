@@ -12,11 +12,10 @@
 
 package cz.adamec.timotej.snag.structures.be.driving.impl.internal
 
+import cz.adamec.timotej.snag.configuration.be.AppConfiguration
 import cz.adamec.timotej.snag.feat.structures.be.model.BackendStructure
 import cz.adamec.timotej.snag.feat.structures.business.Structure
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
-import cz.adamec.timotej.snag.routing.be.InvalidBodyException
-import cz.adamec.timotej.snag.routing.be.InvalidIdException
 import cz.adamec.timotej.snag.structures.be.driven.test.FakeStructuresLocalDataSource
 import cz.adamec.timotej.snag.structures.be.driving.contract.DeleteStructureApiDto
 import cz.adamec.timotej.snag.structures.be.driving.contract.PutStructureApiDto
@@ -32,9 +31,6 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
-import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.server.plugins.statuspages.StatusPages
-import io.ktor.server.response.respond
 import io.ktor.server.routing.routing
 import io.ktor.server.testing.ApplicationTestBuilder
 import io.ktor.server.testing.testApplication
@@ -60,15 +56,10 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
         )
 
     private fun ApplicationTestBuilder.configureApp() {
+        val configurations = getKoin().getAll<AppConfiguration>()
         application {
-            install(ContentNegotiation) { json() }
-            install(StatusPages) {
-                exception<InvalidIdException> { call, _ ->
-                    call.respond(HttpStatusCode.BadRequest, "Invalid ID format.")
-                }
-                exception<InvalidBodyException> { call, _ ->
-                    call.respond(HttpStatusCode.BadRequest, "Invalid request body.")
-                }
+            configurations.forEach { config ->
+                with(config) { setup() }
             }
             routing {
                 with(route) { setup() }

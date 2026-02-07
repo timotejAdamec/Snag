@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.projects.be.driving.impl.internal
 
+import cz.adamec.timotej.snag.configuration.be.AppConfiguration
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.projects.be.driven.test.FakeProjectsLocalDataSource
 import cz.adamec.timotej.snag.projects.be.driving.contract.DeleteProjectApiDto
@@ -20,8 +21,6 @@ import cz.adamec.timotej.snag.projects.be.driving.contract.PutProjectApiDto
 import cz.adamec.timotej.snag.projects.be.model.BackendProject
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsLocalDataSource
 import cz.adamec.timotej.snag.projects.business.Project
-import cz.adamec.timotej.snag.routing.be.InvalidBodyException
-import cz.adamec.timotej.snag.routing.be.InvalidIdException
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
 import io.ktor.client.call.body
 import io.ktor.client.request.delete
@@ -32,9 +31,6 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
-import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.server.plugins.statuspages.StatusPages
-import io.ktor.server.response.respond
 import io.ktor.server.routing.routing
 import io.ktor.server.testing.ApplicationTestBuilder
 import io.ktor.server.testing.testApplication
@@ -60,15 +56,10 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
         )
 
     private fun ApplicationTestBuilder.configureApp() {
+        val configurations = getKoin().getAll<AppConfiguration>()
         application {
-            install(ContentNegotiation) { json() }
-            install(StatusPages) {
-                exception<InvalidIdException> { call, _ ->
-                    call.respond(HttpStatusCode.BadRequest, "Invalid ID format.")
-                }
-                exception<InvalidBodyException> { call, _ ->
-                    call.respond(HttpStatusCode.BadRequest, "Invalid request body.")
-                }
+            configurations.forEach { config ->
+                with(config) { setup() }
             }
             routing {
                 with(route) { setup() }

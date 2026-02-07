@@ -12,17 +12,15 @@
 
 package cz.adamec.timotej.snag.impl
 
-import cz.adamec.timotej.snag.impl.configuration.configureCallLogging
-import cz.adamec.timotej.snag.impl.configuration.configureContentNegotiation
-import cz.adamec.timotej.snag.impl.configuration.configureCors
+import cz.adamec.timotej.snag.configuration.be.AppConfiguration
 import cz.adamec.timotej.snag.impl.configuration.configureRouting
-import cz.adamec.timotej.snag.impl.configuration.configureStatusPages
 import cz.adamec.timotej.snag.impl.di.appModule
 import cz.adamec.timotej.snag.server.api.Host
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
+import org.koin.ktor.ext.getKoin
 import org.koin.ktor.plugin.Koin
 import org.koin.logger.slf4jLogger
 
@@ -40,9 +38,8 @@ fun Application.main() {
         slf4jLogger()
         modules(appModule)
     }
-    configureCallLogging()
-    configureContentNegotiation()
-    configureCors()
-    configureStatusPages()
+    getKoin().getAll<AppConfiguration>().forEach { config ->
+        with(config) { setup() }
+    }
     configureRouting()
 }

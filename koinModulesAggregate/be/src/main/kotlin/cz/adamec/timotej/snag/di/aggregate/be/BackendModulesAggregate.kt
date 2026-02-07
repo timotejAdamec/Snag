@@ -15,6 +15,7 @@ package cz.adamec.timotej.snag.di.aggregate.be
 import cz.adamec.timotej.snag.findings.be.app.impl.di.findingsAppModule
 import cz.adamec.timotej.snag.findings.be.driven.impl.di.findingsDrivenModule
 import cz.adamec.timotej.snag.findings.be.driving.impl.di.findingsDrivingModule
+import cz.adamec.timotej.snag.configuration.be.impl.di.configurationModule
 import cz.adamec.timotej.snag.lib.core.be.backendCoreModule
 import cz.adamec.timotej.snag.projects.be.app.impl.di.projectsAppModule
 import cz.adamec.timotej.snag.projects.be.driven.impl.di.projectsDrivenModule
@@ -28,6 +29,7 @@ val backendModulesAggregate =
     module {
         includes(
             backendCoreModule,
+            configurationModule,
             projectsDrivingModule,
             projectsDrivenModule,
             projectsAppModule,
