@@ -10,15 +10,10 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.impl.configuration
+package cz.adamec.timotej.snag.configuration.be
 
 import io.ktor.server.application.Application
-import io.ktor.server.application.install
-import io.ktor.server.plugins.calllogging.CallLogging
-import org.slf4j.event.Level
 
-internal fun Application.configureCallLogging() {
-    install(CallLogging) {
-        level = Level.INFO
-    }
+interface AppConfiguration {
+    fun Application.setup()
 }

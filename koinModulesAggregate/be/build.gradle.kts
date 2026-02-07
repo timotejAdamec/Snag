@@ -17,6 +17,7 @@ plugins {
 dependencies {
     // Core infrastructure
     implementation(projects.lib.core.be)
+    implementation(projects.lib.configuration.be.impl)
 
     // Projects feature
     implementation(projects.feat.projects.be.driving.impl)

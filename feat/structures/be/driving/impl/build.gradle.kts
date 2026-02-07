@@ -5,4 +5,6 @@ plugins {
 dependencies {
     implementation(project(":feat:structures:be:driving:contract"))
     implementation(project(":feat:structures:be:app:api"))
+    testImplementation(project(":feat:structures:be:driven:test"))
+    testImplementation(libs.ktor.client.content.negotiation)
 }
