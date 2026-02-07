@@ -12,8 +12,11 @@
 
 package cz.adamec.timotej.snag.network.fe.di
 
+import cz.adamec.timotej.snag.network.fe.ConnectionStatusListener
 import cz.adamec.timotej.snag.network.fe.internal.DefaultNetworkErrorClassifier
+import cz.adamec.timotej.snag.network.fe.internal.KonnectionConnectionStatusListener
 import cz.adamec.timotej.snag.network.fe.internal.NetworkErrorClassifier
+import dev.tmapps.konnection.Konnection
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
@@ -21,4 +24,10 @@ import org.koin.dsl.module
 internal actual val networkErrorClassifierPlatformModule =
     module {
         singleOf(::DefaultNetworkErrorClassifier) bind NetworkErrorClassifier::class
+    }
+
+internal actual val connectionStatusPlatformModule =
+    module {
+        single { Konnection.createInstance() }
+        singleOf(::KonnectionConnectionStatusListener) bind ConnectionStatusListener::class
     }

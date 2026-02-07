@@ -23,6 +23,7 @@ val networkModule =
     module {
         includes(localHostPlatformModule)
         includes(networkErrorClassifierPlatformModule)
+        includes(connectionStatusPlatformModule)
         single {
             SnagNetworkHttpClientImpl(
                 httpClient = HttpClientFactory(get()).createHttpClient(),
@@ -33,3 +34,4 @@ val networkModule =
 
 internal expect val localHostPlatformModule: Module
 internal expect val networkErrorClassifierPlatformModule: Module
+internal expect val connectionStatusPlatformModule: Module
