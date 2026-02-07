@@ -14,6 +14,7 @@ package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projects.ui.com
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -26,8 +27,9 @@ import cz.adamec.timotej.snag.lib.core.common.UuidProvider
 import cz.adamec.timotej.snag.lib.design.fe.theme.SnagTheme
 import cz.adamec.timotej.snag.projects.business.Project
 import cz.adamec.timotej.snag.projects.fe.model.FrontendProject
-import org.koin.compose.koinInject
-import kotlin.uuid.Uuid
+import org.jetbrains.compose.resources.painterResource
+import snag.lib.design.fe.generated.resources.ic_chevron_right
+import snag.lib.design.fe.generated.resources.Res as DesignRes
 
 @Composable
 internal fun ProjectListItem(
@@ -52,6 +54,12 @@ internal fun ProjectListItem(
                 maxLines = 2,
             )
         },
+        trailingContent = {
+            Icon(
+                painter = painterResource(DesignRes.drawable.ic_chevron_right),
+                contentDescription = null,
+            )
+        }
     )
 }
 
@@ -62,7 +70,7 @@ internal fun ProjectListItemPreview() {
         ProjectListItem(
             modifier =
                 Modifier.size(
-                    width = 200.dp,
+                    width = 400.dp,
                     height = 100.dp,
                 ),
             project =
