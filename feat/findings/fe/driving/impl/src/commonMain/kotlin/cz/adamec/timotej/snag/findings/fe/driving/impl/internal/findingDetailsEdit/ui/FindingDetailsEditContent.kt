@@ -37,9 +37,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import cz.adamec.timotej.snag.feat.findings.business.Importance
 import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetailsEdit.vm.FindingDetailsEditUiState
+import cz.adamec.timotej.snag.lib.design.fe.theme.SnagTheme
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import snag.feat.findings.fe.driving.impl.generated.resources.Res
@@ -188,5 +190,26 @@ internal fun FindingDetailsEditContent(
                 },
             )
         }
+    }
+}
+
+@Preview
+@Composable
+private fun FindingDetailsEditContentPreview() {
+    SnagTheme {
+        FindingDetailsEditContent(
+            isEditMode = true,
+            state = FindingDetailsEditUiState(
+                findingName = "Example Finding",
+                findingDescription = "Example Description",
+                findingImportance = Importance.MEDIUM,
+            ),
+            snackbarHostState = SnackbarHostState(),
+            onFindingNameChange = {},
+            onFindingDescriptionChange = {},
+            onImportanceChange = {},
+            onSaveClick = {},
+            onCancelClick = {},
+        )
     }
 }
