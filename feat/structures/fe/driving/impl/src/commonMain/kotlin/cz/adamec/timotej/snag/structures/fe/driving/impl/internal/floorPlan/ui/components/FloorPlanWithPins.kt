@@ -45,7 +45,7 @@ internal fun FloorPlanWithPins(
     modifier: Modifier = Modifier,
 ) {
     val zoomState = rememberCoilZoomState()
-    val touchTargetRadiusPx = with(LocalDensity.current) { 24.dp.toPx() }
+    val touchTargetRadiusPx = with(LocalDensity.current) { 16.dp.toPx() }
 
     Box(modifier = modifier) {
         CoilZoomAsyncImage(
@@ -104,7 +104,7 @@ private fun FindingsPinsOverlay(
                     center = drawPoint,
                     fillColor = if (isSelected) selectedPinColor else pinColor,
                     outlineColor = pinOutlineColor,
-                    radius = if (isSelected) 24f else 16f,
+                    radius = if (isSelected) 16.dp.toPx() else 12.dp.toPx(),
                 )
             }
         }
