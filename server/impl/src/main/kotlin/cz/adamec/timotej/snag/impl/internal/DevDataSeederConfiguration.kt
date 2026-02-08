@@ -73,7 +73,7 @@ internal class DevDataSeederConfiguration(
                         updatedAt = now,
                     ),
             ),
-        ).forEach { projectsDb.updateProject(it) }
+        ).forEach { projectsDb.saveProject(it) }
     }
 
     private suspend fun seedStructures() {
@@ -194,7 +194,7 @@ internal class DevDataSeederConfiguration(
                         updatedAt = now,
                     ),
             ),
-        ).forEach { findingsDb.updateFinding(it) }
+        ).forEach { findingsDb.saveFinding(it) }
     }
 
     private companion object {
