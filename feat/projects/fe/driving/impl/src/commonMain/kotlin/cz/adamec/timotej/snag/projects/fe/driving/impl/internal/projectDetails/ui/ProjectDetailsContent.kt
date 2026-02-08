@@ -100,7 +100,7 @@ internal fun ProjectDetailsContent(
 
             ProjectDetailsUiStatus.LOADED,
             ProjectDetailsUiStatus.DELETED,
-                ->
+                -> {
                 LoadedProjectDetailsContent(
                     state = state,
                     onNewStructureClick = onNewStructureClick,
@@ -109,12 +109,14 @@ internal fun ProjectDetailsContent(
                     onEditClick = onEditClick,
                     onDelete = onDelete,
                 )
+            }
 
-            ProjectDetailsUiStatus.ERROR -> onBack()
+            ProjectDetailsUiStatus.ERROR -> { onBack() }
         }
     }
 }
 
+@Suppress("LongMethod")
 @Composable
 private fun LoadedProjectDetailsContent(
     state: ProjectDetailsUiState,
@@ -277,6 +279,7 @@ private fun ProjectDeletionAlertDialog(
 @Preview
 @PreviewScreenSizes
 @Composable
+@Suppress("FunctionNameMaxLength")
 private fun LoadedProjectDetailsContentPreview() {
     SnagTheme {
         LoadedProjectDetailsContent(

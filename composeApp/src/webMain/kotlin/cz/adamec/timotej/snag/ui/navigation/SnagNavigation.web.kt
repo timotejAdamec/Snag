@@ -27,11 +27,14 @@ internal actual fun SnagNavigationPreparation(backStack: SnagBackStack) {
     HierarchicalBrowserNavigation(
         currentDestination = remember { derivedStateOf { backStack.value.lastOrNull() } },
         currentDestinationName = { route ->
-            if (route == null) return@HierarchicalBrowserNavigation ""
-            val builder =
-                builders.find { it.handles(route) }
-                    ?: error("No BrowserHistoryFragmentBuilder found for route $route")
-            builder.build(route)
+            if (route == null) {
+                ""
+            } else {
+                val builder =
+                    builders.find { it.handles(route) }
+                        ?: error("No BrowserHistoryFragmentBuilder found for route $route")
+                builder.build(route)
+            }
         },
     )
 }

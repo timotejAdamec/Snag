@@ -28,6 +28,7 @@ internal class RoutingConfiguration : AppConfiguration {
     override fun Application.setup() {
         val routes = getKoin().getAll<AppRoute>()
         routing {
+            val routingScope = this
             routes.forEach { route ->
                 with(route) { setup() }
             }
@@ -38,7 +39,7 @@ internal class RoutingConfiguration : AppConfiguration {
                 info = OpenApiInfo("Snag API", "1.0")
                 source =
                     OpenApiDocSource.Routing(ContentType.Application.Json) {
-                        this@routing.descendants()
+                        routingScope.descendants()
                     }
             }
         }

@@ -61,6 +61,7 @@ internal inline fun <reified T : ProjectsRoute> Module.projectsScreenNavigation(
         )
     }
 
+@Suppress("FunctionNameMaxLength")
 internal inline fun <reified T : ProjectCreationRoute> Module.projectCreationScreenNavigation() =
     navigation<T>(
         metadata = DialogSceneStrategy.dialog(DialogProperties(usePlatformDefaultWidth = false)),
@@ -90,6 +91,7 @@ internal inline fun <reified T : ProjectEditRoute> Module.projectEditScreenNavig
     }
 
 @Composable
+@Suppress("FunctionNameMaxLength")
 private fun Scope.ProjectDetailsEditScreenInjection(
     projectId: Uuid? = null,
     onSaveProject: (savedProjectId: Uuid) -> Unit,

@@ -61,7 +61,7 @@ internal class StructureDetailsEditViewModel(
                     is OfflineFirstDataResult.ProgrammerError -> {
                         errorEventsChannel.send(Unknown)
                     }
-                    is OfflineFirstDataResult.Success ->
+                    is OfflineFirstDataResult.Success -> {
                         result.data?.let { data ->
                             _state.update {
                                 it.copy(
@@ -71,6 +71,7 @@ internal class StructureDetailsEditViewModel(
                             }
                             cancel()
                         }
+                    }
                 }
             }
         }
@@ -83,10 +84,13 @@ internal class StructureDetailsEditViewModel(
         viewModelScope.launch {
             if (state.value.structureName.isBlank()) {
                 errorEventsChannel.send(CustomUserMessage("Structure name cannot be empty"))
-                return@launch
+            } else {
+                saveStructure()
             }
+        }
 
-            val result =
+    private suspend fun saveStructure() {
+        val result =
                 saveStructureUseCase(
                     request =
                         SaveStructureRequest(
@@ -95,13 +99,13 @@ internal class StructureDetailsEditViewModel(
                             name = state.value.structureName,
                         ),
                 )
-            when (result) {
-                is OfflineFirstDataResult.ProgrammerError -> {
-                    errorEventsChannel.send(Unknown)
-                }
-                is OfflineFirstDataResult.Success -> {
-                    saveEventChannel.send(result.data)
-                }
+        when (result) {
+            is OfflineFirstDataResult.ProgrammerError -> {
+                errorEventsChannel.send(Unknown)
+            }
+            is OfflineFirstDataResult.Success -> {
+                saveEventChannel.send(result.data)
             }
         }
+    }
 }

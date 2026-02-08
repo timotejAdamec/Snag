@@ -41,7 +41,7 @@ internal class ExposedFindingsDb(
             }.with(FindingEntity::coordinates).map { it.toModel() }
         }
 
-    @Suppress("ReturnCount")
+    @Suppress("ReturnCount", "LabeledExpression")
     override suspend fun updateFinding(finding: BackendFinding): BackendFinding? =
         transaction(database) {
             val existing = FindingEntity.findById(finding.finding.id)
@@ -83,7 +83,7 @@ internal class ExposedFindingsDb(
             null
         }
 
-    @Suppress("ReturnCount")
+    @Suppress("ReturnCount", "LabeledExpression")
     override suspend fun deleteFinding(
         id: Uuid,
         deletedAt: Timestamp,
@@ -107,6 +107,7 @@ internal class ExposedFindingsDb(
         since: Timestamp,
     ): List<BackendFinding> =
         transaction(database) {
+            @Suppress("UnnecessaryParentheses")
             FindingEntity.find {
                 (FindingsTable.structureId eq structureId) and
                     (

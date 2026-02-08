@@ -57,7 +57,7 @@ internal class ProjectDetailsEditViewModel(
                     is OfflineFirstDataResult.ProgrammerError -> {
                         errorEventsChannel.send(Unknown)
                     }
-                    is OfflineFirstDataResult.Success ->
+                    is OfflineFirstDataResult.Success -> {
                         result.data?.let { data ->
                             _state.update {
                                 it.copy(
@@ -67,6 +67,7 @@ internal class ProjectDetailsEditViewModel(
                             }
                             cancel()
                         }
+                    }
                 }
             }
         }
@@ -84,14 +85,15 @@ internal class ProjectDetailsEditViewModel(
             if (state.value.projectName.isBlank()) {
                 // TODO use string provider
                 errorEventsChannel.send(CustomUserMessage("Project name cannot be empty"))
-                return@launch
-            }
-            if (state.value.projectAddress.isBlank()) {
+            } else if (state.value.projectAddress.isBlank()) {
                 errorEventsChannel.send(CustomUserMessage("Project address cannot be empty"))
-                return@launch
+            } else {
+                saveProject()
             }
+        }
 
-            val result =
+    private suspend fun saveProject() {
+        val result =
                 saveProjectUseCase(
                     request =
                         SaveProjectRequest(
@@ -100,13 +102,13 @@ internal class ProjectDetailsEditViewModel(
                             address = state.value.projectAddress,
                         ),
                 )
-            when (result) {
-                is OfflineFirstDataResult.ProgrammerError -> {
-                    errorEventsChannel.send(Unknown)
-                }
-                is OfflineFirstDataResult.Success -> {
-                    saveEventChannel.send(result.data)
-                }
+        when (result) {
+            is OfflineFirstDataResult.ProgrammerError -> {
+                errorEventsChannel.send(Unknown)
+            }
+            is OfflineFirstDataResult.Success -> {
+                saveEventChannel.send(result.data)
             }
         }
+    }
 }

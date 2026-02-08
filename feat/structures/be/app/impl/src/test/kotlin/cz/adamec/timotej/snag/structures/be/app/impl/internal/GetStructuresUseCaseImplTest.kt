@@ -33,13 +33,6 @@ class GetStructuresUseCaseImplTest : BackendKoinInitializedTest() {
     private val dataSource: FakeStructuresDb by inject()
     private val useCase: GetStructuresUseCase by inject()
 
-    override fun additionalKoinModules(): List<Module> =
-        listOf(
-            module {
-                singleOf(::FakeStructuresDb) bind StructuresDb::class
-            },
-        )
-
     private val projectId = Uuid.parse("00000000-0000-0000-0000-000000000001")
     private val otherProjectId = Uuid.parse("00000000-0000-0000-0000-000000000002")
 
@@ -72,6 +65,13 @@ class GetStructuresUseCaseImplTest : BackendKoinInitializedTest() {
                 floorPlanUrl = null,
                 updatedAt = Timestamp(3L),
             )
+        )
+
+    override fun additionalKoinModules(): List<Module> =
+        listOf(
+            module {
+                singleOf(::FakeStructuresDb) bind StructuresDb::class
+            },
         )
 
     @Test

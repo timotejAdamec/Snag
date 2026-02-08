@@ -23,6 +23,7 @@ class FakeFindingsApi : FindingsApi {
     private val findings = mutableMapOf<Uuid, FrontendFinding>()
     var forcedFailure: OnlineDataResult.Failure? = null
     var saveFindingResponseOverride: ((FrontendFinding) -> OnlineDataResult<FrontendFinding?>)? = null
+    var modifiedSinceResults: List<FindingSyncResult> = emptyList()
 
     override suspend fun getFindings(structureId: Uuid): OnlineDataResult<List<FrontendFinding>> {
         val failure = forcedFailure
@@ -41,16 +42,17 @@ class FakeFindingsApi : FindingsApi {
         val failure = forcedFailure
         if (failure != null) return failure
         val override = saveFindingResponseOverride
-        if (override != null) return override(finding)
-        findings[finding.finding.id] = finding
-        return OnlineDataResult.Success(finding)
+        return if (override != null) {
+            override(finding)
+        } else {
+            findings[finding.finding.id] = finding
+            OnlineDataResult.Success(finding)
+        }
     }
 
     fun setFinding(finding: FrontendFinding) {
         findings[finding.finding.id] = finding
     }
-
-    var modifiedSinceResults: List<FindingSyncResult> = emptyList()
 
     override suspend fun getFindingsModifiedSince(structureId: Uuid, since: Timestamp): OnlineDataResult<List<FindingSyncResult>> {
         val failure = forcedFailure

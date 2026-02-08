@@ -20,8 +20,6 @@ import org.jetbrains.exposed.v1.dao.UuidEntity
 import org.jetbrains.exposed.v1.dao.UuidEntityClass
 
 internal class FindingEntity(id: EntityID<Uuid>) : UuidEntity(id) {
-    companion object : UuidEntityClass<FindingEntity>(FindingsTable)
-
     var structureId by FindingsTable.structureId
     var name by FindingsTable.name
     var description by FindingsTable.description
@@ -30,13 +28,15 @@ internal class FindingEntity(id: EntityID<Uuid>) : UuidEntity(id) {
     val coordinates by FindingCoordinateEntity referrersOn
         FindingCoordinatesTable.findingId orderBy
         FindingCoordinatesTable.orderIndex
+
+    companion object : UuidEntityClass<FindingEntity>(FindingsTable)
 }
 
 internal class FindingCoordinateEntity(id: EntityID<Int>) : IntEntity(id) {
-    companion object : IntEntityClass<FindingCoordinateEntity>(FindingCoordinatesTable)
-
     var finding by FindingEntity referencedOn FindingCoordinatesTable.findingId
     var x by FindingCoordinatesTable.x
     var y by FindingCoordinatesTable.y
     var orderIndex by FindingCoordinatesTable.orderIndex
+
+    companion object : IntEntityClass<FindingCoordinateEntity>(FindingCoordinatesTable)
 }

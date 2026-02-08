@@ -42,14 +42,6 @@ class SaveFindingDetailsUseCaseImplTest : FrontendKoinInitializedTest() {
 
     private val useCase: SaveFindingDetailsUseCase by inject()
 
-    override fun additionalKoinModules(): List<Module> =
-        listOf(
-            module {
-                singleOf(::FakeFindingsDb) bind FindingsDb::class
-                singleOf(::FakeFindingsSync) bind FindingsSync::class
-            },
-        )
-
     private val structureId = Uuid.parse("00000000-0000-0000-0000-000000000001")
     private val findingId = Uuid.parse("00000000-0000-0000-0001-000000000001")
 
@@ -63,6 +55,14 @@ class SaveFindingDetailsUseCaseImplTest : FrontendKoinInitializedTest() {
             updatedAt = Timestamp(10L),
         ),
     )
+
+    override fun additionalKoinModules(): List<Module> =
+        listOf(
+            module {
+                singleOf(::FakeFindingsDb) bind FindingsDb::class
+                singleOf(::FakeFindingsSync) bind FindingsSync::class
+            },
+        )
 
     @Test
     fun `updates name and description`() = runTest(testDispatcher) {

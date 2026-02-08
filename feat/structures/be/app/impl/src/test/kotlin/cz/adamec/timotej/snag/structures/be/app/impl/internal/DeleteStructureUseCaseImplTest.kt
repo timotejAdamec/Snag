@@ -36,13 +36,6 @@ class DeleteStructureUseCaseImplTest : BackendKoinInitializedTest() {
     private val dataSource: FakeStructuresDb by inject()
     private val useCase: DeleteStructureUseCase by inject()
 
-    override fun additionalKoinModules(): List<Module> =
-        listOf(
-            module {
-                singleOf(::FakeStructuresDb) bind StructuresDb::class
-            },
-        )
-
     private val projectId = Uuid.parse("00000000-0000-0000-0000-000000000001")
     private val structureId = Uuid.parse("00000000-0000-0000-0001-000000000001")
     private val structure =
@@ -54,6 +47,13 @@ class DeleteStructureUseCaseImplTest : BackendKoinInitializedTest() {
                 floorPlanUrl = null,
                 updatedAt = Timestamp(value = 10L),
             ),
+        )
+
+    override fun additionalKoinModules(): List<Module> =
+        listOf(
+            module {
+                singleOf(::FakeStructuresDb) bind StructuresDb::class
+            },
         )
 
     @Test

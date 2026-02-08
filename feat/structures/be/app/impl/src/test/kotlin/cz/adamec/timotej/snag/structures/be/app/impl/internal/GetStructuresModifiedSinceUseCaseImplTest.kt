@@ -34,15 +34,15 @@ class GetStructuresModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
     private val dataSource: FakeStructuresDb by inject()
     private val useCase: GetStructuresModifiedSinceUseCase by inject()
 
+    private val projectId = Uuid.parse("00000000-0000-0000-0000-000000000001")
+    private val otherProjectId = Uuid.parse("00000000-0000-0000-0000-000000000002")
+
     override fun additionalKoinModules(): List<Module> =
         listOf(
             module {
                 singleOf(::FakeStructuresDb) bind StructuresDb::class
             },
         )
-
-    private val projectId = Uuid.parse("00000000-0000-0000-0000-000000000001")
-    private val otherProjectId = Uuid.parse("00000000-0000-0000-0000-000000000002")
 
     @Test
     fun `returns empty list when no structures exist`() =

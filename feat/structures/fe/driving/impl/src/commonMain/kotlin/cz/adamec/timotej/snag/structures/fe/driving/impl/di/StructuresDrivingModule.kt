@@ -66,6 +66,7 @@ internal inline fun <reified T : StructureEditRoute> Module.structureEditScreenN
         )
     }
 
+@Suppress("FunctionNameMaxLength")
 internal inline fun <reified T : StructureFloorPlanRoute> Module.structureFloorPlanScreenNavigation() =
     navigation<T>(
         metadata = MapListDetailSceneMetadata.mapPane(),

@@ -39,6 +39,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertIs
 import kotlin.test.assertNotNull
+import kotlin.uuid.Uuid
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class StructureDetailsEditViewModelTest : FrontendKoinInitializedTest() {
@@ -57,8 +58,8 @@ class StructureDetailsEditViewModelTest : FrontendKoinInitializedTest() {
         )
 
     private fun createViewModel(
-        structureId: kotlin.uuid.Uuid? = null,
-        projectId: kotlin.uuid.Uuid? = null,
+        structureId: Uuid? = null,
+        projectId: Uuid? = null,
     ) = StructureDetailsEditViewModel(
         structureId = structureId,
         projectId = projectId,

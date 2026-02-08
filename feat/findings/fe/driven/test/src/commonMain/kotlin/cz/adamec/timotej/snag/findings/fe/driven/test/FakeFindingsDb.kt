@@ -81,11 +81,17 @@ class FakeFindingsDb : FindingsDb {
         updatedAt: Timestamp,
     ): OfflineFirstUpdateDataResult {
         val failure = forcedFailure
-        if (failure != null) return OfflineFirstUpdateDataResult.ProgrammerError(failure.throwable)
-        val existing = findings.value[id] ?: return OfflineFirstUpdateDataResult.NotFound
-        val updatedFinding = FrontendFinding(finding = existing.finding.copy(name = name, description = description, updatedAt = updatedAt))
-        findings.update { it + (id to updatedFinding) }
-        return OfflineFirstUpdateDataResult.Success
+        if (failure != null) {
+            return OfflineFirstUpdateDataResult.ProgrammerError(failure.throwable)
+        }
+        val existing = findings.value[id]
+        return if (existing == null) {
+            OfflineFirstUpdateDataResult.NotFound
+        } else {
+            val updatedFinding = FrontendFinding(finding = existing.finding.copy(name = name, description = description, updatedAt = updatedAt))
+            findings.update { it + (id to updatedFinding) }
+            OfflineFirstUpdateDataResult.Success
+        }
     }
 
     override suspend fun updateFindingCoordinates(
@@ -94,11 +100,17 @@ class FakeFindingsDb : FindingsDb {
         updatedAt: Timestamp,
     ): OfflineFirstUpdateDataResult {
         val failure = forcedFailure
-        if (failure != null) return OfflineFirstUpdateDataResult.ProgrammerError(failure.throwable)
-        val existing = findings.value[id] ?: return OfflineFirstUpdateDataResult.NotFound
-        val updatedFinding = FrontendFinding(finding = existing.finding.copy(coordinates = coordinates, updatedAt = updatedAt))
-        findings.update { it + (id to updatedFinding) }
-        return OfflineFirstUpdateDataResult.Success
+        if (failure != null) {
+            return OfflineFirstUpdateDataResult.ProgrammerError(failure.throwable)
+        }
+        val existing = findings.value[id]
+        return if (existing == null) {
+            OfflineFirstUpdateDataResult.NotFound
+        } else {
+            val updatedFinding = FrontendFinding(finding = existing.finding.copy(coordinates = coordinates, updatedAt = updatedAt))
+            findings.update { it + (id to updatedFinding) }
+            OfflineFirstUpdateDataResult.Success
+        }
     }
 
     override suspend fun deleteFindingsByStructureId(structureId: Uuid): OfflineFirstDataResult<Unit> {

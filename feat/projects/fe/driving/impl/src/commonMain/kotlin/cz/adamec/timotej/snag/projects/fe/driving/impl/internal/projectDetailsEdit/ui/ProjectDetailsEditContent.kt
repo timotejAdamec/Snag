@@ -46,6 +46,7 @@ import snag.lib.design.fe.generated.resources.Res as DesignRes
 
 private val HorizontalPadding = 12.dp
 
+@Suppress("LongMethod")
 @Composable
 internal fun ProjectDetailsEditContent(
     projectId: Uuid?,

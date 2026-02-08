@@ -20,12 +20,12 @@ internal class FindingsBrowserHistoryFragmentBuilder : BrowserHistoryFragmentBui
     override fun handles(route: SnagNavRoute): Boolean = route is WebFindingEditRoute
 
     override fun build(route: SnagNavRoute): String =
-        when (route) {
-            is WebFindingEditRoute ->
-                buildBrowserHistoryFragment(
-                    WebFindingEditRoute.URL_NAME,
-                    mapOf("id" to route.findingId.toString()),
-                )
-            else -> error("FindingsBrowserHistoryFragmentBuilder cannot handle $route")
+        if (route is WebFindingEditRoute) {
+            buildBrowserHistoryFragment(
+                WebFindingEditRoute.URL_NAME,
+                mapOf("id" to route.findingId.toString()),
+            )
+        } else {
+            error("FindingsBrowserHistoryFragmentBuilder cannot handle $route")
         }
 }

@@ -53,6 +53,9 @@ class PullFindingChangesUseCaseImplTest : FrontendKoinInitializedTest() {
 
     private val useCase: PullFindingChangesUseCase by inject()
 
+    private val structureId = Uuid.parse("00000000-0000-0000-0000-000000000001")
+    private val findingId = Uuid.parse("00000000-0000-0000-0001-000000000001")
+
     override fun additionalKoinModules(): List<Module> =
         listOf(
             module {
@@ -63,9 +66,6 @@ class PullFindingChangesUseCaseImplTest : FrontendKoinInitializedTest() {
                 singleOf(::FakeFindingsPullSyncTimestampDataSource) bind FindingsPullSyncTimestampDataSource::class
             },
         )
-
-    private val structureId = Uuid.parse("00000000-0000-0000-0000-000000000001")
-    private val findingId = Uuid.parse("00000000-0000-0000-0001-000000000001")
 
     private fun createFinding(id: Uuid) = FrontendFinding(
         finding = Finding(

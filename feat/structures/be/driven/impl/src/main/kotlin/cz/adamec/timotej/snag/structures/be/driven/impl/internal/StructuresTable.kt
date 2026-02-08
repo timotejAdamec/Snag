@@ -14,10 +14,13 @@ package cz.adamec.timotej.snag.structures.be.driven.impl.internal
 
 import org.jetbrains.exposed.v1.core.dao.id.UuidTable
 
+private const val NAME_MAX_LENGTH = 255
+private const val FLOOR_PLAN_URL_MAX_LENGTH = 1024
+
 internal object StructuresTable : UuidTable("structures") {
     val projectId = uuid("project_id")
-    val name = varchar("name", 255)
-    val floorPlanUrl = varchar("floor_plan_url", 1024).nullable()
+    val name = varchar("name", NAME_MAX_LENGTH)
+    val floorPlanUrl = varchar("floor_plan_url", FLOOR_PLAN_URL_MAX_LENGTH).nullable()
     val updatedAt = long("updated_at")
     val deletedAt = long("deleted_at").nullable()
 }
