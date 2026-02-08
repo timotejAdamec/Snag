@@ -14,10 +14,12 @@ package cz.adamec.timotej.snag.projects.be.driving.contract
 
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import kotlinx.serialization.Serializable
+import kotlin.uuid.Uuid
 
 @Serializable
 data class PutProjectApiDto(
     val name: String,
     val address: String,
+    val clientId: Uuid? = null,
     val updatedAt: Timestamp,
 )

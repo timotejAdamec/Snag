@@ -12,6 +12,9 @@
 
 package cz.adamec.timotej.snag.di.aggregate.be
 
+import cz.adamec.timotej.snag.clients.be.app.impl.di.clientsAppModule
+import cz.adamec.timotej.snag.clients.be.driven.impl.di.clientsDrivenModule
+import cz.adamec.timotej.snag.clients.be.driving.impl.di.clientsDrivingModule
 import cz.adamec.timotej.snag.configuration.be.impl.di.configurationModule
 import cz.adamec.timotej.snag.feat.shared.database.be.di.sharedDatabaseModule
 import cz.adamec.timotej.snag.findings.be.app.impl.di.findingsAppModule
@@ -35,6 +38,9 @@ val backendModulesAggregate =
             projectsDrivingModule,
             projectsDrivenModule,
             projectsAppModule,
+            clientsDrivingModule,
+            clientsDrivenModule,
+            clientsAppModule,
             structuresDrivingModule,
             structuresDrivenModule,
             structuresAppModule,

@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.projects.be.driven.impl.internal
 
+import cz.adamec.timotej.snag.feat.shared.database.be.ClientEntity
 import cz.adamec.timotej.snag.feat.shared.database.be.ProjectEntity
 import cz.adamec.timotej.snag.feat.shared.database.be.ProjectsTable
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
@@ -52,12 +53,14 @@ internal class ExposedProjectsDb(
                 }
                 existing.name = project.project.name
                 existing.address = project.project.address
+                existing.client = project.project.clientId?.let { ClientEntity.findById(it) }
                 existing.updatedAt = project.project.updatedAt.value
                 existing.deletedAt = project.deletedAt?.value
             } else {
                 ProjectEntity.new(project.project.id) {
                     name = project.project.name
                     address = project.project.address
+                    client = project.project.clientId?.let { ClientEntity.findById(it) }
                     updatedAt = project.project.updatedAt.value
                     deletedAt = project.deletedAt?.value
                 }

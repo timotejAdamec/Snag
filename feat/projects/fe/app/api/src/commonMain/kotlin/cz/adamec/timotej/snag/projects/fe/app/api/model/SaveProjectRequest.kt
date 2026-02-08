@@ -18,4 +18,5 @@ data class SaveProjectRequest(
     val id: Uuid?,
     val name: String,
     val address: String,
+    val clientId: Uuid? = null,
 )

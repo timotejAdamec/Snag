@@ -1,0 +1,30 @@
+CREATE TABLE IF NOT EXISTS ClientEntity (
+    id TEXT NOT NULL PRIMARY KEY,
+    name TEXT NOT NULL,
+    address TEXT,
+    phoneNumber TEXT,
+    email TEXT,
+    updatedAt INTEGER NOT NULL
+);
+
+save:
+INSERT INTO ClientEntity(id, name, address, phoneNumber, email, updatedAt)
+VALUES ?
+ON CONFLICT(id) DO UPDATE SET
+    name = excluded.name,
+    address = excluded.address,
+    phoneNumber = excluded.phoneNumber,
+    email = excluded.email,
+    updatedAt = excluded.updatedAt;
+
+selectAll:
+SELECT * FROM ClientEntity;
+
+selectById:
+SELECT * FROM ClientEntity WHERE id = :id;
+
+deleteById:
+DELETE FROM ClientEntity WHERE id = :id;
+
+deleteAll:
+DELETE FROM ClientEntity;

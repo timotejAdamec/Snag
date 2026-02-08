@@ -39,6 +39,7 @@ class SaveProjectUseCaseImpl(
                     id = request.id ?: uuidProvider.getUuid(),
                     name = request.name,
                     address = request.address,
+                    clientId = request.clientId,
                     updatedAt = timestampProvider.getNowTimestamp(),
                 ),
             )

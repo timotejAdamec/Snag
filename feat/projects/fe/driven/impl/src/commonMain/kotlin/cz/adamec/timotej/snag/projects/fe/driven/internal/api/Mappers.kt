@@ -23,6 +23,7 @@ internal fun ProjectApiDto.toModel() =
             id = id,
             name = name,
             address = address,
+            clientId = clientId,
             updatedAt = updatedAt,
         ),
     )
@@ -31,5 +32,6 @@ internal fun FrontendProject.toPutApiDto() =
     PutProjectApiDto(
         name = project.name,
         address = project.address,
+        clientId = project.clientId,
         updatedAt = project.updatedAt,
     )
