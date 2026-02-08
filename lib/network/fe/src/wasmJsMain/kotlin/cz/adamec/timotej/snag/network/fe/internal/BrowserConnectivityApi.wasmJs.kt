@@ -12,36 +12,30 @@
 
 package cz.adamec.timotej.snag.network.fe.internal
 
-import kotlin.js.JsAny
+private fun jsIsNavigatorOnline(): Boolean =
+    js("globalThis.navigator.onLine")
 
-@JsFun("() => globalThis.navigator.onLine")
-private external fun jsIsNavigatorOnline(): Boolean
-
-@JsFun(
-    """
-    (onOnline, onOffline) => {
-        const onlineHandler = () => onOnline();
-        const offlineHandler = () => onOffline();
-        globalThis.addEventListener('online', onlineHandler);
-        globalThis.addEventListener('offline', offlineHandler);
-        return { onlineHandler, offlineHandler };
-    }
-    """,
-)
-private external fun jsAddConnectivityListeners(
+private fun jsAddConnectivityListeners(
     onOnline: () -> Unit,
     onOffline: () -> Unit,
-): JsAny
+): JsAny =
+    js(
+        """(() => {
+        const online = () => onOnline();
+        const offline = () => onOffline();
+        globalThis.addEventListener('online', online);
+        globalThis.addEventListener('offline', offline);
+        return { online, offline };
+    })()""",
+    )
 
-@JsFun(
-    """
-    (handlers) => {
-        globalThis.removeEventListener('online', handlers.onlineHandler);
-        globalThis.removeEventListener('offline', handlers.offlineHandler);
-    }
-    """,
-)
-private external fun jsRemoveConnectivityListeners(handlers: JsAny)
+private fun jsRemoveConnectivityListeners(handlers: JsAny): Unit =
+    js(
+        """{
+        globalThis.removeEventListener('online', handlers.online);
+        globalThis.removeEventListener('offline', handlers.offline);
+    }""",
+    )
 
 internal actual fun isNavigatorOnline(): Boolean = jsIsNavigatorOnline()
 
