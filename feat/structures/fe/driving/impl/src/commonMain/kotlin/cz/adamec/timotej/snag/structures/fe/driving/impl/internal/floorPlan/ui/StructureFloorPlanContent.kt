@@ -153,11 +153,14 @@ private fun LoadedStructureDetailsContent(
                     },
                 )
             }
+            val toolbarBottomPadding = if (LocalSheetPeekHeight.current == 0.dp) {
+                16.dp
+            } else LocalSheetPeekHeight.current
             HorizontalFloatingToolbar(
                 modifier =
                     Modifier
                         .align(Alignment.BottomCenter)
-                        .padding(bottom = LocalSheetPeekHeight.current),
+                        .padding(bottom = toolbarBottomPadding),
                 expanded = true,
             ) {
                 IconButton(
