@@ -18,14 +18,13 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonGroup
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SegmentedButton
-import androidx.compose.material3.SegmentedButtonDefaults
-import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -53,6 +52,7 @@ import snag.lib.design.fe.generated.resources.Res as DesignRes
 
 private val HorizontalPadding = 12.dp
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Suppress("LongMethod")
 @Composable
 internal fun FindingDetailsEditContent(
@@ -137,22 +137,23 @@ internal fun FindingDetailsEditContent(
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
-            val importanceOptions = Importance.entries
-            SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
-                importanceOptions.forEachIndexed { index, importance ->
-                    SegmentedButton(
-                        selected = state.findingImportance == importance,
-                        onClick = { onImportanceChange(importance) },
-                        shape = SegmentedButtonDefaults.itemShape(index = index, count = importanceOptions.size),
-                    ) {
-                        Text(
-                            text = when (importance) {
-                                Importance.HIGH -> stringResource(Res.string.importance_high)
-                                Importance.MEDIUM -> stringResource(Res.string.importance_medium)
-                                Importance.LOW -> stringResource(Res.string.importance_low)
-                            },
-                        )
-                    }
+            val importanceLabels =
+                mapOf(
+                    Importance.HIGH to stringResource(Res.string.importance_high),
+                    Importance.MEDIUM to stringResource(Res.string.importance_medium),
+                    Importance.LOW to stringResource(Res.string.importance_low),
+                )
+            ButtonGroup(
+                overflowIndicator = {},
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Importance.entries.forEach { importance ->
+                    toggleableItem(
+                        checked = state.findingImportance == importance,
+                        onCheckedChange = { onImportanceChange(importance) },
+                        label = importanceLabels.getValue(importance),
+                        weight = 1f,
+                    )
                 }
             }
             OutlinedTextField(
