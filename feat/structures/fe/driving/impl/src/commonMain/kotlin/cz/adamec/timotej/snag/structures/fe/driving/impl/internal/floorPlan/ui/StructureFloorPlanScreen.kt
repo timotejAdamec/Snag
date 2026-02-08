@@ -29,6 +29,7 @@ internal fun StructureFloorPlanScreen(
     selectedFindingId: Uuid?,
     onBack: () -> Unit,
     onEditClick: () -> Unit,
+    onFindingClick: (Uuid) -> Unit,
     viewModel: StructureFloorPlanViewModel = koinViewModel {
         parametersOf(structureId)
     },
@@ -54,5 +55,6 @@ internal fun StructureFloorPlanScreen(
         onBack = onBack,
         onEditClick = onEditClick,
         onDelete = viewModel::onDelete,
+        onFindingClick = onFindingClick,
     )
 }

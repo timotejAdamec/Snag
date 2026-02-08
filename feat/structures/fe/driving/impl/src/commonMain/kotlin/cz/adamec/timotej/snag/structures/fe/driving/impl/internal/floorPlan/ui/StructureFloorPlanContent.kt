@@ -45,6 +45,7 @@ import snag.lib.design.fe.generated.resources.delete
 import snag.lib.design.fe.generated.resources.edit
 import snag.lib.design.fe.generated.resources.ic_delete
 import snag.lib.design.fe.generated.resources.ic_edit
+import kotlin.uuid.Uuid
 import snag.lib.design.fe.generated.resources.Res as DesignRes
 
 @Composable
@@ -53,6 +54,7 @@ internal fun StructureFloorPlanContent(
     onBack: () -> Unit,
     onEditClick: () -> Unit,
     onDelete: () -> Unit,
+    onFindingClick: (Uuid) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(
@@ -80,6 +82,7 @@ internal fun StructureFloorPlanContent(
                     onBack = onBack,
                     onEditClick = onEditClick,
                     onDelete = onDelete,
+                    onFindingClick = onFindingClick,
                 )
             }
 
@@ -96,6 +99,7 @@ private fun LoadedStructureDetailsContent(
     onBack: () -> Unit,
     onEditClick: () -> Unit,
     onDelete: () -> Unit,
+    onFindingClick: (Uuid) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Scaffold(
@@ -128,6 +132,7 @@ private fun LoadedStructureDetailsContent(
                     contentDescription = state.feStructure.structure.name,
                     findings = state.findings,
                     selectedFindingId = state.selectedFindingId,
+                    onFindingClick = onFindingClick,
                 )
             } else {
                 FloorPlanPlaceholder(

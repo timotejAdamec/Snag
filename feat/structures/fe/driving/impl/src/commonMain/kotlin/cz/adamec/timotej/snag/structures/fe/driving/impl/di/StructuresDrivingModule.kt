@@ -19,6 +19,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation3.scene.DialogSceneStrategy
 import cz.adamec.timotej.snag.feat.findings.fe.driving.api.FindingDetailRoute
+import cz.adamec.timotej.snag.feat.findings.fe.driving.api.FindingDetailRouteFactory
 import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureCreationRoute
 import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureDetailBackStack
 import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureDetailNavRoute
@@ -88,6 +89,18 @@ internal inline fun <reified T : StructureFloorPlanRoute> Module.structureFloorP
             onEditClick = {
                 val rootBackStack = get<SnagBackStack>()
                 rootBackStack.value.add(structureEditRouteFactory.create(route.structureId))
+            },
+            onFindingClick = { findingId ->
+                val factory = get<FindingDetailRouteFactory>()
+                if (structureDetailBackStack.value.lastOrNull() is FindingDetailRoute) {
+                    structureDetailBackStack.removeLastSafely()
+                }
+                structureDetailBackStack.value.add(
+                    factory.create(
+                        structureId = route.structureId,
+                        findingId = findingId,
+                    ),
+                )
             },
         )
     }
