@@ -12,25 +12,48 @@
 
 package cz.adamec.timotej.snag.network.fe.internal
 
-import kotlinx.browser.window
-import org.w3c.dom.events.Event
+import kotlin.js.JsAny
 
-internal actual fun isNavigatorOnline(): Boolean = window.navigator.onLine
+@JsFun("() => globalThis.navigator.onLine")
+private external fun jsIsNavigatorOnline(): Boolean
+
+@JsFun(
+    """
+    (onOnline, onOffline) => {
+        const onlineHandler = () => onOnline();
+        const offlineHandler = () => onOffline();
+        globalThis.addEventListener('online', onlineHandler);
+        globalThis.addEventListener('offline', offlineHandler);
+        return { onlineHandler, offlineHandler };
+    }
+    """,
+)
+private external fun jsAddConnectivityListeners(
+    onOnline: () -> Unit,
+    onOffline: () -> Unit,
+): JsAny
+
+@JsFun(
+    """
+    (handlers) => {
+        globalThis.removeEventListener('online', handlers.onlineHandler);
+        globalThis.removeEventListener('offline', handlers.offlineHandler);
+    }
+    """,
+)
+private external fun jsRemoveConnectivityListeners(handlers: JsAny)
+
+internal actual fun isNavigatorOnline(): Boolean = jsIsNavigatorOnline()
 
 internal actual fun observeConnectivityChanges(
     onOnline: () -> Unit,
     onOffline: () -> Unit,
 ): ConnectivityEventRegistration {
-    val onlineHandler: (Event) -> Unit = { onOnline() }
-    val offlineHandler: (Event) -> Unit = { onOffline() }
-
-    window.addEventListener("online", onlineHandler)
-    window.addEventListener("offline", offlineHandler)
+    val handlers = jsAddConnectivityListeners(onOnline, onOffline)
 
     return object : ConnectivityEventRegistration {
         override fun unregister() {
-            window.removeEventListener("online", onlineHandler)
-            window.removeEventListener("offline", offlineHandler)
+            jsRemoveConnectivityListeners(handlers)
         }
     }
 }
