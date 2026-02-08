@@ -41,7 +41,7 @@ import snag.lib.design.fe.generated.resources.ic_close
 import snag.lib.design.fe.generated.resources.save
 import snag.lib.design.fe.generated.resources.Res as DesignRes
 
-private val HorizontalPadding = 12.dp
+private val HorizontalPadding = 16.dp
 
 @Suppress("LongMethod")
 @Composable

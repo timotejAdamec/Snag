@@ -44,7 +44,7 @@ import snag.lib.design.fe.generated.resources.save
 import kotlin.uuid.Uuid
 import snag.lib.design.fe.generated.resources.Res as DesignRes
 
-private val HorizontalPadding = 12.dp
+private val HorizontalPadding = 16.dp
 
 @Suppress("LongMethod")
 @Composable
