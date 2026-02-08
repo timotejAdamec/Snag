@@ -19,12 +19,11 @@ import cz.adamec.timotej.snag.structures.be.ports.StructuresDb
 import kotlin.uuid.Uuid
 import kotlin.uuid.toJavaUuid
 import kotlin.uuid.toKotlinUuid
-import org.jetbrains.exposed.sql.Database
-
-import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.or
-import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.v1.core.and
+import org.jetbrains.exposed.v1.core.or
+import org.jetbrains.exposed.v1.jdbc.Database
+import org.jetbrains.exposed.v1.jdbc.SchemaUtils
+import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 
 internal class ExposedStructuresDb(
     private val database: Database,

@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.structures.be.driven.impl.internal
 
-import org.jetbrains.exposed.dao.id.UuidTable
+import org.jetbrains.exposed.v1.core.dao.id.UuidTable
 
 internal object StructuresTable : UuidTable("structures") {
     val projectId = uuid("project_id")

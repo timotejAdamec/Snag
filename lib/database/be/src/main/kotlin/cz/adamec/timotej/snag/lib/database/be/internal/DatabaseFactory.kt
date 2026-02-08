@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.lib.database.be.internal
 
-import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.v1.jdbc.Database
 
 internal object DatabaseFactory {
     fun create(): Database =

@@ -13,9 +13,9 @@
 package cz.adamec.timotej.snag.projects.be.driven.impl.internal
 
 import kotlin.uuid.Uuid
-import org.jetbrains.exposed.dao.UuidEntity
-import org.jetbrains.exposed.dao.UuidEntityClass
-import org.jetbrains.exposed.dao.id.EntityID
+import org.jetbrains.exposed.v1.core.dao.id.EntityID
+import org.jetbrains.exposed.v1.dao.UuidEntity
+import org.jetbrains.exposed.v1.dao.UuidEntityClass
 
 internal class ProjectEntity(id: EntityID<Uuid>) : UuidEntity(id) {
     companion object : UuidEntityClass<ProjectEntity>(ProjectsTable)

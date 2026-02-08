@@ -17,10 +17,10 @@ import cz.adamec.timotej.snag.projects.be.model.BackendProject
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
 import cz.adamec.timotej.snag.projects.business.Project
 import kotlin.uuid.Uuid
-import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.or
-import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.v1.core.or
+import org.jetbrains.exposed.v1.jdbc.Database
+import org.jetbrains.exposed.v1.jdbc.SchemaUtils
+import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 
 internal class ExposedProjectsDb(
     private val database: Database,

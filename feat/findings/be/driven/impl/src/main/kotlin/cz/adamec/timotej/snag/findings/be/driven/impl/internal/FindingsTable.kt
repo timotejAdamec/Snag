@@ -12,8 +12,8 @@
 
 package cz.adamec.timotej.snag.findings.be.driven.impl.internal
 
-import org.jetbrains.exposed.dao.id.IntIdTable
-import org.jetbrains.exposed.dao.id.UuidTable
+import org.jetbrains.exposed.v1.core.dao.id.IntIdTable
+import org.jetbrains.exposed.v1.core.dao.id.UuidTable
 
 internal object FindingsTable : UuidTable("findings") {
     val structureId = uuid("structure_id")
