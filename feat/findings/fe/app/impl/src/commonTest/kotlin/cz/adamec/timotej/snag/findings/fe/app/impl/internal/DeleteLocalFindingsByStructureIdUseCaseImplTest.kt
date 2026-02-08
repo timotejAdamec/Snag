@@ -44,6 +44,9 @@ class DeleteLocalFindingsByStructureIdUseCaseImplTest : FrontendKoinInitializedT
 
     private val useCase: DeleteLocalFindingsByStructureIdUseCase by inject()
 
+    private val structureId1 = Uuid.parse("00000000-0000-0000-0000-000000000001")
+    private val structureId2 = Uuid.parse("00000000-0000-0000-0000-000000000002")
+
     override fun additionalKoinModules(): List<Module> =
         listOf(
             module {
@@ -53,9 +56,6 @@ class DeleteLocalFindingsByStructureIdUseCaseImplTest : FrontendKoinInitializedT
                 singleOf(::FakeFindingsPullSyncTimestampDataSource) bind FindingsPullSyncTimestampDataSource::class
             },
         )
-
-    private val structureId1 = Uuid.parse("00000000-0000-0000-0000-000000000001")
-    private val structureId2 = Uuid.parse("00000000-0000-0000-0000-000000000002")
 
     private fun createFinding(id: Uuid, structureId: Uuid) = FrontendFinding(
         finding = Finding(

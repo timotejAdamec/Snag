@@ -35,10 +35,11 @@ class GetProjectUseCaseImpl(
     override operator fun invoke(projectId: Uuid): Flow<OfflineFirstDataResult<FrontendProject?>> {
         applicationScope.launch {
             when (val remoteProjectResult = projectsApi.getProject(projectId)) {
-                is OnlineDataResult.Failure ->
+                is OnlineDataResult.Failure -> {
                     logger.w(
                         "Error fetching project $projectId, not updating local DB.",
                     )
+                }
                 is OnlineDataResult.Success -> {
                     logger.d {
                         "Fetched project $projectId from API." +

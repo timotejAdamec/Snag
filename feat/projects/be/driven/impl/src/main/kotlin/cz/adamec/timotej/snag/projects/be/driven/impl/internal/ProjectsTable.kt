@@ -14,9 +14,11 @@ package cz.adamec.timotej.snag.projects.be.driven.impl.internal
 
 import org.jetbrains.exposed.v1.core.dao.id.UuidTable
 
+private const val VARCHAR_MAX_LENGTH = 255
+
 internal object ProjectsTable : UuidTable("projects") {
-    val name = varchar("name", 255)
-    val address = varchar("address", 255)
+    val name = varchar("name", VARCHAR_MAX_LENGTH)
+    val address = varchar("address", VARCHAR_MAX_LENGTH)
     val updatedAt = long("updated_at")
     val deletedAt = long("deleted_at").nullable()
 }

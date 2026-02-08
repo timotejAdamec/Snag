@@ -90,6 +90,7 @@ internal fun StructureFloorPlanContent(
     }
 }
 
+@Suppress("LongMethod")
 @Composable
 private fun LoadedStructureDetailsContent(
     state: StructureDetailsUiState,

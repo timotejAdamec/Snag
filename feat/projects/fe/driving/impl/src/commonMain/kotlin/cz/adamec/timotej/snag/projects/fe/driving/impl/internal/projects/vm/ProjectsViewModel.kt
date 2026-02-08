@@ -52,13 +52,14 @@ internal class ProjectsViewModel(
                         errorEventsChannel.send(UiError.Unknown)
                     }
 
-                    is OfflineFirstDataResult.Success ->
+                    is OfflineFirstDataResult.Success -> {
                         _state.update {
                             it.copy(
                                 projects = projectsDataResult.data.toPersistentList(),
                                 isLoading = false,
                             )
                         }
+                    }
                 }
             }.launchIn(viewModelScope)
 }

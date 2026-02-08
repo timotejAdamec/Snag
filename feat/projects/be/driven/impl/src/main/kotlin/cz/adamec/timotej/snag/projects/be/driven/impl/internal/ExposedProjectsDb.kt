@@ -41,7 +41,7 @@ internal class ExposedProjectsDb(
             ProjectEntity.findById(id)?.toModel()
         }
 
-    @Suppress("ReturnCount")
+    @Suppress("ReturnCount", "LabeledExpression")
     override suspend fun updateProject(project: BackendProject): BackendProject? =
         transaction(database) {
             val existing = ProjectEntity.findById(project.project.id)
@@ -70,7 +70,7 @@ internal class ExposedProjectsDb(
             null
         }
 
-    @Suppress("ReturnCount")
+    @Suppress("ReturnCount", "LabeledExpression")
     override suspend fun deleteProject(
         id: Uuid,
         deletedAt: Timestamp,
@@ -91,6 +91,7 @@ internal class ExposedProjectsDb(
 
     override suspend fun getProjectsModifiedSince(since: Timestamp): List<BackendProject> =
         transaction(database) {
+            @Suppress("UnnecessaryParentheses")
             ProjectEntity.find {
                 (ProjectsTable.updatedAt greater since.value) or
                     (ProjectsTable.deletedAt greater since.value)

@@ -34,15 +34,15 @@ class GetFindingsModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
     private val dataSource: FakeFindingsDb by inject()
     private val useCase: GetFindingsModifiedSinceUseCase by inject()
 
+    private val structureId = Uuid.parse("00000000-0000-0000-0001-000000000001")
+    private val otherStructureId = Uuid.parse("00000000-0000-0000-0001-000000000002")
+
     override fun additionalKoinModules(): List<Module> =
         listOf(
             module {
                 singleOf(::FakeFindingsDb) bind FindingsDb::class
             },
         )
-
-    private val structureId = Uuid.parse("00000000-0000-0000-0001-000000000001")
-    private val otherStructureId = Uuid.parse("00000000-0000-0000-0001-000000000002")
 
     @Test
     fun `returns empty list when no findings exist`() =

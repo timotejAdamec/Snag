@@ -65,7 +65,7 @@ internal class FindingDetailsEditViewModel(
                     is OfflineFirstDataResult.ProgrammerError -> {
                         errorEventsChannel.send(Unknown)
                     }
-                    is OfflineFirstDataResult.Success ->
+                    is OfflineFirstDataResult.Success -> {
                         result.data?.let { data ->
                             _state.update {
                                 it.copy(
@@ -75,6 +75,7 @@ internal class FindingDetailsEditViewModel(
                             }
                             cancel()
                         }
+                    }
                 }
             }
         }
@@ -91,14 +92,13 @@ internal class FindingDetailsEditViewModel(
         viewModelScope.launch {
             if (state.value.findingName.isBlank()) {
                 errorEventsChannel.send(CustomUserMessage("Finding name cannot be empty"))
-                return@launch
-            }
-
-            val currentFindingId = findingId
-            if (currentFindingId != null) {
-                editFinding(currentFindingId)
             } else {
-                createFinding()
+                val currentFindingId = findingId
+                if (currentFindingId != null) {
+                    editFinding(currentFindingId)
+                } else {
+                    createFinding()
+                }
             }
         }
 

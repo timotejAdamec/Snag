@@ -10,6 +10,8 @@
  * Department of Software Engineering
  */
 
+@file:Suppress("MatchingDeclarationName")
+
 package cz.adamec.timotej.snag.findings.fe.driven.internal.db
 
 import cz.adamec.timotej.snag.feat.findings.business.Finding

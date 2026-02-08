@@ -10,6 +10,7 @@
  * Department of Software Engineering
  */
 
+@file:Suppress("TrimMultilineRawString")
 @file:OptIn(ExperimentalWasmJsInterop::class)
 
 package cz.adamec.timotej.snag.network.fe.internal

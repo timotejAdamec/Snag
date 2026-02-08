@@ -66,6 +66,9 @@ class PullProjectChangesUseCaseImplTest : FrontendKoinInitializedTest() {
 
     private val useCase: PullProjectChangesUseCase by inject()
 
+    private val projectId = Uuid.parse("00000000-0000-0000-0000-000000000001")
+    private val structureId = Uuid.parse("00000000-0000-0000-0001-000000000001")
+
     override fun additionalKoinModules(): List<Module> =
         listOf(
             module {
@@ -81,9 +84,6 @@ class PullProjectChangesUseCaseImplTest : FrontendKoinInitializedTest() {
                 singleOf(::FakeFindingsDb) bind FindingsDb::class
             },
         )
-
-    private val projectId = Uuid.parse("00000000-0000-0000-0000-000000000001")
-    private val structureId = Uuid.parse("00000000-0000-0000-0001-000000000001")
 
     private fun createProject(id: Uuid) = FrontendProject(
         project = Project(

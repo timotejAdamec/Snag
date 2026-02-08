@@ -42,6 +42,8 @@ class SaveNewFindingUseCaseImplTest : FrontendKoinInitializedTest() {
 
     private val useCase: SaveNewFindingUseCase by inject()
 
+    private val structureId = Uuid.parse("00000000-0000-0000-0000-000000000001")
+
     override fun additionalKoinModules(): List<Module> =
         listOf(
             module {
@@ -49,8 +51,6 @@ class SaveNewFindingUseCaseImplTest : FrontendKoinInitializedTest() {
                 singleOf(::FakeFindingsSync) bind FindingsSync::class
             },
         )
-
-    private val structureId = Uuid.parse("00000000-0000-0000-0000-000000000001")
 
     @Test
     fun `saves finding and enqueues sync`() = runTest(testDispatcher) {

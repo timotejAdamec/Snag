@@ -49,6 +49,7 @@ import snag.lib.design.fe.generated.resources.ic_delete
 import snag.lib.design.fe.generated.resources.ic_edit
 import snag.lib.design.fe.generated.resources.Res as DesignRes
 
+@Suppress("LongMethod")
 @Composable
 internal fun FindingDetailContent(
     state: FindingDetailUiState,

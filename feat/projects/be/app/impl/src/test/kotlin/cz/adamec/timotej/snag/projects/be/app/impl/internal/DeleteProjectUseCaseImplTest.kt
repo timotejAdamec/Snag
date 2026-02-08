@@ -36,14 +36,8 @@ class DeleteProjectUseCaseImplTest : BackendKoinInitializedTest() {
     private val dataSource: FakeProjectsDb by inject()
     private val useCase: DeleteProjectUseCase by inject()
 
-    override fun additionalKoinModules(): List<Module> =
-        listOf(
-            module {
-                singleOf(::FakeProjectsDb) bind ProjectsDb::class
-            },
-        )
-
     private val projectId = Uuid.parse("00000000-0000-0000-0000-000000000001")
+
     private val project =
         BackendProject(
             project = Project(
@@ -52,6 +46,13 @@ class DeleteProjectUseCaseImplTest : BackendKoinInitializedTest() {
                 address = "Test Address",
                 updatedAt = Timestamp(10L),
             ),
+        )
+
+    override fun additionalKoinModules(): List<Module> =
+        listOf(
+            module {
+                singleOf(::FakeProjectsDb) bind ProjectsDb::class
+            },
         )
 
     @Test

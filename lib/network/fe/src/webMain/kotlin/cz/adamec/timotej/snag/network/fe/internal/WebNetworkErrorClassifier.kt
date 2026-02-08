@@ -20,5 +20,5 @@ package cz.adamec.timotej.snag.network.fe.internal
 internal class WebNetworkErrorClassifier : DefaultNetworkErrorClassifier() {
     override fun isNetworkUnavailableError(cause: Throwable): Boolean =
         super.isNetworkUnavailableError(cause) ||
-            (cause is Error && cause.message == "Fail to fetch")
+            cause is Error && cause.message == "Fail to fetch"
 }

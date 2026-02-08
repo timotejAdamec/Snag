@@ -10,6 +10,8 @@
  * Department of Software Engineering
  */
 
+@file:Suppress("UnnecessaryFullyQualifiedName")
+
 package cz.adamec.timotej.snag.lib.design.fe.scenes
 
 import androidx.compose.foundation.layout.Column
@@ -34,6 +36,7 @@ import androidx.window.core.layout.WindowSizeClass.Companion.WIDTH_DP_EXPANDED_L
 import androidx.window.core.layout.WindowSizeClass.Companion.WIDTH_DP_MEDIUM_LOWER_BOUND
 
 class MapListDetailSceneStrategy<T : Any> : SceneStrategy<T> {
+    @Suppress("ReturnCount")
     override fun SceneStrategyScope<T>.calculateScene(entries: List<NavEntry<T>>): Scene<T>? {
         val mapEntry =
             entries.findLast {
@@ -48,7 +51,7 @@ class MapListDetailSceneStrategy<T : Any> : SceneStrategy<T> {
                 it.metadata.containsKey(MapListDetailSceneMetadata.DETAIL_KEY)
             }
 
-        if (mapEntry == null || (listEntry == null && detailEntry == null)) return null
+        if (mapEntry == null || listEntry == null && detailEntry == null) return null
 
         val firstFindingsIndex =
             entries.indexOfFirst {
@@ -75,6 +78,9 @@ class MapListDetailSceneStrategy<T : Any> : SceneStrategy<T> {
     }
 }
 
+private const val HALF_WEIGHT = 0.5f
+private const val QUARTER_WEIGHT = 0.25f
+
 private class AdaptiveMapListDetailScene<T : Any>(
     override val key: Any,
     override val entries: List<NavEntry<T>>,
@@ -95,13 +101,13 @@ private class AdaptiveMapListDetailScene<T : Any>(
         when {
             isExpanded && listEntry != null && detailEntry != null -> {
                 Row(modifier = Modifier.fillMaxSize()) {
-                    Column(modifier = Modifier.weight(0.5f)) {
+                    Column(modifier = Modifier.weight(HALF_WEIGHT)) {
                         hostPane(hostEntry)
                     }
-                    Column(modifier = Modifier.weight(0.25f)) {
+                    Column(modifier = Modifier.weight(QUARTER_WEIGHT)) {
                         listEntry.Content()
                     }
-                    Column(modifier = Modifier.weight(0.25f)) {
+                    Column(modifier = Modifier.weight(QUARTER_WEIGHT)) {
                         detailEntry.Content()
                     }
                 }
@@ -109,10 +115,10 @@ private class AdaptiveMapListDetailScene<T : Any>(
 
             isAtLeastMedium -> {
                 Row(modifier = Modifier.fillMaxSize()) {
-                    Column(modifier = Modifier.weight(0.5f)) {
+                    Column(modifier = Modifier.weight(HALF_WEIGHT)) {
                         hostPane(hostEntry)
                     }
-                    Column(modifier = Modifier.weight(0.5f)) {
+                    Column(modifier = Modifier.weight(HALF_WEIGHT)) {
                         if (detailEntry != null) {
                             detailEntry.Content()
                         } else {

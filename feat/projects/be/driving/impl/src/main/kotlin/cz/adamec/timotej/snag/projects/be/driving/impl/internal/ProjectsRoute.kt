@@ -32,7 +32,7 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.put
 import io.ktor.server.routing.route
 
-@Suppress("LabeledExpression")
+@Suppress("LabeledExpression", "StringLiteralDuplication")
 internal class ProjectsRoute(
     private val getProjectsUseCase: GetProjectsUseCase,
     private val getProjectsModifiedSinceUseCase: GetProjectsModifiedSinceUseCase,

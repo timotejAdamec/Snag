@@ -49,6 +49,16 @@ class CascadeDeleteLocalStructuresByProjectIdUseCaseImplTest : FrontendKoinIniti
 
     private val useCase: CascadeDeleteLocalStructuresByProjectIdUseCase by inject()
 
+    private val projectId1 = Uuid.parse("00000000-0000-0000-0000-000000000001")
+    private val projectId2 = Uuid.parse("00000000-0000-0000-0000-000000000002")
+
+    private val structureId1 = Uuid.parse("00000000-0000-0000-0001-000000000001")
+    private val structureId2 = Uuid.parse("00000000-0000-0000-0001-000000000002")
+    private val structureId3 = Uuid.parse("00000000-0000-0000-0001-000000000003")
+
+    private val findingId1 = Uuid.parse("00000000-0000-0000-0002-000000000001")
+    private val findingId2 = Uuid.parse("00000000-0000-0000-0002-000000000002")
+
     override fun additionalKoinModules(): List<Module> =
         listOf(
             module {
@@ -59,16 +69,6 @@ class CascadeDeleteLocalStructuresByProjectIdUseCaseImplTest : FrontendKoinIniti
                 singleOf(::FakeFindingsDb) bind FindingsDb::class
             },
         )
-
-    private val projectId1 = Uuid.parse("00000000-0000-0000-0000-000000000001")
-    private val projectId2 = Uuid.parse("00000000-0000-0000-0000-000000000002")
-
-    private val structureId1 = Uuid.parse("00000000-0000-0000-0001-000000000001")
-    private val structureId2 = Uuid.parse("00000000-0000-0000-0001-000000000002")
-    private val structureId3 = Uuid.parse("00000000-0000-0000-0001-000000000003")
-
-    private val findingId1 = Uuid.parse("00000000-0000-0000-0002-000000000001")
-    private val findingId2 = Uuid.parse("00000000-0000-0000-0002-000000000002")
 
     private fun createStructure(id: Uuid, projectId: Uuid) = FrontendStructure(
         structure = Structure(

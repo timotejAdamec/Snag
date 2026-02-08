@@ -23,6 +23,7 @@ class FakeProjectsApi : ProjectsApi {
     private val projects = mutableMapOf<Uuid, FrontendProject>()
     var forcedFailure: OnlineDataResult.Failure? = null
     var saveProjectResponseOverride: ((FrontendProject) -> OnlineDataResult<FrontendProject?>)? = null
+    var modifiedSinceResults: List<ProjectSyncResult> = emptyList()
 
     override suspend fun getProjects(): OnlineDataResult<List<FrontendProject>> {
         val failure = forcedFailure
@@ -33,17 +34,20 @@ class FakeProjectsApi : ProjectsApi {
     override suspend fun getProject(id: Uuid): OnlineDataResult<FrontendProject> {
         val failure = forcedFailure
         if (failure != null) return failure
-        val project = projects[id] ?: return OnlineDataResult.Failure.ProgrammerError(Exception("Not found"))
-        return OnlineDataResult.Success(project)
+        return projects[id]?.let { OnlineDataResult.Success(it) }
+            ?: OnlineDataResult.Failure.ProgrammerError(Exception("Not found"))
     }
 
     override suspend fun saveProject(project: FrontendProject): OnlineDataResult<FrontendProject?> {
         val failure = forcedFailure
         if (failure != null) return failure
         val override = saveProjectResponseOverride
-        if (override != null) return override(project)
-        projects[project.project.id] = project
-        return OnlineDataResult.Success(project)
+        return if (override != null) {
+            override(project)
+        } else {
+            projects[project.project.id] = project
+            OnlineDataResult.Success(project)
+        }
     }
 
     override suspend fun deleteProject(id: Uuid, deletedAt: Timestamp): OnlineDataResult<Unit> {
@@ -52,8 +56,6 @@ class FakeProjectsApi : ProjectsApi {
         projects.remove(id)
         return OnlineDataResult.Success(Unit)
     }
-
-    var modifiedSinceResults: List<ProjectSyncResult> = emptyList()
 
     override suspend fun getProjectsModifiedSince(since: Timestamp): OnlineDataResult<List<ProjectSyncResult>> {
         val failure = forcedFailure

@@ -23,6 +23,7 @@ class FakeStructuresApi : StructuresApi {
     private val structures = mutableMapOf<Uuid, FrontendStructure>()
     var forcedFailure: OnlineDataResult.Failure? = null
     var saveStructureResponseOverride: ((FrontendStructure) -> OnlineDataResult<FrontendStructure?>)? = null
+    var modifiedSinceResults: List<StructureSyncResult> = emptyList()
 
     override suspend fun getStructures(projectId: Uuid): OnlineDataResult<List<FrontendStructure>> {
         val failure = forcedFailure
@@ -41,16 +42,17 @@ class FakeStructuresApi : StructuresApi {
         val failure = forcedFailure
         if (failure != null) return failure
         val override = saveStructureResponseOverride
-        if (override != null) return override(frontendStructure)
-        structures[frontendStructure.structure.id] = frontendStructure
-        return OnlineDataResult.Success(frontendStructure)
+        return if (override != null) {
+            override(frontendStructure)
+        } else {
+            structures[frontendStructure.structure.id] = frontendStructure
+            OnlineDataResult.Success(frontendStructure)
+        }
     }
 
     fun setStructure(structure: FrontendStructure) {
         structures[structure.structure.id] = structure
     }
-
-    var modifiedSinceResults: List<StructureSyncResult> = emptyList()
 
     override suspend fun getStructuresModifiedSince(projectId: Uuid, since: Timestamp): OnlineDataResult<List<StructureSyncResult>> {
         val failure = forcedFailure

@@ -58,6 +58,10 @@ class PullStructureChangesUseCaseImplTest : FrontendKoinInitializedTest() {
 
     private val useCase: PullStructureChangesUseCase by inject()
 
+    private val projectId = Uuid.parse("00000000-0000-0000-0000-000000000001")
+    private val structureId = Uuid.parse("00000000-0000-0000-0001-000000000001")
+    private val findingId = Uuid.parse("00000000-0000-0000-0002-000000000001")
+
     override fun additionalKoinModules(): List<Module> =
         listOf(
             module {
@@ -69,10 +73,6 @@ class PullStructureChangesUseCaseImplTest : FrontendKoinInitializedTest() {
                 singleOf(::FakeFindingsDb) bind FindingsDb::class
             },
         )
-
-    private val projectId = Uuid.parse("00000000-0000-0000-0000-000000000001")
-    private val structureId = Uuid.parse("00000000-0000-0000-0001-000000000001")
-    private val findingId = Uuid.parse("00000000-0000-0000-0002-000000000001")
 
     private fun createStructure(id: Uuid) = FrontendStructure(
         structure = Structure(

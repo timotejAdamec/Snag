@@ -62,7 +62,7 @@ internal class ProjectDetailsViewModel(
                         }
                         errorEventsChannel.send(UiError.Unknown)
                     }
-                    is OfflineFirstDataResult.Success ->
+                    is OfflineFirstDataResult.Success -> {
                         result.data?.let { project ->
                             _state.update {
                                 it.copy(
@@ -79,6 +79,7 @@ internal class ProjectDetailsViewModel(
                         } else {
                             // keep as deleted
                         }
+                    }
                 }
             }
         }

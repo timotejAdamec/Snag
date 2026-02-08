@@ -40,7 +40,7 @@ internal class ExposedStructuresDb(
             }.map { it.toModel() }
         }
 
-    @Suppress("ReturnCount")
+    @Suppress("ReturnCount", "LabeledExpression")
     override suspend fun saveStructure(backendStructure: BackendStructure): BackendStructure? =
         transaction(database) {
             val existing =
@@ -72,7 +72,7 @@ internal class ExposedStructuresDb(
             null
         }
 
-    @Suppress("ReturnCount")
+    @Suppress("ReturnCount", "LabeledExpression")
     override suspend fun deleteStructure(
         id: Uuid,
         deletedAt: Timestamp,
@@ -96,6 +96,7 @@ internal class ExposedStructuresDb(
         since: Timestamp,
     ): List<BackendStructure> =
         transaction(database) {
+            @Suppress("UnnecessaryParentheses")
             StructureEntity.find {
                 (StructuresTable.projectId eq projectId) and
                     (
