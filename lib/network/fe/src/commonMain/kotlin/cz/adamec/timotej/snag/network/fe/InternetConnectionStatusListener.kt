@@ -14,6 +14,6 @@ package cz.adamec.timotej.snag.network.fe
 
 import kotlinx.coroutines.flow.Flow
 
-interface ConnectionStatusListener {
+interface InternetConnectionStatusListener {
     fun isConnectedFlow(): Flow<Boolean>
 }

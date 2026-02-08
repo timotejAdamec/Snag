@@ -20,7 +20,7 @@ import cz.adamec.timotej.snag.feat.shared.database.fe.db.ProjectEntityQueries
 import cz.adamec.timotej.snag.lib.core.common.ApplicationScope
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.database.fe.safeDbWrite
-import cz.adamec.timotej.snag.network.fe.ConnectionStatusListener
+import cz.adamec.timotej.snag.network.fe.InternetConnectionStatusListener
 import cz.adamec.timotej.snag.projects.fe.driven.internal.LH
 import cz.adamec.timotej.snag.projects.fe.model.FrontendProject
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsDb
@@ -36,7 +36,7 @@ internal class RealProjectsDb(
     private val projectEntityQueries: ProjectEntityQueries,
     private val ioDispatcher: CoroutineDispatcher,
     private val applicationScope: ApplicationScope,
-    private val internetConnectionStatusListener: ConnectionStatusListener,
+    private val internetConnectionStatusListener: InternetConnectionStatusListener,
 ) : ProjectsDb {
     override fun getAllProjectsFlow(): Flow<OfflineFirstDataResult<List<FrontendProject>>> =
         projectEntityQueries

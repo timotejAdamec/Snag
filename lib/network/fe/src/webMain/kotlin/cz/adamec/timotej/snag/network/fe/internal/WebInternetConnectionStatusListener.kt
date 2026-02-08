@@ -12,15 +12,15 @@
 
 package cz.adamec.timotej.snag.network.fe.internal
 
-import cz.adamec.timotej.snag.network.fe.ConnectionStatusListener
+import cz.adamec.timotej.snag.network.fe.InternetConnectionStatusListener
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.onEach
 
-internal class WebConnectionStatusListener(
+internal class WebInternetConnectionStatusListener(
     private val provider: BrowserConnectivityProvider,
-) : ConnectionStatusListener {
+) : InternetConnectionStatusListener {
     override fun isConnectedFlow(): Flow<Boolean> =
         callbackFlow {
             trySend(provider.isOnline())
