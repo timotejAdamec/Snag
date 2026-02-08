@@ -15,14 +15,14 @@ package cz.adamec.timotej.snag.structures.be.app.impl.internal
 import cz.adamec.timotej.snag.feat.structures.be.model.BackendStructure
 import cz.adamec.timotej.snag.structures.be.app.api.SaveStructureUseCase
 import cz.adamec.timotej.snag.structures.be.app.impl.internal.LH.logger
-import cz.adamec.timotej.snag.structures.be.ports.StructuresLocalDataSource
+import cz.adamec.timotej.snag.structures.be.ports.StructuresDb
 
 internal class SaveStructureUseCaseImpl(
-    private val structuresLocalDataSource: StructuresLocalDataSource,
+    private val structuresDb: StructuresDb,
 ) : SaveStructureUseCase {
     override suspend operator fun invoke(backendStructure: BackendStructure): BackendStructure? {
         logger.debug("Saving structure {} to local storage.", backendStructure)
-        return structuresLocalDataSource.saveStructure(backendStructure).also {
+        return structuresDb.saveStructure(backendStructure).also {
             logger.debug("Saved structure {} to local storage.", backendStructure)
         }
     }

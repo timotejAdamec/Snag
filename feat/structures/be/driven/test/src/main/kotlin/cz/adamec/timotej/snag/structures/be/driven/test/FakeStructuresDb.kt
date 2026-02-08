@@ -14,10 +14,10 @@ package cz.adamec.timotej.snag.structures.be.driven.test
 
 import cz.adamec.timotej.snag.feat.structures.be.model.BackendStructure
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
-import cz.adamec.timotej.snag.structures.be.ports.StructuresLocalDataSource
+import cz.adamec.timotej.snag.structures.be.ports.StructuresDb
 import kotlin.uuid.Uuid
 
-class FakeStructuresLocalDataSource : StructuresLocalDataSource {
+class FakeStructuresDb : StructuresDb {
     private val structures = mutableListOf<BackendStructure>()
 
     override suspend fun getStructures(projectId: Uuid): List<BackendStructure> = structures.filter { it.structure.projectId == projectId }

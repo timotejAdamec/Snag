@@ -15,14 +15,14 @@ package cz.adamec.timotej.snag.projects.be.app.impl.internal
 import cz.adamec.timotej.snag.projects.be.app.api.SaveProjectUseCase
 import cz.adamec.timotej.snag.projects.be.app.impl.internal.LH.logger
 import cz.adamec.timotej.snag.projects.be.model.BackendProject
-import cz.adamec.timotej.snag.projects.be.ports.ProjectsLocalDataSource
+import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
 
 internal class SaveProjectUseCaseImpl(
-    private val projectsLocalDataSource: ProjectsLocalDataSource,
+    private val projectsDb: ProjectsDb,
 ) : SaveProjectUseCase {
     override suspend operator fun invoke(project: BackendProject): BackendProject? {
         logger.debug("Saving project {} to local storage.", project)
-        return projectsLocalDataSource.updateProject(project).also {
+        return projectsDb.updateProject(project).also {
             logger.debug("Saved project {} to local storage.", project)
         }
     }

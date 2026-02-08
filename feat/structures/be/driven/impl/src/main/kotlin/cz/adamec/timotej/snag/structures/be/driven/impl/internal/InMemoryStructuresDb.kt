@@ -16,12 +16,12 @@ import cz.adamec.timotej.snag.feat.structures.be.model.BackendStructure
 import cz.adamec.timotej.snag.feat.structures.business.Structure
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.common.TimestampProvider
-import cz.adamec.timotej.snag.structures.be.ports.StructuresLocalDataSource
+import cz.adamec.timotej.snag.structures.be.ports.StructuresDb
 import kotlin.uuid.Uuid
 
-internal class InMemoryStructuresLocalDataSource(
+internal class InMemoryStructuresDb(
     timestampProvider: TimestampProvider,
-) : StructuresLocalDataSource {
+) : StructuresDb {
     private val structures =
         mutableListOf(
             BackendStructure(

@@ -40,7 +40,7 @@ feat/<feature>/
     │   ├── contract/        → snagContractDrivingBackendMultiplatformModule
     │   └── impl/            → snagImplDrivingBackendModule
     └── driven/
-        ├── impl/            → snagBackendModule
+        ├── impl/            → snagDrivenBackendModule
         └── test/            → snagBackendModule
 ```
 
@@ -57,6 +57,7 @@ snagMultiplatformModule
 └── snagContractDrivingBackendMultiplatformModule (+ Serialization)
 
 snagBackendModule
+├── snagDrivenBackendModule                        (+ Exposed, DB)
 └── snagImplDrivingBackendModule                  (+ Ktor server)
 ```
 

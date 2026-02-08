@@ -10,24 +10,24 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.findings.be.ports
+package cz.adamec.timotej.snag.structures.be.ports
 
-import cz.adamec.timotej.snag.feat.findings.be.model.BackendFinding
+import cz.adamec.timotej.snag.feat.structures.be.model.BackendStructure
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import kotlin.uuid.Uuid
 
-interface FindingsLocalDataSource {
-    suspend fun getFindings(structureId: Uuid): List<BackendFinding>
+interface StructuresDb {
+    suspend fun getStructures(projectId: Uuid): List<BackendStructure>
 
-    suspend fun updateFinding(finding: BackendFinding): BackendFinding?
+    suspend fun saveStructure(backendStructure: BackendStructure): BackendStructure?
 
-    suspend fun deleteFinding(
+    suspend fun deleteStructure(
         id: Uuid,
         deletedAt: Timestamp,
-    ): BackendFinding?
+    ): BackendStructure?
 
-    suspend fun getFindingsModifiedSince(
-        structureId: Uuid,
+    suspend fun getStructuresModifiedSince(
+        projectId: Uuid,
         since: Timestamp,
-    ): List<BackendFinding>
+    ): List<BackendStructure>
 }

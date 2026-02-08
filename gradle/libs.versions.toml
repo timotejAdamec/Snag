@@ -39,6 +39,8 @@ ktlint = "14.0.1"
 compose-rules = "0.5.6"
 ksp = "2.3.4"
 turbine = "1.2.0"
+exposed = "1.0.0"
+h2 = "2.4.240"
 konnection = "1.4.5"
 
 [libraries]
@@ -140,6 +142,10 @@ compose-rules-ktlint = { group = "io.nlopez.compose.rules", name = "ktlint", ver
 
 turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 
+exposed-core = { module = "org.jetbrains.exposed:exposed-core", version.ref = "exposed" }
+exposed-dao = { module = "org.jetbrains.exposed:exposed-dao", version.ref = "exposed" }
+exposed-jdbc = { module = "org.jetbrains.exposed:exposed-jdbc", version.ref = "exposed" }
+h2 = { module = "com.h2database:h2", version.ref = "h2" }
 konnection = { module = "dev.tmapps:konnection", version.ref = "konnection" }
 
 [plugins]
@@ -149,6 +155,7 @@ snagDrivingFrontendMultiplatformModule = { id = "libs.plugins.snag.driving.front
 snagNetworkFrontendMultiplatformModule = { id = "libs.plugins.snag.network.frontend.multiplatform.module" }
 snagDrivenFrontendMultiplatformModule = { id = "libs.plugins.snag.driven.frontend.multiplatform.module" }
 snagBackendModule = { id = "libs.plugins.snag.backend.module" }
+snagDrivenBackendModule = { id = "libs.plugins.snag.driven.backend.module" }
 snagImplDrivingBackendModule = { id = "libs.plugins.snag.impl.driving.backend.module" }
 snagContractDrivingBackendMultiplatformModule = { id = "libs.plugins.snag.contract.driving.backend.multiplatform.module" }
 

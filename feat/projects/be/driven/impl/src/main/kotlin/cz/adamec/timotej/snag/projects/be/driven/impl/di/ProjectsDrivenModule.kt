@@ -12,13 +12,13 @@
 
 package cz.adamec.timotej.snag.projects.be.driven.impl.di
 
-import cz.adamec.timotej.snag.projects.be.driven.impl.internal.InMemoryProjectsLocalDataSource
-import cz.adamec.timotej.snag.projects.be.ports.ProjectsLocalDataSource
+import cz.adamec.timotej.snag.projects.be.driven.impl.internal.ExposedProjectsDb
+import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
 val projectsDrivenModule =
     module {
-        singleOf(::InMemoryProjectsLocalDataSource) bind ProjectsLocalDataSource::class
+        singleOf(::ExposedProjectsDb) bind ProjectsDb::class
     }

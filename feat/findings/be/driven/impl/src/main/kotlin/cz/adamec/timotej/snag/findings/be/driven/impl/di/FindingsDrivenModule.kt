@@ -12,13 +12,13 @@
 
 package cz.adamec.timotej.snag.findings.be.driven.impl.di
 
-import cz.adamec.timotej.snag.findings.be.driven.impl.internal.InMemoryFindingsLocalDataSource
-import cz.adamec.timotej.snag.findings.be.ports.FindingsLocalDataSource
+import cz.adamec.timotej.snag.findings.be.driven.impl.internal.ExposedFindingsDb
+import cz.adamec.timotej.snag.findings.be.ports.FindingsDb
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
 val findingsDrivenModule =
     module {
-        singleOf(::InMemoryFindingsLocalDataSource) bind FindingsLocalDataSource::class
+        singleOf(::ExposedFindingsDb) bind FindingsDb::class
     }

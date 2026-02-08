@@ -16,14 +16,14 @@ import cz.adamec.timotej.snag.feat.findings.be.model.BackendFinding
 import cz.adamec.timotej.snag.findings.be.app.api.DeleteFindingUseCase
 import cz.adamec.timotej.snag.findings.be.app.api.model.DeleteFindingRequest
 import cz.adamec.timotej.snag.findings.be.app.impl.internal.LH.logger
-import cz.adamec.timotej.snag.findings.be.ports.FindingsLocalDataSource
+import cz.adamec.timotej.snag.findings.be.ports.FindingsDb
 
 internal class DeleteFindingUseCaseImpl(
-    private val findingsLocalDataSource: FindingsLocalDataSource,
+    private val findingsDb: FindingsDb,
 ) : DeleteFindingUseCase {
     override suspend operator fun invoke(request: DeleteFindingRequest): BackendFinding? {
         logger.debug("Deleting finding {} from local storage.", request.findingId)
-        return findingsLocalDataSource.deleteFinding(
+        return findingsDb.deleteFinding(
             id = request.findingId,
             deletedAt = request.deletedAt,
         ).also {

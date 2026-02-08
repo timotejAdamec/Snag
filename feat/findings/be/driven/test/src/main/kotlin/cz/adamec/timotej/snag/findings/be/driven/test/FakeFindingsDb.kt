@@ -13,11 +13,11 @@
 package cz.adamec.timotej.snag.findings.be.driven.test
 
 import cz.adamec.timotej.snag.feat.findings.be.model.BackendFinding
-import cz.adamec.timotej.snag.findings.be.ports.FindingsLocalDataSource
+import cz.adamec.timotej.snag.findings.be.ports.FindingsDb
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import kotlin.uuid.Uuid
 
-class FakeFindingsLocalDataSource : FindingsLocalDataSource {
+class FakeFindingsDb : FindingsDb {
     private val findings = mutableMapOf<Uuid, BackendFinding>()
 
     override suspend fun getFindings(structureId: Uuid): List<BackendFinding> =

@@ -16,7 +16,7 @@ import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.projects.be.model.BackendProject
 import kotlin.uuid.Uuid
 
-interface ProjectsLocalDataSource {
+interface ProjectsDb {
     suspend fun getProjects(): List<BackendProject>
 
     suspend fun getProject(id: Uuid): BackendProject?

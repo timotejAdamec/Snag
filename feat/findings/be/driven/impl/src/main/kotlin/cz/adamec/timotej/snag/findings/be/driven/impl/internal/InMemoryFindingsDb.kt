@@ -15,14 +15,14 @@ package cz.adamec.timotej.snag.findings.be.driven.impl.internal
 import cz.adamec.timotej.snag.feat.findings.be.model.BackendFinding
 import cz.adamec.timotej.snag.feat.findings.business.Finding
 import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
-import cz.adamec.timotej.snag.findings.be.ports.FindingsLocalDataSource
+import cz.adamec.timotej.snag.findings.be.ports.FindingsDb
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.common.TimestampProvider
 import kotlin.uuid.Uuid
 
-internal class InMemoryFindingsLocalDataSource(
+internal class InMemoryFindingsDb(
     timestampProvider: TimestampProvider,
-) : FindingsLocalDataSource {
+) : FindingsDb {
     private val findings =
         mutableListOf(
             BackendFinding(
