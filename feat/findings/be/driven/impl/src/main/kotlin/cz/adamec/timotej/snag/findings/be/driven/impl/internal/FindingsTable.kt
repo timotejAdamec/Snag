@@ -16,11 +16,11 @@ import org.jetbrains.exposed.v1.core.dao.id.IntIdTable
 import org.jetbrains.exposed.v1.core.dao.id.UuidTable
 
 internal object FindingsTable : UuidTable("findings") {
-    val structureId = uuid("structure_id")
+    val structureId = uuid("structure_id").index()
     val name = varchar("name", 255)
-    val description = varchar("description", 1024).nullable()
-    val updatedAt = long("updated_at")
-    val deletedAt = long("deleted_at").nullable()
+    val description = text("description", eagerLoading = true).nullable()
+    val updatedAt = long("updated_at").index()
+    val deletedAt = long("deleted_at").nullable().index()
 }
 
 internal object FindingCoordinatesTable : IntIdTable("finding_coordinates") {

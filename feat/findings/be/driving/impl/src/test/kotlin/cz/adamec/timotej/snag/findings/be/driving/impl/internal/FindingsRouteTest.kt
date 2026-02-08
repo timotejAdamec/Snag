@@ -16,12 +16,12 @@ import cz.adamec.timotej.snag.configuration.be.AppConfiguration
 import cz.adamec.timotej.snag.feat.findings.be.model.BackendFinding
 import cz.adamec.timotej.snag.feat.findings.business.Finding
 import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
-import cz.adamec.timotej.snag.findings.be.driven.test.FakeFindingsLocalDataSource
+import cz.adamec.timotej.snag.findings.be.driven.test.FakeFindingsDb
 import cz.adamec.timotej.snag.findings.be.driving.contract.DeleteFindingApiDto
 import cz.adamec.timotej.snag.findings.be.driving.contract.FindingApiDto
 import cz.adamec.timotej.snag.findings.be.driving.contract.PutFindingApiDto
 import cz.adamec.timotej.snag.findings.be.driving.contract.RelativeCoordinateApiDto
-import cz.adamec.timotej.snag.findings.be.ports.FindingsLocalDataSource
+import cz.adamec.timotej.snag.findings.be.ports.FindingsDb
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
 import io.ktor.client.call.body
@@ -48,12 +48,12 @@ import kotlin.uuid.Uuid
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation as ClientContentNegotiation
 
 class FindingsRouteTest : BackendKoinInitializedTest() {
-    private val dataSource: FakeFindingsLocalDataSource by inject()
+    private val dataSource: FakeFindingsDb by inject()
 
     override fun additionalKoinModules(): List<Module> =
         listOf(
             module {
-                singleOf(::FakeFindingsLocalDataSource) bind FindingsLocalDataSource::class
+                singleOf(::FakeFindingsDb) bind FindingsDb::class
             },
         )
 

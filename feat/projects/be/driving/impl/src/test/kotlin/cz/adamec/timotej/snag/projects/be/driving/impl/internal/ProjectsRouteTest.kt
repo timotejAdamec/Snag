@@ -14,12 +14,12 @@ package cz.adamec.timotej.snag.projects.be.driving.impl.internal
 
 import cz.adamec.timotej.snag.configuration.be.AppConfiguration
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
-import cz.adamec.timotej.snag.projects.be.driven.test.FakeProjectsLocalDataSource
+import cz.adamec.timotej.snag.projects.be.driven.test.FakeProjectsDb
 import cz.adamec.timotej.snag.projects.be.driving.contract.DeleteProjectApiDto
 import cz.adamec.timotej.snag.projects.be.driving.contract.ProjectApiDto
 import cz.adamec.timotej.snag.projects.be.driving.contract.PutProjectApiDto
 import cz.adamec.timotej.snag.projects.be.model.BackendProject
-import cz.adamec.timotej.snag.projects.be.ports.ProjectsLocalDataSource
+import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
 import cz.adamec.timotej.snag.projects.business.Project
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
 import io.ktor.client.call.body
@@ -46,12 +46,12 @@ import kotlin.uuid.Uuid
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation as ClientContentNegotiation
 
 class ProjectsRouteTest : BackendKoinInitializedTest() {
-    private val dataSource: FakeProjectsLocalDataSource by inject()
+    private val dataSource: FakeProjectsDb by inject()
 
     override fun additionalKoinModules(): List<Module> =
         listOf(
             module {
-                singleOf(::FakeProjectsLocalDataSource) bind ProjectsLocalDataSource::class
+                singleOf(::FakeProjectsDb) bind ProjectsDb::class
             },
         )
 

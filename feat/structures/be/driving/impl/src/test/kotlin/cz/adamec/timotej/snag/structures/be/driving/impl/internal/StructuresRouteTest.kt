@@ -16,11 +16,11 @@ import cz.adamec.timotej.snag.configuration.be.AppConfiguration
 import cz.adamec.timotej.snag.feat.structures.be.model.BackendStructure
 import cz.adamec.timotej.snag.feat.structures.business.Structure
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
-import cz.adamec.timotej.snag.structures.be.driven.test.FakeStructuresLocalDataSource
+import cz.adamec.timotej.snag.structures.be.driven.test.FakeStructuresDb
 import cz.adamec.timotej.snag.structures.be.driving.contract.DeleteStructureApiDto
 import cz.adamec.timotej.snag.structures.be.driving.contract.PutStructureApiDto
 import cz.adamec.timotej.snag.structures.be.driving.contract.StructureApiDto
-import cz.adamec.timotej.snag.structures.be.ports.StructuresLocalDataSource
+import cz.adamec.timotej.snag.structures.be.ports.StructuresDb
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
 import io.ktor.client.call.body
 import io.ktor.client.request.delete
@@ -46,12 +46,12 @@ import kotlin.uuid.Uuid
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation as ClientContentNegotiation
 
 class StructuresRouteTest : BackendKoinInitializedTest() {
-    private val dataSource: FakeStructuresLocalDataSource by inject()
+    private val dataSource: FakeStructuresDb by inject()
 
     override fun additionalKoinModules(): List<Module> =
         listOf(
             module {
-                singleOf(::FakeStructuresLocalDataSource) bind StructuresLocalDataSource::class
+                singleOf(::FakeStructuresDb) bind StructuresDb::class
             },
         )
 
