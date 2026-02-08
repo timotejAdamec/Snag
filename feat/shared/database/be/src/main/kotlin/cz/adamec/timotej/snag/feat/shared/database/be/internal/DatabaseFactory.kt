@@ -10,7 +10,7 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.lib.database.be.internal
+package cz.adamec.timotej.snag.feat.shared.database.be.internal
 
 import org.jetbrains.exposed.v1.jdbc.Database
 

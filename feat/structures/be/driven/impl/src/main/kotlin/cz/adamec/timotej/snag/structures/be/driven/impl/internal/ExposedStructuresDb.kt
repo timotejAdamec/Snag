@@ -12,6 +12,9 @@
 
 package cz.adamec.timotej.snag.structures.be.driven.impl.internal
 
+import cz.adamec.timotej.snag.feat.shared.database.be.ProjectEntity
+import cz.adamec.timotej.snag.feat.shared.database.be.StructureEntity
+import cz.adamec.timotej.snag.feat.shared.database.be.StructuresTable
 import cz.adamec.timotej.snag.feat.structures.be.model.BackendStructure
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.structures.be.ports.StructuresDb
@@ -21,23 +24,17 @@ import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.core.greater
 import org.jetbrains.exposed.v1.core.or
 import org.jetbrains.exposed.v1.jdbc.Database
-import org.jetbrains.exposed.v1.jdbc.SchemaUtils
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 
 internal class ExposedStructuresDb(
     private val database: Database,
 ) : StructuresDb {
-    init {
-        transaction(database) {
-            SchemaUtils.create(StructuresTable)
-        }
-    }
-
     override suspend fun getStructures(projectId: Uuid): List<BackendStructure> =
         transaction(database) {
-            StructureEntity.find {
-                StructuresTable.projectId eq projectId
-            }.map { it.toModel() }
+            StructureEntity
+                .find {
+                    StructuresTable.project eq projectId
+                }.map { it.toModel() }
         }
 
     @Suppress("ReturnCount", "LabeledExpression")
@@ -55,14 +52,14 @@ internal class ExposedStructuresDb(
                 if (serverTimestamp >= backendStructure.structure.updatedAt) {
                     return@transaction existing.toModel()
                 }
-                existing.projectId = backendStructure.structure.projectId
+                existing.project = ProjectEntity[backendStructure.structure.projectId]
                 existing.name = backendStructure.structure.name
                 existing.floorPlanUrl = backendStructure.structure.floorPlanUrl
                 existing.updatedAt = backendStructure.structure.updatedAt.value
                 existing.deletedAt = backendStructure.deletedAt?.value
             } else {
                 StructureEntity.new(backendStructure.structure.id) {
-                    projectId = backendStructure.structure.projectId
+                    project = ProjectEntity[backendStructure.structure.projectId]
                     name = backendStructure.structure.name
                     floorPlanUrl = backendStructure.structure.floorPlanUrl
                     updatedAt = backendStructure.structure.updatedAt.value
@@ -97,12 +94,13 @@ internal class ExposedStructuresDb(
     ): List<BackendStructure> =
         transaction(database) {
             @Suppress("UnnecessaryParentheses")
-            StructureEntity.find {
-                (StructuresTable.projectId eq projectId) and
-                    (
-                        (StructuresTable.updatedAt greater since.value) or
-                            (StructuresTable.deletedAt greater since.value)
-                    )
-            }.map { it.toModel() }
+            StructureEntity
+                .find {
+                    (StructuresTable.project eq projectId) and
+                        (
+                            (StructuresTable.updatedAt greater since.value) or
+                                (StructuresTable.deletedAt greater since.value)
+                        )
+                }.map { it.toModel() }
         }
 }

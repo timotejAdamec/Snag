@@ -12,25 +12,20 @@
 
 package cz.adamec.timotej.snag.projects.be.driven.impl.internal
 
+import cz.adamec.timotej.snag.feat.shared.database.be.ProjectEntity
+import cz.adamec.timotej.snag.feat.shared.database.be.ProjectsTable
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.projects.be.model.BackendProject
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
-import org.jetbrains.exposed.v1.core.greater
 import kotlin.uuid.Uuid
+import org.jetbrains.exposed.v1.core.greater
 import org.jetbrains.exposed.v1.core.or
 import org.jetbrains.exposed.v1.jdbc.Database
-import org.jetbrains.exposed.v1.jdbc.SchemaUtils
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 
 internal class ExposedProjectsDb(
     private val database: Database,
 ) : ProjectsDb {
-    init {
-        transaction(database) {
-            SchemaUtils.create(ProjectsTable)
-        }
-    }
-
     override suspend fun getProjects(): List<BackendProject> =
         transaction(database) {
             ProjectEntity.all().map { it.toModel() }
@@ -92,9 +87,10 @@ internal class ExposedProjectsDb(
     override suspend fun getProjectsModifiedSince(since: Timestamp): List<BackendProject> =
         transaction(database) {
             @Suppress("UnnecessaryParentheses")
-            ProjectEntity.find {
-                (ProjectsTable.updatedAt greater since.value) or
-                    (ProjectsTable.deletedAt greater since.value)
-            }.map { it.toModel() }
+            ProjectEntity
+                .find {
+                    (ProjectsTable.updatedAt greater since.value) or
+                        (ProjectsTable.deletedAt greater since.value)
+                }.map { it.toModel() }
         }
 }
