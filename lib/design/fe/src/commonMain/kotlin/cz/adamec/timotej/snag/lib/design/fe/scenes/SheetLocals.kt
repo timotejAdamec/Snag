@@ -13,5 +13,8 @@
 package cz.adamec.timotej.snag.lib.design.fe.scenes
 
 import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.ui.unit.dp
 
 val LocalIsInSheet = compositionLocalOf { false }
+
+val LocalSheetPeekHeight = compositionLocalOf { 0.dp }

@@ -181,7 +181,11 @@ private class AdaptiveMapListDetailScene<T : Any>(
                             }
                         },
                     ) {
-                        hostPane(hostEntry)
+                        CompositionLocalProvider(
+                            LocalSheetPeekHeight provides sheetPeekHeight,
+                        ) {
+                            hostPane(hostEntry)
+                        }
                     }
                 }
             }

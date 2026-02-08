@@ -18,10 +18,14 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.material3.Card
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -42,7 +46,7 @@ fun StructureCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    ElevatedCard(
+    Card(
         modifier = modifier,
         onClick = onClick,
     ) {
@@ -85,18 +89,25 @@ fun StructureCard(
 @Composable
 private fun StructureCardPreview() {
     SnagTheme {
-        StructureCard(
-            modifier = Modifier.wrapContentSize(),
-            feStructure = FrontendStructure(
-                Structure(
-                    id = UuidProvider.getUuid(),
-                    projectId = UuidProvider.getUuid(),
-                    name = "Structure Name",
-                    floorPlanUrl = "https://saterdesign.com/cdn/shop/products/6842.M_1200x.jpeg?v=1547874083",
-                    updatedAt = Timestamp(1L),
+        Surface {
+            Box(
+                modifier = Modifier.size(400.dp),
+                contentAlignment = Alignment.Center,
+            ) {
+                StructureCard(
+                    modifier = Modifier.size(350.dp),
+                    feStructure = FrontendStructure(
+                        Structure(
+                            id = UuidProvider.getUuid(),
+                            projectId = UuidProvider.getUuid(),
+                            name = "Structure Name",
+                            floorPlanUrl = "https://saterdesign.com/cdn/shop/products/6842.M_1200x.jpeg?v=1547874083",
+                            updatedAt = Timestamp(1L),
+                        )
+                    ),
+                    onClick = {},
                 )
-            ),
-            onClick = {},
-        )
+            }
+        }
     }
 }
