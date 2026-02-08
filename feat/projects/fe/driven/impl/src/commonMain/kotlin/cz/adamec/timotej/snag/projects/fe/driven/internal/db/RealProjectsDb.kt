@@ -17,20 +17,26 @@ import app.cash.sqldelight.coroutines.mapToList
 import app.cash.sqldelight.coroutines.mapToOneOrNull
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.ProjectEntity
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.ProjectEntityQueries
+import cz.adamec.timotej.snag.lib.core.common.ApplicationScope
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.database.fe.safeDbWrite
+import cz.adamec.timotej.snag.network.fe.ConnectionStatusListener
 import cz.adamec.timotej.snag.projects.fe.driven.internal.LH
 import cz.adamec.timotej.snag.projects.fe.model.FrontendProject
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsDb
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import kotlin.uuid.Uuid
 
 internal class RealProjectsDb(
     private val projectEntityQueries: ProjectEntityQueries,
     private val ioDispatcher: CoroutineDispatcher,
+    private val applicationScope: ApplicationScope,
+    private val internetConnectionStatusListener: ConnectionStatusListener,
 ) : ProjectsDb {
     override fun getAllProjectsFlow(): Flow<OfflineFirstDataResult<List<FrontendProject>>> =
         projectEntityQueries
@@ -44,6 +50,10 @@ internal class RealProjectsDb(
             }.catch { e ->
                 LH.logger.e { "Error loading projects from DB." }
                 emit(OfflineFirstDataResult.ProgrammerError(throwable = e))
+            }.also {
+                applicationScope.launch {
+                    internetConnectionStatusListener.isConnectedFlow().collect()
+                }
             }
 
     override suspend fun saveProjects(projects: List<FrontendProject>): OfflineFirstDataResult<Unit> =

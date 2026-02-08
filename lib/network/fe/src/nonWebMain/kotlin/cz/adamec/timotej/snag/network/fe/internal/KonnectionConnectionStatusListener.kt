@@ -22,5 +22,5 @@ internal class KonnectionConnectionStatusListener(
 ) : ConnectionStatusListener {
     override fun isConnectedFlow(): Flow<Boolean> =
         konnection.observeHasConnection()
-            .onEach { isConnected -> LH.logger.i { "Connection status changed: isConnected=$isConnected" } }
+            .onEach { isConnected -> LH.logger.i { "Connection status: isConnected=$isConnected" } }
 }

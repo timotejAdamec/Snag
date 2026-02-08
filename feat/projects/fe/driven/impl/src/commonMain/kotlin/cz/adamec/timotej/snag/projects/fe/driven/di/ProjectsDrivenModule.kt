@@ -35,6 +35,8 @@ val projectsDrivenModule =
             RealProjectsDb(
                 projectEntityQueries = get(),
                 ioDispatcher = getIoDispatcher(),
+                applicationScope = get(),
+                internetConnectionStatusListener = get(),
             )
         } bind ProjectsDb::class
         factoryOf(::RealProjectsApi) bind ProjectsApi::class

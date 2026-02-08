@@ -32,5 +32,5 @@ internal class WebConnectionStatusListener(
                 )
 
             awaitClose { registration.unregister() }
-        }.onEach { isConnected -> LH.logger.i { "Connection status changed: isConnected=$isConnected" } }
+        }.onEach { isConnected -> LH.logger.i { "Connection status: isConnected=$isConnected" } }
 }
