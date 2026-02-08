@@ -17,6 +17,8 @@ import cz.adamec.timotej.snag.projects.be.model.BackendProject
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
 import cz.adamec.timotej.snag.projects.business.Project
 import kotlin.uuid.Uuid
+import kotlin.uuid.toJavaUuid
+import kotlin.uuid.toKotlinUuid
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SchemaUtils
@@ -44,7 +46,7 @@ internal class ExposedProjectsDb(
         transaction(database) {
             ProjectsTable
                 .selectAll()
-                .where { ProjectsTable.id eq id.toString() }
+                .where { ProjectsTable.id eq id.toJavaUuid() }
                 .map { it.toBackendProject() }
                 .singleOrNull()
         }
@@ -55,7 +57,7 @@ internal class ExposedProjectsDb(
             val existing =
                 ProjectsTable
                     .selectAll()
-                    .where { ProjectsTable.id eq project.project.id.toString() }
+                    .where { ProjectsTable.id eq project.project.id.toJavaUuid() }
                     .map { it.toBackendProject() }
                     .singleOrNull()
 
@@ -71,7 +73,7 @@ internal class ExposedProjectsDb(
             }
 
             ProjectsTable.upsert {
-                it[id] = project.project.id.toString()
+                it[id] = project.project.id.toJavaUuid()
                 it[name] = project.project.name
                 it[address] = project.project.address
                 it[updatedAt] = project.project.updatedAt.value
@@ -89,7 +91,7 @@ internal class ExposedProjectsDb(
             val existing =
                 ProjectsTable
                     .selectAll()
-                    .where { ProjectsTable.id eq id.toString() }
+                    .where { ProjectsTable.id eq id.toJavaUuid() }
                     .map { it.toBackendProject() }
                     .singleOrNull()
                     ?: return@transaction null
@@ -97,7 +99,7 @@ internal class ExposedProjectsDb(
             if (existing.deletedAt != null) return@transaction null
             if (existing.project.updatedAt >= deletedAt) return@transaction existing
 
-            ProjectsTable.update({ ProjectsTable.id eq id.toString() }) {
+            ProjectsTable.update({ ProjectsTable.id eq id.toJavaUuid() }) {
                 it[ProjectsTable.deletedAt] = deletedAt.value
             }
             null
@@ -118,7 +120,7 @@ internal class ExposedProjectsDb(
         BackendProject(
             project =
                 Project(
-                    id = Uuid.parse(this[ProjectsTable.id]),
+                    id = this[ProjectsTable.id].value.toKotlinUuid(),
                     name = this[ProjectsTable.name],
                     address = this[ProjectsTable.address],
                     updatedAt = Timestamp(this[ProjectsTable.updatedAt]),

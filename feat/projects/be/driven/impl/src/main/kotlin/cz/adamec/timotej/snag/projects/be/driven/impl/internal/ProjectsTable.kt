@@ -12,14 +12,11 @@
 
 package cz.adamec.timotej.snag.projects.be.driven.impl.internal
 
-import org.jetbrains.exposed.sql.Table
+import org.jetbrains.exposed.dao.id.UUIDTable
 
-internal object ProjectsTable : Table("projects") {
-    val id = varchar("id", 36)
+internal object ProjectsTable : UUIDTable("projects") {
     val name = varchar("name", 255)
     val address = varchar("address", 255)
     val updatedAt = long("updated_at")
     val deletedAt = long("deleted_at").nullable()
-
-    override val primaryKey = PrimaryKey(id)
 }

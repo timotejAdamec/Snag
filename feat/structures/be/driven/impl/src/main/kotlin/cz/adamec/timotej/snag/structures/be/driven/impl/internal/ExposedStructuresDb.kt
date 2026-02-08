@@ -17,6 +17,8 @@ import cz.adamec.timotej.snag.feat.structures.business.Structure
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.structures.be.ports.StructuresDb
 import kotlin.uuid.Uuid
+import kotlin.uuid.toJavaUuid
+import kotlin.uuid.toKotlinUuid
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SchemaUtils
@@ -40,7 +42,7 @@ internal class ExposedStructuresDb(
         transaction(database) {
             StructuresTable
                 .selectAll()
-                .where { StructuresTable.projectId eq projectId.toString() }
+                .where { StructuresTable.projectId eq projectId.toJavaUuid() }
                 .map { it.toBackendStructure() }
         }
 
@@ -50,7 +52,7 @@ internal class ExposedStructuresDb(
             val existing =
                 StructuresTable
                     .selectAll()
-                    .where { StructuresTable.id eq backendStructure.structure.id.toString() }
+                    .where { StructuresTable.id eq backendStructure.structure.id.toJavaUuid() }
                     .map { it.toBackendStructure() }
                     .singleOrNull()
 
@@ -66,8 +68,8 @@ internal class ExposedStructuresDb(
             }
 
             StructuresTable.upsert {
-                it[id] = backendStructure.structure.id.toString()
-                it[projectId] = backendStructure.structure.projectId.toString()
+                it[id] = backendStructure.structure.id.toJavaUuid()
+                it[projectId] = backendStructure.structure.projectId.toJavaUuid()
                 it[name] = backendStructure.structure.name
                 it[floorPlanUrl] = backendStructure.structure.floorPlanUrl
                 it[updatedAt] = backendStructure.structure.updatedAt.value
@@ -85,7 +87,7 @@ internal class ExposedStructuresDb(
             val existing =
                 StructuresTable
                     .selectAll()
-                    .where { StructuresTable.id eq id.toString() }
+                    .where { StructuresTable.id eq id.toJavaUuid() }
                     .map { it.toBackendStructure() }
                     .singleOrNull()
                     ?: return@transaction null
@@ -93,7 +95,7 @@ internal class ExposedStructuresDb(
             if (existing.deletedAt != null) return@transaction null
             if (existing.structure.updatedAt >= deletedAt) return@transaction existing
 
-            StructuresTable.update({ StructuresTable.id eq id.toString() }) {
+            StructuresTable.update({ StructuresTable.id eq id.toJavaUuid() }) {
                 it[StructuresTable.deletedAt] = deletedAt.value
             }
             null
@@ -107,7 +109,7 @@ internal class ExposedStructuresDb(
             StructuresTable
                 .selectAll()
                 .where {
-                    (StructuresTable.projectId eq projectId.toString()) and
+                    (StructuresTable.projectId eq projectId.toJavaUuid()) and
                         (
                             (StructuresTable.updatedAt greater since.value) or
                                 (StructuresTable.deletedAt greater since.value)
@@ -120,8 +122,8 @@ internal class ExposedStructuresDb(
         BackendStructure(
             structure =
                 Structure(
-                    id = Uuid.parse(this[StructuresTable.id]),
-                    projectId = Uuid.parse(this[StructuresTable.projectId]),
+                    id = this[StructuresTable.id].value.toKotlinUuid(),
+                    projectId = this[StructuresTable.projectId].toKotlinUuid(),
                     name = this[StructuresTable.name],
                     floorPlanUrl = this[StructuresTable.floorPlanUrl],
                     updatedAt = Timestamp(this[StructuresTable.updatedAt]),

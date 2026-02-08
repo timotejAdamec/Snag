@@ -18,6 +18,8 @@ import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
 import cz.adamec.timotej.snag.findings.be.ports.FindingsDb
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import kotlin.uuid.Uuid
+import kotlin.uuid.toJavaUuid
+import kotlin.uuid.toKotlinUuid
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SchemaUtils
@@ -45,7 +47,7 @@ internal class ExposedFindingsDb(
             val findings =
                 FindingsTable
                     .selectAll()
-                    .where { FindingsTable.structureId eq structureId.toString() }
+                    .where { FindingsTable.structureId eq structureId.toJavaUuid() }
                     .map { it.toBackendFindingWithoutCoordinates() }
 
             findings.map { it.withCoordinates() }
@@ -68,8 +70,8 @@ internal class ExposedFindingsDb(
             }
 
             FindingsTable.upsert {
-                it[id] = finding.finding.id.toString()
-                it[structureId] = finding.finding.structureId.toString()
+                it[id] = finding.finding.id.toJavaUuid()
+                it[structureId] = finding.finding.structureId.toJavaUuid()
                 it[name] = finding.finding.name
                 it[description] = finding.finding.description
                 it[updatedAt] = finding.finding.updatedAt.value
@@ -77,11 +79,11 @@ internal class ExposedFindingsDb(
             }
 
             FindingCoordinatesTable.deleteWhere {
-                findingId eq finding.finding.id.toString()
+                findingId eq finding.finding.id.toJavaUuid()
             }
             finding.finding.coordinates.forEachIndexed { index, coordinate ->
                 FindingCoordinatesTable.insert {
-                    it[findingId] = finding.finding.id.toString()
+                    it[findingId] = finding.finding.id.toJavaUuid()
                     it[x] = coordinate.x
                     it[y] = coordinate.y
                     it[orderIndex] = index
@@ -100,7 +102,7 @@ internal class ExposedFindingsDb(
             if (existing.deletedAt != null) return@transaction null
             if (existing.finding.updatedAt >= deletedAt) return@transaction existing
 
-            FindingsTable.update({ FindingsTable.id eq id.toString() }) {
+            FindingsTable.update({ FindingsTable.id eq id.toJavaUuid() }) {
                 it[FindingsTable.deletedAt] = deletedAt.value
             }
             null
@@ -115,7 +117,7 @@ internal class ExposedFindingsDb(
                 FindingsTable
                     .selectAll()
                     .where {
-                        (FindingsTable.structureId eq structureId.toString()) and
+                        (FindingsTable.structureId eq structureId.toJavaUuid()) and
                             (
                                 (FindingsTable.updatedAt greater since.value) or
                                     (FindingsTable.deletedAt greater since.value)
@@ -130,7 +132,7 @@ internal class ExposedFindingsDb(
         val finding =
             FindingsTable
                 .selectAll()
-                .where { FindingsTable.id eq id.toString() }
+                .where { FindingsTable.id eq id.toJavaUuid() }
                 .map { it.toBackendFindingWithoutCoordinates() }
                 .singleOrNull()
                 ?: return null
@@ -141,7 +143,7 @@ internal class ExposedFindingsDb(
         val coordinates =
             FindingCoordinatesTable
                 .selectAll()
-                .where { FindingCoordinatesTable.findingId eq finding.id.toString() }
+                .where { FindingCoordinatesTable.findingId eq finding.id.toJavaUuid() }
                 .orderBy(FindingCoordinatesTable.orderIndex)
                 .map { row ->
                     RelativeCoordinate(
@@ -156,8 +158,8 @@ internal class ExposedFindingsDb(
         BackendFinding(
             finding =
                 Finding(
-                    id = Uuid.parse(this[FindingsTable.id]),
-                    structureId = Uuid.parse(this[FindingsTable.structureId]),
+                    id = this[FindingsTable.id].value.toKotlinUuid(),
+                    structureId = this[FindingsTable.structureId].toKotlinUuid(),
                     name = this[FindingsTable.name],
                     description = this[FindingsTable.description],
                     coordinates = emptyList(),
