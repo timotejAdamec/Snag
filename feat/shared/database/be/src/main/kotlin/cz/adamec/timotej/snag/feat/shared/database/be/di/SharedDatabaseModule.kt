@@ -24,15 +24,16 @@ import org.koin.dsl.module
 
 val sharedDatabaseModule =
     module {
-        single<Database> { DatabaseFactory.create() }
-        single(createdAtStart = true) {
-            transaction(get<Database>()) {
-                SchemaUtils.create(
-                    ProjectsTable,
-                    StructuresTable,
-                    FindingsTable,
-                    FindingCoordinatesTable,
-                )
+        single<Database> {
+            DatabaseFactory.create().also { database ->
+                transaction(database) {
+                    SchemaUtils.create(
+                        ProjectsTable,
+                        StructuresTable,
+                        FindingsTable,
+                        FindingCoordinatesTable,
+                    )
+                }
             }
         }
     }
