@@ -13,27 +13,33 @@
 package cz.adamec.timotej.snag.network.fe.internal
 
 import cz.adamec.timotej.snag.network.fe.ConnectionStatusListener
-import kotlinx.browser.window
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.onEach
-import org.w3c.dom.events.Event
 
 internal class WebConnectionStatusListener : ConnectionStatusListener {
     override fun isConnectedFlow(): Flow<Boolean> =
         callbackFlow {
-            trySend(window.navigator.onLine)
+            trySend(isNavigatorOnline())
 
-            val onlineHandler: (Event) -> Unit = { trySend(true) }
-            val offlineHandler: (Event) -> Unit = { trySend(false) }
+            val registration =
+                observeConnectivityChanges(
+                    onOnline = { trySend(true) },
+                    onOffline = { trySend(false) },
+                )
 
-            window.addEventListener("online", onlineHandler)
-            window.addEventListener("offline", offlineHandler)
-
-            awaitClose {
-                window.removeEventListener("online", onlineHandler)
-                window.removeEventListener("offline", offlineHandler)
-            }
+            awaitClose { registration.unregister() }
         }.onEach { isConnected -> LH.logger.i { "Connection status changed: isConnected=$isConnected" } }
 }
+
+internal expect fun isNavigatorOnline(): Boolean
+
+internal interface ConnectivityEventRegistration {
+    fun unregister()
+}
+
+internal expect fun observeConnectivityChanges(
+    onOnline: () -> Unit,
+    onOffline: () -> Unit,
+): ConnectivityEventRegistration
