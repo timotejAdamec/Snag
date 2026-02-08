@@ -15,6 +15,7 @@ package cz.adamec.timotej.snag.structures.fe.driving.impl.internal.structureDeta
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
@@ -41,7 +42,7 @@ import snag.lib.design.fe.generated.resources.ic_close
 import snag.lib.design.fe.generated.resources.save
 import snag.lib.design.fe.generated.resources.Res as DesignRes
 
-private val HorizontalPadding = 12.dp
+private val HorizontalPadding = 16.dp
 
 @Suppress("LongMethod")
 @Composable
@@ -106,7 +107,8 @@ internal fun StructureDetailsEditContent(
             modifier =
                 Modifier
                     .padding(paddingValues)
-                    .padding(horizontal = HorizontalPadding),
+                    .padding(horizontal = HorizontalPadding)
+                    .consumeWindowInsets(paddingValues),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             OutlinedTextField(

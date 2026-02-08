@@ -15,8 +15,8 @@ package cz.adamec.timotej.snag.findings.fe.driving.impl.di
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.window.DialogProperties
 import androidx.navigation3.scene.DialogSceneStrategy
+import cz.adamec.timotej.snag.lib.design.fe.dialog.fullscreenDialogProperties
 import cz.adamec.timotej.snag.feat.findings.fe.driving.api.FindingDetailRoute
 import cz.adamec.timotej.snag.feat.findings.fe.driving.api.FindingDetailRouteFactory
 import cz.adamec.timotej.snag.feat.findings.fe.driving.api.FindingEditRoute
@@ -93,7 +93,7 @@ internal inline fun <reified T : FindingDetailRoute> Module.findingDetailScreenN
 
 internal inline fun <reified T : FindingEditRoute> Module.findingEditScreenNav() =
     navigation<T>(
-        metadata = DialogSceneStrategy.dialog(DialogProperties(usePlatformDefaultWidth = false)),
+        metadata = DialogSceneStrategy.dialog(fullscreenDialogProperties()),
     ) { route ->
         FindingEditScreenSetup(
             findingId = route.findingId,

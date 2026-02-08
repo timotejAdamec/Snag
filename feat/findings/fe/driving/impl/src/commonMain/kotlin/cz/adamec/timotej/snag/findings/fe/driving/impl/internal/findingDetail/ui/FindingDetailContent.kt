@@ -105,7 +105,7 @@ internal fun FindingDetailContent(
 
         FindingDetailUiStatus.LOADED,
         FindingDetailUiStatus.DELETED,
-        -> {
+            -> {
             val finding = state.finding ?: return
             var isShowingDeleteConfirmation by remember { mutableStateOf(false) }
             if (isShowingDeleteConfirmation) {
@@ -119,52 +119,51 @@ internal fun FindingDetailContent(
             }
             val isInSheet = LocalIsInSheet.current
             val zeroInsets = WindowInsets(0, 0, 0, 0)
-            Box(modifier = modifier.fillMaxSize()) {
-                Scaffold(
-                    containerColor =
-                        if (isInSheet) Color.Transparent else MaterialTheme.colorScheme.background,
-                    topBar = {
-                        TopAppBar(
-                            title = {
-                                Text(text = finding.finding.name)
-                            },
-                            navigationIcon = {
-                                IconButton(onClick = onBack) {
-                                    Icon(
-                                        painter = painterResource(DesignRes.drawable.ic_close),
-                                        contentDescription = stringResource(DesignRes.string.close),
-                                    )
-                                }
-                            },
-                            windowInsets =
-                                if (isInSheet) zeroInsets else TopAppBarDefaults.windowInsets.only(
-                                    WindowInsetsSides.Vertical + WindowInsetsSides.End,
-                                ),
-                            colors =
-                                if (isInSheet) {
-                                    TopAppBarDefaults.topAppBarColors(
-                                        containerColor = Color.Transparent,
-                                    )
-                                } else {
-                                    TopAppBarDefaults.topAppBarColors()
-                                },
-                        )
-                    },
-                    contentWindowInsets =
-                        if (isInSheet) zeroInsets else ScaffoldDefaults.contentWindowInsets,
-                ) { paddingValues ->
-                    Column(
-                        modifier =
-                            Modifier
-                                .fillMaxWidth()
-                                .padding(
-                                    top = paddingValues.calculateTopPadding(),
-                                    bottom = paddingValues.calculateBottomPadding(),
-                                    end = paddingValues.calculateEndPadding(LayoutDirection.Ltr),
+            Scaffold(
+                containerColor =
+                    if (isInSheet) Color.Transparent else MaterialTheme.colorScheme.background,
+                topBar = {
+                    TopAppBar(
+                        title = {
+                            Text(text = finding.finding.name)
+                        },
+                        navigationIcon = {
+                            IconButton(onClick = onBack) {
+                                Icon(
+                                    painter = painterResource(DesignRes.drawable.ic_close),
+                                    contentDescription = stringResource(DesignRes.string.close),
                                 )
-                                .consumeWindowInsets(paddingValues)
-                                .padding(16.dp),
-                    ) {
+                            }
+                        },
+                        windowInsets =
+                            if (isInSheet) zeroInsets else TopAppBarDefaults.windowInsets.only(
+                                WindowInsetsSides.Vertical + WindowInsetsSides.End,
+                            ),
+                        colors =
+                            if (isInSheet) {
+                                TopAppBarDefaults.topAppBarColors(
+                                    containerColor = Color.Transparent,
+                                )
+                            } else {
+                                TopAppBarDefaults.topAppBarColors()
+                            },
+                    )
+                },
+                contentWindowInsets =
+                    if (isInSheet) zeroInsets else ScaffoldDefaults.contentWindowInsets,
+            ) { paddingValues ->
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(
+                            top = paddingValues.calculateTopPadding(),
+                            bottom = paddingValues.calculateBottomPadding(),
+                            end = paddingValues.calculateEndPadding(LayoutDirection.Ltr),
+                        )
+                        .consumeWindowInsets(paddingValues)
+                        .padding(16.dp),
+                ) {
+                    Column {
                         val importanceColor = when (finding.finding.importance) {
                             Importance.HIGH -> MaterialTheme.colorScheme.error
                             Importance.MEDIUM -> MaterialTheme.colorScheme.tertiary
@@ -205,32 +204,31 @@ internal fun FindingDetailContent(
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     }
-                }
-                HorizontalFloatingToolbar(
-                    modifier =
-                        Modifier
-                            .align(Alignment.BottomCenter)
-                            .padding(bottom = 16.dp),
-                    expanded = true,
-                ) {
-                    IconButton(
-                        onClick = onEditClick,
+                    HorizontalFloatingToolbar(
+                        modifier =
+                            Modifier
+                                .align(Alignment.BottomCenter),
+                        expanded = true,
                     ) {
-                        Icon(
-                            painter = painterResource(DesignRes.drawable.ic_edit),
-                            contentDescription = stringResource(DesignRes.string.edit),
-                        )
-                    }
-                    IconButton(
-                        enabled = state.canInvokeDeletion,
-                        onClick = {
-                            isShowingDeleteConfirmation = true
-                        },
-                    ) {
-                        Icon(
-                            painter = painterResource(DesignRes.drawable.ic_delete),
-                            contentDescription = stringResource(DesignRes.string.delete),
-                        )
+                        IconButton(
+                            onClick = onEditClick,
+                        ) {
+                            Icon(
+                                painter = painterResource(DesignRes.drawable.ic_edit),
+                                contentDescription = stringResource(DesignRes.string.edit),
+                            )
+                        }
+                        IconButton(
+                            enabled = state.canInvokeDeletion,
+                            onClick = {
+                                isShowingDeleteConfirmation = true
+                            },
+                        ) {
+                            Icon(
+                                painter = painterResource(DesignRes.drawable.ic_delete),
+                                contentDescription = stringResource(DesignRes.string.delete),
+                            )
+                        }
                     }
                 }
             }

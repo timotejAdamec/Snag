@@ -15,8 +15,8 @@ package cz.adamec.timotej.snag.projects.fe.driving.impl.di
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.window.DialogProperties
 import androidx.navigation3.scene.DialogSceneStrategy
+import cz.adamec.timotej.snag.lib.design.fe.dialog.fullscreenDialogProperties
 import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureCreationRouteFactory
 import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureDetailRouteFactory
 import cz.adamec.timotej.snag.lib.navigation.fe.SnagBackStack
@@ -64,7 +64,7 @@ internal inline fun <reified T : ProjectsRoute> Module.projectsScreenNavigation(
 @Suppress("FunctionNameMaxLength")
 internal inline fun <reified T : ProjectCreationRoute> Module.projectCreationScreenNavigation() =
     navigation<T>(
-        metadata = DialogSceneStrategy.dialog(DialogProperties(usePlatformDefaultWidth = false)),
+        metadata = DialogSceneStrategy.dialog(fullscreenDialogProperties()),
     ) { _ ->
         val projectDetailRouteFactory = koinInject<ProjectDetailRouteFactory>()
         ProjectDetailsEditScreenInjection(
@@ -79,7 +79,7 @@ internal inline fun <reified T : ProjectCreationRoute> Module.projectCreationScr
 
 internal inline fun <reified T : ProjectEditRoute> Module.projectEditScreenNavigation() =
     navigation<T>(
-        metadata = DialogSceneStrategy.dialog(DialogProperties(usePlatformDefaultWidth = false)),
+        metadata = DialogSceneStrategy.dialog(fullscreenDialogProperties()),
     ) { route ->
         ProjectDetailsEditScreenInjection(
             projectId = route.projectId,

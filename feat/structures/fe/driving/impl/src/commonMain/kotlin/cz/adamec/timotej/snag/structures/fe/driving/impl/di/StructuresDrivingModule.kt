@@ -16,8 +16,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.ui.window.DialogProperties
 import androidx.navigation3.scene.DialogSceneStrategy
+import cz.adamec.timotej.snag.lib.design.fe.dialog.fullscreenDialogProperties
 import cz.adamec.timotej.snag.feat.findings.fe.driving.api.FindingDetailRoute
 import cz.adamec.timotej.snag.feat.findings.fe.driving.api.FindingDetailRouteFactory
 import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureCreationRoute
@@ -43,7 +43,7 @@ import kotlin.uuid.Uuid
 
 internal inline fun <reified T : StructureCreationRoute> Module.structureCreateScreenNav() =
     navigation<T>(
-        metadata = DialogSceneStrategy.dialog(DialogProperties(usePlatformDefaultWidth = false)),
+        metadata = DialogSceneStrategy.dialog(fullscreenDialogProperties()),
     ) { route ->
         StructureEditScreenSetup(
             projectId = route.projectId,
@@ -56,7 +56,7 @@ internal inline fun <reified T : StructureCreationRoute> Module.structureCreateS
 
 internal inline fun <reified T : StructureEditRoute> Module.structureEditScreenNavigation() =
     navigation<T>(
-        metadata = DialogSceneStrategy.dialog(DialogProperties(usePlatformDefaultWidth = false)),
+        metadata = DialogSceneStrategy.dialog(fullscreenDialogProperties()),
     ) { route ->
         StructureEditScreenSetup(
             structureId = route.structureId,
