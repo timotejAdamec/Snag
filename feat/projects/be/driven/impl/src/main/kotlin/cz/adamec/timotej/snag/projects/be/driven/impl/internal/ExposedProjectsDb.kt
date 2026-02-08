@@ -20,13 +20,9 @@ import kotlin.uuid.Uuid
 import kotlin.uuid.toJavaUuid
 import kotlin.uuid.toKotlinUuid
 import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.or
-import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
-import org.jetbrains.exposed.sql.update
-import org.jetbrains.exposed.sql.upsert
 
 internal class ExposedProjectsDb(
     private val database: Database,
@@ -39,45 +35,39 @@ internal class ExposedProjectsDb(
 
     override suspend fun getProjects(): List<BackendProject> =
         transaction(database) {
-            ProjectsTable.selectAll().map { it.toBackendProject() }
+            ProjectEntity.all().map { it.toBackendProject() }
         }
 
     override suspend fun getProject(id: Uuid): BackendProject? =
         transaction(database) {
-            ProjectsTable
-                .selectAll()
-                .where { ProjectsTable.id eq id.toJavaUuid() }
-                .map { it.toBackendProject() }
-                .singleOrNull()
+            ProjectEntity.findById(id.toJavaUuid())?.toBackendProject()
         }
 
     @Suppress("ReturnCount")
     override suspend fun updateProject(project: BackendProject): BackendProject? =
         transaction(database) {
-            val existing =
-                ProjectsTable
-                    .selectAll()
-                    .where { ProjectsTable.id eq project.project.id.toJavaUuid() }
-                    .map { it.toBackendProject() }
-                    .singleOrNull()
+            val existing = ProjectEntity.findById(project.project.id.toJavaUuid())
 
             if (existing != null) {
                 val serverTimestamp =
                     maxOf(
-                        existing.project.updatedAt,
-                        existing.deletedAt ?: Timestamp(0),
+                        Timestamp(existing.updatedAt),
+                        existing.deletedAt?.let { Timestamp(it) } ?: Timestamp(0),
                     )
                 if (serverTimestamp >= project.project.updatedAt) {
-                    return@transaction existing
+                    return@transaction existing.toBackendProject()
                 }
-            }
-
-            ProjectsTable.upsert {
-                it[id] = project.project.id.toJavaUuid()
-                it[name] = project.project.name
-                it[address] = project.project.address
-                it[updatedAt] = project.project.updatedAt.value
-                it[deletedAt] = project.deletedAt?.value
+                existing.name = project.project.name
+                existing.address = project.project.address
+                existing.updatedAt = project.project.updatedAt.value
+                existing.deletedAt = project.deletedAt?.value
+            } else {
+                ProjectEntity.new(project.project.id.toJavaUuid()) {
+                    name = project.project.name
+                    address = project.project.address
+                    updatedAt = project.project.updatedAt.value
+                    deletedAt = project.deletedAt?.value
+                }
             }
             null
         }
@@ -89,42 +79,35 @@ internal class ExposedProjectsDb(
     ): BackendProject? =
         transaction(database) {
             val existing =
-                ProjectsTable
-                    .selectAll()
-                    .where { ProjectsTable.id eq id.toJavaUuid() }
-                    .map { it.toBackendProject() }
-                    .singleOrNull()
+                ProjectEntity.findById(id.toJavaUuid())
                     ?: return@transaction null
 
             if (existing.deletedAt != null) return@transaction null
-            if (existing.project.updatedAt >= deletedAt) return@transaction existing
-
-            ProjectsTable.update({ ProjectsTable.id eq id.toJavaUuid() }) {
-                it[ProjectsTable.deletedAt] = deletedAt.value
+            if (Timestamp(existing.updatedAt) >= deletedAt) {
+                return@transaction existing.toBackendProject()
             }
+
+            existing.deletedAt = deletedAt.value
             null
         }
 
     override suspend fun getProjectsModifiedSince(since: Timestamp): List<BackendProject> =
         transaction(database) {
-            ProjectsTable
-                .selectAll()
-                .where {
-                    (ProjectsTable.updatedAt greater since.value) or
-                        (ProjectsTable.deletedAt greater since.value)
-                }
-                .map { it.toBackendProject() }
+            ProjectEntity.find {
+                (ProjectsTable.updatedAt greater since.value) or
+                    (ProjectsTable.deletedAt greater since.value)
+            }.map { it.toBackendProject() }
         }
 
-    private fun ResultRow.toBackendProject(): BackendProject =
+    private fun ProjectEntity.toBackendProject(): BackendProject =
         BackendProject(
             project =
                 Project(
-                    id = this[ProjectsTable.id].value.toKotlinUuid(),
-                    name = this[ProjectsTable.name],
-                    address = this[ProjectsTable.address],
-                    updatedAt = Timestamp(this[ProjectsTable.updatedAt]),
+                    id = id.value.toKotlinUuid(),
+                    name = name,
+                    address = address,
+                    updatedAt = Timestamp(updatedAt),
                 ),
-            deletedAt = this[ProjectsTable.deletedAt]?.let { Timestamp(it) },
+            deletedAt = deletedAt?.let { Timestamp(it) },
         )
 }

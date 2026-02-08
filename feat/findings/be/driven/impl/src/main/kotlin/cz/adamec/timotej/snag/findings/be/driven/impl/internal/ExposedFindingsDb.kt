@@ -21,17 +21,10 @@ import kotlin.uuid.Uuid
 import kotlin.uuid.toJavaUuid
 import kotlin.uuid.toKotlinUuid
 import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.deleteWhere
-import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.or
-import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
-import org.jetbrains.exposed.sql.update
-import org.jetbrains.exposed.sql.upsert
 
 internal class ExposedFindingsDb(
     private val database: Database,
@@ -44,49 +37,48 @@ internal class ExposedFindingsDb(
 
     override suspend fun getFindings(structureId: Uuid): List<BackendFinding> =
         transaction(database) {
-            val findings =
-                FindingsTable
-                    .selectAll()
-                    .where { FindingsTable.structureId eq structureId.toJavaUuid() }
-                    .map { it.toBackendFindingWithoutCoordinates() }
-
-            findings.map { it.withCoordinates() }
+            FindingEntity.find {
+                FindingsTable.structureId eq structureId.toJavaUuid()
+            }.with(FindingEntity::coordinates).map { it.toBackendFinding() }
         }
 
     @Suppress("ReturnCount")
     override suspend fun updateFinding(finding: BackendFinding): BackendFinding? =
         transaction(database) {
-            val existing = findById(finding.finding.id)
+            val existing = FindingEntity.findById(finding.finding.id.toJavaUuid())
 
             if (existing != null) {
                 val serverTimestamp =
                     maxOf(
-                        existing.finding.updatedAt,
-                        existing.deletedAt ?: Timestamp(0),
+                        Timestamp(existing.updatedAt),
+                        existing.deletedAt?.let { Timestamp(it) } ?: Timestamp(0),
                     )
                 if (serverTimestamp >= finding.finding.updatedAt) {
-                    return@transaction existing
+                    return@transaction existing.toBackendFinding()
+                }
+                existing.structureId = finding.finding.structureId.toJavaUuid()
+                existing.name = finding.finding.name
+                existing.description = finding.finding.description
+                existing.updatedAt = finding.finding.updatedAt.value
+                existing.deletedAt = finding.deletedAt?.value
+                existing.coordinates.forEach { it.delete() }
+            } else {
+                FindingEntity.new(finding.finding.id.toJavaUuid()) {
+                    structureId = finding.finding.structureId.toJavaUuid()
+                    name = finding.finding.name
+                    description = finding.finding.description
+                    updatedAt = finding.finding.updatedAt.value
+                    deletedAt = finding.deletedAt?.value
                 }
             }
 
-            FindingsTable.upsert {
-                it[id] = finding.finding.id.toJavaUuid()
-                it[structureId] = finding.finding.structureId.toJavaUuid()
-                it[name] = finding.finding.name
-                it[description] = finding.finding.description
-                it[updatedAt] = finding.finding.updatedAt.value
-                it[deletedAt] = finding.deletedAt?.value
-            }
-
-            FindingCoordinatesTable.deleteWhere {
-                findingId eq finding.finding.id.toJavaUuid()
-            }
+            val findingEntity = FindingEntity[finding.finding.id.toJavaUuid()]
             finding.finding.coordinates.forEachIndexed { index, coordinate ->
-                FindingCoordinatesTable.insert {
-                    it[findingId] = finding.finding.id.toJavaUuid()
-                    it[x] = coordinate.x
-                    it[y] = coordinate.y
-                    it[orderIndex] = index
+                FindingCoordinateEntity.new {
+                    this.finding = findingEntity
+                    x = coordinate.x
+                    y = coordinate.y
+                    orderIndex = index
                 }
             }
             null
@@ -98,13 +90,16 @@ internal class ExposedFindingsDb(
         deletedAt: Timestamp,
     ): BackendFinding? =
         transaction(database) {
-            val existing = findById(id) ?: return@transaction null
-            if (existing.deletedAt != null) return@transaction null
-            if (existing.finding.updatedAt >= deletedAt) return@transaction existing
+            val existing =
+                FindingEntity.findById(id.toJavaUuid())
+                    ?: return@transaction null
 
-            FindingsTable.update({ FindingsTable.id eq id.toJavaUuid() }) {
-                it[FindingsTable.deletedAt] = deletedAt.value
+            if (existing.deletedAt != null) return@transaction null
+            if (Timestamp(existing.updatedAt) >= deletedAt) {
+                return@transaction existing.toBackendFinding()
             }
+
+            existing.deletedAt = deletedAt.value
             null
         }
 
@@ -113,58 +108,29 @@ internal class ExposedFindingsDb(
         since: Timestamp,
     ): List<BackendFinding> =
         transaction(database) {
-            val findings =
-                FindingsTable
-                    .selectAll()
-                    .where {
-                        (FindingsTable.structureId eq structureId.toJavaUuid()) and
-                            (
-                                (FindingsTable.updatedAt greater since.value) or
-                                    (FindingsTable.deletedAt greater since.value)
-                            )
-                    }
-                    .map { it.toBackendFindingWithoutCoordinates() }
-
-            findings.map { it.withCoordinates() }
+            FindingEntity.find {
+                (FindingsTable.structureId eq structureId.toJavaUuid()) and
+                    (
+                        (FindingsTable.updatedAt greater since.value) or
+                            (FindingsTable.deletedAt greater since.value)
+                    )
+            }.with(FindingEntity::coordinates).map { it.toBackendFinding() }
         }
 
-    private fun findById(id: Uuid): BackendFinding? {
-        val finding =
-            FindingsTable
-                .selectAll()
-                .where { FindingsTable.id eq id.toJavaUuid() }
-                .map { it.toBackendFindingWithoutCoordinates() }
-                .singleOrNull()
-                ?: return null
-        return finding.withCoordinates()
-    }
-
-    private fun BackendFinding.withCoordinates(): BackendFinding {
-        val coordinates =
-            FindingCoordinatesTable
-                .selectAll()
-                .where { FindingCoordinatesTable.findingId eq finding.id.toJavaUuid() }
-                .orderBy(FindingCoordinatesTable.orderIndex)
-                .map { row ->
-                    RelativeCoordinate(
-                        x = row[FindingCoordinatesTable.x],
-                        y = row[FindingCoordinatesTable.y],
-                    )
-                }
-        return copy(finding = finding.copy(coordinates = coordinates))
-    }
-
-    private fun ResultRow.toBackendFindingWithoutCoordinates(): BackendFinding =
+    private fun FindingEntity.toBackendFinding(): BackendFinding =
         BackendFinding(
             finding =
                 Finding(
-                    id = this[FindingsTable.id].value.toKotlinUuid(),
-                    structureId = this[FindingsTable.structureId].toKotlinUuid(),
-                    name = this[FindingsTable.name],
-                    description = this[FindingsTable.description],
-                    coordinates = emptyList(),
-                    updatedAt = Timestamp(this[FindingsTable.updatedAt]),
+                    id = id.value.toKotlinUuid(),
+                    structureId = structureId.toKotlinUuid(),
+                    name = name,
+                    description = description,
+                    coordinates =
+                        coordinates.map {
+                            RelativeCoordinate(x = it.x, y = it.y)
+                        },
+                    updatedAt = Timestamp(updatedAt),
                 ),
-            deletedAt = this[FindingsTable.deletedAt]?.let { Timestamp(it) },
+            deletedAt = deletedAt?.let { Timestamp(it) },
         )
 }

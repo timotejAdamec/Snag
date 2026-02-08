@@ -20,14 +20,10 @@ import kotlin.uuid.Uuid
 import kotlin.uuid.toJavaUuid
 import kotlin.uuid.toKotlinUuid
 import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.or
-import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
-import org.jetbrains.exposed.sql.update
-import org.jetbrains.exposed.sql.upsert
 
 internal class ExposedStructuresDb(
     private val database: Database,
@@ -40,40 +36,39 @@ internal class ExposedStructuresDb(
 
     override suspend fun getStructures(projectId: Uuid): List<BackendStructure> =
         transaction(database) {
-            StructuresTable
-                .selectAll()
-                .where { StructuresTable.projectId eq projectId.toJavaUuid() }
-                .map { it.toBackendStructure() }
+            StructureEntity.find {
+                StructuresTable.projectId eq projectId.toJavaUuid()
+            }.map { it.toBackendStructure() }
         }
 
     @Suppress("ReturnCount")
     override suspend fun saveStructure(backendStructure: BackendStructure): BackendStructure? =
         transaction(database) {
             val existing =
-                StructuresTable
-                    .selectAll()
-                    .where { StructuresTable.id eq backendStructure.structure.id.toJavaUuid() }
-                    .map { it.toBackendStructure() }
-                    .singleOrNull()
+                StructureEntity.findById(backendStructure.structure.id.toJavaUuid())
 
             if (existing != null) {
                 val serverTimestamp =
                     maxOf(
-                        existing.structure.updatedAt,
-                        existing.deletedAt ?: Timestamp(0),
+                        Timestamp(existing.updatedAt),
+                        existing.deletedAt?.let { Timestamp(it) } ?: Timestamp(0),
                     )
                 if (serverTimestamp >= backendStructure.structure.updatedAt) {
-                    return@transaction existing
+                    return@transaction existing.toBackendStructure()
                 }
-            }
-
-            StructuresTable.upsert {
-                it[id] = backendStructure.structure.id.toJavaUuid()
-                it[projectId] = backendStructure.structure.projectId.toJavaUuid()
-                it[name] = backendStructure.structure.name
-                it[floorPlanUrl] = backendStructure.structure.floorPlanUrl
-                it[updatedAt] = backendStructure.structure.updatedAt.value
-                it[deletedAt] = backendStructure.deletedAt?.value
+                existing.projectId = backendStructure.structure.projectId.toJavaUuid()
+                existing.name = backendStructure.structure.name
+                existing.floorPlanUrl = backendStructure.structure.floorPlanUrl
+                existing.updatedAt = backendStructure.structure.updatedAt.value
+                existing.deletedAt = backendStructure.deletedAt?.value
+            } else {
+                StructureEntity.new(backendStructure.structure.id.toJavaUuid()) {
+                    projectId = backendStructure.structure.projectId.toJavaUuid()
+                    name = backendStructure.structure.name
+                    floorPlanUrl = backendStructure.structure.floorPlanUrl
+                    updatedAt = backendStructure.structure.updatedAt.value
+                    deletedAt = backendStructure.deletedAt?.value
+                }
             }
             null
         }
@@ -85,19 +80,15 @@ internal class ExposedStructuresDb(
     ): BackendStructure? =
         transaction(database) {
             val existing =
-                StructuresTable
-                    .selectAll()
-                    .where { StructuresTable.id eq id.toJavaUuid() }
-                    .map { it.toBackendStructure() }
-                    .singleOrNull()
+                StructureEntity.findById(id.toJavaUuid())
                     ?: return@transaction null
 
             if (existing.deletedAt != null) return@transaction null
-            if (existing.structure.updatedAt >= deletedAt) return@transaction existing
-
-            StructuresTable.update({ StructuresTable.id eq id.toJavaUuid() }) {
-                it[StructuresTable.deletedAt] = deletedAt.value
+            if (Timestamp(existing.updatedAt) >= deletedAt) {
+                return@transaction existing.toBackendStructure()
             }
+
+            existing.deletedAt = deletedAt.value
             null
         }
 
@@ -106,28 +97,25 @@ internal class ExposedStructuresDb(
         since: Timestamp,
     ): List<BackendStructure> =
         transaction(database) {
-            StructuresTable
-                .selectAll()
-                .where {
-                    (StructuresTable.projectId eq projectId.toJavaUuid()) and
-                        (
-                            (StructuresTable.updatedAt greater since.value) or
-                                (StructuresTable.deletedAt greater since.value)
-                        )
-                }
-                .map { it.toBackendStructure() }
+            StructureEntity.find {
+                (StructuresTable.projectId eq projectId.toJavaUuid()) and
+                    (
+                        (StructuresTable.updatedAt greater since.value) or
+                            (StructuresTable.deletedAt greater since.value)
+                    )
+            }.map { it.toBackendStructure() }
         }
 
-    private fun ResultRow.toBackendStructure(): BackendStructure =
+    private fun StructureEntity.toBackendStructure(): BackendStructure =
         BackendStructure(
             structure =
                 Structure(
-                    id = this[StructuresTable.id].value.toKotlinUuid(),
-                    projectId = this[StructuresTable.projectId].toKotlinUuid(),
-                    name = this[StructuresTable.name],
-                    floorPlanUrl = this[StructuresTable.floorPlanUrl],
-                    updatedAt = Timestamp(this[StructuresTable.updatedAt]),
+                    id = id.value.toKotlinUuid(),
+                    projectId = projectId.toKotlinUuid(),
+                    name = name,
+                    floorPlanUrl = floorPlanUrl,
+                    updatedAt = Timestamp(updatedAt),
                 ),
-            deletedAt = this[StructuresTable.deletedAt]?.let { Timestamp(it) },
+            deletedAt = deletedAt?.let { Timestamp(it) },
         )
 }
