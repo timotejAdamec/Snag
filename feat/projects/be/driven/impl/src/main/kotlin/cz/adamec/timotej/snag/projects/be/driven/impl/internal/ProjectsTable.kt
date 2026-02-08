@@ -12,9 +12,9 @@
 
 package cz.adamec.timotej.snag.projects.be.driven.impl.internal
 
-import org.jetbrains.exposed.dao.id.UUIDTable
+import org.jetbrains.exposed.dao.id.UuidTable
 
-internal object ProjectsTable : UUIDTable("projects") {
+internal object ProjectsTable : UuidTable("projects") {
     val name = varchar("name", 255)
     val address = varchar("address", 255)
     val updatedAt = long("updated_at")

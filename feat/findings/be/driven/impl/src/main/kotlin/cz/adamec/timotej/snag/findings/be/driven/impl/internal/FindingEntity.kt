@@ -12,15 +12,15 @@
 
 package cz.adamec.timotej.snag.findings.be.driven.impl.internal
 
-import java.util.UUID
+import kotlin.uuid.Uuid
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
-import org.jetbrains.exposed.dao.UUIDEntity
-import org.jetbrains.exposed.dao.UUIDEntityClass
+import org.jetbrains.exposed.dao.UuidEntity
+import org.jetbrains.exposed.dao.UuidEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 
-internal class FindingEntity(id: EntityID<UUID>) : UUIDEntity(id) {
-    companion object : UUIDEntityClass<FindingEntity>(FindingsTable)
+internal class FindingEntity(id: EntityID<Uuid>) : UuidEntity(id) {
+    companion object : UuidEntityClass<FindingEntity>(FindingsTable)
 
     var structureId by FindingsTable.structureId
     var name by FindingsTable.name

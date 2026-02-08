@@ -45,7 +45,7 @@ internal class ExposedFindingsDb(
     @Suppress("ReturnCount")
     override suspend fun updateFinding(finding: BackendFinding): BackendFinding? =
         transaction(database) {
-            val existing = FindingEntity.findById(finding.finding.id.toJavaUuid())
+            val existing = FindingEntity.findById(finding.finding.id)
 
             if (existing != null) {
                 val serverTimestamp =
@@ -63,7 +63,7 @@ internal class ExposedFindingsDb(
                 existing.deletedAt = finding.deletedAt?.value
                 existing.coordinates.forEach { it.delete() }
             } else {
-                FindingEntity.new(finding.finding.id.toJavaUuid()) {
+                FindingEntity.new(finding.finding.id) {
                     structureId = finding.finding.structureId.toJavaUuid()
                     name = finding.finding.name
                     description = finding.finding.description
@@ -72,7 +72,7 @@ internal class ExposedFindingsDb(
                 }
             }
 
-            val findingEntity = FindingEntity[finding.finding.id.toJavaUuid()]
+            val findingEntity = FindingEntity[finding.finding.id]
             finding.finding.coordinates.forEachIndexed { index, coordinate ->
                 FindingCoordinateEntity.new {
                     this.finding = findingEntity
@@ -91,7 +91,7 @@ internal class ExposedFindingsDb(
     ): BackendFinding? =
         transaction(database) {
             val existing =
-                FindingEntity.findById(id.toJavaUuid())
+                FindingEntity.findById(id)
                     ?: return@transaction null
 
             if (existing.deletedAt != null) return@transaction null
@@ -121,7 +121,7 @@ internal class ExposedFindingsDb(
         BackendFinding(
             finding =
                 Finding(
-                    id = id.value.toKotlinUuid(),
+                    id = id.value,
                     structureId = structureId.toKotlinUuid(),
                     name = name,
                     description = description,

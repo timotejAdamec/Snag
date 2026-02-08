@@ -12,13 +12,13 @@
 
 package cz.adamec.timotej.snag.structures.be.driven.impl.internal
 
-import java.util.UUID
-import org.jetbrains.exposed.dao.UUIDEntity
-import org.jetbrains.exposed.dao.UUIDEntityClass
+import kotlin.uuid.Uuid
+import org.jetbrains.exposed.dao.UuidEntity
+import org.jetbrains.exposed.dao.UuidEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 
-internal class StructureEntity(id: EntityID<UUID>) : UUIDEntity(id) {
-    companion object : UUIDEntityClass<StructureEntity>(StructuresTable)
+internal class StructureEntity(id: EntityID<Uuid>) : UuidEntity(id) {
+    companion object : UuidEntityClass<StructureEntity>(StructuresTable)
 
     var projectId by StructuresTable.projectId
     var name by StructuresTable.name

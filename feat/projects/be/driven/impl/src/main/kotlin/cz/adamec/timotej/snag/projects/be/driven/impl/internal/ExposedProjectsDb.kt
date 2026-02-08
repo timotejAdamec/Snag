@@ -17,8 +17,6 @@ import cz.adamec.timotej.snag.projects.be.model.BackendProject
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
 import cz.adamec.timotej.snag.projects.business.Project
 import kotlin.uuid.Uuid
-import kotlin.uuid.toJavaUuid
-import kotlin.uuid.toKotlinUuid
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.or
@@ -40,13 +38,13 @@ internal class ExposedProjectsDb(
 
     override suspend fun getProject(id: Uuid): BackendProject? =
         transaction(database) {
-            ProjectEntity.findById(id.toJavaUuid())?.toBackendProject()
+            ProjectEntity.findById(id)?.toBackendProject()
         }
 
     @Suppress("ReturnCount")
     override suspend fun updateProject(project: BackendProject): BackendProject? =
         transaction(database) {
-            val existing = ProjectEntity.findById(project.project.id.toJavaUuid())
+            val existing = ProjectEntity.findById(project.project.id)
 
             if (existing != null) {
                 val serverTimestamp =
@@ -62,7 +60,7 @@ internal class ExposedProjectsDb(
                 existing.updatedAt = project.project.updatedAt.value
                 existing.deletedAt = project.deletedAt?.value
             } else {
-                ProjectEntity.new(project.project.id.toJavaUuid()) {
+                ProjectEntity.new(project.project.id) {
                     name = project.project.name
                     address = project.project.address
                     updatedAt = project.project.updatedAt.value
@@ -79,7 +77,7 @@ internal class ExposedProjectsDb(
     ): BackendProject? =
         transaction(database) {
             val existing =
-                ProjectEntity.findById(id.toJavaUuid())
+                ProjectEntity.findById(id)
                     ?: return@transaction null
 
             if (existing.deletedAt != null) return@transaction null
@@ -103,7 +101,7 @@ internal class ExposedProjectsDb(
         BackendProject(
             project =
                 Project(
-                    id = id.value.toKotlinUuid(),
+                    id = id.value,
                     name = name,
                     address = address,
                     updatedAt = Timestamp(updatedAt),

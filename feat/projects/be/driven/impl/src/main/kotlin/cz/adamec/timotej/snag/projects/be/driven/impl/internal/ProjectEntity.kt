@@ -12,13 +12,13 @@
 
 package cz.adamec.timotej.snag.projects.be.driven.impl.internal
 
-import java.util.UUID
-import org.jetbrains.exposed.dao.UUIDEntity
-import org.jetbrains.exposed.dao.UUIDEntityClass
+import kotlin.uuid.Uuid
+import org.jetbrains.exposed.dao.UuidEntity
+import org.jetbrains.exposed.dao.UuidEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 
-internal class ProjectEntity(id: EntityID<UUID>) : UUIDEntity(id) {
-    companion object : UUIDEntityClass<ProjectEntity>(ProjectsTable)
+internal class ProjectEntity(id: EntityID<Uuid>) : UuidEntity(id) {
+    companion object : UuidEntityClass<ProjectEntity>(ProjectsTable)
 
     var name by ProjectsTable.name
     var address by ProjectsTable.address

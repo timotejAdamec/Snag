@@ -20,6 +20,7 @@ import kotlin.uuid.Uuid
 import kotlin.uuid.toJavaUuid
 import kotlin.uuid.toKotlinUuid
 import org.jetbrains.exposed.sql.Database
+
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.or
@@ -45,7 +46,7 @@ internal class ExposedStructuresDb(
     override suspend fun saveStructure(backendStructure: BackendStructure): BackendStructure? =
         transaction(database) {
             val existing =
-                StructureEntity.findById(backendStructure.structure.id.toJavaUuid())
+                StructureEntity.findById(backendStructure.structure.id)
 
             if (existing != null) {
                 val serverTimestamp =
@@ -62,7 +63,7 @@ internal class ExposedStructuresDb(
                 existing.updatedAt = backendStructure.structure.updatedAt.value
                 existing.deletedAt = backendStructure.deletedAt?.value
             } else {
-                StructureEntity.new(backendStructure.structure.id.toJavaUuid()) {
+                StructureEntity.new(backendStructure.structure.id) {
                     projectId = backendStructure.structure.projectId.toJavaUuid()
                     name = backendStructure.structure.name
                     floorPlanUrl = backendStructure.structure.floorPlanUrl
@@ -80,7 +81,7 @@ internal class ExposedStructuresDb(
     ): BackendStructure? =
         transaction(database) {
             val existing =
-                StructureEntity.findById(id.toJavaUuid())
+                StructureEntity.findById(id)
                     ?: return@transaction null
 
             if (existing.deletedAt != null) return@transaction null
@@ -110,7 +111,7 @@ internal class ExposedStructuresDb(
         BackendStructure(
             structure =
                 Structure(
-                    id = id.value.toKotlinUuid(),
+                    id = id.value,
                     projectId = projectId.toKotlinUuid(),
                     name = name,
                     floorPlanUrl = floorPlanUrl,
