@@ -12,17 +12,19 @@
 
 package cz.adamec.timotej.snag.projects.be.driven.impl.internal
 
+import cz.adamec.timotej.snag.feat.shared.database.be.ProjectEntity
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.projects.be.model.BackendProject
 import cz.adamec.timotej.snag.projects.business.Project
 
 internal fun ProjectEntity.toModel() =
     BackendProject(
-        project = Project(
-            id = id.value,
-            name = name,
-            address = address,
-            updatedAt = Timestamp(updatedAt),
-        ),
+        project =
+            Project(
+                id = id.value,
+                name = name,
+                address = address,
+                updatedAt = Timestamp(updatedAt),
+            ),
         deletedAt = deletedAt?.let { Timestamp(it) },
     )

@@ -10,13 +10,13 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.projects.be.driven.impl.internal
+package cz.adamec.timotej.snag.feat.shared.database.be
 
 import org.jetbrains.exposed.v1.core.dao.id.UuidTable
 
 private const val VARCHAR_MAX_LENGTH = 255
 
-internal object ProjectsTable : UuidTable("projects") {
+object ProjectsTable : UuidTable("projects") {
     val name = varchar("name", VARCHAR_MAX_LENGTH)
     val address = varchar("address", VARCHAR_MAX_LENGTH)
     val updatedAt = long("updated_at")

@@ -10,30 +10,34 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.findings.be.driven.impl.internal
+package cz.adamec.timotej.snag.feat.shared.database.be
 
-import kotlin.uuid.Uuid
 import org.jetbrains.exposed.v1.core.dao.id.EntityID
 import org.jetbrains.exposed.v1.dao.IntEntity
 import org.jetbrains.exposed.v1.dao.IntEntityClass
 import org.jetbrains.exposed.v1.dao.UuidEntity
 import org.jetbrains.exposed.v1.dao.UuidEntityClass
+import kotlin.uuid.Uuid
 
-internal class FindingEntity(id: EntityID<Uuid>) : UuidEntity(id) {
-    var structureId by FindingsTable.structureId
+class FindingEntity(
+    id: EntityID<Uuid>,
+) : UuidEntity(id) {
+    var structure by StructureEntity referencedOn FindingsTable.structure
     var name by FindingsTable.name
     var description by FindingsTable.description
     var updatedAt by FindingsTable.updatedAt
     var deletedAt by FindingsTable.deletedAt
     val coordinates by FindingCoordinateEntity referrersOn
-        FindingCoordinatesTable.findingId orderBy
+        FindingCoordinatesTable.finding orderBy
         FindingCoordinatesTable.orderIndex
 
     companion object : UuidEntityClass<FindingEntity>(FindingsTable)
 }
 
-internal class FindingCoordinateEntity(id: EntityID<Int>) : IntEntity(id) {
-    var finding by FindingEntity referencedOn FindingCoordinatesTable.findingId
+class FindingCoordinateEntity(
+    id: EntityID<Int>,
+) : IntEntity(id) {
+    var finding by FindingEntity referencedOn FindingCoordinatesTable.finding
     var x by FindingCoordinatesTable.x
     var y by FindingCoordinatesTable.y
     var orderIndex by FindingCoordinatesTable.orderIndex

@@ -13,32 +13,31 @@
 package cz.adamec.timotej.snag.findings.be.driven.impl.internal
 
 import cz.adamec.timotej.snag.feat.findings.be.model.BackendFinding
+import cz.adamec.timotej.snag.feat.shared.database.be.FindingCoordinateEntity
+import cz.adamec.timotej.snag.feat.shared.database.be.FindingEntity
+import cz.adamec.timotej.snag.feat.shared.database.be.FindingsTable
+import cz.adamec.timotej.snag.feat.shared.database.be.StructureEntity
 import cz.adamec.timotej.snag.findings.be.ports.FindingsDb
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
-import kotlin.uuid.Uuid
 import org.jetbrains.exposed.v1.core.and
 import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.core.greater
 import org.jetbrains.exposed.v1.core.or
 import org.jetbrains.exposed.v1.dao.with
 import org.jetbrains.exposed.v1.jdbc.Database
-import org.jetbrains.exposed.v1.jdbc.SchemaUtils
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
+import kotlin.uuid.Uuid
 
 internal class ExposedFindingsDb(
     private val database: Database,
 ) : FindingsDb {
-    init {
-        transaction(database) {
-            SchemaUtils.create(FindingsTable, FindingCoordinatesTable)
-        }
-    }
-
     override suspend fun getFindings(structureId: Uuid): List<BackendFinding> =
         transaction(database) {
-            FindingEntity.find {
-                FindingsTable.structureId eq structureId
-            }.with(FindingEntity::coordinates).map { it.toModel() }
+            FindingEntity
+                .find {
+                    FindingsTable.structure eq structureId
+                }.with(FindingEntity::coordinates)
+                .map { it.toModel() }
         }
 
     @Suppress("ReturnCount", "LabeledExpression")
@@ -55,7 +54,7 @@ internal class ExposedFindingsDb(
                 if (serverTimestamp >= finding.finding.updatedAt) {
                     return@transaction existing.toModel()
                 }
-                existing.structureId = finding.finding.structureId
+                existing.structure = StructureEntity[finding.finding.structureId]
                 existing.name = finding.finding.name
                 existing.description = finding.finding.description
                 existing.updatedAt = finding.finding.updatedAt.value
@@ -63,7 +62,7 @@ internal class ExposedFindingsDb(
                 existing.coordinates.forEach { it.delete() }
             } else {
                 FindingEntity.new(finding.finding.id) {
-                    structureId = finding.finding.structureId
+                    structure = StructureEntity[finding.finding.structureId]
                     name = finding.finding.name
                     description = finding.finding.description
                     updatedAt = finding.finding.updatedAt.value
@@ -108,12 +107,14 @@ internal class ExposedFindingsDb(
     ): List<BackendFinding> =
         transaction(database) {
             @Suppress("UnnecessaryParentheses")
-            FindingEntity.find {
-                (FindingsTable.structureId eq structureId) and
-                    (
-                        (FindingsTable.updatedAt greater since.value) or
-                            (FindingsTable.deletedAt greater since.value)
-                    )
-            }.with(FindingEntity::coordinates).map { it.toModel() }
+            FindingEntity
+                .find {
+                    (FindingsTable.structure eq structureId) and
+                        (
+                            (FindingsTable.updatedAt greater since.value) or
+                                (FindingsTable.deletedAt greater since.value)
+                        )
+                }.with(FindingEntity::coordinates)
+                .map { it.toModel() }
         }
 }

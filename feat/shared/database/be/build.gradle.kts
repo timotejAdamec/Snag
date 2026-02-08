@@ -10,13 +10,13 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.lib.database.be.di
+plugins {
+    alias(libs.plugins.snagBackendModule)
+}
 
-import cz.adamec.timotej.snag.lib.database.be.internal.DatabaseFactory
-import org.jetbrains.exposed.v1.jdbc.Database
-import org.koin.dsl.module
-
-val backendDatabaseModule =
-    module {
-        single<Database> { DatabaseFactory.create() }
-    }
+dependencies {
+    implementation(libs.exposed.core)
+    implementation(libs.exposed.dao)
+    implementation(libs.exposed.jdbc)
+    implementation(libs.h2)
+}

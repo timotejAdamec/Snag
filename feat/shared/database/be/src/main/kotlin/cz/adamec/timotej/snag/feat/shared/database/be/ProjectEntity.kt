@@ -10,18 +10,21 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.projects.be.driven.impl.internal
+package cz.adamec.timotej.snag.feat.shared.database.be
 
-import kotlin.uuid.Uuid
 import org.jetbrains.exposed.v1.core.dao.id.EntityID
 import org.jetbrains.exposed.v1.dao.UuidEntity
 import org.jetbrains.exposed.v1.dao.UuidEntityClass
+import kotlin.uuid.Uuid
 
-internal class ProjectEntity(id: EntityID<Uuid>) : UuidEntity(id) {
+class ProjectEntity(
+    id: EntityID<Uuid>,
+) : UuidEntity(id) {
     var name by ProjectsTable.name
     var address by ProjectsTable.address
     var updatedAt by ProjectsTable.updatedAt
     var deletedAt by ProjectsTable.deletedAt
+    val structures by StructureEntity referrersOn StructuresTable.project
 
     companion object : UuidEntityClass<ProjectEntity>(ProjectsTable)
 }
