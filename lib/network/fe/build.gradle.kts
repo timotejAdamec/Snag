@@ -9,5 +9,10 @@ kotlin {
                 implementation(projects.server.api)
             }
         }
+        val nonWebMain by getting {
+            dependencies {
+                implementation(libs.konnection)
+            }
+        }
     }
 }
