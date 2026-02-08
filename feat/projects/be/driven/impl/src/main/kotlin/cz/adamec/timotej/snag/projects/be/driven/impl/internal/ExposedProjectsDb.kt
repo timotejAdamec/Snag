@@ -15,7 +15,6 @@ package cz.adamec.timotej.snag.projects.be.driven.impl.internal
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.projects.be.model.BackendProject
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
-import cz.adamec.timotej.snag.projects.business.Project
 import kotlin.uuid.Uuid
 import org.jetbrains.exposed.v1.core.or
 import org.jetbrains.exposed.v1.jdbc.Database
@@ -33,12 +32,12 @@ internal class ExposedProjectsDb(
 
     override suspend fun getProjects(): List<BackendProject> =
         transaction(database) {
-            ProjectEntity.all().map { it.toBackendProject() }
+            ProjectEntity.all().map { it.toModel() }
         }
 
     override suspend fun getProject(id: Uuid): BackendProject? =
         transaction(database) {
-            ProjectEntity.findById(id)?.toBackendProject()
+            ProjectEntity.findById(id)?.toModel()
         }
 
     @Suppress("ReturnCount")
@@ -53,7 +52,7 @@ internal class ExposedProjectsDb(
                         existing.deletedAt?.let { Timestamp(it) } ?: Timestamp(0),
                     )
                 if (serverTimestamp >= project.project.updatedAt) {
-                    return@transaction existing.toBackendProject()
+                    return@transaction existing.toModel()
                 }
                 existing.name = project.project.name
                 existing.address = project.project.address
@@ -82,7 +81,7 @@ internal class ExposedProjectsDb(
 
             if (existing.deletedAt != null) return@transaction null
             if (Timestamp(existing.updatedAt) >= deletedAt) {
-                return@transaction existing.toBackendProject()
+                return@transaction existing.toModel()
             }
 
             existing.deletedAt = deletedAt.value
@@ -94,18 +93,6 @@ internal class ExposedProjectsDb(
             ProjectEntity.find {
                 (ProjectsTable.updatedAt greater since.value) or
                     (ProjectsTable.deletedAt greater since.value)
-            }.map { it.toBackendProject() }
+            }.map { it.toModel() }
         }
-
-    private fun ProjectEntity.toBackendProject(): BackendProject =
-        BackendProject(
-            project =
-                Project(
-                    id = id.value,
-                    name = name,
-                    address = address,
-                    updatedAt = Timestamp(updatedAt),
-                ),
-            deletedAt = deletedAt?.let { Timestamp(it) },
-        )
 }

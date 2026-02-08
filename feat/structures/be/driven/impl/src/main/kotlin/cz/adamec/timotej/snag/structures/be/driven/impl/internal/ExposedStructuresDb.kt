@@ -13,12 +13,10 @@
 package cz.adamec.timotej.snag.structures.be.driven.impl.internal
 
 import cz.adamec.timotej.snag.feat.structures.be.model.BackendStructure
-import cz.adamec.timotej.snag.feat.structures.business.Structure
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.structures.be.ports.StructuresDb
 import kotlin.uuid.Uuid
 import kotlin.uuid.toJavaUuid
-import kotlin.uuid.toKotlinUuid
 import org.jetbrains.exposed.v1.core.and
 import org.jetbrains.exposed.v1.core.or
 import org.jetbrains.exposed.v1.jdbc.Database
@@ -38,7 +36,7 @@ internal class ExposedStructuresDb(
         transaction(database) {
             StructureEntity.find {
                 StructuresTable.projectId eq projectId.toJavaUuid()
-            }.map { it.toBackendStructure() }
+            }.map { it.toModel() }
         }
 
     @Suppress("ReturnCount")
@@ -54,7 +52,7 @@ internal class ExposedStructuresDb(
                         existing.deletedAt?.let { Timestamp(it) } ?: Timestamp(0),
                     )
                 if (serverTimestamp >= backendStructure.structure.updatedAt) {
-                    return@transaction existing.toBackendStructure()
+                    return@transaction existing.toModel()
                 }
                 existing.projectId = backendStructure.structure.projectId.toJavaUuid()
                 existing.name = backendStructure.structure.name
@@ -85,7 +83,7 @@ internal class ExposedStructuresDb(
 
             if (existing.deletedAt != null) return@transaction null
             if (Timestamp(existing.updatedAt) >= deletedAt) {
-                return@transaction existing.toBackendStructure()
+                return@transaction existing.toModel()
             }
 
             existing.deletedAt = deletedAt.value
@@ -103,19 +101,6 @@ internal class ExposedStructuresDb(
                         (StructuresTable.updatedAt greater since.value) or
                             (StructuresTable.deletedAt greater since.value)
                     )
-            }.map { it.toBackendStructure() }
+            }.map { it.toModel() }
         }
-
-    private fun StructureEntity.toBackendStructure(): BackendStructure =
-        BackendStructure(
-            structure =
-                Structure(
-                    id = id.value,
-                    projectId = projectId.toKotlinUuid(),
-                    name = name,
-                    floorPlanUrl = floorPlanUrl,
-                    updatedAt = Timestamp(updatedAt),
-                ),
-            deletedAt = deletedAt?.let { Timestamp(it) },
-        )
 }

@@ -13,13 +13,10 @@
 package cz.adamec.timotej.snag.findings.be.driven.impl.internal
 
 import cz.adamec.timotej.snag.feat.findings.be.model.BackendFinding
-import cz.adamec.timotej.snag.feat.findings.business.Finding
-import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
 import cz.adamec.timotej.snag.findings.be.ports.FindingsDb
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import kotlin.uuid.Uuid
 import kotlin.uuid.toJavaUuid
-import kotlin.uuid.toKotlinUuid
 import org.jetbrains.exposed.v1.core.and
 import org.jetbrains.exposed.v1.core.or
 import org.jetbrains.exposed.v1.jdbc.Database
@@ -39,7 +36,7 @@ internal class ExposedFindingsDb(
         transaction(database) {
             FindingEntity.find {
                 FindingsTable.structureId eq structureId.toJavaUuid()
-            }.with(FindingEntity::coordinates).map { it.toBackendFinding() }
+            }.with(FindingEntity::coordinates).map { it.toModel() }
         }
 
     @Suppress("ReturnCount")
@@ -54,7 +51,7 @@ internal class ExposedFindingsDb(
                         existing.deletedAt?.let { Timestamp(it) } ?: Timestamp(0),
                     )
                 if (serverTimestamp >= finding.finding.updatedAt) {
-                    return@transaction existing.toBackendFinding()
+                    return@transaction existing.toModel()
                 }
                 existing.structureId = finding.finding.structureId.toJavaUuid()
                 existing.name = finding.finding.name
@@ -96,7 +93,7 @@ internal class ExposedFindingsDb(
 
             if (existing.deletedAt != null) return@transaction null
             if (Timestamp(existing.updatedAt) >= deletedAt) {
-                return@transaction existing.toBackendFinding()
+                return@transaction existing.toModel()
             }
 
             existing.deletedAt = deletedAt.value
@@ -114,23 +111,6 @@ internal class ExposedFindingsDb(
                         (FindingsTable.updatedAt greater since.value) or
                             (FindingsTable.deletedAt greater since.value)
                     )
-            }.with(FindingEntity::coordinates).map { it.toBackendFinding() }
+            }.with(FindingEntity::coordinates).map { it.toModel() }
         }
-
-    private fun FindingEntity.toBackendFinding(): BackendFinding =
-        BackendFinding(
-            finding =
-                Finding(
-                    id = id.value,
-                    structureId = structureId.toKotlinUuid(),
-                    name = name,
-                    description = description,
-                    coordinates =
-                        coordinates.map {
-                            RelativeCoordinate(x = it.x, y = it.y)
-                        },
-                    updatedAt = Timestamp(updatedAt),
-                ),
-            deletedAt = deletedAt?.let { Timestamp(it) },
-        )
 }
