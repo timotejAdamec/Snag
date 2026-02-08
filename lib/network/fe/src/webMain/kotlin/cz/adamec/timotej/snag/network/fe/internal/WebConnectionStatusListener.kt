@@ -18,13 +18,15 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.onEach
 
-internal class WebConnectionStatusListener : ConnectionStatusListener {
+internal class WebConnectionStatusListener(
+    private val provider: BrowserConnectivityProvider,
+) : ConnectionStatusListener {
     override fun isConnectedFlow(): Flow<Boolean> =
         callbackFlow {
-            trySend(isNavigatorOnline())
+            trySend(provider.isOnline())
 
             val registration =
-                observeConnectivityChanges(
+                provider.addConnectivityListeners(
                     onOnline = { trySend(true) },
                     onOffline = { trySend(false) },
                 )
@@ -32,14 +34,3 @@ internal class WebConnectionStatusListener : ConnectionStatusListener {
             awaitClose { registration.unregister() }
         }.onEach { isConnected -> LH.logger.i { "Connection status changed: isConnected=$isConnected" } }
 }
-
-internal expect fun isNavigatorOnline(): Boolean
-
-internal interface ConnectivityEventRegistration {
-    fun unregister()
-}
-
-internal expect fun observeConnectivityChanges(
-    onOnline: () -> Unit,
-    onOffline: () -> Unit,
-): ConnectivityEventRegistration

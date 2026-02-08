@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.network.fe.internal
 
-private fun jsIsNavigatorOnline(): Boolean =
+private fun jsIsOnline(): Boolean =
     js("globalThis.navigator.onLine")
 
 private fun jsAddConnectivityListeners(
@@ -37,17 +37,19 @@ private fun jsRemoveConnectivityListeners(handlers: JsAny): Unit =
     }""",
     )
 
-internal actual fun isNavigatorOnline(): Boolean = jsIsNavigatorOnline()
+internal class WasmBrowserConnectivityProvider : BrowserConnectivityProvider {
+    override fun isOnline(): Boolean = jsIsOnline()
 
-internal actual fun observeConnectivityChanges(
-    onOnline: () -> Unit,
-    onOffline: () -> Unit,
-): ConnectivityEventRegistration {
-    val handlers = jsAddConnectivityListeners(onOnline, onOffline)
+    override fun addConnectivityListeners(
+        onOnline: () -> Unit,
+        onOffline: () -> Unit,
+    ): BrowserConnectivityProvider.ListenerRegistration {
+        val handlers = jsAddConnectivityListeners(onOnline, onOffline)
 
-    return object : ConnectivityEventRegistration {
-        override fun unregister() {
-            jsRemoveConnectivityListeners(handlers)
+        return object : BrowserConnectivityProvider.ListenerRegistration {
+            override fun unregister() {
+                jsRemoveConnectivityListeners(handlers)
+            }
         }
     }
 }
