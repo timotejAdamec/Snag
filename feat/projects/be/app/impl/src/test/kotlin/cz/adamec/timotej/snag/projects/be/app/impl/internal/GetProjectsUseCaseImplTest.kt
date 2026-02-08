@@ -14,31 +14,19 @@ package cz.adamec.timotej.snag.projects.be.app.impl.internal
 
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.projects.be.app.api.GetProjectsUseCase
-import cz.adamec.timotej.snag.projects.be.driven.test.FakeProjectsDb
 import cz.adamec.timotej.snag.projects.be.model.BackendProject
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
 import cz.adamec.timotej.snag.projects.business.Project
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
 import kotlinx.coroutines.test.runTest
-import org.koin.core.module.Module
-import org.koin.core.module.dsl.singleOf
-import org.koin.dsl.bind
-import org.koin.dsl.module
 import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.uuid.Uuid
 
 class GetProjectsUseCaseImplTest : BackendKoinInitializedTest() {
-    private val dataSource: FakeProjectsDb by inject()
+    private val dataSource: ProjectsDb by inject()
     private val useCase: GetProjectsUseCase by inject()
-
-    override fun additionalKoinModules(): List<Module> =
-        listOf(
-            module {
-                singleOf(::FakeProjectsDb) bind ProjectsDb::class
-            },
-        )
 
     @Test
     fun `returns empty list when none exist`() =
@@ -69,8 +57,8 @@ class GetProjectsUseCaseImplTest : BackendKoinInitializedTest() {
                         updatedAt = Timestamp(10L),
                     ),
                 )
-            dataSource.setProject(project1)
-            dataSource.setProject(project2)
+            dataSource.saveProject(project1)
+            dataSource.saveProject(project2)
 
             val result = useCase()
 

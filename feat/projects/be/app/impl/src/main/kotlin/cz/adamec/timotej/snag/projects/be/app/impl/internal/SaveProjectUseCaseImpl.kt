@@ -22,7 +22,7 @@ internal class SaveProjectUseCaseImpl(
 ) : SaveProjectUseCase {
     override suspend operator fun invoke(project: BackendProject): BackendProject? {
         logger.debug("Saving project {} to local storage.", project)
-        return projectsDb.updateProject(project).also {
+        return projectsDb.saveProject(project).also {
             logger.debug("Saved project {} to local storage.", project)
         }
     }

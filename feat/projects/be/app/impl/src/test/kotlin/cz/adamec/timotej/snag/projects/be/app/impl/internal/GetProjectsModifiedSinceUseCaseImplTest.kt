@@ -14,16 +14,11 @@ package cz.adamec.timotej.snag.projects.be.app.impl.internal
 
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.projects.be.app.api.GetProjectsModifiedSinceUseCase
-import cz.adamec.timotej.snag.projects.be.driven.test.FakeProjectsDb
 import cz.adamec.timotej.snag.projects.be.model.BackendProject
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
 import cz.adamec.timotej.snag.projects.business.Project
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
 import kotlinx.coroutines.test.runTest
-import org.koin.core.module.Module
-import org.koin.core.module.dsl.singleOf
-import org.koin.dsl.bind
-import org.koin.dsl.module
 import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -31,15 +26,8 @@ import kotlin.test.assertTrue
 import kotlin.uuid.Uuid
 
 class GetProjectsModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
-    private val dataSource: FakeProjectsDb by inject()
+    private val dataSource: ProjectsDb by inject()
     private val useCase: GetProjectsModifiedSinceUseCase by inject()
-
-    override fun additionalKoinModules(): List<Module> =
-        listOf(
-            module {
-                singleOf(::FakeProjectsDb) bind ProjectsDb::class
-            },
-        )
 
     @Test
     fun `returns empty list when no projects exist`() =
@@ -61,7 +49,7 @@ class GetProjectsModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
                         updatedAt = Timestamp(200L),
                     ),
                 )
-            dataSource.setProject(project)
+            dataSource.saveProject(project)
 
             val result = useCase(since = Timestamp(100L))
 
@@ -80,7 +68,7 @@ class GetProjectsModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
                         updatedAt = Timestamp(50L),
                     ),
                 )
-            dataSource.setProject(project)
+            dataSource.saveProject(project)
 
             val result = useCase(since = Timestamp(100L))
 
@@ -100,7 +88,7 @@ class GetProjectsModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
                     ),
                     deletedAt = Timestamp(200L),
                 )
-            dataSource.setProject(project)
+            dataSource.saveProject(project)
 
             val result = useCase(since = Timestamp(100L))
 
@@ -120,7 +108,7 @@ class GetProjectsModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
                     ),
                     deletedAt = Timestamp(80L),
                 )
-            dataSource.setProject(project)
+            dataSource.saveProject(project)
 
             val result = useCase(since = Timestamp(100L))
 

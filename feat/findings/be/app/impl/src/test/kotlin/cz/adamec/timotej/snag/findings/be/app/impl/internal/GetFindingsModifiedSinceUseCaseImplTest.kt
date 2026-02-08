@@ -14,16 +14,17 @@ package cz.adamec.timotej.snag.findings.be.app.impl.internal
 
 import cz.adamec.timotej.snag.feat.findings.be.model.BackendFinding
 import cz.adamec.timotej.snag.feat.findings.business.Finding
+import cz.adamec.timotej.snag.feat.structures.be.model.BackendStructure
+import cz.adamec.timotej.snag.feat.structures.business.Structure
 import cz.adamec.timotej.snag.findings.be.app.api.GetFindingsModifiedSinceUseCase
-import cz.adamec.timotej.snag.findings.be.driven.test.FakeFindingsDb
 import cz.adamec.timotej.snag.findings.be.ports.FindingsDb
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
+import cz.adamec.timotej.snag.projects.be.model.BackendProject
+import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
+import cz.adamec.timotej.snag.projects.business.Project
+import cz.adamec.timotej.snag.structures.be.ports.StructuresDb
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
 import kotlinx.coroutines.test.runTest
-import org.koin.core.module.Module
-import org.koin.core.module.dsl.singleOf
-import org.koin.dsl.bind
-import org.koin.dsl.module
 import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -31,18 +32,49 @@ import kotlin.test.assertTrue
 import kotlin.uuid.Uuid
 
 class GetFindingsModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
-    private val dataSource: FakeFindingsDb by inject()
+    private val dataSource: FindingsDb by inject()
+    private val projectsDb: ProjectsDb by inject()
+    private val structuresDb: StructuresDb by inject()
     private val useCase: GetFindingsModifiedSinceUseCase by inject()
 
+    private val projectId = Uuid.parse("00000000-0000-0000-0000-000000000001")
     private val structureId = Uuid.parse("00000000-0000-0000-0001-000000000001")
     private val otherStructureId = Uuid.parse("00000000-0000-0000-0001-000000000002")
 
-    override fun additionalKoinModules(): List<Module> =
-        listOf(
-            module {
-                singleOf(::FakeFindingsDb) bind FindingsDb::class
-            },
+    private suspend fun seedParentEntities() {
+        projectsDb.saveProject(
+            BackendProject(
+                project = Project(
+                    id = projectId,
+                    name = "Test Project",
+                    address = "Test Address",
+                    updatedAt = Timestamp(1L),
+                ),
+            ),
         )
+        structuresDb.saveStructure(
+            BackendStructure(
+                structure = Structure(
+                    id = structureId,
+                    projectId = projectId,
+                    name = "Test Structure",
+                    floorPlanUrl = null,
+                    updatedAt = Timestamp(1L),
+                ),
+            ),
+        )
+        structuresDb.saveStructure(
+            BackendStructure(
+                structure = Structure(
+                    id = otherStructureId,
+                    projectId = projectId,
+                    name = "Other Structure",
+                    floorPlanUrl = null,
+                    updatedAt = Timestamp(1L),
+                ),
+            ),
+        )
+    }
 
     @Test
     fun `returns empty list when no findings exist`() =
@@ -55,6 +87,7 @@ class GetFindingsModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
     @Test
     fun `returns findings with updatedAt after since`() =
         runTest(testDispatcher) {
+            seedParentEntities()
             val finding =
                 BackendFinding(
                     finding = Finding(
@@ -66,7 +99,7 @@ class GetFindingsModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
                         updatedAt = Timestamp(200L),
                     ),
                 )
-            dataSource.setFinding(finding)
+            dataSource.saveFinding(finding)
 
             val result = useCase(structureId = structureId, since = Timestamp(100L))
 
@@ -76,6 +109,7 @@ class GetFindingsModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
     @Test
     fun `excludes findings from different structure`() =
         runTest(testDispatcher) {
+            seedParentEntities()
             val finding =
                 BackendFinding(
                     finding = Finding(
@@ -87,7 +121,7 @@ class GetFindingsModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
                         updatedAt = Timestamp(200L),
                     ),
                 )
-            dataSource.setFinding(finding)
+            dataSource.saveFinding(finding)
 
             val result = useCase(structureId = structureId, since = Timestamp(100L))
 
@@ -97,6 +131,7 @@ class GetFindingsModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
     @Test
     fun `returns deleted findings when deletedAt is after since`() =
         runTest(testDispatcher) {
+            seedParentEntities()
             val finding =
                 BackendFinding(
                     finding = Finding(
@@ -109,7 +144,7 @@ class GetFindingsModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
                     ),
                     deletedAt = Timestamp(200L),
                 )
-            dataSource.setFinding(finding)
+            dataSource.saveFinding(finding)
 
             val result = useCase(structureId = structureId, since = Timestamp(100L))
 
@@ -119,6 +154,7 @@ class GetFindingsModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
     @Test
     fun `excludes unchanged findings`() =
         runTest(testDispatcher) {
+            seedParentEntities()
             val finding =
                 BackendFinding(
                     finding = Finding(
@@ -130,7 +166,7 @@ class GetFindingsModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
                         updatedAt = Timestamp(50L),
                     ),
                 )
-            dataSource.setFinding(finding)
+            dataSource.saveFinding(finding)
 
             val result = useCase(structureId = structureId, since = Timestamp(100L))
 

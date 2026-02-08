@@ -15,16 +15,14 @@ package cz.adamec.timotej.snag.structures.be.app.impl.internal
 import cz.adamec.timotej.snag.feat.structures.be.model.BackendStructure
 import cz.adamec.timotej.snag.feat.structures.business.Structure
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
+import cz.adamec.timotej.snag.projects.be.model.BackendProject
+import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
+import cz.adamec.timotej.snag.projects.business.Project
 import cz.adamec.timotej.snag.structures.be.app.api.DeleteStructureUseCase
 import cz.adamec.timotej.snag.structures.be.app.api.model.DeleteStructureRequest
-import cz.adamec.timotej.snag.structures.be.driven.test.FakeStructuresDb
 import cz.adamec.timotej.snag.structures.be.ports.StructuresDb
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
 import kotlinx.coroutines.test.runTest
-import org.koin.core.module.Module
-import org.koin.core.module.dsl.singleOf
-import org.koin.dsl.bind
-import org.koin.dsl.module
 import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -33,7 +31,8 @@ import kotlin.test.assertNull
 import kotlin.uuid.Uuid
 
 class DeleteStructureUseCaseImplTest : BackendKoinInitializedTest() {
-    private val dataSource: FakeStructuresDb by inject()
+    private val dataSource: StructuresDb by inject()
+    private val projectsDb: ProjectsDb by inject()
     private val useCase: DeleteStructureUseCase by inject()
 
     private val projectId = Uuid.parse("00000000-0000-0000-0000-000000000001")
@@ -49,17 +48,24 @@ class DeleteStructureUseCaseImplTest : BackendKoinInitializedTest() {
             ),
         )
 
-    override fun additionalKoinModules(): List<Module> =
-        listOf(
-            module {
-                singleOf(::FakeStructuresDb) bind StructuresDb::class
-            },
+    private fun createProject() = runTest(testDispatcher) {
+        projectsDb.saveProject(
+            BackendProject(
+                project = Project(
+                    id = projectId,
+                    name = "Test Project",
+                    address = "Test Address",
+                    updatedAt = Timestamp(1L),
+                ),
+            ),
         )
+    }
 
     @Test
     fun `soft-deletes structure in storage`() =
         runTest(testDispatcher) {
-            dataSource.setStructures(structure)
+            createProject()
+            dataSource.saveStructure(structure)
 
             useCase(
                 DeleteStructureRequest(
@@ -68,7 +74,8 @@ class DeleteStructureUseCaseImplTest : BackendKoinInitializedTest() {
                 )
             )
 
-            val deletedStructure = dataSource.getStructure(structureId)
+            val deletedStructure =
+                dataSource.getStructures(projectId).find { it.structure.id == structureId }
             assertNotNull(deletedStructure)
             assertEquals(Timestamp(20L), deletedStructure.deletedAt)
         }
@@ -76,7 +83,8 @@ class DeleteStructureUseCaseImplTest : BackendKoinInitializedTest() {
     @Test
     fun `does not delete structure when saved updated at is later than deleted at`() =
         runTest(testDispatcher) {
-            dataSource.setStructures(structure)
+            createProject()
+            dataSource.saveStructure(structure)
 
             useCase(
                 DeleteStructureRequest(
@@ -85,13 +93,16 @@ class DeleteStructureUseCaseImplTest : BackendKoinInitializedTest() {
                 )
             )
 
-            assertNotNull(dataSource.getStructure(structureId))
+            assertNotNull(
+                dataSource.getStructures(projectId).find { it.structure.id == structureId }
+            )
         }
 
     @Test
     fun `returns saved structure when saved updated at is later than deleted at`() =
         runTest(testDispatcher) {
-            dataSource.setStructures(structure)
+            createProject()
+            dataSource.saveStructure(structure)
 
             val result = useCase(
                 DeleteStructureRequest(

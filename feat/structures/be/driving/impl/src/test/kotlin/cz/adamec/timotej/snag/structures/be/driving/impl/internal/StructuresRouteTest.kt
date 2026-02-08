@@ -16,7 +16,9 @@ import cz.adamec.timotej.snag.configuration.be.AppConfiguration
 import cz.adamec.timotej.snag.feat.structures.be.model.BackendStructure
 import cz.adamec.timotej.snag.feat.structures.business.Structure
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
-import cz.adamec.timotej.snag.structures.be.driven.test.FakeStructuresDb
+import cz.adamec.timotej.snag.projects.be.model.BackendProject
+import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
+import cz.adamec.timotej.snag.projects.business.Project
 import cz.adamec.timotej.snag.structures.be.driving.contract.DeleteStructureApiDto
 import cz.adamec.timotej.snag.structures.be.driving.contract.PutStructureApiDto
 import cz.adamec.timotej.snag.structures.be.driving.contract.StructureApiDto
@@ -33,10 +35,6 @@ import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.testing.ApplicationTestBuilder
 import io.ktor.server.testing.testApplication
-import org.koin.core.module.Module
-import org.koin.core.module.dsl.singleOf
-import org.koin.dsl.bind
-import org.koin.dsl.module
 import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -46,14 +44,21 @@ import kotlin.uuid.Uuid
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation as ClientContentNegotiation
 
 class StructuresRouteTest : BackendKoinInitializedTest() {
-    private val dataSource: FakeStructuresDb by inject()
+    private val dataSource: StructuresDb by inject()
+    private val projectsDb: ProjectsDb by inject()
 
-    override fun additionalKoinModules(): List<Module> =
-        listOf(
-            module {
-                singleOf(::FakeStructuresDb) bind StructuresDb::class
-            },
+    private suspend fun createParentProject() {
+        projectsDb.saveProject(
+            BackendProject(
+                project = Project(
+                    id = PROJECT_ID,
+                    name = "Test Project",
+                    address = "Test Address",
+                    updatedAt = Timestamp(1L),
+                ),
+            ),
         )
+    }
 
     private fun ApplicationTestBuilder.configureApp() {
         val configurations = getKoin().getAll<AppConfiguration>()
@@ -75,7 +80,8 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
     fun `DELETE structure returns 204 when successfully deleted`() =
         testApplication {
             configureApp()
-            dataSource.setStructures(
+            createParentProject()
+            dataSource.saveStructure(
                 BackendStructure(
                     structure = Structure(
                         id = TEST_ID_1,
@@ -100,7 +106,8 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
     fun `DELETE structure sets deletedAt on successful deletion`() =
         testApplication {
             configureApp()
-            dataSource.setStructures(
+            createParentProject()
+            dataSource.saveStructure(
                 BackendStructure(
                     structure = Structure(
                         id = TEST_ID_1,
@@ -130,7 +137,8 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
     fun `DELETE structure returns existing structure on conflict`() =
         testApplication {
             configureApp()
-            dataSource.setStructures(
+            createParentProject()
+            dataSource.saveStructure(
                 BackendStructure(
                     structure = Structure(
                         id = TEST_ID_1,
@@ -201,7 +209,8 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
     fun `GET structures returns all structures for project`() =
         testApplication {
             configureApp()
-            dataSource.setStructures(
+            createParentProject()
+            dataSource.saveStructure(
                 BackendStructure(
                     structure = Structure(
                         id = TEST_ID_1,
@@ -211,6 +220,8 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
                         updatedAt = Timestamp(100L),
                     ),
                 ),
+            )
+            dataSource.saveStructure(
                 BackendStructure(
                     structure = Structure(
                         id = TEST_ID_2,
@@ -236,7 +247,8 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
     fun `GET structures includes deletedAt for soft-deleted structures`() =
         testApplication {
             configureApp()
-            dataSource.setStructures(
+            createParentProject()
+            dataSource.saveStructure(
                 BackendStructure(
                     structure = Structure(
                         id = TEST_ID_1,
@@ -246,6 +258,8 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
                         updatedAt = Timestamp(100L),
                     ),
                 ),
+            )
+            dataSource.saveStructure(
                 BackendStructure(
                     structure = Structure(
                         id = TEST_ID_2,
@@ -274,7 +288,8 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
     fun `GET structures with since returns soft-deleted structures with deletedAt`() =
         testApplication {
             configureApp()
-            dataSource.setStructures(
+            createParentProject()
+            dataSource.saveStructure(
                 BackendStructure(
                     structure = Structure(
                         id = TEST_ID_1,
@@ -300,7 +315,8 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
     fun `GET structures with since parameter returns modified structures`() =
         testApplication {
             configureApp()
-            dataSource.setStructures(
+            createParentProject()
+            dataSource.saveStructure(
                 BackendStructure(
                     structure = Structure(
                         id = TEST_ID_1,
@@ -310,6 +326,8 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
                         updatedAt = Timestamp(50L),
                     ),
                 ),
+            )
+            dataSource.saveStructure(
                 BackendStructure(
                     structure = Structure(
                         id = TEST_ID_2,
@@ -349,6 +367,7 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
     fun `PUT structure returns 204 when successfully saved`() =
         testApplication {
             configureApp()
+            createParentProject()
             val client = jsonClient()
 
             val response = client.put("/projects/$PROJECT_ID/structures/$TEST_ID_1") {
@@ -370,7 +389,8 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
     fun `PUT structure returns existing structure on conflict`() =
         testApplication {
             configureApp()
-            dataSource.setStructures(
+            createParentProject()
+            dataSource.saveStructure(
                 BackendStructure(
                     structure = Structure(
                         id = TEST_ID_1,
@@ -405,7 +425,8 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
     fun `PUT structure conflict includes deletedAt when existing is soft-deleted`() =
         testApplication {
             configureApp()
-            dataSource.setStructures(
+            createParentProject()
+            dataSource.saveStructure(
                 BackendStructure(
                     structure = Structure(
                         id = TEST_ID_1,

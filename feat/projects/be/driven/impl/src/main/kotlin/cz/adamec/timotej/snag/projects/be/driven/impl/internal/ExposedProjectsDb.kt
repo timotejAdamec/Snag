@@ -37,7 +37,7 @@ internal class ExposedProjectsDb(
         }
 
     @Suppress("ReturnCount", "LabeledExpression")
-    override suspend fun updateProject(project: BackendProject): BackendProject? =
+    override suspend fun saveProject(project: BackendProject): BackendProject? =
         transaction(database) {
             val existing = ProjectEntity.findById(project.project.id)
 

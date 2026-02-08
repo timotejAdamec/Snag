@@ -16,13 +16,18 @@ import cz.adamec.timotej.snag.configuration.be.AppConfiguration
 import cz.adamec.timotej.snag.feat.findings.be.model.BackendFinding
 import cz.adamec.timotej.snag.feat.findings.business.Finding
 import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
-import cz.adamec.timotej.snag.findings.be.driven.test.FakeFindingsDb
+import cz.adamec.timotej.snag.feat.structures.be.model.BackendStructure
+import cz.adamec.timotej.snag.feat.structures.business.Structure
 import cz.adamec.timotej.snag.findings.be.driving.contract.DeleteFindingApiDto
 import cz.adamec.timotej.snag.findings.be.driving.contract.FindingApiDto
 import cz.adamec.timotej.snag.findings.be.driving.contract.PutFindingApiDto
 import cz.adamec.timotej.snag.findings.be.driving.contract.RelativeCoordinateApiDto
 import cz.adamec.timotej.snag.findings.be.ports.FindingsDb
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
+import cz.adamec.timotej.snag.projects.be.model.BackendProject
+import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
+import cz.adamec.timotej.snag.projects.business.Project
+import cz.adamec.timotej.snag.structures.be.ports.StructuresDb
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
 import io.ktor.client.call.body
 import io.ktor.client.request.delete
@@ -35,10 +40,6 @@ import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.testing.ApplicationTestBuilder
 import io.ktor.server.testing.testApplication
-import org.koin.core.module.Module
-import org.koin.core.module.dsl.singleOf
-import org.koin.dsl.bind
-import org.koin.dsl.module
 import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -48,14 +49,33 @@ import kotlin.uuid.Uuid
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation as ClientContentNegotiation
 
 class FindingsRouteTest : BackendKoinInitializedTest() {
-    private val dataSource: FakeFindingsDb by inject()
+    private val dataSource: FindingsDb by inject()
+    private val projectsDb: ProjectsDb by inject()
+    private val structuresDb: StructuresDb by inject()
 
-    override fun additionalKoinModules(): List<Module> =
-        listOf(
-            module {
-                singleOf(::FakeFindingsDb) bind FindingsDb::class
-            },
+    private suspend fun seedParentEntities() {
+        projectsDb.saveProject(
+            BackendProject(
+                project = Project(
+                    id = PROJECT_ID,
+                    name = "Test Project",
+                    address = "Test Address",
+                    updatedAt = Timestamp(1L),
+                ),
+            ),
         )
+        structuresDb.saveStructure(
+            BackendStructure(
+                structure = Structure(
+                    id = STRUCTURE_ID,
+                    projectId = PROJECT_ID,
+                    name = "Test Structure",
+                    floorPlanUrl = null,
+                    updatedAt = Timestamp(1L),
+                ),
+            ),
+        )
+    }
 
     private fun ApplicationTestBuilder.configureApp() {
         val configurations = getKoin().getAll<AppConfiguration>()
@@ -77,7 +97,8 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
     fun `DELETE finding returns 204 when successfully deleted`() =
         testApplication {
             configureApp()
-            dataSource.setFinding(
+            seedParentEntities()
+            dataSource.saveFinding(
                 BackendFinding(
                     finding = Finding(
                         id = TEST_ID_1,
@@ -103,7 +124,8 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
     fun `DELETE finding sets deletedAt on successful deletion`() =
         testApplication {
             configureApp()
-            dataSource.setFinding(
+            seedParentEntities()
+            dataSource.saveFinding(
                 BackendFinding(
                     finding = Finding(
                         id = TEST_ID_1,
@@ -134,7 +156,8 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
     fun `DELETE finding returns existing finding on conflict`() =
         testApplication {
             configureApp()
-            dataSource.setFinding(
+            seedParentEntities()
+            dataSource.saveFinding(
                 BackendFinding(
                     finding = Finding(
                         id = TEST_ID_1,
@@ -206,7 +229,8 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
     fun `GET findings returns all findings for structure`() =
         testApplication {
             configureApp()
-            dataSource.setFinding(
+            seedParentEntities()
+            dataSource.saveFinding(
                 BackendFinding(
                     finding = Finding(
                         id = TEST_ID_1,
@@ -218,7 +242,7 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
                     ),
                 ),
             )
-            dataSource.setFinding(
+            dataSource.saveFinding(
                 BackendFinding(
                     finding = Finding(
                         id = TEST_ID_2,
@@ -243,7 +267,8 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
     fun `GET findings includes deletedAt for soft-deleted findings`() =
         testApplication {
             configureApp()
-            dataSource.setFinding(
+            seedParentEntities()
+            dataSource.saveFinding(
                 BackendFinding(
                     finding = Finding(
                         id = TEST_ID_1,
@@ -255,7 +280,7 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
                     ),
                 ),
             )
-            dataSource.setFinding(
+            dataSource.saveFinding(
                 BackendFinding(
                     finding = Finding(
                         id = TEST_ID_2,
@@ -285,7 +310,8 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
     fun `GET findings with since returns soft-deleted findings with deletedAt`() =
         testApplication {
             configureApp()
-            dataSource.setFinding(
+            seedParentEntities()
+            dataSource.saveFinding(
                 BackendFinding(
                     finding = Finding(
                         id = TEST_ID_1,
@@ -312,7 +338,8 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
     fun `GET findings with since parameter returns modified findings`() =
         testApplication {
             configureApp()
-            dataSource.setFinding(
+            seedParentEntities()
+            dataSource.saveFinding(
                 BackendFinding(
                     finding = Finding(
                         id = TEST_ID_1,
@@ -324,7 +351,7 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
                     ),
                 ),
             )
-            dataSource.setFinding(
+            dataSource.saveFinding(
                 BackendFinding(
                     finding = Finding(
                         id = TEST_ID_2,
@@ -365,6 +392,7 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
     fun `PUT finding returns 204 when successfully saved`() =
         testApplication {
             configureApp()
+            seedParentEntities()
             val client = jsonClient()
 
             val response = client.put("/structures/$STRUCTURE_ID/findings/$TEST_ID_1") {
@@ -387,7 +415,8 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
     fun `PUT finding returns existing finding on conflict`() =
         testApplication {
             configureApp()
-            dataSource.setFinding(
+            seedParentEntities()
+            dataSource.saveFinding(
                 BackendFinding(
                     finding = Finding(
                         id = TEST_ID_1,
@@ -424,7 +453,8 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
     fun `PUT finding conflict includes deletedAt when existing is soft-deleted`() =
         testApplication {
             configureApp()
-            dataSource.setFinding(
+            seedParentEntities()
+            dataSource.saveFinding(
                 BackendFinding(
                     finding = Finding(
                         id = TEST_ID_1,
@@ -497,6 +527,7 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
     // endregion
 
     companion object {
+        private val PROJECT_ID = Uuid.parse("00000000-0000-0000-0000-000000000020")
         private val STRUCTURE_ID = Uuid.parse("00000000-0000-0000-0000-000000000010")
         private val TEST_ID_1 = Uuid.parse("00000000-0000-0000-0000-000000000001")
         private val TEST_ID_2 = Uuid.parse("00000000-0000-0000-0000-000000000002")

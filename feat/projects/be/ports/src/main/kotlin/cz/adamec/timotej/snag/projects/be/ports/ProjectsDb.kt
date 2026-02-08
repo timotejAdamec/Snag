@@ -21,7 +21,7 @@ interface ProjectsDb {
 
     suspend fun getProject(id: Uuid): BackendProject?
 
-    suspend fun updateProject(project: BackendProject): BackendProject?
+    suspend fun saveProject(project: BackendProject): BackendProject?
 
     suspend fun deleteProject(
         id: Uuid,
