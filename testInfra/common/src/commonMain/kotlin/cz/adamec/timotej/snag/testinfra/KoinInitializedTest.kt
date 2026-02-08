@@ -36,6 +36,7 @@ abstract class KoinInitializedTest : KoinTest {
     fun setUpKoin() {
         Dispatchers.setMain(testDispatcher)
         startKoin {
+            allowOverride(true)
             modules(
                 koinModules() +
                     createTestDispatchersModule(testDispatcher) +

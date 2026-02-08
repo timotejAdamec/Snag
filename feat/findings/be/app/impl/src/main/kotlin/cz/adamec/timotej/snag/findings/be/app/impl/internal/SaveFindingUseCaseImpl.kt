@@ -22,7 +22,7 @@ internal class SaveFindingUseCaseImpl(
 ) : SaveFindingUseCase {
     override suspend operator fun invoke(finding: BackendFinding): BackendFinding? {
         logger.debug("Saving finding {} to local storage.", finding)
-        return findingsDb.updateFinding(finding).also {
+        return findingsDb.saveFinding(finding).also {
             logger.debug("Saved finding {} to local storage.", finding)
         }
     }

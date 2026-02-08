@@ -41,7 +41,7 @@ internal class ExposedFindingsDb(
         }
 
     @Suppress("ReturnCount", "LabeledExpression")
-    override suspend fun updateFinding(finding: BackendFinding): BackendFinding? =
+    override suspend fun saveFinding(finding: BackendFinding): BackendFinding? =
         transaction(database) {
             val existing = FindingEntity.findById(finding.finding.id)
 

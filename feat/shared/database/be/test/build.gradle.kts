@@ -15,7 +15,9 @@ plugins {
 }
 
 dependencies {
-    api(projects.testInfra.common)
-    implementation(projects.koinModulesAggregate.be)
-    implementation(projects.feat.shared.database.be.test)
+    implementation(project(":feat:shared:database:be:impl"))
+    implementation(libs.exposed.core)
+    implementation(libs.exposed.dao)
+    implementation(libs.exposed.jdbc)
+    implementation(libs.h2)
 }

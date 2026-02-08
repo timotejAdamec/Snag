@@ -14,7 +14,6 @@ package cz.adamec.timotej.snag.projects.be.driving.impl.internal
 
 import cz.adamec.timotej.snag.configuration.be.AppConfiguration
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
-import cz.adamec.timotej.snag.projects.be.driven.test.FakeProjectsDb
 import cz.adamec.timotej.snag.projects.be.driving.contract.DeleteProjectApiDto
 import cz.adamec.timotej.snag.projects.be.driving.contract.ProjectApiDto
 import cz.adamec.timotej.snag.projects.be.driving.contract.PutProjectApiDto
@@ -33,10 +32,6 @@ import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.testing.ApplicationTestBuilder
 import io.ktor.server.testing.testApplication
-import org.koin.core.module.Module
-import org.koin.core.module.dsl.singleOf
-import org.koin.dsl.bind
-import org.koin.dsl.module
 import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -46,14 +41,7 @@ import kotlin.uuid.Uuid
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation as ClientContentNegotiation
 
 class ProjectsRouteTest : BackendKoinInitializedTest() {
-    private val dataSource: FakeProjectsDb by inject()
-
-    override fun additionalKoinModules(): List<Module> =
-        listOf(
-            module {
-                singleOf(::FakeProjectsDb) bind ProjectsDb::class
-            },
-        )
+    private val dataSource: ProjectsDb by inject()
 
     private fun ApplicationTestBuilder.configureApp() {
         val configurations = getKoin().getAll<AppConfiguration>()
@@ -85,7 +73,7 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
     fun `GET projects returns all projects`() =
         testApplication {
             configureApp()
-            dataSource.setProject(
+            dataSource.saveProject(
                 BackendProject(
                     project = Project(
                         id = TEST_ID_1,
@@ -95,7 +83,7 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
                     ),
                 ),
             )
-            dataSource.setProject(
+            dataSource.saveProject(
                 BackendProject(
                     project = Project(
                         id = TEST_ID_2,
@@ -118,7 +106,7 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
     fun `GET projects includes deletedAt for soft-deleted projects`() =
         testApplication {
             configureApp()
-            dataSource.setProject(
+            dataSource.saveProject(
                 BackendProject(
                     project = Project(
                         id = TEST_ID_1,
@@ -128,7 +116,7 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
                     ),
                 ),
             )
-            dataSource.setProject(
+            dataSource.saveProject(
                 BackendProject(
                     project = Project(
                         id = TEST_ID_2,
@@ -156,7 +144,7 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
     fun `GET projects with since parameter returns modified projects`() =
         testApplication {
             configureApp()
-            dataSource.setProject(
+            dataSource.saveProject(
                 BackendProject(
                     project = Project(
                         id = TEST_ID_1,
@@ -166,7 +154,7 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
                     ),
                 ),
             )
-            dataSource.setProject(
+            dataSource.saveProject(
                 BackendProject(
                     project = Project(
                         id = TEST_ID_2,
@@ -190,7 +178,7 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
     fun `GET projects with since returns soft-deleted projects with deletedAt`() =
         testApplication {
             configureApp()
-            dataSource.setProject(
+            dataSource.saveProject(
                 BackendProject(
                     project = Project(
                         id = TEST_ID_1,
@@ -215,7 +203,7 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
     fun `GET project by id returns project when found`() =
         testApplication {
             configureApp()
-            dataSource.setProject(
+            dataSource.saveProject(
                 BackendProject(
                     project = Project(
                         id = TEST_ID_1,
@@ -239,7 +227,7 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
     fun `GET project by id includes deletedAt when soft-deleted`() =
         testApplication {
             configureApp()
-            dataSource.setProject(
+            dataSource.saveProject(
                 BackendProject(
                     project = Project(
                         id = TEST_ID_1,
@@ -300,7 +288,7 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
     fun `PUT project returns existing project on conflict`() =
         testApplication {
             configureApp()
-            dataSource.setProject(
+            dataSource.saveProject(
                 BackendProject(
                     project = Project(
                         id = TEST_ID_1,
@@ -327,7 +315,7 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
     fun `PUT project conflict includes deletedAt when existing is soft-deleted`() =
         testApplication {
             configureApp()
-            dataSource.setProject(
+            dataSource.saveProject(
                 BackendProject(
                     project = Project(
                         id = TEST_ID_1,
@@ -383,7 +371,7 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
     fun `DELETE project returns 204 when successfully deleted`() =
         testApplication {
             configureApp()
-            dataSource.setProject(
+            dataSource.saveProject(
                 BackendProject(
                     project = Project(
                         id = TEST_ID_1,
@@ -407,7 +395,7 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
     fun `DELETE project sets deletedAt on successful deletion`() =
         testApplication {
             configureApp()
-            dataSource.setProject(
+            dataSource.saveProject(
                 BackendProject(
                     project = Project(
                         id = TEST_ID_1,
@@ -435,7 +423,7 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
     fun `DELETE project returns existing project on conflict`() =
         testApplication {
             configureApp()
-            dataSource.setProject(
+            dataSource.saveProject(
                 BackendProject(
                     project = Project(
                         id = TEST_ID_1,

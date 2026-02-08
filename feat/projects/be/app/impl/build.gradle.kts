@@ -3,5 +3,4 @@ plugins {
 }
 
 dependencies {
-    testImplementation(project(":feat:projects:be:driven:test"))
 }

@@ -14,16 +14,11 @@ package cz.adamec.timotej.snag.projects.be.app.impl.internal
 
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.projects.be.app.api.GetProjectUseCase
-import cz.adamec.timotej.snag.projects.be.driven.test.FakeProjectsDb
 import cz.adamec.timotej.snag.projects.be.model.BackendProject
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
 import cz.adamec.timotej.snag.projects.business.Project
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
 import kotlinx.coroutines.test.runTest
-import org.koin.core.module.Module
-import org.koin.core.module.dsl.singleOf
-import org.koin.dsl.bind
-import org.koin.dsl.module
 import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -31,7 +26,7 @@ import kotlin.test.assertNull
 import kotlin.uuid.Uuid
 
 class GetProjectUseCaseImplTest : BackendKoinInitializedTest() {
-    private val dataSource: FakeProjectsDb by inject()
+    private val dataSource: ProjectsDb by inject()
     private val useCase: GetProjectUseCase by inject()
 
     private val projectId = Uuid.parse("00000000-0000-0000-0000-000000000001")
@@ -45,18 +40,10 @@ class GetProjectUseCaseImplTest : BackendKoinInitializedTest() {
                 updatedAt = Timestamp(10L),
             ),
         )
-
-    override fun additionalKoinModules(): List<Module> =
-        listOf(
-            module {
-                singleOf(::FakeProjectsDb) bind ProjectsDb::class
-            },
-        )
-
     @Test
     fun `returns project when it exists`() =
         runTest(testDispatcher) {
-            dataSource.setProject(project)
+            dataSource.saveProject(project)
 
             val result = useCase(projectId)
 

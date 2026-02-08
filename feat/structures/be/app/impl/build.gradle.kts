@@ -3,5 +3,5 @@ plugins {
 }
 
 dependencies {
-    testImplementation(project(":feat:structures:be:driven:test"))
+    testImplementation(projects.feat.projects.be.ports)
 }
