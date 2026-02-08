@@ -15,9 +15,13 @@ package cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetail.u
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.exclude
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ContainedLoadingIndicator
 import androidx.compose.material3.HorizontalFloatingToolbar
@@ -37,6 +41,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetail.ui.components.FindingDeletionAlertDialog
 import cz.adamec.timotej.snag.lib.design.fe.scenes.LocalIsInSheet
@@ -124,7 +129,9 @@ internal fun FindingDetailContent(
                                 }
                             },
                             windowInsets =
-                                if (isInSheet) zeroInsets else TopAppBarDefaults.windowInsets,
+                                if (isInSheet) zeroInsets else TopAppBarDefaults.windowInsets.only(
+                                    WindowInsetsSides.Vertical + WindowInsetsSides.End,
+                                ),
                             colors =
                                 if (isInSheet) {
                                     TopAppBarDefaults.topAppBarColors(
@@ -142,7 +149,11 @@ internal fun FindingDetailContent(
                         modifier =
                             Modifier
                                 .fillMaxWidth()
-                                .padding(paddingValues)
+                                .padding(
+                                    top = paddingValues.calculateTopPadding(),
+                                    bottom = paddingValues.calculateBottomPadding(),
+                                    end = paddingValues.calculateEndPadding(LayoutDirection.Ltr),
+                                )
                                 .consumeWindowInsets(paddingValues)
                                 .padding(16.dp),
                     ) {
