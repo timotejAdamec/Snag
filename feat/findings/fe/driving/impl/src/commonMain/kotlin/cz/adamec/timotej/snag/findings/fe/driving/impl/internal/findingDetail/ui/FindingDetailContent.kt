@@ -14,6 +14,7 @@ package cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetail.u
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -24,8 +25,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.ScaffoldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -35,6 +38,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetail.ui.components.FindingDeletionAlertDialog
+import cz.adamec.timotej.snag.lib.design.fe.scenes.LocalIsInSheet
 import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetail.vm.FindingDetailUiState
 import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetail.vm.FindingDetailUiStatus
 import org.jetbrains.compose.resources.painterResource
@@ -99,6 +103,8 @@ internal fun FindingDetailContent(
                     },
                 )
             }
+            val isInSheet = LocalIsInSheet.current
+            val zeroInsets = WindowInsets(0, 0, 0, 0)
             Box(modifier = modifier.fillMaxSize()) {
                 Scaffold(
                     topBar = {
@@ -114,8 +120,12 @@ internal fun FindingDetailContent(
                                     )
                                 }
                             },
+                            windowInsets =
+                                if (isInSheet) zeroInsets else TopAppBarDefaults.windowInsets,
                         )
                     },
+                    contentWindowInsets =
+                        if (isInSheet) zeroInsets else ScaffoldDefaults.contentWindowInsets,
                 ) { paddingValues ->
                     Column(
                         modifier =

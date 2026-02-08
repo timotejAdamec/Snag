@@ -15,9 +15,12 @@ package cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingsList.ui
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ContainedLoadingIndicator
@@ -32,6 +35,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
 import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingsList.vm.FindingsListUiState
+import cz.adamec.timotej.snag.lib.design.fe.scenes.LocalIsInSheet
 import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingsList.vm.FindingsListUiStatus
 import org.jetbrains.compose.resources.stringResource
 import snag.feat.findings.fe.driving.impl.generated.resources.Res
@@ -99,9 +103,16 @@ private fun FindingsList(
     onFindingClick: (findingId: Uuid) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val isInSheet = LocalIsInSheet.current
+    val extraTop =
+        if (!isInSheet) {
+            WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
+        } else {
+            0.dp
+        }
     LazyColumn(
         modifier = modifier.fillMaxWidth(),
-        contentPadding = PaddingValues(vertical = 6.dp),
+        contentPadding = PaddingValues(top = extraTop + 6.dp, bottom = 6.dp),
     ) {
         items(
             items = findings,
