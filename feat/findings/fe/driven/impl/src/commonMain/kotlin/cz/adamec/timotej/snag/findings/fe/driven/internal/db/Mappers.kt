@@ -15,6 +15,7 @@
 package cz.adamec.timotej.snag.findings.fe.driven.internal.db
 
 import cz.adamec.timotej.snag.feat.findings.business.Finding
+import cz.adamec.timotej.snag.feat.findings.business.Importance
 import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
 import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.FindingEntity
@@ -36,6 +37,7 @@ internal fun FindingEntity.toModel() =
             structureId = Uuid.parse(structureId),
             name = name,
             description = description,
+            importance = Importance.valueOf(importance),
             coordinates = parseCoordinates(coordinates),
             updatedAt = Timestamp(updatedAt),
         ),
@@ -47,6 +49,7 @@ internal fun FrontendFinding.toEntity() =
         structureId = finding.structureId.toString(),
         name = finding.name,
         description = finding.description,
+        importance = finding.importance.name,
         coordinates = serializeCoordinates(finding.coordinates),
         updatedAt = finding.updatedAt.value,
     )

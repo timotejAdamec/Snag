@@ -13,6 +13,7 @@
 package cz.adamec.timotej.snag.findings.fe.app.impl.internal
 
 import cz.adamec.timotej.snag.feat.findings.business.Finding
+import cz.adamec.timotej.snag.feat.findings.business.Importance
 import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
 import cz.adamec.timotej.snag.findings.fe.app.api.DeleteLocalFindingsByStructureIdUseCase
 import cz.adamec.timotej.snag.findings.fe.driven.test.FakeFindingsDb
@@ -63,6 +64,7 @@ class DeleteLocalFindingsByStructureIdUseCaseImplTest : FrontendKoinInitializedT
             structureId = structureId,
             name = "Finding",
             description = null,
+            importance = Importance.MEDIUM,
             coordinates = emptyList(),
             updatedAt = Timestamp(1L),
         ),

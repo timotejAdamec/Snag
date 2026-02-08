@@ -31,7 +31,7 @@ suspend fun safeDbWrite(
                 data = Unit,
             )
         } catch (e: Throwable) {
-            logger.e { errorMessage }
+            logger.e(e) { errorMessage }
             OfflineFirstDataResult.ProgrammerError(
                 throwable = e,
             )

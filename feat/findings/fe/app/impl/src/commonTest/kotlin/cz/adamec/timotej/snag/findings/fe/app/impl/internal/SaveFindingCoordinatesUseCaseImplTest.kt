@@ -13,6 +13,7 @@
 package cz.adamec.timotej.snag.findings.fe.app.impl.internal
 
 import cz.adamec.timotej.snag.feat.findings.business.Finding
+import cz.adamec.timotej.snag.feat.findings.business.Importance
 import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
 import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
@@ -52,6 +53,7 @@ class SaveFindingCoordinatesUseCaseImplTest : FrontendKoinInitializedTest() {
             structureId = structureId,
             name = "Finding",
             description = null,
+            importance = Importance.MEDIUM,
             coordinates = listOf(RelativeCoordinate(0.1f, 0.2f)),
             updatedAt = Timestamp(10L),
         ),

@@ -26,8 +26,13 @@ internal class DeleteFindingUseCaseImpl(
         return findingsDb.deleteFinding(
             id = request.findingId,
             deletedAt = request.deletedAt,
-        ).also {
-            logger.debug("Deleted finding {} from local storage.", request.findingId)
+        ).also { newerFinding ->
+            newerFinding?.let {
+                logger.debug(
+                    "Found newer version of finding {} in local storage. Returning it instead.",
+                    request.findingId
+                )
+            } ?: logger.debug("Deleted finding {} from local storage.", request.findingId)
         }
     }
 }

@@ -57,6 +57,7 @@ internal class ExposedFindingsDb(
                 existing.structure = StructureEntity[finding.finding.structureId]
                 existing.name = finding.finding.name
                 existing.description = finding.finding.description
+                existing.importance = finding.finding.importance.name
                 existing.updatedAt = finding.finding.updatedAt.value
                 existing.deletedAt = finding.deletedAt?.value
                 existing.coordinates.forEach { it.delete() }
@@ -65,6 +66,7 @@ internal class ExposedFindingsDb(
                     structure = StructureEntity[finding.finding.structureId]
                     name = finding.finding.name
                     description = finding.finding.description
+                    importance = finding.finding.importance.name
                     updatedAt = finding.finding.updatedAt.value
                     deletedAt = finding.deletedAt?.value
                 }

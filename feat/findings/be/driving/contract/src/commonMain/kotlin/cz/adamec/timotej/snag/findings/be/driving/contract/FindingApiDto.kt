@@ -22,6 +22,7 @@ data class FindingApiDto(
     val structureId: Uuid,
     val name: String,
     val description: String?,
+    val importance: String,
     val coordinates: List<RelativeCoordinateApiDto>,
     val updatedAt: Timestamp,
     val deletedAt: Timestamp? = null,

@@ -13,6 +13,7 @@
 package cz.adamec.timotej.snag.structures.fe.app.impl.internal
 
 import cz.adamec.timotej.snag.feat.findings.business.Finding
+import cz.adamec.timotej.snag.feat.findings.business.Importance
 import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
 import cz.adamec.timotej.snag.feat.structures.business.Structure
 import cz.adamec.timotej.snag.feat.structures.fe.model.FrontendStructure
@@ -83,6 +84,7 @@ class DeleteStructureUseCaseImplTest : FrontendKoinInitializedTest() {
             structureId = structureId,
             name = "Finding",
             description = null,
+            importance = Importance.MEDIUM,
             coordinates = emptyList(),
             updatedAt = Timestamp(1L),
         ),

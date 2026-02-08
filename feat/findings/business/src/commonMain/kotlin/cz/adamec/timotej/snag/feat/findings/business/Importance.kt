@@ -12,15 +12,8 @@
 
 package cz.adamec.timotej.snag.feat.findings.business
 
-import cz.adamec.timotej.snag.lib.core.common.Timestamp
-import kotlin.uuid.Uuid
-
-data class Finding(
-    val id: Uuid,
-    val structureId: Uuid,
-    val name: String,
-    val description: String?,
-    val importance: Importance,
-    val coordinates: List<RelativeCoordinate>,
-    val updatedAt: Timestamp,
-)
+enum class Importance {
+    HIGH,
+    MEDIUM,
+    LOW,
+}

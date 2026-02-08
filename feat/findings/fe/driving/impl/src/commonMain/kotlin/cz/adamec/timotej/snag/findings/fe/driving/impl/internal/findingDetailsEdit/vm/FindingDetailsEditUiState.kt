@@ -12,7 +12,10 @@
 
 package cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetailsEdit.vm
 
+import cz.adamec.timotej.snag.feat.findings.business.Importance
+
 internal data class FindingDetailsEditUiState(
     val findingName: String = "",
     val findingDescription: String = "",
+    val findingImportance: Importance = Importance.MEDIUM,
 )
