@@ -12,7 +12,11 @@
 
 package cz.adamec.timotej.snag.impl.di
 
+import cz.adamec.timotej.snag.configuration.be.AppConfiguration
 import cz.adamec.timotej.snag.di.aggregate.be.backendModulesAggregate
+import cz.adamec.timotej.snag.impl.internal.DevDataSeederConfiguration
+import org.koin.core.module.dsl.singleOf
+import org.koin.dsl.bind
 import org.koin.dsl.module
 
 internal val appModule =
@@ -20,4 +24,5 @@ internal val appModule =
         includes(
             backendModulesAggregate,
         )
+        singleOf(::DevDataSeederConfiguration) bind AppConfiguration::class
     }

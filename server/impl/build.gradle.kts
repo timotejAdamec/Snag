@@ -37,6 +37,9 @@ dependencies {
     implementation(projects.server.api)
     implementation(projects.koinModulesAggregate.be)
     implementation(projects.lib.configuration.be.api)
+    implementation(projects.feat.projects.be.ports)
+    implementation(projects.feat.structures.be.ports)
+    implementation(projects.feat.findings.be.ports)
 
     implementation(libs.ktor.server.core)
     implementation(libs.ktor.server.netty)
