@@ -43,6 +43,10 @@ gradlePlugin {
         id = libs.plugins.snagBackendModule.get().pluginId
         implementationClass = "cz.adamec.timotej.snag.buildsrc.plugins.BackendModulePlugin"
     }
+    plugins.register("SnagDrivenBackendModulePlugin") {
+        id = libs.plugins.snagDrivenBackendModule.get().pluginId
+        implementationClass = "cz.adamec.timotej.snag.buildsrc.plugins.DrivenBackendModulePlugin"
+    }
     plugins.register("SnagImplDrivingBackendModulePlugin") {
         id = libs.plugins.snagImplDrivingBackendModule.get().pluginId
         implementationClass = "cz.adamec.timotej.snag.buildsrc.plugins.ImplDrivingBackendModulePlugin"

@@ -153,6 +153,7 @@ snagDrivingFrontendMultiplatformModule = { id = "libs.plugins.snag.driving.front
 snagNetworkFrontendMultiplatformModule = { id = "libs.plugins.snag.network.frontend.multiplatform.module" }
 snagDrivenFrontendMultiplatformModule = { id = "libs.plugins.snag.driven.frontend.multiplatform.module" }
 snagBackendModule = { id = "libs.plugins.snag.backend.module" }
+snagDrivenBackendModule = { id = "libs.plugins.snag.driven.backend.module" }
 snagImplDrivingBackendModule = { id = "libs.plugins.snag.impl.driving.backend.module" }
 snagContractDrivingBackendMultiplatformModule = { id = "libs.plugins.snag.contract.driving.backend.multiplatform.module" }
 

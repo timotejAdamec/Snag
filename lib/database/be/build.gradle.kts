@@ -3,8 +3,6 @@ plugins {
 }
 
 dependencies {
-    api(libs.exposed.core)
-    api(libs.exposed.dao)
     implementation(libs.exposed.jdbc)
     implementation(libs.h2)
 }

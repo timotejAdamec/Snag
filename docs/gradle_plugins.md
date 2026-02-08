@@ -13,6 +13,7 @@ They enforce consistent configuration across modules — dependencies, targets, 
 | `snagNetworkFrontendMultiplatformModule`        | `libs.plugins.snag.network.frontend.multiplatform.module`         | Frontend | HTTP client (Ktor)               | Frontend      |
 | `snagDrivenFrontendMultiplatformModule`         | `libs.plugins.snag.driven.frontend.multiplatform.module`          | Frontend | Data/adapter implementations     | Network       |
 | `snagBackendModule`                             | `libs.plugins.snag.backend.module`                                | Backend  | JVM-only backend module          | —             |
+| `snagDrivenBackendModule`                       | `libs.plugins.snag.driven.backend.module`                         | Backend  | DB adapter implementations       | Backend       |
 | `snagImplDrivingBackendModule`                  | `libs.plugins.snag.impl.driving.backend.module`                   | Backend  | Ktor HTTP routes                 | Backend       |
 | `snagContractDrivingBackendMultiplatformModule` | `libs.plugins.snag.contract.driving.backend.multiplatform.module` | Shared   | FE/BE API contracts              | Multiplatform |
 
@@ -27,6 +28,7 @@ snagMultiplatformModule
 └── snagContractDrivingBackendMultiplatformModule (+ Serialization)
 
 snagBackendModule
+├── snagDrivenBackendModule                        (+ Exposed, DB)
 └── snagImplDrivingBackendModule                  (+ Ktor server, Serialization)
 ```
 
@@ -101,6 +103,14 @@ Configures:
 - Automatic inter-module dependency wiring (same rules as Multiplatform)
 - Lint: detekt + ktlint
 
+### snagDrivenBackendModule
+
+**Source:** `plugins/DrivenBackendModulePlugin.kt` + `configuration/DatabaseBackendModuleSetup.kt`
+
+Adds on top of Backend:
+- Exposed core, DAO, JDBC
+- `:lib:database:be` dependency
+
 ### snagImplDrivingBackendModule
 
 **Source:** `plugins/ImplDrivingBackendModulePlugin.kt` + `configuration/KtorBackendModuleSetup.kt`
@@ -151,7 +161,7 @@ feat/<feature>/
     │   ├── contract/        → snagContractDrivingBackendMultiplatformModule
     │   └── impl/            → snagImplDrivingBackendModule
     └── driven/
-        ├── impl/            → snagBackendModule
+        ├── impl/            → snagDrivenBackendModule
         └── test/            → snagBackendModule
 ```
 
