@@ -12,16 +12,13 @@
 
 package cz.adamec.timotej.snag.network.fe.di
 
-import cz.adamec.timotej.snag.network.fe.ConnectionStatusListener
 import cz.adamec.timotej.snag.network.fe.internal.BrowserConnectivityProvider
 import cz.adamec.timotej.snag.network.fe.internal.JsBrowserConnectivityProvider
-import cz.adamec.timotej.snag.network.fe.internal.WebConnectionStatusListener
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
-internal actual val connectionStatusPlatformModule =
+internal actual val browserConnectivityProviderPlatformModule =
     module {
         singleOf(::JsBrowserConnectivityProvider) bind BrowserConnectivityProvider::class
-        singleOf(::WebConnectionStatusListener) bind ConnectionStatusListener::class
     }
