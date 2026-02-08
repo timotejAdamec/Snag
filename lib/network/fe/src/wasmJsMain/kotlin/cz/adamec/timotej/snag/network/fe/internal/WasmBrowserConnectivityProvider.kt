@@ -10,11 +10,14 @@
  * Department of Software Engineering
  */
 
+@file:OptIn(ExperimentalWasmJsInterop::class)
+
 package cz.adamec.timotej.snag.network.fe.internal
 
 private fun jsIsOnline(): Boolean =
     js("globalThis.navigator.onLine")
 
+@Suppress("unused")
 private fun jsAddConnectivityListeners(
     onOnline: () -> Unit,
     onOffline: () -> Unit,
@@ -29,6 +32,7 @@ private fun jsAddConnectivityListeners(
     })()""",
     )
 
+@Suppress("unused")
 private fun jsRemoveConnectivityListeners(handlers: JsAny): Unit =
     js(
         """{
