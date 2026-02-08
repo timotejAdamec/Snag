@@ -29,6 +29,7 @@ import androidx.compose.material3.ScaffoldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.ui.graphics.Color
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -107,6 +108,8 @@ internal fun FindingDetailContent(
             val zeroInsets = WindowInsets(0, 0, 0, 0)
             Box(modifier = modifier.fillMaxSize()) {
                 Scaffold(
+                    containerColor =
+                        if (isInSheet) Color.Transparent else MaterialTheme.colorScheme.background,
                     topBar = {
                         TopAppBar(
                             title = {
@@ -122,6 +125,14 @@ internal fun FindingDetailContent(
                             },
                             windowInsets =
                                 if (isInSheet) zeroInsets else TopAppBarDefaults.windowInsets,
+                            colors =
+                                if (isInSheet) {
+                                    TopAppBarDefaults.topAppBarColors(
+                                        containerColor = Color.Transparent,
+                                    )
+                                } else {
+                                    TopAppBarDefaults.topAppBarColors()
+                                },
                         )
                     },
                     contentWindowInsets =
