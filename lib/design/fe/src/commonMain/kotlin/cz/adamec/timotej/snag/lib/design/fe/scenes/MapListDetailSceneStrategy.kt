@@ -137,11 +137,12 @@ private class AdaptiveMapListDetailScene<T : Any>(
                                     initialValue = SheetValue.PartiallyExpanded,
                                 ),
                         )
+                    val isDetail = detailEntry != null
                     BottomSheetScaffold(
                         scaffoldState = scaffoldState,
-                        sheetPeekHeight = 128.dp,
+                        sheetPeekHeight = if (isDetail) 192.dp else 128.dp,
                         sheetContent = {
-                            if (detailEntry != null) {
+                            if (isDetail) {
                                 detailEntry.Content()
                             } else {
                                 listEntry?.Content()

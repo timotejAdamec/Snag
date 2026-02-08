@@ -133,7 +133,7 @@ internal fun FindingDetailContent(
                         }
                         Text(
                             modifier = Modifier.padding(top = 16.dp),
-                            text = "${finding.finding.coordinates.size} coordinate(s)",
+                            text = "${finding.finding.coordinates.size} coordinate(s)", // TODO use string res
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
