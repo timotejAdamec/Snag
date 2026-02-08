@@ -21,7 +21,7 @@ internal fun StructureEntity.toModel() =
     BackendStructure(
         structure = Structure(
             id = id.value,
-            projectId = projectId.toKotlinUuid(),
+            projectId = projectId,
             name = name,
             floorPlanUrl = floorPlanUrl,
             updatedAt = Timestamp(updatedAt),

@@ -16,9 +16,11 @@ import cz.adamec.timotej.snag.feat.findings.be.model.BackendFinding
 import cz.adamec.timotej.snag.findings.be.ports.FindingsDb
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import kotlin.uuid.Uuid
-import kotlin.uuid.toJavaUuid
 import org.jetbrains.exposed.v1.core.and
+import org.jetbrains.exposed.v1.core.eq
+import org.jetbrains.exposed.v1.core.greater
 import org.jetbrains.exposed.v1.core.or
+import org.jetbrains.exposed.v1.dao.with
 import org.jetbrains.exposed.v1.jdbc.Database
 import org.jetbrains.exposed.v1.jdbc.SchemaUtils
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
@@ -35,7 +37,7 @@ internal class ExposedFindingsDb(
     override suspend fun getFindings(structureId: Uuid): List<BackendFinding> =
         transaction(database) {
             FindingEntity.find {
-                FindingsTable.structureId eq structureId.toJavaUuid()
+                FindingsTable.structureId eq structureId
             }.with(FindingEntity::coordinates).map { it.toModel() }
         }
 
@@ -53,7 +55,7 @@ internal class ExposedFindingsDb(
                 if (serverTimestamp >= finding.finding.updatedAt) {
                     return@transaction existing.toModel()
                 }
-                existing.structureId = finding.finding.structureId.toJavaUuid()
+                existing.structureId = finding.finding.structureId
                 existing.name = finding.finding.name
                 existing.description = finding.finding.description
                 existing.updatedAt = finding.finding.updatedAt.value
@@ -61,7 +63,7 @@ internal class ExposedFindingsDb(
                 existing.coordinates.forEach { it.delete() }
             } else {
                 FindingEntity.new(finding.finding.id) {
-                    structureId = finding.finding.structureId.toJavaUuid()
+                    structureId = finding.finding.structureId
                     name = finding.finding.name
                     description = finding.finding.description
                     updatedAt = finding.finding.updatedAt.value
@@ -106,7 +108,7 @@ internal class ExposedFindingsDb(
     ): List<BackendFinding> =
         transaction(database) {
             FindingEntity.find {
-                (FindingsTable.structureId eq structureId.toJavaUuid()) and
+                (FindingsTable.structureId eq structureId) and
                     (
                         (FindingsTable.updatedAt greater since.value) or
                             (FindingsTable.deletedAt greater since.value)

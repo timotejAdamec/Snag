@@ -16,13 +16,12 @@ import cz.adamec.timotej.snag.feat.findings.be.model.BackendFinding
 import cz.adamec.timotej.snag.feat.findings.business.Finding
 import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
-import kotlin.uuid.toKotlinUuid
 
 internal fun FindingEntity.toModel() =
     BackendFinding(
         finding = Finding(
             id = id.value,
-            structureId = structureId.toKotlinUuid(),
+            structureId = structureId,
             name = name,
             description = description,
             coordinates =
