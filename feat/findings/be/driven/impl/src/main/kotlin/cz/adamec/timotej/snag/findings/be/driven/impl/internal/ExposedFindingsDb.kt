@@ -19,7 +19,6 @@ import cz.adamec.timotej.snag.feat.shared.database.be.FindingsTable
 import cz.adamec.timotej.snag.feat.shared.database.be.StructureEntity
 import cz.adamec.timotej.snag.findings.be.ports.FindingsDb
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
-import kotlin.uuid.Uuid
 import org.jetbrains.exposed.v1.core.and
 import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.core.greater
@@ -27,6 +26,7 @@ import org.jetbrains.exposed.v1.core.or
 import org.jetbrains.exposed.v1.dao.with
 import org.jetbrains.exposed.v1.jdbc.Database
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
+import kotlin.uuid.Uuid
 
 internal class ExposedFindingsDb(
     private val database: Database,

@@ -12,18 +12,16 @@
 
 package cz.adamec.timotej.snag.feat.shared.database.be
 
-import kotlin.uuid.Uuid
 import org.jetbrains.exposed.v1.core.dao.id.EntityID
 import org.jetbrains.exposed.v1.dao.IntEntity
 import org.jetbrains.exposed.v1.dao.IntEntityClass
 import org.jetbrains.exposed.v1.dao.UuidEntity
 import org.jetbrains.exposed.v1.dao.UuidEntityClass
+import kotlin.uuid.Uuid
 
 class FindingEntity(
     id: EntityID<Uuid>,
 ) : UuidEntity(id) {
-    companion object : UuidEntityClass<FindingEntity>(FindingsTable)
-
     var structure by StructureEntity referencedOn FindingsTable.structure
     var name by FindingsTable.name
     var description by FindingsTable.description
@@ -32,15 +30,17 @@ class FindingEntity(
     val coordinates by FindingCoordinateEntity referrersOn
         FindingCoordinatesTable.finding orderBy
         FindingCoordinatesTable.orderIndex
+
+    companion object : UuidEntityClass<FindingEntity>(FindingsTable)
 }
 
 class FindingCoordinateEntity(
     id: EntityID<Int>,
 ) : IntEntity(id) {
-    companion object : IntEntityClass<FindingCoordinateEntity>(FindingCoordinatesTable)
-
     var finding by FindingEntity referencedOn FindingCoordinatesTable.finding
     var x by FindingCoordinatesTable.x
     var y by FindingCoordinatesTable.y
     var orderIndex by FindingCoordinatesTable.orderIndex
+
+    companion object : IntEntityClass<FindingCoordinateEntity>(FindingCoordinatesTable)
 }
