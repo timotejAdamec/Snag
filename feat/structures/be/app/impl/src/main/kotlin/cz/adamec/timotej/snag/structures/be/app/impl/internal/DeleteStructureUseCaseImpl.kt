@@ -28,8 +28,13 @@ internal class DeleteStructureUseCaseImpl(
         return structuresDb.deleteStructure(
             id = request.structureId,
             deletedAt = request.deletedAt,
-        ).also {
-            logger.debug("Deleted structure {} from local storage.", request.structureId)
+        ).also { newerStructure ->
+            newerStructure?.let {
+                logger.debug(
+                    "Found newer version of structure {} in local storage. Returning it instead.",
+                    request.structureId
+                )
+            } ?: logger.debug("Deleted structure {} from local storage.", request.structureId)
         }
     }
 }
