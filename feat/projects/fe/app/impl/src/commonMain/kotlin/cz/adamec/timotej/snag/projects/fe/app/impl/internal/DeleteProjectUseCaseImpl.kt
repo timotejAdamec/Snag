@@ -18,14 +18,17 @@ import cz.adamec.timotej.snag.projects.fe.app.api.DeleteProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.LH.logger
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsDb
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsSync
+import cz.adamec.timotej.snag.structures.fe.app.api.CascadeDeleteLocalStructuresByProjectIdUseCase
 import kotlin.uuid.Uuid
 
 class DeleteProjectUseCaseImpl(
     private val projectsDb: ProjectsDb,
     private val projectsSync: ProjectsSync,
+    private val cascadeDeleteLocalStructuresByProjectIdUseCase: CascadeDeleteLocalStructuresByProjectIdUseCase,
 ) : DeleteProjectUseCase {
-    override suspend operator fun invoke(projectId: Uuid): OfflineFirstDataResult<Unit> =
-        projectsDb
+    override suspend operator fun invoke(projectId: Uuid): OfflineFirstDataResult<Unit> {
+        cascadeDeleteLocalStructuresByProjectIdUseCase(projectId)
+        return projectsDb
             .deleteProject(projectId)
             .also {
                 logger.log(
@@ -36,4 +39,5 @@ class DeleteProjectUseCaseImpl(
                     projectsSync.enqueueProjectDelete(projectId)
                 }
             }
+    }
 }
