@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.findings.fe.ports
 
+import cz.adamec.timotej.snag.feat.findings.business.Importance
 import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
 import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
@@ -31,7 +32,13 @@ interface FindingsDb {
 
     suspend fun deleteFinding(id: Uuid): OfflineFirstDataResult<Unit>
 
-    suspend fun updateFindingDetails(id: Uuid, name: String, description: String?, updatedAt: Timestamp): OfflineFirstUpdateDataResult
+    suspend fun updateFindingDetails(
+        id: Uuid,
+        name: String,
+        description: String?,
+        importance: Importance,
+        updatedAt: Timestamp,
+    ): OfflineFirstUpdateDataResult
 
     suspend fun updateFindingCoordinates(id: Uuid, coordinates: List<RelativeCoordinate>, updatedAt: Timestamp): OfflineFirstUpdateDataResult
 

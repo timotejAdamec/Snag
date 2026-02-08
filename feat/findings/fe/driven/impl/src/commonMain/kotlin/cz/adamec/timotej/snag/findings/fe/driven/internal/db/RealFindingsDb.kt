@@ -16,6 +16,7 @@ import app.cash.sqldelight.async.coroutines.awaitAsOne
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import app.cash.sqldelight.coroutines.mapToOneOrNull
+import cz.adamec.timotej.snag.feat.findings.business.Importance
 import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
 import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.FindingEntity
@@ -86,12 +87,19 @@ internal class RealFindingsDb(
         id: Uuid,
         name: String,
         description: String?,
+        importance: Importance,
         updatedAt: Timestamp,
     ): OfflineFirstUpdateDataResult =
         withContext(ioDispatcher) {
             runCatching {
                 findingEntityQueries.transactionWithResult {
-                    findingEntityQueries.updateDetails(name = name, description = description, updatedAt = updatedAt.value, id = id.toString())
+                    findingEntityQueries.updateDetails(
+                        name = name,
+                        description = description,
+                        importance = importance.name,
+                        updatedAt = updatedAt.value,
+                        id = id.toString(),
+                    )
                     findingEntityQueries.selectChanges().awaitAsOne()
                 }
             }.fold(

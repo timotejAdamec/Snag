@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.findings.fe.app.api.model
 
+import cz.adamec.timotej.snag.feat.findings.business.Importance
 import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
 import kotlin.uuid.Uuid
 
@@ -19,5 +20,6 @@ data class SaveNewFindingRequest(
     val structureId: Uuid,
     val name: String,
     val description: String?,
+    val importance: Importance = Importance.MEDIUM,
     val coordinates: List<RelativeCoordinate> = emptyList(),
 )

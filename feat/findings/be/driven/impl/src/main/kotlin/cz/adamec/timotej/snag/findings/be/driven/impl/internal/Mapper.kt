@@ -14,6 +14,7 @@ package cz.adamec.timotej.snag.findings.be.driven.impl.internal
 
 import cz.adamec.timotej.snag.feat.findings.be.model.BackendFinding
 import cz.adamec.timotej.snag.feat.findings.business.Finding
+import cz.adamec.timotej.snag.feat.findings.business.Importance
 import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
 import cz.adamec.timotej.snag.feat.shared.database.be.FindingEntity
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
@@ -26,6 +27,7 @@ internal fun FindingEntity.toModel() =
                 structureId = structure.id.value,
                 name = name,
                 description = description,
+                importance = Importance.valueOf(importance),
                 coordinates =
                     coordinates.map {
                         RelativeCoordinate(x = it.x, y = it.y)

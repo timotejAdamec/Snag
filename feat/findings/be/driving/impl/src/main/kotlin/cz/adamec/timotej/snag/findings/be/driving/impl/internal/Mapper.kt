@@ -14,6 +14,7 @@ package cz.adamec.timotej.snag.findings.be.driving.impl.internal
 
 import cz.adamec.timotej.snag.feat.findings.be.model.BackendFinding
 import cz.adamec.timotej.snag.feat.findings.business.Finding
+import cz.adamec.timotej.snag.feat.findings.business.Importance
 import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
 import cz.adamec.timotej.snag.findings.be.driving.contract.FindingApiDto
 import cz.adamec.timotej.snag.findings.be.driving.contract.PutFindingApiDto
@@ -27,6 +28,7 @@ internal fun BackendFinding.toDto() =
             structureId = structureId,
             name = name,
             description = description,
+            importance = importance.name,
             coordinates = coordinates.map { it.toDto() },
             updatedAt = updatedAt,
             deletedAt = this@toDto.deletedAt,
@@ -46,6 +48,7 @@ internal fun PutFindingApiDto.toModel(id: Uuid) =
             structureId = structureId,
             name = name,
             description = description,
+            importance = Importance.valueOf(importance),
             coordinates = coordinates.map { it.toBusiness() },
             updatedAt = updatedAt,
         ),

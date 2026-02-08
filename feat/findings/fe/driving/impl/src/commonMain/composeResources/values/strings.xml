@@ -20,4 +20,8 @@
     <string name="finding_name_label">Name</string>
     <string name="finding_description_label">Description</string>
     <string name="required">Required</string>
+    <string name="importance_label">Importance</string>
+    <string name="importance_high">High</string>
+    <string name="importance_medium">Medium</string>
+    <string name="importance_low">Low</string>
 </resources>

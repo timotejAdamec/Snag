@@ -39,6 +39,7 @@ class SaveNewFindingUseCaseImpl(
                 structureId = request.structureId,
                 name = request.name,
                 description = request.description,
+                importance = request.importance,
                 coordinates = request.coordinates,
                 updatedAt = timestampProvider.getNowTimestamp(),
             )

@@ -14,6 +14,7 @@ package cz.adamec.timotej.snag.findings.be.app.impl.internal
 
 import cz.adamec.timotej.snag.feat.findings.be.model.BackendFinding
 import cz.adamec.timotej.snag.feat.findings.business.Finding
+import cz.adamec.timotej.snag.feat.findings.business.Importance
 import cz.adamec.timotej.snag.feat.structures.be.model.BackendStructure
 import cz.adamec.timotej.snag.feat.structures.business.Structure
 import cz.adamec.timotej.snag.findings.be.app.api.GetFindingsModifiedSinceUseCase
@@ -95,6 +96,7 @@ class GetFindingsModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
                         structureId = structureId,
                         name = "Crack in wall",
                         description = null,
+                        importance = Importance.MEDIUM,
                         coordinates = emptyList(),
                         updatedAt = Timestamp(200L),
                     ),
@@ -117,6 +119,7 @@ class GetFindingsModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
                         structureId = otherStructureId,
                         name = "Other finding",
                         description = null,
+                        importance = Importance.MEDIUM,
                         coordinates = emptyList(),
                         updatedAt = Timestamp(200L),
                     ),
@@ -139,6 +142,7 @@ class GetFindingsModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
                         structureId = structureId,
                         name = "Crack in wall",
                         description = null,
+                        importance = Importance.MEDIUM,
                         coordinates = emptyList(),
                         updatedAt = Timestamp(50L),
                     ),
@@ -162,6 +166,7 @@ class GetFindingsModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
                         structureId = structureId,
                         name = "Crack in wall",
                         description = null,
+                        importance = Importance.MEDIUM,
                         coordinates = emptyList(),
                         updatedAt = Timestamp(50L),
                     ),

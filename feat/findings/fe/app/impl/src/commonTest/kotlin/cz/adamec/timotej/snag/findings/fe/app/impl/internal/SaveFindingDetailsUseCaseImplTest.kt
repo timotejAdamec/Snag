@@ -13,6 +13,7 @@
 package cz.adamec.timotej.snag.findings.fe.app.impl.internal
 
 import cz.adamec.timotej.snag.feat.findings.business.Finding
+import cz.adamec.timotej.snag.feat.findings.business.Importance
 import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.findings.fe.app.api.SaveFindingDetailsUseCase
@@ -51,6 +52,7 @@ class SaveFindingDetailsUseCaseImplTest : FrontendKoinInitializedTest() {
             structureId = structureId,
             name = "Old name",
             description = "Old description",
+            importance = Importance.MEDIUM,
             coordinates = emptyList(),
             updatedAt = Timestamp(10L),
         ),
@@ -72,6 +74,7 @@ class SaveFindingDetailsUseCaseImplTest : FrontendKoinInitializedTest() {
             findingId = findingId,
             name = "New name",
             description = "New description",
+            importance = Importance.MEDIUM,
         )
 
         val result = useCase(request)
@@ -87,6 +90,7 @@ class SaveFindingDetailsUseCaseImplTest : FrontendKoinInitializedTest() {
             findingId = findingId,
             name = "New name",
             description = "New description",
+            importance = Importance.MEDIUM,
         )
 
         useCase(request)
@@ -100,6 +104,7 @@ class SaveFindingDetailsUseCaseImplTest : FrontendKoinInitializedTest() {
             findingId = findingId,
             name = "New name",
             description = "New description",
+            importance = Importance.MEDIUM,
         )
 
         val result = useCase(request)
@@ -113,6 +118,7 @@ class SaveFindingDetailsUseCaseImplTest : FrontendKoinInitializedTest() {
             findingId = findingId,
             name = "New name",
             description = "New description",
+            importance = Importance.MEDIUM,
         )
 
         useCase(request)
@@ -128,6 +134,7 @@ class SaveFindingDetailsUseCaseImplTest : FrontendKoinInitializedTest() {
             findingId = findingId,
             name = "New name",
             description = "New description",
+            importance = Importance.MEDIUM,
         )
 
         val result = useCase(request)
@@ -143,6 +150,7 @@ class SaveFindingDetailsUseCaseImplTest : FrontendKoinInitializedTest() {
             findingId = findingId,
             name = "New name",
             description = "New description",
+            importance = Importance.MEDIUM,
         )
 
         useCase(request)

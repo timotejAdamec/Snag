@@ -20,8 +20,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -29,12 +33,17 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import cz.adamec.timotej.snag.feat.findings.business.Importance
 import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetailsEdit.vm.FindingDetailsEditUiState
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import snag.feat.findings.fe.driving.impl.generated.resources.Res
 import snag.feat.findings.fe.driving.impl.generated.resources.finding_description_label
 import snag.feat.findings.fe.driving.impl.generated.resources.finding_name_label
+import snag.feat.findings.fe.driving.impl.generated.resources.importance_high
+import snag.feat.findings.fe.driving.impl.generated.resources.importance_label
+import snag.feat.findings.fe.driving.impl.generated.resources.importance_low
+import snag.feat.findings.fe.driving.impl.generated.resources.importance_medium
 import snag.feat.findings.fe.driving.impl.generated.resources.new_finding
 import snag.feat.findings.fe.driving.impl.generated.resources.required
 import snag.lib.design.fe.generated.resources.close
@@ -52,6 +61,7 @@ internal fun FindingDetailsEditContent(
     snackbarHostState: SnackbarHostState,
     onFindingNameChange: (String) -> Unit,
     onFindingDescriptionChange: (String) -> Unit,
+    onImportanceChange: (Importance) -> Unit,
     onSaveClick: () -> Unit,
     onCancelClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -122,6 +132,29 @@ internal fun FindingDetailsEditContent(
                     onFindingNameChange(it)
                 },
             )
+            Text(
+                text = stringResource(Res.string.importance_label),
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            val importanceOptions = Importance.entries
+            SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
+                importanceOptions.forEachIndexed { index, importance ->
+                    SegmentedButton(
+                        selected = state.findingImportance == importance,
+                        onClick = { onImportanceChange(importance) },
+                        shape = SegmentedButtonDefaults.itemShape(index = index, count = importanceOptions.size),
+                    ) {
+                        Text(
+                            text = when (importance) {
+                                Importance.HIGH -> stringResource(Res.string.importance_high)
+                                Importance.MEDIUM -> stringResource(Res.string.importance_medium)
+                                Importance.LOW -> stringResource(Res.string.importance_low)
+                            },
+                        )
+                    }
+                }
+            }
             OutlinedTextField(
                 modifier =
                     Modifier

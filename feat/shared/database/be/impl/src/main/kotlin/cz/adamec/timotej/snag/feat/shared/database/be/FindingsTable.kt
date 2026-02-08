@@ -16,11 +16,13 @@ import org.jetbrains.exposed.v1.core.dao.id.IntIdTable
 import org.jetbrains.exposed.v1.core.dao.id.UuidTable
 
 private const val NAME_MAX_LENGTH = 255
+private const val IMPORTANCE_MAX_LENGTH = 6
 
 object FindingsTable : UuidTable("findings") {
     val structure = reference("structure_id", StructuresTable).index()
     val name = varchar("name", NAME_MAX_LENGTH)
     val description = text("description", eagerLoading = true).nullable()
+    val importance = varchar("importance", IMPORTANCE_MAX_LENGTH).default("MEDIUM")
     val updatedAt = long("updated_at").index()
     val deletedAt = long("deleted_at").nullable().index()
 }
