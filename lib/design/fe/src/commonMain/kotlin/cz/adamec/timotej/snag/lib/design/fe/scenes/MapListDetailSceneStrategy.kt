@@ -14,6 +14,7 @@
 
 package cz.adamec.timotej.snag.lib.design.fe.scenes
 
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -23,6 +24,7 @@ import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.movableContentOf
 import androidx.compose.runtime.remember
@@ -129,7 +131,12 @@ private class AdaptiveMapListDetailScene<T : Any>(
             }
 
             else -> {
-                key(detailEntry != null) {
+                val isDetail = detailEntry != null
+                val sheetPeekHeight by animateDpAsState(
+                    targetValue = if (isDetail) 192.dp else 128.dp,
+                    label = "sheetPeekHeight",
+                )
+                key(isDetail) {
                     val scaffoldState =
                         rememberBottomSheetScaffoldState(
                             bottomSheetState =
@@ -137,10 +144,9 @@ private class AdaptiveMapListDetailScene<T : Any>(
                                     initialValue = SheetValue.PartiallyExpanded,
                                 ),
                         )
-                    val isDetail = detailEntry != null
                     BottomSheetScaffold(
                         scaffoldState = scaffoldState,
-                        sheetPeekHeight = if (isDetail) 192.dp else 128.dp,
+                        sheetPeekHeight = sheetPeekHeight,
                         sheetContent = {
                             if (isDetail) {
                                 detailEntry.Content()
