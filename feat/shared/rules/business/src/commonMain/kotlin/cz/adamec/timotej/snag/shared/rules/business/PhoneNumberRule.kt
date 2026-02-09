@@ -10,11 +10,8 @@
  * Department of Software Engineering
  */
 
-@file:Suppress("ktlint:standard:no-empty-file")
+package cz.adamec.timotej.snag.shared.rules.business
 
-package cz.adamec.timotej.snag.projects.business
-
-// class PhoneNumberValidator {
-//    operator fun invoke(phoneNumber: String): Boolean =
-//        phoneNumber.isNotBlank() && phoneNumber.none { it.isLetter() }
-// }
+class PhoneNumberRule {
+    operator fun invoke(phoneNumber: String): Boolean = phoneNumber.isNotBlank() && phoneNumber.none { it.isLetter() }
+}

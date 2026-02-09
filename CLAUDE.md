@@ -73,6 +73,10 @@ Detailed description is available in [Project Structure](docs/project_structure.
 - `OfflineFirstDataResult<T>` (Success | ProgrammerError) - offline-first frontend operations
 - `OnlineDataResult<T>` (Success | Failure) - online-only operations
 
+**Validation Rules:** Business-layer validation uses `*Rule` naming convention.
+Rules are classes with `operator fun invoke(input): Boolean`. Cross-feature
+rules live in `feat/shared/rules/business/` (auto-wired to all business modules).
+
 **Testing:** Fake implementations in `driven/test/` modules for port fakes (DB, API interfaces). Tests extend `FrontendKoinInitializedTest`
 or `BackendKoinInitializedTest` which handle all DI setup including dispatcher setup. Override
 `additionalKoinModules()` to bind fakes: `singleOf(::FakeXxxDb) bind XxxDb::class`. Use Turbine for

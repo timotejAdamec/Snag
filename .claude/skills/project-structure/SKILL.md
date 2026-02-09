@@ -36,6 +36,11 @@ Each feature follows hexagonal architecture with these layers:
   - `driven/test/` — Fakes for port interfaces (DB, API)
   - `app/test/` — Fakes for use case interfaces (cross-feature testing)
 
+### Shared modules (`feat/shared/`)
+
+- **`shared/database/`** — Shared database infrastructure
+- **`shared/rules/business/`** — Cross-cutting business rules (`*Rule` naming). Auto-wired to all feature business modules.
+
 ### Library modules (`lib/`)
 
 Domain-agnostic reusable code used by `driven` and `driving` feature modules.
