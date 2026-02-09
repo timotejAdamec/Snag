@@ -13,11 +13,3 @@
 plugins {
     alias(libs.plugins.snagFrontendMultiplatformModule)
 }
-
-kotlin {
-    sourceSets {
-        commonMain.dependencies {
-            api(project(":lib:sync:fe:model"))
-        }
-    }
-}
