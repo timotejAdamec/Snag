@@ -23,7 +23,10 @@ internal class SaveStructureUseCaseImpl(
     override suspend operator fun invoke(backendStructure: BackendStructure): BackendStructure? {
         logger.debug("Saving structure {} to local storage.", backendStructure)
         return structuresDb.saveStructure(backendStructure).also {
-            logger.debug("Saved structure {} to local storage.", backendStructure)
+            it?.let {
+                logger.debug("Didn't save structure {} to local storage as there is a newer one." +
+                        " Returning the newer one ({}).", backendStructure, it)
+            } ?: logger.debug("Saved structure {} to local storage.", backendStructure)
         }
     }
 }

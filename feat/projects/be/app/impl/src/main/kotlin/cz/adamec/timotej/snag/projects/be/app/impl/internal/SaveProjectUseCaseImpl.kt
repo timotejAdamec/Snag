@@ -23,7 +23,10 @@ internal class SaveProjectUseCaseImpl(
     override suspend operator fun invoke(project: BackendProject): BackendProject? {
         logger.debug("Saving project {} to local storage.", project)
         return projectsDb.saveProject(project).also {
-            logger.debug("Saved project {} to local storage.", project)
+            it?.let {
+                logger.debug("Didn't save project {} to local storage as there is a newer one." +
+                        " Returning the newer one ({}).", project, it)
+            } ?: logger.debug("Saved project {} to local storage.", project)
         }
     }
 }
