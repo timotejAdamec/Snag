@@ -16,7 +16,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
-import cz.adamec.timotej.snag.lib.design.fe.error.UiError.CustomUserMessage
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError.Unknown
 import cz.adamec.timotej.snag.structures.fe.app.api.GetStructureUseCase
 import cz.adamec.timotej.snag.structures.fe.app.api.SaveStructureUseCase
@@ -29,6 +28,8 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.core.annotation.InjectedParam
+import snag.lib.design.fe.generated.resources.Res
+import snag.lib.design.fe.generated.resources.error_field_required
 import kotlin.uuid.Uuid
 
 internal class StructureDetailsEditViewModel(
@@ -77,13 +78,13 @@ internal class StructureDetailsEditViewModel(
         }
 
     fun onStructureNameChange(updatedName: String) {
-        _state.update { it.copy(structureName = updatedName) }
+        _state.update { it.copy(structureName = updatedName, structureNameError = null) }
     }
 
     fun onSaveStructure() =
         viewModelScope.launch {
             if (state.value.structureName.isBlank()) {
-                errorEventsChannel.send(CustomUserMessage("Structure name cannot be empty"))
+                _state.update { it.copy(structureNameError = Res.string.error_field_required) }
             } else {
                 saveStructure()
             }
@@ -91,14 +92,14 @@ internal class StructureDetailsEditViewModel(
 
     private suspend fun saveStructure() {
         val result =
-                saveStructureUseCase(
-                    request =
-                        SaveStructureRequest(
-                            id = structureId,
-                            projectId = state.value.projectId ?: projectId!!,
-                            name = state.value.structureName,
-                        ),
-                )
+            saveStructureUseCase(
+                request =
+                    SaveStructureRequest(
+                        id = structureId,
+                        projectId = state.value.projectId ?: projectId!!,
+                        name = state.value.structureName,
+                    ),
+            )
         when (result) {
             is OfflineFirstDataResult.ProgrammerError -> {
                 errorEventsChannel.send(Unknown)

@@ -42,8 +42,8 @@ import snag.feat.clients.fe.driving.impl.generated.resources.client_phone_label
 import snag.feat.clients.fe.driving.impl.generated.resources.new_client
 import snag.feat.clients.fe.driving.impl.generated.resources.required
 import snag.lib.design.fe.generated.resources.close
-import snag.lib.design.fe.generated.resources.ic_close
 import snag.lib.design.fe.generated.resources.ic_call
+import snag.lib.design.fe.generated.resources.ic_close
 import snag.lib.design.fe.generated.resources.ic_location
 import snag.lib.design.fe.generated.resources.ic_mail
 import snag.lib.design.fe.generated.resources.save
@@ -126,7 +126,18 @@ internal fun ClientDetailsEditContent(
                     Modifier
                         .fillMaxWidth(),
                 label = { Text(text = stringResource(Res.string.client_name_label) + "*") },
-                supportingText = { Text(text = stringResource(Res.string.required) + "*") },
+                isError = state.clientNameError != null,
+                supportingText = {
+                    val error = state.clientNameError
+                    Text(
+                        text =
+                            if (error != null) {
+                                stringResource(error)
+                            } else {
+                                stringResource(Res.string.required) + "*"
+                            },
+                    )
+                },
                 value = state.clientName,
                 onValueChange = onClientNameChange,
             )
@@ -149,6 +160,11 @@ internal fun ClientDetailsEditContent(
                     Modifier
                         .fillMaxWidth(),
                 label = { Text(text = stringResource(Res.string.client_phone_label)) },
+                isError = state.clientPhoneNumberError != null,
+                supportingText =
+                    state.clientPhoneNumberError?.let { error ->
+                        { Text(text = stringResource(error)) }
+                    },
                 value = state.clientPhoneNumber,
                 onValueChange = onClientPhoneNumberChange,
                 leadingIcon = {
@@ -163,6 +179,11 @@ internal fun ClientDetailsEditContent(
                     Modifier
                         .fillMaxWidth(),
                 label = { Text(text = stringResource(Res.string.client_email_label)) },
+                isError = state.clientEmailError != null,
+                supportingText =
+                    state.clientEmailError?.let { error ->
+                        { Text(text = stringResource(error)) }
+                    },
                 value = state.clientEmail,
                 onValueChange = onClientEmailChange,
                 leadingIcon = {
@@ -182,12 +203,13 @@ private fun ClientDetailsEditContentPreview() {
     SnagTheme {
         ClientDetailsEditContent(
             clientId = null,
-            state = ClientDetailsEditUiState(
-                clientName = "Acme Corp",
-                clientAddress = "123 Main Street",
-                clientPhoneNumber = "+1 555 123 456",
-                clientEmail = "contact@acme.com",
-            ),
+            state =
+                ClientDetailsEditUiState(
+                    clientName = "Acme Corp",
+                    clientAddress = "123 Main Street",
+                    clientPhoneNumber = "+1 555 123 456",
+                    clientEmail = "contact@acme.com",
+                ),
             snackbarHostState = SnackbarHostState(),
             onClientNameChange = {},
             onClientAddressChange = {},

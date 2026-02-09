@@ -122,7 +122,18 @@ internal fun ProjectDetailsEditContent(
                     Modifier
                         .fillMaxWidth(),
                 label = { Text(text = stringResource(Res.string.project_name_label) + "*") },
-                supportingText = { Text(text = stringResource(Res.string.required) + "*") },
+                isError = state.projectNameError != null,
+                supportingText = {
+                    val error = state.projectNameError
+                    Text(
+                        text =
+                            if (error != null) {
+                                stringResource(error)
+                            } else {
+                                stringResource(Res.string.required) + "*"
+                            },
+                    )
+                },
                 value = state.projectName,
                 onValueChange = {
                     onProjectNameChange(it)
@@ -133,7 +144,18 @@ internal fun ProjectDetailsEditContent(
                     Modifier
                         .fillMaxWidth(),
                 label = { Text(text = stringResource(Res.string.project_address_label) + "*") },
-                supportingText = { Text(text = stringResource(Res.string.required) + "*") },
+                isError = state.projectAddressError != null,
+                supportingText = {
+                    val error = state.projectAddressError
+                    Text(
+                        text =
+                            if (error != null) {
+                                stringResource(error)
+                            } else {
+                                stringResource(Res.string.required) + "*"
+                            },
+                    )
+                },
                 value = state.projectAddress,
                 onValueChange = {
                     onProjectAddressChange(it)

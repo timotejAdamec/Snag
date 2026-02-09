@@ -139,7 +139,18 @@ internal fun FindingDetailsEditContent(
                     Modifier
                         .fillMaxWidth(),
                 label = { Text(text = stringResource(Res.string.finding_name_label) + "*") },
-                supportingText = { Text(text = stringResource(Res.string.required) + "*") },
+                isError = state.findingNameError != null,
+                supportingText = {
+                    val error = state.findingNameError
+                    Text(
+                        text =
+                            if (error != null) {
+                                stringResource(error)
+                            } else {
+                                stringResource(Res.string.required) + "*"
+                            },
+                    )
+                },
                 value = state.findingName,
                 singleLine = true,
                 onValueChange = {

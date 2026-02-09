@@ -24,7 +24,6 @@ import cz.adamec.timotej.snag.findings.fe.app.api.model.SaveNewFindingRequest
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstUpdateDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
-import cz.adamec.timotej.snag.lib.design.fe.error.UiError.CustomUserMessage
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError.Unknown
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
@@ -34,6 +33,8 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.core.annotation.InjectedParam
+import snag.lib.design.fe.generated.resources.Res
+import snag.lib.design.fe.generated.resources.error_field_required
 import kotlin.uuid.Uuid
 
 internal class FindingDetailsEditViewModel(
@@ -85,7 +86,7 @@ internal class FindingDetailsEditViewModel(
         }
 
     fun onFindingNameChange(updatedName: String) {
-        _state.update { it.copy(findingName = updatedName) }
+        _state.update { it.copy(findingName = updatedName, findingNameError = null) }
     }
 
     fun onFindingDescriptionChange(updatedDescription: String) {
@@ -103,7 +104,7 @@ internal class FindingDetailsEditViewModel(
     fun onSaveFinding() =
         viewModelScope.launch {
             if (state.value.findingName.isBlank()) {
-                errorEventsChannel.send(CustomUserMessage("Finding name cannot be empty"))
+                _state.update { it.copy(findingNameError = Res.string.error_field_required) }
             } else {
                 val currentFindingId = findingId
                 if (currentFindingId != null) {

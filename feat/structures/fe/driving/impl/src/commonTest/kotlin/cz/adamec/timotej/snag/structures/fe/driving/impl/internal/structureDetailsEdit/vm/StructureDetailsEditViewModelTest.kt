@@ -39,6 +39,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertIs
 import kotlin.test.assertNotNull
+import kotlin.test.assertNull
 import kotlin.uuid.Uuid
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -113,16 +114,29 @@ class StructureDetailsEditViewModelTest : FrontendKoinInitializedTest() {
         }
 
     @Test
-    fun `onSaveStructure with empty name sends error`() =
+    fun `onSaveStructure with empty name shows inline error`() =
         runTest {
             val projectId = UuidProvider.getUuid()
             val viewModel = createViewModel(projectId = projectId)
 
             viewModel.onSaveStructure()
+            advanceUntilIdle()
 
-            val error = viewModel.errorsFlow.first()
-            assertIs<UiError.CustomUserMessage>(error)
-            assertEquals("Structure name cannot be empty", error.message)
+            assertNotNull(viewModel.state.value.structureNameError)
+        }
+
+    @Test
+    fun `editing name clears its error`() =
+        runTest {
+            val projectId = UuidProvider.getUuid()
+            val viewModel = createViewModel(projectId = projectId)
+
+            viewModel.onSaveStructure()
+            advanceUntilIdle()
+            assertNotNull(viewModel.state.value.structureNameError)
+
+            viewModel.onStructureNameChange("N")
+            assertNull(viewModel.state.value.structureNameError)
         }
 
     @Test
