@@ -128,14 +128,10 @@ internal fun ClientDetailsEditContent(
                 label = { Text(text = stringResource(Res.string.client_name_label) + "*") },
                 isError = state.clientNameError != null,
                 supportingText = {
-                    val error = state.clientNameError
                     Text(
                         text =
-                            if (error != null) {
-                                stringResource(error)
-                            } else {
-                                stringResource(Res.string.required) + "*"
-                            },
+                            state.clientNameError?.let { stringResource(it) }
+                                ?: (stringResource(Res.string.required) + "*"),
                     )
                 },
                 value = state.clientName,

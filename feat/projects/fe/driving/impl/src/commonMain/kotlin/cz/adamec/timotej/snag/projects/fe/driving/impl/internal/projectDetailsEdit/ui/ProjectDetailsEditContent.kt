@@ -124,14 +124,10 @@ internal fun ProjectDetailsEditContent(
                 label = { Text(text = stringResource(Res.string.project_name_label) + "*") },
                 isError = state.projectNameError != null,
                 supportingText = {
-                    val error = state.projectNameError
                     Text(
                         text =
-                            if (error != null) {
-                                stringResource(error)
-                            } else {
-                                stringResource(Res.string.required) + "*"
-                            },
+                            state.projectNameError?.let { stringResource(it) }
+                                ?: (stringResource(Res.string.required) + "*"),
                     )
                 },
                 value = state.projectName,
@@ -146,14 +142,10 @@ internal fun ProjectDetailsEditContent(
                 label = { Text(text = stringResource(Res.string.project_address_label) + "*") },
                 isError = state.projectAddressError != null,
                 supportingText = {
-                    val error = state.projectAddressError
                     Text(
                         text =
-                            if (error != null) {
-                                stringResource(error)
-                            } else {
-                                stringResource(Res.string.required) + "*"
-                            },
+                            state.projectAddressError?.let { stringResource(it) }
+                                ?: (stringResource(Res.string.required) + "*"),
                     )
                 },
                 value = state.projectAddress,

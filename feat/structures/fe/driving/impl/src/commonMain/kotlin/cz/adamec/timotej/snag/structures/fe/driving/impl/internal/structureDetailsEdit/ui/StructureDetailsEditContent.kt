@@ -116,14 +116,10 @@ internal fun StructureDetailsEditContent(
                 label = { Text(text = stringResource(Res.string.structure_name_label) + "*") },
                 isError = state.structureNameError != null,
                 supportingText = {
-                    val error = state.structureNameError
                     Text(
                         text =
-                            if (error != null) {
-                                stringResource(error)
-                            } else {
-                                stringResource(Res.string.required) + "*"
-                            },
+                            state.structureNameError?.let { stringResource(it) }
+                                ?: (stringResource(Res.string.required) + "*"),
                     )
                 },
                 value = state.structureName,

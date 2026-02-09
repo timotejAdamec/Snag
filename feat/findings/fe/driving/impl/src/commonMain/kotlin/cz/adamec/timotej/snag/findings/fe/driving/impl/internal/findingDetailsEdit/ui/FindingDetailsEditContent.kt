@@ -141,14 +141,10 @@ internal fun FindingDetailsEditContent(
                 label = { Text(text = stringResource(Res.string.finding_name_label) + "*") },
                 isError = state.findingNameError != null,
                 supportingText = {
-                    val error = state.findingNameError
                     Text(
                         text =
-                            if (error != null) {
-                                stringResource(error)
-                            } else {
-                                stringResource(Res.string.required) + "*"
-                            },
+                            state.findingNameError?.let { stringResource(it) }
+                                ?: (stringResource(Res.string.required) + "*"),
                     )
                 },
                 value = state.findingName,

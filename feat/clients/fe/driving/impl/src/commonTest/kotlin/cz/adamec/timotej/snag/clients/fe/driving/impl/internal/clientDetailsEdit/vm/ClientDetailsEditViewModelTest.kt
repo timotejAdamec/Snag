@@ -25,8 +25,6 @@ import cz.adamec.timotej.snag.clients.fe.ports.ClientsSync
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
-import cz.adamec.timotej.snag.shared.rules.business.api.EmailFormatRule
-import cz.adamec.timotej.snag.shared.rules.business.api.PhoneNumberRule
 import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
@@ -36,6 +34,7 @@ import org.koin.core.module.Module
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
+import org.koin.test.get
 import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -46,13 +45,10 @@ import kotlin.uuid.Uuid
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class ClientDetailsEditViewModelTest : FrontendKoinInitializedTest() {
-
     private val fakeClientsDb: FakeClientsDb by inject()
 
     private val getClientUseCase: GetClientUseCase by inject()
     private val saveClientUseCase: SaveClientUseCase by inject()
-    private val emailFormatRule: EmailFormatRule by inject()
-    private val phoneNumberRule: PhoneNumberRule by inject()
 
     override fun additionalKoinModules(): List<Module> =
         listOf(
@@ -68,8 +64,8 @@ class ClientDetailsEditViewModelTest : FrontendKoinInitializedTest() {
             clientId = clientId,
             getClientUseCase = getClientUseCase,
             saveClientUseCase = saveClientUseCase,
-            emailFormatRule = emailFormatRule,
-            phoneNumberRule = phoneNumberRule,
+            emailFormatRule = get(),
+            phoneNumberRule = get(),
         )
 
     @Test
