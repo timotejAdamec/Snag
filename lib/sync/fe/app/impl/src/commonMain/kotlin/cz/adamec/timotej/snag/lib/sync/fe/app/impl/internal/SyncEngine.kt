@@ -13,9 +13,7 @@
 package cz.adamec.timotej.snag.lib.sync.fe.app.impl.internal
 
 import cz.adamec.timotej.snag.lib.core.common.ApplicationScope
-import cz.adamec.timotej.snag.lib.sync.fe.app.api.GetSyncEngineStatusUseCase
 import cz.adamec.timotej.snag.lib.sync.fe.app.api.SyncCoordinator
-import cz.adamec.timotej.snag.lib.sync.fe.app.api.SyncEngineStatus
 import cz.adamec.timotej.snag.lib.sync.fe.app.api.handler.SyncOperationHandler
 import cz.adamec.timotej.snag.lib.sync.fe.app.api.handler.SyncOperationResult
 import cz.adamec.timotej.snag.lib.sync.fe.model.SyncOperationType

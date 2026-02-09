@@ -10,9 +10,9 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.lib.sync.fe.app.api
+package cz.adamec.timotej.snag.lib.sync.fe.app.impl.internal
 
-sealed interface SyncEngineStatus {
+internal sealed interface SyncEngineStatus {
     data object Idle : SyncEngineStatus
 
     data object Syncing : SyncEngineStatus

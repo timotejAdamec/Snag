@@ -14,8 +14,8 @@ package cz.adamec.timotej.snag.lib.sync.fe.app.impl.di
 
 import cz.adamec.timotej.snag.lib.sync.fe.app.api.EnqueueSyncDeleteUseCase
 import cz.adamec.timotej.snag.lib.sync.fe.app.api.EnqueueSyncSaveUseCase
-import cz.adamec.timotej.snag.lib.sync.fe.app.api.GetSyncEngineStatusUseCase
 import cz.adamec.timotej.snag.lib.sync.fe.app.api.GetSyncStatusUseCase
+import cz.adamec.timotej.snag.lib.sync.fe.app.impl.internal.GetSyncEngineStatusUseCase
 import cz.adamec.timotej.snag.lib.sync.fe.app.api.SyncCoordinator
 import cz.adamec.timotej.snag.lib.sync.fe.app.api.handler.SyncOperationHandler
 import cz.adamec.timotej.snag.lib.sync.fe.app.impl.internal.EnqueueSyncDeleteUseCaseImpl

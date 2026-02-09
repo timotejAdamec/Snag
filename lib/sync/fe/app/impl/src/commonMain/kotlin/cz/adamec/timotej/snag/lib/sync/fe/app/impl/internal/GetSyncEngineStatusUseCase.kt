@@ -10,10 +10,10 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.lib.sync.fe.app.api
+package cz.adamec.timotej.snag.lib.sync.fe.app.impl.internal
 
 import kotlinx.coroutines.flow.StateFlow
 
-interface GetSyncEngineStatusUseCase {
+internal interface GetSyncEngineStatusUseCase {
     operator fun invoke(): StateFlow<SyncEngineStatus>
 }
