@@ -88,7 +88,6 @@ private fun FindingsPinsOverlay(
 
     val pinColor = MaterialTheme.colorScheme.error
     val selectedPinColor = MaterialTheme.colorScheme.tertiary
-    val pinOutlineColor = MaterialTheme.colorScheme.onError
 
     Canvas(modifier = modifier.fillMaxSize()) {
         findings.forEach { finding ->
@@ -103,7 +102,6 @@ private fun FindingsPinsOverlay(
                 drawFindingPin(
                     center = drawPoint,
                     fillColor = if (isSelected) selectedPinColor else pinColor,
-                    outlineColor = pinOutlineColor,
                     radius = if (isSelected) 16.dp.toPx() else 12.dp.toPx(),
                 )
             }
@@ -114,7 +112,6 @@ private fun FindingsPinsOverlay(
 private fun DrawScope.drawFindingPin(
     center: Offset,
     fillColor: Color,
-    outlineColor: Color,
     radius: Float,
 ) {
     drawCircle(
@@ -122,12 +119,6 @@ private fun DrawScope.drawFindingPin(
         radius = radius,
         center = center,
         style = Fill,
-    )
-    drawCircle(
-        color = outlineColor,
-        radius = radius,
-        center = center,
-        style = Stroke(width = 2f),
     )
 }
 
