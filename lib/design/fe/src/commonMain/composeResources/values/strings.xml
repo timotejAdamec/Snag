@@ -18,4 +18,8 @@
     <string name="back">Back</string>
     <string name="delete">Delete</string>
     <string name="edit">Edit</string>
+    <string name="sync_status_synced">Up to date</string>
+    <string name="sync_status_syncing">Syncing…</string>
+    <string name="sync_status_offline">Offline</string>
+    <string name="sync_status_error">Sync error</string>
 </resources>

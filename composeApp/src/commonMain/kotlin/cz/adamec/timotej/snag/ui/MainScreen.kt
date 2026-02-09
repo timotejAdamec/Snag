@@ -12,19 +12,26 @@
 
 package cz.adamec.timotej.snag.ui
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.AppScaffold
+import cz.adamec.timotej.snag.lib.design.fe.scaffold.SyncStatusBar
 import cz.adamec.timotej.snag.lib.design.fe.theme.SnagTheme
 import cz.adamec.timotej.snag.ui.navigation.SnagNavigation
 import cz.adamec.timotej.snag.vm.MainViewModel
 import org.koin.compose.viewmodel.koinViewModel
 
-@Suppress("UnusedParameter")
 @Composable
 internal fun MainScreen(mainViewModel: MainViewModel = koinViewModel()) {
+    val syncStatus by mainViewModel.syncStatus.collectAsStateWithLifecycle()
     SnagTheme {
         AppScaffold {
-            SnagNavigation()
+            Column {
+                SyncStatusBar(state = syncStatus.toBarState())
+                SnagNavigation()
+            }
         }
     }
 }
