@@ -11,5 +11,8 @@ kotlin {
             implementation(project(":lib:sync:fe:model"))
             implementation(project(":lib:database:fe"))
         }
+        commonTest.dependencies {
+            implementation(project(":feat:clients:fe:driven:test"))
+        }
     }
 }
