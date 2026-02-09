@@ -10,10 +10,11 @@
  * Department of Software Engineering
  */
 
-plugins {
-    alias(libs.plugins.snagDrivingFrontendMultiplatformModule)
-}
+package cz.adamec.timotej.snag.lib.design.fe.scaffold
 
-compose.resources {
-    publicResClass = true
+enum class SyncStatusBarState {
+    SYNCED,
+    SYNCING,
+    OFFLINE,
+    ERROR,
 }

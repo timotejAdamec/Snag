@@ -37,7 +37,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import cz.adamec.timotej.snag.lib.sync.fe.app.api.SyncStatus
 import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -54,15 +53,15 @@ private const val SYNCED_DISPLAY_DURATION_MS = 2_000L
 
 @Composable
 fun SyncStatusBar(
-    syncStatus: SyncStatus,
+    state: SyncStatusBarState,
     modifier: Modifier = Modifier,
 ) {
     var hasShownNonSynced by remember { mutableStateOf(false) }
     var visible by remember { mutableStateOf(false) }
 
-    LaunchedEffect(syncStatus) {
-        when (syncStatus) {
-            SyncStatus.Synced -> {
+    LaunchedEffect(state) {
+        when (state) {
+            SyncStatusBarState.SYNCED -> {
                 if (hasShownNonSynced) {
                     visible = true
                     delay(SYNCED_DISPLAY_DURATION_MS)
@@ -86,8 +85,8 @@ fun SyncStatusBar(
         val label: String
         val icon: @Composable () -> Unit
 
-        when (syncStatus) {
-            SyncStatus.Synced -> {
+        when (state) {
+            SyncStatusBarState.SYNCED -> {
                 backgroundColor = MaterialTheme.colorScheme.primaryContainer
                 contentColor = MaterialTheme.colorScheme.onPrimaryContainer
                 label = stringResource(Res.string.sync_status_synced)
@@ -100,7 +99,7 @@ fun SyncStatusBar(
                     )
                 }
             }
-            SyncStatus.Syncing -> {
+            SyncStatusBarState.SYNCING -> {
                 backgroundColor = MaterialTheme.colorScheme.secondaryContainer
                 contentColor = MaterialTheme.colorScheme.onSecondaryContainer
                 label = stringResource(Res.string.sync_status_syncing)
@@ -112,7 +111,7 @@ fun SyncStatusBar(
                     )
                 }
             }
-            SyncStatus.Offline -> {
+            SyncStatusBarState.OFFLINE -> {
                 backgroundColor = MaterialTheme.colorScheme.surfaceVariant
                 contentColor = MaterialTheme.colorScheme.onSurfaceVariant
                 label = stringResource(Res.string.sync_status_offline)
@@ -125,7 +124,7 @@ fun SyncStatusBar(
                     )
                 }
             }
-            SyncStatus.Error -> {
+            SyncStatusBarState.ERROR -> {
                 backgroundColor = MaterialTheme.colorScheme.errorContainer
                 contentColor = MaterialTheme.colorScheme.onErrorContainer
                 label = stringResource(Res.string.sync_status_error)

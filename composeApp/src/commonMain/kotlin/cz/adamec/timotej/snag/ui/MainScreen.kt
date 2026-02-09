@@ -18,7 +18,9 @@ import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.AppScaffold
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.SyncStatusBar
+import cz.adamec.timotej.snag.lib.design.fe.scaffold.SyncStatusBarState
 import cz.adamec.timotej.snag.lib.design.fe.theme.SnagTheme
+import cz.adamec.timotej.snag.lib.sync.fe.app.api.SyncStatus
 import cz.adamec.timotej.snag.ui.navigation.SnagNavigation
 import cz.adamec.timotej.snag.vm.MainViewModel
 import org.koin.compose.viewmodel.koinViewModel
@@ -29,9 +31,17 @@ internal fun MainScreen(mainViewModel: MainViewModel = koinViewModel()) {
     SnagTheme {
         AppScaffold {
             Column {
-                SyncStatusBar(syncStatus = syncStatus)
+                SyncStatusBar(state = syncStatus.toBarState())
                 SnagNavigation()
             }
         }
     }
 }
+
+private fun SyncStatus.toBarState(): SyncStatusBarState =
+    when (this) {
+        SyncStatus.Synced -> SyncStatusBarState.SYNCED
+        SyncStatus.Syncing -> SyncStatusBarState.SYNCING
+        SyncStatus.Offline -> SyncStatusBarState.OFFLINE
+        SyncStatus.Error -> SyncStatusBarState.ERROR
+    }
