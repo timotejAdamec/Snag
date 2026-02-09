@@ -17,7 +17,5 @@ internal sealed interface SyncEngineStatus {
 
     data object Syncing : SyncEngineStatus
 
-    data class Failed(
-        val pendingCount: Int,
-    ) : SyncEngineStatus
+    data object Failed : SyncEngineStatus
 }

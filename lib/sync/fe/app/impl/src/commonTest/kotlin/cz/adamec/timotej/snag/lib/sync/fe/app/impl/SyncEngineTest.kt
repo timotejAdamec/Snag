@@ -34,7 +34,6 @@ import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
-import kotlin.test.assertIs
 import kotlin.test.assertTrue
 import kotlin.uuid.Uuid
 
@@ -213,9 +212,7 @@ class SyncEngineTest : FrontendKoinInitializedTest() {
 
                 deferred.complete(SyncOperationResult.Failure)
                 advanceUntilIdle()
-                val failed = awaitItem()
-                assertIs<SyncEngineStatus.Failed>(failed)
-                assertEquals(1, failed.pendingCount)
+                assertEquals(SyncEngineStatus.Failed, awaitItem())
             }
         }
 
@@ -250,7 +247,7 @@ class SyncEngineTest : FrontendKoinInitializedTest() {
 
                 deferred1.complete(SyncOperationResult.Failure)
                 advanceUntilIdle()
-                assertIs<SyncEngineStatus.Failed>(awaitItem())
+                assertEquals(SyncEngineStatus.Failed, awaitItem())
 
                 engine.invoke("project", Uuid.random(), SyncOperationType.UPSERT)
                 advanceUntilIdle()

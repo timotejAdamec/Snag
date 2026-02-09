@@ -86,8 +86,7 @@ internal class SyncEngine(
                 }
                 SyncOperationResult.Failure -> {
                     LH.logger.w { "Sync operation ${operation.id} failed, stopping processing." }
-                    val remainingCount = syncQueue.getAllPending().size
-                    _status.value = SyncEngineStatus.Failed(pendingCount = remainingCount)
+                    _status.value = SyncEngineStatus.Failed
                     return
                 }
             }
