@@ -14,6 +14,7 @@ package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetailsE
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cz.adamec.timotej.snag.clients.fe.app.api.GetClientsUseCase
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError.CustomUserMessage
@@ -21,6 +22,7 @@ import cz.adamec.timotej.snag.lib.design.fe.error.UiError.Unknown
 import cz.adamec.timotej.snag.projects.fe.app.api.GetProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.SaveProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.model.SaveProjectRequest
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -35,6 +37,7 @@ internal class ProjectDetailsEditViewModel(
     @InjectedParam private val projectId: Uuid?,
     private val getProjectUseCase: GetProjectUseCase,
     private val saveProjectUseCase: SaveProjectUseCase,
+    private val getClientsUseCase: GetClientsUseCase,
 ) : ViewModel() {
     private val _state: MutableStateFlow<ProjectDetailsEditUiState> =
         MutableStateFlow(ProjectDetailsEditUiState())
@@ -48,6 +51,7 @@ internal class ProjectDetailsEditViewModel(
 
     init {
         projectId?.let { collectProject(it) }
+        collectClients()
     }
 
     private fun collectProject(projectId: Uuid) =
@@ -63,6 +67,11 @@ internal class ProjectDetailsEditViewModel(
                                 it.copy(
                                     projectName = data.project.name,
                                     projectAddress = data.project.address,
+                                    selectedClientId = data.project.clientId,
+                                    selectedClientName =
+                                        data.project.clientId?.let { clientId ->
+                                            resolveClientName(clientId)
+                                        } ?: "",
                                 )
                             }
                             cancel()
@@ -71,6 +80,70 @@ internal class ProjectDetailsEditViewModel(
                 }
             }
         }
+
+    private fun collectClients() =
+        viewModelScope.launch {
+            getClientsUseCase().collect { result ->
+                when (result) {
+                    is OfflineFirstDataResult.ProgrammerError -> {
+                        errorEventsChannel.send(Unknown)
+                    }
+                    is OfflineFirstDataResult.Success -> {
+                        val clients = result.data.toImmutableList()
+                        _state.update { current ->
+                            val resolvedName =
+                                if (current.selectedClientId != null && current.selectedClientName.isEmpty()) {
+                                    val matchingClient =
+                                        clients.firstOrNull { it.client.id == current.selectedClientId }
+                                    matchingClient?.client?.name ?: ""
+                                } else {
+                                    current.selectedClientName
+                                }
+                            current.copy(
+                                availableClients = clients,
+                                selectedClientName = resolvedName,
+                            )
+                        }
+                    }
+                }
+            }
+        }
+
+    private fun resolveClientName(clientId: Uuid): String {
+        val matchingClient =
+            _state.value.availableClients.firstOrNull { it.client.id == clientId }
+        return matchingClient?.client?.name ?: ""
+    }
+
+    fun onClientSelected(
+        clientId: Uuid,
+        clientName: String,
+    ) {
+        _state.update {
+            it.copy(
+                selectedClientId = clientId,
+                selectedClientName = clientName,
+            )
+        }
+    }
+
+    fun onClientCleared() {
+        _state.update {
+            it.copy(
+                selectedClientId = null,
+                selectedClientName = "",
+            )
+        }
+    }
+
+    fun onClientCreated(clientId: Uuid) {
+        _state.update {
+            it.copy(
+                selectedClientId = clientId,
+                selectedClientName = resolveClientName(clientId),
+            )
+        }
+    }
 
     fun onProjectNameChange(updatedName: String) {
         _state.update { it.copy(projectName = updatedName) }
@@ -94,14 +167,15 @@ internal class ProjectDetailsEditViewModel(
 
     private suspend fun saveProject() {
         val result =
-                saveProjectUseCase(
-                    request =
-                        SaveProjectRequest(
-                            id = projectId,
-                            name = state.value.projectName,
-                            address = state.value.projectAddress,
-                        ),
-                )
+            saveProjectUseCase(
+                request =
+                    SaveProjectRequest(
+                        id = projectId,
+                        name = state.value.projectName,
+                        address = state.value.projectAddress,
+                        clientId = state.value.selectedClientId,
+                    ),
+            )
         when (result) {
             is OfflineFirstDataResult.ProgrammerError -> {
                 errorEventsChannel.send(Unknown)

@@ -17,7 +17,13 @@ import kotlin.uuid.Uuid
 
 interface ClientsRoute : SnagNavRoute
 
-interface ClientCreationRoute : SnagNavRoute
+interface ClientCreationRoute : SnagNavRoute {
+    val onCreated: (newClientId: Uuid) -> Unit
+}
+
+interface ClientCreationRouteFactory {
+    fun create(onCreated: (newClientId: Uuid) -> Unit): ClientCreationRoute
+}
 
 interface ClientEditRoute : SnagNavRoute {
     val clientId: Uuid

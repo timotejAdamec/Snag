@@ -21,4 +21,7 @@
     <string name="delete_project_confirmation_text">Project will be deleted permanently locally and on the server.</string>
 
     <string name="required">Required</string>
+    <string name="client_label">Client</string>
+    <string name="none">None</string>
+    <string name="create_new_client">Create new client</string>
 </resources>

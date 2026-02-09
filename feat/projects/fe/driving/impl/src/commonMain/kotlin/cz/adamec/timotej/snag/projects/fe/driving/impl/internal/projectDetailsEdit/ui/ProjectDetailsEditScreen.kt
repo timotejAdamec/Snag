@@ -41,6 +41,7 @@ import kotlin.uuid.Uuid
 internal fun ProjectDetailsEditScreen(
     onSaveProject: (projectId: Uuid) -> Unit,
     onCancelClick: () -> Unit,
+    onNavigateToClientCreation: (onCreated: (Uuid) -> Unit) -> Unit,
     projectId: Uuid? = null,
     viewModel: ProjectDetailsEditViewModel =
         koinViewModel(
@@ -90,6 +91,13 @@ internal fun ProjectDetailsEditScreen(
         },
         onProjectAddressChange = {
             viewModel.onProjectAddressChange(it)
+        },
+        onSelectClient = { id, name -> viewModel.onClientSelected(id, name) },
+        onClearClient = { viewModel.onClientCleared() },
+        onCreateNewClientClick = {
+            onNavigateToClientCreation { clientId ->
+                viewModel.onClientCreated(clientId)
+            }
         },
         onSaveClick = {
             viewModel.onSaveProject()

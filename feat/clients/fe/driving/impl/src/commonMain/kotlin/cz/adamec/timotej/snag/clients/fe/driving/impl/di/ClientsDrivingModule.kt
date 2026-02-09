@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation3.scene.DialogSceneStrategy
 import cz.adamec.timotej.snag.clients.fe.driving.api.ClientCreationRoute
+import cz.adamec.timotej.snag.clients.fe.driving.api.ClientCreationRouteFactory
 import cz.adamec.timotej.snag.clients.fe.driving.api.ClientEditRoute
 import cz.adamec.timotej.snag.clients.fe.driving.api.ClientEditRouteFactory
 import cz.adamec.timotej.snag.clients.fe.driving.api.ClientsRoute
@@ -42,8 +43,8 @@ internal inline fun <reified T : ClientsRoute> Module.clientsScreenNavigation() 
             viewModel = koinViewModel(),
             onNewClientClick = {
                 val backStack = get<SnagBackStack>()
-                val clientCreationRoute = get<ClientCreationRoute>()
-                backStack.value.add(clientCreationRoute)
+                val factory = get<ClientCreationRouteFactory>()
+                backStack.value.add(factory.create { })
             },
             onClientClick = { clientId ->
                 val backStack = get<SnagBackStack>()
@@ -57,9 +58,10 @@ internal inline fun <reified T : ClientsRoute> Module.clientsScreenNavigation() 
 internal inline fun <reified T : ClientCreationRoute> Module.clientCreationScreenNavigation() =
     navigation<T>(
         metadata = DialogSceneStrategy.dialog(DialogProperties(usePlatformDefaultWidth = false)),
-    ) { _ ->
+    ) { route ->
         ClientDetailsEditScreenInjection(
-            onSaveClient = { _ ->
+            onSaveClient = { savedClientId ->
+                route.onCreated(savedClientId)
                 val backStack = get<SnagBackStack>()
                 backStack.removeLastSafely()
             },
