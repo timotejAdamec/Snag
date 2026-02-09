@@ -10,7 +10,7 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.lib.sync.fe.app.api
+package cz.adamec.timotej.snag.lib.sync.fe.model
 
 sealed interface SyncStatus {
     data object Synced : SyncStatus

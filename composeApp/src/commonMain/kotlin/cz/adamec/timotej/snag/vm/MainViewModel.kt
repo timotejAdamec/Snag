@@ -15,7 +15,7 @@ package cz.adamec.timotej.snag.vm
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cz.adamec.timotej.snag.lib.sync.fe.app.api.GetSyncStatusUseCase
-import cz.adamec.timotej.snag.lib.sync.fe.app.api.SyncStatus
+import cz.adamec.timotej.snag.lib.sync.fe.model.SyncStatus
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn

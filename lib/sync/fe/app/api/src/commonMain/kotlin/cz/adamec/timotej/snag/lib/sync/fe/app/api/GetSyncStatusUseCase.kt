@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.lib.sync.fe.app.api
 
+import cz.adamec.timotej.snag.lib.sync.fe.model.SyncStatus
 import kotlinx.coroutines.flow.Flow
 
 interface GetSyncStatusUseCase {

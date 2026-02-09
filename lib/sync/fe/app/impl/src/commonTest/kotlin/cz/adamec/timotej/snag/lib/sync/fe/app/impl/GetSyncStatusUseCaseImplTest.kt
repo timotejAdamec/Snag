@@ -14,7 +14,7 @@ package cz.adamec.timotej.snag.lib.sync.fe.app.impl
 
 import app.cash.turbine.test
 import cz.adamec.timotej.snag.lib.core.common.ApplicationScope
-import cz.adamec.timotej.snag.lib.sync.fe.app.api.SyncStatus
+import cz.adamec.timotej.snag.lib.sync.fe.model.SyncStatus
 import cz.adamec.timotej.snag.lib.sync.fe.app.api.handler.SyncOperationHandler
 import cz.adamec.timotej.snag.lib.sync.fe.app.api.handler.SyncOperationResult
 import cz.adamec.timotej.snag.lib.sync.fe.app.impl.internal.GetSyncStatusUseCaseImpl

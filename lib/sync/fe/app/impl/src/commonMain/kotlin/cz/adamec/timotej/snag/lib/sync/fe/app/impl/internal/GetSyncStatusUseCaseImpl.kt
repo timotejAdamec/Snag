@@ -13,7 +13,7 @@
 package cz.adamec.timotej.snag.lib.sync.fe.app.impl.internal
 
 import cz.adamec.timotej.snag.lib.sync.fe.app.api.GetSyncStatusUseCase
-import cz.adamec.timotej.snag.lib.sync.fe.app.api.SyncStatus
+import cz.adamec.timotej.snag.lib.sync.fe.model.SyncStatus
 import cz.adamec.timotej.snag.network.fe.InternetConnectionStatusListener
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
