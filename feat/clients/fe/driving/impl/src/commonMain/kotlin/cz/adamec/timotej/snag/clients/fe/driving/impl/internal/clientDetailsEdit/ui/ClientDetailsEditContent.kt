@@ -41,7 +41,9 @@ import snag.feat.clients.fe.driving.impl.generated.resources.new_client
 import snag.feat.clients.fe.driving.impl.generated.resources.required
 import snag.lib.design.fe.generated.resources.close
 import snag.lib.design.fe.generated.resources.ic_close
+import snag.lib.design.fe.generated.resources.ic_call
 import snag.lib.design.fe.generated.resources.ic_location
+import snag.lib.design.fe.generated.resources.ic_mail
 import snag.lib.design.fe.generated.resources.save
 import kotlin.uuid.Uuid
 import snag.lib.design.fe.generated.resources.Res as DesignRes
@@ -147,6 +149,12 @@ internal fun ClientDetailsEditContent(
                 label = { Text(text = stringResource(Res.string.client_phone_label)) },
                 value = state.clientPhoneNumber,
                 onValueChange = onClientPhoneNumberChange,
+                leadingIcon = {
+                    Icon(
+                        painter = painterResource(DesignRes.drawable.ic_call),
+                        contentDescription = null,
+                    )
+                },
             )
             OutlinedTextField(
                 modifier =
@@ -155,6 +163,12 @@ internal fun ClientDetailsEditContent(
                 label = { Text(text = stringResource(Res.string.client_email_label)) },
                 value = state.clientEmail,
                 onValueChange = onClientEmailChange,
+                leadingIcon = {
+                    Icon(
+                        painter = painterResource(DesignRes.drawable.ic_mail),
+                        contentDescription = null,
+                    )
+                },
             )
         }
     }
