@@ -136,6 +136,7 @@ internal fun FindingDetailsEditContent(
                 label = { Text(text = stringResource(Res.string.finding_name_label) + "*") },
                 supportingText = { Text(text = stringResource(Res.string.required) + "*") },
                 value = state.findingName,
+                singleLine = true,
                 onValueChange = {
                     onFindingNameChange(it)
                 },
@@ -185,6 +186,8 @@ internal fun FindingDetailsEditContent(
                         .fillMaxWidth(),
                 label = { Text(text = stringResource(Res.string.finding_description_label)) },
                 value = state.findingDescription,
+                minLines = 3,
+                maxLines = 6,
                 onValueChange = {
                     onFindingDescriptionChange(it)
                 },
