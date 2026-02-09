@@ -11,5 +11,10 @@ kotlin {
                 implementation(project(":feat:clients:business"))
             }
         }
+        commonTest {
+            dependencies {
+                implementation(project(":feat:clients:fe:driven:test"))
+            }
+        }
     }
 }
