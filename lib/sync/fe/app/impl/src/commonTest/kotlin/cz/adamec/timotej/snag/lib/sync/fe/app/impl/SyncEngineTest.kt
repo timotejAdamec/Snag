@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.lib.sync.fe.app.impl
 
+import app.cash.turbine.test
 import cz.adamec.timotej.snag.lib.core.common.ApplicationScope
 import cz.adamec.timotej.snag.lib.sync.fe.app.api.handler.SyncOperationHandler
 import cz.adamec.timotej.snag.lib.sync.fe.app.api.handler.SyncOperationResult
@@ -21,6 +22,7 @@ import cz.adamec.timotej.snag.lib.sync.fe.driven.test.FakeSyncQueue
 import cz.adamec.timotej.snag.lib.sync.fe.model.SyncOperationType
 import cz.adamec.timotej.snag.lib.sync.fe.ports.SyncQueue
 import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
@@ -170,40 +172,59 @@ class SyncEngineTest : FrontendKoinInitializedTest() {
         runTest(testDispatcher) {
             val engine = createEngine(emptyList())
 
-            assertEquals(SyncEngineStatus.Idle, engine.status.value)
+            engine.status.test {
+                assertEquals(SyncEngineStatus.Idle, awaitItem())
+            }
         }
 
     @Test
-    fun `status transitions to Syncing when processing starts`() =
+    fun `status transitions Idle to Syncing to Idle on success`() =
         runTest(testDispatcher) {
-            val handler = TestSyncHandler("project", SyncOperationResult.Success)
+            val deferred = CompletableDeferred<SyncOperationResult>()
+            val handler = SuspendingHandler("project", deferred)
             val engine = createEngine(listOf(handler))
 
-            engine.invoke("project", Uuid.random(), SyncOperationType.UPSERT)
-            advanceUntilIdle()
+            engine.status.test {
+                assertEquals(SyncEngineStatus.Idle, awaitItem())
 
-            // After processing completes successfully, status returns to Idle
-            assertEquals(SyncEngineStatus.Idle, engine.status.value)
+                engine.invoke("project", Uuid.random(), SyncOperationType.UPSERT)
+                advanceUntilIdle()
+                assertEquals(SyncEngineStatus.Syncing, awaitItem())
+
+                deferred.complete(SyncOperationResult.Success)
+                advanceUntilIdle()
+                assertEquals(SyncEngineStatus.Idle, awaitItem())
+            }
         }
 
     @Test
-    fun `status transitions to Failed on handler failure`() =
+    fun `status transitions Idle to Syncing to Failed on failure`() =
         runTest(testDispatcher) {
-            val handler = TestSyncHandler("project", SyncOperationResult.Failure)
+            val deferred = CompletableDeferred<SyncOperationResult>()
+            val handler = SuspendingHandler("project", deferred)
             val engine = createEngine(listOf(handler))
 
-            engine.invoke("project", Uuid.random(), SyncOperationType.UPSERT)
-            advanceUntilIdle()
+            engine.status.test {
+                assertEquals(SyncEngineStatus.Idle, awaitItem())
 
-            val status = engine.status.value
-            assertIs<SyncEngineStatus.Failed>(status)
-            assertEquals(1, status.pendingCount)
+                engine.invoke("project", Uuid.random(), SyncOperationType.UPSERT)
+                advanceUntilIdle()
+                assertEquals(SyncEngineStatus.Syncing, awaitItem())
+
+                deferred.complete(SyncOperationResult.Failure)
+                advanceUntilIdle()
+                val failed = awaitItem()
+                assertIs<SyncEngineStatus.Failed>(failed)
+                assertEquals(1, failed.pendingCount)
+            }
         }
 
     @Test
-    fun `status returns to Idle after all operations succeed`() =
+    fun `status returns to Idle after retry succeeds`() =
         runTest(testDispatcher) {
-            var shouldFail = true
+            val deferred1 = CompletableDeferred<SyncOperationResult>()
+            val deferred2 = CompletableDeferred<SyncOperationResult>()
+            var callCount = 0
             val handler =
                 object : SyncOperationHandler {
                     override val entityTypeId = "project"
@@ -211,19 +232,45 @@ class SyncEngineTest : FrontendKoinInitializedTest() {
                     override suspend fun execute(
                         entityId: Uuid,
                         operationType: SyncOperationType,
-                    ): SyncOperationResult = if (shouldFail) SyncOperationResult.Failure else SyncOperationResult.Success
+                    ): SyncOperationResult =
+                        when (++callCount) {
+                            1 -> deferred1.await()
+                            2 -> deferred2.await()
+                            else -> SyncOperationResult.Success
+                        }
                 }
             val engine = createEngine(listOf(handler))
 
-            engine.invoke("project", Uuid.random(), SyncOperationType.UPSERT)
-            advanceUntilIdle()
-            assertIs<SyncEngineStatus.Failed>(engine.status.value)
+            engine.status.test {
+                assertEquals(SyncEngineStatus.Idle, awaitItem())
 
-            shouldFail = false
-            engine.invoke("project", Uuid.random(), SyncOperationType.UPSERT)
-            advanceUntilIdle()
-            assertEquals(SyncEngineStatus.Idle, engine.status.value)
+                engine.invoke("project", Uuid.random(), SyncOperationType.UPSERT)
+                advanceUntilIdle()
+                assertEquals(SyncEngineStatus.Syncing, awaitItem())
+
+                deferred1.complete(SyncOperationResult.Failure)
+                advanceUntilIdle()
+                assertIs<SyncEngineStatus.Failed>(awaitItem())
+
+                engine.invoke("project", Uuid.random(), SyncOperationType.UPSERT)
+                advanceUntilIdle()
+                assertEquals(SyncEngineStatus.Syncing, awaitItem())
+
+                deferred2.complete(SyncOperationResult.Success)
+                advanceUntilIdle()
+                assertEquals(SyncEngineStatus.Idle, awaitItem())
+            }
         }
+
+    private class SuspendingHandler(
+        override val entityTypeId: String,
+        private val deferred: CompletableDeferred<SyncOperationResult>,
+    ) : SyncOperationHandler {
+        override suspend fun execute(
+            entityId: Uuid,
+            operationType: SyncOperationType,
+        ): SyncOperationResult = deferred.await()
+    }
 
     private class TestSyncHandler(
         override val entityTypeId: String,

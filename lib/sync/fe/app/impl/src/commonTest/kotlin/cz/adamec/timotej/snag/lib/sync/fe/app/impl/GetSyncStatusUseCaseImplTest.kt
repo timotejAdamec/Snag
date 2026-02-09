@@ -14,13 +14,13 @@ package cz.adamec.timotej.snag.lib.sync.fe.app.impl
 
 import app.cash.turbine.test
 import cz.adamec.timotej.snag.lib.core.common.ApplicationScope
-import cz.adamec.timotej.snag.lib.sync.fe.model.SyncStatus
 import cz.adamec.timotej.snag.lib.sync.fe.app.api.handler.SyncOperationHandler
 import cz.adamec.timotej.snag.lib.sync.fe.app.api.handler.SyncOperationResult
 import cz.adamec.timotej.snag.lib.sync.fe.app.impl.internal.GetSyncStatusUseCaseImpl
 import cz.adamec.timotej.snag.lib.sync.fe.app.impl.internal.SyncEngine
 import cz.adamec.timotej.snag.lib.sync.fe.driven.test.FakeSyncQueue
 import cz.adamec.timotej.snag.lib.sync.fe.model.SyncOperationType
+import cz.adamec.timotej.snag.lib.sync.fe.model.SyncStatus
 import cz.adamec.timotej.snag.lib.sync.fe.ports.SyncQueue
 import cz.adamec.timotej.snag.network.fe.test.FakeInternetConnectionStatusListener
 import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
