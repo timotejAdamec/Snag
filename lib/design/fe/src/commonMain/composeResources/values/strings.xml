@@ -21,4 +21,8 @@
     <string name="error_field_required">This field is required</string>
     <string name="error_invalid_email">Invalid email format</string>
     <string name="error_invalid_phone">Invalid phone number</string>
+    <string name="sync_status_synced">Up to date</string>
+    <string name="sync_status_syncing">Syncing…</string>
+    <string name="sync_status_offline">Offline</string>
+    <string name="sync_status_error">Sync error</string>
 </resources>

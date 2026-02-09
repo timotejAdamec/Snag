@@ -18,6 +18,9 @@ import cz.adamec.timotej.snag.lib.sync.fe.app.api.handler.SyncOperationHandler
 import cz.adamec.timotej.snag.lib.sync.fe.app.api.handler.SyncOperationResult
 import cz.adamec.timotej.snag.lib.sync.fe.model.SyncOperationType
 import cz.adamec.timotej.snag.lib.sync.fe.ports.SyncQueue
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -27,8 +30,11 @@ internal class SyncEngine(
     private val syncQueue: SyncQueue,
     private val handlers: List<SyncOperationHandler>,
     private val applicationScope: ApplicationScope,
-) : EnqueueSyncOperationUseCase, SyncCoordinator {
+) : EnqueueSyncOperationUseCase,
+    SyncCoordinator {
     private val mutex = Mutex()
+    private val _status = MutableStateFlow<SyncEngineStatus>(SyncEngineStatus.Idle)
+    val status: StateFlow<SyncEngineStatus> = _status.asStateFlow()
 
     override suspend fun invoke(
         entityTypeId: String,
@@ -58,6 +64,11 @@ internal class SyncEngine(
 
     private suspend fun processAllPending() {
         val pending = syncQueue.getAllPending()
+        if (pending.isEmpty()) {
+            _status.value = SyncEngineStatus.Idle
+            return
+        }
+        _status.value = SyncEngineStatus.Syncing
         for (operation in pending) {
             val handler =
                 handlers.find { it.entityTypeId == operation.entityTypeId }
@@ -75,9 +86,11 @@ internal class SyncEngine(
                 }
                 SyncOperationResult.Failure -> {
                     LH.logger.w { "Sync operation ${operation.id} failed, stopping processing." }
+                    _status.value = SyncEngineStatus.Failed
                     return
                 }
             }
         }
+        _status.value = SyncEngineStatus.Idle
     }
 }

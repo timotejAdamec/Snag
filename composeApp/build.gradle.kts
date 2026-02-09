@@ -47,6 +47,7 @@ kotlin {
         commonMain.dependencies {
             implementation(projects.koinModulesAggregate.fe)
             implementation(projects.lib.design.fe)
+            implementation(projects.lib.sync.fe.app.api)
             implementation(projects.feat.projects.fe.driving.api)
         }
         commonTest.dependencies {

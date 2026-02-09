@@ -18,6 +18,6 @@ internal class EmailFormatRuleImpl : EmailFormatRule {
     override operator fun invoke(email: String): Boolean = email.matches(EMAIL_REGEX)
 
     private companion object {
-        val EMAIL_REGEX = Regex("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")
+        val EMAIL_REGEX = Regex("^[A-Za-z0-9+_.-]+@[A-Za-z0-9]+([.-][A-Za-z0-9]+)*\\.[A-Za-z]{2,}$")
     }
 }

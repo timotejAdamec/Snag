@@ -15,5 +15,9 @@ package cz.adamec.timotej.snag.shared.rules.business.impl.internal
 import cz.adamec.timotej.snag.shared.rules.business.api.PhoneNumberRule
 
 internal class PhoneNumberRuleImpl : PhoneNumberRule {
-    override operator fun invoke(phoneNumber: String): Boolean = phoneNumber.isNotBlank() && phoneNumber.none { it.isLetter() }
+    override operator fun invoke(phoneNumber: String): Boolean =
+        phoneNumber == phoneNumber.trim() &&
+            phoneNumber.isNotBlank() &&
+            phoneNumber.none { it.isLetter() } &&
+            phoneNumber.any { it.isDigit() }
 }
