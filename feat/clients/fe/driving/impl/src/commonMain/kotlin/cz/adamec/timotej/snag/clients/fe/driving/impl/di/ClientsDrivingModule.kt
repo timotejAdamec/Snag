@@ -15,8 +15,8 @@ package cz.adamec.timotej.snag.clients.fe.driving.impl.di
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.window.DialogProperties
 import androidx.navigation3.scene.DialogSceneStrategy
+import cz.adamec.timotej.snag.lib.design.fe.dialog.fullscreenDialogProperties
 import cz.adamec.timotej.snag.clients.fe.driving.api.ClientCreationRoute
 import cz.adamec.timotej.snag.clients.fe.driving.api.ClientCreationRouteFactory
 import cz.adamec.timotej.snag.clients.fe.driving.api.ClientEditRoute
@@ -57,7 +57,7 @@ internal inline fun <reified T : ClientsRoute> Module.clientsScreenNavigation() 
 @Suppress("FunctionNameMaxLength")
 internal inline fun <reified T : ClientCreationRoute> Module.clientCreationScreenNavigation() =
     navigation<T>(
-        metadata = DialogSceneStrategy.dialog(DialogProperties(usePlatformDefaultWidth = false)),
+        metadata = DialogSceneStrategy.dialog(fullscreenDialogProperties()),
     ) { route ->
         ClientDetailsEditScreenInjection(
             onSaveClient = { savedClientId ->
@@ -70,7 +70,7 @@ internal inline fun <reified T : ClientCreationRoute> Module.clientCreationScree
 
 internal inline fun <reified T : ClientEditRoute> Module.clientEditScreenNavigation() =
     navigation<T>(
-        metadata = DialogSceneStrategy.dialog(DialogProperties(usePlatformDefaultWidth = false)),
+        metadata = DialogSceneStrategy.dialog(fullscreenDialogProperties()),
     ) { route ->
         ClientDetailsEditScreenInjection(
             clientId = route.clientId,
