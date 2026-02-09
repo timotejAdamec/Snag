@@ -16,6 +16,7 @@ import cz.adamec.timotej.snag.feat.findings.be.model.BackendFinding
 import cz.adamec.timotej.snag.feat.findings.business.Finding
 import cz.adamec.timotej.snag.feat.findings.business.Importance
 import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
+import cz.adamec.timotej.snag.feat.findings.business.Term
 import cz.adamec.timotej.snag.findings.be.driving.contract.FindingApiDto
 import cz.adamec.timotej.snag.findings.be.driving.contract.PutFindingApiDto
 import cz.adamec.timotej.snag.findings.be.driving.contract.RelativeCoordinateApiDto
@@ -29,6 +30,7 @@ internal fun BackendFinding.toDto() =
             name = name,
             description = description,
             importance = importance.name,
+            term = term.name,
             coordinates = coordinates.map { it.toDto() },
             updatedAt = updatedAt,
             deletedAt = this@toDto.deletedAt,
@@ -49,6 +51,7 @@ internal fun PutFindingApiDto.toModel(id: Uuid) =
             name = name,
             description = description,
             importance = Importance.valueOf(importance),
+            term = Term.valueOf(term),
             coordinates = coordinates.map { it.toBusiness() },
             updatedAt = updatedAt,
         ),

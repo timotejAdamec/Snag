@@ -26,6 +26,7 @@ class FindingEntity(
     var name by FindingsTable.name
     var description by FindingsTable.description
     var importance by FindingsTable.importance
+    var term by FindingsTable.term
     var updatedAt by FindingsTable.updatedAt
     var deletedAt by FindingsTable.deletedAt
     val coordinates by FindingCoordinateEntity referrersOn

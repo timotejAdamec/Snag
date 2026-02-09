@@ -18,6 +18,7 @@ import app.cash.sqldelight.coroutines.mapToList
 import app.cash.sqldelight.coroutines.mapToOneOrNull
 import cz.adamec.timotej.snag.feat.findings.business.Importance
 import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
+import cz.adamec.timotej.snag.feat.findings.business.Term
 import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.FindingEntity
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.FindingEntityQueries
@@ -88,6 +89,7 @@ internal class RealFindingsDb(
         name: String,
         description: String?,
         importance: Importance,
+        term: Term,
         updatedAt: Timestamp,
     ): OfflineFirstUpdateDataResult =
         withContext(ioDispatcher) {
@@ -97,6 +99,7 @@ internal class RealFindingsDb(
                         name = name,
                         description = description,
                         importance = importance.name,
+                        term = term.name,
                         updatedAt = updatedAt.value,
                         id = id.toString(),
                     )

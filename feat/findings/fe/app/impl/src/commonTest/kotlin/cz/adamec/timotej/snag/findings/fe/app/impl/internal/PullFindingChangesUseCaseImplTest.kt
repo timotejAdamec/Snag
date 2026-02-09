@@ -14,6 +14,7 @@ package cz.adamec.timotej.snag.findings.fe.app.impl.internal
 
 import cz.adamec.timotej.snag.feat.findings.business.Finding
 import cz.adamec.timotej.snag.feat.findings.business.Importance
+import cz.adamec.timotej.snag.feat.findings.business.Term
 import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
 import cz.adamec.timotej.snag.findings.fe.app.api.PullFindingChangesUseCase
 import cz.adamec.timotej.snag.findings.fe.driven.test.FakeFindingsApi
@@ -75,6 +76,7 @@ class PullFindingChangesUseCaseImplTest : FrontendKoinInitializedTest() {
             name = "Test Finding",
             description = null,
             importance = Importance.MEDIUM,
+            term = Term.T1,
             coordinates = emptyList(),
             updatedAt = Timestamp(100L),
         ),

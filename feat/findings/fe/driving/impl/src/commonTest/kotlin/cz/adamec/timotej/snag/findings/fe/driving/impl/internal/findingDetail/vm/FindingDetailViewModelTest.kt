@@ -15,6 +15,7 @@ package cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetail.v
 import app.cash.turbine.test
 import cz.adamec.timotej.snag.feat.findings.business.Finding
 import cz.adamec.timotej.snag.feat.findings.business.Importance
+import cz.adamec.timotej.snag.feat.findings.business.Term
 import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.findings.fe.app.api.DeleteFindingUseCase
@@ -52,7 +53,7 @@ class FindingDetailViewModelTest : FrontendKoinInitializedTest() {
 
     private val structureId = Uuid.parse("00000000-0000-0000-0000-000000000001")
     private val findingId = Uuid.parse("00000000-0000-0000-0001-000000000001")
-    private val finding = FrontendFinding(finding = Finding(findingId, structureId, "Crack in wall", "A large crack", Importance.MEDIUM, emptyList(), Timestamp(10L)))
+    private val finding = FrontendFinding(finding = Finding(findingId, structureId, "Crack in wall", "A large crack", Importance.MEDIUM, Term.T1, emptyList(), Timestamp(10L)))
 
     override fun additionalKoinModules(): List<Module> =
         listOf(

@@ -58,6 +58,7 @@ internal class ExposedFindingsDb(
                 existing.name = finding.finding.name
                 existing.description = finding.finding.description
                 existing.importance = finding.finding.importance.name
+                existing.term = finding.finding.term.name
                 existing.updatedAt = finding.finding.updatedAt.value
                 existing.deletedAt = finding.deletedAt?.value
                 existing.coordinates.forEach { it.delete() }
@@ -67,6 +68,7 @@ internal class ExposedFindingsDb(
                     name = finding.finding.name
                     description = finding.finding.description
                     importance = finding.finding.importance.name
+                    term = finding.finding.term.name
                     updatedAt = finding.finding.updatedAt.value
                     deletedAt = finding.deletedAt?.value
                 }

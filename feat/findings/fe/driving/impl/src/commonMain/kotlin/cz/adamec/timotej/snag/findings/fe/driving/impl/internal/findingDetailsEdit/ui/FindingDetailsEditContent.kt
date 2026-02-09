@@ -40,6 +40,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import cz.adamec.timotej.snag.feat.findings.business.Importance
+import cz.adamec.timotej.snag.feat.findings.business.Term
 import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetailsEdit.vm.FindingDetailsEditUiState
 import cz.adamec.timotej.snag.lib.design.fe.theme.SnagTheme
 import org.jetbrains.compose.resources.painterResource
@@ -52,6 +53,11 @@ import snag.feat.findings.fe.driving.impl.generated.resources.importance_label
 import snag.feat.findings.fe.driving.impl.generated.resources.importance_low
 import snag.feat.findings.fe.driving.impl.generated.resources.importance_medium
 import snag.feat.findings.fe.driving.impl.generated.resources.new_finding
+import snag.feat.findings.fe.driving.impl.generated.resources.term_con
+import snag.feat.findings.fe.driving.impl.generated.resources.term_label
+import snag.feat.findings.fe.driving.impl.generated.resources.term_t1
+import snag.feat.findings.fe.driving.impl.generated.resources.term_t2
+import snag.feat.findings.fe.driving.impl.generated.resources.term_t3
 import snag.feat.findings.fe.driving.impl.generated.resources.required
 import snag.lib.design.fe.generated.resources.close
 import snag.lib.design.fe.generated.resources.ic_close
@@ -70,6 +76,7 @@ internal fun FindingDetailsEditContent(
     onFindingNameChange: (String) -> Unit,
     onFindingDescriptionChange: (String) -> Unit,
     onImportanceChange: (Importance) -> Unit,
+    onTermChange: (Term) -> Unit,
     onSaveClick: () -> Unit,
     onCancelClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -180,6 +187,46 @@ internal fun FindingDetailsEditContent(
                     }
                 }
             }
+            Text(
+                text = stringResource(Res.string.term_label),
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            val termOptions = Term.entries
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement =
+                    Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween),
+            ) {
+                termOptions.forEachIndexed { index, term ->
+                    ToggleButton(
+                        checked = state.findingTerm == term,
+                        onCheckedChange = { onTermChange(term) },
+                        modifier =
+                            Modifier
+                                .weight(1f)
+                                .semantics { role = Role.RadioButton },
+                        colors = ToggleButtonDefaults.tonalToggleButtonColors(),
+                        shapes =
+                            when (index) {
+                                0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
+                                termOptions.lastIndex ->
+                                    ButtonGroupDefaults.connectedTrailingButtonShapes()
+                                else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
+                            },
+                    ) {
+                        Text(
+                            text =
+                                when (term) {
+                                    Term.T1 -> stringResource(Res.string.term_t1)
+                                    Term.T2 -> stringResource(Res.string.term_t2)
+                                    Term.T3 -> stringResource(Res.string.term_t3)
+                                    Term.CON -> stringResource(Res.string.term_con)
+                                },
+                        )
+                    }
+                }
+            }
             OutlinedTextField(
                 modifier =
                     Modifier
@@ -211,6 +258,7 @@ private fun FindingDetailsEditContentPreview() {
             onFindingNameChange = {},
             onFindingDescriptionChange = {},
             onImportanceChange = {},
+            onTermChange = {},
             onSaveClick = {},
             onCancelClick = {},
         )

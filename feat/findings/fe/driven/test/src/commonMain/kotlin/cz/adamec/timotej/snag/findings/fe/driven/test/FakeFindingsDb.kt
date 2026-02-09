@@ -14,6 +14,7 @@ package cz.adamec.timotej.snag.findings.fe.driven.test
 
 import cz.adamec.timotej.snag.feat.findings.business.Importance
 import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
+import cz.adamec.timotej.snag.feat.findings.business.Term
 import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
 import cz.adamec.timotej.snag.findings.fe.ports.FindingsDb
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
@@ -80,6 +81,7 @@ class FakeFindingsDb : FindingsDb {
         name: String,
         description: String?,
         importance: Importance,
+        term: Term,
         updatedAt: Timestamp,
     ): OfflineFirstUpdateDataResult {
         val failure = forcedFailure
@@ -97,6 +99,7 @@ class FakeFindingsDb : FindingsDb {
                             name = name,
                             description = description,
                             importance = importance,
+                            term = term,
                             updatedAt = updatedAt,
                         ),
                 )

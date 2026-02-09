@@ -40,6 +40,7 @@ class SaveNewFindingUseCaseImpl(
                 name = request.name,
                 description = request.description,
                 importance = request.importance,
+                term = request.term,
                 coordinates = request.coordinates,
                 updatedAt = timestampProvider.getNowTimestamp(),
             )

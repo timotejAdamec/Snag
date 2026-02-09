@@ -15,6 +15,7 @@ package cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetailsE
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cz.adamec.timotej.snag.feat.findings.business.Importance
+import cz.adamec.timotej.snag.feat.findings.business.Term
 import cz.adamec.timotej.snag.findings.fe.app.api.GetFindingUseCase
 import cz.adamec.timotej.snag.findings.fe.app.api.SaveFindingDetailsUseCase
 import cz.adamec.timotej.snag.findings.fe.app.api.SaveNewFindingUseCase
@@ -73,6 +74,7 @@ internal class FindingDetailsEditViewModel(
                                     findingName = data.finding.name,
                                     findingDescription = data.finding.description.orEmpty(),
                                     findingImportance = data.finding.importance,
+                                    findingTerm = data.finding.term,
                                 )
                             }
                             cancel()
@@ -92,6 +94,10 @@ internal class FindingDetailsEditViewModel(
 
     fun onImportanceChange(importance: Importance) {
         _state.update { it.copy(findingImportance = importance) }
+    }
+
+    fun onTermChange(term: Term) {
+        _state.update { it.copy(findingTerm = term) }
     }
 
     fun onSaveFinding() =
@@ -117,6 +123,7 @@ internal class FindingDetailsEditViewModel(
                         name = state.value.findingName,
                         description = state.value.findingDescription.ifBlank { null },
                         importance = state.value.findingImportance,
+                        term = state.value.findingTerm,
                     ),
             )
         when (result) {
@@ -138,6 +145,7 @@ internal class FindingDetailsEditViewModel(
                         name = state.value.findingName,
                         description = state.value.findingDescription.ifBlank { null },
                         importance = state.value.findingImportance,
+                        term = state.value.findingTerm,
                     ),
             )
         when (result) {

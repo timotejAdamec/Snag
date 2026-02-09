@@ -14,6 +14,7 @@ package cz.adamec.timotej.snag.findings.fe.ports
 
 import cz.adamec.timotej.snag.feat.findings.business.Importance
 import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
+import cz.adamec.timotej.snag.feat.findings.business.Term
 import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
@@ -37,6 +38,7 @@ interface FindingsDb {
         name: String,
         description: String?,
         importance: Importance,
+        term: Term,
         updatedAt: Timestamp,
     ): OfflineFirstUpdateDataResult
 

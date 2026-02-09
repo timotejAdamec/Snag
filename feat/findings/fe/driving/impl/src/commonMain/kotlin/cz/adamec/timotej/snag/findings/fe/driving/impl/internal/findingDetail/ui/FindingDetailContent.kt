@@ -44,6 +44,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import cz.adamec.timotej.snag.feat.findings.business.Importance
+import cz.adamec.timotej.snag.feat.findings.business.Term
 import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetail.ui.components.FindingDeletionAlertDialog
 import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetail.vm.FindingDetailUiState
 import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetail.vm.FindingDetailUiStatus
@@ -55,6 +56,10 @@ import snag.feat.findings.fe.driving.impl.generated.resources.finding_not_found_
 import snag.feat.findings.fe.driving.impl.generated.resources.importance_high
 import snag.feat.findings.fe.driving.impl.generated.resources.importance_low
 import snag.feat.findings.fe.driving.impl.generated.resources.importance_medium
+import snag.feat.findings.fe.driving.impl.generated.resources.term_con
+import snag.feat.findings.fe.driving.impl.generated.resources.term_t1
+import snag.feat.findings.fe.driving.impl.generated.resources.term_t2
+import snag.feat.findings.fe.driving.impl.generated.resources.term_t3
 import snag.lib.design.fe.generated.resources.close
 import snag.lib.design.fe.generated.resources.delete
 import snag.lib.design.fe.generated.resources.edit
@@ -175,16 +180,37 @@ internal fun FindingDetailContent(
                             Importance.MEDIUM -> stringResource(Res.string.importance_medium)
                             Importance.LOW -> stringResource(Res.string.importance_low)
                         }
-                        Surface(
-                            color = importanceColor,
-                            shape = RoundedCornerShape(4.dp),
+                        val termText = when (finding.finding.term) {
+                            Term.T1 -> stringResource(Res.string.term_t1)
+                            Term.T2 -> stringResource(Res.string.term_t2)
+                            Term.T3 -> stringResource(Res.string.term_t3)
+                            Term.CON -> stringResource(Res.string.term_con)
+                        }
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
                         ) {
-                            Text(
-                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                                text = importanceText,
-                                style = MaterialTheme.typography.labelSmall,
-                                color = importanceTextColor,
-                            )
+                            Surface(
+                                color = importanceColor,
+                                shape = RoundedCornerShape(4.dp),
+                            ) {
+                                Text(
+                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                                    text = importanceText,
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = importanceTextColor,
+                                )
+                            }
+                            Surface(
+                                color = MaterialTheme.colorScheme.secondaryContainer,
+                                shape = RoundedCornerShape(4.dp),
+                            ) {
+                                Text(
+                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                                    text = termText,
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = MaterialTheme.colorScheme.onSecondaryContainer,
+                                )
+                            }
                         }
                         finding.finding.description?.let { description ->
                             Text(
