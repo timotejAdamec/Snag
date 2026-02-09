@@ -62,7 +62,7 @@ internal fun Project.configureBackendModule() {
         if (path.startsWith(":feat:") &&
             !path.contains(":shared:rules:")
         ) {
-            api(project(":feat:shared:rules:business:api"))
+            implementation(project(":feat:shared:rules:business:api"))
         }
 
         implementation(libs.library("kotlinx-coroutines-core"))

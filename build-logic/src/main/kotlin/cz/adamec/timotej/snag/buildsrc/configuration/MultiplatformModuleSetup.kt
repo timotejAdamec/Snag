@@ -124,7 +124,7 @@ internal fun Project.configureKotlinMultiplatformModule() {
                 if (this@configureKotlinMultiplatformModule.path.startsWith(":feat:") &&
                     !this@configureKotlinMultiplatformModule.path.contains(":shared:rules:")
                 ) {
-                    api(project(":feat:shared:rules:business:api"))
+                    implementation(project(":feat:shared:rules:business:api"))
                 }
 
                 if (!path.contains("core")) {
