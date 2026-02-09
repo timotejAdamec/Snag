@@ -28,8 +28,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import cz.adamec.timotej.snag.clients.fe.driving.impl.internal.clientDetailsEdit.vm.ClientDetailsEditUiState
+import cz.adamec.timotej.snag.lib.design.fe.theme.SnagTheme
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import snag.feat.clients.fe.driving.impl.generated.resources.Res
@@ -171,5 +173,28 @@ internal fun ClientDetailsEditContent(
                 },
             )
         }
+    }
+}
+
+@Preview
+@Composable
+private fun ClientDetailsEditContentPreview() {
+    SnagTheme {
+        ClientDetailsEditContent(
+            clientId = null,
+            state = ClientDetailsEditUiState(
+                clientName = "Acme Corp",
+                clientAddress = "123 Main Street",
+                clientPhoneNumber = "+1 555 123 456",
+                clientEmail = "contact@acme.com",
+            ),
+            snackbarHostState = SnackbarHostState(),
+            onClientNameChange = {},
+            onClientAddressChange = {},
+            onClientPhoneNumberChange = {},
+            onClientEmailChange = {},
+            onSaveClick = {},
+            onCancelClick = {},
+        )
     }
 }
