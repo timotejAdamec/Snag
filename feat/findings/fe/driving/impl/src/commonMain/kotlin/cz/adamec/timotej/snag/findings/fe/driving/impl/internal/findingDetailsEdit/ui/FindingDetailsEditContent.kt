@@ -186,7 +186,7 @@ internal fun FindingDetailsEditContent(
                         .fillMaxWidth(),
                 label = { Text(text = stringResource(Res.string.finding_description_label)) },
                 value = state.findingDescription,
-                minLines = 3,
+                minLines = 2,
                 maxLines = 6,
                 onValueChange = {
                     onFindingDescriptionChange(it)
