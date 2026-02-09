@@ -19,6 +19,7 @@ private const val VARCHAR_MAX_LENGTH = 255
 object ProjectsTable : UuidTable("projects") {
     val name = varchar("name", VARCHAR_MAX_LENGTH)
     val address = varchar("address", VARCHAR_MAX_LENGTH)
+    val client = reference("client_id", ClientsTable).nullable()
     val updatedAt = long("updated_at")
     val deletedAt = long("deleted_at").nullable()
 }

@@ -38,6 +38,12 @@ kotlin {
             implementation(projects.feat.structures.fe.driving.impl)
             implementation(projects.feat.structures.fe.driven.impl)
 
+            // Clients feature
+            implementation(projects.feat.clients.fe.app.impl)
+            implementation(projects.feat.clients.fe.driving.api)
+            implementation(projects.feat.clients.fe.driving.impl)
+            implementation(projects.feat.clients.fe.driven.impl)
+
             // Findings feature
             implementation(projects.feat.findings.fe.app.impl)
             implementation(projects.feat.findings.fe.driving.api)

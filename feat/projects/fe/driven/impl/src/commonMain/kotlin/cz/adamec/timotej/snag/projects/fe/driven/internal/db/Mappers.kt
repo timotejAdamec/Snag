@@ -23,6 +23,7 @@ internal fun FrontendProject.toEntity() =
         id = project.id.toString(),
         name = project.name,
         address = project.address,
+        clientId = project.clientId?.toString(),
         updatedAt = project.updatedAt.value,
     )
 
@@ -32,6 +33,7 @@ internal fun ProjectEntity.toModel() =
             id = Uuid.parse(id),
             name = name,
             address = address,
+            clientId = clientId?.let { Uuid.parse(it) },
             updatedAt = Timestamp(updatedAt),
         ),
     )

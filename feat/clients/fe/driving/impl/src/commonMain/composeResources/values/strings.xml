@@ -1,0 +1,9 @@
+<resources>
+    <string name="clients_title">Clients</string>
+    <string name="new_client">New Client</string>
+    <string name="client_name_label">Client Name</string>
+    <string name="client_address_label">Address</string>
+    <string name="client_phone_label">Phone Number</string>
+    <string name="client_email_label">Email</string>
+    <string name="required">Required</string>
+</resources>

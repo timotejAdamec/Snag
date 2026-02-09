@@ -25,6 +25,11 @@ dependencies {
     implementation(projects.feat.projects.be.driven.impl)
     implementation(projects.feat.projects.be.app.impl)
 
+    // Clients feature
+    implementation(projects.feat.clients.be.driving.impl)
+    implementation(projects.feat.clients.be.driven.impl)
+    implementation(projects.feat.clients.be.app.impl)
+
     // Structures feature
     implementation(projects.feat.structures.be.driving.impl)
     implementation(projects.feat.structures.be.driven.impl)

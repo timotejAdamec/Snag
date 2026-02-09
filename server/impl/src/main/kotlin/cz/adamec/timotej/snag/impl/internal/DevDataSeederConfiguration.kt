@@ -12,6 +12,9 @@
 
 package cz.adamec.timotej.snag.impl.internal
 
+import cz.adamec.timotej.snag.clients.be.model.BackendClient
+import cz.adamec.timotej.snag.clients.be.ports.ClientsDb
+import cz.adamec.timotej.snag.clients.business.Client
 import cz.adamec.timotej.snag.configuration.be.AppConfiguration
 import cz.adamec.timotej.snag.feat.findings.be.model.BackendFinding
 import cz.adamec.timotej.snag.feat.findings.business.Finding
@@ -32,16 +35,46 @@ import kotlin.uuid.Uuid
 
 internal class DevDataSeederConfiguration(
     private val projectsDb: ProjectsDb,
+    private val clientsDb: ClientsDb,
     private val structuresDb: StructuresDb,
     private val findingsDb: FindingsDb,
     private val timestampProvider: TimestampProvider,
 ) : AppConfiguration {
     override fun Application.setup() {
         runBlocking {
+            seedClients()
             seedProjects()
             seedStructures()
             seedFindings()
         }
+    }
+
+    private suspend fun seedClients() {
+        val now = timestampProvider.getNowTimestamp()
+        listOf(
+            BackendClient(
+                client =
+                    Client(
+                        id = Uuid.parse(CLIENT_1),
+                        name = "CTU Prague",
+                        address = "Zikova 1903/4, 166 36 Praha 6",
+                        phoneNumber = "+420 224 351 111",
+                        email = "info@cvut.cz",
+                        updatedAt = now,
+                    ),
+            ),
+            BackendClient(
+                client =
+                    Client(
+                        id = Uuid.parse(CLIENT_2),
+                        name = "Prague 6 Municipality",
+                        address = "Čs. armády 601/23, 160 52 Praha 6",
+                        phoneNumber = null,
+                        email = "podatelna@praha6.cz",
+                        updatedAt = now,
+                    ),
+            ),
+        ).forEach { clientsDb.saveClient(it) }
     }
 
     private suspend fun seedProjects() {
@@ -53,6 +86,7 @@ internal class DevDataSeederConfiguration(
                         id = Uuid.parse(PROJECT_1),
                         name = "Strahov Dormitories Renovation",
                         address = "Chaloupeckého 1917/9, 160 17 Praha 6",
+                        clientId = Uuid.parse(CLIENT_1),
                         updatedAt = now,
                     ),
             ),
@@ -62,6 +96,7 @@ internal class DevDataSeederConfiguration(
                         id = Uuid.parse(PROJECT_2),
                         name = "FIT CTU New Building",
                         address = "Thákurova 9, 160 00 Praha 6",
+                        clientId = Uuid.parse(CLIENT_1),
                         updatedAt = now,
                     ),
             ),
@@ -71,6 +106,7 @@ internal class DevDataSeederConfiguration(
                         id = Uuid.parse(PROJECT_3),
                         name = "National Library of Technology",
                         address = "Technická 2710/6, 160 00 Praha 6",
+                        clientId = Uuid.parse(CLIENT_2),
                         updatedAt = now,
                     ),
             ),
@@ -202,6 +238,8 @@ internal class DevDataSeederConfiguration(
     }
 
     private companion object {
+        private const val CLIENT_1 = "00000000-0000-0000-0003-000000000001"
+        private const val CLIENT_2 = "00000000-0000-0000-0003-000000000002"
         private const val PROJECT_1 = "00000000-0000-0000-0000-000000000001"
         private const val PROJECT_2 = "00000000-0000-0000-0000-000000000002"
         private const val PROJECT_3 = "00000000-0000-0000-0000-000000000003"
