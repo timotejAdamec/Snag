@@ -16,6 +16,7 @@ import cz.adamec.timotej.snag.feat.findings.be.model.BackendFinding
 import cz.adamec.timotej.snag.feat.findings.business.Finding
 import cz.adamec.timotej.snag.feat.findings.business.Importance
 import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
+import cz.adamec.timotej.snag.feat.findings.business.Term
 import cz.adamec.timotej.snag.feat.shared.database.be.FindingEntity
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 
@@ -28,6 +29,7 @@ internal fun FindingEntity.toModel() =
                 name = name,
                 description = description,
                 importance = Importance.valueOf(importance),
+                term = Term.valueOf(term),
                 coordinates =
                     coordinates.map {
                         RelativeCoordinate(x = it.x, y = it.y)

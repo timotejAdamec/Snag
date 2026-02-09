@@ -95,6 +95,9 @@ internal fun FindingDetailsEditScreen(
         onImportanceChange = {
             viewModel.onImportanceChange(it)
         },
+        onTermChange = {
+            viewModel.onTermChange(it)
+        },
         onSaveClick = {
             viewModel.onSaveFinding()
         },

@@ -17,6 +17,7 @@ import cz.adamec.timotej.snag.feat.findings.be.model.BackendFinding
 import cz.adamec.timotej.snag.feat.findings.business.Finding
 import cz.adamec.timotej.snag.feat.findings.business.Importance
 import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
+import cz.adamec.timotej.snag.feat.findings.business.Term
 import cz.adamec.timotej.snag.feat.structures.be.model.BackendStructure
 import cz.adamec.timotej.snag.feat.structures.business.Structure
 import cz.adamec.timotej.snag.findings.be.ports.FindingsDb
@@ -166,6 +167,7 @@ internal class DevDataSeederConfiguration(
                         name = "Cracked wall tile",
                         description = "Visible crack on wall tile near entrance.",
                         importance = Importance.HIGH,
+                        term = Term.T1,
                         coordinates = listOf(RelativeCoordinate(x = 0.25f, y = 0.40f)),
                         updatedAt = now,
                     ),
@@ -178,6 +180,7 @@ internal class DevDataSeederConfiguration(
                         name = "Missing paint patch",
                         description = "Unpainted area on the ceiling in hallway.",
                         importance = Importance.MEDIUM,
+                        term = Term.T2,
                         coordinates = listOf(RelativeCoordinate(x = 0.60f, y = 0.15f)),
                         updatedAt = now,
                     ),
@@ -190,6 +193,7 @@ internal class DevDataSeederConfiguration(
                         name = "Loose handrail",
                         description = null,
                         importance = Importance.LOW,
+                        term = Term.T3,
                         coordinates =
                             listOf(
                                 RelativeCoordinate(x = 0.80f, y = 0.55f),

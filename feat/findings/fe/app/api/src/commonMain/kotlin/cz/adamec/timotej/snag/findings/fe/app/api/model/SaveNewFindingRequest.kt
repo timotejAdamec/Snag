@@ -14,6 +14,7 @@ package cz.adamec.timotej.snag.findings.fe.app.api.model
 
 import cz.adamec.timotej.snag.feat.findings.business.Importance
 import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
+import cz.adamec.timotej.snag.feat.findings.business.Term
 import kotlin.uuid.Uuid
 
 data class SaveNewFindingRequest(
@@ -21,5 +22,6 @@ data class SaveNewFindingRequest(
     val name: String,
     val description: String?,
     val importance: Importance = Importance.MEDIUM,
+    val term: Term = Term.T1,
     val coordinates: List<RelativeCoordinate> = emptyList(),
 )

@@ -24,4 +24,9 @@
     <string name="importance_high">High</string>
     <string name="importance_medium">Medium</string>
     <string name="importance_low">Low</string>
+    <string name="term_label">Term</string>
+    <string name="term_t1">T1</string>
+    <string name="term_t2">T2</string>
+    <string name="term_t3">T3</string>
+    <string name="term_con">CON</string>
 </resources>
