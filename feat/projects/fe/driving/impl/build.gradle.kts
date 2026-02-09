@@ -29,10 +29,7 @@ kotlin {
         }
         commonTest {
             dependencies {
-//                TODO()
-                implementation(project(":feat:projects:fe:app:impl"))
                 implementation(project(":feat:projects:fe:driven:test"))
-                implementation(project(":feat:clients:fe:app:impl"))
                 implementation(project(":feat:clients:fe:driven:test"))
             }
         }
