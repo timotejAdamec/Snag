@@ -59,7 +59,7 @@ class GetSyncStatusUseCaseImplTest : FrontendKoinInitializedTest() {
 
     private fun createUseCase(engine: SyncEngine) =
         GetSyncStatusUseCaseImpl(
-            getSyncEngineStatus = engine,
+            syncEngine = engine,
             connectionStatusListener = fakeConnectionListener,
         )
 

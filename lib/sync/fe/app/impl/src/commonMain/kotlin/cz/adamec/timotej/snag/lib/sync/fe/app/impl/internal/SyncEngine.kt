@@ -31,12 +31,10 @@ internal class SyncEngine(
     private val handlers: List<SyncOperationHandler>,
     private val applicationScope: ApplicationScope,
 ) : EnqueueSyncOperationUseCase,
-    SyncCoordinator,
-    GetSyncEngineStatusUseCase {
+    SyncCoordinator {
     private val mutex = Mutex()
-    private val statusFlow = MutableStateFlow<SyncEngineStatus>(SyncEngineStatus.Idle)
-
-    override fun invoke(): StateFlow<SyncEngineStatus> = statusFlow.asStateFlow()
+    private val _status = MutableStateFlow<SyncEngineStatus>(SyncEngineStatus.Idle)
+    val status: StateFlow<SyncEngineStatus> = _status.asStateFlow()
 
     override suspend fun invoke(
         entityTypeId: String,
@@ -67,10 +65,10 @@ internal class SyncEngine(
     private suspend fun processAllPending() {
         val pending = syncQueue.getAllPending()
         if (pending.isEmpty()) {
-            statusFlow.value = SyncEngineStatus.Idle
+            _status.value = SyncEngineStatus.Idle
             return
         }
-        statusFlow.value = SyncEngineStatus.Syncing
+        _status.value = SyncEngineStatus.Syncing
         for (operation in pending) {
             val handler =
                 handlers.find { it.entityTypeId == operation.entityTypeId }
@@ -89,11 +87,11 @@ internal class SyncEngine(
                 SyncOperationResult.Failure -> {
                     LH.logger.w { "Sync operation ${operation.id} failed, stopping processing." }
                     val remainingCount = syncQueue.getAllPending().size
-                    statusFlow.value = SyncEngineStatus.Failed(pendingCount = remainingCount)
+                    _status.value = SyncEngineStatus.Failed(pendingCount = remainingCount)
                     return
                 }
             }
         }
-        statusFlow.value = SyncEngineStatus.Idle
+        _status.value = SyncEngineStatus.Idle
     }
 }

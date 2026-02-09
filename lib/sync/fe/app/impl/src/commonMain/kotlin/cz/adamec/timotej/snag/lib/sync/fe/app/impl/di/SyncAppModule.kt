@@ -15,7 +15,6 @@ package cz.adamec.timotej.snag.lib.sync.fe.app.impl.di
 import cz.adamec.timotej.snag.lib.sync.fe.app.api.EnqueueSyncDeleteUseCase
 import cz.adamec.timotej.snag.lib.sync.fe.app.api.EnqueueSyncSaveUseCase
 import cz.adamec.timotej.snag.lib.sync.fe.app.api.GetSyncStatusUseCase
-import cz.adamec.timotej.snag.lib.sync.fe.app.impl.internal.GetSyncEngineStatusUseCase
 import cz.adamec.timotej.snag.lib.sync.fe.app.api.SyncCoordinator
 import cz.adamec.timotej.snag.lib.sync.fe.app.api.handler.SyncOperationHandler
 import cz.adamec.timotej.snag.lib.sync.fe.app.impl.internal.EnqueueSyncDeleteUseCaseImpl
@@ -36,7 +35,7 @@ val syncAppModule =
                 handlers = getAll<SyncOperationHandler>(),
                 applicationScope = get(),
             )
-        } binds arrayOf(EnqueueSyncOperationUseCase::class, SyncCoordinator::class, GetSyncEngineStatusUseCase::class)
+        } binds arrayOf(EnqueueSyncOperationUseCase::class, SyncCoordinator::class)
         singleOf(::EnqueueSyncSaveUseCaseImpl) bind EnqueueSyncSaveUseCase::class
         singleOf(::EnqueueSyncDeleteUseCaseImpl) bind EnqueueSyncDeleteUseCase::class
         singleOf(::GetSyncStatusUseCaseImpl) bind GetSyncStatusUseCase::class

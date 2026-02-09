@@ -19,12 +19,12 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 
 internal class GetSyncStatusUseCaseImpl(
-    private val getSyncEngineStatus: GetSyncEngineStatusUseCase,
+    private val syncEngine: SyncEngine,
     private val connectionStatusListener: InternetConnectionStatusListener,
 ) : GetSyncStatusUseCase {
     override fun invoke(): Flow<SyncStatus> =
         combine(
-            getSyncEngineStatus(),
+            syncEngine.status,
             connectionStatusListener.isConnectedFlow(),
         ) { engineStatus, isConnected ->
             when {

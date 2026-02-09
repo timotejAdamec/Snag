@@ -170,7 +170,7 @@ class SyncEngineTest : FrontendKoinInitializedTest() {
         runTest(testDispatcher) {
             val engine = createEngine(emptyList())
 
-            assertEquals(SyncEngineStatus.Idle, engine.invoke().value)
+            assertEquals(SyncEngineStatus.Idle, engine.status.value)
         }
 
     @Test
@@ -183,7 +183,7 @@ class SyncEngineTest : FrontendKoinInitializedTest() {
             advanceUntilIdle()
 
             // After processing completes successfully, status returns to Idle
-            assertEquals(SyncEngineStatus.Idle, engine.invoke().value)
+            assertEquals(SyncEngineStatus.Idle, engine.status.value)
         }
 
     @Test
@@ -195,7 +195,7 @@ class SyncEngineTest : FrontendKoinInitializedTest() {
             engine.invoke("project", Uuid.random(), SyncOperationType.UPSERT)
             advanceUntilIdle()
 
-            val status = engine.invoke().value
+            val status = engine.status.value
             assertIs<SyncEngineStatus.Failed>(status)
             assertEquals(1, status.pendingCount)
         }
@@ -217,12 +217,12 @@ class SyncEngineTest : FrontendKoinInitializedTest() {
 
             engine.invoke("project", Uuid.random(), SyncOperationType.UPSERT)
             advanceUntilIdle()
-            assertIs<SyncEngineStatus.Failed>(engine.invoke().value)
+            assertIs<SyncEngineStatus.Failed>(engine.status.value)
 
             shouldFail = false
             engine.invoke("project", Uuid.random(), SyncOperationType.UPSERT)
             advanceUntilIdle()
-            assertEquals(SyncEngineStatus.Idle, engine.invoke().value)
+            assertEquals(SyncEngineStatus.Idle, engine.status.value)
         }
 
     private class TestSyncHandler(
