@@ -12,7 +12,15 @@
 
 package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetailsEdit.vm
 
+import cz.adamec.timotej.snag.clients.fe.model.FrontendClient
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
+import kotlin.uuid.Uuid
+
 internal data class ProjectDetailsEditUiState(
     val projectName: String = "",
     val projectAddress: String = "",
+    val selectedClientId: Uuid? = null,
+    val selectedClientName: String = "",
+    val availableClients: ImmutableList<FrontendClient> = persistentListOf(),
 )

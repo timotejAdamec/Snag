@@ -23,6 +23,8 @@ kotlin {
                 implementation(project(":feat:projects:business"))
                 implementation(project(":feat:structures:fe:app:api"))
                 implementation(project(":feat:structures:fe:driving:api"))
+                implementation(project(":feat:clients:fe:app:api"))
+                implementation(project(":feat:clients:fe:driving:api"))
             }
         }
         commonTest {
@@ -30,6 +32,8 @@ kotlin {
 //                TODO()
                 implementation(project(":feat:projects:fe:app:impl"))
                 implementation(project(":feat:projects:fe:driven:test"))
+                implementation(project(":feat:clients:fe:app:impl"))
+                implementation(project(":feat:clients:fe:driven:test"))
             }
         }
     }

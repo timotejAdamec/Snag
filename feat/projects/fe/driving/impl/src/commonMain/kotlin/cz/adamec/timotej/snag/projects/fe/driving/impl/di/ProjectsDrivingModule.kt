@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation3.scene.DialogSceneStrategy
+import cz.adamec.timotej.snag.clients.fe.driving.api.ClientCreationRouteFactory
 import cz.adamec.timotej.snag.lib.design.fe.dialog.fullscreenDialogProperties
 import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureCreationRouteFactory
 import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureDetailRouteFactory
@@ -96,6 +97,7 @@ private fun Scope.ProjectDetailsEditScreenInjection(
     projectId: Uuid? = null,
     onSaveProject: (savedProjectId: Uuid) -> Unit,
 ) {
+    val clientCreationRouteFactory = koinInject<ClientCreationRouteFactory>()
     ProjectDetailsEditScreen(
         projectId = projectId,
         onSaveProject = { savedProjectId ->
@@ -104,6 +106,10 @@ private fun Scope.ProjectDetailsEditScreenInjection(
         onCancelClick = {
             val backStack = get<SnagBackStack>()
             backStack.removeLastSafely()
+        },
+        onNavigateToClientCreation = { onCreated ->
+            val backStack = get<SnagBackStack>()
+            backStack.value.add(clientCreationRouteFactory.create(onCreated))
         },
     )
 }
@@ -143,6 +149,7 @@ val projectsDrivingImplModule =
                 projectId = projectId,
                 getProjectUseCase = get(),
                 saveProjectUseCase = get(),
+                getClientsUseCase = get(),
             )
         }
         viewModel { (projectId: Uuid) ->

@@ -20,9 +20,14 @@ import kotlin.uuid.Uuid
 @Immutable
 data object NonWebClientsRoute : ClientsRoute
 
-@Serializable
 @Immutable
-data object NonWebClientCreationRoute : ClientCreationRoute
+data class NonWebClientCreationRoute(
+    override val onCreated: (Uuid) -> Unit,
+) : ClientCreationRoute
+
+class NonWebClientCreationRouteFactory : ClientCreationRouteFactory {
+    override fun create(onCreated: (Uuid) -> Unit) = NonWebClientCreationRoute(onCreated)
+}
 
 @Serializable
 @Immutable
