@@ -22,12 +22,10 @@ import cz.adamec.timotej.snag.lib.sync.fe.app.impl.internal.SyncEngine
 import cz.adamec.timotej.snag.lib.sync.fe.driven.test.FakeSyncQueue
 import cz.adamec.timotej.snag.lib.sync.fe.model.SyncOperationType
 import cz.adamec.timotej.snag.lib.sync.fe.ports.SyncQueue
-import cz.adamec.timotej.snag.network.fe.InternetConnectionStatusListener
+import cz.adamec.timotej.snag.network.fe.test.FakeInternetConnectionStatusListener
 import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.koin.core.module.Module
@@ -160,16 +158,6 @@ class GetSyncStatusUseCaseImplTest : FrontendKoinInitializedTest() {
                 assertEquals(SyncStatus.Offline, awaitItem())
             }
         }
-
-    private class FakeInternetConnectionStatusListener : InternetConnectionStatusListener {
-        private val connectedFlow = MutableStateFlow(true)
-
-        fun emit(connected: Boolean) {
-            connectedFlow.value = connected
-        }
-
-        override fun isConnectedFlow(): Flow<Boolean> = connectedFlow
-    }
 
     private class FixedResultHandler(
         override val entityTypeId: String,
