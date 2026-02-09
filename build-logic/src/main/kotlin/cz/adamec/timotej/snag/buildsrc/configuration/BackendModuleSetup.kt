@@ -59,6 +59,12 @@ internal fun Project.configureBackendModule() {
             api(project("$drivenDirectoryPath:ports"))
         }
 
+        if (path.startsWith(":feat:") &&
+            !path.contains(":shared:rules:")
+        ) {
+            implementation(project(":feat:shared:rules:business:api"))
+        }
+
         implementation(libs.library("kotlinx-coroutines-core"))
         implementation(libs.library("koin-core"))
         implementation(libs.library("slf4j-api"))

@@ -19,6 +19,7 @@ dependencies {
     implementation(projects.lib.core.be)
     implementation(projects.lib.configuration.be.impl)
     implementation(projects.feat.shared.database.be.impl)
+    implementation(projects.feat.shared.rules.business.impl)
 
     // Projects feature
     implementation(projects.feat.projects.be.driving.impl)

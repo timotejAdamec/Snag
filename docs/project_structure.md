@@ -50,6 +50,13 @@ The `test` and `impl` split is typical for driven code so that tests in `driving
 can run with non-production unit-test-friendly adapter `ports`.
 The `contract` and `impl` split is typical for backend driving code.
 
+### Shared modules (`feat/shared/`)
+
+The `shared` directory contains cross-cutting concerns used by multiple features:
+- `database/` — Shared database infrastructure (`fe/`, `be/impl`, `be/test`).
+- `rules/business/` — Cross-cutting business-layer validation rules (`api/impl` split).
+  Auto-wired as a dependency to all feature modules via the convention plugin.
+
 ### Cross-feature dependencies
 
 Dependencies between features is handled by accessing use cases (`app/api`) from the different feature.
