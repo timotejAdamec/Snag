@@ -19,10 +19,11 @@ import kotlin.uuid.Uuid
 @Serializable
 data class PutFindingApiDto(
     val structureId: Uuid,
+    val type: String,
     val name: String,
     val description: String?,
-    val importance: String,
-    val term: String,
+    val importance: String? = null,
+    val term: String? = null,
     val coordinates: List<RelativeCoordinateApiDto>,
     val updatedAt: Timestamp,
 )

@@ -32,15 +32,14 @@ internal class FindingSyncHandler(
     override val entityTypeId: String = FINDING_SYNC_ENTITY_TYPE
     override val entityName: String = "finding"
 
-    override fun getEntityFlow(entityId: Uuid): Flow<OfflineFirstDataResult<FrontendFinding?>> =
-        findingsDb.getFindingFlow(entityId)
+    override fun getEntityFlow(entityId: Uuid): Flow<OfflineFirstDataResult<FrontendFinding?>> = findingsDb.getFindingFlow(entityId)
 
-    override suspend fun saveEntityToApi(entity: FrontendFinding): OnlineDataResult<FrontendFinding?> =
-        findingsApi.saveFinding(entity)
+    override suspend fun saveEntityToApi(entity: FrontendFinding): OnlineDataResult<FrontendFinding?> = findingsApi.saveFinding(entity)
 
-    override suspend fun deleteEntityFromApi(entityId: Uuid, deletedAt: Timestamp): OnlineDataResult<Unit> =
-        findingsApi.deleteFinding(entityId, deletedAt)
+    override suspend fun deleteEntityFromApi(
+        entityId: Uuid,
+        deletedAt: Timestamp,
+    ): OnlineDataResult<Unit> = findingsApi.deleteFinding(entityId, deletedAt)
 
-    override suspend fun saveEntityToDb(entity: FrontendFinding): OfflineFirstDataResult<Unit> =
-        findingsDb.saveFinding(entity)
+    override suspend fun saveEntityToDb(entity: FrontendFinding): OfflineFirstDataResult<Unit> = findingsDb.saveFinding(entity)
 }

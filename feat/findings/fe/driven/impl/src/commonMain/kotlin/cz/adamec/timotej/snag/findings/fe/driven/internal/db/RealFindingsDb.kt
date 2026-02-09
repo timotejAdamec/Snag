@@ -16,12 +16,13 @@ import app.cash.sqldelight.async.coroutines.awaitAsOne
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import app.cash.sqldelight.coroutines.mapToOneOrNull
-import cz.adamec.timotej.snag.feat.findings.business.Importance
+import cz.adamec.timotej.snag.feat.findings.business.FindingType
 import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
-import cz.adamec.timotej.snag.feat.findings.business.Term
 import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
-import cz.adamec.timotej.snag.feat.shared.database.fe.db.FindingEntity
+import cz.adamec.timotej.snag.feat.shared.database.fe.db.ClassicFindingEntityQueries
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.FindingEntityQueries
+import cz.adamec.timotej.snag.feat.shared.database.fe.db.SelectById
+import cz.adamec.timotej.snag.feat.shared.database.fe.db.SelectByStructureId
 import cz.adamec.timotej.snag.findings.fe.driven.internal.LH
 import cz.adamec.timotej.snag.findings.fe.ports.FindingsDb
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
@@ -37,6 +38,7 @@ import kotlin.uuid.Uuid
 
 internal class RealFindingsDb(
     private val findingEntityQueries: FindingEntityQueries,
+    private val classicFindingEntityQueries: ClassicFindingEntityQueries,
     private val ioDispatcher: CoroutineDispatcher,
 ) : FindingsDb {
     override fun getFindingsFlow(structureId: Uuid): Flow<OfflineFirstDataResult<List<FrontendFinding>>> =
@@ -44,7 +46,7 @@ internal class RealFindingsDb(
             .selectByStructureId(structureId.toString())
             .asFlow()
             .mapToList(ioDispatcher)
-            .map<List<FindingEntity>, OfflineFirstDataResult<List<FrontendFinding>>> { entities ->
+            .map<List<SelectByStructureId>, OfflineFirstDataResult<List<FrontendFinding>>> { entities ->
                 OfflineFirstDataResult.Success(
                     entities.map { it.toModel() },
                 )
@@ -55,16 +57,20 @@ internal class RealFindingsDb(
 
     override suspend fun saveFindings(findings: List<FrontendFinding>): OfflineFirstDataResult<Unit> =
         safeDbWrite(ioDispatcher = ioDispatcher, logger = LH.logger, errorMessage = "Error saving findings $findings to DB.") {
-            findingEntityQueries.transaction {
-                findings.forEach {
-                    findingEntityQueries.save(it.toEntity())
+            findingEntityQueries.transactionWithResult {
+                findings.forEach { finding ->
+                    findingEntityQueries.save(finding.toEntity())
+                    saveClassicDetails(finding)
                 }
             }
         }
 
     override suspend fun saveFinding(finding: FrontendFinding): OfflineFirstDataResult<Unit> =
         safeDbWrite(ioDispatcher = ioDispatcher, logger = LH.logger, errorMessage = "Error saving finding $finding to DB.") {
-            findingEntityQueries.save(finding.toEntity())
+            findingEntityQueries.transactionWithResult {
+                findingEntityQueries.save(finding.toEntity())
+                saveClassicDetails(finding)
+            }
         }
 
     override suspend fun deleteFinding(id: Uuid): OfflineFirstDataResult<Unit> =
@@ -77,7 +83,7 @@ internal class RealFindingsDb(
             .selectById(id.toString())
             .asFlow()
             .mapToOneOrNull(ioDispatcher)
-            .map<FindingEntity?, OfflineFirstDataResult<FrontendFinding?>> { entity ->
+            .map<SelectById?, OfflineFirstDataResult<FrontendFinding?>> { entity ->
                 OfflineFirstDataResult.Success(entity?.toModel())
             }.catch { e ->
                 LH.logger.e { "Error loading finding $id from DB." }
@@ -88,8 +94,7 @@ internal class RealFindingsDb(
         id: Uuid,
         name: String,
         description: String?,
-        importance: Importance,
-        term: Term,
+        findingType: FindingType,
         updatedAt: Timestamp,
     ): OfflineFirstUpdateDataResult =
         withContext(ioDispatcher) {
@@ -98,11 +103,20 @@ internal class RealFindingsDb(
                     findingEntityQueries.updateDetails(
                         name = name,
                         description = description,
-                        importance = importance.name,
-                        term = term.name,
+                        type = findingType.toDbString(),
                         updatedAt = updatedAt.value,
                         id = id.toString(),
                     )
+                    when (findingType) {
+                        is FindingType.Classic ->
+                            classicFindingEntityQueries.save(
+                                id.toString(),
+                                findingType.importance.name,
+                                findingType.term.name,
+                            )
+                        is FindingType.Unvisited, is FindingType.Note ->
+                            classicFindingEntityQueries.deleteByFindingId(id.toString())
+                    }
                     findingEntityQueries.selectChanges().awaitAsOne()
                 }
             }.fold(
@@ -151,7 +165,24 @@ internal class RealFindingsDb(
         }
 
     override suspend fun deleteFindingsByStructureId(structureId: Uuid): OfflineFirstDataResult<Unit> =
-        safeDbWrite(ioDispatcher = ioDispatcher, logger = LH.logger, errorMessage = "Error deleting findings for structure $structureId from DB.") {
+        safeDbWrite(
+            ioDispatcher = ioDispatcher,
+            logger = LH.logger,
+            errorMessage = "Error deleting findings for structure $structureId from DB.",
+        ) {
             findingEntityQueries.deleteByStructureId(structureId.toString())
         }
+
+    private suspend fun saveClassicDetails(finding: FrontendFinding) {
+        val type = finding.finding.type
+        if (type is FindingType.Classic) {
+            classicFindingEntityQueries.save(
+                finding.finding.id.toString(),
+                type.importance.name,
+                type.term.name,
+            )
+        } else {
+            classicFindingEntityQueries.deleteByFindingId(finding.finding.id.toString())
+        }
+    }
 }

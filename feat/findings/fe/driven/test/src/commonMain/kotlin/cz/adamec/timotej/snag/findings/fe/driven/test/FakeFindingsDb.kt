@@ -12,9 +12,8 @@
 
 package cz.adamec.timotej.snag.findings.fe.driven.test
 
-import cz.adamec.timotej.snag.feat.findings.business.Importance
+import cz.adamec.timotej.snag.feat.findings.business.FindingType
 import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
-import cz.adamec.timotej.snag.feat.findings.business.Term
 import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
 import cz.adamec.timotej.snag.findings.fe.ports.FindingsDb
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
@@ -80,8 +79,7 @@ class FakeFindingsDb : FindingsDb {
         id: Uuid,
         name: String,
         description: String?,
-        importance: Importance,
-        term: Term,
+        findingType: FindingType,
         updatedAt: Timestamp,
     ): OfflineFirstUpdateDataResult {
         val failure = forcedFailure
@@ -98,8 +96,7 @@ class FakeFindingsDb : FindingsDb {
                         existing.finding.copy(
                             name = name,
                             description = description,
-                            importance = importance,
-                            term = term,
+                            type = findingType,
                             updatedAt = updatedAt,
                         ),
                 )

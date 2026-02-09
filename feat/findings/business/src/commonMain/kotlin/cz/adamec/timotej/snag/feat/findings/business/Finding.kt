@@ -20,8 +20,7 @@ data class Finding(
     val structureId: Uuid,
     val name: String,
     val description: String?,
-    val importance: Importance,
-    val term: Term,
+    val type: FindingType,
     val coordinates: List<RelativeCoordinate>,
     val updatedAt: Timestamp,
 )

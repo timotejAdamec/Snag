@@ -16,10 +16,10 @@ import cz.adamec.timotej.snag.findings.be.app.api.DeleteFindingUseCase
 import cz.adamec.timotej.snag.findings.be.app.api.GetFindingsModifiedSinceUseCase
 import cz.adamec.timotej.snag.findings.be.app.api.GetFindingsUseCase
 import cz.adamec.timotej.snag.findings.be.app.api.SaveFindingUseCase
-import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.findings.be.app.api.model.DeleteFindingRequest
 import cz.adamec.timotej.snag.findings.be.driving.contract.DeleteFindingApiDto
 import cz.adamec.timotej.snag.findings.be.driving.contract.PutFindingApiDto
+import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.routing.be.AppRoute
 import cz.adamec.timotej.snag.routing.be.getDtoFromBody
 import cz.adamec.timotej.snag.routing.be.getIdFromParameters
@@ -44,12 +44,13 @@ internal class FindingsRoute(
                 val id = getIdFromParameters()
                 val deleteFindingDto = getDtoFromBody<DeleteFindingApiDto>()
 
-                val newerFinding = deleteFindingUseCase(
-                    DeleteFindingRequest(
-                        findingId = id,
-                        deletedAt = deleteFindingDto.deletedAt,
-                    ),
-                )
+                val newerFinding =
+                    deleteFindingUseCase(
+                        DeleteFindingRequest(
+                            findingId = id,
+                            deletedAt = deleteFindingDto.deletedAt,
+                        ),
+                    )
 
                 newerFinding?.let {
                     call.respond(it.toDto())

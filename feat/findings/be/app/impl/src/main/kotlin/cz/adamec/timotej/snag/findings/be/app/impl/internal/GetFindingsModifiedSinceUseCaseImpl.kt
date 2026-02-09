@@ -22,7 +22,10 @@ import kotlin.uuid.Uuid
 internal class GetFindingsModifiedSinceUseCaseImpl(
     private val findingsDb: FindingsDb,
 ) : GetFindingsModifiedSinceUseCase {
-    override suspend operator fun invoke(structureId: Uuid, since: Timestamp): List<BackendFinding> {
+    override suspend operator fun invoke(
+        structureId: Uuid,
+        since: Timestamp,
+    ): List<BackendFinding> {
         logger.debug("Getting findings modified since {} for structure {} from local storage.", since, structureId)
         return findingsDb.getFindingsModifiedSince(structureId, since).also {
             logger.debug("Got {} findings modified since {} for structure {} from local storage.", it.size, since, structureId)

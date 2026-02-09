@@ -39,17 +39,19 @@ internal fun TermLabel(
     term: Term,
     modifier: Modifier = Modifier,
 ) {
-    val termText = when (term) {
-        Term.T1 -> stringResource(Res.string.term_t1)
-        Term.T2 -> stringResource(Res.string.term_t2)
-        Term.T3 -> stringResource(Res.string.term_t3)
-        Term.CON -> stringResource(Res.string.term_con)
-    }
+    val termText =
+        when (term) {
+            Term.T1 -> stringResource(Res.string.term_t1)
+            Term.T2 -> stringResource(Res.string.term_t2)
+            Term.T3 -> stringResource(Res.string.term_t3)
+            Term.CON -> stringResource(Res.string.term_con)
+        }
     TooltipBox(
         modifier = modifier,
-        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
-            positioning = TooltipAnchorPosition.Above,
-        ),
+        positionProvider =
+            TooltipDefaults.rememberTooltipPositionProvider(
+                positioning = TooltipAnchorPosition.Above,
+            ),
         tooltip = {
             PlainTooltip {
                 Text(
@@ -57,7 +59,7 @@ internal fun TermLabel(
                 )
             }
         },
-        state = rememberTooltipState()
+        state = rememberTooltipState(),
     ) {
         Surface(
             color = MaterialTheme.colorScheme.secondaryContainer,

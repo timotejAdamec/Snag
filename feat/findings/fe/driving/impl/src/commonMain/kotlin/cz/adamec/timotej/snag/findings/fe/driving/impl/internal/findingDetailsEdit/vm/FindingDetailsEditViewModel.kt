@@ -14,6 +14,7 @@ package cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetailsE
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cz.adamec.timotej.snag.feat.findings.business.FindingType
 import cz.adamec.timotej.snag.feat.findings.business.Importance
 import cz.adamec.timotej.snag.feat.findings.business.Term
 import cz.adamec.timotej.snag.findings.fe.app.api.GetFindingUseCase
@@ -40,12 +41,17 @@ import kotlin.uuid.Uuid
 internal class FindingDetailsEditViewModel(
     @InjectedParam private val findingId: Uuid?,
     @InjectedParam private val structureId: Uuid?,
+    @InjectedParam private val findingTypeKey: String?,
     private val getFindingUseCase: GetFindingUseCase,
     private val saveNewFindingUseCase: SaveNewFindingUseCase,
     private val saveFindingDetailsUseCase: SaveFindingDetailsUseCase,
 ) : ViewModel() {
     private val _state: MutableStateFlow<FindingDetailsEditUiState> =
-        MutableStateFlow(FindingDetailsEditUiState())
+        MutableStateFlow(
+            FindingDetailsEditUiState(
+                findingType = findingTypeKey.toFindingType(),
+            ),
+        )
     val state: StateFlow<FindingDetailsEditUiState> = _state
 
     private val errorEventsChannel = Channel<UiError>()
@@ -74,8 +80,7 @@ internal class FindingDetailsEditViewModel(
                                 it.copy(
                                     findingName = data.finding.name,
                                     findingDescription = data.finding.description.orEmpty(),
-                                    findingImportance = data.finding.importance,
-                                    findingTerm = data.finding.term,
+                                    findingType = data.finding.type,
                                 )
                             }
                             cancel()
@@ -94,11 +99,25 @@ internal class FindingDetailsEditViewModel(
     }
 
     fun onImportanceChange(importance: Importance) {
-        _state.update { it.copy(findingImportance = importance) }
+        _state.update { state ->
+            val currentType = state.findingType
+            if (currentType is FindingType.Classic) {
+                state.copy(findingType = currentType.copy(importance = importance))
+            } else {
+                state
+            }
+        }
     }
 
     fun onTermChange(term: Term) {
-        _state.update { it.copy(findingTerm = term) }
+        _state.update { state ->
+            val currentType = state.findingType
+            if (currentType is FindingType.Classic) {
+                state.copy(findingType = currentType.copy(term = term))
+            } else {
+                state
+            }
+        }
     }
 
     fun onSaveFinding() =
@@ -123,8 +142,7 @@ internal class FindingDetailsEditViewModel(
                         structureId = structureId!!,
                         name = state.value.findingName,
                         description = state.value.findingDescription.ifBlank { null },
-                        importance = state.value.findingImportance,
-                        term = state.value.findingTerm,
+                        findingType = state.value.findingType,
                     ),
             )
         when (result) {
@@ -145,8 +163,7 @@ internal class FindingDetailsEditViewModel(
                         findingId = findingId,
                         name = state.value.findingName,
                         description = state.value.findingDescription.ifBlank { null },
-                        importance = state.value.findingImportance,
-                        term = state.value.findingTerm,
+                        findingType = state.value.findingType,
                     ),
             )
         when (result) {
@@ -160,4 +177,11 @@ internal class FindingDetailsEditViewModel(
             }
         }
     }
+
+    private fun String?.toFindingType(): FindingType =
+        when (this) {
+            FindingType.KEY_UNVISITED -> FindingType.Unvisited
+            FindingType.KEY_NOTE -> FindingType.Note
+            else -> FindingType.Classic()
+        }
 }

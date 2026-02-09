@@ -23,10 +23,9 @@ class FindingEntity(
     id: EntityID<Uuid>,
 ) : UuidEntity(id) {
     var structure by StructureEntity referencedOn FindingsTable.structure
+    var type by FindingsTable.type
     var name by FindingsTable.name
     var description by FindingsTable.description
-    var importance by FindingsTable.importance
-    var term by FindingsTable.term
     var updatedAt by FindingsTable.updatedAt
     var deletedAt by FindingsTable.deletedAt
     val coordinates by FindingCoordinateEntity referrersOn
@@ -34,6 +33,15 @@ class FindingEntity(
         FindingCoordinatesTable.orderIndex
 
     companion object : UuidEntityClass<FindingEntity>(FindingsTable)
+}
+
+class ClassicFindingEntity(
+    id: EntityID<Uuid>,
+) : UuidEntity(id) {
+    var importance by ClassicFindingTable.importance
+    var term by ClassicFindingTable.term
+
+    companion object : UuidEntityClass<ClassicFindingEntity>(ClassicFindingTable)
 }
 
 class FindingCoordinateEntity(

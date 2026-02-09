@@ -32,8 +32,7 @@ class SaveFindingDetailsUseCaseImpl(
                 id = request.findingId,
                 name = request.name,
                 description = request.description,
-                importance = request.importance,
-                term = request.term,
+                findingType = request.findingType,
                 updatedAt = timestampProvider.getNowTimestamp(),
             ).also {
                 logger.log(

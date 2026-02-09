@@ -24,8 +24,12 @@ internal class SaveFindingUseCaseImpl(
         logger.debug("Saving finding {} to local storage.", finding)
         return findingsDb.saveFinding(finding).also {
             it?.let {
-                logger.debug("Didn't save finding {} to local storage as there is a newer one." +
-                        " Returning the newer one ({}).", finding, it)
+                logger.debug(
+                    "Didn't save finding {} to local storage as there is a newer one." +
+                        " Returning the newer one ({}).",
+                    finding,
+                    it,
+                )
             } ?: logger.debug("Saved finding {} to local storage.", finding)
         }
     }

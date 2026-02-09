@@ -12,14 +12,12 @@
 
 package cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetailsEdit.vm
 
-import cz.adamec.timotej.snag.feat.findings.business.Importance
-import cz.adamec.timotej.snag.feat.findings.business.Term
+import cz.adamec.timotej.snag.feat.findings.business.FindingType
 import org.jetbrains.compose.resources.StringResource
 
 internal data class FindingDetailsEditUiState(
     val findingName: String = "",
     val findingDescription: String = "",
-    val findingImportance: Importance = Importance.MEDIUM,
-    val findingTerm: Term = Term.T1,
+    val findingType: FindingType = FindingType.Classic(),
     val findingNameError: StringResource? = null,
 )

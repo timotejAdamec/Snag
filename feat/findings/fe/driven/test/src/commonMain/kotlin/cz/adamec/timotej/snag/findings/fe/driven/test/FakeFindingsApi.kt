@@ -31,7 +31,10 @@ class FakeFindingsApi : FindingsApi {
         return OnlineDataResult.Success(findings.values.filter { it.finding.structureId == structureId })
     }
 
-    override suspend fun deleteFinding(id: Uuid, deletedAt: Timestamp): OnlineDataResult<Unit> {
+    override suspend fun deleteFinding(
+        id: Uuid,
+        deletedAt: Timestamp,
+    ): OnlineDataResult<Unit> {
         val failure = forcedFailure
         if (failure != null) return failure
         findings.remove(id)
@@ -54,7 +57,10 @@ class FakeFindingsApi : FindingsApi {
         findings[finding.finding.id] = finding
     }
 
-    override suspend fun getFindingsModifiedSince(structureId: Uuid, since: Timestamp): OnlineDataResult<List<FindingSyncResult>> {
+    override suspend fun getFindingsModifiedSince(
+        structureId: Uuid,
+        since: Timestamp,
+    ): OnlineDataResult<List<FindingSyncResult>> {
         val failure = forcedFailure
         if (failure != null) return failure
         return OnlineDataResult.Success(modifiedSinceResults)

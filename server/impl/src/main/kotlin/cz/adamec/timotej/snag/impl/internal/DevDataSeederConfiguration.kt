@@ -18,6 +18,7 @@ import cz.adamec.timotej.snag.clients.business.Client
 import cz.adamec.timotej.snag.configuration.be.AppConfiguration
 import cz.adamec.timotej.snag.feat.findings.be.model.BackendFinding
 import cz.adamec.timotej.snag.feat.findings.business.Finding
+import cz.adamec.timotej.snag.feat.findings.business.FindingType
 import cz.adamec.timotej.snag.feat.findings.business.Importance
 import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
 import cz.adamec.timotej.snag.feat.findings.business.Term
@@ -192,6 +193,7 @@ internal class DevDataSeederConfiguration(
             ),
         )
 
+    @Suppress("LongMethod")
     private suspend fun seedFindings() {
         val now = timestampProvider.getNowTimestamp()
         listOf(
@@ -202,8 +204,7 @@ internal class DevDataSeederConfiguration(
                         structureId = Uuid.parse(STRUCTURE_1),
                         name = "Cracked wall tile",
                         description = "Visible crack on wall tile near entrance.",
-                        importance = Importance.HIGH,
-                        term = Term.T1,
+                        type = FindingType.Classic(importance = Importance.HIGH, term = Term.T1),
                         coordinates = listOf(RelativeCoordinate(x = 0.25f, y = 0.40f)),
                         updatedAt = now,
                     ),
@@ -215,8 +216,7 @@ internal class DevDataSeederConfiguration(
                         structureId = Uuid.parse(STRUCTURE_1),
                         name = "Missing paint patch",
                         description = "Unpainted area on the ceiling in hallway.",
-                        importance = Importance.MEDIUM,
-                        term = Term.T2,
+                        type = FindingType.Classic(importance = Importance.MEDIUM, term = Term.T2),
                         coordinates = listOf(RelativeCoordinate(x = 0.60f, y = 0.15f)),
                         updatedAt = now,
                     ),
@@ -228,13 +228,36 @@ internal class DevDataSeederConfiguration(
                         structureId = Uuid.parse(STRUCTURE_2),
                         name = "Loose handrail",
                         description = null,
-                        importance = Importance.LOW,
-                        term = Term.T3,
+                        type = FindingType.Classic(importance = Importance.LOW, term = Term.T3),
                         coordinates =
                             listOf(
                                 RelativeCoordinate(x = 0.80f, y = 0.55f),
                                 RelativeCoordinate(x = 0.82f, y = 0.60f),
                             ),
+                        updatedAt = now,
+                    ),
+            ),
+            BackendFinding(
+                finding =
+                    Finding(
+                        id = Uuid.parse(FINDING_4),
+                        structureId = Uuid.parse(STRUCTURE_1),
+                        name = "Bathroom not visited",
+                        description = "Bathroom was locked during inspection.",
+                        type = FindingType.Unvisited,
+                        coordinates = listOf(RelativeCoordinate(x = 0.45f, y = 0.70f)),
+                        updatedAt = now,
+                    ),
+            ),
+            BackendFinding(
+                finding =
+                    Finding(
+                        id = Uuid.parse(FINDING_5),
+                        structureId = Uuid.parse(STRUCTURE_2),
+                        name = "Owner requests extra outlet",
+                        description = "Owner mentioned wanting an additional power outlet near the kitchen island.",
+                        type = FindingType.Note,
+                        coordinates = listOf(RelativeCoordinate(x = 0.35f, y = 0.30f)),
                         updatedAt = now,
                     ),
             ),
@@ -256,5 +279,7 @@ internal class DevDataSeederConfiguration(
         private const val FINDING_1 = "00000000-0000-0000-0002-000000000001"
         private const val FINDING_2 = "00000000-0000-0000-0002-000000000002"
         private const val FINDING_3 = "00000000-0000-0000-0002-000000000003"
+        private const val FINDING_4 = "00000000-0000-0000-0002-000000000004"
+        private const val FINDING_5 = "00000000-0000-0000-0002-000000000005"
     }
 }

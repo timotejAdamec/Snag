@@ -14,8 +14,7 @@ package cz.adamec.timotej.snag.findings.be.app.impl.internal
 
 import cz.adamec.timotej.snag.feat.findings.be.model.BackendFinding
 import cz.adamec.timotej.snag.feat.findings.business.Finding
-import cz.adamec.timotej.snag.feat.findings.business.Importance
-import cz.adamec.timotej.snag.feat.findings.business.Term
+import cz.adamec.timotej.snag.feat.findings.business.FindingType
 import cz.adamec.timotej.snag.feat.structures.be.model.BackendStructure
 import cz.adamec.timotej.snag.feat.structures.business.Structure
 import cz.adamec.timotej.snag.findings.be.app.api.GetFindingsModifiedSinceUseCase
@@ -46,34 +45,37 @@ class GetFindingsModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
     private suspend fun seedParentEntities() {
         projectsDb.saveProject(
             BackendProject(
-                project = Project(
-                    id = projectId,
-                    name = "Test Project",
-                    address = "Test Address",
-                    updatedAt = Timestamp(1L),
-                ),
+                project =
+                    Project(
+                        id = projectId,
+                        name = "Test Project",
+                        address = "Test Address",
+                        updatedAt = Timestamp(1L),
+                    ),
             ),
         )
         structuresDb.saveStructure(
             BackendStructure(
-                structure = Structure(
-                    id = structureId,
-                    projectId = projectId,
-                    name = "Test Structure",
-                    floorPlanUrl = null,
-                    updatedAt = Timestamp(1L),
-                ),
+                structure =
+                    Structure(
+                        id = structureId,
+                        projectId = projectId,
+                        name = "Test Structure",
+                        floorPlanUrl = null,
+                        updatedAt = Timestamp(1L),
+                    ),
             ),
         )
         structuresDb.saveStructure(
             BackendStructure(
-                structure = Structure(
-                    id = otherStructureId,
-                    projectId = projectId,
-                    name = "Other Structure",
-                    floorPlanUrl = null,
-                    updatedAt = Timestamp(1L),
-                ),
+                structure =
+                    Structure(
+                        id = otherStructureId,
+                        projectId = projectId,
+                        name = "Other Structure",
+                        floorPlanUrl = null,
+                        updatedAt = Timestamp(1L),
+                    ),
             ),
         )
     }
@@ -92,16 +94,16 @@ class GetFindingsModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
             seedParentEntities()
             val finding =
                 BackendFinding(
-                    finding = Finding(
-                        id = Uuid.parse("00000000-0000-0000-0002-000000000001"),
-                        structureId = structureId,
-                        name = "Crack in wall",
-                        description = null,
-                        importance = Importance.MEDIUM,
-                        term = Term.T1,
-                        coordinates = emptyList(),
-                        updatedAt = Timestamp(200L),
-                    ),
+                    finding =
+                        Finding(
+                            id = Uuid.parse("00000000-0000-0000-0002-000000000001"),
+                            structureId = structureId,
+                            name = "Crack in wall",
+                            description = null,
+                            type = FindingType.Classic(),
+                            coordinates = emptyList(),
+                            updatedAt = Timestamp(200L),
+                        ),
                 )
             dataSource.saveFinding(finding)
 
@@ -116,16 +118,16 @@ class GetFindingsModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
             seedParentEntities()
             val finding =
                 BackendFinding(
-                    finding = Finding(
-                        id = Uuid.parse("00000000-0000-0000-0002-000000000001"),
-                        structureId = otherStructureId,
-                        name = "Other finding",
-                        description = null,
-                        importance = Importance.MEDIUM,
-                        term = Term.T1,
-                        coordinates = emptyList(),
-                        updatedAt = Timestamp(200L),
-                    ),
+                    finding =
+                        Finding(
+                            id = Uuid.parse("00000000-0000-0000-0002-000000000001"),
+                            structureId = otherStructureId,
+                            name = "Other finding",
+                            description = null,
+                            type = FindingType.Classic(),
+                            coordinates = emptyList(),
+                            updatedAt = Timestamp(200L),
+                        ),
                 )
             dataSource.saveFinding(finding)
 
@@ -140,16 +142,16 @@ class GetFindingsModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
             seedParentEntities()
             val finding =
                 BackendFinding(
-                    finding = Finding(
-                        id = Uuid.parse("00000000-0000-0000-0002-000000000001"),
-                        structureId = structureId,
-                        name = "Crack in wall",
-                        description = null,
-                        importance = Importance.MEDIUM,
-                        term = Term.T1,
-                        coordinates = emptyList(),
-                        updatedAt = Timestamp(50L),
-                    ),
+                    finding =
+                        Finding(
+                            id = Uuid.parse("00000000-0000-0000-0002-000000000001"),
+                            structureId = structureId,
+                            name = "Crack in wall",
+                            description = null,
+                            type = FindingType.Classic(),
+                            coordinates = emptyList(),
+                            updatedAt = Timestamp(50L),
+                        ),
                     deletedAt = Timestamp(200L),
                 )
             dataSource.saveFinding(finding)
@@ -165,16 +167,16 @@ class GetFindingsModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
             seedParentEntities()
             val finding =
                 BackendFinding(
-                    finding = Finding(
-                        id = Uuid.parse("00000000-0000-0000-0002-000000000001"),
-                        structureId = structureId,
-                        name = "Crack in wall",
-                        description = null,
-                        importance = Importance.MEDIUM,
-                        term = Term.T1,
-                        coordinates = emptyList(),
-                        updatedAt = Timestamp(50L),
-                    ),
+                    finding =
+                        Finding(
+                            id = Uuid.parse("00000000-0000-0000-0002-000000000001"),
+                            structureId = structureId,
+                            name = "Crack in wall",
+                            description = null,
+                            type = FindingType.Classic(),
+                            coordinates = emptyList(),
+                            updatedAt = Timestamp(50L),
+                        ),
                 )
             dataSource.saveFinding(finding)
 

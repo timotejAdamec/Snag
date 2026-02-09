@@ -23,16 +23,17 @@ internal class DeleteFindingUseCaseImpl(
 ) : DeleteFindingUseCase {
     override suspend operator fun invoke(request: DeleteFindingRequest): BackendFinding? {
         logger.debug("Deleting finding {} from local storage.", request.findingId)
-        return findingsDb.deleteFinding(
-            id = request.findingId,
-            deletedAt = request.deletedAt,
-        ).also { newerFinding ->
-            newerFinding?.let {
-                logger.debug(
-                    "Found newer version of finding {} in local storage. Returning it instead.",
-                    request.findingId
-                )
-            } ?: logger.debug("Deleted finding {} from local storage.", request.findingId)
-        }
+        return findingsDb
+            .deleteFinding(
+                id = request.findingId,
+                deletedAt = request.deletedAt,
+            ).also { newerFinding ->
+                newerFinding?.let {
+                    logger.debug(
+                        "Found newer version of finding {} in local storage. Returning it instead.",
+                        request.findingId,
+                    )
+                } ?: logger.debug("Deleted finding {} from local storage.", request.findingId)
+            }
     }
 }
