@@ -23,7 +23,6 @@ import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ContainedLoadingIndicator
 import androidx.compose.material3.HorizontalFloatingToolbar
 import androidx.compose.material3.Icon
@@ -31,7 +30,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.ScaffoldDefaults
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -45,9 +43,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import cz.adamec.timotej.snag.feat.findings.business.Importance
-import cz.adamec.timotej.snag.feat.findings.business.Term
 import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetail.ui.components.FindingDeletionAlertDialog
+import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetail.ui.components.ImportanceLabel
+import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetail.ui.components.TermLabel
 import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetail.vm.FindingDetailUiState
 import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetail.vm.FindingDetailUiStatus
 import cz.adamec.timotej.snag.lib.design.fe.scenes.LocalIsInSheet
@@ -55,13 +53,6 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import snag.feat.findings.fe.driving.impl.generated.resources.Res
 import snag.feat.findings.fe.driving.impl.generated.resources.finding_not_found_message
-import snag.feat.findings.fe.driving.impl.generated.resources.importance_high
-import snag.feat.findings.fe.driving.impl.generated.resources.importance_low
-import snag.feat.findings.fe.driving.impl.generated.resources.importance_medium
-import snag.feat.findings.fe.driving.impl.generated.resources.term_con
-import snag.feat.findings.fe.driving.impl.generated.resources.term_t1
-import snag.feat.findings.fe.driving.impl.generated.resources.term_t2
-import snag.feat.findings.fe.driving.impl.generated.resources.term_t3
 import snag.lib.design.fe.generated.resources.close
 import snag.lib.design.fe.generated.resources.delete
 import snag.lib.design.fe.generated.resources.edit
@@ -167,52 +158,15 @@ internal fun FindingDetailContent(
                         .padding(16.dp),
                 ) {
                     Column {
-                        val importanceColor = when (finding.finding.importance) {
-                            Importance.HIGH -> MaterialTheme.colorScheme.error
-                            Importance.MEDIUM -> MaterialTheme.colorScheme.tertiary
-                            Importance.LOW -> MaterialTheme.colorScheme.surfaceVariant
-                        }
-                        val importanceTextColor = when (finding.finding.importance) {
-                            Importance.HIGH -> MaterialTheme.colorScheme.onError
-                            Importance.MEDIUM -> MaterialTheme.colorScheme.onTertiary
-                            Importance.LOW -> MaterialTheme.colorScheme.onSurfaceVariant
-                        }
-                        val importanceText = when (finding.finding.importance) {
-                            Importance.HIGH -> stringResource(Res.string.importance_high)
-                            Importance.MEDIUM -> stringResource(Res.string.importance_medium)
-                            Importance.LOW -> stringResource(Res.string.importance_low)
-                        }
-                        val termText = when (finding.finding.term) {
-                            Term.T1 -> stringResource(Res.string.term_t1)
-                            Term.T2 -> stringResource(Res.string.term_t2)
-                            Term.T3 -> stringResource(Res.string.term_t3)
-                            Term.CON -> stringResource(Res.string.term_con)
-                        }
                         Row(
                             horizontalArrangement = Arrangement.spacedBy(8.dp),
                         ) {
-                            Surface(
-                                color = importanceColor,
-                                shape = RoundedCornerShape(4.dp),
-                            ) {
-                                Text(
-                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                                    text = importanceText,
-                                    style = MaterialTheme.typography.labelSmall,
-                                    color = importanceTextColor,
-                                )
-                            }
-                            Surface(
-                                color = MaterialTheme.colorScheme.secondaryContainer,
-                                shape = RoundedCornerShape(4.dp),
-                            ) {
-                                Text(
-                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                                    text = termText,
-                                    style = MaterialTheme.typography.labelSmall,
-                                    color = MaterialTheme.colorScheme.onSecondaryContainer,
-                                )
-                            }
+                            ImportanceLabel(
+                                importance = finding.finding.importance,
+                            )
+                            TermLabel(
+                                term = finding.finding.term,
+                            )
                         }
                         finding.finding.description?.let { description ->
                             Text(
