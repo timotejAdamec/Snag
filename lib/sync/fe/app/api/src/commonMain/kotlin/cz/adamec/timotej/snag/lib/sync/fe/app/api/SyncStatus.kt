@@ -10,18 +10,14 @@
  * Department of Software Engineering
  */
 
-plugins {
-    alias(libs.plugins.snagDrivingFrontendMultiplatformModule)
-}
+package cz.adamec.timotej.snag.lib.sync.fe.app.api
 
-kotlin {
-    sourceSets {
-        commonMain.dependencies {
-            implementation(project(":lib:sync:fe:app:api"))
-        }
-    }
-}
+sealed interface SyncStatus {
+    data object Synced : SyncStatus
 
-compose.resources {
-    publicResClass = true
+    data object Syncing : SyncStatus
+
+    data object Offline : SyncStatus
+
+    data object Error : SyncStatus
 }

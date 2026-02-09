@@ -13,11 +13,16 @@
 package cz.adamec.timotej.snag.lib.sync.fe.app.impl.internal
 
 import cz.adamec.timotej.snag.lib.core.common.ApplicationScope
+import cz.adamec.timotej.snag.lib.sync.fe.app.api.GetSyncEngineStatusUseCase
 import cz.adamec.timotej.snag.lib.sync.fe.app.api.SyncCoordinator
+import cz.adamec.timotej.snag.lib.sync.fe.app.api.SyncEngineStatus
 import cz.adamec.timotej.snag.lib.sync.fe.app.api.handler.SyncOperationHandler
 import cz.adamec.timotej.snag.lib.sync.fe.app.api.handler.SyncOperationResult
 import cz.adamec.timotej.snag.lib.sync.fe.model.SyncOperationType
 import cz.adamec.timotej.snag.lib.sync.fe.ports.SyncQueue
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -27,8 +32,13 @@ internal class SyncEngine(
     private val syncQueue: SyncQueue,
     private val handlers: List<SyncOperationHandler>,
     private val applicationScope: ApplicationScope,
-) : EnqueueSyncOperationUseCase, SyncCoordinator {
+) : EnqueueSyncOperationUseCase,
+    SyncCoordinator,
+    GetSyncEngineStatusUseCase {
     private val mutex = Mutex()
+    private val statusFlow = MutableStateFlow<SyncEngineStatus>(SyncEngineStatus.Idle)
+
+    override fun invoke(): StateFlow<SyncEngineStatus> = statusFlow.asStateFlow()
 
     override suspend fun invoke(
         entityTypeId: String,
@@ -58,6 +68,11 @@ internal class SyncEngine(
 
     private suspend fun processAllPending() {
         val pending = syncQueue.getAllPending()
+        if (pending.isEmpty()) {
+            statusFlow.value = SyncEngineStatus.Idle
+            return
+        }
+        statusFlow.value = SyncEngineStatus.Syncing
         for (operation in pending) {
             val handler =
                 handlers.find { it.entityTypeId == operation.entityTypeId }
@@ -75,9 +90,12 @@ internal class SyncEngine(
                 }
                 SyncOperationResult.Failure -> {
                     LH.logger.w { "Sync operation ${operation.id} failed, stopping processing." }
+                    val remainingCount = syncQueue.getAllPending().size
+                    statusFlow.value = SyncEngineStatus.Failed(pendingCount = remainingCount)
                     return
                 }
             }
         }
+        statusFlow.value = SyncEngineStatus.Idle
     }
 }

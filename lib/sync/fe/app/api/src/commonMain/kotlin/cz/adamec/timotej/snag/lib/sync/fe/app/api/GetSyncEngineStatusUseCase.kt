@@ -10,18 +10,10 @@
  * Department of Software Engineering
  */
 
-plugins {
-    alias(libs.plugins.snagDrivingFrontendMultiplatformModule)
-}
+package cz.adamec.timotej.snag.lib.sync.fe.app.api
 
-kotlin {
-    sourceSets {
-        commonMain.dependencies {
-            implementation(project(":lib:sync:fe:app:api"))
-        }
-    }
-}
+import kotlinx.coroutines.flow.StateFlow
 
-compose.resources {
-    publicResClass = true
+interface GetSyncEngineStatusUseCase {
+    operator fun invoke(): StateFlow<SyncEngineStatus>
 }

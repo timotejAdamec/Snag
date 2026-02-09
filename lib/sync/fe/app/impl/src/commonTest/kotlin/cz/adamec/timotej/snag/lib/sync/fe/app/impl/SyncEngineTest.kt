@@ -13,11 +13,12 @@
 package cz.adamec.timotej.snag.lib.sync.fe.app.impl
 
 import cz.adamec.timotej.snag.lib.core.common.ApplicationScope
-import cz.adamec.timotej.snag.lib.sync.fe.model.SyncOperationType
+import cz.adamec.timotej.snag.lib.sync.fe.app.api.SyncEngineStatus
 import cz.adamec.timotej.snag.lib.sync.fe.app.api.handler.SyncOperationHandler
 import cz.adamec.timotej.snag.lib.sync.fe.app.api.handler.SyncOperationResult
 import cz.adamec.timotej.snag.lib.sync.fe.app.impl.internal.SyncEngine
 import cz.adamec.timotej.snag.lib.sync.fe.driven.test.FakeSyncQueue
+import cz.adamec.timotej.snag.lib.sync.fe.model.SyncOperationType
 import cz.adamec.timotej.snag.lib.sync.fe.ports.SyncQueue
 import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -31,12 +32,12 @@ import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.test.assertIs
 import kotlin.test.assertTrue
 import kotlin.uuid.Uuid
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class SyncEngineTest : FrontendKoinInitializedTest() {
-
     private val fakeSyncQueue: FakeSyncQueue by inject()
     private val applicationScope: ApplicationScope by inject()
 
@@ -162,6 +163,66 @@ class SyncEngineTest : FrontendKoinInitializedTest() {
 
             assertTrue(fakeSyncQueue.getAllPending().isEmpty())
             assertEquals(3, handler.executedOperations.size)
+        }
+
+    @Test
+    fun `status is Idle when queue is empty`() =
+        runTest(testDispatcher) {
+            val engine = createEngine(emptyList())
+
+            assertEquals(SyncEngineStatus.Idle, engine.invoke().value)
+        }
+
+    @Test
+    fun `status transitions to Syncing when processing starts`() =
+        runTest(testDispatcher) {
+            val handler = TestSyncHandler("project", SyncOperationResult.Success)
+            val engine = createEngine(listOf(handler))
+
+            engine.invoke("project", Uuid.random(), SyncOperationType.UPSERT)
+            advanceUntilIdle()
+
+            // After processing completes successfully, status returns to Idle
+            assertEquals(SyncEngineStatus.Idle, engine.invoke().value)
+        }
+
+    @Test
+    fun `status transitions to Failed on handler failure`() =
+        runTest(testDispatcher) {
+            val handler = TestSyncHandler("project", SyncOperationResult.Failure)
+            val engine = createEngine(listOf(handler))
+
+            engine.invoke("project", Uuid.random(), SyncOperationType.UPSERT)
+            advanceUntilIdle()
+
+            val status = engine.invoke().value
+            assertIs<SyncEngineStatus.Failed>(status)
+            assertEquals(1, status.pendingCount)
+        }
+
+    @Test
+    fun `status returns to Idle after all operations succeed`() =
+        runTest(testDispatcher) {
+            var shouldFail = true
+            val handler =
+                object : SyncOperationHandler {
+                    override val entityTypeId = "project"
+
+                    override suspend fun execute(
+                        entityId: Uuid,
+                        operationType: SyncOperationType,
+                    ): SyncOperationResult = if (shouldFail) SyncOperationResult.Failure else SyncOperationResult.Success
+                }
+            val engine = createEngine(listOf(handler))
+
+            engine.invoke("project", Uuid.random(), SyncOperationType.UPSERT)
+            advanceUntilIdle()
+            assertIs<SyncEngineStatus.Failed>(engine.invoke().value)
+
+            shouldFail = false
+            engine.invoke("project", Uuid.random(), SyncOperationType.UPSERT)
+            advanceUntilIdle()
+            assertEquals(SyncEngineStatus.Idle, engine.invoke().value)
         }
 
     private class TestSyncHandler(
