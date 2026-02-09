@@ -10,8 +10,8 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.shared.rules.business
+package cz.adamec.timotej.snag.shared.rules.business.api
 
-class PhoneNumberRule {
-    operator fun invoke(phoneNumber: String): Boolean = phoneNumber.isNotBlank() && phoneNumber.none { it.isLetter() }
+interface EmailFormatRule {
+    operator fun invoke(email: String): Boolean
 }

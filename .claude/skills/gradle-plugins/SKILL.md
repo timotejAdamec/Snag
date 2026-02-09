@@ -44,11 +44,6 @@ feat/<feature>/
         └── test/            → snagBackendModule
 ```
 
-feat/shared/
-├── rules/
-│   └── business/            → snagMultiplatformModule
-```
-
 Applied in `build.gradle.kts` as: `alias(libs.plugins.<alias>)`
 
 ## Plugin inheritance chain

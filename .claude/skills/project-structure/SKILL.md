@@ -39,7 +39,7 @@ Each feature follows hexagonal architecture with these layers:
 ### Shared modules (`feat/shared/`)
 
 - **`shared/database/`** — Shared database infrastructure
-- **`shared/rules/business/`** — Cross-cutting business rules (`*Rule` naming). Auto-wired to all feature business modules.
+- **`shared/rules/business/`** — Cross-cutting business rules (`api/` + `impl/`). Auto-wired to all feature modules.
 
 ### Library modules (`lib/`)
 

@@ -24,6 +24,7 @@ import cz.adamec.timotej.snag.lib.core.be.backendCoreModule
 import cz.adamec.timotej.snag.projects.be.app.impl.di.projectsAppModule
 import cz.adamec.timotej.snag.projects.be.driven.impl.di.projectsDrivenModule
 import cz.adamec.timotej.snag.projects.be.driving.impl.di.projectsDrivingModule
+import cz.adamec.timotej.snag.shared.rules.business.impl.di.sharedRulesModule
 import cz.adamec.timotej.snag.structures.be.app.impl.di.structuresAppModule
 import cz.adamec.timotej.snag.structures.be.driven.impl.di.structuresDrivenModule
 import cz.adamec.timotej.snag.structures.be.driving.impl.di.structuresDrivingModule
@@ -35,6 +36,7 @@ val backendModulesAggregate =
             backendCoreModule,
             configurationModule,
             sharedDatabaseModule,
+            sharedRulesModule,
             projectsDrivingModule,
             projectsDrivenModule,
             projectsAppModule,

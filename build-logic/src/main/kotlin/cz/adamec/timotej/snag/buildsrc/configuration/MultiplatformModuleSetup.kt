@@ -121,11 +121,10 @@ internal fun Project.configureKotlinMultiplatformModule() {
                     api(project("$drivenDirectoryPath:ports"))
                 }
 
-                if (this@configureKotlinMultiplatformModule.name == "business" &&
-                    !this@configureKotlinMultiplatformModule.path.contains(":shared:") &&
-                    hasFolderInPath(":feat:shared:rules", "business")
+                if (this@configureKotlinMultiplatformModule.path.startsWith(":feat:") &&
+                    !this@configureKotlinMultiplatformModule.path.contains(":shared:rules:")
                 ) {
-                    api(project(":feat:shared:rules:business"))
+                    api(project(":feat:shared:rules:business:api"))
                 }
 
                 if (!path.contains("core")) {

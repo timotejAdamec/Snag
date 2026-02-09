@@ -54,9 +54,8 @@ The `contract` and `impl` split is typical for backend driving code.
 
 The `shared` directory contains cross-cutting concerns used by multiple features:
 - `database/` — Shared database infrastructure (`fe/`, `be/impl`, `be/test`).
-- `rules/business/` — Cross-cutting business-layer validation rules using the `*Rule` naming
-  convention. Classes with `operator fun invoke(input): Boolean`. Auto-wired as a dependency to all
-  feature `business` modules via the convention plugin.
+- `rules/business/` — Cross-cutting business-layer validation rules (`api/impl` split).
+  Auto-wired as a dependency to all feature modules via the convention plugin.
 
 ### Cross-feature dependencies
 

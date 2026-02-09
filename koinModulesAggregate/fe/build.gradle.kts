@@ -21,6 +21,7 @@ kotlin {
             implementation(projects.lib.core.fe)
             implementation(projects.lib.network.fe)
             implementation(projects.feat.shared.database.fe)
+            implementation(projects.feat.shared.rules.business.impl)
 
             // Sync layer
             implementation(projects.lib.sync.fe.driven.impl)

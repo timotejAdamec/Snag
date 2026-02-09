@@ -30,6 +30,7 @@ import cz.adamec.timotej.snag.projects.fe.app.impl.di.projectsAppModule
 import cz.adamec.timotej.snag.projects.fe.driven.di.projectsDrivenModule
 import cz.adamec.timotej.snag.projects.fe.driving.api.di.projectsDrivingApiModule
 import cz.adamec.timotej.snag.projects.fe.driving.impl.di.projectsDrivingImplModule
+import cz.adamec.timotej.snag.shared.rules.business.impl.di.sharedRulesModule
 import cz.adamec.timotej.snag.structures.fe.app.impl.di.structuresAppModule
 import cz.adamec.timotej.snag.structures.fe.driven.di.structuresDrivenModule
 import cz.adamec.timotej.snag.structures.fe.driving.impl.di.structuresDrivingImplModule
@@ -41,6 +42,7 @@ val frontendModulesAggregate =
             frontendCoreModule,
             networkModule,
             databaseModule,
+            sharedRulesModule,
             syncDrivenModule,
             syncAppModule,
             projectsAppModule,
