@@ -50,6 +50,7 @@ import snag.lib.design.fe.generated.resources.sync_status_synced
 import snag.lib.design.fe.generated.resources.sync_status_syncing
 
 private const val SYNCED_DISPLAY_DURATION_MS = 2_000L
+private val ICON_SIZE = 16.dp
 
 @Composable
 fun SyncStatusBar(
@@ -94,7 +95,7 @@ fun SyncStatusBar(
                     Icon(
                         painter = painterResource(Res.drawable.ic_cloud_done),
                         contentDescription = null,
-                        modifier = Modifier.size(16.dp),
+                        modifier = Modifier.size(ICON_SIZE),
                         tint = contentColor,
                     )
                 }
@@ -105,7 +106,7 @@ fun SyncStatusBar(
                 label = stringResource(Res.string.sync_status_syncing)
                 icon = {
                     CircularProgressIndicator(
-                        modifier = Modifier.size(16.dp),
+                        modifier = Modifier.size(ICON_SIZE),
                         color = contentColor,
                         strokeWidth = 2.dp,
                     )
@@ -119,7 +120,7 @@ fun SyncStatusBar(
                     Icon(
                         painter = painterResource(Res.drawable.ic_cloud_off),
                         contentDescription = null,
-                        modifier = Modifier.size(16.dp),
+                        modifier = Modifier.size(ICON_SIZE),
                         tint = contentColor,
                     )
                 }
@@ -132,7 +133,7 @@ fun SyncStatusBar(
                     Icon(
                         painter = painterResource(Res.drawable.ic_sync_problem),
                         contentDescription = null,
-                        modifier = Modifier.size(16.dp),
+                        modifier = Modifier.size(ICON_SIZE),
                         tint = contentColor,
                     )
                 }
