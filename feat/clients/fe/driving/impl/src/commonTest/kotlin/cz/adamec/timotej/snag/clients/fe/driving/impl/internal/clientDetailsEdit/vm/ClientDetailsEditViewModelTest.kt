@@ -34,15 +34,17 @@ import org.koin.core.module.Module
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
+import org.koin.test.get
 import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
+import kotlin.test.assertNotNull
+import kotlin.test.assertNull
 import kotlin.uuid.Uuid
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class ClientDetailsEditViewModelTest : FrontendKoinInitializedTest() {
-
     private val fakeClientsDb: FakeClientsDb by inject()
 
     private val getClientUseCase: GetClientUseCase by inject()
@@ -62,6 +64,8 @@ class ClientDetailsEditViewModelTest : FrontendKoinInitializedTest() {
             clientId = clientId,
             getClientUseCase = getClientUseCase,
             saveClientUseCase = saveClientUseCase,
+            emailFormatRule = get(),
+            phoneNumberRule = get(),
         )
 
     @Test
@@ -142,15 +146,72 @@ class ClientDetailsEditViewModelTest : FrontendKoinInitializedTest() {
         }
 
     @Test
-    fun `onSaveClient with empty name sends error`() =
+    fun `onSaveClient with empty name shows inline error`() =
         runTest {
             val viewModel = createViewModel()
 
             viewModel.onSaveClient()
+            advanceUntilIdle()
 
-            val error = viewModel.errorsFlow.first()
-            assertIs<UiError.CustomUserMessage>(error)
-            assertEquals("Client name cannot be empty", error.message)
+            assertNotNull(viewModel.state.value.clientNameError)
+        }
+
+    @Test
+    fun `onSaveClient with invalid email shows inline error`() =
+        runTest {
+            val viewModel = createViewModel()
+            viewModel.onClientNameChange("Name")
+            viewModel.onClientEmailChange("invalid")
+
+            viewModel.onSaveClient()
+            advanceUntilIdle()
+
+            assertNotNull(viewModel.state.value.clientEmailError)
+            assertNull(viewModel.state.value.clientNameError)
+        }
+
+    @Test
+    fun `onSaveClient with invalid phone shows inline error`() =
+        runTest {
+            val viewModel = createViewModel()
+            viewModel.onClientNameChange("Name")
+            viewModel.onClientPhoneNumberChange("abc")
+
+            viewModel.onSaveClient()
+            advanceUntilIdle()
+
+            assertNotNull(viewModel.state.value.clientPhoneNumberError)
+            assertNull(viewModel.state.value.clientNameError)
+        }
+
+    @Test
+    fun `onSaveClient with valid optional fields passes validation`() =
+        runTest {
+            val viewModel = createViewModel()
+            viewModel.onClientNameChange("Name")
+            viewModel.onClientEmailChange("test@example.com")
+            viewModel.onClientPhoneNumberChange("+420123456789")
+
+            viewModel.onSaveClient()
+
+            val savedId = viewModel.saveEventFlow.first()
+            assertNotNull(savedId)
+            assertNull(viewModel.state.value.clientNameError)
+            assertNull(viewModel.state.value.clientEmailError)
+            assertNull(viewModel.state.value.clientPhoneNumberError)
+        }
+
+    @Test
+    fun `editing field clears its error`() =
+        runTest {
+            val viewModel = createViewModel()
+            viewModel.onSaveClient()
+            advanceUntilIdle()
+            assertNotNull(viewModel.state.value.clientNameError)
+
+            viewModel.onClientNameChange("N")
+
+            assertNull(viewModel.state.value.clientNameError)
         }
 
     @Test

@@ -108,6 +108,8 @@ val clientsDrivingImplModule =
                 clientId = clientId,
                 getClientUseCase = get(),
                 saveClientUseCase = get(),
+                emailFormatRule = get(),
+                phoneNumberRule = get(),
             )
         }
     }

@@ -51,6 +51,7 @@ import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
+import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.uuid.Uuid
 
@@ -141,29 +142,46 @@ class ProjectDetailsEditViewModelTest : FrontendKoinInitializedTest() {
         }
 
     @Test
-    fun `onSaveProject with empty name sends error`() =
+    fun `onSaveProject with empty name shows inline error`() =
         runTest {
             val viewModel = createViewModel()
             viewModel.onProjectAddressChange("Address")
 
             viewModel.onSaveProject()
+            advanceUntilIdle()
 
-            val error = viewModel.errorsFlow.first()
-            assertIs<UiError.CustomUserMessage>(error)
-            assertEquals("Project name cannot be empty", error.message)
+            assertNotNull(viewModel.state.value.projectNameError)
+            assertNull(viewModel.state.value.projectAddressError)
         }
 
     @Test
-    fun `onSaveProject with empty address sends error`() =
+    fun `onSaveProject with empty address shows inline error`() =
         runTest {
             val viewModel = createViewModel()
             viewModel.onProjectNameChange("Name")
 
             viewModel.onSaveProject()
+            advanceUntilIdle()
 
-            val error = viewModel.errorsFlow.first()
-            assertIs<UiError.CustomUserMessage>(error)
-            assertEquals("Project address cannot be empty", error.message)
+            assertNotNull(viewModel.state.value.projectAddressError)
+            assertNull(viewModel.state.value.projectNameError)
+        }
+
+    @Test
+    fun `editing field clears its error`() =
+        runTest {
+            val viewModel = createViewModel()
+
+            viewModel.onSaveProject()
+            advanceUntilIdle()
+            assertNotNull(viewModel.state.value.projectNameError)
+            assertNotNull(viewModel.state.value.projectAddressError)
+
+            viewModel.onProjectNameChange("N")
+            assertNull(viewModel.state.value.projectNameError)
+
+            viewModel.onProjectAddressChange("A")
+            assertNull(viewModel.state.value.projectAddressError)
         }
 
     @Test

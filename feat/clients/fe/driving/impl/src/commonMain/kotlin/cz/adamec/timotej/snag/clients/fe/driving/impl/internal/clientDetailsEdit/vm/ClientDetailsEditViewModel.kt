@@ -19,8 +19,9 @@ import cz.adamec.timotej.snag.clients.fe.app.api.SaveClientUseCase
 import cz.adamec.timotej.snag.clients.fe.app.api.model.SaveClientRequest
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
-import cz.adamec.timotej.snag.lib.design.fe.error.UiError.CustomUserMessage
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError.Unknown
+import cz.adamec.timotej.snag.shared.rules.business.api.EmailFormatRule
+import cz.adamec.timotej.snag.shared.rules.business.api.PhoneNumberRule
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -29,12 +30,18 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.core.annotation.InjectedParam
+import snag.lib.design.fe.generated.resources.Res
+import snag.lib.design.fe.generated.resources.error_field_required
+import snag.lib.design.fe.generated.resources.error_invalid_email
+import snag.lib.design.fe.generated.resources.error_invalid_phone
 import kotlin.uuid.Uuid
 
 internal class ClientDetailsEditViewModel(
     @InjectedParam private val clientId: Uuid?,
     private val getClientUseCase: GetClientUseCase,
     private val saveClientUseCase: SaveClientUseCase,
+    private val emailFormatRule: EmailFormatRule,
+    private val phoneNumberRule: PhoneNumberRule,
 ) : ViewModel() {
     private val _state: MutableStateFlow<ClientDetailsEditUiState> =
         MutableStateFlow(ClientDetailsEditUiState())
@@ -75,7 +82,7 @@ internal class ClientDetailsEditViewModel(
         }
 
     fun onClientNameChange(updatedName: String) {
-        _state.update { it.copy(clientName = updatedName) }
+        _state.update { it.copy(clientName = updatedName, clientNameError = null) }
     }
 
     fun onClientAddressChange(updatedAddress: String) {
@@ -83,17 +90,38 @@ internal class ClientDetailsEditViewModel(
     }
 
     fun onClientPhoneNumberChange(updatedPhoneNumber: String) {
-        _state.update { it.copy(clientPhoneNumber = updatedPhoneNumber) }
+        _state.update { it.copy(clientPhoneNumber = updatedPhoneNumber, clientPhoneNumberError = null) }
     }
 
     fun onClientEmailChange(updatedEmail: String) {
-        _state.update { it.copy(clientEmail = updatedEmail) }
+        _state.update { it.copy(clientEmail = updatedEmail, clientEmailError = null) }
     }
 
     fun onSaveClient() =
         viewModelScope.launch {
-            if (state.value.clientName.isBlank()) {
-                errorEventsChannel.send(CustomUserMessage("Client name cannot be empty"))
+            val current = state.value
+            val nameError = if (current.clientName.isBlank()) Res.string.error_field_required else null
+            val phoneError =
+                if (current.clientPhoneNumber.isNotBlank() && !phoneNumberRule(current.clientPhoneNumber)) {
+                    Res.string.error_invalid_phone
+                } else {
+                    null
+                }
+            val emailError =
+                if (current.clientEmail.isNotBlank() && !emailFormatRule(current.clientEmail)) {
+                    Res.string.error_invalid_email
+                } else {
+                    null
+                }
+
+            if (nameError != null || phoneError != null || emailError != null) {
+                _state.update {
+                    it.copy(
+                        clientNameError = nameError,
+                        clientPhoneNumberError = phoneError,
+                        clientEmailError = emailError,
+                    )
+                }
             } else {
                 saveClient()
             }

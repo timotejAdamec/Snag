@@ -114,7 +114,14 @@ internal fun StructureDetailsEditContent(
                     Modifier
                         .fillMaxWidth(),
                 label = { Text(text = stringResource(Res.string.structure_name_label) + "*") },
-                supportingText = { Text(text = stringResource(Res.string.required) + "*") },
+                isError = state.structureNameError != null,
+                supportingText = {
+                    Text(
+                        text =
+                            state.structureNameError?.let { stringResource(it) }
+                                ?: (stringResource(Res.string.required) + "*"),
+                    )
+                },
                 value = state.structureName,
                 onValueChange = {
                     onStructureNameChange(it)

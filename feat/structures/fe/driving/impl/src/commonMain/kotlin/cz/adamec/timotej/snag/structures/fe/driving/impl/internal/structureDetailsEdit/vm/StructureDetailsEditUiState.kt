@@ -12,9 +12,11 @@
 
 package cz.adamec.timotej.snag.structures.fe.driving.impl.internal.structureDetailsEdit.vm
 
+import org.jetbrains.compose.resources.StringResource
 import kotlin.uuid.Uuid
 
 internal data class StructureDetailsEditUiState(
     val structureName: String = "",
     val projectId: Uuid? = null,
+    val structureNameError: StringResource? = null,
 )

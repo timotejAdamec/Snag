@@ -17,7 +17,6 @@ import androidx.lifecycle.viewModelScope
 import cz.adamec.timotej.snag.clients.fe.app.api.GetClientsUseCase
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
-import cz.adamec.timotej.snag.lib.design.fe.error.UiError.CustomUserMessage
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError.Unknown
 import cz.adamec.timotej.snag.projects.fe.app.api.GetProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.SaveProjectUseCase
@@ -31,6 +30,8 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.core.annotation.InjectedParam
+import snag.lib.design.fe.generated.resources.Res
+import snag.lib.design.fe.generated.resources.error_field_required
 import kotlin.uuid.Uuid
 
 internal class ProjectDetailsEditViewModel(
@@ -146,20 +147,26 @@ internal class ProjectDetailsEditViewModel(
     }
 
     fun onProjectNameChange(updatedName: String) {
-        _state.update { it.copy(projectName = updatedName) }
+        _state.update { it.copy(projectName = updatedName, projectNameError = null) }
     }
 
     fun onProjectAddressChange(updatedAddress: String) {
-        _state.update { it.copy(projectAddress = updatedAddress) }
+        _state.update { it.copy(projectAddress = updatedAddress, projectAddressError = null) }
     }
 
     fun onSaveProject() =
         viewModelScope.launch {
-            if (state.value.projectName.isBlank()) {
-                // TODO use string provider
-                errorEventsChannel.send(CustomUserMessage("Project name cannot be empty"))
-            } else if (state.value.projectAddress.isBlank()) {
-                errorEventsChannel.send(CustomUserMessage("Project address cannot be empty"))
+            val current = state.value
+            val nameError = if (current.projectName.isBlank()) Res.string.error_field_required else null
+            val addressError = if (current.projectAddress.isBlank()) Res.string.error_field_required else null
+
+            if (nameError != null || addressError != null) {
+                _state.update {
+                    it.copy(
+                        projectNameError = nameError,
+                        projectAddressError = addressError,
+                    )
+                }
             } else {
                 saveProject()
             }
