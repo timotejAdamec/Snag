@@ -38,8 +38,8 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import cz.adamec.timotej.snag.feat.findings.business.Importance
+import cz.adamec.timotej.snag.lib.design.fe.dialog.FullScreenDialogMeasurements
 import cz.adamec.timotej.snag.feat.findings.business.Term
 import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetailsEdit.vm.FindingDetailsEditUiState
 import cz.adamec.timotej.snag.lib.design.fe.theme.SnagTheme
@@ -63,8 +63,6 @@ import snag.lib.design.fe.generated.resources.close
 import snag.lib.design.fe.generated.resources.ic_close
 import snag.lib.design.fe.generated.resources.save
 import snag.lib.design.fe.generated.resources.Res as DesignRes
-
-private val HorizontalPadding = 16.dp
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Suppress("LongMethod")
@@ -121,7 +119,7 @@ internal fun FindingDetailsEditContent(
                 },
                 contentPadding =
                     PaddingValues(
-                        end = HorizontalPadding,
+                        end = FullScreenDialogMeasurements.HorizontalPadding,
                     ),
             )
         },
@@ -133,8 +131,8 @@ internal fun FindingDetailsEditContent(
             modifier =
                 Modifier
                     .padding(paddingValues)
-                    .padding(horizontal = HorizontalPadding),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
+                    .padding(horizontal = FullScreenDialogMeasurements.HorizontalPadding),
+            verticalArrangement = Arrangement.spacedBy(FullScreenDialogMeasurements.ElementSpacing),
         ) {
             OutlinedTextField(
                 modifier =

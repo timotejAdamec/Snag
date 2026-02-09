@@ -29,7 +29,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import cz.adamec.timotej.snag.lib.design.fe.dialog.FullScreenDialogMeasurements
 import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.structureDetailsEdit.vm.StructureDetailsEditUiState
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -41,8 +41,6 @@ import snag.lib.design.fe.generated.resources.close
 import snag.lib.design.fe.generated.resources.ic_close
 import snag.lib.design.fe.generated.resources.save
 import snag.lib.design.fe.generated.resources.Res as DesignRes
-
-private val HorizontalPadding = 16.dp
 
 @Suppress("LongMethod")
 @Composable
@@ -95,7 +93,7 @@ internal fun StructureDetailsEditContent(
                 },
                 contentPadding =
                     PaddingValues(
-                        end = HorizontalPadding,
+                        end = FullScreenDialogMeasurements.HorizontalPadding,
                     ),
             )
         },
@@ -107,9 +105,9 @@ internal fun StructureDetailsEditContent(
             modifier =
                 Modifier
                     .padding(paddingValues)
-                    .padding(horizontal = HorizontalPadding)
+                    .padding(horizontal = FullScreenDialogMeasurements.HorizontalPadding)
                     .consumeWindowInsets(paddingValues),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(FullScreenDialogMeasurements.ElementSpacing),
         ) {
             OutlinedTextField(
                 modifier =

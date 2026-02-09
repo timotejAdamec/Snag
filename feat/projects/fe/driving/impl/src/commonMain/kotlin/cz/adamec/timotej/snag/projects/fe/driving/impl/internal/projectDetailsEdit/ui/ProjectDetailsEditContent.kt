@@ -39,7 +39,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import cz.adamec.timotej.snag.lib.design.fe.dialog.FullScreenDialogMeasurements
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetailsEdit.vm.ProjectDetailsEditUiState
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -58,8 +58,6 @@ import snag.lib.design.fe.generated.resources.ic_location
 import snag.lib.design.fe.generated.resources.save
 import kotlin.uuid.Uuid
 import snag.lib.design.fe.generated.resources.Res as DesignRes
-
-private val HorizontalPadding = 16.dp
 
 @Suppress("LongMethod")
 @Composable
@@ -116,7 +114,7 @@ internal fun ProjectDetailsEditContent(
                 },
                 contentPadding =
                     PaddingValues(
-                        end = HorizontalPadding,
+                        end = FullScreenDialogMeasurements.HorizontalPadding,
                     ),
             )
         },
@@ -128,9 +126,9 @@ internal fun ProjectDetailsEditContent(
             modifier =
                 Modifier
                     .padding(paddingValues)
-                    .padding(horizontal = HorizontalPadding)
+                    .padding(horizontal = FullScreenDialogMeasurements.HorizontalPadding)
                     .consumeWindowInsets(paddingValues),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(FullScreenDialogMeasurements.ElementSpacing),
         ) {
             OutlinedTextField(
                 modifier =
