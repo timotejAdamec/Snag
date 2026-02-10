@@ -78,12 +78,13 @@ private fun toFindingType(
                 importance = importance?.let { Importance.valueOf(it) } ?: Importance.MEDIUM,
                 term = term?.let { Term.valueOf(it) } ?: Term.T1,
             )
+
         DB_TYPE_UNVISITED -> FindingType.Unvisited
         DB_TYPE_NOTE -> FindingType.Note
-        else -> {
-            LH.logger.e { "Unknown finding type in DB: '$type', defaulting to Classic" }
-            FindingType.Classic()
-        }
+        else ->
+            FindingType.Classic().also {
+                LH.logger.e { "Unknown finding type in DB: '$type', defaulting to Classic" }
+            }
     }
 
 internal fun FrontendFinding.toEntity() =

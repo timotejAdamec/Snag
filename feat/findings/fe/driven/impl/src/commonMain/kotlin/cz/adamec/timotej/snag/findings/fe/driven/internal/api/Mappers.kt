@@ -32,12 +32,13 @@ internal fun FindingApiDto.toModel(): FrontendFinding {
                     importance = importance?.let { Importance.valueOf(it) } ?: Importance.MEDIUM,
                     term = term?.let { Term.valueOf(it) } ?: Term.T1,
                 )
+
             FindingTypeStringApiDto.UNVISITED -> FindingType.Unvisited
             FindingTypeStringApiDto.NOTE -> FindingType.Note
-            else -> {
-                LH.logger.e { "Unknown finding type from API: '$type', defaulting to Classic" }
-                FindingType.Classic()
-            }
+            else ->
+                FindingType.Classic().also {
+                    LH.logger.e { "Unknown finding type from API: '$type', defaulting to Classic" }
+                }
         }
     return FrontendFinding(
         finding =
@@ -64,6 +65,7 @@ internal fun FrontendFinding.toPutApiDto(): PutFindingApiDto {
         when (val type = finding.type) {
             is FindingType.Classic ->
                 Triple(FindingTypeStringApiDto.CLASSIC, type.importance.name, type.term.name)
+
             is FindingType.Unvisited -> Triple(FindingTypeStringApiDto.UNVISITED, null, null)
             is FindingType.Note -> Triple(FindingTypeStringApiDto.NOTE, null, null)
         }
