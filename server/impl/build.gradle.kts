@@ -44,6 +44,8 @@ dependencies {
     implementation(projects.server.api)
     implementation(projects.koinModulesAggregate.be)
     implementation(projects.lib.configuration.be.api)
+    implementation(projects.lib.storage.be.api)
+    implementation(projects.lib.storage.be.impl)
     implementation(projects.feat.projects.be.ports)
     implementation(projects.feat.clients.be.ports)
     implementation(projects.feat.structures.be.ports)

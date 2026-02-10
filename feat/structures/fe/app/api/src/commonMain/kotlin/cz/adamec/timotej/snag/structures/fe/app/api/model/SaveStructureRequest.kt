@@ -18,4 +18,5 @@ data class SaveStructureRequest(
     val id: Uuid?,
     val projectId: Uuid,
     val name: String,
+    val floorPlanUrl: String? = null,
 )

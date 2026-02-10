@@ -18,4 +18,5 @@ dependencies {
     api(projects.testInfra.common)
     implementation(projects.koinModulesAggregate.be)
     implementation(projects.feat.shared.database.be.test)
+    implementation(projects.lib.storage.be.test)
 }

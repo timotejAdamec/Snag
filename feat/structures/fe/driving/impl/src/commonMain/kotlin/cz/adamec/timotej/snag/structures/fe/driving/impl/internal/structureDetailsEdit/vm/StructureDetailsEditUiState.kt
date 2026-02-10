@@ -19,4 +19,7 @@ internal data class StructureDetailsEditUiState(
     val structureName: String = "",
     val projectId: Uuid? = null,
     val structureNameError: StringResource? = null,
+    val floorPlanUrl: String? = null,
+    val pendingUploadUrl: String? = null,
+    val isUploadingImage: Boolean = false,
 )
