@@ -11,5 +11,8 @@ kotlin {
             implementation(project(":lib:sync:fe:model"))
             implementation(project(":lib:database:fe"))
         }
+        jvmTest.dependencies {
+            implementation(libs.sqldelight.jvm.driver)
+        }
     }
 }
