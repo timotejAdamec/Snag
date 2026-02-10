@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.vm
 
+import cz.adamec.timotej.snag.feat.inspections.fe.model.FrontendInspection
 import cz.adamec.timotej.snag.feat.structures.fe.model.FrontendStructure
 import cz.adamec.timotej.snag.projects.fe.model.FrontendProject
 import kotlinx.collections.immutable.ImmutableList
@@ -20,9 +21,11 @@ import kotlinx.collections.immutable.persistentListOf
 internal data class ProjectDetailsUiState(
     val projectStatus: ProjectDetailsUiStatus = ProjectDetailsUiStatus.LOADING,
     val structureStatus: StructuresUiStatus = StructuresUiStatus.LOADING,
+    val inspectionStatus: InspectionsUiStatus = InspectionsUiStatus.LOADING,
     val isBeingDeleted: Boolean = false,
     val project: FrontendProject? = null,
     val structures: ImmutableList<FrontendStructure> = persistentListOf(),
+    val inspections: ImmutableList<FrontendInspection> = persistentListOf(),
 ) {
     val canInvokeDeletion = projectStatus == ProjectDetailsUiStatus.LOADED && !isBeingDeleted
 }
@@ -36,6 +39,12 @@ internal enum class ProjectDetailsUiStatus {
 }
 
 internal enum class StructuresUiStatus {
+    ERROR,
+    LOADING,
+    LOADED,
+}
+
+internal enum class InspectionsUiStatus {
     ERROR,
     LOADING,
     LOADED,

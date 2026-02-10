@@ -41,6 +41,7 @@ dependencies {
     implementation(projects.feat.clients.be.ports)
     implementation(projects.feat.structures.be.ports)
     implementation(projects.feat.findings.be.ports)
+    implementation(projects.feat.inspections.be.ports)
 
     implementation(libs.ktor.server.core)
     implementation(libs.ktor.server.netty)

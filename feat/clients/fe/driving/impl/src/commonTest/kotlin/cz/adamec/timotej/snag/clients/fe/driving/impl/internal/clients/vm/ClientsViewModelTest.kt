@@ -12,6 +12,14 @@
 
 package cz.adamec.timotej.snag.clients.fe.driving.impl.internal.clients.vm
 
+import cz.adamec.timotej.snag.feat.inspections.fe.driven.test.FakeInspectionsDb
+import cz.adamec.timotej.snag.feat.inspections.fe.driven.test.FakeInspectionsPullSyncCoordinator
+import cz.adamec.timotej.snag.feat.inspections.fe.driven.test.FakeInspectionsPullSyncTimestampDataSource
+import cz.adamec.timotej.snag.feat.inspections.fe.driven.test.FakeInspectionsSync
+import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionsDb
+import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionsPullSyncCoordinator
+import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionsPullSyncTimestampDataSource
+import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionsSync
 import cz.adamec.timotej.snag.clients.business.Client
 import cz.adamec.timotej.snag.clients.fe.app.api.GetClientsUseCase
 import cz.adamec.timotej.snag.clients.fe.driven.test.FakeClientsApi
@@ -54,6 +62,10 @@ class ClientsViewModelTest : FrontendKoinInitializedTest() {
                 singleOf(::FakeClientsApi) bind ClientsApi::class
                 singleOf(::FakeClientsPullSyncCoordinator) bind ClientsPullSyncCoordinator::class
                 singleOf(::FakeClientsPullSyncTimestampDataSource) bind ClientsPullSyncTimestampDataSource::class
+                singleOf(::FakeInspectionsDb) bind InspectionsDb::class
+                singleOf(::FakeInspectionsSync) bind InspectionsSync::class
+                singleOf(::FakeInspectionsPullSyncCoordinator) bind InspectionsPullSyncCoordinator::class
+                singleOf(::FakeInspectionsPullSyncTimestampDataSource) bind InspectionsPullSyncTimestampDataSource::class
             },
         )
 

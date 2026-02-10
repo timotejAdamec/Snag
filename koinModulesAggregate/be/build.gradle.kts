@@ -40,4 +40,9 @@ dependencies {
     implementation(projects.feat.findings.be.driving.impl)
     implementation(projects.feat.findings.be.driven.impl)
     implementation(projects.feat.findings.be.app.impl)
+
+    // Inspections feature
+    implementation(projects.feat.inspections.be.driving.impl)
+    implementation(projects.feat.inspections.be.driven.impl)
+    implementation(projects.feat.inspections.be.app.impl)
 }

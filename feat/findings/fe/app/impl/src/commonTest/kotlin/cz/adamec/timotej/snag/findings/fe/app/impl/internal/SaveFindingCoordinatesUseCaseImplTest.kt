@@ -16,6 +16,14 @@ import cz.adamec.timotej.snag.feat.findings.business.Finding
 import cz.adamec.timotej.snag.feat.findings.business.FindingType
 import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
 import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
+import cz.adamec.timotej.snag.feat.inspections.fe.driven.test.FakeInspectionsDb
+import cz.adamec.timotej.snag.feat.inspections.fe.driven.test.FakeInspectionsPullSyncCoordinator
+import cz.adamec.timotej.snag.feat.inspections.fe.driven.test.FakeInspectionsPullSyncTimestampDataSource
+import cz.adamec.timotej.snag.feat.inspections.fe.driven.test.FakeInspectionsSync
+import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionsDb
+import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionsPullSyncCoordinator
+import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionsPullSyncTimestampDataSource
+import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionsSync
 import cz.adamec.timotej.snag.findings.fe.app.api.SaveFindingCoordinatesUseCase
 import cz.adamec.timotej.snag.findings.fe.app.api.model.SaveFindingCoordinatesRequest
 import cz.adamec.timotej.snag.findings.fe.driven.test.FakeFindingsDb
@@ -65,6 +73,10 @@ class SaveFindingCoordinatesUseCaseImplTest : FrontendKoinInitializedTest() {
             module {
                 singleOf(::FakeFindingsDb) bind FindingsDb::class
                 singleOf(::FakeFindingsSync) bind FindingsSync::class
+                singleOf(::FakeInspectionsDb) bind InspectionsDb::class
+                singleOf(::FakeInspectionsSync) bind InspectionsSync::class
+                singleOf(::FakeInspectionsPullSyncCoordinator) bind InspectionsPullSyncCoordinator::class
+                singleOf(::FakeInspectionsPullSyncTimestampDataSource) bind InspectionsPullSyncTimestampDataSource::class
             },
         )
 

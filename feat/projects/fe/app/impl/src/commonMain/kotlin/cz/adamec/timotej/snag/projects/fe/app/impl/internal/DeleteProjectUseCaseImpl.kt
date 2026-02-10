@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.projects.fe.app.impl.internal
 
+import cz.adamec.timotej.snag.feat.inspections.fe.app.api.CascadeDeleteLocalInspectionsByProjectIdUseCase
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.core.fe.log
 import cz.adamec.timotej.snag.projects.fe.app.api.DeleteProjectUseCase
@@ -25,9 +26,11 @@ class DeleteProjectUseCaseImpl(
     private val projectsDb: ProjectsDb,
     private val projectsSync: ProjectsSync,
     private val cascadeDeleteLocalStructuresByProjectIdUseCase: CascadeDeleteLocalStructuresByProjectIdUseCase,
+    private val cascadeDeleteLocalInspectionsByProjectIdUseCase: CascadeDeleteLocalInspectionsByProjectIdUseCase,
 ) : DeleteProjectUseCase {
     override suspend operator fun invoke(projectId: Uuid): OfflineFirstDataResult<Unit> {
         cascadeDeleteLocalStructuresByProjectIdUseCase(projectId)
+        cascadeDeleteLocalInspectionsByProjectIdUseCase(projectId)
         return projectsDb
             .deleteProject(projectId)
             .also {

@@ -1,0 +1,42 @@
+import cz.adamec.timotej.snag.lib.core.common.Timestamp;
+
+CREATE TABLE IF NOT EXISTS InspectionEntity (
+    id TEXT NOT NULL PRIMARY KEY,
+    projectId TEXT NOT NULL,
+    startedAt INTEGER,
+    endedAt INTEGER,
+    participants TEXT,
+    climate TEXT,
+    note TEXT,
+    updatedAt INTEGER NOT NULL
+);
+
+save:
+INSERT INTO InspectionEntity(id, projectId, startedAt, endedAt, participants, climate, note, updatedAt)
+VALUES ?
+ON CONFLICT(id) DO UPDATE SET
+    projectId = excluded.projectId,
+    startedAt = excluded.startedAt,
+    endedAt = excluded.endedAt,
+    participants = excluded.participants,
+    climate = excluded.climate,
+    note = excluded.note,
+    updatedAt = excluded.updatedAt;
+
+selectByProjectId:
+SELECT * FROM InspectionEntity WHERE projectId = :projectId;
+
+selectById:
+SELECT * FROM InspectionEntity WHERE id = :id;
+
+deleteById:
+DELETE FROM InspectionEntity WHERE id = :id;
+
+selectIdsByProjectId:
+SELECT id FROM InspectionEntity WHERE projectId = :projectId;
+
+deleteByProjectId:
+DELETE FROM InspectionEntity WHERE projectId = :projectId;
+
+deleteAll:
+DELETE FROM InspectionEntity;

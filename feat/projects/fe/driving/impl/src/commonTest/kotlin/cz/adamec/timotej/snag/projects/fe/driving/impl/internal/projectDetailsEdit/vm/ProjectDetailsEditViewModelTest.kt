@@ -25,6 +25,14 @@ import cz.adamec.timotej.snag.clients.fe.ports.ClientsDb
 import cz.adamec.timotej.snag.clients.fe.ports.ClientsPullSyncCoordinator
 import cz.adamec.timotej.snag.clients.fe.ports.ClientsPullSyncTimestampDataSource
 import cz.adamec.timotej.snag.clients.fe.ports.ClientsSync
+import cz.adamec.timotej.snag.feat.inspections.fe.driven.test.FakeInspectionsDb
+import cz.adamec.timotej.snag.feat.inspections.fe.driven.test.FakeInspectionsPullSyncCoordinator
+import cz.adamec.timotej.snag.feat.inspections.fe.driven.test.FakeInspectionsPullSyncTimestampDataSource
+import cz.adamec.timotej.snag.feat.inspections.fe.driven.test.FakeInspectionsSync
+import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionsDb
+import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionsPullSyncCoordinator
+import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionsPullSyncTimestampDataSource
+import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionsSync
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
@@ -75,6 +83,10 @@ class ProjectDetailsEditViewModelTest : FrontendKoinInitializedTest() {
                 singleOf(::FakeClientsSync) bind ClientsSync::class
                 singleOf(::FakeClientsPullSyncCoordinator) bind ClientsPullSyncCoordinator::class
                 singleOf(::FakeClientsPullSyncTimestampDataSource) bind ClientsPullSyncTimestampDataSource::class
+                singleOf(::FakeInspectionsDb) bind InspectionsDb::class
+                singleOf(::FakeInspectionsSync) bind InspectionsSync::class
+                singleOf(::FakeInspectionsPullSyncCoordinator) bind InspectionsPullSyncCoordinator::class
+                singleOf(::FakeInspectionsPullSyncTimestampDataSource) bind InspectionsPullSyncTimestampDataSource::class
             },
         )
 

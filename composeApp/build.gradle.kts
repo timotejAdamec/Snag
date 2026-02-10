@@ -51,6 +51,7 @@ kotlin {
         }
         commonTest.dependencies {
             implementation(projects.feat.findings.fe.ports)
+            implementation(projects.feat.inspections.fe.ports)
             implementation(projects.feat.projects.fe.driving.impl)
         }
         jvmMain.dependencies {

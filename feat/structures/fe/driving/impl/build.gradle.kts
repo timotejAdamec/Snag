@@ -20,6 +20,7 @@ kotlin {
                 implementation(project(":feat:structures:fe:driven:test"))
                 implementation(project(":feat:findings:fe:app:impl"))
                 implementation(project(":feat:findings:fe:driven:test"))
+                implementation(project(":feat:inspections:fe:driven:test"))
             }
         }
     }

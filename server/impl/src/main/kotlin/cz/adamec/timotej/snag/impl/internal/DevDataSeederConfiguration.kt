@@ -22,6 +22,9 @@ import cz.adamec.timotej.snag.feat.findings.business.FindingType
 import cz.adamec.timotej.snag.feat.findings.business.Importance
 import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
 import cz.adamec.timotej.snag.feat.findings.business.Term
+import cz.adamec.timotej.snag.feat.inspections.be.model.BackendInspection
+import cz.adamec.timotej.snag.feat.inspections.be.ports.InspectionsDb
+import cz.adamec.timotej.snag.feat.inspections.business.Inspection
 import cz.adamec.timotej.snag.feat.structures.be.model.BackendStructure
 import cz.adamec.timotej.snag.feat.structures.business.Structure
 import cz.adamec.timotej.snag.findings.be.ports.FindingsDb
@@ -40,6 +43,7 @@ internal class DevDataSeederConfiguration(
     private val clientsDb: ClientsDb,
     private val structuresDb: StructuresDb,
     private val findingsDb: FindingsDb,
+    private val inspectionsDb: InspectionsDb,
     private val timestampProvider: TimestampProvider,
 ) : AppConfiguration {
     override fun Application.setup() {
@@ -48,6 +52,7 @@ internal class DevDataSeederConfiguration(
             seedProjects()
             seedStructures()
             seedFindings()
+            seedInspections()
         }
     }
 
@@ -264,6 +269,65 @@ internal class DevDataSeederConfiguration(
         ).forEach { findingsDb.saveFinding(it) }
     }
 
+    @Suppress("MagicNumber", "UnderscoresInNumericLiterals")
+    private suspend fun seedInspections() {
+        val now = timestampProvider.getNowTimestamp()
+        listOf(
+            BackendInspection(
+                inspection =
+                    Inspection(
+                        id = Uuid.parse(INSPECTION_1),
+                        projectId = Uuid.parse(PROJECT_1),
+                        startedAt = Timestamp(now.value - 7200000),
+                        endedAt = Timestamp(now.value - 3600000),
+                        participants = "Jan Novak, Petr Svoboda",
+                        climate = "Sunny, 22C",
+                        note = "Initial site walkthrough completed.",
+                        updatedAt = now,
+                    ),
+            ),
+            BackendInspection(
+                inspection =
+                    Inspection(
+                        id = Uuid.parse(INSPECTION_2),
+                        projectId = Uuid.parse(PROJECT_1),
+                        startedAt = Timestamp(now.value - 1800000),
+                        endedAt = null,
+                        participants = "Jan Novak",
+                        climate = null,
+                        note = null,
+                        updatedAt = now,
+                    ),
+            ),
+            BackendInspection(
+                inspection =
+                    Inspection(
+                        id = Uuid.parse(INSPECTION_3),
+                        projectId = Uuid.parse(PROJECT_2),
+                        startedAt = Timestamp(now.value - 86400000),
+                        endedAt = Timestamp(now.value - 82800000),
+                        participants = "Marie Kralova, Tomas Benes",
+                        climate = "Overcast, 15C",
+                        note = "Follow-up inspection after plumbing fixes.",
+                        updatedAt = now,
+                    ),
+            ),
+            BackendInspection(
+                inspection =
+                    Inspection(
+                        id = Uuid.parse(INSPECTION_4),
+                        projectId = Uuid.parse(PROJECT_3),
+                        startedAt = null,
+                        endedAt = null,
+                        participants = null,
+                        climate = null,
+                        note = null,
+                        updatedAt = now,
+                    ),
+            ),
+        ).forEach { inspectionsDb.saveInspection(it) }
+    }
+
     private companion object {
         private const val CLIENT_1 = "00000000-0000-0000-0003-000000000001"
         private const val CLIENT_2 = "00000000-0000-0000-0003-000000000002"
@@ -281,5 +345,9 @@ internal class DevDataSeederConfiguration(
         private const val FINDING_3 = "00000000-0000-0000-0002-000000000003"
         private const val FINDING_4 = "00000000-0000-0000-0002-000000000004"
         private const val FINDING_5 = "00000000-0000-0000-0002-000000000005"
+        private const val INSPECTION_1 = "00000000-0000-0000-0004-000000000001"
+        private const val INSPECTION_2 = "00000000-0000-0000-0004-000000000002"
+        private const val INSPECTION_3 = "00000000-0000-0000-0004-000000000003"
+        private const val INSPECTION_4 = "00000000-0000-0000-0004-000000000004"
     }
 }

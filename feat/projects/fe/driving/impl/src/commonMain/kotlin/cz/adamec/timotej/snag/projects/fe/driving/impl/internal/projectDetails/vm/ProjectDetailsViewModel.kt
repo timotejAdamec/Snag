@@ -14,6 +14,7 @@ package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cz.adamec.timotej.snag.feat.inspections.fe.app.api.GetInspectionsUseCase
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.projects.fe.app.api.DeleteProjectUseCase
@@ -34,6 +35,7 @@ internal class ProjectDetailsViewModel(
     private val getProjectUseCase: GetProjectUseCase,
     private val deleteProjectUseCase: DeleteProjectUseCase,
     private val getStructuresUseCase: GetStructuresUseCase,
+    private val getInspectionsUseCase: GetInspectionsUseCase,
 ) : ViewModel() {
     private val _state: MutableStateFlow<ProjectDetailsUiState> =
         MutableStateFlow(ProjectDetailsUiState())
@@ -48,6 +50,7 @@ internal class ProjectDetailsViewModel(
     init {
         collectProject(projectId)
         collectStructures(projectId)
+        collectInspections(projectId)
     }
 
     private fun collectProject(projectId: Uuid) =
@@ -73,7 +76,7 @@ internal class ProjectDetailsViewModel(
                         } ?: if (state.value.projectStatus != ProjectDetailsUiStatus.DELETED) {
                             _state.update {
                                 it.copy(
-                                    projectStatus = ProjectDetailsUiStatus.NOT_FOUND
+                                    projectStatus = ProjectDetailsUiStatus.NOT_FOUND,
                                 )
                             }
                         } else {
@@ -84,28 +87,53 @@ internal class ProjectDetailsViewModel(
             }
         }
 
-    private fun collectStructures(projectId: Uuid) = viewModelScope.launch {
-        getStructuresUseCase(projectId).collect { result ->
-            when (result) {
-                is OfflineFirstDataResult.ProgrammerError -> {
-                    _state.update {
-                        it.copy(
-                            structureStatus = StructuresUiStatus.ERROR,
-                        )
+    private fun collectStructures(projectId: Uuid) =
+        viewModelScope.launch {
+            getStructuresUseCase(projectId).collect { result ->
+                when (result) {
+                    is OfflineFirstDataResult.ProgrammerError -> {
+                        _state.update {
+                            it.copy(
+                                structureStatus = StructuresUiStatus.ERROR,
+                            )
+                        }
+                        errorEventsChannel.send(UiError.Unknown)
                     }
-                    errorEventsChannel.send(UiError.Unknown)
-                }
-                is OfflineFirstDataResult.Success -> {
-                    _state.update {
-                        it.copy(
-                            structureStatus = StructuresUiStatus.LOADED,
-                            structures = result.data.toImmutableList(),
-                        )
+                    is OfflineFirstDataResult.Success -> {
+                        _state.update {
+                            it.copy(
+                                structureStatus = StructuresUiStatus.LOADED,
+                                structures = result.data.toImmutableList(),
+                            )
+                        }
                     }
                 }
             }
         }
-    }
+
+    private fun collectInspections(projectId: Uuid) =
+        viewModelScope.launch {
+            getInspectionsUseCase(projectId).collect { result ->
+                when (result) {
+                    is OfflineFirstDataResult.ProgrammerError -> {
+                        _state.update {
+                            it.copy(
+                                inspectionStatus = InspectionsUiStatus.ERROR,
+                            )
+                        }
+                        errorEventsChannel.send(UiError.Unknown)
+                    }
+                    is OfflineFirstDataResult.Success -> {
+                        _state.update {
+                            it.copy(
+                                inspectionStatus = InspectionsUiStatus.LOADED,
+                                inspections = result.data.toImmutableList(),
+                            )
+                        }
+                    }
+                }
+            }
+        }
 
     fun onDelete() =
         viewModelScope.launch {

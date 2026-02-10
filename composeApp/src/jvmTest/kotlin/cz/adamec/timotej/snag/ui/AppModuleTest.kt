@@ -13,6 +13,11 @@
 package cz.adamec.timotej.snag.ui
 
 import cz.adamec.timotej.snag.di.appModule
+import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionsApi
+import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionsDb
+import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionsPullSyncCoordinator
+import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionsPullSyncTimestampDataSource
+import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionsSync
 import cz.adamec.timotej.snag.findings.fe.ports.FindingsApi
 import cz.adamec.timotej.snag.findings.fe.ports.FindingsDb
 import io.ktor.client.HttpClient
@@ -34,6 +39,11 @@ internal class AppModuleTest {
                     HttpClientConfig::class,
                     FindingsDb::class,
                     FindingsApi::class,
+                    InspectionsDb::class,
+                    InspectionsApi::class,
+                    InspectionsSync::class,
+                    InspectionsPullSyncCoordinator::class,
+                    InspectionsPullSyncTimestampDataSource::class,
                 ),
         )
     }
