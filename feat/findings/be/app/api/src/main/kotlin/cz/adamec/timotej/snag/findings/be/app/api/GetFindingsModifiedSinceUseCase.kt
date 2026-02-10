@@ -17,5 +17,8 @@ import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import kotlin.uuid.Uuid
 
 interface GetFindingsModifiedSinceUseCase {
-    suspend operator fun invoke(structureId: Uuid, since: Timestamp): List<BackendFinding>
+    suspend operator fun invoke(
+        structureId: Uuid,
+        since: Timestamp,
+    ): List<BackendFinding>
 }

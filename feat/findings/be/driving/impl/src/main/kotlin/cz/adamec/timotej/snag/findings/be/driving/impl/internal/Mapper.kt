@@ -55,13 +55,18 @@ internal fun RelativeCoordinate.toDto() =
 internal fun PutFindingApiDto.toModel(id: Uuid): BackendFinding {
     val findingType =
         when (type) {
-            FindingTypeStringApiDto.CLASSIC ->
+            FindingTypeStringApiDto.CLASSIC -> {
                 FindingType.Classic(
                     importance = importance?.let { Importance.valueOf(it) } ?: Importance.MEDIUM,
                     term = term?.let { Term.valueOf(it) } ?: Term.T1,
                 )
-            FindingTypeStringApiDto.UNVISITED -> FindingType.Unvisited
-            FindingTypeStringApiDto.NOTE -> FindingType.Note
+            }
+            FindingTypeStringApiDto.UNVISITED -> {
+                FindingType.Unvisited
+            }
+            FindingTypeStringApiDto.NOTE -> {
+                FindingType.Note
+            }
             else -> {
                 LH.logger.error("Unknown finding type from API: '{}', defaulting to Classic", type)
                 FindingType.Classic()

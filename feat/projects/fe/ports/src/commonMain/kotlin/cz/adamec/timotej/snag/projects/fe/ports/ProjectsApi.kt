@@ -20,10 +20,11 @@ import kotlin.uuid.Uuid
 sealed interface ProjectSyncResult {
     data class Deleted(
         val id: Uuid,
-        ) : ProjectSyncResult
+    ) : ProjectSyncResult
+
     data class Updated(
         val project: FrontendProject,
-        ) : ProjectSyncResult
+    ) : ProjectSyncResult
 }
 
 interface ProjectsApi {

@@ -45,7 +45,6 @@ import kotlin.test.assertNull
 import kotlin.uuid.Uuid
 
 class PullClientChangesUseCaseImplTest : FrontendKoinInitializedTest() {
-
     private val fakeClientsApi: FakeClientsApi by inject()
     private val fakeClientsDb: FakeClientsDb by inject()
     private val fakePullSyncTimestampDataSource: FakeClientsPullSyncTimestampDataSource by inject()
@@ -65,64 +64,72 @@ class PullClientChangesUseCaseImplTest : FrontendKoinInitializedTest() {
             },
         )
 
-    private fun createClient(id: Uuid) = FrontendClient(
-        client = Client(
-            id = id,
-            name = "Test Client",
-            address = "Test Address",
-            phoneNumber = "+420123456789",
-            email = "test@example.com",
-            updatedAt = Timestamp(100L),
-        ),
-    )
-
-    @Test
-    fun `upserts alive clients to db`() = runTest(testDispatcher) {
-        val client = createClient(clientId)
-        fakeClientsApi.modifiedSinceResults = listOf(
-            ClientSyncResult.Updated(client = client),
+    private fun createClient(id: Uuid) =
+        FrontendClient(
+            client =
+                Client(
+                    id = id,
+                    name = "Test Client",
+                    address = "Test Address",
+                    phoneNumber = "+420123456789",
+                    email = "test@example.com",
+                    updatedAt = Timestamp(100L),
+                ),
         )
 
-        useCase()
+    @Test
+    fun `upserts alive clients to db`() =
+        runTest(testDispatcher) {
+            val client = createClient(clientId)
+            fakeClientsApi.modifiedSinceResults =
+                listOf(
+                    ClientSyncResult.Updated(client = client),
+                )
 
-        val result = fakeClientsDb.getClientFlow(clientId).first()
-        assertIs<OfflineFirstDataResult.Success<FrontendClient?>>(result)
-        assertNotNull(result.data)
-        assertEquals(clientId, result.data!!.client.id)
-    }
+            useCase()
+
+            val result = fakeClientsDb.getClientFlow(clientId).first()
+            assertIs<OfflineFirstDataResult.Success<FrontendClient?>>(result)
+            assertNotNull(result.data)
+            assertEquals(clientId, result.data!!.client.id)
+        }
 
     @Test
-    fun `deletes soft-deleted clients`() = runTest(testDispatcher) {
-        val client = createClient(clientId)
-        fakeClientsDb.setClient(client)
+    fun `deletes soft-deleted clients`() =
+        runTest(testDispatcher) {
+            val client = createClient(clientId)
+            fakeClientsDb.setClient(client)
 
-        fakeClientsApi.modifiedSinceResults = listOf(
-            ClientSyncResult.Deleted(id = clientId),
-        )
+            fakeClientsApi.modifiedSinceResults =
+                listOf(
+                    ClientSyncResult.Deleted(id = clientId),
+                )
 
-        useCase()
+            useCase()
 
-        val result = fakeClientsDb.getClientFlow(clientId).first()
-        assertIs<OfflineFirstDataResult.Success<FrontendClient?>>(result)
-        assertNull(result.data)
-    }
-
-    @Test
-    fun `stores last synced timestamp on success`() = runTest(testDispatcher) {
-        fakeClientsApi.modifiedSinceResults = emptyList()
-
-        useCase()
-
-        assertNotNull(fakePullSyncTimestampDataSource.getLastSyncedAt())
-    }
+            val result = fakeClientsDb.getClientFlow(clientId).first()
+            assertIs<OfflineFirstDataResult.Success<FrontendClient?>>(result)
+            assertNull(result.data)
+        }
 
     @Test
-    fun `does not store timestamp on API failure`() = runTest(testDispatcher) {
-        fakeClientsApi.forcedFailure =
-            OnlineDataResult.Failure.ProgrammerError(Exception("API error"))
+    fun `stores last synced timestamp on success`() =
+        runTest(testDispatcher) {
+            fakeClientsApi.modifiedSinceResults = emptyList()
 
-        useCase()
+            useCase()
 
-        assertNull(fakePullSyncTimestampDataSource.getLastSyncedAt())
-    }
+            assertNotNull(fakePullSyncTimestampDataSource.getLastSyncedAt())
+        }
+
+    @Test
+    fun `does not store timestamp on API failure`() =
+        runTest(testDispatcher) {
+            fakeClientsApi.forcedFailure =
+                OnlineDataResult.Failure.ProgrammerError(Exception("API error"))
+
+            useCase()
+
+            assertNull(fakePullSyncTimestampDataSource.getLastSyncedAt())
+        }
 }

@@ -16,5 +16,6 @@ import cz.adamec.timotej.snag.lib.core.common.Timestamp
 
 interface ProjectsPullSyncTimestampDataSource {
     suspend fun getLastSyncedAt(): Timestamp?
+
     suspend fun setLastSyncedAt(timestamp: Timestamp)
 }
