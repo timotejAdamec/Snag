@@ -12,16 +12,7 @@
 
 package cz.adamec.timotej.snag.feat.shared.database.fe.test
 
-import app.cash.sqldelight.async.coroutines.synchronous
-import app.cash.sqldelight.db.SqlDriver
-import app.cash.sqldelight.driver.native.NativeSqliteDriver
-import cz.adamec.timotej.snag.feat.shared.database.fe.db.SnagDatabase
 import org.koin.core.module.Module
 import org.koin.dsl.module
 
-actual val sharedDatabaseFeTestModule: Module =
-    module {
-        single<SqlDriver> {
-            NativeSqliteDriver(schema = SnagDatabase.Schema.synchronous(), name = "")
-        }
-    }
+actual val sharedDatabaseFeTestModule: Module = module { }
