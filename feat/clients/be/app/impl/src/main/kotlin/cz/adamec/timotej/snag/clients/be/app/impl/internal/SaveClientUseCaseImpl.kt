@@ -24,8 +24,10 @@ internal class SaveClientUseCaseImpl(
         logger.debug("Saving client {} to local storage.", client.client.id)
         return clientsDb.saveClient(client).also {
             it?.let {
-                logger.debug("Didn't save client {} to local storage as there is a newer one." +
-                        " Returning the newer one ({}).", client, it)
+                logger.debug(
+                    "Didn't save client {} to local storage as there is a newer one." +
+                            " Returning the newer one ({}).", client, it
+                )
             } ?: logger.debug("Saved client {} to local storage.", client)
         }
     }

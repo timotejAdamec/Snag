@@ -21,6 +21,7 @@ internal class KonnectionInternetConnectionStatusListener(
     private val konnection: Konnection,
 ) : InternetConnectionStatusListener {
     override fun isConnectedFlow(): Flow<Boolean> =
-        konnection.observeHasConnection()
+        konnection
+            .observeHasConnection()
             .onEach { isConnected -> LH.logger.i { "Connection status: isConnected=$isConnected" } }
 }

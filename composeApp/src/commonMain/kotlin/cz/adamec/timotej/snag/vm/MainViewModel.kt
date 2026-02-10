@@ -28,9 +28,10 @@ internal class MainViewModel(
         getSyncStatus()
             .stateIn(
                 scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(
-                    stopTimeoutMillis = DEFAULT_NO_STATE_SUBSCRIBER_TIMEOUT,
-                ),
+                started =
+                    SharingStarted.WhileSubscribed(
+                        stopTimeoutMillis = DEFAULT_NO_STATE_SUBSCRIBER_TIMEOUT,
+                    ),
                 initialValue = SyncStatus.Synced,
             )
 }

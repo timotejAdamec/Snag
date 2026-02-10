@@ -15,8 +15,7 @@
 
 package cz.adamec.timotej.snag.network.fe.internal
 
-private fun jsIsOnline(): Boolean =
-    js("globalThis.navigator.onLine")
+private fun jsIsOnline(): Boolean = js("globalThis.navigator.onLine")
 
 @Suppress("unused")
 private fun jsAddConnectivityListeners(

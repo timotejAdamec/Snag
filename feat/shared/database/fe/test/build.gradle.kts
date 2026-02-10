@@ -18,7 +18,6 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(project(":feat:shared:database:fe:api"))
-            implementation(libs.koin.core)
         }
         jvmMain.dependencies {
             implementation(libs.sqldelight.jvm.driver)

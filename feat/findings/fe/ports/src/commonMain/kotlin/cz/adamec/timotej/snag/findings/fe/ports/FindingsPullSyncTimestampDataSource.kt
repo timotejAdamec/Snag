@@ -16,6 +16,12 @@ import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import kotlin.uuid.Uuid
 
 interface FindingsPullSyncTimestampDataSource {
-    suspend fun getLastSyncedAt(structureId: Uuid): Timestamp?
-    suspend fun setLastSyncedAt(structureId: Uuid, timestamp: Timestamp)
+    suspend fun getLastSyncedAt(
+        structureId: Uuid,
+    ): Timestamp?
+
+    suspend fun setLastSyncedAt(
+        structureId: Uuid,
+        timestamp: Timestamp,
+    )
 }

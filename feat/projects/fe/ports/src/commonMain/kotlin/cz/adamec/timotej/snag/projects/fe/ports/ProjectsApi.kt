@@ -18,8 +18,12 @@ import cz.adamec.timotej.snag.projects.fe.model.FrontendProject
 import kotlin.uuid.Uuid
 
 sealed interface ProjectSyncResult {
-    data class Deleted(val id: Uuid) : ProjectSyncResult
-    data class Updated(val project: FrontendProject) : ProjectSyncResult
+    data class Deleted(
+        val id: Uuid,
+        ) : ProjectSyncResult
+    data class Updated(
+        val project: FrontendProject,
+        ) : ProjectSyncResult
 }
 
 interface ProjectsApi {
@@ -29,7 +33,10 @@ interface ProjectsApi {
 
     suspend fun saveProject(project: FrontendProject): OnlineDataResult<FrontendProject?>
 
-    suspend fun deleteProject(id: Uuid, deletedAt: Timestamp): OnlineDataResult<Unit>
+    suspend fun deleteProject(
+        id: Uuid,
+        deletedAt: Timestamp,
+    ): OnlineDataResult<Unit>
 
     suspend fun getProjectsModifiedSince(since: Timestamp): OnlineDataResult<List<ProjectSyncResult>>
 }

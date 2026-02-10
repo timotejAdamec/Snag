@@ -18,11 +18,10 @@ import kotlin.uuid.Uuid
 
 fun RoutingContext.getIdFromParameters(): Uuid = getIdFromParameters("id")
 
-fun RoutingContext.getIdFromParameters(parameterName: String): Uuid {
-    return call.parameters[parameterName]?.let {
+fun RoutingContext.getIdFromParameters(parameterName: String): Uuid =
+    call.parameters[parameterName]?.let {
         runCatching { Uuid.parse(it) }.getOrNull()
     } ?: throw InvalidIdException()
-}
 
 suspend inline fun <reified T : Any> RoutingContext.getDtoFromBody(): T =
     runCatching { call.receive<T>() }.getOrNull()

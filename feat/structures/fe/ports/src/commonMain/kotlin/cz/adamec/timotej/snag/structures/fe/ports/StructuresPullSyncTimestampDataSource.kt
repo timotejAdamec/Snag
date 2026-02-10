@@ -17,5 +17,8 @@ import kotlin.uuid.Uuid
 
 interface StructuresPullSyncTimestampDataSource {
     suspend fun getLastSyncedAt(projectId: Uuid): Timestamp?
-    suspend fun setLastSyncedAt(projectId: Uuid, timestamp: Timestamp)
+    suspend fun setLastSyncedAt(
+        projectId: Uuid,
+        timestamp: Timestamp,
+    )
 }

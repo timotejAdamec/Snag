@@ -18,8 +18,13 @@ import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
 import kotlin.uuid.Uuid
 
 sealed interface StructureSyncResult {
-    data class Deleted(val id: Uuid) : StructureSyncResult
-    data class Updated(val structure: FrontendStructure) : StructureSyncResult
+    data class Deleted(
+        val id: Uuid,
+    ) : StructureSyncResult
+
+    data class Updated(
+        val structure: FrontendStructure,
+    ) : StructureSyncResult
 }
 
 interface StructuresApi {
@@ -27,7 +32,13 @@ interface StructuresApi {
 
     suspend fun saveStructure(frontendStructure: FrontendStructure): OnlineDataResult<FrontendStructure?>
 
-    suspend fun deleteStructure(id: Uuid, deletedAt: Timestamp): OnlineDataResult<Unit>
+    suspend fun deleteStructure(
+        id: Uuid,
+        deletedAt: Timestamp,
+    ): OnlineDataResult<Unit>
 
-    suspend fun getStructuresModifiedSince(projectId: Uuid, since: Timestamp): OnlineDataResult<List<StructureSyncResult>>
+    suspend fun getStructuresModifiedSince(
+        projectId: Uuid,
+        since: Timestamp,
+    ): OnlineDataResult<List<StructureSyncResult>>
 }

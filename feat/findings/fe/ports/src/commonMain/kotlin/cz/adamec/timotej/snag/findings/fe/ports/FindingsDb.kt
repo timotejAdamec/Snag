@@ -40,7 +40,11 @@ interface FindingsDb {
         updatedAt: Timestamp,
     ): OfflineFirstUpdateDataResult
 
-    suspend fun updateFindingCoordinates(id: Uuid, coordinates: List<RelativeCoordinate>, updatedAt: Timestamp): OfflineFirstUpdateDataResult
+    suspend fun updateFindingCoordinates(
+        id: Uuid,
+        coordinates: List<RelativeCoordinate>,
+        updatedAt: Timestamp,
+    ): OfflineFirstUpdateDataResult
 
     suspend fun deleteFindingsByStructureId(structureId: Uuid): OfflineFirstDataResult<Unit>
 }

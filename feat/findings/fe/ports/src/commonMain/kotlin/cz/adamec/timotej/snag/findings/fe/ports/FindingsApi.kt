@@ -18,16 +18,31 @@ import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
 import kotlin.uuid.Uuid
 
 sealed interface FindingSyncResult {
-    data class Deleted(val id: Uuid) : FindingSyncResult
-    data class Updated(val finding: FrontendFinding) : FindingSyncResult
+    data class Deleted(
+        val id: Uuid,
+    ) : FindingSyncResult
+
+    data class Updated(
+        val finding: FrontendFinding,
+    ) : FindingSyncResult
 }
 
 interface FindingsApi {
-    suspend fun getFindings(structureId: Uuid): OnlineDataResult<List<FrontendFinding>>
+    suspend fun getFindings(
+        structureId: Uuid,
+    ): OnlineDataResult<List<FrontendFinding>>
 
-    suspend fun saveFinding(finding: FrontendFinding): OnlineDataResult<FrontendFinding?>
+    suspend fun saveFinding(
+        finding: FrontendFinding,
+    ): OnlineDataResult<FrontendFinding?>
 
-    suspend fun deleteFinding(id: Uuid, deletedAt: Timestamp): OnlineDataResult<Unit>
+    suspend fun deleteFinding(
+        id: Uuid,
+        deletedAt: Timestamp,
+    ): OnlineDataResult<Unit>
 
-    suspend fun getFindingsModifiedSince(structureId: Uuid, since: Timestamp): OnlineDataResult<List<FindingSyncResult>>
+    suspend fun getFindingsModifiedSince(
+        structureId: Uuid,
+        since: Timestamp,
+    ): OnlineDataResult<List<FindingSyncResult>>
 }

@@ -28,7 +28,6 @@ internal class RealSyncQueue(
     private val ioDispatcher: CoroutineDispatcher,
     private val uuidProvider: UuidProvider,
 ) : SyncQueue {
-
     override suspend fun enqueue(
         entityTypeId: String,
         entityId: Uuid,

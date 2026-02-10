@@ -13,7 +13,6 @@
 package cz.adamec.timotej.snag.lib.navigation.fe
 
 interface BrowserHistoryFragmentBuilder {
-
     fun handles(route: SnagNavRoute): Boolean
 
     fun build(route: SnagNavRoute): String
