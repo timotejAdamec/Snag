@@ -20,8 +20,10 @@ import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.invoke
+import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 internal fun Project.configureKotlinMultiplatformModule() {
 
@@ -45,12 +47,26 @@ internal fun Project.configureKotlinMultiplatformModule() {
         jvm()
 
         js {
-            browser()
+            browser {
+                testTask {
+                    enabled = false
+                }
+            }
         }
 
         @OptIn(ExperimentalWasmDsl::class)
         wasmJs {
-            browser()
+            browser {
+                testTask {
+                    enabled = false
+                }
+            }
+        }
+
+        targets.withType<KotlinNativeTarget> {
+            binaries.all {
+                linkerOpts("-lsqlite3")
+            }
         }
 
         applyDefaultHierarchyTemplate()

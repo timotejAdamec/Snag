@@ -131,7 +131,7 @@ internal fun ClientDetailsEditContent(
                     Text(
                         text =
                             state.clientNameError?.let { stringResource(it) }
-                                ?: (stringResource(Res.string.required) + "*"),
+                                ?: stringResource(Res.string.required) + "*",
                     )
                 },
                 value = state.clientName,
@@ -195,7 +195,7 @@ internal fun ClientDetailsEditContent(
 
 @Preview
 @Composable
-private fun ClientDetailsEditContentPreview() {
+private fun ClientDetailsEditPreview() {
     SnagTheme {
         ClientDetailsEditContent(
             clientId = null,

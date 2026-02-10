@@ -42,6 +42,8 @@ class DeleteClientUseCaseImplTest : FrontendKoinInitializedTest() {
 
     private val useCase: DeleteClientUseCase by inject()
 
+    private val clientId = Uuid.parse("00000000-0000-0000-0000-000000000001")
+
     override fun additionalKoinModules(): List<Module> =
         listOf(
             module {
@@ -49,8 +51,6 @@ class DeleteClientUseCaseImplTest : FrontendKoinInitializedTest() {
                 singleOf(::FakeClientsSync) bind ClientsSync::class
             },
         )
-
-    private val clientId = Uuid.parse("00000000-0000-0000-0000-000000000001")
 
     private fun createClient(id: Uuid) =
         FrontendClient(
