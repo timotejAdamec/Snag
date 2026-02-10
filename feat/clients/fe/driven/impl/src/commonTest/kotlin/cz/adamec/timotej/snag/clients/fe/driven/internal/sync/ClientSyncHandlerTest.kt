@@ -36,7 +36,6 @@ import kotlin.test.assertEquals
 import kotlin.uuid.Uuid
 
 class ClientSyncHandlerTest : FrontendKoinInitializedTest() {
-
     private val fakeClientsApi: FakeClientsApi by inject()
     private val fakeClientsDb: FakeClientsDb by inject()
 
@@ -54,9 +53,10 @@ class ClientSyncHandlerTest : FrontendKoinInitializedTest() {
     @Test
     fun `upsert reads from db and calls api`() =
         runTest(testDispatcher) {
-            val client = FrontendClient(
-                client = Client(Uuid.random(), "Test Client", "123 Street", "+420123456789", "test@example.com", Timestamp(10L)),
-            )
+            val client =
+                FrontendClient(
+                    client = Client(Uuid.random(), "Test Client", "123 Street", "+420123456789", "test@example.com", Timestamp(10L)),
+                )
             fakeClientsDb.setClient(client)
 
             val result = handler.execute(client.client.id, SyncOperationType.UPSERT)
@@ -67,9 +67,10 @@ class ClientSyncHandlerTest : FrontendKoinInitializedTest() {
     @Test
     fun `upsert saves fresher dto from api to db`() =
         runTest(testDispatcher) {
-            val client = FrontendClient(
-                client = Client(Uuid.random(), "Original", "123 Street", null, null, Timestamp(10L)),
-            )
+            val client =
+                FrontendClient(
+                    client = Client(Uuid.random(), "Original", "123 Street", null, null, Timestamp(10L)),
+                )
             fakeClientsDb.setClient(client)
 
             val fresherClient = client.copy(client = client.client.copy(name = "Updated by API"))
@@ -94,9 +95,10 @@ class ClientSyncHandlerTest : FrontendKoinInitializedTest() {
     @Test
     fun `upsert when api fails returns failure`() =
         runTest(testDispatcher) {
-            val client = FrontendClient(
-                client = Client(Uuid.random(), "Test Client", "123 Street", null, null, Timestamp(10L)),
-            )
+            val client =
+                FrontendClient(
+                    client = Client(Uuid.random(), "Test Client", "123 Street", null, null, Timestamp(10L)),
+                )
             fakeClientsDb.setClient(client)
             fakeClientsApi.forcedFailure =
                 OnlineDataResult.Failure.ProgrammerError(Exception("API error"))

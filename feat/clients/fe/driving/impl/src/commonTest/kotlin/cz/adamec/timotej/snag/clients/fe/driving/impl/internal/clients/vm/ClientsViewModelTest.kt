@@ -42,7 +42,6 @@ import kotlin.uuid.Uuid
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class ClientsViewModelTest : FrontendKoinInitializedTest() {
-
     private val fakeClientsDb: FakeClientsDb by inject()
 
     private val getClientsUseCase: GetClientsUseCase by inject()
@@ -58,38 +57,43 @@ class ClientsViewModelTest : FrontendKoinInitializedTest() {
             },
         )
 
-    private fun createViewModel() = ClientsViewModel(
-        getClientsUseCase = getClientsUseCase,
-    )
+    private fun createViewModel() =
+        ClientsViewModel(
+            getClientsUseCase = getClientsUseCase,
+        )
 
     @Test
     fun `initial state has empty clients list`() =
         runTest {
             val viewModel = createViewModel()
 
-            assertTrue(viewModel.state.value.clients.isEmpty())
+            val clients = viewModel.state.value.clients
+            assertTrue(clients.isEmpty())
         }
 
     @Test
     fun `loads clients from db`() =
         runTest {
-            val client = FrontendClient(
-                client = Client(
-                    id = Uuid.random(),
-                    name = "Test Client",
-                    address = "Test Address",
-                    phoneNumber = "+420123456789",
-                    email = "test@example.com",
-                    updatedAt = Timestamp(10L),
-                ),
-            )
+            val client =
+                FrontendClient(
+                    client =
+                        Client(
+                            id = Uuid.random(),
+                            name = "Test Client",
+                            address = "Test Address",
+                            phoneNumber = "+420123456789",
+                            email = "test@example.com",
+                            updatedAt = Timestamp(10L),
+                        ),
+                )
             fakeClientsDb.setClient(client)
 
             val viewModel = createViewModel()
 
             advanceUntilIdle()
 
-            assertEquals(1, viewModel.state.value.clients.size)
-            assertEquals("Test Client", viewModel.state.value.clients.first().client.name)
+            val clients = viewModel.state.value.clients
+            assertEquals(1, clients.size)
+            assertEquals("Test Client", clients.first().client.name)
         }
 }

@@ -83,16 +83,18 @@ class ClientDetailsEditViewModelTest : FrontendKoinInitializedTest() {
     fun `loading client data updates state when clientId is provided`() =
         runTest {
             val clientId = Uuid.random()
-            val client = FrontendClient(
-                client = Client(
-                    id = clientId,
-                    name = "Test Client",
-                    address = "Test Address",
-                    phoneNumber = "+420123456789",
-                    email = "test@example.com",
-                    updatedAt = Timestamp(10L),
-                ),
-            )
+            val client =
+                FrontendClient(
+                    client =
+                        Client(
+                            id = clientId,
+                            name = "Test Client",
+                            address = "Test Address",
+                            phoneNumber = "+420123456789",
+                            email = "test@example.com",
+                            updatedAt = Timestamp(10L),
+                        ),
+                )
             fakeClientsDb.setClient(client)
 
             val viewModel = createViewModel(clientId = clientId)

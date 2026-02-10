@@ -37,10 +37,11 @@ class NonWebFindingDetailRouteFactory : FindingDetailRouteFactory {
     override fun create(
         structureId: Uuid,
         findingId: Uuid,
-    ): FindingDetailRoute = NonWebFindingDetailRoute(
-        structureId = structureId,
-        findingId = findingId,
-    )
+    ): FindingDetailRoute =
+        NonWebFindingDetailRoute(
+            structureId = structureId,
+            findingId = findingId,
+        )
 }
 
 @Serializable

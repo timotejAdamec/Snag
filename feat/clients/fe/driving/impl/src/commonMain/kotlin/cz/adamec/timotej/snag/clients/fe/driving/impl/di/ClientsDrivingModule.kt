@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation3.scene.DialogSceneStrategy
-import cz.adamec.timotej.snag.lib.design.fe.dialog.fullscreenDialogProperties
 import cz.adamec.timotej.snag.clients.fe.driving.api.ClientCreationRoute
 import cz.adamec.timotej.snag.clients.fe.driving.api.ClientCreationRouteFactory
 import cz.adamec.timotej.snag.clients.fe.driving.api.ClientEditRoute
@@ -26,6 +25,7 @@ import cz.adamec.timotej.snag.clients.fe.driving.impl.internal.clientDetailsEdit
 import cz.adamec.timotej.snag.clients.fe.driving.impl.internal.clientDetailsEdit.vm.ClientDetailsEditViewModel
 import cz.adamec.timotej.snag.clients.fe.driving.impl.internal.clients.ui.ClientsScreen
 import cz.adamec.timotej.snag.clients.fe.driving.impl.internal.clients.vm.ClientsViewModel
+import cz.adamec.timotej.snag.lib.design.fe.dialog.fullscreenDialogProperties
 import cz.adamec.timotej.snag.lib.navigation.fe.SnagBackStack
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.module.Module

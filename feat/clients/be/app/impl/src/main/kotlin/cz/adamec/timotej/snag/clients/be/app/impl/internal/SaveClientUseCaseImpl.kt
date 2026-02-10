@@ -26,7 +26,9 @@ internal class SaveClientUseCaseImpl(
             it?.let {
                 logger.debug(
                     "Didn't save client {} to local storage as there is a newer one." +
-                            " Returning the newer one ({}).", client, it
+                        " Returning the newer one ({}).",
+                    client,
+                    it,
                 )
             } ?: logger.debug("Saved client {} to local storage.", client)
         }

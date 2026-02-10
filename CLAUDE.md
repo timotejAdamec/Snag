@@ -6,6 +6,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 For each new task create a new worktree with a new branch. After finishing the work, push and create a PR.
 
+## Model Usage Guidelines
+
+- Use **Sonnet** for:
+    - Running tests and other Gradle tasks
+    - Code linting & formatting fixes
+    - Simple file operations
+
+- Use **Opus** (default) for everything else.
+
 ## Build Commands
 
 ```bash
@@ -17,14 +26,6 @@ For each new task create a new worktree with a new branch. After finishing the w
 
 # Run a single test class
 ./gradlew :feat:projects:fe:driving:impl:jvmTest --tests "*ProjectDetailsEditViewModelTest"
-
-# Platform-specific builds
-./gradlew :androidApp:assembleDebug          # Android
-./gradlew :composeApp:run                     # Desktop (JVM)
-./gradlew :server:impl:run --no-daemon        # Server (Ktor)
-./gradlew :composeApp:wasmJsBrowserDevelopmentRun  # Web (Wasm)
-./gradlew :composeApp:jsBrowserDevelopmentRun      # Web (JS)
-# iOS: Open iosApp/ in Xcode
 ```
 
 ## Architecture

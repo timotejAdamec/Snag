@@ -28,13 +28,9 @@ sealed interface FindingSyncResult {
 }
 
 interface FindingsApi {
-    suspend fun getFindings(
-        structureId: Uuid,
-    ): OnlineDataResult<List<FrontendFinding>>
+    suspend fun getFindings(structureId: Uuid): OnlineDataResult<List<FrontendFinding>>
 
-    suspend fun saveFinding(
-        finding: FrontendFinding,
-    ): OnlineDataResult<FrontendFinding?>
+    suspend fun saveFinding(finding: FrontendFinding): OnlineDataResult<FrontendFinding?>
 
     suspend fun deleteFinding(
         id: Uuid,

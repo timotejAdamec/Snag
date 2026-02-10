@@ -37,11 +37,12 @@ import kotlin.test.assertTrue
 import kotlin.uuid.Uuid
 
 class DeleteClientUseCaseImplTest : FrontendKoinInitializedTest() {
-
     private val fakeClientsDb: FakeClientsDb by inject()
     private val fakeClientsSync: FakeClientsSync by inject()
 
     private val useCase: DeleteClientUseCase by inject()
+
+    private val clientId = Uuid.parse("00000000-0000-0000-0000-000000000001")
 
     override fun additionalKoinModules(): List<Module> =
         listOf(
@@ -51,48 +52,51 @@ class DeleteClientUseCaseImplTest : FrontendKoinInitializedTest() {
             },
         )
 
-    private val clientId = Uuid.parse("00000000-0000-0000-0000-000000000001")
-
-    private fun createClient(id: Uuid) = FrontendClient(
-        client = Client(
-            id = id,
-            name = "Test Client",
-            address = "Test Address",
-            phoneNumber = "+420123456789",
-            email = "test@example.com",
-            updatedAt = Timestamp(100L),
-        ),
-    )
-
-    @Test
-    fun `deletes client from db`() = runTest(testDispatcher) {
-        val client = createClient(clientId)
-        fakeClientsDb.setClient(client)
-
-        useCase(clientId)
-
-        val result = fakeClientsDb.getClientFlow(clientId).first()
-        assertIs<OfflineFirstDataResult.Success<FrontendClient?>>(result)
-        assertNull(result.data)
-    }
+    private fun createClient(id: Uuid) =
+        FrontendClient(
+            client =
+                Client(
+                    id = id,
+                    name = "Test Client",
+                    address = "Test Address",
+                    phoneNumber = "+420123456789",
+                    email = "test@example.com",
+                    updatedAt = Timestamp(100L),
+                ),
+        )
 
     @Test
-    fun `enqueues sync delete on success`() = runTest(testDispatcher) {
-        val client = createClient(clientId)
-        fakeClientsDb.setClient(client)
+    fun `deletes client from db`() =
+        runTest(testDispatcher) {
+            val client = createClient(clientId)
+            fakeClientsDb.setClient(client)
 
-        useCase(clientId)
+            useCase(clientId)
 
-        assertEquals(listOf(clientId), fakeClientsSync.deletedClientIds)
-    }
+            val result = fakeClientsDb.getClientFlow(clientId).first()
+            assertIs<OfflineFirstDataResult.Success<FrontendClient?>>(result)
+            assertNull(result.data)
+        }
 
     @Test
-    fun `does not enqueue sync delete on failure`() = runTest(testDispatcher) {
-        fakeClientsDb.forcedFailure =
-            OfflineFirstDataResult.ProgrammerError(Exception("DB error"))
+    fun `enqueues sync delete on success`() =
+        runTest(testDispatcher) {
+            val client = createClient(clientId)
+            fakeClientsDb.setClient(client)
 
-        useCase(clientId)
+            useCase(clientId)
 
-        assertTrue(fakeClientsSync.deletedClientIds.isEmpty())
-    }
+            assertEquals(listOf(clientId), fakeClientsSync.deletedClientIds)
+        }
+
+    @Test
+    fun `does not enqueue sync delete on failure`() =
+        runTest(testDispatcher) {
+            fakeClientsDb.forcedFailure =
+                OfflineFirstDataResult.ProgrammerError(Exception("DB error"))
+
+            useCase(clientId)
+
+            assertTrue(fakeClientsSync.deletedClientIds.isEmpty())
+        }
 }
