@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.painter.Painter
@@ -133,6 +134,24 @@ private fun DrawScope.drawFindingPin(
     size: Float,
     tint: androidx.compose.ui.graphics.Color,
 ) {
+    val haloRadius = size / 2 + 3.dp.toPx()
+    val ringRadius = size / 2 + 1.dp.toPx()
+
+    // Draw white halo (outermost layer)
+    drawCircle(
+        color = Color.White,
+        radius = haloRadius,
+        center = center,
+    )
+
+    // Draw colored ring
+    drawCircle(
+        color = tint,
+        radius = ringRadius,
+        center = center,
+    )
+
+    // Draw white icon on top
     translate(
         left = center.x - size / 2,
         top = center.y - size / 2,
@@ -140,7 +159,7 @@ private fun DrawScope.drawFindingPin(
         with(painter) {
             draw(
                 size = Size(size, size),
-                colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(tint),
+                colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(Color.White),
             )
         }
     }
