@@ -14,6 +14,7 @@ package cz.adamec.timotej.snag.vm
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cz.adamec.timotej.snag.lib.design.fe.state.DEFAULT_NO_STATE_SUBSCRIBER_TIMEOUT
 import cz.adamec.timotej.snag.lib.sync.fe.app.api.GetSyncStatusUseCase
 import cz.adamec.timotej.snag.lib.sync.fe.model.SyncStatus
 import kotlinx.coroutines.flow.SharingStarted
@@ -25,5 +26,11 @@ internal class MainViewModel(
 ) : ViewModel() {
     val syncStatus: StateFlow<SyncStatus> =
         getSyncStatus()
-            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), SyncStatus.Synced)
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(
+                    stopTimeoutMillis = DEFAULT_NO_STATE_SUBSCRIBER_TIMEOUT,
+                ),
+                initialValue = SyncStatus.Synced,
+            )
 }
