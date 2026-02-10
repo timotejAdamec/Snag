@@ -17,12 +17,14 @@ import cz.adamec.timotej.snag.lib.sync.fe.app.api.handler.SyncOperationHandler
 import cz.adamec.timotej.snag.structures.fe.driven.internal.api.RealStructuresApi
 import cz.adamec.timotej.snag.structures.fe.driven.internal.db.RealStructuresDb
 import cz.adamec.timotej.snag.structures.fe.driven.internal.db.StructuresSqlDelightDbOps
+import cz.adamec.timotej.snag.structures.fe.driven.internal.storage.RealStructuresFileStorage
 import cz.adamec.timotej.snag.structures.fe.driven.internal.sync.RealStructuresPullSyncCoordinator
 import cz.adamec.timotej.snag.structures.fe.driven.internal.sync.RealStructuresPullSyncTimestampDataSource
 import cz.adamec.timotej.snag.structures.fe.driven.internal.sync.RealStructuresSync
 import cz.adamec.timotej.snag.structures.fe.driven.internal.sync.StructureSyncHandler
 import cz.adamec.timotej.snag.structures.fe.ports.StructuresApi
 import cz.adamec.timotej.snag.structures.fe.ports.StructuresDb
+import cz.adamec.timotej.snag.structures.fe.ports.StructuresFileStorage
 import cz.adamec.timotej.snag.structures.fe.ports.StructuresPullSyncCoordinator
 import cz.adamec.timotej.snag.structures.fe.ports.StructuresPullSyncTimestampDataSource
 import cz.adamec.timotej.snag.structures.fe.ports.StructuresSync
@@ -49,4 +51,5 @@ val structuresDrivenModule =
             )
         } bind StructuresPullSyncTimestampDataSource::class
         factoryOf(::RealStructuresPullSyncCoordinator) bind StructuresPullSyncCoordinator::class
+        factoryOf(::RealStructuresFileStorage) bind StructuresFileStorage::class
     }

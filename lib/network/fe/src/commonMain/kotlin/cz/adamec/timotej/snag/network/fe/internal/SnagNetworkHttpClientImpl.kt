@@ -17,6 +17,7 @@ import io.ktor.client.HttpClient
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.delete
 import io.ktor.client.request.get
+import io.ktor.client.request.post
 import io.ktor.client.request.put
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.ContentType
@@ -33,6 +34,18 @@ internal class SnagNetworkHttpClientImpl(
         httpClient.get(
             urlString = localHostUrlFactory.createUrl() + path,
         ) {
+            block()
+        }
+
+    override suspend fun post(
+        path: String,
+        contentType: ContentType,
+        block: HttpRequestBuilder.() -> Unit,
+    ): HttpResponse =
+        httpClient.post(
+            urlString = localHostUrlFactory.createUrl() + path,
+        ) {
+            contentType(contentType)
             block()
         }
 

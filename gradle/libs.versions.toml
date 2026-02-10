@@ -42,6 +42,8 @@ turbine = "1.2.1"
 exposed = "1.0.0"
 h2 = "2.4.240"
 konnection = "1.4.5"
+gcs = "2.47.0"
+filekit = "0.12.0"
 
 [libraries]
 kotlin-gradle = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlinGradlePlugin" }
@@ -147,6 +149,8 @@ exposed-dao = { module = "org.jetbrains.exposed:exposed-dao", version.ref = "exp
 exposed-jdbc = { module = "org.jetbrains.exposed:exposed-jdbc", version.ref = "exposed" }
 h2 = { module = "com.h2database:h2", version.ref = "h2" }
 konnection = { module = "dev.tmapps:konnection", version.ref = "konnection" }
+google-cloud-storage = { module = "com.google.cloud:google-cloud-storage", version.ref = "gcs" }
+filekit-dialogs-compose = { module = "io.github.vinceglb:filekit-dialogs-compose", version.ref = "filekit" }
 
 [plugins]
 snagMultiplatformModule = { id = "libs.plugins.snag.multiplatform.module" }

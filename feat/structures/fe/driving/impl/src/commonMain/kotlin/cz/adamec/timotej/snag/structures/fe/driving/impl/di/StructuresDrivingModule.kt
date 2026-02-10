@@ -154,6 +154,8 @@ val structuresDrivingImplModule =
                 projectId = projectId,
                 getStructureUseCase = get(),
                 saveStructureUseCase = get(),
+                uploadFloorPlanImageUseCase = get(),
+                deleteFloorPlanImageUseCase = get(),
             )
         }
     }

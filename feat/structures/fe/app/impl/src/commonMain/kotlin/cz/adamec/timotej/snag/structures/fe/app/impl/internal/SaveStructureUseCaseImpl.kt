@@ -12,8 +12,8 @@
 
 package cz.adamec.timotej.snag.structures.fe.app.impl.internal
 
-import cz.adamec.timotej.snag.feat.structures.fe.model.FrontendStructure
 import cz.adamec.timotej.snag.feat.structures.business.Structure
+import cz.adamec.timotej.snag.feat.structures.fe.model.FrontendStructure
 import cz.adamec.timotej.snag.lib.core.common.TimestampProvider
 import cz.adamec.timotej.snag.lib.core.common.UuidProvider
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
@@ -35,13 +35,14 @@ class SaveStructureUseCaseImpl(
     override suspend operator fun invoke(request: SaveStructureRequest): OfflineFirstDataResult<Uuid> {
         val feStructure =
             FrontendStructure(
-                structure = Structure(
-                    id = request.id ?: uuidProvider.getUuid(),
-                    projectId = request.projectId,
-                    name = request.name,
-                    floorPlanUrl = null,
-                    updatedAt = timestampProvider.getNowTimestamp(),
-                )
+                structure =
+                    Structure(
+                        id = request.id ?: uuidProvider.getUuid(),
+                        projectId = request.projectId,
+                        name = request.name,
+                        floorPlanUrl = request.floorPlanUrl,
+                        updatedAt = timestampProvider.getNowTimestamp(),
+                    ),
             )
 
         return structuresDb
