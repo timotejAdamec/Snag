@@ -108,7 +108,7 @@ private fun FindingsPinsOverlay(
                         y = displayRect.top + coord.y * displayRect.height,
                     )
                 val isSelected = finding.finding.id == selectedFindingId
-                val size = if (isSelected) 32.dp.toPx() else 24.dp.toPx()
+                val iconSize = if (isSelected) 36.dp.toPx() else 28.dp.toPx()
 
                 val (painter, color) =
                     when (finding.finding.type) {
@@ -120,7 +120,7 @@ private fun FindingsPinsOverlay(
                 drawFindingPin(
                     center = drawPoint,
                     painter = painter,
-                    size = size,
+                    size = iconSize,
                     tint = if (isSelected) selectedPinColor else color,
                 )
             }
@@ -134,8 +134,10 @@ private fun DrawScope.drawFindingPin(
     size: Float,
     tint: androidx.compose.ui.graphics.Color,
 ) {
-    val haloRadius = size / 2 + 3.dp.toPx()
-    val ringRadius = size / 2 + 1.dp.toPx()
+    // Use diagonal of icon square to calculate circle sizes (ensures full icon visibility)
+    val iconDiagonal = size * 1.41f / 2
+    val haloRadius = iconDiagonal + 3.dp.toPx()
+    val ringRadius = iconDiagonal + 1.dp.toPx()
 
     // Draw white halo (outermost layer)
     drawCircle(
