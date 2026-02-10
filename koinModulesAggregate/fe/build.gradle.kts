@@ -20,7 +20,7 @@ kotlin {
             // Core infrastructure
             implementation(projects.lib.core.fe)
             implementation(projects.lib.network.fe)
-            implementation(projects.feat.shared.database.fe)
+            implementation(projects.feat.shared.database.fe.impl)
             implementation(projects.feat.shared.rules.business.impl)
 
             // Sync layer

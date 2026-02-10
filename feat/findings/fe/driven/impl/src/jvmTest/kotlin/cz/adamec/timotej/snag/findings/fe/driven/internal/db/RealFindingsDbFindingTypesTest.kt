@@ -12,46 +12,26 @@
 
 package cz.adamec.timotej.snag.findings.fe.driven.internal.db
 
-import app.cash.sqldelight.async.coroutines.synchronous
-import app.cash.sqldelight.driver.jdbc.sqlite.JdbcSqliteDriver
 import cz.adamec.timotej.snag.feat.findings.business.Finding
 import cz.adamec.timotej.snag.feat.findings.business.FindingType
 import cz.adamec.timotej.snag.feat.findings.business.Importance
 import cz.adamec.timotej.snag.feat.findings.business.Term
 import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
-import cz.adamec.timotej.snag.feat.shared.database.fe.db.SnagDatabase
+import cz.adamec.timotej.snag.findings.fe.ports.FindingsDb
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstUpdateDataResult
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
-import kotlin.test.BeforeTest
+import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
 import kotlin.uuid.Uuid
 
-@OptIn(ExperimentalCoroutinesApi::class)
-class RealFindingsDbFindingTypesTest {
-    private lateinit var findingsDb: RealFindingsDb
-
-    @BeforeTest
-    fun setUp() {
-        val driver =
-            JdbcSqliteDriver(
-                url = JdbcSqliteDriver.IN_MEMORY,
-                schema = SnagDatabase.Schema.synchronous(),
-            )
-        val database = SnagDatabase(driver)
-        findingsDb =
-            RealFindingsDb(
-                findingEntityQueries = database.findingEntityQueries,
-                classicFindingEntityQueries = database.classicFindingEntityQueries,
-                ioDispatcher = UnconfinedTestDispatcher(),
-            )
-    }
+class RealFindingsDbFindingTypesTest : FrontendKoinInitializedTest() {
+    private val findingsDb: FindingsDb by inject()
 
     // region Factory helpers
 
@@ -124,7 +104,7 @@ class RealFindingsDbFindingTypesTest {
 
     @Test
     fun `save and retrieve Classic finding preserves importance and term`() =
-        runTest {
+        runTest(testDispatcher) {
             val finding = classicFinding(importance = Importance.HIGH, term = Term.T2)
 
             findingsDb.saveFinding(finding)
@@ -135,7 +115,7 @@ class RealFindingsDbFindingTypesTest {
 
     @Test
     fun `save and retrieve Unvisited finding`() =
-        runTest {
+        runTest(testDispatcher) {
             findingsDb.saveFinding(unvisitedFinding())
 
             val result = getFindings().single()
@@ -144,7 +124,7 @@ class RealFindingsDbFindingTypesTest {
 
     @Test
     fun `save and retrieve Note finding`() =
-        runTest {
+        runTest(testDispatcher) {
             findingsDb.saveFinding(noteFinding())
 
             val result = getFindings().single()
@@ -157,7 +137,7 @@ class RealFindingsDbFindingTypesTest {
 
     @Test
     fun `changing Classic to Unvisited removes classic details`() =
-        runTest {
+        runTest(testDispatcher) {
             findingsDb.saveFinding(classicFinding(importance = Importance.HIGH, term = Term.T1, updatedAt = 100L))
 
             findingsDb.saveFinding(unvisitedFinding(updatedAt = 200L))
@@ -168,7 +148,7 @@ class RealFindingsDbFindingTypesTest {
 
     @Test
     fun `changing Classic to Note removes classic details`() =
-        runTest {
+        runTest(testDispatcher) {
             findingsDb.saveFinding(classicFinding(updatedAt = 100L))
 
             findingsDb.saveFinding(noteFinding(updatedAt = 200L))
@@ -183,7 +163,7 @@ class RealFindingsDbFindingTypesTest {
 
     @Test
     fun `changing Unvisited to Classic creates classic details`() =
-        runTest {
+        runTest(testDispatcher) {
             findingsDb.saveFinding(unvisitedFinding(updatedAt = 100L))
 
             findingsDb.saveFinding(classicFinding(importance = Importance.LOW, term = Term.T3, updatedAt = 200L))
@@ -194,7 +174,7 @@ class RealFindingsDbFindingTypesTest {
 
     @Test
     fun `changing Note to Classic creates classic details`() =
-        runTest {
+        runTest(testDispatcher) {
             findingsDb.saveFinding(noteFinding(updatedAt = 100L))
 
             findingsDb.saveFinding(classicFinding(importance = Importance.MEDIUM, term = Term.CON, updatedAt = 200L))
@@ -209,7 +189,7 @@ class RealFindingsDbFindingTypesTest {
 
     @Test
     fun `updating Classic importance and term via saveFinding modifies classic details`() =
-        runTest {
+        runTest(testDispatcher) {
             findingsDb.saveFinding(classicFinding(importance = Importance.HIGH, term = Term.T1, updatedAt = 100L))
 
             findingsDb.saveFinding(classicFinding(importance = Importance.MEDIUM, term = Term.T2, updatedAt = 200L))
@@ -220,7 +200,7 @@ class RealFindingsDbFindingTypesTest {
 
     @Test
     fun `deleting Classic finding and re-saving as Unvisited works`() =
-        runTest {
+        runTest(testDispatcher) {
             findingsDb.saveFinding(classicFinding(updatedAt = 100L))
 
             findingsDb.deleteFinding(FINDING_ID_1)
@@ -233,7 +213,7 @@ class RealFindingsDbFindingTypesTest {
 
     @Test
     fun `multiple findings of different types in same structure`() =
-        runTest {
+        runTest(testDispatcher) {
             findingsDb.saveFinding(classicFinding(id = FINDING_ID_1, importance = Importance.HIGH, term = Term.T1))
             findingsDb.saveFinding(unvisitedFinding(id = FINDING_ID_2))
             findingsDb.saveFinding(noteFinding(id = FINDING_ID_3))
@@ -253,7 +233,7 @@ class RealFindingsDbFindingTypesTest {
 
     @Test
     fun `updateFindingDetails changing Classic to Unvisited removes classic details`() =
-        runTest {
+        runTest(testDispatcher) {
             findingsDb.saveFinding(classicFinding(importance = Importance.HIGH, term = Term.T1, updatedAt = 100L))
 
             val updateResult =
@@ -272,7 +252,7 @@ class RealFindingsDbFindingTypesTest {
 
     @Test
     fun `updateFindingDetails changing Unvisited to Classic creates classic details`() =
-        runTest {
+        runTest(testDispatcher) {
             findingsDb.saveFinding(unvisitedFinding(updatedAt = 100L))
 
             val updateResult =
@@ -291,7 +271,7 @@ class RealFindingsDbFindingTypesTest {
 
     @Test
     fun `updateFindingDetails updating Classic importance and term`() =
-        runTest {
+        runTest(testDispatcher) {
             findingsDb.saveFinding(classicFinding(importance = Importance.HIGH, term = Term.T1, updatedAt = 100L))
 
             val updateResult =

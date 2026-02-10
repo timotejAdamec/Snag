@@ -19,6 +19,7 @@ kotlin {
         commonMain.dependencies {
             api(projects.testInfra.common)
             implementation(projects.koinModulesAggregate.fe)
+            implementation(projects.feat.shared.database.fe.test)
         }
     }
 }

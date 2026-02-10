@@ -21,7 +21,7 @@ internal fun Project.configureDataMultiplatformModule() {
         sourceSets {
             commonMain.dependencies {
                 if (!path.contains("database")) {
-                    implementation(project(":feat:shared:database:fe"))
+                    implementation(project(":feat:shared:database:fe:api"))
                 }
             }
         }

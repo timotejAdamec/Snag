@@ -17,7 +17,7 @@ plugins {
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            implementation(project(":feat:shared:database:fe"))
+            implementation(project(":feat:shared:database:fe:api"))
         }
     }
 }
