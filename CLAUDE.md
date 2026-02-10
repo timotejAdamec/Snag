@@ -2,6 +2,10 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Workflow
+
+For each new task create a new worktree with a new branch. After finishing the work, push and create a PR.
+
 ## Build Commands
 
 ```bash
