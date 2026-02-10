@@ -24,6 +24,7 @@ import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ContainedLoadingIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
@@ -33,10 +34,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import cz.adamec.timotej.snag.feat.findings.fe.driving.api.findingTypeVisuals
 import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
 import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingsList.vm.FindingsListUiState
 import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingsList.vm.FindingsListUiStatus
 import cz.adamec.timotej.snag.lib.design.fe.scenes.LocalIsInSheet
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import snag.feat.findings.fe.driving.impl.generated.resources.Res
 import snag.feat.findings.fe.driving.impl.generated.resources.no_findings_yet_message
@@ -134,6 +137,14 @@ private fun FindingsList(
                     } else {
                         ListItemDefaults.colors()
                     },
+                leadingContent = {
+                    val visuals = findingTypeVisuals(finding.finding.type)
+                    Icon(
+                        painter = painterResource(visuals.icon),
+                        contentDescription = stringResource(visuals.label),
+                        tint = visuals.pinColor,
+                    )
+                },
                 headlineContent = {
                     Text(text = finding.finding.name)
                 },

@@ -25,4 +25,7 @@
     <string name="sync_status_syncing">Syncing…</string>
     <string name="sync_status_offline">Offline</string>
     <string name="sync_status_error">Sync error</string>
+    <string name="finding_type_classic">Classic</string>
+    <string name="finding_type_unvisited">Unvisited</string>
+    <string name="finding_type_note">Note</string>
 </resources>
