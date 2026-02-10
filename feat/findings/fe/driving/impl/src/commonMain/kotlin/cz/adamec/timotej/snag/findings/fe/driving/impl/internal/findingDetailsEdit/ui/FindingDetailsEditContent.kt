@@ -38,10 +38,11 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
+import cz.adamec.timotej.snag.feat.findings.business.FindingType
 import cz.adamec.timotej.snag.feat.findings.business.Importance
-import cz.adamec.timotej.snag.lib.design.fe.dialog.FullScreenDialogMeasurements
 import cz.adamec.timotej.snag.feat.findings.business.Term
 import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetailsEdit.vm.FindingDetailsEditUiState
+import cz.adamec.timotej.snag.lib.design.fe.dialog.FullScreenDialogMeasurements
 import cz.adamec.timotej.snag.lib.design.fe.theme.SnagTheme
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -53,12 +54,12 @@ import snag.feat.findings.fe.driving.impl.generated.resources.importance_label
 import snag.feat.findings.fe.driving.impl.generated.resources.importance_low
 import snag.feat.findings.fe.driving.impl.generated.resources.importance_medium
 import snag.feat.findings.fe.driving.impl.generated.resources.new_finding
+import snag.feat.findings.fe.driving.impl.generated.resources.required
 import snag.feat.findings.fe.driving.impl.generated.resources.term_con
 import snag.feat.findings.fe.driving.impl.generated.resources.term_label
 import snag.feat.findings.fe.driving.impl.generated.resources.term_t1
 import snag.feat.findings.fe.driving.impl.generated.resources.term_t2
 import snag.feat.findings.fe.driving.impl.generated.resources.term_t3
-import snag.feat.findings.fe.driving.impl.generated.resources.required
 import snag.lib.design.fe.generated.resources.close
 import snag.lib.design.fe.generated.resources.ic_close
 import snag.lib.design.fe.generated.resources.save
@@ -153,82 +154,85 @@ internal fun FindingDetailsEditContent(
                     onFindingNameChange(it)
                 },
             )
-            Text(
-                text = stringResource(Res.string.importance_label),
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-            val importanceOptions = Importance.entries
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement =
-                    Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween),
-            ) {
-                importanceOptions.forEachIndexed { index, importance ->
-                    ToggleButton(
-                        checked = state.findingImportance == importance,
-                        onCheckedChange = { onImportanceChange(importance) },
-                        modifier =
-                            Modifier
-                                .weight(1f)
-                                .semantics { role = Role.RadioButton },
-                        colors = ToggleButtonDefaults.tonalToggleButtonColors(),
-                        shapes =
-                            when (index) {
-                                0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
-                                importanceOptions.lastIndex ->
-                                    ButtonGroupDefaults.connectedTrailingButtonShapes()
-                                else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
-                            },
-                    ) {
-                        Text(
-                            text =
-                                when (importance) {
-                                    Importance.HIGH -> stringResource(Res.string.importance_high)
-                                    Importance.MEDIUM -> stringResource(Res.string.importance_medium)
-                                    Importance.LOW -> stringResource(Res.string.importance_low)
+            val classicType = state.findingType as? FindingType.Classic
+            if (classicType != null) {
+                Text(
+                    text = stringResource(Res.string.importance_label),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                val importanceOptions = Importance.entries
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement =
+                        Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween),
+                ) {
+                    importanceOptions.forEachIndexed { index, importance ->
+                        ToggleButton(
+                            checked = classicType.importance == importance,
+                            onCheckedChange = { onImportanceChange(importance) },
+                            modifier =
+                                Modifier
+                                    .weight(1f)
+                                    .semantics { role = Role.RadioButton },
+                            colors = ToggleButtonDefaults.tonalToggleButtonColors(),
+                            shapes =
+                                when (index) {
+                                    0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
+                                    importanceOptions.lastIndex ->
+                                        ButtonGroupDefaults.connectedTrailingButtonShapes()
+                                    else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
                                 },
-                        )
+                        ) {
+                            Text(
+                                text =
+                                    when (importance) {
+                                        Importance.HIGH -> stringResource(Res.string.importance_high)
+                                        Importance.MEDIUM -> stringResource(Res.string.importance_medium)
+                                        Importance.LOW -> stringResource(Res.string.importance_low)
+                                    },
+                            )
+                        }
                     }
                 }
-            }
-            Text(
-                text = stringResource(Res.string.term_label),
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-            val termOptions = Term.entries
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement =
-                    Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween),
-            ) {
-                termOptions.forEachIndexed { index, term ->
-                    ToggleButton(
-                        checked = state.findingTerm == term,
-                        onCheckedChange = { onTermChange(term) },
-                        modifier =
-                            Modifier
-                                .weight(1f)
-                                .semantics { role = Role.RadioButton },
-                        colors = ToggleButtonDefaults.tonalToggleButtonColors(),
-                        shapes =
-                            when (index) {
-                                0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
-                                termOptions.lastIndex ->
-                                    ButtonGroupDefaults.connectedTrailingButtonShapes()
-                                else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
-                            },
-                    ) {
-                        Text(
-                            text =
-                                when (term) {
-                                    Term.T1 -> stringResource(Res.string.term_t1)
-                                    Term.T2 -> stringResource(Res.string.term_t2)
-                                    Term.T3 -> stringResource(Res.string.term_t3)
-                                    Term.CON -> stringResource(Res.string.term_con)
+                Text(
+                    text = stringResource(Res.string.term_label),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                val termOptions = Term.entries
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement =
+                        Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween),
+                ) {
+                    termOptions.forEachIndexed { index, term ->
+                        ToggleButton(
+                            checked = classicType.term == term,
+                            onCheckedChange = { onTermChange(term) },
+                            modifier =
+                                Modifier
+                                    .weight(1f)
+                                    .semantics { role = Role.RadioButton },
+                            colors = ToggleButtonDefaults.tonalToggleButtonColors(),
+                            shapes =
+                                when (index) {
+                                    0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
+                                    termOptions.lastIndex ->
+                                        ButtonGroupDefaults.connectedTrailingButtonShapes()
+                                    else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
                                 },
-                        )
+                        ) {
+                            Text(
+                                text =
+                                    when (term) {
+                                        Term.T1 -> stringResource(Res.string.term_t1)
+                                        Term.T2 -> stringResource(Res.string.term_t2)
+                                        Term.T3 -> stringResource(Res.string.term_t3)
+                                        Term.CON -> stringResource(Res.string.term_con)
+                                    },
+                            )
+                        }
                     }
                 }
             }
@@ -254,11 +258,12 @@ private fun FindingDetailsEditContentPreview() {
     SnagTheme {
         FindingDetailsEditContent(
             isEditMode = true,
-            state = FindingDetailsEditUiState(
-                findingName = "Example Finding",
-                findingDescription = "Example Description",
-                findingImportance = Importance.MEDIUM,
-            ),
+            state =
+                FindingDetailsEditUiState(
+                    findingName = "Example Finding",
+                    findingDescription = "Example Description",
+                    findingType = FindingType.Classic(importance = Importance.MEDIUM),
+                ),
             snackbarHostState = SnackbarHostState(),
             onFindingNameChange = {},
             onFindingDescriptionChange = {},

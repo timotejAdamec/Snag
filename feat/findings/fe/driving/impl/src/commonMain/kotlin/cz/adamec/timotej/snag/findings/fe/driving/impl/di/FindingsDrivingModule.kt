@@ -16,7 +16,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.navigation3.scene.DialogSceneStrategy
-import cz.adamec.timotej.snag.lib.design.fe.dialog.fullscreenDialogProperties
 import cz.adamec.timotej.snag.feat.findings.fe.driving.api.FindingDetailRoute
 import cz.adamec.timotej.snag.feat.findings.fe.driving.api.FindingDetailRouteFactory
 import cz.adamec.timotej.snag.feat.findings.fe.driving.api.FindingEditRoute
@@ -29,6 +28,7 @@ import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetailsEd
 import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetailsEdit.vm.FindingDetailsEditViewModel
 import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingsList.ui.FindingsListScreen
 import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingsList.vm.FindingsListViewModel
+import cz.adamec.timotej.snag.lib.design.fe.dialog.fullscreenDialogProperties
 import cz.adamec.timotej.snag.lib.design.fe.scenes.MapListDetailSceneMetadata
 import cz.adamec.timotej.snag.lib.navigation.fe.SnagBackStack
 import org.koin.compose.koinInject
@@ -62,7 +62,7 @@ internal inline fun <reified T : FindingsListRoute> Module.findingsListScreenNav
                     factory.create(
                         structureId = route.structureId,
                         findingId = findingId,
-                    )
+                    ),
                 )
             },
         )
@@ -85,7 +85,7 @@ internal inline fun <reified T : FindingDetailRoute> Module.findingDetailScreenN
                     findingEditRouteFactory.create(
                         structureId = route.structureId,
                         findingId = route.findingId,
-                    )
+                    ),
                 )
             },
         )
@@ -139,10 +139,11 @@ val findingsDrivingImplModule =
                 deleteFindingUseCase = get(),
             )
         }
-        viewModel { (findingId: Uuid?, structureId: Uuid?) ->
+        viewModel { (findingId: Uuid?, structureId: Uuid?, findingTypeKey: String?) ->
             FindingDetailsEditViewModel(
                 findingId = findingId,
                 structureId = structureId,
+                findingTypeKey = findingTypeKey,
                 getFindingUseCase = get(),
                 saveNewFindingUseCase = get(),
                 saveFindingDetailsUseCase = get(),

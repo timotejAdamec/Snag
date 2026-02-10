@@ -43,6 +43,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import cz.adamec.timotej.snag.feat.findings.business.FindingType
 import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetail.ui.components.FindingDeletionAlertDialog
 import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetail.ui.components.ImportanceLabel
 import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetail.ui.components.TermLabel
@@ -99,7 +100,7 @@ internal fun FindingDetailContent(
 
         FindingDetailUiStatus.LOADED,
         FindingDetailUiStatus.DELETED,
-            -> {
+        -> {
             val finding = state.finding ?: return
             var isShowingDeleteConfirmation by remember { mutableStateOf(false) }
             if (isShowingDeleteConfirmation) {
@@ -130,9 +131,13 @@ internal fun FindingDetailContent(
                             }
                         },
                         windowInsets =
-                            if (isInSheet) zeroInsets else TopAppBarDefaults.windowInsets.only(
-                                WindowInsetsSides.Vertical + WindowInsetsSides.End,
-                            ),
+                            if (isInSheet) {
+                                zeroInsets
+                            } else {
+                                TopAppBarDefaults.windowInsets.only(
+                                    WindowInsetsSides.Vertical + WindowInsetsSides.End,
+                                )
+                            },
                         colors =
                             if (isInSheet) {
                                 TopAppBarDefaults.topAppBarColors(
@@ -147,26 +152,29 @@ internal fun FindingDetailContent(
                     if (isInSheet) zeroInsets else ScaffoldDefaults.contentWindowInsets,
             ) { paddingValues ->
                 Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(
-                            top = paddingValues.calculateTopPadding(),
-                            bottom = paddingValues.calculateBottomPadding(),
-                            end = paddingValues.calculateEndPadding(LayoutDirection.Ltr),
-                        )
-                        .consumeWindowInsets(paddingValues)
-                        .padding(16.dp),
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .padding(
+                                top = paddingValues.calculateTopPadding(),
+                                bottom = paddingValues.calculateBottomPadding(),
+                                end = paddingValues.calculateEndPadding(LayoutDirection.Ltr),
+                            ).consumeWindowInsets(paddingValues)
+                            .padding(16.dp),
                 ) {
                     Column {
-                        Row(
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        ) {
-                            ImportanceLabel(
-                                importance = finding.finding.importance,
-                            )
-                            TermLabel(
-                                term = finding.finding.term,
-                            )
+                        val type = finding.finding.type
+                        if (type is FindingType.Classic) {
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            ) {
+                                ImportanceLabel(
+                                    importance = type.importance,
+                                )
+                                TermLabel(
+                                    term = type.term,
+                                )
+                            }
                         }
                         finding.finding.description?.let { description ->
                             Text(

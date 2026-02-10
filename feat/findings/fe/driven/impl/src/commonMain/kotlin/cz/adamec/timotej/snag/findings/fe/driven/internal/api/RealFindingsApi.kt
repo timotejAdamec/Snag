@@ -39,7 +39,10 @@ internal class RealFindingsApi(
         }.also { if (it is OnlineDataResult.Success) LH.logger.d { "Fetched ${it.data.size} findings for structure $structureId." } }
     }
 
-    override suspend fun deleteFinding(id: Uuid, deletedAt: Timestamp): OnlineDataResult<Unit> {
+    override suspend fun deleteFinding(
+        id: Uuid,
+        deletedAt: Timestamp,
+    ): OnlineDataResult<Unit> {
         LH.logger.d { "Deleting finding $id from API..." }
         return safeApiCall(logger = LH.logger, errorContext = "Error deleting finding $id from API.") {
             httpClient.delete("/findings/$id") {
@@ -65,7 +68,10 @@ internal class RealFindingsApi(
         }.also { if (it is OnlineDataResult.Success) LH.logger.d { "Saved finding ${finding.finding.id} to API." } }
     }
 
-    override suspend fun getFindingsModifiedSince(structureId: Uuid, since: Timestamp): OnlineDataResult<List<FindingSyncResult>> {
+    override suspend fun getFindingsModifiedSince(
+        structureId: Uuid,
+        since: Timestamp,
+    ): OnlineDataResult<List<FindingSyncResult>> {
         LH.logger.d { "Fetching findings modified since $since for structure $structureId..." }
         return safeApiCall(logger = LH.logger, errorContext = "Error fetching findings modified since $since for structure $structureId.") {
             httpClient.get("/structures/$structureId/findings?since=${since.value}").body<List<FindingApiDto>>().map { dto ->
@@ -75,6 +81,8 @@ internal class RealFindingsApi(
                     FindingSyncResult.Updated(finding = dto.toModel())
                 }
             }
-        }.also { if (it is OnlineDataResult.Success) LH.logger.d { "Fetched ${it.data.size} modified findings for structure $structureId." } }
+        }.also {
+            if (it is OnlineDataResult.Success) LH.logger.d { "Fetched ${it.data.size} modified findings for structure $structureId." }
+        }
     }
 }

@@ -38,27 +38,31 @@ internal fun ImportanceLabel(
     importance: Importance,
     modifier: Modifier = Modifier,
 ) {
-    val importanceColor = when (importance) {
-        Importance.HIGH -> MaterialTheme.colorScheme.error
-        Importance.MEDIUM -> MaterialTheme.colorScheme.tertiary
-        Importance.LOW -> MaterialTheme.colorScheme.surfaceVariant
-    }
-    val importanceTextColor = when (importance) {
-        Importance.HIGH -> MaterialTheme.colorScheme.onError
-        Importance.MEDIUM -> MaterialTheme.colorScheme.onTertiary
-        Importance.LOW -> MaterialTheme.colorScheme.onSurfaceVariant
-    }
-    val importanceText = when (importance) {
-        Importance.HIGH -> stringResource(Res.string.importance_high)
-        Importance.MEDIUM -> stringResource(Res.string.importance_medium)
-        Importance.LOW -> stringResource(Res.string.importance_low)
-    }
+    val importanceColor =
+        when (importance) {
+            Importance.HIGH -> MaterialTheme.colorScheme.error
+            Importance.MEDIUM -> MaterialTheme.colorScheme.tertiary
+            Importance.LOW -> MaterialTheme.colorScheme.surfaceVariant
+        }
+    val importanceTextColor =
+        when (importance) {
+            Importance.HIGH -> MaterialTheme.colorScheme.onError
+            Importance.MEDIUM -> MaterialTheme.colorScheme.onTertiary
+            Importance.LOW -> MaterialTheme.colorScheme.onSurfaceVariant
+        }
+    val importanceText =
+        when (importance) {
+            Importance.HIGH -> stringResource(Res.string.importance_high)
+            Importance.MEDIUM -> stringResource(Res.string.importance_medium)
+            Importance.LOW -> stringResource(Res.string.importance_low)
+        }
 
     TooltipBox(
         modifier = modifier,
-        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
-            positioning = TooltipAnchorPosition.Above,
-        ),
+        positionProvider =
+            TooltipDefaults.rememberTooltipPositionProvider(
+                positioning = TooltipAnchorPosition.Above,
+            ),
         tooltip = {
             PlainTooltip {
                 Text(
@@ -66,7 +70,7 @@ internal fun ImportanceLabel(
                 )
             }
         },
-        state = rememberTooltipState()
+        state = rememberTooltipState(),
     ) {
         Surface(
             color = importanceColor,

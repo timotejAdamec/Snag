@@ -13,6 +13,8 @@
 package cz.adamec.timotej.snag.findings.be.driven.impl.internal
 
 import cz.adamec.timotej.snag.feat.findings.be.model.BackendFinding
+import cz.adamec.timotej.snag.feat.findings.business.FindingType
+import cz.adamec.timotej.snag.feat.shared.database.be.ClassicFindingEntity
 import cz.adamec.timotej.snag.feat.shared.database.be.FindingCoordinateEntity
 import cz.adamec.timotej.snag.feat.shared.database.be.FindingEntity
 import cz.adamec.timotej.snag.feat.shared.database.be.FindingsTable
@@ -55,24 +57,23 @@ internal class ExposedFindingsDb(
                     return@transaction existing.toModel()
                 }
                 existing.structure = StructureEntity[finding.finding.structureId]
+                existing.type = finding.finding.type.toDbString()
                 existing.name = finding.finding.name
                 existing.description = finding.finding.description
-                existing.importance = finding.finding.importance.name
-                existing.term = finding.finding.term.name
                 existing.updatedAt = finding.finding.updatedAt.value
                 existing.deletedAt = finding.deletedAt?.value
                 existing.coordinates.forEach { it.delete() }
             } else {
                 FindingEntity.new(finding.finding.id) {
                     structure = StructureEntity[finding.finding.structureId]
+                    type = finding.finding.type.toDbString()
                     name = finding.finding.name
                     description = finding.finding.description
-                    importance = finding.finding.importance.name
-                    term = finding.finding.term.name
                     updatedAt = finding.finding.updatedAt.value
                     deletedAt = finding.deletedAt?.value
                 }
             }
+            saveClassicFindingDetails(finding)
 
             val findingEntity = FindingEntity[finding.finding.id]
             finding.finding.coordinates.forEachIndexed { index, coordinate ->
@@ -121,4 +122,22 @@ internal class ExposedFindingsDb(
                 }.with(FindingEntity::coordinates)
                 .map { it.toModel() }
         }
+
+    private fun saveClassicFindingDetails(finding: BackendFinding) {
+        val type = finding.finding.type
+        if (type is FindingType.Classic) {
+            val existing = ClassicFindingEntity.findById(finding.finding.id)
+            if (existing != null) {
+                existing.importance = type.importance.name
+                existing.term = type.term.name
+            } else {
+                ClassicFindingEntity.new(finding.finding.id) {
+                    importance = type.importance.name
+                    term = type.term.name
+                }
+            }
+        } else {
+            ClassicFindingEntity.findById(finding.finding.id)?.delete()
+        }
+    }
 }

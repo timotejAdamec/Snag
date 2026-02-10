@@ -10,14 +10,10 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.findings.fe.app.api.model
+package cz.adamec.timotej.snag.findings.be.driving.impl.internal
 
-import cz.adamec.timotej.snag.feat.findings.business.FindingType
-import kotlin.uuid.Uuid
+import org.slf4j.LoggerFactory
 
-data class SaveFindingDetailsRequest(
-    val findingId: Uuid,
-    val name: String,
-    val description: String?,
-    val findingType: FindingType,
-)
+internal object LH {
+    val logger = LoggerFactory.getLogger("feat-findings-be-driving")
+}

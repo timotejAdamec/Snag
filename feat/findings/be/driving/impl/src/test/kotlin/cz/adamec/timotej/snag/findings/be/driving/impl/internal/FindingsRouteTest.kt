@@ -15,6 +15,7 @@ package cz.adamec.timotej.snag.findings.be.driving.impl.internal
 import cz.adamec.timotej.snag.configuration.be.AppConfiguration
 import cz.adamec.timotej.snag.feat.findings.be.model.BackendFinding
 import cz.adamec.timotej.snag.feat.findings.business.Finding
+import cz.adamec.timotej.snag.feat.findings.business.FindingType
 import cz.adamec.timotej.snag.feat.findings.business.Importance
 import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
 import cz.adamec.timotej.snag.feat.findings.business.Term
@@ -22,6 +23,7 @@ import cz.adamec.timotej.snag.feat.structures.be.model.BackendStructure
 import cz.adamec.timotej.snag.feat.structures.business.Structure
 import cz.adamec.timotej.snag.findings.be.driving.contract.DeleteFindingApiDto
 import cz.adamec.timotej.snag.findings.be.driving.contract.FindingApiDto
+import cz.adamec.timotej.snag.findings.be.driving.contract.FindingTypeStringApiDto
 import cz.adamec.timotej.snag.findings.be.driving.contract.PutFindingApiDto
 import cz.adamec.timotej.snag.findings.be.driving.contract.RelativeCoordinateApiDto
 import cz.adamec.timotej.snag.findings.be.ports.FindingsDb
@@ -58,23 +60,25 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
     private suspend fun seedParentEntities() {
         projectsDb.saveProject(
             BackendProject(
-                project = Project(
-                    id = PROJECT_ID,
-                    name = "Test Project",
-                    address = "Test Address",
-                    updatedAt = Timestamp(1L),
-                ),
+                project =
+                    Project(
+                        id = PROJECT_ID,
+                        name = "Test Project",
+                        address = "Test Address",
+                        updatedAt = Timestamp(1L),
+                    ),
             ),
         )
         structuresDb.saveStructure(
             BackendStructure(
-                structure = Structure(
-                    id = STRUCTURE_ID,
-                    projectId = PROJECT_ID,
-                    name = "Test Structure",
-                    floorPlanUrl = null,
-                    updatedAt = Timestamp(1L),
-                ),
+                structure =
+                    Structure(
+                        id = STRUCTURE_ID,
+                        projectId = PROJECT_ID,
+                        name = "Test Structure",
+                        floorPlanUrl = null,
+                        updatedAt = Timestamp(1L),
+                    ),
             ),
         )
     }
@@ -102,24 +106,25 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
             seedParentEntities()
             dataSource.saveFinding(
                 BackendFinding(
-                    finding = Finding(
-                        id = TEST_ID_1,
-                        structureId = STRUCTURE_ID,
-                        name = "To Delete",
-                        description = "Desc",
-                        importance = Importance.MEDIUM,
-                        term = Term.T1,
-                        coordinates = listOf(RelativeCoordinate(0.5f, 0.5f)),
-                        updatedAt = Timestamp(100L),
-                    ),
+                    finding =
+                        Finding(
+                            id = TEST_ID_1,
+                            structureId = STRUCTURE_ID,
+                            name = "To Delete",
+                            description = "Desc",
+                            type = FindingType.Classic(importance = Importance.MEDIUM, term = Term.T1),
+                            coordinates = listOf(RelativeCoordinate(0.5f, 0.5f)),
+                            updatedAt = Timestamp(100L),
+                        ),
                 ),
             )
             val client = jsonClient()
 
-            val response = client.delete("/findings/$TEST_ID_1") {
-                contentType(ContentType.Application.Json)
-                setBody(DeleteFindingApiDto(deletedAt = Timestamp(200L)))
-            }
+            val response =
+                client.delete("/findings/$TEST_ID_1") {
+                    contentType(ContentType.Application.Json)
+                    setBody(DeleteFindingApiDto(deletedAt = Timestamp(200L)))
+                }
 
             assertEquals(HttpStatusCode.NoContent, response.status)
         }
@@ -131,16 +136,16 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
             seedParentEntities()
             dataSource.saveFinding(
                 BackendFinding(
-                    finding = Finding(
-                        id = TEST_ID_1,
-                        structureId = STRUCTURE_ID,
-                        name = "To Delete",
-                        description = null,
-                        importance = Importance.MEDIUM,
-                        term = Term.T1,
-                        coordinates = emptyList(),
-                        updatedAt = Timestamp(100L),
-                    ),
+                    finding =
+                        Finding(
+                            id = TEST_ID_1,
+                            structureId = STRUCTURE_ID,
+                            name = "To Delete",
+                            description = null,
+                            type = FindingType.Classic(importance = Importance.MEDIUM, term = Term.T1),
+                            coordinates = emptyList(),
+                            updatedAt = Timestamp(100L),
+                        ),
                 ),
             )
             val client = jsonClient()
@@ -165,24 +170,25 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
             seedParentEntities()
             dataSource.saveFinding(
                 BackendFinding(
-                    finding = Finding(
-                        id = TEST_ID_1,
-                        structureId = STRUCTURE_ID,
-                        name = "Existing",
-                        description = "Desc",
-                        importance = Importance.MEDIUM,
-                        term = Term.T1,
-                        coordinates = listOf(RelativeCoordinate(0.5f, 0.5f)),
-                        updatedAt = Timestamp(300L),
-                    ),
+                    finding =
+                        Finding(
+                            id = TEST_ID_1,
+                            structureId = STRUCTURE_ID,
+                            name = "Existing",
+                            description = "Desc",
+                            type = FindingType.Classic(importance = Importance.MEDIUM, term = Term.T1),
+                            coordinates = listOf(RelativeCoordinate(0.5f, 0.5f)),
+                            updatedAt = Timestamp(300L),
+                        ),
                 ),
             )
             val client = jsonClient()
 
-            val response = client.delete("/findings/$TEST_ID_1") {
-                contentType(ContentType.Application.Json)
-                setBody(DeleteFindingApiDto(deletedAt = Timestamp(200L)))
-            }
+            val response =
+                client.delete("/findings/$TEST_ID_1") {
+                    contentType(ContentType.Application.Json)
+                    setBody(DeleteFindingApiDto(deletedAt = Timestamp(200L)))
+                }
 
             assertEquals(HttpStatusCode.OK, response.status)
             val body = response.body<FindingApiDto>()
@@ -195,10 +201,11 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
             configureApp()
             val client = jsonClient()
 
-            val response = client.delete("/findings/not-a-uuid") {
-                contentType(ContentType.Application.Json)
-                setBody(DeleteFindingApiDto(deletedAt = Timestamp(200L)))
-            }
+            val response =
+                client.delete("/findings/not-a-uuid") {
+                    contentType(ContentType.Application.Json)
+                    setBody(DeleteFindingApiDto(deletedAt = Timestamp(200L)))
+                }
 
             assertEquals(HttpStatusCode.BadRequest, response.status)
         }
@@ -209,10 +216,11 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
             configureApp()
             val client = jsonClient()
 
-            val response = client.delete("/findings/$TEST_ID_1") {
-                contentType(ContentType.Application.Json)
-                setBody("{\"invalid\": true}")
-            }
+            val response =
+                client.delete("/findings/$TEST_ID_1") {
+                    contentType(ContentType.Application.Json)
+                    setBody("{\"invalid\": true}")
+                }
 
             assertEquals(HttpStatusCode.BadRequest, response.status)
         }
@@ -240,30 +248,30 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
             seedParentEntities()
             dataSource.saveFinding(
                 BackendFinding(
-                    finding = Finding(
-                        id = TEST_ID_1,
-                        structureId = STRUCTURE_ID,
-                        name = "Finding 1",
-                        description = "Description 1",
-                        importance = Importance.MEDIUM,
-                        term = Term.T1,
-                        coordinates = listOf(RelativeCoordinate(0.1f, 0.2f)),
-                        updatedAt = Timestamp(100L),
-                    ),
+                    finding =
+                        Finding(
+                            id = TEST_ID_1,
+                            structureId = STRUCTURE_ID,
+                            name = "Finding 1",
+                            description = "Description 1",
+                            type = FindingType.Classic(importance = Importance.MEDIUM, term = Term.T1),
+                            coordinates = listOf(RelativeCoordinate(0.1f, 0.2f)),
+                            updatedAt = Timestamp(100L),
+                        ),
                 ),
             )
             dataSource.saveFinding(
                 BackendFinding(
-                    finding = Finding(
-                        id = TEST_ID_2,
-                        structureId = STRUCTURE_ID,
-                        name = "Finding 2",
-                        description = null,
-                        importance = Importance.MEDIUM,
-                        term = Term.T1,
-                        coordinates = emptyList(),
-                        updatedAt = Timestamp(200L),
-                    ),
+                    finding =
+                        Finding(
+                            id = TEST_ID_2,
+                            structureId = STRUCTURE_ID,
+                            name = "Finding 2",
+                            description = null,
+                            type = FindingType.Classic(importance = Importance.MEDIUM, term = Term.T1),
+                            coordinates = emptyList(),
+                            updatedAt = Timestamp(200L),
+                        ),
                 ),
             )
             val client = jsonClient()
@@ -282,30 +290,30 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
             seedParentEntities()
             dataSource.saveFinding(
                 BackendFinding(
-                    finding = Finding(
-                        id = TEST_ID_1,
-                        structureId = STRUCTURE_ID,
-                        name = "Active",
-                        description = null,
-                        importance = Importance.MEDIUM,
-                        term = Term.T1,
-                        coordinates = emptyList(),
-                        updatedAt = Timestamp(100L),
-                    ),
+                    finding =
+                        Finding(
+                            id = TEST_ID_1,
+                            structureId = STRUCTURE_ID,
+                            name = "Active",
+                            description = null,
+                            type = FindingType.Classic(importance = Importance.MEDIUM, term = Term.T1),
+                            coordinates = emptyList(),
+                            updatedAt = Timestamp(100L),
+                        ),
                 ),
             )
             dataSource.saveFinding(
                 BackendFinding(
-                    finding = Finding(
-                        id = TEST_ID_2,
-                        structureId = STRUCTURE_ID,
-                        name = "Deleted",
-                        description = null,
-                        importance = Importance.MEDIUM,
-                        term = Term.T1,
-                        coordinates = emptyList(),
-                        updatedAt = Timestamp(100L),
-                    ),
+                    finding =
+                        Finding(
+                            id = TEST_ID_2,
+                            structureId = STRUCTURE_ID,
+                            name = "Deleted",
+                            description = null,
+                            type = FindingType.Classic(importance = Importance.MEDIUM, term = Term.T1),
+                            coordinates = emptyList(),
+                            updatedAt = Timestamp(100L),
+                        ),
                     deletedAt = Timestamp(200L),
                 ),
             )
@@ -329,16 +337,16 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
             seedParentEntities()
             dataSource.saveFinding(
                 BackendFinding(
-                    finding = Finding(
-                        id = TEST_ID_1,
-                        structureId = STRUCTURE_ID,
-                        name = "Deleted After Since",
-                        description = null,
-                        importance = Importance.MEDIUM,
-                        term = Term.T1,
-                        coordinates = emptyList(),
-                        updatedAt = Timestamp(50L),
-                    ),
+                    finding =
+                        Finding(
+                            id = TEST_ID_1,
+                            structureId = STRUCTURE_ID,
+                            name = "Deleted After Since",
+                            description = null,
+                            type = FindingType.Classic(importance = Importance.MEDIUM, term = Term.T1),
+                            coordinates = emptyList(),
+                            updatedAt = Timestamp(50L),
+                        ),
                     deletedAt = Timestamp(150L),
                 ),
             )
@@ -359,30 +367,30 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
             seedParentEntities()
             dataSource.saveFinding(
                 BackendFinding(
-                    finding = Finding(
-                        id = TEST_ID_1,
-                        structureId = STRUCTURE_ID,
-                        name = "Old",
-                        description = null,
-                        importance = Importance.MEDIUM,
-                        term = Term.T1,
-                        coordinates = emptyList(),
-                        updatedAt = Timestamp(50L),
-                    ),
+                    finding =
+                        Finding(
+                            id = TEST_ID_1,
+                            structureId = STRUCTURE_ID,
+                            name = "Old",
+                            description = null,
+                            type = FindingType.Classic(importance = Importance.MEDIUM, term = Term.T1),
+                            coordinates = emptyList(),
+                            updatedAt = Timestamp(50L),
+                        ),
                 ),
             )
             dataSource.saveFinding(
                 BackendFinding(
-                    finding = Finding(
-                        id = TEST_ID_2,
-                        structureId = STRUCTURE_ID,
-                        name = "Modified",
-                        description = null,
-                        importance = Importance.MEDIUM,
-                        term = Term.T1,
-                        coordinates = emptyList(),
-                        updatedAt = Timestamp(150L),
-                    ),
+                    finding =
+                        Finding(
+                            id = TEST_ID_2,
+                            structureId = STRUCTURE_ID,
+                            name = "Modified",
+                            description = null,
+                            type = FindingType.Classic(importance = Importance.MEDIUM, term = Term.T1),
+                            coordinates = emptyList(),
+                            updatedAt = Timestamp(150L),
+                        ),
                 ),
             )
             val client = jsonClient()
@@ -417,20 +425,22 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
             seedParentEntities()
             val client = jsonClient()
 
-            val response = client.put("/structures/$STRUCTURE_ID/findings/$TEST_ID_1") {
-                contentType(ContentType.Application.Json)
-                setBody(
-                    PutFindingApiDto(
-                        structureId = STRUCTURE_ID,
-                        name = "New Finding",
-                        description = "New Desc",
-                        importance = Importance.MEDIUM.name,
-                        term = Term.T1.name,
-                        coordinates = listOf(RelativeCoordinateApiDto(0.3f, 0.4f)),
-                        updatedAt = Timestamp(100L),
-                    ),
-                )
-            }
+            val response =
+                client.put("/structures/$STRUCTURE_ID/findings/$TEST_ID_1") {
+                    contentType(ContentType.Application.Json)
+                    setBody(
+                        PutFindingApiDto(
+                            structureId = STRUCTURE_ID,
+                            name = "New Finding",
+                            description = "New Desc",
+                            type = FindingTypeStringApiDto.CLASSIC,
+                            importance = "MEDIUM",
+                            term = "T1",
+                            coordinates = listOf(RelativeCoordinateApiDto(0.3f, 0.4f)),
+                            updatedAt = Timestamp(100L),
+                        ),
+                    )
+                }
 
             assertEquals(HttpStatusCode.NoContent, response.status)
         }
@@ -442,34 +452,36 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
             seedParentEntities()
             dataSource.saveFinding(
                 BackendFinding(
-                    finding = Finding(
-                        id = TEST_ID_1,
-                        structureId = STRUCTURE_ID,
-                        name = "Existing",
-                        description = null,
-                        importance = Importance.MEDIUM,
-                        term = Term.T1,
-                        coordinates = emptyList(),
-                        updatedAt = Timestamp(200L),
-                    ),
+                    finding =
+                        Finding(
+                            id = TEST_ID_1,
+                            structureId = STRUCTURE_ID,
+                            name = "Existing",
+                            description = null,
+                            type = FindingType.Classic(importance = Importance.MEDIUM, term = Term.T1),
+                            coordinates = emptyList(),
+                            updatedAt = Timestamp(200L),
+                        ),
                 ),
             )
             val client = jsonClient()
 
-            val response = client.put("/structures/$STRUCTURE_ID/findings/$TEST_ID_1") {
-                contentType(ContentType.Application.Json)
-                setBody(
-                    PutFindingApiDto(
-                        structureId = STRUCTURE_ID,
-                        name = "New",
-                        description = null,
-                        importance = Importance.MEDIUM.name,
-                        term = Term.T1.name,
-                        coordinates = emptyList(),
-                        updatedAt = Timestamp(100L),
-                    ),
-                )
-            }
+            val response =
+                client.put("/structures/$STRUCTURE_ID/findings/$TEST_ID_1") {
+                    contentType(ContentType.Application.Json)
+                    setBody(
+                        PutFindingApiDto(
+                            structureId = STRUCTURE_ID,
+                            name = "New",
+                            description = null,
+                            type = FindingTypeStringApiDto.CLASSIC,
+                            importance = "MEDIUM",
+                            term = "T1",
+                            coordinates = emptyList(),
+                            updatedAt = Timestamp(100L),
+                        ),
+                    )
+                }
 
             assertEquals(HttpStatusCode.OK, response.status)
             val body = response.body<FindingApiDto>()
@@ -484,35 +496,37 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
             seedParentEntities()
             dataSource.saveFinding(
                 BackendFinding(
-                    finding = Finding(
-                        id = TEST_ID_1,
-                        structureId = STRUCTURE_ID,
-                        name = "Deleted",
-                        description = null,
-                        importance = Importance.MEDIUM,
-                        term = Term.T1,
-                        coordinates = emptyList(),
-                        updatedAt = Timestamp(200L),
-                    ),
+                    finding =
+                        Finding(
+                            id = TEST_ID_1,
+                            structureId = STRUCTURE_ID,
+                            name = "Deleted",
+                            description = null,
+                            type = FindingType.Classic(importance = Importance.MEDIUM, term = Term.T1),
+                            coordinates = emptyList(),
+                            updatedAt = Timestamp(200L),
+                        ),
                     deletedAt = Timestamp(300L),
                 ),
             )
             val client = jsonClient()
 
-            val response = client.put("/structures/$STRUCTURE_ID/findings/$TEST_ID_1") {
-                contentType(ContentType.Application.Json)
-                setBody(
-                    PutFindingApiDto(
-                        structureId = STRUCTURE_ID,
-                        name = "New",
-                        description = null,
-                        importance = Importance.MEDIUM.name,
-                        term = Term.T1.name,
-                        coordinates = emptyList(),
-                        updatedAt = Timestamp(100L),
-                    ),
-                )
-            }
+            val response =
+                client.put("/structures/$STRUCTURE_ID/findings/$TEST_ID_1") {
+                    contentType(ContentType.Application.Json)
+                    setBody(
+                        PutFindingApiDto(
+                            structureId = STRUCTURE_ID,
+                            name = "New",
+                            description = null,
+                            type = FindingTypeStringApiDto.CLASSIC,
+                            importance = "MEDIUM",
+                            term = "T1",
+                            coordinates = emptyList(),
+                            updatedAt = Timestamp(100L),
+                        ),
+                    )
+                }
 
             assertEquals(HttpStatusCode.OK, response.status)
             val body = response.body<FindingApiDto>()
@@ -526,20 +540,22 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
             configureApp()
             val client = jsonClient()
 
-            val response = client.put("/structures/$STRUCTURE_ID/findings/not-a-uuid") {
-                contentType(ContentType.Application.Json)
-                setBody(
-                    PutFindingApiDto(
-                        structureId = STRUCTURE_ID,
-                        name = "New",
-                        description = null,
-                        importance = Importance.MEDIUM.name,
-                        term = Term.T1.name,
-                        coordinates = emptyList(),
-                        updatedAt = Timestamp(100L),
-                    ),
-                )
-            }
+            val response =
+                client.put("/structures/$STRUCTURE_ID/findings/not-a-uuid") {
+                    contentType(ContentType.Application.Json)
+                    setBody(
+                        PutFindingApiDto(
+                            structureId = STRUCTURE_ID,
+                            name = "New",
+                            description = null,
+                            type = FindingTypeStringApiDto.CLASSIC,
+                            importance = "MEDIUM",
+                            term = "T1",
+                            coordinates = emptyList(),
+                            updatedAt = Timestamp(100L),
+                        ),
+                    )
+                }
 
             assertEquals(HttpStatusCode.BadRequest, response.status)
         }
@@ -550,10 +566,11 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
             configureApp()
             val client = jsonClient()
 
-            val response = client.put("/structures/$STRUCTURE_ID/findings/$TEST_ID_1") {
-                contentType(ContentType.Application.Json)
-                setBody("{\"invalid\": true}")
-            }
+            val response =
+                client.put("/structures/$STRUCTURE_ID/findings/$TEST_ID_1") {
+                    contentType(ContentType.Application.Json)
+                    setBody("{\"invalid\": true}")
+                }
 
             assertEquals(HttpStatusCode.BadRequest, response.status)
         }

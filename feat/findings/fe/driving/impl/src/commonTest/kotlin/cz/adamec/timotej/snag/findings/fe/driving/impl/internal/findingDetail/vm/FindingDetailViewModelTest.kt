@@ -14,16 +14,15 @@ package cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetail.v
 
 import app.cash.turbine.test
 import cz.adamec.timotej.snag.feat.findings.business.Finding
-import cz.adamec.timotej.snag.feat.findings.business.Importance
-import cz.adamec.timotej.snag.feat.findings.business.Term
+import cz.adamec.timotej.snag.feat.findings.business.FindingType
 import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
-import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.findings.fe.app.api.DeleteFindingUseCase
 import cz.adamec.timotej.snag.findings.fe.app.api.GetFindingUseCase
 import cz.adamec.timotej.snag.findings.fe.driven.test.FakeFindingsDb
 import cz.adamec.timotej.snag.findings.fe.driven.test.FakeFindingsSync
 import cz.adamec.timotej.snag.findings.fe.ports.FindingsDb
 import cz.adamec.timotej.snag.findings.fe.ports.FindingsSync
+import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
@@ -45,7 +44,6 @@ import kotlin.uuid.Uuid
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class FindingDetailViewModelTest : FrontendKoinInitializedTest() {
-
     private val fakeFindingsDb: FakeFindingsDb by inject()
 
     private val getFindingUseCase: GetFindingUseCase by inject()
@@ -53,7 +51,10 @@ class FindingDetailViewModelTest : FrontendKoinInitializedTest() {
 
     private val structureId = Uuid.parse("00000000-0000-0000-0000-000000000001")
     private val findingId = Uuid.parse("00000000-0000-0000-0001-000000000001")
-    private val finding = FrontendFinding(finding = Finding(findingId, structureId, "Crack in wall", "A large crack", Importance.MEDIUM, Term.T1, emptyList(), Timestamp(10L)))
+    private val finding =
+        FrontendFinding(
+            finding = Finding(findingId, structureId, "Crack in wall", "A large crack", FindingType.Classic(), emptyList(), Timestamp(10L)),
+        )
 
     override fun additionalKoinModules(): List<Module> =
         listOf(

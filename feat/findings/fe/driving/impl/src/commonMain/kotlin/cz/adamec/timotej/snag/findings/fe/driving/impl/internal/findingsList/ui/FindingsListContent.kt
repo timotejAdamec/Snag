@@ -35,8 +35,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
 import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingsList.vm.FindingsListUiState
-import cz.adamec.timotej.snag.lib.design.fe.scenes.LocalIsInSheet
 import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingsList.vm.FindingsListUiStatus
+import cz.adamec.timotej.snag.lib.design.fe.scenes.LocalIsInSheet
 import org.jetbrains.compose.resources.stringResource
 import snag.feat.findings.fe.driving.impl.generated.resources.Res
 import snag.feat.findings.fe.driving.impl.generated.resources.no_findings_yet_message

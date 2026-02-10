@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.feat.shared.database.be.di
 
+import cz.adamec.timotej.snag.feat.shared.database.be.ClassicFindingTable
 import cz.adamec.timotej.snag.feat.shared.database.be.ClientsTable
 import cz.adamec.timotej.snag.feat.shared.database.be.FindingCoordinatesTable
 import cz.adamec.timotej.snag.feat.shared.database.be.FindingsTable
@@ -33,6 +34,7 @@ val sharedDatabaseModule =
                         ProjectsTable,
                         StructuresTable,
                         FindingsTable,
+                        ClassicFindingTable,
                         FindingCoordinatesTable,
                     )
                 }

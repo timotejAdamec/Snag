@@ -21,7 +21,10 @@ class FakeFindingsPullSyncTimestampDataSource : FindingsPullSyncTimestampDataSou
 
     override suspend fun getLastSyncedAt(structureId: Uuid): Timestamp? = timestamps[structureId]
 
-    override suspend fun setLastSyncedAt(structureId: Uuid, timestamp: Timestamp) {
+    override suspend fun setLastSyncedAt(
+        structureId: Uuid,
+        timestamp: Timestamp,
+    ) {
         timestamps[structureId] = timestamp
     }
 }

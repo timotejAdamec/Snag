@@ -18,6 +18,5 @@ import cz.adamec.timotej.snag.lib.sync.fe.app.api.SyncCoordinator
 internal class RealFindingsPullSyncCoordinator(
     private val syncCoordinator: SyncCoordinator,
 ) : FindingsPullSyncCoordinator {
-    override suspend fun <T> withFlushedQueue(block: suspend () -> T): T =
-        syncCoordinator.withFlushedQueue(block)
+    override suspend fun <T> withFlushedQueue(block: suspend () -> T): T = syncCoordinator.withFlushedQueue(block)
 }

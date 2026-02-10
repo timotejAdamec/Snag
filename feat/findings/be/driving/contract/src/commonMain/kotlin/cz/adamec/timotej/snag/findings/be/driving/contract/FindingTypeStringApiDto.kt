@@ -10,14 +10,10 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.findings.fe.app.api.model
+package cz.adamec.timotej.snag.findings.be.driving.contract
 
-import cz.adamec.timotej.snag.feat.findings.business.FindingType
-import kotlin.uuid.Uuid
-
-data class SaveFindingDetailsRequest(
-    val findingId: Uuid,
-    val name: String,
-    val description: String?,
-    val findingType: FindingType,
-)
+object FindingTypeStringApiDto {
+    const val CLASSIC = "CLASSIC"
+    const val UNVISITED = "UNVISITED"
+    const val NOTE = "NOTE"
+}

@@ -43,12 +43,13 @@ internal fun FindingDetailsEditScreen(
     onCancelClick: () -> Unit,
     findingId: Uuid? = null,
     structureId: Uuid? = null,
+    findingTypeKey: String? = null,
     viewModel: FindingDetailsEditViewModel =
         koinViewModel(
             viewModelStoreOwner =
                 LocalViewModelStoreOwner.current
                     ?: error("No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"),
-        ) { parametersOf(findingId, structureId) },
+        ) { parametersOf(findingId, structureId, findingTypeKey) },
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 

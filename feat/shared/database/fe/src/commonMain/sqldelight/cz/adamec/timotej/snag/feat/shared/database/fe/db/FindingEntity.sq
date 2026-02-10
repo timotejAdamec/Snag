@@ -1,31 +1,35 @@
 CREATE TABLE IF NOT EXISTS FindingEntity (
     id TEXT NOT NULL PRIMARY KEY,
     structureId TEXT NOT NULL,
+    type TEXT NOT NULL DEFAULT 'CLASSIC',
     name TEXT NOT NULL,
     description TEXT,
-    importance TEXT NOT NULL DEFAULT 'MEDIUM',
-    term TEXT NOT NULL DEFAULT 'T1',
     coordinates TEXT NOT NULL DEFAULT '[]',
     updatedAt INTEGER NOT NULL
 );
 
 save:
-INSERT INTO FindingEntity(id, structureId, name, description, importance, term, coordinates, updatedAt)
+INSERT INTO FindingEntity(id, structureId, type, name, description, coordinates, updatedAt)
 VALUES ?
 ON CONFLICT(id) DO UPDATE SET
     structureId = excluded.structureId,
+    type = excluded.type,
     name = excluded.name,
     description = excluded.description,
-    importance = excluded.importance,
-    term = excluded.term,
     coordinates = excluded.coordinates,
     updatedAt = excluded.updatedAt;
 
 selectByStructureId:
-SELECT * FROM FindingEntity WHERE structureId = :structureId;
+SELECT f.*, c.importance, c.term
+FROM FindingEntity f
+LEFT JOIN ClassicFindingEntity c ON f.id = c.findingId
+WHERE f.structureId = :structureId;
 
 selectById:
-SELECT * FROM FindingEntity WHERE id = :id;
+SELECT f.*, c.importance, c.term
+FROM FindingEntity f
+LEFT JOIN ClassicFindingEntity c ON f.id = c.findingId
+WHERE f.id = :id;
 
 deleteById:
 DELETE FROM FindingEntity WHERE id = :id;
@@ -37,7 +41,7 @@ deleteAll:
 DELETE FROM FindingEntity;
 
 updateDetails:
-UPDATE FindingEntity SET name = :name, description = :description, importance = :importance, term = :term, updatedAt = :updatedAt WHERE id = :id;
+UPDATE FindingEntity SET name = :name, description = :description, type = :type, updatedAt = :updatedAt WHERE id = :id;
 
 updateCoordinates:
 UPDATE FindingEntity SET coordinates = :coordinates, updatedAt = :updatedAt WHERE id = :id;

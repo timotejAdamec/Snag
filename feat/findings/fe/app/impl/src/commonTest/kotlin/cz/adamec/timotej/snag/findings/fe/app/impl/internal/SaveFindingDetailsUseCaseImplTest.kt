@@ -13,16 +13,15 @@
 package cz.adamec.timotej.snag.findings.fe.app.impl.internal
 
 import cz.adamec.timotej.snag.feat.findings.business.Finding
-import cz.adamec.timotej.snag.feat.findings.business.Importance
-import cz.adamec.timotej.snag.feat.findings.business.Term
+import cz.adamec.timotej.snag.feat.findings.business.FindingType
 import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
-import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.findings.fe.app.api.SaveFindingDetailsUseCase
 import cz.adamec.timotej.snag.findings.fe.app.api.model.SaveFindingDetailsRequest
 import cz.adamec.timotej.snag.findings.fe.driven.test.FakeFindingsDb
 import cz.adamec.timotej.snag.findings.fe.driven.test.FakeFindingsSync
 import cz.adamec.timotej.snag.findings.fe.ports.FindingsDb
 import cz.adamec.timotej.snag.findings.fe.ports.FindingsSync
+import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstUpdateDataResult
 import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
@@ -38,7 +37,6 @@ import kotlin.test.assertTrue
 import kotlin.uuid.Uuid
 
 class SaveFindingDetailsUseCaseImplTest : FrontendKoinInitializedTest() {
-
     private val fakeFindingsDb: FakeFindingsDb by inject()
     private val fakeFindingsSync: FakeFindingsSync by inject()
 
@@ -47,18 +45,19 @@ class SaveFindingDetailsUseCaseImplTest : FrontendKoinInitializedTest() {
     private val structureId = Uuid.parse("00000000-0000-0000-0000-000000000001")
     private val findingId = Uuid.parse("00000000-0000-0000-0001-000000000001")
 
-    private val existingFinding = FrontendFinding(
-        finding = Finding(
-            id = findingId,
-            structureId = structureId,
-            name = "Old name",
-            description = "Old description",
-            importance = Importance.MEDIUM,
-            term = Term.T1,
-            coordinates = emptyList(),
-            updatedAt = Timestamp(10L),
-        ),
-    )
+    private val existingFinding =
+        FrontendFinding(
+            finding =
+                Finding(
+                    id = findingId,
+                    structureId = structureId,
+                    name = "Old name",
+                    description = "Old description",
+                    type = FindingType.Classic(),
+                    coordinates = emptyList(),
+                    updatedAt = Timestamp(10L),
+                ),
+        )
 
     override fun additionalKoinModules(): List<Module> =
         listOf(
@@ -69,100 +68,106 @@ class SaveFindingDetailsUseCaseImplTest : FrontendKoinInitializedTest() {
         )
 
     @Test
-    fun `updates name and description`() = runTest(testDispatcher) {
-        fakeFindingsDb.setFinding(existingFinding)
+    fun `updates name and description`() =
+        runTest(testDispatcher) {
+            fakeFindingsDb.setFinding(existingFinding)
 
-        val request = SaveFindingDetailsRequest(
-            findingId = findingId,
-            name = "New name",
-            description = "New description",
-            importance = Importance.MEDIUM,
-            term = Term.T1,
-        )
+            val request =
+                SaveFindingDetailsRequest(
+                    findingId = findingId,
+                    name = "New name",
+                    description = "New description",
+                    findingType = FindingType.Classic(),
+                )
 
-        val result = useCase(request)
+            val result = useCase(request)
 
-        assertIs<OfflineFirstUpdateDataResult.Success>(result)
-    }
-
-    @Test
-    fun `enqueues sync on success`() = runTest(testDispatcher) {
-        fakeFindingsDb.setFinding(existingFinding)
-
-        val request = SaveFindingDetailsRequest(
-            findingId = findingId,
-            name = "New name",
-            description = "New description",
-            importance = Importance.MEDIUM,
-            term = Term.T1,
-        )
-
-        useCase(request)
-
-        assertTrue(fakeFindingsSync.savedFindingIds.contains(findingId))
-    }
+            assertIs<OfflineFirstUpdateDataResult.Success>(result)
+        }
 
     @Test
-    fun `returns NotFound when finding does not exist`() = runTest(testDispatcher) {
-        val request = SaveFindingDetailsRequest(
-            findingId = findingId,
-            name = "New name",
-            description = "New description",
-            importance = Importance.MEDIUM,
-            term = Term.T1,
-        )
+    fun `enqueues sync on success`() =
+        runTest(testDispatcher) {
+            fakeFindingsDb.setFinding(existingFinding)
 
-        val result = useCase(request)
+            val request =
+                SaveFindingDetailsRequest(
+                    findingId = findingId,
+                    name = "New name",
+                    description = "New description",
+                    findingType = FindingType.Classic(),
+                )
 
-        assertIs<OfflineFirstUpdateDataResult.NotFound>(result)
-    }
+            useCase(request)
 
-    @Test
-    fun `does not enqueue sync when not found`() = runTest(testDispatcher) {
-        val request = SaveFindingDetailsRequest(
-            findingId = findingId,
-            name = "New name",
-            description = "New description",
-            importance = Importance.MEDIUM,
-            term = Term.T1,
-        )
-
-        useCase(request)
-
-        assertTrue(fakeFindingsSync.savedFindingIds.isEmpty())
-    }
+            assertTrue(fakeFindingsSync.savedFindingIds.contains(findingId))
+        }
 
     @Test
-    fun `returns error when db fails`() = runTest(testDispatcher) {
-        fakeFindingsDb.forcedFailure = OfflineFirstDataResult.ProgrammerError(RuntimeException("DB error"))
+    fun `returns NotFound when finding does not exist`() =
+        runTest(testDispatcher) {
+            val request =
+                SaveFindingDetailsRequest(
+                    findingId = findingId,
+                    name = "New name",
+                    description = "New description",
+                    findingType = FindingType.Classic(),
+                )
 
-        val request = SaveFindingDetailsRequest(
-            findingId = findingId,
-            name = "New name",
-            description = "New description",
-            importance = Importance.MEDIUM,
-            term = Term.T1,
-        )
+            val result = useCase(request)
 
-        val result = useCase(request)
-
-        assertIs<OfflineFirstUpdateDataResult.ProgrammerError>(result)
-    }
+            assertIs<OfflineFirstUpdateDataResult.NotFound>(result)
+        }
 
     @Test
-    fun `does not enqueue sync when update fails`() = runTest(testDispatcher) {
-        fakeFindingsDb.forcedFailure = OfflineFirstDataResult.ProgrammerError(RuntimeException("DB error"))
+    fun `does not enqueue sync when not found`() =
+        runTest(testDispatcher) {
+            val request =
+                SaveFindingDetailsRequest(
+                    findingId = findingId,
+                    name = "New name",
+                    description = "New description",
+                    findingType = FindingType.Classic(),
+                )
 
-        val request = SaveFindingDetailsRequest(
-            findingId = findingId,
-            name = "New name",
-            description = "New description",
-            importance = Importance.MEDIUM,
-            term = Term.T1,
-        )
+            useCase(request)
 
-        useCase(request)
+            assertTrue(fakeFindingsSync.savedFindingIds.isEmpty())
+        }
 
-        assertTrue(fakeFindingsSync.savedFindingIds.isEmpty())
-    }
+    @Test
+    fun `returns error when db fails`() =
+        runTest(testDispatcher) {
+            fakeFindingsDb.forcedFailure = OfflineFirstDataResult.ProgrammerError(RuntimeException("DB error"))
+
+            val request =
+                SaveFindingDetailsRequest(
+                    findingId = findingId,
+                    name = "New name",
+                    description = "New description",
+                    findingType = FindingType.Classic(),
+                )
+
+            val result = useCase(request)
+
+            assertIs<OfflineFirstUpdateDataResult.ProgrammerError>(result)
+        }
+
+    @Test
+    fun `does not enqueue sync when update fails`() =
+        runTest(testDispatcher) {
+            fakeFindingsDb.forcedFailure = OfflineFirstDataResult.ProgrammerError(RuntimeException("DB error"))
+
+            val request =
+                SaveFindingDetailsRequest(
+                    findingId = findingId,
+                    name = "New name",
+                    description = "New description",
+                    findingType = FindingType.Classic(),
+                )
+
+            useCase(request)
+
+            assertTrue(fakeFindingsSync.savedFindingIds.isEmpty())
+        }
 }

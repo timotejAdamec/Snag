@@ -1,0 +1,15 @@
+CREATE TABLE IF NOT EXISTS ClassicFindingEntity (
+    findingId TEXT NOT NULL PRIMARY KEY REFERENCES FindingEntity(id) ON DELETE CASCADE,
+    importance TEXT NOT NULL,
+    term TEXT NOT NULL
+);
+
+save:
+INSERT INTO ClassicFindingEntity(findingId, importance, term)
+VALUES (?, ?, ?)
+ON CONFLICT(findingId) DO UPDATE SET
+    importance = excluded.importance,
+    term = excluded.term;
+
+deleteByFindingId:
+DELETE FROM ClassicFindingEntity WHERE findingId = :findingId;
