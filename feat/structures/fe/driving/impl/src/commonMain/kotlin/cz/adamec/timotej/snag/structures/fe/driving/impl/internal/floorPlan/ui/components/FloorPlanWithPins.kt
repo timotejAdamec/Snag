@@ -20,18 +20,22 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.graphics.drawscope.Fill
-import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.translate
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import com.github.panpf.zoomimage.CoilZoomAsyncImage
 import com.github.panpf.zoomimage.CoilZoomState
 import com.github.panpf.zoomimage.rememberCoilZoomState
+import cz.adamec.timotej.snag.feat.findings.business.FindingType
+import cz.adamec.timotej.snag.feat.findings.fe.driving.api.findingTypeVisuals
 import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
 import kotlinx.collections.immutable.ImmutableList
+import org.jetbrains.compose.resources.painterResource
 import kotlin.math.sqrt
 import kotlin.uuid.Uuid
 
@@ -75,7 +79,6 @@ internal fun FloorPlanWithPins(
     }
 }
 
-
 @Composable
 private fun FindingsPinsOverlay(
     zoomableState: CoilZoomState,
@@ -86,8 +89,15 @@ private fun FindingsPinsOverlay(
     val displayRect = zoomableState.zoomable.contentDisplayRectF
     if (displayRect.isEmpty) return
 
-    val pinColor = MaterialTheme.colorScheme.error
-    val selectedPinColor = MaterialTheme.colorScheme.tertiary
+    val classicVisuals = findingTypeVisuals(FindingType.Classic())
+    val unvisitedVisuals = findingTypeVisuals(FindingType.Unvisited)
+    val noteVisuals = findingTypeVisuals(FindingType.Note)
+
+    val classicPainter = painterResource(classicVisuals.icon)
+    val unvisitedPainter = painterResource(unvisitedVisuals.icon)
+    val notePainter = painterResource(noteVisuals.icon)
+
+    val selectedPinColor = MaterialTheme.colorScheme.primary
 
     Canvas(modifier = modifier.fillMaxSize()) {
         findings.forEach { finding ->
@@ -98,11 +108,20 @@ private fun FindingsPinsOverlay(
                         y = displayRect.top + coord.y * displayRect.height,
                     )
                 val isSelected = finding.finding.id == selectedFindingId
+                val size = if (isSelected) 32.dp.toPx() else 24.dp.toPx()
+
+                val (painter, color) =
+                    when (finding.finding.type) {
+                        is FindingType.Classic -> classicPainter to classicVisuals.pinColor
+                        is FindingType.Unvisited -> unvisitedPainter to unvisitedVisuals.pinColor
+                        is FindingType.Note -> notePainter to noteVisuals.pinColor
+                    }
 
                 drawFindingPin(
                     center = drawPoint,
-                    fillColor = if (isSelected) selectedPinColor else pinColor,
-                    radius = if (isSelected) 16.dp.toPx() else 12.dp.toPx(),
+                    painter = painter,
+                    size = size,
+                    tint = if (isSelected) selectedPinColor else color,
                 )
             }
         }
@@ -111,15 +130,39 @@ private fun FindingsPinsOverlay(
 
 private fun DrawScope.drawFindingPin(
     center: Offset,
-    fillColor: Color,
-    radius: Float,
+    painter: Painter,
+    size: Float,
+    tint: androidx.compose.ui.graphics.Color,
 ) {
+    val haloRadius = size / 2 + 3.dp.toPx()
+    val ringRadius = size / 2 + 1.dp.toPx()
+
+    // Draw white halo (outermost layer)
     drawCircle(
-        color = fillColor,
-        radius = radius,
+        color = Color.White,
+        radius = haloRadius,
         center = center,
-        style = Fill,
     )
+
+    // Draw colored ring
+    drawCircle(
+        color = tint,
+        radius = ringRadius,
+        center = center,
+    )
+
+    // Draw white icon on top
+    translate(
+        left = center.x - size / 2,
+        top = center.y - size / 2,
+    ) {
+        with(painter) {
+            draw(
+                size = Size(size, size),
+                colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(Color.White),
+            )
+        }
+    }
 }
 
 private fun findTappedFinding(

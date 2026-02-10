@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -33,14 +34,17 @@ import androidx.compose.material3.ToggleButton
 import androidx.compose.material3.ToggleButtonDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import cz.adamec.timotej.snag.feat.findings.business.FindingType
 import cz.adamec.timotej.snag.feat.findings.business.Importance
 import cz.adamec.timotej.snag.feat.findings.business.Term
+import cz.adamec.timotej.snag.feat.findings.fe.driving.api.findingTypeVisuals
 import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetailsEdit.vm.FindingDetailsEditUiState
 import cz.adamec.timotej.snag.lib.design.fe.dialog.FullScreenDialogMeasurements
 import cz.adamec.timotej.snag.lib.design.fe.theme.SnagTheme
@@ -154,6 +158,23 @@ internal fun FindingDetailsEditContent(
                     onFindingNameChange(it)
                 },
             )
+            val visuals = findingTypeVisuals(state.findingType)
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                Icon(
+                    painter = painterResource(visuals.icon),
+                    contentDescription = null,
+                    modifier = Modifier.size(20.dp),
+                    tint = visuals.pinColor,
+                )
+                Text(
+                    text = stringResource(visuals.label),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
             val classicType = state.findingType as? FindingType.Classic
             if (classicType != null) {
                 Text(

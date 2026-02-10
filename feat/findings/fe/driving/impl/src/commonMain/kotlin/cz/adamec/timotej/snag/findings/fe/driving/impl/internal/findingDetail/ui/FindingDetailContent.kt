@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ContainedLoadingIndicator
 import androidx.compose.material3.HorizontalFloatingToolbar
 import androidx.compose.material3.Icon
@@ -44,6 +45,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import cz.adamec.timotej.snag.feat.findings.business.FindingType
+import cz.adamec.timotej.snag.feat.findings.fe.driving.api.findingTypeVisuals
 import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetail.ui.components.FindingDeletionAlertDialog
 import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetail.ui.components.ImportanceLabel
 import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetail.ui.components.TermLabel
@@ -164,8 +166,26 @@ internal fun FindingDetailContent(
                 ) {
                     Column {
                         val type = finding.finding.type
+                        val visuals = findingTypeVisuals(type)
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        ) {
+                            Icon(
+                                painter = painterResource(visuals.icon),
+                                contentDescription = null,
+                                modifier = Modifier.size(20.dp),
+                                tint = visuals.pinColor,
+                            )
+                            Text(
+                                text = stringResource(visuals.label),
+                                style = MaterialTheme.typography.labelMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
                         if (type is FindingType.Classic) {
                             Row(
+                                modifier = Modifier.padding(top = 8.dp),
                                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                             ) {
                                 ImportanceLabel(
