@@ -63,15 +63,12 @@ fun SyncStatusBar(
     var visible by remember { mutableStateOf(false) }
 
     LaunchedEffect(state) {
-        when (state) {
-            SyncStatusBarState.SYNCED -> {
-                if (hasShownNonSynced) {
-                    visible = true
-                    delay(SYNCED_DISPLAY_DURATION_MS)
-                    visible = false
-                }
-            }
-            else -> {
+        if (state == SyncStatusBarState.SYNCED) {
+            if (hasShownNonSynced) {
+                visible = true
+                delay(SYNCED_DISPLAY_DURATION_MS)
+                visible = false
+            } else {
                 hasShownNonSynced = true
                 visible = true
             }
@@ -111,6 +108,7 @@ private fun SyncStatusBarContent(
                 )
             }
         }
+
         SyncStatusBarState.SYNCING -> {
             backgroundColor = MaterialTheme.colorScheme.secondaryContainer
             contentColor = MaterialTheme.colorScheme.onSecondaryContainer
@@ -122,6 +120,7 @@ private fun SyncStatusBarContent(
                 )
             }
         }
+
         SyncStatusBarState.OFFLINE -> {
             backgroundColor = MaterialTheme.colorScheme.surfaceVariant
             contentColor = MaterialTheme.colorScheme.onSurfaceVariant
@@ -135,6 +134,7 @@ private fun SyncStatusBarContent(
                 )
             }
         }
+
         SyncStatusBarState.ERROR -> {
             backgroundColor = MaterialTheme.colorScheme.errorContainer
             contentColor = MaterialTheme.colorScheme.onErrorContainer

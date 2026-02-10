@@ -195,7 +195,7 @@ internal fun ClientDetailsEditContent(
 
 @Preview
 @Composable
-private fun ClientDetailsEditPreview() {
+private fun ClientDetailsEditContentPreview() {
     SnagTheme {
         ClientDetailsEditContent(
             clientId = null,

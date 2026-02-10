@@ -26,14 +26,6 @@ For each new task create a new worktree with a new branch. After finishing the w
 
 # Run a single test class
 ./gradlew :feat:projects:fe:driving:impl:jvmTest --tests "*ProjectDetailsEditViewModelTest"
-
-# Platform-specific builds
-./gradlew :androidApp:assembleDebug          # Android
-./gradlew :composeApp:run                     # Desktop (JVM)
-./gradlew :server:impl:run --no-daemon        # Server (Ktor)
-./gradlew :composeApp:wasmJsBrowserDevelopmentRun  # Web (Wasm)
-./gradlew :composeApp:jsBrowserDevelopmentRun      # Web (JS)
-# iOS: Open iosApp/ in Xcode
 ```
 
 ## Architecture

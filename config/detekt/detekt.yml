@@ -1,15 +1,19 @@
 complexity:
+  LongMethod:
+    active: true
+    ignoreAnnotated: [ 'Composable' ]
   LongParameterList:
     allowedFunctionParameters: 8
     ignoreDefaultParameters: true
   TooManyFunctions:
-    ignoreAnnotatedFunctions: ['Preview']
+    ignoreAnnotatedFunctions: [ 'Preview' ]
 
 naming:
   FunctionNaming:
     ignoreAnnotated: [ 'Composable' ]
   FunctionNameMaxLength:
-    excludes: ['**/test/**', '**/*Test.kt', '**/*Spec.kt']
+    excludes: [ '**/test/**', '**/*Test.kt', '**/*Spec.kt' ]
+    ignoreAnnotated: ['Preview']
   TopLevelPropertyNaming:
     constantPattern: '[A-Z][A-Za-z0-9]*|[A-Z][_A-Z0-9]*'
 
