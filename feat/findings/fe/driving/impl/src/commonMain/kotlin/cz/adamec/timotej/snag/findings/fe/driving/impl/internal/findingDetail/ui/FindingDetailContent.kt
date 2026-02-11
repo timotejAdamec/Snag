@@ -53,8 +53,10 @@ import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetail.vm
 import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetail.vm.FindingDetailUiStatus
 import cz.adamec.timotej.snag.lib.design.fe.scenes.LocalIsInSheet
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 import snag.feat.findings.fe.driving.impl.generated.resources.Res
+import snag.feat.findings.fe.driving.impl.generated.resources.coordinate_count
 import snag.feat.findings.fe.driving.impl.generated.resources.finding_not_found_message
 import snag.lib.design.fe.generated.resources.close
 import snag.lib.design.fe.generated.resources.delete
@@ -203,9 +205,10 @@ internal fun FindingDetailContent(
                                 style = MaterialTheme.typography.bodyMedium,
                             )
                         }
+                        val coordinateCount = finding.finding.coordinates.size
                         Text(
                             modifier = Modifier.padding(top = 16.dp),
-                            text = "${finding.finding.coordinates.size} coordinate(s)", // TODO use string res
+                            text = pluralStringResource(Res.plurals.coordinate_count, coordinateCount, coordinateCount),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
