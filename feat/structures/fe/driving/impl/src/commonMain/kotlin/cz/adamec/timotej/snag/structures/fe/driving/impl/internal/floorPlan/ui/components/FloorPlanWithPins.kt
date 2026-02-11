@@ -108,7 +108,7 @@ private fun FindingsPinsOverlay(
                         y = displayRect.top + coord.y * displayRect.height,
                     )
                 val isSelected = finding.finding.id == selectedFindingId
-                val iconSize = if (isSelected) 36.dp.toPx() else 28.dp.toPx()
+                val iconSize = if (isSelected) 30.dp.toPx() else 22.dp.toPx()
 
                 val (painter, color) =
                     when (finding.finding.type) {
@@ -120,7 +120,7 @@ private fun FindingsPinsOverlay(
                 drawFindingPin(
                     center = drawPoint,
                     painter = painter,
-                    size = iconSize,
+                    iconSize = iconSize,
                     tint = if (isSelected) selectedPinColor else color,
                 )
             }
@@ -131,13 +131,11 @@ private fun FindingsPinsOverlay(
 private fun DrawScope.drawFindingPin(
     center: Offset,
     painter: Painter,
-    size: Float,
-    tint: androidx.compose.ui.graphics.Color,
+    iconSize: Float,
+    tint: Color,
 ) {
-    // Use diagonal of icon square to calculate circle sizes (ensures full icon visibility)
-    val iconDiagonal = size * 1.41f / 2
-    val haloRadius = iconDiagonal + 3.dp.toPx()
-    val ringRadius = iconDiagonal + 1.dp.toPx()
+    val backgroundCircleRadius = iconSize * 1.3f / 2
+    val haloRadius = backgroundCircleRadius + 1.5.dp.toPx()
 
     // Draw white halo (outermost layer)
     drawCircle(
@@ -149,18 +147,18 @@ private fun DrawScope.drawFindingPin(
     // Draw colored ring
     drawCircle(
         color = tint,
-        radius = ringRadius,
+        radius = backgroundCircleRadius,
         center = center,
     )
 
     // Draw white icon on top
     translate(
-        left = center.x - size / 2,
-        top = center.y - size / 2,
+        left = center.x - iconSize / 2,
+        top = center.y - iconSize / 2.15F,
     ) {
         with(painter) {
             draw(
-                size = Size(size, size),
+                size = Size(iconSize, iconSize),
                 colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(Color.White),
             )
         }
