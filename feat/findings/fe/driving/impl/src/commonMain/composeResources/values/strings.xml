@@ -29,4 +29,8 @@
     <string name="term_t2">T2</string>
     <string name="term_t3">T3</string>
     <string name="term_con">CON</string>
+    <plurals name="coordinate_count">
+        <item quantity="one">%d coordinate</item>
+        <item quantity="other">%d coordinates</item>
+    </plurals>
 </resources>
