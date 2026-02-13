@@ -17,56 +17,48 @@ import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionSyncResult
 import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionsApi
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
+import cz.adamec.timotej.snag.network.fe.test.FakeApiOps
 import kotlin.uuid.Uuid
 
 class FakeInspectionsApi : InspectionsApi {
-    private val inspections = mutableMapOf<Uuid, FrontendInspection>()
-    var forcedFailure: OnlineDataResult.Failure? = null
-    var saveInspectionResponseOverride: ((FrontendInspection) -> OnlineDataResult<FrontendInspection?>)? = null
-    var modifiedSinceResults: List<InspectionSyncResult> = emptyList()
+    private val ops =
+        FakeApiOps<FrontendInspection, InspectionSyncResult>(getId = { it.inspection.id })
 
-    override suspend fun getInspections(projectId: Uuid): OnlineDataResult<List<FrontendInspection>> {
-        val failure = forcedFailure
-        if (failure != null) return failure
-        return OnlineDataResult.Success(inspections.values.filter { it.inspection.projectId == projectId })
-    }
+    var forcedFailure
+        get() = ops.forcedFailure
+        set(value) {
+            ops.forcedFailure = value
+        }
+
+    var saveInspectionResponseOverride
+        get() = ops.saveResponseOverride
+        set(value) {
+            ops.saveResponseOverride = value
+        }
+
+    var modifiedSinceResults
+        get() = ops.modifiedSinceResults
+        set(value) {
+            ops.modifiedSinceResults = value
+        }
+
+    override suspend fun getInspections(projectId: Uuid): OnlineDataResult<List<FrontendInspection>> =
+        ops.getAllItems { it.inspection.projectId == projectId }
 
     override suspend fun deleteInspection(
         id: Uuid,
         deletedAt: Timestamp,
-    ): OnlineDataResult<Unit> {
-        val failure = forcedFailure
-        if (failure != null) return failure
-        inspections.remove(id)
-        return OnlineDataResult.Success(Unit)
-    }
+    ): OnlineDataResult<Unit> = ops.deleteItemById(id)
 
-    override suspend fun saveInspection(frontendInspection: FrontendInspection): OnlineDataResult<FrontendInspection?> {
-        val failure = forcedFailure
-        if (failure != null) return failure
-        val override = saveInspectionResponseOverride
-        return if (override != null) {
-            override(frontendInspection)
-        } else {
-            inspections[frontendInspection.inspection.id] = frontendInspection
-            OnlineDataResult.Success(frontendInspection)
-        }
-    }
-
-    fun setInspection(inspection: FrontendInspection) {
-        inspections[inspection.inspection.id] = inspection
-    }
+    override suspend fun saveInspection(frontendInspection: FrontendInspection): OnlineDataResult<FrontendInspection?> =
+        ops.saveItem(frontendInspection)
 
     override suspend fun getInspectionsModifiedSince(
         projectId: Uuid,
         since: Timestamp,
-    ): OnlineDataResult<List<InspectionSyncResult>> {
-        val failure = forcedFailure
-        if (failure != null) return failure
-        return OnlineDataResult.Success(modifiedSinceResults)
-    }
+    ): OnlineDataResult<List<InspectionSyncResult>> = ops.getModifiedSinceItems()
 
-    fun setInspections(inspections: List<FrontendInspection>) {
-        inspections.forEach { this.inspections[it.inspection.id] = it }
-    }
+    fun setInspection(inspection: FrontendInspection) = ops.setItem(inspection)
+
+    fun setInspections(inspections: List<FrontendInspection>) = ops.setItems(inspections)
 }

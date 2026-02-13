@@ -13,6 +13,7 @@
 package cz.adamec.timotej.snag.feat.inspections.fe.driven.di
 
 import cz.adamec.timotej.snag.feat.inspections.fe.driven.internal.api.RealInspectionsApi
+import cz.adamec.timotej.snag.feat.inspections.fe.driven.internal.db.InspectionsSqlDelightDbOps
 import cz.adamec.timotej.snag.feat.inspections.fe.driven.internal.db.RealInspectionsDb
 import cz.adamec.timotej.snag.feat.inspections.fe.driven.internal.sync.InspectionSyncHandler
 import cz.adamec.timotej.snag.feat.inspections.fe.driven.internal.sync.RealInspectionsPullSyncCoordinator
@@ -32,11 +33,12 @@ import org.koin.dsl.module
 val inspectionsDrivenModule =
     module {
         factory {
-            RealInspectionsDb(
-                inspectionEntityQueries = get(),
+            InspectionsSqlDelightDbOps(
+                queries = get(),
                 ioDispatcher = getIoDispatcher(),
             )
-        } bind InspectionsDb::class
+        }
+        factory { RealInspectionsDb(ops = get()) } bind InspectionsDb::class
         factoryOf(::RealInspectionsApi) bind InspectionsApi::class
         factoryOf(::InspectionSyncHandler) bind SyncOperationHandler::class
         factoryOf(::RealInspectionsSync) bind InspectionsSync::class

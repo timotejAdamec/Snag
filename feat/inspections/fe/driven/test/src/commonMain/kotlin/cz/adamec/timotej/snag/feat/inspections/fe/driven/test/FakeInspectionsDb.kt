@@ -15,67 +15,37 @@ package cz.adamec.timotej.snag.feat.inspections.fe.driven.test
 import cz.adamec.timotej.snag.feat.inspections.fe.model.FrontendInspection
 import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionsDb
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
+import cz.adamec.timotej.snag.lib.database.fe.test.FakeDbOps
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.update
 import kotlin.uuid.Uuid
 
 class FakeInspectionsDb : InspectionsDb {
-    private val inspections = MutableStateFlow<Map<Uuid, FrontendInspection>>(emptyMap())
-    var forcedFailure: OfflineFirstDataResult.ProgrammerError? = null
+    private val ops = FakeDbOps<FrontendInspection>(getId = { it.inspection.id })
+
+    var forcedFailure
+        get() = ops.forcedFailure
+        set(value) {
+            ops.forcedFailure = value
+        }
 
     override fun getInspectionsFlow(projectId: Uuid): Flow<OfflineFirstDataResult<List<FrontendInspection>>> =
-        inspections.map { map ->
-            val failure = forcedFailure
-            failure ?: OfflineFirstDataResult.Success(map.values.filter { it.inspection.projectId == projectId })
-        }
+        ops.allItemsFlow { it.inspection.projectId == projectId }
 
-    override suspend fun saveInspection(inspection: FrontendInspection): OfflineFirstDataResult<Unit> {
-        val failure = forcedFailure
-        if (failure != null) return failure
+    override suspend fun saveInspection(inspection: FrontendInspection): OfflineFirstDataResult<Unit> = ops.saveOneItem(inspection)
 
-        inspections.update { it + (inspection.inspection.id to inspection) }
-        return OfflineFirstDataResult.Success(Unit)
-    }
+    override suspend fun deleteInspection(id: Uuid): OfflineFirstDataResult<Unit> = ops.deleteItem(id)
 
-    override suspend fun deleteInspection(id: Uuid): OfflineFirstDataResult<Unit> {
-        val failure = forcedFailure
-        if (failure != null) return failure
+    override fun getInspectionFlow(id: Uuid): Flow<OfflineFirstDataResult<FrontendInspection?>> = ops.itemByIdFlow(id)
 
-        inspections.update { it - id }
-        return OfflineFirstDataResult.Success(Unit)
-    }
+    override suspend fun getInspectionIdsByProjectId(projectId: Uuid): List<Uuid> =
+        ops.items.value.values
+            .filter { it.inspection.projectId == projectId }
+            .map { it.inspection.id }
 
-    override fun getInspectionFlow(id: Uuid): Flow<OfflineFirstDataResult<FrontendInspection?>> =
-        inspections.map { map ->
-            val failure = forcedFailure
-            if (failure != null) {
-                failure
-            } else {
-                OfflineFirstDataResult.Success(map[id])
-            }
-        }
+    override suspend fun deleteInspectionsByProjectId(projectId: Uuid): OfflineFirstDataResult<Unit> =
+        ops.deleteItemsWhere { it.inspection.projectId != projectId }
 
-    override suspend fun getInspectionIdsByProjectId(projectId: Uuid): List<Uuid> {
-        val matching = inspections.value.values.filter { it.inspection.projectId == projectId }
-        return matching.map { it.inspection.id }
-    }
+    fun setInspection(inspection: FrontendInspection) = ops.setItem(inspection)
 
-    override suspend fun deleteInspectionsByProjectId(projectId: Uuid): OfflineFirstDataResult<Unit> {
-        val failure = forcedFailure
-        if (failure != null) return failure
-        inspections.update { current -> current.filterValues { it.inspection.projectId != projectId } }
-        return OfflineFirstDataResult.Success(Unit)
-    }
-
-    fun setInspection(inspection: FrontendInspection) {
-        inspections.update { it + (inspection.inspection.id to inspection) }
-    }
-
-    fun setInspections(inspections: List<FrontendInspection>) {
-        this.inspections.update { current ->
-            current + inspections.associateBy { it.inspection.id }
-        }
-    }
+    fun setInspections(inspections: List<FrontendInspection>) = ops.setItems(inspections)
 }
