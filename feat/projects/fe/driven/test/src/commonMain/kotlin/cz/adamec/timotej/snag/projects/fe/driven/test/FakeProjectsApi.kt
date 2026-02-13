@@ -14,56 +14,47 @@ package cz.adamec.timotej.snag.projects.fe.driven.test
 
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
+import cz.adamec.timotej.snag.network.fe.test.FakeApiOps
 import cz.adamec.timotej.snag.projects.fe.model.FrontendProject
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectSyncResult
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsApi
 import kotlin.uuid.Uuid
 
 class FakeProjectsApi : ProjectsApi {
-    private val projects = mutableMapOf<Uuid, FrontendProject>()
-    var forcedFailure: OnlineDataResult.Failure? = null
-    var saveProjectResponseOverride: ((FrontendProject) -> OnlineDataResult<FrontendProject?>)? = null
-    var modifiedSinceResults: List<ProjectSyncResult> = emptyList()
+    private val ops = FakeApiOps<FrontendProject, ProjectSyncResult>(getId = { it.project.id })
 
-    override suspend fun getProjects(): OnlineDataResult<List<FrontendProject>> {
-        val failure = forcedFailure
-        if (failure != null) return failure
-        return OnlineDataResult.Success(projects.values.toList())
-    }
-
-    override suspend fun getProject(id: Uuid): OnlineDataResult<FrontendProject> {
-        val failure = forcedFailure
-        if (failure != null) return failure
-        return projects[id]?.let { OnlineDataResult.Success(it) }
-            ?: OnlineDataResult.Failure.ProgrammerError(Exception("Not found"))
-    }
-
-    override suspend fun saveProject(project: FrontendProject): OnlineDataResult<FrontendProject?> {
-        val failure = forcedFailure
-        if (failure != null) return failure
-        val override = saveProjectResponseOverride
-        return if (override != null) {
-            override(project)
-        } else {
-            projects[project.project.id] = project
-            OnlineDataResult.Success(project)
+    var forcedFailure
+        get() = ops.forcedFailure
+        set(value) {
+            ops.forcedFailure = value
         }
-    }
 
-    override suspend fun deleteProject(id: Uuid, deletedAt: Timestamp): OnlineDataResult<Unit> {
-        val failure = forcedFailure
-        if (failure != null) return failure
-        projects.remove(id)
-        return OnlineDataResult.Success(Unit)
-    }
+    var saveProjectResponseOverride
+        get() = ops.saveResponseOverride
+        set(value) {
+            ops.saveResponseOverride = value
+        }
 
-    override suspend fun getProjectsModifiedSince(since: Timestamp): OnlineDataResult<List<ProjectSyncResult>> {
-        val failure = forcedFailure
-        if (failure != null) return failure
-        return OnlineDataResult.Success(modifiedSinceResults)
-    }
+    var modifiedSinceResults
+        get() = ops.modifiedSinceResults
+        set(value) {
+            ops.modifiedSinceResults = value
+        }
 
-    fun setProject(project: FrontendProject) {
-        projects[project.project.id] = project
-    }
+    override suspend fun getProjects(): OnlineDataResult<List<FrontendProject>> =
+        ops.getAllItems()
+
+    override suspend fun getProject(id: Uuid): OnlineDataResult<FrontendProject> =
+        ops.getItemById(id)
+
+    override suspend fun saveProject(project: FrontendProject): OnlineDataResult<FrontendProject?> =
+        ops.saveItem(project)
+
+    override suspend fun deleteProject(id: Uuid, deletedAt: Timestamp): OnlineDataResult<Unit> =
+        ops.deleteItemById(id)
+
+    override suspend fun getProjectsModifiedSince(since: Timestamp): OnlineDataResult<List<ProjectSyncResult>> =
+        ops.getModifiedSinceItems()
+
+    fun setProject(project: FrontendProject) = ops.setItem(project)
 }

@@ -15,52 +15,48 @@ package cz.adamec.timotej.snag.structures.fe.driven.test
 import cz.adamec.timotej.snag.feat.structures.fe.model.FrontendStructure
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
+import cz.adamec.timotej.snag.network.fe.test.FakeApiOps
 import cz.adamec.timotej.snag.structures.fe.ports.StructureSyncResult
 import cz.adamec.timotej.snag.structures.fe.ports.StructuresApi
 import kotlin.uuid.Uuid
 
 class FakeStructuresApi : StructuresApi {
-    private val structures = mutableMapOf<Uuid, FrontendStructure>()
-    var forcedFailure: OnlineDataResult.Failure? = null
-    var saveStructureResponseOverride: ((FrontendStructure) -> OnlineDataResult<FrontendStructure?>)? = null
-    var modifiedSinceResults: List<StructureSyncResult> = emptyList()
+    private val ops =
+        FakeApiOps<FrontendStructure, StructureSyncResult>(getId = { it.structure.id })
 
-    override suspend fun getStructures(projectId: Uuid): OnlineDataResult<List<FrontendStructure>> {
-        val failure = forcedFailure
-        if (failure != null) return failure
-        return OnlineDataResult.Success(structures.values.filter { it.structure.projectId == projectId })
-    }
-
-    override suspend fun deleteStructure(id: Uuid, deletedAt: Timestamp): OnlineDataResult<Unit> {
-        val failure = forcedFailure
-        if (failure != null) return failure
-        structures.remove(id)
-        return OnlineDataResult.Success(Unit)
-    }
-
-    override suspend fun saveStructure(frontendStructure: FrontendStructure): OnlineDataResult<FrontendStructure?> {
-        val failure = forcedFailure
-        if (failure != null) return failure
-        val override = saveStructureResponseOverride
-        return if (override != null) {
-            override(frontendStructure)
-        } else {
-            structures[frontendStructure.structure.id] = frontendStructure
-            OnlineDataResult.Success(frontendStructure)
+    var forcedFailure
+        get() = ops.forcedFailure
+        set(value) {
+            ops.forcedFailure = value
         }
-    }
 
-    fun setStructure(structure: FrontendStructure) {
-        structures[structure.structure.id] = structure
-    }
+    var saveStructureResponseOverride
+        get() = ops.saveResponseOverride
+        set(value) {
+            ops.saveResponseOverride = value
+        }
 
-    override suspend fun getStructuresModifiedSince(projectId: Uuid, since: Timestamp): OnlineDataResult<List<StructureSyncResult>> {
-        val failure = forcedFailure
-        if (failure != null) return failure
-        return OnlineDataResult.Success(modifiedSinceResults)
-    }
+    var modifiedSinceResults
+        get() = ops.modifiedSinceResults
+        set(value) {
+            ops.modifiedSinceResults = value
+        }
 
-    fun setStructures(structures: List<FrontendStructure>) {
-        structures.forEach { this.structures[it.structure.id] = it }
-    }
+    override suspend fun getStructures(projectId: Uuid): OnlineDataResult<List<FrontendStructure>> =
+        ops.getAllItems { it.structure.projectId == projectId }
+
+    override suspend fun saveStructure(frontendStructure: FrontendStructure): OnlineDataResult<FrontendStructure?> =
+        ops.saveItem(frontendStructure)
+
+    override suspend fun deleteStructure(id: Uuid, deletedAt: Timestamp): OnlineDataResult<Unit> =
+        ops.deleteItemById(id)
+
+    override suspend fun getStructuresModifiedSince(
+        projectId: Uuid,
+        since: Timestamp,
+    ): OnlineDataResult<List<StructureSyncResult>> = ops.getModifiedSinceItems()
+
+    fun setStructure(structure: FrontendStructure) = ops.setItem(structure)
+
+    fun setStructures(structures: List<FrontendStructure>) = ops.setItems(structures)
 }

@@ -17,56 +17,48 @@ import cz.adamec.timotej.snag.findings.fe.ports.FindingSyncResult
 import cz.adamec.timotej.snag.findings.fe.ports.FindingsApi
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
+import cz.adamec.timotej.snag.network.fe.test.FakeApiOps
 import kotlin.uuid.Uuid
 
 class FakeFindingsApi : FindingsApi {
-    private val findings = mutableMapOf<Uuid, FrontendFinding>()
-    var forcedFailure: OnlineDataResult.Failure? = null
-    var saveFindingResponseOverride: ((FrontendFinding) -> OnlineDataResult<FrontendFinding?>)? = null
-    var modifiedSinceResults: List<FindingSyncResult> = emptyList()
+    private val ops =
+        FakeApiOps<FrontendFinding, FindingSyncResult>(getId = { it.finding.id })
 
-    override suspend fun getFindings(structureId: Uuid): OnlineDataResult<List<FrontendFinding>> {
-        val failure = forcedFailure
-        if (failure != null) return failure
-        return OnlineDataResult.Success(findings.values.filter { it.finding.structureId == structureId })
-    }
+    var forcedFailure
+        get() = ops.forcedFailure
+        set(value) {
+            ops.forcedFailure = value
+        }
+
+    var saveFindingResponseOverride
+        get() = ops.saveResponseOverride
+        set(value) {
+            ops.saveResponseOverride = value
+        }
+
+    var modifiedSinceResults
+        get() = ops.modifiedSinceResults
+        set(value) {
+            ops.modifiedSinceResults = value
+        }
+
+    override suspend fun getFindings(structureId: Uuid): OnlineDataResult<List<FrontendFinding>> =
+        ops.getAllItems { it.finding.structureId == structureId }
+
+    override suspend fun saveFinding(finding: FrontendFinding): OnlineDataResult<FrontendFinding?> =
+        ops.saveItem(finding)
 
     override suspend fun deleteFinding(
         id: Uuid,
         deletedAt: Timestamp,
-    ): OnlineDataResult<Unit> {
-        val failure = forcedFailure
-        if (failure != null) return failure
-        findings.remove(id)
-        return OnlineDataResult.Success(Unit)
-    }
-
-    override suspend fun saveFinding(finding: FrontendFinding): OnlineDataResult<FrontendFinding?> {
-        val failure = forcedFailure
-        if (failure != null) return failure
-        val override = saveFindingResponseOverride
-        return if (override != null) {
-            override(finding)
-        } else {
-            findings[finding.finding.id] = finding
-            OnlineDataResult.Success(finding)
-        }
-    }
-
-    fun setFinding(finding: FrontendFinding) {
-        findings[finding.finding.id] = finding
-    }
+    ): OnlineDataResult<Unit> = ops.deleteItemById(id)
 
     override suspend fun getFindingsModifiedSince(
         structureId: Uuid,
         since: Timestamp,
-    ): OnlineDataResult<List<FindingSyncResult>> {
-        val failure = forcedFailure
-        if (failure != null) return failure
-        return OnlineDataResult.Success(modifiedSinceResults)
-    }
+    ): OnlineDataResult<List<FindingSyncResult>> = ops.getModifiedSinceItems()
 
-    fun setFindings(findings: List<FrontendFinding>) {
-        findings.forEach { this.findings[it.finding.id] = it }
-    }
+    fun setFinding(finding: FrontendFinding) = ops.setItem(finding)
+
+    fun setFindings(findings: List<FrontendFinding>) = ops.setItems(findings)
 }

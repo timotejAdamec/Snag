@@ -13,6 +13,7 @@
 package cz.adamec.timotej.snag.clients.fe.driven.di
 
 import cz.adamec.timotej.snag.clients.fe.driven.internal.api.RealClientsApi
+import cz.adamec.timotej.snag.clients.fe.driven.internal.db.ClientsSqlDelightDbOps
 import cz.adamec.timotej.snag.clients.fe.driven.internal.db.RealClientsDb
 import cz.adamec.timotej.snag.clients.fe.driven.internal.sync.ClientSyncHandler
 import cz.adamec.timotej.snag.clients.fe.driven.internal.sync.RealClientsPullSyncCoordinator
@@ -32,11 +33,12 @@ import org.koin.dsl.module
 val clientsDrivenModule =
     module {
         factory {
-            RealClientsDb(
-                clientEntityQueries = get(),
+            ClientsSqlDelightDbOps(
+                queries = get(),
                 ioDispatcher = getIoDispatcher(),
             )
-        } bind ClientsDb::class
+        }
+        factory { RealClientsDb(ops = get()) } bind ClientsDb::class
         factoryOf(::RealClientsApi) bind ClientsApi::class
         factoryOf(::ClientSyncHandler) bind SyncOperationHandler::class
         factoryOf(::RealClientsSync) bind ClientsSync::class

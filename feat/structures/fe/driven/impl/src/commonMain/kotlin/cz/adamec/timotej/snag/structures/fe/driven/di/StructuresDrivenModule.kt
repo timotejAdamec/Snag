@@ -16,6 +16,7 @@ import cz.adamec.timotej.snag.lib.core.common.di.getIoDispatcher
 import cz.adamec.timotej.snag.lib.sync.fe.app.api.handler.SyncOperationHandler
 import cz.adamec.timotej.snag.structures.fe.driven.internal.api.RealStructuresApi
 import cz.adamec.timotej.snag.structures.fe.driven.internal.db.RealStructuresDb
+import cz.adamec.timotej.snag.structures.fe.driven.internal.db.StructuresSqlDelightDbOps
 import cz.adamec.timotej.snag.structures.fe.driven.internal.sync.RealStructuresPullSyncCoordinator
 import cz.adamec.timotej.snag.structures.fe.driven.internal.sync.RealStructuresPullSyncTimestampDataSource
 import cz.adamec.timotej.snag.structures.fe.driven.internal.sync.RealStructuresSync
@@ -32,11 +33,12 @@ import org.koin.dsl.module
 val structuresDrivenModule =
     module {
         factory {
-            RealStructuresDb(
-                structureEntityQueries = get(),
+            StructuresSqlDelightDbOps(
+                queries = get(),
                 ioDispatcher = getIoDispatcher(),
             )
-        } bind StructuresDb::class
+        }
+        factory { RealStructuresDb(ops = get()) } bind StructuresDb::class
         factoryOf(::RealStructuresApi) bind StructuresApi::class
         factoryOf(::StructureSyncHandler) bind SyncOperationHandler::class
         factoryOf(::RealStructuresSync) bind StructuresSync::class
