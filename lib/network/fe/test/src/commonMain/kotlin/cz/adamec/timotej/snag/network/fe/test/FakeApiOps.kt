@@ -15,7 +15,9 @@ package cz.adamec.timotej.snag.network.fe.test
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
 import kotlin.uuid.Uuid
 
-class FakeApiOps<T, SyncResultType>(private val getId: (T) -> Uuid) {
+class FakeApiOps<T, SyncResultType>(
+    private val getId: (T) -> Uuid,
+) {
     val apiItems = mutableMapOf<Uuid, T>()
     var forcedFailure: OnlineDataResult.Failure? = null
     var saveResponseOverride: ((T) -> OnlineDataResult<T?>)? = null

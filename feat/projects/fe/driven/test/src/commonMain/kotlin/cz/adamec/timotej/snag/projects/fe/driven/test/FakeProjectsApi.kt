@@ -41,20 +41,18 @@ class FakeProjectsApi : ProjectsApi {
             ops.modifiedSinceResults = value
         }
 
-    override suspend fun getProjects(): OnlineDataResult<List<FrontendProject>> =
-        ops.getAllItems()
+    override suspend fun getProjects(): OnlineDataResult<List<FrontendProject>> = ops.getAllItems()
 
-    override suspend fun getProject(id: Uuid): OnlineDataResult<FrontendProject> =
-        ops.getItemById(id)
+    override suspend fun getProject(id: Uuid): OnlineDataResult<FrontendProject> = ops.getItemById(id)
 
-    override suspend fun saveProject(project: FrontendProject): OnlineDataResult<FrontendProject?> =
-        ops.saveItem(project)
+    override suspend fun saveProject(project: FrontendProject): OnlineDataResult<FrontendProject?> = ops.saveItem(project)
 
-    override suspend fun deleteProject(id: Uuid, deletedAt: Timestamp): OnlineDataResult<Unit> =
-        ops.deleteItemById(id)
+    override suspend fun deleteProject(
+        id: Uuid,
+        deletedAt: Timestamp,
+    ): OnlineDataResult<Unit> = ops.deleteItemById(id)
 
-    override suspend fun getProjectsModifiedSince(since: Timestamp): OnlineDataResult<List<ProjectSyncResult>> =
-        ops.getModifiedSinceItems()
+    override suspend fun getProjectsModifiedSince(since: Timestamp): OnlineDataResult<List<ProjectSyncResult>> = ops.getModifiedSinceItems()
 
     fun setProject(project: FrontendProject) = ops.setItem(project)
 }

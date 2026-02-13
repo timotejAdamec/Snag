@@ -21,18 +21,13 @@ import kotlin.uuid.Uuid
 internal class RealProjectsDb(
     private val ops: ProjectsSqlDelightDbOps,
 ) : ProjectsDb {
-    override fun getAllProjectsFlow(): Flow<OfflineFirstDataResult<List<FrontendProject>>> =
-        ops.allEntitiesFlow()
+    override fun getAllProjectsFlow(): Flow<OfflineFirstDataResult<List<FrontendProject>>> = ops.allEntitiesFlow()
 
-    override fun getProjectFlow(id: Uuid): Flow<OfflineFirstDataResult<FrontendProject?>> =
-        ops.entityByIdFlow(id)
+    override fun getProjectFlow(id: Uuid): Flow<OfflineFirstDataResult<FrontendProject?>> = ops.entityByIdFlow(id)
 
-    override suspend fun saveProject(project: FrontendProject): OfflineFirstDataResult<Unit> =
-        ops.saveOne(project)
+    override suspend fun saveProject(project: FrontendProject): OfflineFirstDataResult<Unit> = ops.saveOne(project)
 
-    override suspend fun saveProjects(projects: List<FrontendProject>): OfflineFirstDataResult<Unit> =
-        ops.saveMany(projects)
+    override suspend fun saveProjects(projects: List<FrontendProject>): OfflineFirstDataResult<Unit> = ops.saveMany(projects)
 
-    override suspend fun deleteProject(id: Uuid): OfflineFirstDataResult<Unit> =
-        ops.deleteById(id)
+    override suspend fun deleteProject(id: Uuid): OfflineFirstDataResult<Unit> = ops.deleteById(id)
 }

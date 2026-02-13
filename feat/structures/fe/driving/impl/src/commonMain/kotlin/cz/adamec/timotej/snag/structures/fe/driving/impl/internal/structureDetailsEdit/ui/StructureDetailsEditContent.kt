@@ -127,7 +127,7 @@ internal fun StructureDetailsEditContent(
                     Text(
                         text =
                             state.structureNameError?.let { stringResource(it) }
-                                ?: (stringResource(Res.string.required) + "*"),
+                                ?: stringResource(Res.string.required) + "*",
                     )
                 },
                 value = state.structureName,

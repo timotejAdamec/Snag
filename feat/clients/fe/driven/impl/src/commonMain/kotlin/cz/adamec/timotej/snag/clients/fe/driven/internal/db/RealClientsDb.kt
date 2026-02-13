@@ -21,18 +21,13 @@ import kotlin.uuid.Uuid
 internal class RealClientsDb(
     private val ops: ClientsSqlDelightDbOps,
 ) : ClientsDb {
-    override fun getAllClientsFlow(): Flow<OfflineFirstDataResult<List<FrontendClient>>> =
-        ops.allEntitiesFlow()
+    override fun getAllClientsFlow(): Flow<OfflineFirstDataResult<List<FrontendClient>>> = ops.allEntitiesFlow()
 
-    override fun getClientFlow(id: Uuid): Flow<OfflineFirstDataResult<FrontendClient?>> =
-        ops.entityByIdFlow(id)
+    override fun getClientFlow(id: Uuid): Flow<OfflineFirstDataResult<FrontendClient?>> = ops.entityByIdFlow(id)
 
-    override suspend fun saveClient(client: FrontendClient): OfflineFirstDataResult<Unit> =
-        ops.saveOne(client)
+    override suspend fun saveClient(client: FrontendClient): OfflineFirstDataResult<Unit> = ops.saveOne(client)
 
-    override suspend fun saveClients(clients: List<FrontendClient>): OfflineFirstDataResult<Unit> =
-        ops.saveMany(clients)
+    override suspend fun saveClients(clients: List<FrontendClient>): OfflineFirstDataResult<Unit> = ops.saveMany(clients)
 
-    override suspend fun deleteClient(id: Uuid): OfflineFirstDataResult<Unit> =
-        ops.deleteById(id)
+    override suspend fun deleteClient(id: Uuid): OfflineFirstDataResult<Unit> = ops.deleteById(id)
 }

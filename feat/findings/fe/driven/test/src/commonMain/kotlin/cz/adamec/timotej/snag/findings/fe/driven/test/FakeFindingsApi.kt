@@ -45,8 +45,7 @@ class FakeFindingsApi : FindingsApi {
     override suspend fun getFindings(structureId: Uuid): OnlineDataResult<List<FrontendFinding>> =
         ops.getAllItems { it.finding.structureId == structureId }
 
-    override suspend fun saveFinding(finding: FrontendFinding): OnlineDataResult<FrontendFinding?> =
-        ops.saveItem(finding)
+    override suspend fun saveFinding(finding: FrontendFinding): OnlineDataResult<FrontendFinding?> = ops.saveItem(finding)
 
     override suspend fun deleteFinding(
         id: Uuid,
