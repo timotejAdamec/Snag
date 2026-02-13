@@ -17,7 +17,6 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.navigation3.scene.DialogSceneStrategy
-import cz.adamec.timotej.snag.lib.design.fe.dialog.fullscreenDialogProperties
 import cz.adamec.timotej.snag.feat.findings.fe.driving.api.FindingDetailRoute
 import cz.adamec.timotej.snag.feat.findings.fe.driving.api.FindingDetailRouteFactory
 import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureCreationRoute
@@ -26,11 +25,12 @@ import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureDetailNavR
 import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureEditRoute
 import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureEditRouteFactory
 import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureFloorPlanRoute
+import cz.adamec.timotej.snag.lib.design.fe.dialog.fullscreenDialogProperties
 import cz.adamec.timotej.snag.lib.design.fe.scenes.MapListDetailSceneMetadata
 import cz.adamec.timotej.snag.lib.navigation.fe.SnagBackStack
-import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.structureDetails.ui.StructureDetailNestedNav
 import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.floorPlan.ui.StructureFloorPlanScreen
 import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.floorPlan.vm.StructureFloorPlanViewModel
+import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.structureDetails.ui.StructureDetailNestedNav
 import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.structureDetailsEdit.ui.StructureDetailsEditScreen
 import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.structureDetailsEdit.vm.StructureDetailsEditViewModel
 import org.koin.compose.koinInject

@@ -51,7 +51,6 @@ import kotlin.test.assertTrue
 import kotlin.uuid.Uuid
 
 class PullStructureChangesUseCaseImplTest : FrontendKoinInitializedTest() {
-
     private val fakeStructuresApi: FakeStructuresApi by inject()
     private val fakeStructuresDb: FakeStructuresDb by inject()
     private val fakePullSyncTimestampDataSource: FakeStructuresPullSyncTimestampDataSource by inject()
@@ -75,82 +74,94 @@ class PullStructureChangesUseCaseImplTest : FrontendKoinInitializedTest() {
             },
         )
 
-    private fun createStructure(id: Uuid) = FrontendStructure(
-        structure = Structure(
-            id = id,
-            projectId = projectId,
-            name = "Test Structure",
-            floorPlanUrl = null,
-            updatedAt = Timestamp(100L),
-        ),
-    )
-
-    private fun createFinding(id: Uuid, structureId: Uuid) = FrontendFinding(
-        finding = Finding(
-            id = id,
-            structureId = structureId,
-            name = "Finding",
-            description = null,
-            type = FindingType.Classic(),
-            coordinates = emptyList(),
-            updatedAt = Timestamp(1L),
-        ),
-    )
-
-    @Test
-    fun `upserts alive structures to db`() = runTest(testDispatcher) {
-        val structure = createStructure(structureId)
-        fakeStructuresApi.modifiedSinceResults = listOf(
-            StructureSyncResult.Updated(structure = structure),
+    private fun createStructure(id: Uuid) =
+        FrontendStructure(
+            structure =
+                Structure(
+                    id = id,
+                    projectId = projectId,
+                    name = "Test Structure",
+                    floorPlanUrl = null,
+                    updatedAt = Timestamp(100L),
+                ),
         )
 
-        useCase(projectId)
-
-        val result = fakeStructuresDb.getStructureFlow(structureId).first()
-        assertIs<OfflineFirstDataResult.Success<FrontendStructure?>>(result)
-        assertNotNull(result.data)
-        assertEquals(structureId, result.data!!.structure.id)
-    }
-
-    @Test
-    fun `deletes soft-deleted structures and cascades findings`() = runTest(testDispatcher) {
-        val structure = createStructure(structureId)
-        fakeStructuresDb.setStructure(structure)
-
-        val finding = createFinding(id = findingId, structureId = structureId)
-        fakeFindingsDb.setFinding(finding)
-
-        fakeStructuresApi.modifiedSinceResults = listOf(
-            StructureSyncResult.Deleted(id = structureId),
-        )
-
-        useCase(projectId)
-
-        val findingsResult = fakeFindingsDb.getFindingsFlow(structureId).first()
-        assertIs<OfflineFirstDataResult.Success<List<FrontendFinding>>>(findingsResult)
-        assertTrue(findingsResult.data.isEmpty())
-
-        val result = fakeStructuresDb.getStructureFlow(structureId).first()
-        assertIs<OfflineFirstDataResult.Success<FrontendStructure?>>(result)
-        assertNull(result.data)
-    }
+    private fun createFinding(
+        id: Uuid,
+        structureId: Uuid,
+    ) = FrontendFinding(
+        finding =
+            Finding(
+                id = id,
+                structureId = structureId,
+                name = "Finding",
+                description = null,
+                type = FindingType.Classic(),
+                coordinates = emptyList(),
+                updatedAt = Timestamp(1L),
+            ),
+    )
 
     @Test
-    fun `stores last synced timestamp on success`() = runTest(testDispatcher) {
-        fakeStructuresApi.modifiedSinceResults = emptyList()
+    fun `upserts alive structures to db`() =
+        runTest(testDispatcher) {
+            val structure = createStructure(structureId)
+            fakeStructuresApi.modifiedSinceResults =
+                listOf(
+                    StructureSyncResult.Updated(structure = structure),
+                )
 
-        useCase(projectId)
+            useCase(projectId)
 
-        assertNotNull(fakePullSyncTimestampDataSource.getLastSyncedAt(projectId))
-    }
+            val result = fakeStructuresDb.getStructureFlow(structureId).first()
+            assertIs<OfflineFirstDataResult.Success<FrontendStructure?>>(result)
+            assertNotNull(result.data)
+            assertEquals(structureId, result.data!!.structure.id)
+        }
 
     @Test
-    fun `does not store timestamp on API failure`() = runTest(testDispatcher) {
-        fakeStructuresApi.forcedFailure =
-            OnlineDataResult.Failure.ProgrammerError(Exception("API error"))
+    fun `deletes soft-deleted structures and cascades findings`() =
+        runTest(testDispatcher) {
+            val structure = createStructure(structureId)
+            fakeStructuresDb.setStructure(structure)
 
-        useCase(projectId)
+            val finding = createFinding(id = findingId, structureId = structureId)
+            fakeFindingsDb.setFinding(finding)
 
-        assertNull(fakePullSyncTimestampDataSource.getLastSyncedAt(projectId))
-    }
+            fakeStructuresApi.modifiedSinceResults =
+                listOf(
+                    StructureSyncResult.Deleted(id = structureId),
+                )
+
+            useCase(projectId)
+
+            val findingsResult = fakeFindingsDb.getFindingsFlow(structureId).first()
+            assertIs<OfflineFirstDataResult.Success<List<FrontendFinding>>>(findingsResult)
+            assertTrue(findingsResult.data.isEmpty())
+
+            val result = fakeStructuresDb.getStructureFlow(structureId).first()
+            assertIs<OfflineFirstDataResult.Success<FrontendStructure?>>(result)
+            assertNull(result.data)
+        }
+
+    @Test
+    fun `stores last synced timestamp on success`() =
+        runTest(testDispatcher) {
+            fakeStructuresApi.modifiedSinceResults = emptyList()
+
+            useCase(projectId)
+
+            assertNotNull(fakePullSyncTimestampDataSource.getLastSyncedAt(projectId))
+        }
+
+    @Test
+    fun `does not store timestamp on API failure`() =
+        runTest(testDispatcher) {
+            fakeStructuresApi.forcedFailure =
+                OnlineDataResult.Failure.ProgrammerError(Exception("API error"))
+
+            useCase(projectId)
+
+            assertNull(fakePullSyncTimestampDataSource.getLastSyncedAt(projectId))
+        }
 }

@@ -32,15 +32,14 @@ internal class ProjectSyncHandler(
     override val entityTypeId: String = PROJECT_SYNC_ENTITY_TYPE
     override val entityName: String = "project"
 
-    override fun getEntityFlow(entityId: Uuid): Flow<OfflineFirstDataResult<FrontendProject?>> =
-        projectsDb.getProjectFlow(entityId)
+    override fun getEntityFlow(entityId: Uuid): Flow<OfflineFirstDataResult<FrontendProject?>> = projectsDb.getProjectFlow(entityId)
 
-    override suspend fun saveEntityToApi(entity: FrontendProject): OnlineDataResult<FrontendProject?> =
-        projectsApi.saveProject(entity)
+    override suspend fun saveEntityToApi(entity: FrontendProject): OnlineDataResult<FrontendProject?> = projectsApi.saveProject(entity)
 
-    override suspend fun deleteEntityFromApi(entityId: Uuid, deletedAt: Timestamp): OnlineDataResult<Unit> =
-        projectsApi.deleteProject(entityId, deletedAt)
+    override suspend fun deleteEntityFromApi(
+        entityId: Uuid,
+        deletedAt: Timestamp,
+    ): OnlineDataResult<Unit> = projectsApi.deleteProject(entityId, deletedAt)
 
-    override suspend fun saveEntityToDb(entity: FrontendProject): OfflineFirstDataResult<Unit> =
-        projectsDb.saveProject(entity)
+    override suspend fun saveEntityToDb(entity: FrontendProject): OfflineFirstDataResult<Unit> = projectsDb.saveProject(entity)
 }

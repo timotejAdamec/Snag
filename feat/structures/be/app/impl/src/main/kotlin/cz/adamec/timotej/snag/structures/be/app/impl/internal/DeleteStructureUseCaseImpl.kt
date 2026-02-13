@@ -21,20 +21,19 @@ import cz.adamec.timotej.snag.structures.be.ports.StructuresDb
 internal class DeleteStructureUseCaseImpl(
     private val structuresDb: StructuresDb,
 ) : DeleteStructureUseCase {
-    override suspend operator fun invoke(
-        request: DeleteStructureRequest,
-    ): BackendStructure? {
+    override suspend operator fun invoke(request: DeleteStructureRequest): BackendStructure? {
         logger.debug("Deleting structure {} from local storage.", request.structureId)
-        return structuresDb.deleteStructure(
-            id = request.structureId,
-            deletedAt = request.deletedAt,
-        ).also { newerStructure ->
-            newerStructure?.let {
-                logger.debug(
-                    "Found newer version of structure {} in local storage. Returning it instead.",
-                    request.structureId
-                )
-            } ?: logger.debug("Deleted structure {} from local storage.", request.structureId)
-        }
+        return structuresDb
+            .deleteStructure(
+                id = request.structureId,
+                deletedAt = request.deletedAt,
+            ).also { newerStructure ->
+                newerStructure?.let {
+                    logger.debug(
+                        "Found newer version of structure {} in local storage. Returning it instead.",
+                        request.structureId,
+                    )
+                } ?: logger.debug("Deleted structure {} from local storage.", request.structureId)
+            }
     }
 }

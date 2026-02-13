@@ -51,7 +51,6 @@ import kotlin.uuid.Uuid
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class StructureDetailsEditViewModelTest : FrontendKoinInitializedTest() {
-
     private val fakeStructuresDb: FakeStructuresDb by inject()
     private val fakeFileApi: FakeFileApi by inject()
 
@@ -246,7 +245,10 @@ class StructureDetailsEditViewModelTest : FrontendKoinInitializedTest() {
             advanceUntilIdle()
 
             assertNotNull(viewModel.state.value.floorPlanUrl)
-            assertTrue(viewModel.state.value.floorPlanUrl!!.contains("photo.png"))
+            assertTrue(
+                viewModel.state.value.floorPlanUrl!!
+                    .contains("photo.png"),
+            )
             assertFalse(viewModel.state.value.isUploadingImage)
             assertEquals(1, fakeFileApi.uploadedFiles.size)
         }
@@ -265,7 +267,10 @@ class StructureDetailsEditViewModelTest : FrontendKoinInitializedTest() {
             viewModel.onImagePicked(byteArrayOf(2), "imageB.png")
             advanceUntilIdle()
 
-            assertTrue(viewModel.state.value.floorPlanUrl!!.contains("imageB.png"))
+            assertTrue(
+                viewModel.state.value.floorPlanUrl!!
+                    .contains("imageB.png"),
+            )
             assertTrue(fakeFileApi.deletedUrls.contains(firstUrl))
         }
 

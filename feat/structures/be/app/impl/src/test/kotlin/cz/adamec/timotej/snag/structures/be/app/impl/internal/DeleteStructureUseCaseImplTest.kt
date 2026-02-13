@@ -39,27 +39,30 @@ class DeleteStructureUseCaseImplTest : BackendKoinInitializedTest() {
     private val structureId = Uuid.parse("00000000-0000-0000-0001-000000000001")
     private val structure =
         BackendStructure(
-            structure = Structure(
-                id = structureId,
-                projectId = projectId,
-                name = "Ground Floor",
-                floorPlanUrl = null,
-                updatedAt = Timestamp(value = 10L),
-            ),
+            structure =
+                Structure(
+                    id = structureId,
+                    projectId = projectId,
+                    name = "Ground Floor",
+                    floorPlanUrl = null,
+                    updatedAt = Timestamp(value = 10L),
+                ),
         )
 
-    private fun createProject() = runTest(testDispatcher) {
-        projectsDb.saveProject(
-            BackendProject(
-                project = Project(
-                    id = projectId,
-                    name = "Test Project",
-                    address = "Test Address",
-                    updatedAt = Timestamp(1L),
+    private fun createProject() =
+        runTest(testDispatcher) {
+            projectsDb.saveProject(
+                BackendProject(
+                    project =
+                        Project(
+                            id = projectId,
+                            name = "Test Project",
+                            address = "Test Address",
+                            updatedAt = Timestamp(1L),
+                        ),
                 ),
-            ),
-        )
-    }
+            )
+        }
 
     @Test
     fun `soft-deletes structure in storage`() =
@@ -70,8 +73,8 @@ class DeleteStructureUseCaseImplTest : BackendKoinInitializedTest() {
             useCase(
                 DeleteStructureRequest(
                     structureId = structureId,
-                    deletedAt = Timestamp(value = 20L)
-                )
+                    deletedAt = Timestamp(value = 20L),
+                ),
             )
 
             val deletedStructure =
@@ -89,12 +92,12 @@ class DeleteStructureUseCaseImplTest : BackendKoinInitializedTest() {
             useCase(
                 DeleteStructureRequest(
                     structureId = structureId,
-                    deletedAt = Timestamp(value = 1L)
-                )
+                    deletedAt = Timestamp(value = 1L),
+                ),
             )
 
             assertNotNull(
-                dataSource.getStructures(projectId).find { it.structure.id == structureId }
+                dataSource.getStructures(projectId).find { it.structure.id == structureId },
             )
         }
 
@@ -104,12 +107,13 @@ class DeleteStructureUseCaseImplTest : BackendKoinInitializedTest() {
             createProject()
             dataSource.saveStructure(structure)
 
-            val result = useCase(
-                DeleteStructureRequest(
-                    structureId = structureId,
-                    deletedAt = Timestamp(value = 1L)
+            val result =
+                useCase(
+                    DeleteStructureRequest(
+                        structureId = structureId,
+                        deletedAt = Timestamp(value = 1L),
+                    ),
                 )
-            )
 
             assertNotNull(result)
             assertEquals(structure, result)
@@ -118,12 +122,13 @@ class DeleteStructureUseCaseImplTest : BackendKoinInitializedTest() {
     @Test
     fun `returns null if no structure was saved`() =
         runTest(testDispatcher) {
-            val result = useCase(
-                DeleteStructureRequest(
-                    structureId = structureId,
-                    deletedAt = Timestamp(value = 20L)
+            val result =
+                useCase(
+                    DeleteStructureRequest(
+                        structureId = structureId,
+                        deletedAt = Timestamp(value = 20L),
+                    ),
                 )
-            )
 
             assertNull(result)
         }

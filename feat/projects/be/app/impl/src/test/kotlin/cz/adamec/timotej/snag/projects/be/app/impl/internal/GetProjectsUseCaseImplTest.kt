@@ -41,21 +41,23 @@ class GetProjectsUseCaseImplTest : BackendKoinInitializedTest() {
         runTest(testDispatcher) {
             val project1 =
                 BackendProject(
-                    project = Project(
-                        id = Uuid.parse("00000000-0000-0000-0000-000000000001"),
-                        name = "Project 1",
-                        address = "Address 1",
-                        updatedAt = Timestamp(10L),
-                    ),
+                    project =
+                        Project(
+                            id = Uuid.parse("00000000-0000-0000-0000-000000000001"),
+                            name = "Project 1",
+                            address = "Address 1",
+                            updatedAt = Timestamp(10L),
+                        ),
                 )
             val project2 =
                 BackendProject(
-                    project = Project(
-                        id = Uuid.parse("00000000-0000-0000-0000-000000000002"),
-                        name = "Project 2",
-                        address = "Address 2",
-                        updatedAt = Timestamp(10L),
-                    ),
+                    project =
+                        Project(
+                            id = Uuid.parse("00000000-0000-0000-0000-000000000002"),
+                            name = "Project 2",
+                            address = "Address 2",
+                            updatedAt = Timestamp(10L),
+                        ),
                 )
             dataSource.saveProject(project1)
             dataSource.saveProject(project2)

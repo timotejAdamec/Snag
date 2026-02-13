@@ -50,7 +50,7 @@ import snag.feat.structures.fe.driving.impl.generated.resources.remove_floor_pla
 internal fun FloorPlanEditSection(
     floorPlanUrl: String?,
     isUploading: Boolean,
-    onImagePicked: (bytes: ByteArray, fileName: String) -> Unit,
+    onImagePick: (bytes: ByteArray, fileName: String) -> Unit,
     onRemoveImage: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -104,7 +104,7 @@ internal fun FloorPlanEditSection(
                                 type = FileKitType.Image,
                             ) ?: return@launch
                         val bytes = file.readBytes()
-                        onImagePicked(bytes, file.name)
+                        onImagePick(bytes, file.name)
                     }
                 },
             ) {

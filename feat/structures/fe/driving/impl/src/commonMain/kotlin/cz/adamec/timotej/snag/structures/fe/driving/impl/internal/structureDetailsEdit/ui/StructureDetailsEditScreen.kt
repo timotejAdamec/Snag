@@ -89,7 +89,7 @@ internal fun StructureDetailsEditScreen(
         onStructureNameChange = {
             viewModel.onStructureNameChange(it)
         },
-        onImagePicked = { bytes, fileName ->
+        onImagePick = { bytes, fileName ->
             viewModel.onImagePicked(bytes, fileName)
         },
         onRemoveImage = {

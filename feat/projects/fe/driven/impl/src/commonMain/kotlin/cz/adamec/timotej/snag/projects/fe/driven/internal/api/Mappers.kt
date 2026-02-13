@@ -19,13 +19,14 @@ import cz.adamec.timotej.snag.projects.fe.model.FrontendProject
 
 internal fun ProjectApiDto.toModel() =
     FrontendProject(
-        project = Project(
-            id = id,
-            name = name,
-            address = address,
-            clientId = clientId,
-            updatedAt = updatedAt,
-        ),
+        project =
+            Project(
+                id = id,
+                name = name,
+                address = address,
+                clientId = clientId,
+                updatedAt = updatedAt,
+            ),
     )
 
 internal fun FrontendProject.toPutApiDto() =

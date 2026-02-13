@@ -43,7 +43,7 @@ class GetStructuresUseCaseImplTest : BackendKoinInitializedTest() {
                 name = "Ground Floor",
                 floorPlanUrl = null,
                 updatedAt = Timestamp(1L),
-            )
+            ),
         )
     private val structure2 =
         BackendStructure(
@@ -53,7 +53,7 @@ class GetStructuresUseCaseImplTest : BackendKoinInitializedTest() {
                 name = "First Floor",
                 floorPlanUrl = "https://example.com/plan.jpg",
                 updatedAt = Timestamp(2L),
-            )
+            ),
         )
     private val otherStructure =
         BackendStructure(
@@ -63,8 +63,9 @@ class GetStructuresUseCaseImplTest : BackendKoinInitializedTest() {
                 name = "Other Building",
                 floorPlanUrl = null,
                 updatedAt = Timestamp(3L),
-            )
+            ),
         )
+
     @Test
     fun `returns empty list when none`() =
         runTest(testDispatcher) {
@@ -78,22 +79,24 @@ class GetStructuresUseCaseImplTest : BackendKoinInitializedTest() {
         runTest(testDispatcher) {
             projectsDb.saveProject(
                 BackendProject(
-                    project = Project(
-                        id = projectId,
-                        name = "Test Project",
-                        address = "Test Address",
-                        updatedAt = Timestamp(1L),
-                    ),
+                    project =
+                        Project(
+                            id = projectId,
+                            name = "Test Project",
+                            address = "Test Address",
+                            updatedAt = Timestamp(1L),
+                        ),
                 ),
             )
             projectsDb.saveProject(
                 BackendProject(
-                    project = Project(
-                        id = otherProjectId,
-                        name = "Other Project",
-                        address = "Other Address",
-                        updatedAt = Timestamp(1L),
-                    ),
+                    project =
+                        Project(
+                            id = otherProjectId,
+                            name = "Other Project",
+                            address = "Other Address",
+                            updatedAt = Timestamp(1L),
+                        ),
                 ),
             )
             dataSource.saveStructure(structure1)
@@ -110,12 +113,13 @@ class GetStructuresUseCaseImplTest : BackendKoinInitializedTest() {
         runTest(testDispatcher) {
             projectsDb.saveProject(
                 BackendProject(
-                    project = Project(
-                        id = otherProjectId,
-                        name = "Other Project",
-                        address = "Other Address",
-                        updatedAt = Timestamp(1L),
-                    ),
+                    project =
+                        Project(
+                            id = otherProjectId,
+                            name = "Other Project",
+                            address = "Other Address",
+                            updatedAt = Timestamp(1L),
+                        ),
                 ),
             )
             dataSource.saveStructure(otherStructure)

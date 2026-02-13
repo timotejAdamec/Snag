@@ -18,6 +18,5 @@ import cz.adamec.timotej.snag.projects.fe.ports.ProjectsPullSyncCoordinator
 internal class RealProjectsPullSyncCoordinator(
     private val syncCoordinator: SyncCoordinator,
 ) : ProjectsPullSyncCoordinator {
-    override suspend fun <T> withFlushedQueue(block: suspend () -> T): T =
-        syncCoordinator.withFlushedQueue(block)
+    override suspend fun <T> withFlushedQueue(block: suspend () -> T): T = syncCoordinator.withFlushedQueue(block)
 }

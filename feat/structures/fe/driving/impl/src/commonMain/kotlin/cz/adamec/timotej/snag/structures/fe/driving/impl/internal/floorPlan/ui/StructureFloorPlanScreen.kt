@@ -30,9 +30,10 @@ internal fun StructureFloorPlanScreen(
     onBack: () -> Unit,
     onEditClick: () -> Unit,
     onFindingClick: (Uuid) -> Unit,
-    viewModel: StructureFloorPlanViewModel = koinViewModel {
-        parametersOf(structureId)
-    },
+    viewModel: StructureFloorPlanViewModel =
+        koinViewModel {
+            parametersOf(structureId)
+        },
 ) {
     LaunchedEffect(selectedFindingId) {
         viewModel.onFindingSelected(selectedFindingId)

@@ -21,7 +21,10 @@ class FakeStructuresPullSyncTimestampDataSource : StructuresPullSyncTimestampDat
 
     override suspend fun getLastSyncedAt(projectId: Uuid): Timestamp? = timestamps[projectId]
 
-    override suspend fun setLastSyncedAt(projectId: Uuid, timestamp: Timestamp) {
+    override suspend fun setLastSyncedAt(
+        projectId: Uuid,
+        timestamp: Timestamp,
+    ) {
         timestamps[projectId] = timestamp
     }
 }

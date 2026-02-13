@@ -62,7 +62,10 @@ internal class RealProjectsApi(
         }.also { if (it is OnlineDataResult.Success) LH.logger.d { "Saved project ${project.project.id} to API." } }
     }
 
-    override suspend fun deleteProject(id: Uuid, deletedAt: Timestamp): OnlineDataResult<Unit> {
+    override suspend fun deleteProject(
+        id: Uuid,
+        deletedAt: Timestamp,
+    ): OnlineDataResult<Unit> {
         LH.logger.d { "Deleting project $id from API..." }
         return safeApiCall(logger = LH.logger, errorContext = "Error deleting project $id from API.") {
             httpClient.delete("/projects/$id") {

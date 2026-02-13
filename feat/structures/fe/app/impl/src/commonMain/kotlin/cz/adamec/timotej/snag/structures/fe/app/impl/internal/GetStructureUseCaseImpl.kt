@@ -24,6 +24,7 @@ class GetStructureUseCaseImpl(
     private val structuresDb: StructuresDb,
 ) : GetStructureUseCase {
     override operator fun invoke(structureId: Uuid): Flow<OfflineFirstDataResult<FrontendStructure?>> =
-        structuresDb.getStructureFlow(structureId)
+        structuresDb
+            .getStructureFlow(structureId)
             .distinctUntilChanged()
 }

@@ -61,7 +61,7 @@ internal fun ProjectListItem(
                 painter = painterResource(DesignRes.drawable.ic_chevron_right),
                 contentDescription = null,
             )
-        }
+        },
     )
 }
 
@@ -77,12 +77,13 @@ internal fun ProjectListItemPreview() {
                 ),
             project =
                 FrontendProject(
-                    project = Project(
-                        id = UuidProvider.getUuid(),
-                        name = "Project A",
-                        address = "Client A",
-                        updatedAt = Timestamp(0L),
-                    ),
+                    project =
+                        Project(
+                            id = UuidProvider.getUuid(),
+                            name = "Project A",
+                            address = "Client A",
+                            updatedAt = Timestamp(0L),
+                        ),
                 ),
             onClick = {},
         )

@@ -42,12 +42,13 @@ class GetProjectsModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
         runTest(testDispatcher) {
             val project =
                 BackendProject(
-                    project = Project(
-                        id = Uuid.parse("00000000-0000-0000-0000-000000000001"),
-                        name = "Project 1",
-                        address = "Address 1",
-                        updatedAt = Timestamp(200L),
-                    ),
+                    project =
+                        Project(
+                            id = Uuid.parse("00000000-0000-0000-0000-000000000001"),
+                            name = "Project 1",
+                            address = "Address 1",
+                            updatedAt = Timestamp(200L),
+                        ),
                 )
             dataSource.saveProject(project)
 
@@ -61,12 +62,13 @@ class GetProjectsModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
         runTest(testDispatcher) {
             val project =
                 BackendProject(
-                    project = Project(
-                        id = Uuid.parse("00000000-0000-0000-0000-000000000001"),
-                        name = "Project 1",
-                        address = "Address 1",
-                        updatedAt = Timestamp(50L),
-                    ),
+                    project =
+                        Project(
+                            id = Uuid.parse("00000000-0000-0000-0000-000000000001"),
+                            name = "Project 1",
+                            address = "Address 1",
+                            updatedAt = Timestamp(50L),
+                        ),
                 )
             dataSource.saveProject(project)
 
@@ -80,12 +82,13 @@ class GetProjectsModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
         runTest(testDispatcher) {
             val project =
                 BackendProject(
-                    project = Project(
-                        id = Uuid.parse("00000000-0000-0000-0000-000000000001"),
-                        name = "Project 1",
-                        address = "Address 1",
-                        updatedAt = Timestamp(50L),
-                    ),
+                    project =
+                        Project(
+                            id = Uuid.parse("00000000-0000-0000-0000-000000000001"),
+                            name = "Project 1",
+                            address = "Address 1",
+                            updatedAt = Timestamp(50L),
+                        ),
                     deletedAt = Timestamp(200L),
                 )
             dataSource.saveProject(project)
@@ -100,12 +103,13 @@ class GetProjectsModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
         runTest(testDispatcher) {
             val project =
                 BackendProject(
-                    project = Project(
-                        id = Uuid.parse("00000000-0000-0000-0000-000000000001"),
-                        name = "Project 1",
-                        address = "Address 1",
-                        updatedAt = Timestamp(50L),
-                    ),
+                    project =
+                        Project(
+                            id = Uuid.parse("00000000-0000-0000-0000-000000000001"),
+                            name = "Project 1",
+                            address = "Address 1",
+                            updatedAt = Timestamp(50L),
+                        ),
                     deletedAt = Timestamp(80L),
                 )
             dataSource.saveProject(project)

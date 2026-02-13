@@ -49,7 +49,6 @@ import kotlin.test.assertTrue
 import kotlin.uuid.Uuid
 
 class DeleteProjectUseCaseImplTest : FrontendKoinInitializedTest() {
-
     private val fakeProjectsDb: FakeProjectsDb by inject()
     private val fakeProjectsSync: FakeProjectsSync by inject()
     private val fakeStructuresDb: FakeStructuresDb by inject()
@@ -72,61 +71,70 @@ class DeleteProjectUseCaseImplTest : FrontendKoinInitializedTest() {
     private val projectId = Uuid.parse("00000000-0000-0000-0000-000000000001")
     private val structureId = Uuid.parse("00000000-0000-0000-0001-000000000001")
 
-    private fun createProject(id: Uuid) = FrontendProject(
-        project = Project(
-            id = id,
-            name = "Test Project",
-            address = "Test Address",
-            updatedAt = Timestamp(100L),
-        ),
+    private fun createProject(id: Uuid) =
+        FrontendProject(
+            project =
+                Project(
+                    id = id,
+                    name = "Test Project",
+                    address = "Test Address",
+                    updatedAt = Timestamp(100L),
+                ),
+        )
+
+    private fun createStructure(
+        id: Uuid,
+        projectId: Uuid,
+    ) = FrontendStructure(
+        structure =
+            Structure(
+                id = id,
+                projectId = projectId,
+                name = "Structure",
+                floorPlanUrl = null,
+                updatedAt = Timestamp(1L),
+            ),
     )
 
-    private fun createStructure(id: Uuid, projectId: Uuid) = FrontendStructure(
-        structure = Structure(
-            id = id,
-            projectId = projectId,
-            name = "Structure",
-            floorPlanUrl = null,
-            updatedAt = Timestamp(1L),
-        ),
-    )
+    @Test
+    fun `deletes project and cascade deletes structures`() =
+        runTest(testDispatcher) {
+            val project = createProject(projectId)
+            fakeProjectsDb.setProject(project)
+
+            val structure = createStructure(id = structureId, projectId = projectId)
+            fakeStructuresDb.setStructure(structure)
+
+            useCase(projectId)
+
+            val projectResult = fakeProjectsDb.getProjectFlow(projectId).first()
+            assertIs<OfflineFirstDataResult.Success<FrontendProject?>>(projectResult)
+            assertNull(projectResult.data)
+
+            val structuresResult = fakeStructuresDb.getStructuresFlow(projectId).first()
+            assertIs<OfflineFirstDataResult.Success<List<FrontendStructure>>>(structuresResult)
+            assertTrue(structuresResult.data.isEmpty())
+        }
 
     @Test
-    fun `deletes project and cascade deletes structures`() = runTest(testDispatcher) {
-        val project = createProject(projectId)
-        fakeProjectsDb.setProject(project)
+    fun `enqueues sync delete on success`() =
+        runTest(testDispatcher) {
+            val project = createProject(projectId)
+            fakeProjectsDb.setProject(project)
 
-        val structure = createStructure(id = structureId, projectId = projectId)
-        fakeStructuresDb.setStructure(structure)
+            useCase(projectId)
 
-        useCase(projectId)
-
-        val projectResult = fakeProjectsDb.getProjectFlow(projectId).first()
-        assertIs<OfflineFirstDataResult.Success<FrontendProject?>>(projectResult)
-        assertNull(projectResult.data)
-
-        val structuresResult = fakeStructuresDb.getStructuresFlow(projectId).first()
-        assertIs<OfflineFirstDataResult.Success<List<FrontendStructure>>>(structuresResult)
-        assertTrue(structuresResult.data.isEmpty())
-    }
+            assertEquals(listOf(projectId), fakeProjectsSync.deletedProjectIds)
+        }
 
     @Test
-    fun `enqueues sync delete on success`() = runTest(testDispatcher) {
-        val project = createProject(projectId)
-        fakeProjectsDb.setProject(project)
+    fun `does not enqueue sync delete on failure`() =
+        runTest(testDispatcher) {
+            fakeProjectsDb.forcedFailure =
+                OfflineFirstDataResult.ProgrammerError(Exception("DB error"))
 
-        useCase(projectId)
+            useCase(projectId)
 
-        assertEquals(listOf(projectId), fakeProjectsSync.deletedProjectIds)
-    }
-
-    @Test
-    fun `does not enqueue sync delete on failure`() = runTest(testDispatcher) {
-        fakeProjectsDb.forcedFailure =
-            OfflineFirstDataResult.ProgrammerError(Exception("DB error"))
-
-        useCase(projectId)
-
-        assertTrue(fakeProjectsSync.deletedProjectIds.isEmpty())
-    }
+            assertTrue(fakeProjectsSync.deletedProjectIds.isEmpty())
+        }
 }

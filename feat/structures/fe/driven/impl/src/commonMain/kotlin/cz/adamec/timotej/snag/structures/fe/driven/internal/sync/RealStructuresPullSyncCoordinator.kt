@@ -18,6 +18,5 @@ import cz.adamec.timotej.snag.structures.fe.ports.StructuresPullSyncCoordinator
 internal class RealStructuresPullSyncCoordinator(
     private val syncCoordinator: SyncCoordinator,
 ) : StructuresPullSyncCoordinator {
-    override suspend fun <T> withFlushedQueue(block: suspend () -> T): T =
-        syncCoordinator.withFlushedQueue(block)
+    override suspend fun <T> withFlushedQueue(block: suspend () -> T): T = syncCoordinator.withFlushedQueue(block)
 }
