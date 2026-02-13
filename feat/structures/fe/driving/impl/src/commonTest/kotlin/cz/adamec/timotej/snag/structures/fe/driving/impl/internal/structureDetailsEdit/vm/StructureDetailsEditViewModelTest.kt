@@ -20,14 +20,6 @@ import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.structures.fe.app.api.GetStructureUseCase
 import cz.adamec.timotej.snag.structures.fe.app.api.SaveStructureUseCase
-import cz.adamec.timotej.snag.feat.inspections.fe.driven.test.FakeInspectionsDb
-import cz.adamec.timotej.snag.feat.inspections.fe.driven.test.FakeInspectionsPullSyncCoordinator
-import cz.adamec.timotej.snag.feat.inspections.fe.driven.test.FakeInspectionsPullSyncTimestampDataSource
-import cz.adamec.timotej.snag.feat.inspections.fe.driven.test.FakeInspectionsSync
-import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionsDb
-import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionsPullSyncCoordinator
-import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionsPullSyncTimestampDataSource
-import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionsSync
 import cz.adamec.timotej.snag.structures.fe.driven.test.FakeStructuresDb
 import cz.adamec.timotej.snag.structures.fe.driven.test.FakeStructuresSync
 import cz.adamec.timotej.snag.structures.fe.ports.StructuresDb
@@ -63,10 +55,6 @@ class StructureDetailsEditViewModelTest : FrontendKoinInitializedTest() {
             module {
                 singleOf(::FakeStructuresDb) bind StructuresDb::class
                 singleOf(::FakeStructuresSync) bind StructuresSync::class
-                singleOf(::FakeInspectionsDb) bind InspectionsDb::class
-                singleOf(::FakeInspectionsSync) bind InspectionsSync::class
-                singleOf(::FakeInspectionsPullSyncCoordinator) bind InspectionsPullSyncCoordinator::class
-                singleOf(::FakeInspectionsPullSyncTimestampDataSource) bind InspectionsPullSyncTimestampDataSource::class
             },
         )
 

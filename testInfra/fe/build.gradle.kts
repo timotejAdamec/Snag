@@ -20,6 +20,7 @@ kotlin {
             api(projects.testInfra.common)
             implementation(projects.koinModulesAggregate.fe)
             implementation(projects.feat.shared.database.fe.test)
+            implementation(projects.feat.inspections.fe.driven.test)
         }
     }
 }

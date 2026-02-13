@@ -13,14 +13,6 @@
 package cz.adamec.timotej.snag.lib.sync.fe.app.impl
 
 import app.cash.turbine.test
-import cz.adamec.timotej.snag.feat.inspections.fe.driven.test.FakeInspectionsDb
-import cz.adamec.timotej.snag.feat.inspections.fe.driven.test.FakeInspectionsPullSyncCoordinator
-import cz.adamec.timotej.snag.feat.inspections.fe.driven.test.FakeInspectionsPullSyncTimestampDataSource
-import cz.adamec.timotej.snag.feat.inspections.fe.driven.test.FakeInspectionsSync
-import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionsDb
-import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionsPullSyncCoordinator
-import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionsPullSyncTimestampDataSource
-import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionsSync
 import cz.adamec.timotej.snag.lib.core.common.ApplicationScope
 import cz.adamec.timotej.snag.lib.sync.fe.app.api.handler.SyncOperationHandler
 import cz.adamec.timotej.snag.lib.sync.fe.app.api.handler.SyncOperationResult
@@ -55,10 +47,6 @@ class GetSyncStatusUseCaseImplTest : FrontendKoinInitializedTest() {
         listOf(
             module {
                 singleOf(::FakeSyncQueue) bind SyncQueue::class
-                singleOf(::FakeInspectionsDb) bind InspectionsDb::class
-                singleOf(::FakeInspectionsSync) bind InspectionsSync::class
-                singleOf(::FakeInspectionsPullSyncCoordinator) bind InspectionsPullSyncCoordinator::class
-                singleOf(::FakeInspectionsPullSyncTimestampDataSource) bind InspectionsPullSyncTimestampDataSource::class
             },
         )
 

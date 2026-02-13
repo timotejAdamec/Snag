@@ -12,14 +12,6 @@
 
 package cz.adamec.timotej.snag.projects.fe.driven.internal.sync
 
-import cz.adamec.timotej.snag.feat.inspections.fe.driven.test.FakeInspectionsDb
-import cz.adamec.timotej.snag.feat.inspections.fe.driven.test.FakeInspectionsPullSyncCoordinator
-import cz.adamec.timotej.snag.feat.inspections.fe.driven.test.FakeInspectionsPullSyncTimestampDataSource
-import cz.adamec.timotej.snag.feat.inspections.fe.driven.test.FakeInspectionsSync
-import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionsDb
-import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionsPullSyncCoordinator
-import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionsPullSyncTimestampDataSource
-import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionsSync
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
@@ -56,10 +48,6 @@ class ProjectSyncHandlerTest : FrontendKoinInitializedTest() {
                 singleOf(::FakeProjectsApi) bind ProjectsApi::class
                 singleOf(::FakeProjectsDb) bind ProjectsDb::class
                 singleOf(::ProjectSyncHandler)
-                singleOf(::FakeInspectionsDb) bind InspectionsDb::class
-                singleOf(::FakeInspectionsSync) bind InspectionsSync::class
-                singleOf(::FakeInspectionsPullSyncCoordinator) bind InspectionsPullSyncCoordinator::class
-                singleOf(::FakeInspectionsPullSyncTimestampDataSource) bind InspectionsPullSyncTimestampDataSource::class
             },
         )
 

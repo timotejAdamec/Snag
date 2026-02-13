@@ -23,7 +23,6 @@ kotlin {
             dependencies {
                 implementation(project(":feat:structures:fe:driven:test"))
                 implementation(project(":feat:findings:fe:driven:test"))
-                implementation(project(":feat:inspections:fe:driven:test"))
             }
         }
     }

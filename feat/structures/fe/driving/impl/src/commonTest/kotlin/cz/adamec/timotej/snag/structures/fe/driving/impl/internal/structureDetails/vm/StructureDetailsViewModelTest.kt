@@ -16,14 +16,6 @@ import cz.adamec.timotej.snag.feat.structures.fe.model.FrontendStructure
 import app.cash.turbine.test
 import cz.adamec.timotej.snag.feat.structures.business.Structure
 import cz.adamec.timotej.snag.findings.fe.app.api.GetFindingsUseCase
-import cz.adamec.timotej.snag.feat.inspections.fe.driven.test.FakeInspectionsDb
-import cz.adamec.timotej.snag.feat.inspections.fe.driven.test.FakeInspectionsPullSyncCoordinator
-import cz.adamec.timotej.snag.feat.inspections.fe.driven.test.FakeInspectionsPullSyncTimestampDataSource
-import cz.adamec.timotej.snag.feat.inspections.fe.driven.test.FakeInspectionsSync
-import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionsDb
-import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionsPullSyncCoordinator
-import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionsPullSyncTimestampDataSource
-import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionsSync
 import cz.adamec.timotej.snag.findings.fe.driven.test.FakeFindingsApi
 import cz.adamec.timotej.snag.findings.fe.driven.test.FakeFindingsDb
 import cz.adamec.timotej.snag.findings.fe.ports.FindingsApi
@@ -83,10 +75,6 @@ class StructureDetailsViewModelTest : FrontendKoinInitializedTest() {
                 singleOf(::FakeStructuresSync) bind StructuresSync::class
                 singleOf(::FakeFindingsDb) bind FindingsDb::class
                 singleOf(::FakeFindingsApi) bind FindingsApi::class
-                singleOf(::FakeInspectionsDb) bind InspectionsDb::class
-                singleOf(::FakeInspectionsSync) bind InspectionsSync::class
-                singleOf(::FakeInspectionsPullSyncCoordinator) bind InspectionsPullSyncCoordinator::class
-                singleOf(::FakeInspectionsPullSyncTimestampDataSource) bind InspectionsPullSyncTimestampDataSource::class
             },
         )
 
