@@ -14,6 +14,7 @@ package cz.adamec.timotej.snag.structures.fe.driving.impl.internal.structureDeta
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cz.adamec.timotej.snag.lib.core.common.UuidProvider
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
@@ -56,6 +57,7 @@ internal class StructureDetailsEditViewModel(
     val saveEventFlow = saveEventChannel.receiveAsFlow()
 
     private var originalFloorPlanUrl: String? = null
+    private val resolvedStructureId: Uuid = structureId ?: UuidProvider.getUuid()
 
     init {
         require(structureId != null || projectId != null) {
@@ -97,7 +99,8 @@ internal class StructureDetailsEditViewModel(
         fileName: String,
     ) = viewModelScope.launch {
         _state.update { it.copy(isUploadingImage = true) }
-        when (val result = uploadFloorPlanImageUseCase(bytes, fileName)) {
+        val resolvedProjectId = _state.value.projectId ?: projectId!!
+        when (val result = uploadFloorPlanImageUseCase(resolvedProjectId, resolvedStructureId, bytes, fileName)) {
             is OnlineDataResult.Success -> {
                 val previousPendingUrl = _state.value.pendingUploadUrl
                 _state.update {
@@ -145,7 +148,7 @@ internal class StructureDetailsEditViewModel(
             saveStructureUseCase(
                 request =
                     SaveStructureRequest(
-                        id = structureId,
+                        id = resolvedStructureId,
                         projectId = state.value.projectId ?: projectId!!,
                         name = state.value.structureName,
                         floorPlanUrl = state.value.floorPlanUrl,

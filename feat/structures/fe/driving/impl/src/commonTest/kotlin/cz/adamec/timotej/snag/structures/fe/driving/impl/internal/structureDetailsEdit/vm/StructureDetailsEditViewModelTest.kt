@@ -251,6 +251,8 @@ class StructureDetailsEditViewModelTest : FrontendKoinInitializedTest() {
             )
             assertFalse(viewModel.state.value.isUploadingImage)
             assertEquals(1, fakeFileApi.uploadedFiles.size)
+            val (_, _, directory) = fakeFileApi.uploadedFiles.first()
+            assertTrue(directory.startsWith("projects/$projectId/structures/"))
         }
 
     @Test

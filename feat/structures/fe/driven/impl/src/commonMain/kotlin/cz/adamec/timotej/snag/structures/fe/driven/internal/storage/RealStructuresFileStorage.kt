@@ -22,7 +22,8 @@ internal class RealStructuresFileStorage(
     override suspend fun uploadFile(
         bytes: ByteArray,
         fileName: String,
-    ): OnlineDataResult<String> = fileApi.uploadFile(bytes, fileName)
+        directory: String,
+    ): OnlineDataResult<String> = fileApi.uploadFile(bytes, fileName, directory)
 
     override suspend fun deleteFile(url: String): OnlineDataResult<Unit> = fileApi.deleteFile(url)
 }

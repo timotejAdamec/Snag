@@ -18,6 +18,7 @@ interface FileApi {
     suspend fun uploadFile(
         bytes: ByteArray,
         fileName: String,
+        directory: String,
     ): OnlineDataResult<String>
 
     suspend fun deleteFile(url: String): OnlineDataResult<Unit>

@@ -17,18 +17,19 @@ import cz.adamec.timotej.snag.lib.storage.fe.api.FileApi
 
 class FakeFileApi : FileApi {
     private var uploadCounter = 0
-    val uploadedFiles = mutableListOf<Pair<ByteArray, String>>()
+    val uploadedFiles = mutableListOf<Triple<ByteArray, String, String>>()
     val deletedUrls = mutableListOf<String>()
     var forcedFailure: OnlineDataResult.Failure? = null
 
     override suspend fun uploadFile(
         bytes: ByteArray,
         fileName: String,
+        directory: String,
     ): OnlineDataResult<String> {
         val failure = forcedFailure
         if (failure != null) return failure
-        uploadedFiles.add(bytes to fileName)
-        val url = "https://storage.test/uploads/${++uploadCounter}-$fileName"
+        uploadedFiles.add(Triple(bytes, fileName, directory))
+        val url = "https://storage.test/$directory/${++uploadCounter}-$fileName"
         return OnlineDataResult.Success(url)
     }
 

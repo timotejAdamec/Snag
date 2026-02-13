@@ -67,13 +67,14 @@ class FileRouteTest : BackendKoinInitializedTest() {
                                     append(HttpHeaders.ContentDisposition, "filename=\"test.png\"")
                                 },
                             )
+                            append("directory", "projects/abc/structures/xyz")
                         },
                 )
 
             assertEquals(HttpStatusCode.OK, response.status)
             val body = response.body<Map<String, String>>()
             assertTrue(body.containsKey("url"))
-            assertTrue(body["url"]!!.contains("test-uploads"))
+            assertTrue(body["url"]!!.contains("projects/abc/structures/xyz"))
             assertEquals(1, fakeStorageService.uploadedFiles.size)
         }
 
@@ -86,7 +87,35 @@ class FileRouteTest : BackendKoinInitializedTest() {
             val response =
                 client.submitFormWithBinaryData(
                     url = "/files",
-                    formData = formData {},
+                    formData =
+                        formData {
+                            append("directory", "some-dir")
+                        },
+                )
+
+            assertEquals(HttpStatusCode.BadRequest, response.status)
+        }
+
+    @Test
+    fun `POST file upload without directory part returns 400`() =
+        testApplication {
+            configureApp()
+            val client = jsonClient()
+
+            val response =
+                client.submitFormWithBinaryData(
+                    url = "/files",
+                    formData =
+                        formData {
+                            append(
+                                "file",
+                                byteArrayOf(1, 2, 3),
+                                Headers.build {
+                                    append(HttpHeaders.ContentType, "image/png")
+                                    append(HttpHeaders.ContentDisposition, "filename=\"test.png\"")
+                                },
+                            )
+                        },
                 )
 
             assertEquals(HttpStatusCode.BadRequest, response.status)
