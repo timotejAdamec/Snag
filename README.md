@@ -1,5 +1,47 @@
 This is a Kotlin Multiplatform project targeting Android, iOS, Web, Desktop (JVM), Server.
 
+# Prerequisites
+
+## Google Cloud Storage Setup
+
+This project uses Google Cloud Storage for file storage. Follow these steps to set up your development environment:
+
+### 1. Install Google Cloud CLI
+
+- **macOS** (using Homebrew):
+```shell
+  brew install --cask google-cloud-sdk
+```
+- **Windows/Linux**: Download from [https://cloud.google.com/sdk/docs/install](https://cloud.google.com/sdk/docs/install)
+
+### 2. Authenticate with Google Cloud
+
+Initialize the gcloud CLI and authenticate:
+```shell
+gcloud init
+```
+Follow the prompts to:
+- Sign in with your Google account (you have to be added to the GCP project)
+- Select the `snag-487319` project
+
+### 3. Set Up Application Default Credentials
+
+Configure credentials for the application code:
+```shell
+gcloud auth application-default login
+```
+
+This creates credentials at `~/.config/gcloud/application_default_credentials.json` that the application will use automatically.
+
+**Important**: Never commit credential files to the repository. They contain sensitive authentication tokens.
+
+### 4. Verify Setup
+
+You can verify your setup by listing the project's buckets:
+```shell
+gsutil ls
+```
+
 # Building and Running the Project
 
 ## Build and Run Android Application
