@@ -46,6 +46,10 @@ import snag.feat.structures.fe.driving.impl.generated.resources.add_floor_plan
 import snag.feat.structures.fe.driving.impl.generated.resources.change_floor_plan
 import snag.feat.structures.fe.driving.impl.generated.resources.remove_floor_plan
 
+private const val ASPECT_RATIO_WIDTH = 16f
+private const val ASPECT_RATIO_HEIGHT = 9f
+
+@Suppress("CognitiveComplexMethod")
 @Composable
 internal fun FloorPlanEditSection(
     floorPlanUrl: String?,
@@ -64,7 +68,7 @@ internal fun FloorPlanEditSection(
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .aspectRatio(16f / 9f)
+                    .aspectRatio(ASPECT_RATIO_WIDTH / ASPECT_RATIO_HEIGHT)
                     .clip(MaterialTheme.shapes.medium),
             color = MaterialTheme.colorScheme.surfaceVariant,
         ) {
@@ -102,9 +106,11 @@ internal fun FloorPlanEditSection(
                         val file =
                             FileKit.openFilePicker(
                                 type = FileKitType.Image,
-                            ) ?: return@launch
-                        val bytes = file.readBytes()
-                        onImagePick(bytes, file.name)
+                            )
+                        if (file != null) {
+                            val bytes = file.readBytes()
+                            onImagePick(bytes, file.name)
+                        }
                     }
                 },
             ) {

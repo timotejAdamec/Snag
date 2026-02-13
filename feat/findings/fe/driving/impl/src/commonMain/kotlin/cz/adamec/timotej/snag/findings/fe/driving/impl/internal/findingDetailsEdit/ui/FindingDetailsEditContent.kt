@@ -70,7 +70,7 @@ import snag.lib.design.fe.generated.resources.save
 import snag.lib.design.fe.generated.resources.Res as DesignRes
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
-@Suppress("LongMethod")
+@Suppress("LongMethod", "CognitiveComplexMethod", "CyclomaticComplexMethod")
 @Composable
 internal fun FindingDetailsEditContent(
     isEditMode: Boolean,
@@ -149,7 +149,7 @@ internal fun FindingDetailsEditContent(
                     Text(
                         text =
                             state.findingNameError?.let { stringResource(it) }
-                                ?: (stringResource(Res.string.required) + "*"),
+                                ?: stringResource(Res.string.required) + "*",
                     )
                 },
                 value = state.findingName,

@@ -31,17 +31,13 @@ class FakeStructuresDb : StructuresDb {
     override fun getStructuresFlow(projectId: Uuid): Flow<OfflineFirstDataResult<List<FrontendStructure>>> =
         ops.allItemsFlow { it.structure.projectId == projectId }
 
-    override fun getStructureFlow(id: Uuid): Flow<OfflineFirstDataResult<FrontendStructure?>> =
-        ops.itemByIdFlow(id)
+    override fun getStructureFlow(id: Uuid): Flow<OfflineFirstDataResult<FrontendStructure?>> = ops.itemByIdFlow(id)
 
-    override suspend fun saveStructure(structure: FrontendStructure): OfflineFirstDataResult<Unit> =
-        ops.saveOneItem(structure)
+    override suspend fun saveStructure(structure: FrontendStructure): OfflineFirstDataResult<Unit> = ops.saveOneItem(structure)
 
-    override suspend fun saveStructures(structures: List<FrontendStructure>): OfflineFirstDataResult<Unit> =
-        ops.saveManyItems(structures)
+    override suspend fun saveStructures(structures: List<FrontendStructure>): OfflineFirstDataResult<Unit> = ops.saveManyItems(structures)
 
-    override suspend fun deleteStructure(id: Uuid): OfflineFirstDataResult<Unit> =
-        ops.deleteItem(id)
+    override suspend fun deleteStructure(id: Uuid): OfflineFirstDataResult<Unit> = ops.deleteItem(id)
 
     override suspend fun getStructureIdsByProjectId(projectId: Uuid): List<Uuid> =
         ops.items.value.values
