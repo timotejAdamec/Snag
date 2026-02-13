@@ -49,7 +49,7 @@ internal fun StructureDetailsEditContent(
     state: StructureDetailsEditUiState,
     snackbarHostState: SnackbarHostState,
     onStructureNameChange: (String) -> Unit,
-    onImagePicked: (bytes: ByteArray, fileName: String) -> Unit,
+    onImagePick: (bytes: ByteArray, fileName: String) -> Unit,
     onRemoveImage: () -> Unit,
     onSaveClick: () -> Unit,
     onCancelClick: () -> Unit,
@@ -114,7 +114,7 @@ internal fun StructureDetailsEditContent(
             FloorPlanEditSection(
                 floorPlanUrl = state.floorPlanUrl,
                 isUploading = state.isUploadingImage,
-                onImagePicked = onImagePicked,
+                onImagePick = onImagePick,
                 onRemoveImage = onRemoveImage,
             )
             OutlinedTextField(

@@ -44,7 +44,6 @@ import kotlin.test.assertTrue
 import kotlin.uuid.Uuid
 
 class CascadeDeleteLocalStructuresByProjectIdUseCaseImplTest : FrontendKoinInitializedTest() {
-
     private val fakeStructuresDb: FakeStructuresDb by inject()
     private val fakeFindingsDb: FakeFindingsDb by inject()
 
@@ -71,72 +70,83 @@ class CascadeDeleteLocalStructuresByProjectIdUseCaseImplTest : FrontendKoinIniti
             },
         )
 
-    private fun createStructure(id: Uuid, projectId: Uuid) = FrontendStructure(
-        structure = Structure(
-            id = id,
-            projectId = projectId,
-            name = "Structure",
-            floorPlanUrl = null,
-            updatedAt = Timestamp(1L),
-        ),
+    private fun createStructure(
+        id: Uuid,
+        projectId: Uuid,
+    ) = FrontendStructure(
+        structure =
+            Structure(
+                id = id,
+                projectId = projectId,
+                name = "Structure",
+                floorPlanUrl = null,
+                updatedAt = Timestamp(1L),
+            ),
     )
 
-    private fun createFinding(id: Uuid, structureId: Uuid) = FrontendFinding(
-        finding = Finding(
-            id = id,
-            structureId = structureId,
-            name = "Finding",
-            description = null,
-            type = FindingType.Classic(),
-            coordinates = emptyList(),
-            updatedAt = Timestamp(1L),
-        ),
+    private fun createFinding(
+        id: Uuid,
+        structureId: Uuid,
+    ) = FrontendFinding(
+        finding =
+            Finding(
+                id = id,
+                structureId = structureId,
+                name = "Finding",
+                description = null,
+                type = FindingType.Classic(),
+                coordinates = emptyList(),
+                updatedAt = Timestamp(1L),
+            ),
     )
 
     @Test
-    fun `deletes all structures for the given project`() = runTest(testDispatcher) {
-        val structure1 = createStructure(id = structureId1, projectId = projectId1)
-        val structure2 = createStructure(id = structureId2, projectId = projectId1)
-        fakeStructuresDb.setStructures(listOf(structure1, structure2))
+    fun `deletes all structures for the given project`() =
+        runTest(testDispatcher) {
+            val structure1 = createStructure(id = structureId1, projectId = projectId1)
+            val structure2 = createStructure(id = structureId2, projectId = projectId1)
+            fakeStructuresDb.setStructures(listOf(structure1, structure2))
 
-        useCase(projectId1)
+            useCase(projectId1)
 
-        val result = fakeStructuresDb.getStructuresFlow(projectId1).first()
-        assertIs<OfflineFirstDataResult.Success<List<FrontendStructure>>>(result)
-        assertTrue(result.data.isEmpty())
-    }
-
-    @Test
-    fun `deletes findings for each structure`() = runTest(testDispatcher) {
-        val structure1 = createStructure(id = structureId1, projectId = projectId1)
-        val structure2 = createStructure(id = structureId2, projectId = projectId1)
-        fakeStructuresDb.setStructures(listOf(structure1, structure2))
-
-        val finding1 = createFinding(id = findingId1, structureId = structureId1)
-        val finding2 = createFinding(id = findingId2, structureId = structureId2)
-        fakeFindingsDb.setFindings(listOf(finding1, finding2))
-
-        useCase(projectId1)
-
-        val findings1Result = fakeFindingsDb.getFindingsFlow(structureId1).first()
-        assertIs<OfflineFirstDataResult.Success<List<FrontendFinding>>>(findings1Result)
-        assertTrue(findings1Result.data.isEmpty())
-
-        val findings2Result = fakeFindingsDb.getFindingsFlow(structureId2).first()
-        assertIs<OfflineFirstDataResult.Success<List<FrontendFinding>>>(findings2Result)
-        assertTrue(findings2Result.data.isEmpty())
-    }
+            val result = fakeStructuresDb.getStructuresFlow(projectId1).first()
+            assertIs<OfflineFirstDataResult.Success<List<FrontendStructure>>>(result)
+            assertTrue(result.data.isEmpty())
+        }
 
     @Test
-    fun `does not delete structures from other projects`() = runTest(testDispatcher) {
-        val structureForProject1 = createStructure(id = structureId1, projectId = projectId1)
-        val structureForProject2 = createStructure(id = structureId3, projectId = projectId2)
-        fakeStructuresDb.setStructures(listOf(structureForProject1, structureForProject2))
+    fun `deletes findings for each structure`() =
+        runTest(testDispatcher) {
+            val structure1 = createStructure(id = structureId1, projectId = projectId1)
+            val structure2 = createStructure(id = structureId2, projectId = projectId1)
+            fakeStructuresDb.setStructures(listOf(structure1, structure2))
 
-        useCase(projectId1)
+            val finding1 = createFinding(id = findingId1, structureId = structureId1)
+            val finding2 = createFinding(id = findingId2, structureId = structureId2)
+            fakeFindingsDb.setFindings(listOf(finding1, finding2))
 
-        val result = fakeStructuresDb.getStructuresFlow(projectId2).first()
-        assertIs<OfflineFirstDataResult.Success<List<FrontendStructure>>>(result)
-        assertTrue(result.data.size == 1)
-    }
+            useCase(projectId1)
+
+            val findings1Result = fakeFindingsDb.getFindingsFlow(structureId1).first()
+            assertIs<OfflineFirstDataResult.Success<List<FrontendFinding>>>(findings1Result)
+            assertTrue(findings1Result.data.isEmpty())
+
+            val findings2Result = fakeFindingsDb.getFindingsFlow(structureId2).first()
+            assertIs<OfflineFirstDataResult.Success<List<FrontendFinding>>>(findings2Result)
+            assertTrue(findings2Result.data.isEmpty())
+        }
+
+    @Test
+    fun `does not delete structures from other projects`() =
+        runTest(testDispatcher) {
+            val structureForProject1 = createStructure(id = structureId1, projectId = projectId1)
+            val structureForProject2 = createStructure(id = structureId3, projectId = projectId2)
+            fakeStructuresDb.setStructures(listOf(structureForProject1, structureForProject2))
+
+            useCase(projectId1)
+
+            val result = fakeStructuresDb.getStructuresFlow(projectId2).first()
+            assertIs<OfflineFirstDataResult.Success<List<FrontendStructure>>>(result)
+            assertTrue(result.data.size == 1)
+        }
 }

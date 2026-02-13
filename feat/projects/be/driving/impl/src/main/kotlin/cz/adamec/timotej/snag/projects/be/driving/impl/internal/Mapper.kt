@@ -32,11 +32,12 @@ internal fun BackendProject.toDto() =
 
 internal fun PutProjectApiDto.toModel(id: Uuid) =
     BackendProject(
-        project = Project(
-            id = id,
-            name = name,
-            address = address,
-            clientId = clientId,
-            updatedAt = updatedAt,
-        ),
+        project =
+            Project(
+                id = id,
+                name = name,
+                address = address,
+                clientId = clientId,
+                updatedAt = updatedAt,
+            ),
     )

@@ -24,8 +24,12 @@ internal class SaveProjectUseCaseImpl(
         logger.debug("Saving project {} to local storage.", project)
         return projectsDb.saveProject(project).also {
             it?.let {
-                logger.debug("Didn't save project {} to local storage as there is a newer one." +
-                        " Returning the newer one ({}).", project, it)
+                logger.debug(
+                    "Didn't save project {} to local storage as there is a newer one." +
+                        " Returning the newer one ({}).",
+                    project,
+                    it,
+                )
             } ?: logger.debug("Saved project {} to local storage.", project)
         }
     }

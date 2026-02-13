@@ -68,10 +68,10 @@ fun SyncStatusBar(
                 visible = true
                 delay(SYNCED_DISPLAY_DURATION_MS)
                 visible = false
-            } else {
-                hasShownNonSynced = true
-                visible = true
             }
+        } else {
+            hasShownNonSynced = true
+            visible = true
         }
     }
 
@@ -84,6 +84,7 @@ fun SyncStatusBar(
     }
 }
 
+@Suppress("LongMethod")
 @Composable
 private fun SyncStatusBarContent(
     state: SyncStatusBarState,

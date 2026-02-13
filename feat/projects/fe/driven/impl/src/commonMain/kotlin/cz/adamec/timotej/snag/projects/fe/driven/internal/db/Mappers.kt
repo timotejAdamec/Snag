@@ -29,11 +29,12 @@ internal fun FrontendProject.toEntity() =
 
 internal fun ProjectEntity.toModel() =
     FrontendProject(
-        project = Project(
-            id = Uuid.parse(id),
-            name = name,
-            address = address,
-            clientId = clientId?.let { Uuid.parse(it) },
-            updatedAt = Timestamp(updatedAt),
-        ),
+        project =
+            Project(
+                id = Uuid.parse(id),
+                name = name,
+                address = address,
+                clientId = clientId?.let { Uuid.parse(it) },
+                updatedAt = Timestamp(updatedAt),
+            ),
     )

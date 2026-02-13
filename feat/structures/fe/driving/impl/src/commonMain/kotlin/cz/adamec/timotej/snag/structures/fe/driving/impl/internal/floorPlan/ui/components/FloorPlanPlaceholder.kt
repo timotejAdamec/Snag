@@ -18,7 +18,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextAlign
 import org.jetbrains.compose.resources.stringResource
 import snag.feat.structures.fe.driving.impl.generated.resources.Res
 import snag.feat.structures.fe.driving.impl.generated.resources.no_floor_plan
@@ -29,8 +28,9 @@ internal fun FloorPlanPlaceholder(modifier: Modifier = Modifier) {
         modifier = modifier,
     ) {
         Text(
-            modifier = Modifier
-                .align(Alignment.Center),
+            modifier =
+                Modifier
+                    .align(Alignment.Center),
             text = stringResource(Res.string.no_floor_plan),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,

@@ -59,12 +59,13 @@ internal fun FloorPlanWithPins(
             contentDescription = contentDescription,
             contentScale = ContentScale.Fit,
             onTap = { tapOffset ->
-                val tappedId = findTappedFinding(
-                    tapOffset = tapOffset,
-                    displayRect = zoomState.zoomable.contentDisplayRectF,
-                    findings = findings,
-                    touchTargetRadiusPx = touchTargetRadiusPx,
-                )
+                val tappedId =
+                    findTappedFinding(
+                        tapOffset = tapOffset,
+                        displayRect = zoomState.zoomable.contentDisplayRectF,
+                        findings = findings,
+                        touchTargetRadiusPx = touchTargetRadiusPx,
+                    )
                 if (tappedId != null) {
                     onFindingClick(tappedId)
                 }
@@ -178,10 +179,11 @@ private fun findTappedFinding(
 
     for (finding in findings) {
         for (coord in finding.finding.coordinates) {
-            val pinCenter = Offset(
-                x = displayRect.left + coord.x * displayRect.width,
-                y = displayRect.top + coord.y * displayRect.height,
-            )
+            val pinCenter =
+                Offset(
+                    x = displayRect.left + coord.x * displayRect.width,
+                    y = displayRect.top + coord.y * displayRect.height,
+                )
             val dx = tapOffset.x - pinCenter.x
             val dy = tapOffset.y - pinCenter.y
             val distance = sqrt(dx * dx + dy * dy)

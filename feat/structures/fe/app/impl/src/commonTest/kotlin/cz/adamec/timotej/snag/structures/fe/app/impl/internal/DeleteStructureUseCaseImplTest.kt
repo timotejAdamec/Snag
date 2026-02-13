@@ -46,7 +46,6 @@ import kotlin.test.assertTrue
 import kotlin.uuid.Uuid
 
 class DeleteStructureUseCaseImplTest : FrontendKoinInitializedTest() {
-
     private val fakeStructuresDb: FakeStructuresDb by inject()
     private val fakeStructuresSync: FakeStructuresSync by inject()
     private val fakeFindingsDb: FakeFindingsDb by inject()
@@ -68,64 +67,75 @@ class DeleteStructureUseCaseImplTest : FrontendKoinInitializedTest() {
     private val structureId = Uuid.parse("00000000-0000-0000-0001-000000000001")
     private val findingId = Uuid.parse("00000000-0000-0000-0002-000000000001")
 
-    private fun createStructure(id: Uuid, projectId: Uuid) = FrontendStructure(
-        structure = Structure(
-            id = id,
-            projectId = projectId,
-            name = "Structure",
-            floorPlanUrl = null,
-            updatedAt = Timestamp(1L),
-        ),
+    private fun createStructure(
+        id: Uuid,
+        projectId: Uuid,
+    ) = FrontendStructure(
+        structure =
+            Structure(
+                id = id,
+                projectId = projectId,
+                name = "Structure",
+                floorPlanUrl = null,
+                updatedAt = Timestamp(1L),
+            ),
     )
 
-    private fun createFinding(id: Uuid, structureId: Uuid) = FrontendFinding(
-        finding = Finding(
-            id = id,
-            structureId = structureId,
-            name = "Finding",
-            description = null,
-            type = FindingType.Classic(),
-            coordinates = emptyList(),
-            updatedAt = Timestamp(1L),
-        ),
+    private fun createFinding(
+        id: Uuid,
+        structureId: Uuid,
+    ) = FrontendFinding(
+        finding =
+            Finding(
+                id = id,
+                structureId = structureId,
+                name = "Finding",
+                description = null,
+                type = FindingType.Classic(),
+                coordinates = emptyList(),
+                updatedAt = Timestamp(1L),
+            ),
     )
 
     @Test
-    fun `deletes structure and cascade deletes findings`() = runTest(testDispatcher) {
-        val structure = createStructure(id = structureId, projectId = projectId)
-        fakeStructuresDb.setStructure(structure)
+    fun `deletes structure and cascade deletes findings`() =
+        runTest(testDispatcher) {
+            val structure = createStructure(id = structureId, projectId = projectId)
+            fakeStructuresDb.setStructure(structure)
 
-        val finding = createFinding(id = findingId, structureId = structureId)
-        fakeFindingsDb.setFindings(listOf(finding))
+            val finding = createFinding(id = findingId, structureId = structureId)
+            fakeFindingsDb.setFindings(listOf(finding))
 
-        useCase(structureId)
+            useCase(structureId)
 
-        val structureResult = fakeStructuresDb.getStructureFlow(structureId).first()
-        assertIs<OfflineFirstDataResult.Success<FrontendStructure?>>(structureResult)
-        assertNull(structureResult.data)
+            val structureResult = fakeStructuresDb.getStructureFlow(structureId).first()
+            assertIs<OfflineFirstDataResult.Success<FrontendStructure?>>(structureResult)
+            assertNull(structureResult.data)
 
-        val findingsResult = fakeFindingsDb.getFindingsFlow(structureId).first()
-        assertIs<OfflineFirstDataResult.Success<List<FrontendFinding>>>(findingsResult)
-        assertTrue(findingsResult.data.isEmpty())
-    }
-
-    @Test
-    fun `enqueues sync delete on success`() = runTest(testDispatcher) {
-        val structure = createStructure(id = structureId, projectId = projectId)
-        fakeStructuresDb.setStructure(structure)
-
-        useCase(structureId)
-
-        assertEquals(listOf(structureId), fakeStructuresSync.deletedStructureIds)
-    }
+            val findingsResult = fakeFindingsDb.getFindingsFlow(structureId).first()
+            assertIs<OfflineFirstDataResult.Success<List<FrontendFinding>>>(findingsResult)
+            assertTrue(findingsResult.data.isEmpty())
+        }
 
     @Test
-    fun `does not enqueue sync delete on failure`() = runTest(testDispatcher) {
-        fakeStructuresDb.forcedFailure =
-            OfflineFirstDataResult.ProgrammerError(Exception("DB error"))
+    fun `enqueues sync delete on success`() =
+        runTest(testDispatcher) {
+            val structure = createStructure(id = structureId, projectId = projectId)
+            fakeStructuresDb.setStructure(structure)
 
-        useCase(structureId)
+            useCase(structureId)
 
-        assertTrue(fakeStructuresSync.deletedStructureIds.isEmpty())
-    }
+            assertEquals(listOf(structureId), fakeStructuresSync.deletedStructureIds)
+        }
+
+    @Test
+    fun `does not enqueue sync delete on failure`() =
+        runTest(testDispatcher) {
+            fakeStructuresDb.forcedFailure =
+                OfflineFirstDataResult.ProgrammerError(Exception("DB error"))
+
+            useCase(structureId)
+
+            assertTrue(fakeStructuresSync.deletedStructureIds.isEmpty())
+        }
 }

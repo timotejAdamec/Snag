@@ -39,7 +39,10 @@ internal class RealStructuresApi(
         }.also { if (it is OnlineDataResult.Success) LH.logger.d { "Fetched ${it.data.size} structures for project $projectId." } }
     }
 
-    override suspend fun deleteStructure(id: Uuid, deletedAt: Timestamp): OnlineDataResult<Unit> {
+    override suspend fun deleteStructure(
+        id: Uuid,
+        deletedAt: Timestamp,
+    ): OnlineDataResult<Unit> {
         LH.logger.d { "Deleting structure $id from API..." }
         return safeApiCall(logger = LH.logger, errorContext = "Error deleting structure $id from API.") {
             httpClient.delete("/structures/$id") {
@@ -65,7 +68,10 @@ internal class RealStructuresApi(
         }.also { if (it is OnlineDataResult.Success) LH.logger.d { "Saved structure ${frontendStructure.structure.id} to API." } }
     }
 
-    override suspend fun getStructuresModifiedSince(projectId: Uuid, since: Timestamp): OnlineDataResult<List<StructureSyncResult>> {
+    override suspend fun getStructuresModifiedSince(
+        projectId: Uuid,
+        since: Timestamp,
+    ): OnlineDataResult<List<StructureSyncResult>> {
         LH.logger.d { "Fetching structures modified since $since for project $projectId..." }
         return safeApiCall(logger = LH.logger, errorContext = "Error fetching structures modified since $since for project $projectId.") {
             httpClient.get("/projects/$projectId/structures?since=${since.value}").body<List<StructureApiDto>>().map { dto ->

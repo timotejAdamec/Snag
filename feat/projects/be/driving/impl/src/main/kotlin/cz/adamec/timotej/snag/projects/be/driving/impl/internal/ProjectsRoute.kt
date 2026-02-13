@@ -83,12 +83,13 @@ internal class ProjectsRoute(
                 val id = getIdFromParameters()
                 val deleteProjectDto = getDtoFromBody<DeleteProjectApiDto>()
 
-                val newerProject = deleteProjectUseCase(
-                    DeleteProjectRequest(
-                        projectId = id,
-                        deletedAt = deleteProjectDto.deletedAt,
-                    ),
-                )
+                val newerProject =
+                    deleteProjectUseCase(
+                        DeleteProjectRequest(
+                            projectId = id,
+                            deletedAt = deleteProjectDto.deletedAt,
+                        ),
+                    )
 
                 newerProject?.let {
                     call.respond(it.toDto())

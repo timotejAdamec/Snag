@@ -12,9 +12,9 @@
 
 package cz.adamec.timotej.snag.structures.fe.driven.internal.db
 
-import cz.adamec.timotej.snag.feat.structures.fe.model.FrontendStructure
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.StructureEntity
 import cz.adamec.timotej.snag.feat.structures.business.Structure
+import cz.adamec.timotej.snag.feat.structures.fe.model.FrontendStructure
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import kotlin.uuid.Uuid
 
@@ -29,11 +29,12 @@ internal fun FrontendStructure.toEntity() =
 
 internal fun StructureEntity.toModel() =
     FrontendStructure(
-        structure = Structure(
-            id = Uuid.parse(id),
-            projectId = Uuid.parse(projectId),
-            name = name,
-            floorPlanUrl = floorPlanUrl,
-            updatedAt = Timestamp(updatedAt),
-        )
+        structure =
+            Structure(
+                id = Uuid.parse(id),
+                projectId = Uuid.parse(projectId),
+                name = name,
+                floorPlanUrl = floorPlanUrl,
+                updatedAt = Timestamp(updatedAt),
+            ),
     )

@@ -12,20 +12,21 @@
 
 package cz.adamec.timotej.snag.structures.fe.driven.internal.api
 
-import cz.adamec.timotej.snag.feat.structures.fe.model.FrontendStructure
 import cz.adamec.timotej.snag.feat.structures.business.Structure
+import cz.adamec.timotej.snag.feat.structures.fe.model.FrontendStructure
 import cz.adamec.timotej.snag.structures.be.driving.contract.PutStructureApiDto
 import cz.adamec.timotej.snag.structures.be.driving.contract.StructureApiDto
 
 internal fun StructureApiDto.toModel() =
     FrontendStructure(
-        structure = Structure(
-            id = id,
-            projectId = projectId,
-            name = name,
-            floorPlanUrl = floorPlanUrl,
-            updatedAt = updatedAt,
-        )
+        structure =
+            Structure(
+                id = id,
+                projectId = projectId,
+                name = name,
+                floorPlanUrl = floorPlanUrl,
+                updatedAt = updatedAt,
+            ),
     )
 
 internal fun FrontendStructure.toPutApiDto() =
