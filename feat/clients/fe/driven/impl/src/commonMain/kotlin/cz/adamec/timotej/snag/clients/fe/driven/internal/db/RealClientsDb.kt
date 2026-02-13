@@ -12,68 +12,48 @@
 
 package cz.adamec.timotej.snag.clients.fe.driven.internal.db
 
-import app.cash.sqldelight.coroutines.asFlow
-import app.cash.sqldelight.coroutines.mapToList
-import app.cash.sqldelight.coroutines.mapToOneOrNull
 import cz.adamec.timotej.snag.clients.fe.driven.internal.LH
 import cz.adamec.timotej.snag.clients.fe.model.FrontendClient
 import cz.adamec.timotej.snag.clients.fe.ports.ClientsDb
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.ClientEntity
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.ClientEntityQueries
-import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
-import cz.adamec.timotej.snag.lib.database.fe.safeDbWrite
+import cz.adamec.timotej.snag.lib.database.fe.SqlDelightEntityDb
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.map
 import kotlin.uuid.Uuid
 
+@Suppress("TooManyFunctions")
 internal class RealClientsDb(
-    private val clientEntityQueries: ClientEntityQueries,
-    private val ioDispatcher: CoroutineDispatcher,
-) : ClientsDb {
-    override fun getAllClientsFlow(): Flow<OfflineFirstDataResult<List<FrontendClient>>> =
-        clientEntityQueries
-            .selectAll()
-            .asFlow()
-            .mapToList(ioDispatcher)
-            .map<List<ClientEntity>, OfflineFirstDataResult<List<FrontendClient>>> { entities ->
-                OfflineFirstDataResult.Success(
-                    entities.map { it.toModel() },
-                )
-            }.catch { e ->
-                LH.logger.e { "Error loading clients from DB." }
-                emit(OfflineFirstDataResult.ProgrammerError(throwable = e))
-            }
+    private val queries: ClientEntityQueries,
+    ioDispatcher: CoroutineDispatcher,
+) : SqlDelightEntityDb<ClientEntity, FrontendClient>(ioDispatcher, LH.logger, "client"),
+    ClientsDb {
+    override fun selectAllQuery() = queries.selectAll()
 
-    override suspend fun saveClients(clients: List<FrontendClient>): OfflineFirstDataResult<Unit> =
-        safeDbWrite(ioDispatcher = ioDispatcher, logger = LH.logger, errorMessage = "Error saving clients $clients to DB.") {
-            clientEntityQueries.transaction {
-                clients.forEach {
-                    clientEntityQueries.save(it.toEntity())
-                }
-            }
-        }
+    override fun selectByIdQuery(id: String) = queries.selectById(id)
 
-    override fun getClientFlow(id: Uuid): Flow<OfflineFirstDataResult<FrontendClient?>> =
-        clientEntityQueries
-            .selectById(id.toString())
-            .asFlow()
-            .mapToOneOrNull(ioDispatcher)
-            .map<ClientEntity?, OfflineFirstDataResult<FrontendClient?>> {
-                OfflineFirstDataResult.Success(it?.toModel())
-            }.catch { e ->
-                LH.logger.e { "Error loading client $id from DB." }
-                emit(OfflineFirstDataResult.ProgrammerError(throwable = e))
-            }
+    override suspend fun saveEntity(entity: ClientEntity) {
+        queries.save(entity)
+    }
 
-    override suspend fun saveClient(client: FrontendClient): OfflineFirstDataResult<Unit> =
-        safeDbWrite(ioDispatcher = ioDispatcher, logger = LH.logger, errorMessage = "Error saving client $client to DB.") {
-            clientEntityQueries.save(client.toEntity())
-        }
+    override suspend fun deleteEntityById(id: String) {
+        queries.deleteById(id)
+    }
 
-    override suspend fun deleteClient(id: Uuid): OfflineFirstDataResult<Unit> =
-        safeDbWrite(ioDispatcher = ioDispatcher, logger = LH.logger, errorMessage = "Error deleting client $id from DB.") {
-            clientEntityQueries.deleteById(id.toString())
-        }
+    override suspend fun runInTransaction(block: suspend () -> Unit) {
+        queries.transaction { block() }
+    }
+
+    override fun mapToModel(entity: ClientEntity) = entity.toModel()
+
+    override fun mapToEntity(model: FrontendClient) = model.toEntity()
+
+    override fun getAllClientsFlow() = allEntitiesFlow()
+
+    override fun getClientFlow(id: Uuid) = entityByIdFlow(id)
+
+    override suspend fun saveClient(client: FrontendClient) = saveOne(client)
+
+    override suspend fun saveClients(clients: List<FrontendClient>) = saveMany(clients)
+
+    override suspend fun deleteClient(id: Uuid) = deleteById(id)
 }

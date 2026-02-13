@@ -12,81 +12,60 @@
 
 package cz.adamec.timotej.snag.structures.fe.driven.internal.db
 
-import cz.adamec.timotej.snag.feat.structures.fe.model.FrontendStructure
-import app.cash.sqldelight.coroutines.asFlow
-import app.cash.sqldelight.coroutines.mapToList
-import app.cash.sqldelight.coroutines.mapToOneOrNull
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.StructureEntity
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.StructureEntityQueries
-import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
-import cz.adamec.timotej.snag.lib.database.fe.safeDbWrite
+import cz.adamec.timotej.snag.feat.structures.fe.model.FrontendStructure
+import cz.adamec.timotej.snag.lib.database.fe.SqlDelightEntityDb
 import cz.adamec.timotej.snag.structures.fe.driven.internal.LH
 import cz.adamec.timotej.snag.structures.fe.ports.StructuresDb
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import kotlin.uuid.Uuid
 
+@Suppress("TooManyFunctions")
 internal class RealStructuresDb(
-    private val structureEntityQueries: StructureEntityQueries,
+    private val queries: StructureEntityQueries,
     private val ioDispatcher: CoroutineDispatcher,
-) : StructuresDb {
-    override fun getStructuresFlow(projectId: Uuid): Flow<OfflineFirstDataResult<List<FrontendStructure>>> =
-        structureEntityQueries
-            .selectByProjectId(projectId.toString())
-            .asFlow()
-            .mapToList(ioDispatcher)
-            .map<List<StructureEntity>, OfflineFirstDataResult<List<FrontendStructure>>> { entities ->
-                OfflineFirstDataResult.Success(
-                    entities.map { it.toModel() },
-                )
-            }.catch { e ->
-                LH.logger.e { "Error loading structures for project $projectId from DB." }
-                emit(OfflineFirstDataResult.ProgrammerError(throwable = e))
-            }
+) : SqlDelightEntityDb<StructureEntity, FrontendStructure>(ioDispatcher, LH.logger, "structure"),
+    StructuresDb {
+    override fun selectByIdQuery(id: String) = queries.selectById(id)
 
-    override suspend fun saveStructures(structures: List<FrontendStructure>): OfflineFirstDataResult<Unit> =
-        safeDbWrite(ioDispatcher = ioDispatcher, logger = LH.logger, errorMessage = "Error saving structures $structures to DB.") {
-            structureEntityQueries.transaction {
-                structures.forEach {
-                    structureEntityQueries.save(it.toEntity())
-                }
-            }
-        }
+    override suspend fun saveEntity(entity: StructureEntity) {
+        queries.save(entity)
+    }
 
-    override suspend fun saveStructure(structure: FrontendStructure): OfflineFirstDataResult<Unit> =
-        safeDbWrite(ioDispatcher = ioDispatcher, logger = LH.logger, errorMessage = "Error saving structure $structure to DB.") {
-            structureEntityQueries.save(structure.toEntity())
-        }
+    override suspend fun deleteEntityById(id: String) {
+        queries.deleteById(id)
+    }
 
-    override suspend fun deleteStructure(id: Uuid): OfflineFirstDataResult<Unit> =
-        safeDbWrite(ioDispatcher = ioDispatcher, logger = LH.logger, errorMessage = "Error deleting structure $id from DB.") {
-            structureEntityQueries.deleteById(id.toString())
-        }
+    override suspend fun runInTransaction(block: suspend () -> Unit) {
+        queries.transaction { block() }
+    }
 
-    override fun getStructureFlow(id: Uuid): Flow<OfflineFirstDataResult<FrontendStructure?>> =
-        structureEntityQueries
-            .selectById(id.toString())
-            .asFlow()
-            .mapToOneOrNull(ioDispatcher)
-            .map<StructureEntity?, OfflineFirstDataResult<FrontendStructure?>> { entity ->
-                OfflineFirstDataResult.Success(entity?.toModel())
-            }.catch { e ->
-                LH.logger.e { "Error loading structure $id from DB." }
-                emit(OfflineFirstDataResult.ProgrammerError(throwable = e))
-            }
+    override fun mapToModel(entity: StructureEntity) = entity.toModel()
+
+    override fun mapToEntity(model: FrontendStructure) = model.toEntity()
+
+    override fun getStructuresFlow(projectId: Uuid) = entitiesByQueryFlow(queries.selectByProjectId(projectId.toString()))
+
+    override fun getStructureFlow(id: Uuid) = entityByIdFlow(id)
+
+    override suspend fun saveStructure(structure: FrontendStructure) = saveOne(structure)
+
+    override suspend fun saveStructures(structures: List<FrontendStructure>) = saveMany(structures)
+
+    override suspend fun deleteStructure(id: Uuid) = deleteById(id)
 
     override suspend fun getStructureIdsByProjectId(projectId: Uuid): List<Uuid> =
         withContext(ioDispatcher) {
-            structureEntityQueries.selectIdsByProjectId(projectId.toString())
+            val ids = queries.selectIdsByProjectId(projectId.toString())
+            ids
                 .executeAsList()
                 .map { Uuid.parse(it) }
         }
 
-    override suspend fun deleteStructuresByProjectId(projectId: Uuid): OfflineFirstDataResult<Unit> =
-        safeDbWrite(ioDispatcher = ioDispatcher, logger = LH.logger, errorMessage = "Error deleting structures for project $projectId from DB.") {
-            structureEntityQueries.deleteByProjectId(projectId.toString())
+    override suspend fun deleteStructuresByProjectId(projectId: Uuid) =
+        deleteByQuery("Error deleting structures for project $projectId from DB.") {
+            queries.deleteByProjectId(projectId.toString())
         }
 }

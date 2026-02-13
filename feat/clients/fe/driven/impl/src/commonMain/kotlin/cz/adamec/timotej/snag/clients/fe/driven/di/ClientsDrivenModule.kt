@@ -33,7 +33,7 @@ val clientsDrivenModule =
     module {
         factory {
             RealClientsDb(
-                clientEntityQueries = get(),
+                queries = get(),
                 ioDispatcher = getIoDispatcher(),
             )
         } bind ClientsDb::class

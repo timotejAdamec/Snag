@@ -12,59 +12,25 @@
 
 package cz.adamec.timotej.snag.projects.fe.driven.test
 
-import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
+import cz.adamec.timotej.snag.lib.core.fe.test.FakeEntityDb
 import cz.adamec.timotej.snag.projects.fe.model.FrontendProject
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsDb
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.update
 import kotlin.uuid.Uuid
 
-class FakeProjectsDb : ProjectsDb {
-    private val projects = MutableStateFlow<Map<Uuid, FrontendProject>>(emptyMap())
-    var forcedFailure: OfflineFirstDataResult.ProgrammerError? = null
+class FakeProjectsDb :
+    FakeEntityDb<FrontendProject>(
+        getId = { it.project.id },
+    ),
+    ProjectsDb {
+    override fun getAllProjectsFlow() = allItemsFlow()
 
-    override fun getAllProjectsFlow(): Flow<OfflineFirstDataResult<List<FrontendProject>>> =
-        projects.map { OfflineFirstDataResult.Success(it.values.toList()) }
+    override fun getProjectFlow(id: Uuid) = itemByIdFlow(id)
 
-    override suspend fun saveProjects(projects: List<FrontendProject>): OfflineFirstDataResult<Unit> {
-        val failure = forcedFailure
-        if (failure != null) return failure
+    override suspend fun saveProject(project: FrontendProject) = saveOneItem(project)
 
-        this.projects.update { current ->
-            current + projects.associateBy { it.project.id }
-        }
-        return OfflineFirstDataResult.Success(Unit)
-    }
+    override suspend fun saveProjects(projects: List<FrontendProject>) = saveManyItems(projects)
 
-    override fun getProjectFlow(id: Uuid): Flow<OfflineFirstDataResult<FrontendProject?>> =
-        projects.map { map ->
-            val failure = forcedFailure
-            if (failure != null) {
-                failure
-            } else {
-                OfflineFirstDataResult.Success(map[id])
-            }
-        }
+    override suspend fun deleteProject(id: Uuid) = deleteItem(id)
 
-    override suspend fun saveProject(project: FrontendProject): OfflineFirstDataResult<Unit> {
-        val failure = forcedFailure
-        if (failure != null) return failure
-
-        projects.update { it + (project.project.id to project) }
-        return OfflineFirstDataResult.Success(Unit)
-    }
-
-    override suspend fun deleteProject(id: Uuid): OfflineFirstDataResult<Unit> {
-        val failure = forcedFailure
-        if (failure != null) return failure
-
-        projects.update { it - id }
-        return OfflineFirstDataResult.Success(Unit)
-    }
-
-    fun setProject(project: FrontendProject) {
-        projects.update { it + (project.project.id to project) }
-    }
+    fun setProject(project: FrontendProject) = setItem(project)
 }

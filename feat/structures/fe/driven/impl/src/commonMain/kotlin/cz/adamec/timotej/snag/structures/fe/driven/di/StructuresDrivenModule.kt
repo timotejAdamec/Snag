@@ -33,7 +33,7 @@ val structuresDrivenModule =
     module {
         factory {
             RealStructuresDb(
-                structureEntityQueries = get(),
+                queries = get(),
                 ioDispatcher = getIoDispatcher(),
             )
         } bind StructuresDb::class

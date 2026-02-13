@@ -33,7 +33,7 @@ val projectsDrivenModule =
     module {
         factory {
             RealProjectsDb(
-                projectEntityQueries = get(),
+                queries = get(),
                 ioDispatcher = getIoDispatcher(),
             )
         } bind ProjectsDb::class

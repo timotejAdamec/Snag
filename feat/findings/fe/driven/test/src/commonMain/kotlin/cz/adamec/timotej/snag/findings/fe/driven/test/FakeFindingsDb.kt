@@ -17,63 +17,27 @@ import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
 import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
 import cz.adamec.timotej.snag.findings.fe.ports.FindingsDb
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
-import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstUpdateDataResult
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.map
+import cz.adamec.timotej.snag.lib.core.fe.test.FakeEntityDb
 import kotlinx.coroutines.flow.update
 import kotlin.uuid.Uuid
 
-class FakeFindingsDb : FindingsDb {
-    private val findings = MutableStateFlow<Map<Uuid, FrontendFinding>>(emptyMap())
-    var forcedFailure: OfflineFirstDataResult.ProgrammerError? = null
+class FakeFindingsDb :
+    FakeEntityDb<FrontendFinding>(
+        getId = { it.finding.id },
+    ),
+    FindingsDb {
+    override fun getFindingsFlow(structureId: Uuid) = allItemsFlow { it.finding.structureId == structureId }
 
-    override fun getFindingsFlow(structureId: Uuid): Flow<OfflineFirstDataResult<List<FrontendFinding>>> =
-        findings.map { map ->
-            val failure = forcedFailure
-            failure ?: OfflineFirstDataResult.Success(map.values.filter { it.finding.structureId == structureId })
-        }
+    override fun getFindingFlow(id: Uuid) = itemByIdFlow(id)
 
-    override suspend fun saveFindings(findings: List<FrontendFinding>): OfflineFirstDataResult<Unit> {
-        val failure = forcedFailure
-        if (failure != null) return failure
+    override suspend fun saveFinding(finding: FrontendFinding) = saveOneItem(finding)
 
-        this.findings.update { current ->
-            current + findings.associateBy { it.finding.id }
-        }
-        return OfflineFirstDataResult.Success(Unit)
-    }
+    override suspend fun saveFindings(findings: List<FrontendFinding>) = saveManyItems(findings)
 
-    override suspend fun saveFinding(finding: FrontendFinding): OfflineFirstDataResult<Unit> {
-        val failure = forcedFailure
-        if (failure != null) return failure
+    override suspend fun deleteFinding(id: Uuid) = deleteItem(id)
 
-        findings.update { it + (finding.finding.id to finding) }
-        return OfflineFirstDataResult.Success(Unit)
-    }
-
-    override suspend fun deleteFinding(id: Uuid): OfflineFirstDataResult<Unit> {
-        val failure = forcedFailure
-        if (failure != null) return failure
-
-        findings.update { it - id }
-        return OfflineFirstDataResult.Success(Unit)
-    }
-
-    override fun getFindingFlow(id: Uuid): Flow<OfflineFirstDataResult<FrontendFinding?>> =
-        findings.map { map ->
-            val failure = forcedFailure
-            if (failure != null) {
-                failure
-            } else {
-                OfflineFirstDataResult.Success(map[id])
-            }
-        }
-
-    fun setFinding(finding: FrontendFinding) {
-        findings.update { it + (finding.finding.id to finding) }
-    }
+    override suspend fun deleteFindingsByStructureId(structureId: Uuid) = deleteItemsWhere { it.finding.structureId != structureId }
 
     override suspend fun updateFindingDetails(
         id: Uuid,
@@ -86,7 +50,7 @@ class FakeFindingsDb : FindingsDb {
         if (failure != null) {
             return OfflineFirstUpdateDataResult.ProgrammerError(failure.throwable)
         }
-        val existing = findings.value[id]
+        val existing = items.value[id]
         return if (existing == null) {
             OfflineFirstUpdateDataResult.NotFound
         } else {
@@ -100,7 +64,7 @@ class FakeFindingsDb : FindingsDb {
                             updatedAt = updatedAt,
                         ),
                 )
-            findings.update { it + (id to updatedFinding) }
+            items.update { it + (id to updatedFinding) }
             OfflineFirstUpdateDataResult.Success
         }
     }
@@ -114,26 +78,24 @@ class FakeFindingsDb : FindingsDb {
         if (failure != null) {
             return OfflineFirstUpdateDataResult.ProgrammerError(failure.throwable)
         }
-        val existing = findings.value[id]
+        val existing = items.value[id]
         return if (existing == null) {
             OfflineFirstUpdateDataResult.NotFound
         } else {
-            val updatedFinding = FrontendFinding(finding = existing.finding.copy(coordinates = coordinates, updatedAt = updatedAt))
-            findings.update { it + (id to updatedFinding) }
+            val updatedFinding =
+                FrontendFinding(
+                    finding =
+                        existing.finding.copy(
+                            coordinates = coordinates,
+                            updatedAt = updatedAt,
+                        ),
+                )
+            items.update { it + (id to updatedFinding) }
             OfflineFirstUpdateDataResult.Success
         }
     }
 
-    override suspend fun deleteFindingsByStructureId(structureId: Uuid): OfflineFirstDataResult<Unit> {
-        val failure = forcedFailure
-        if (failure != null) return failure
-        findings.update { current -> current.filterValues { it.finding.structureId != structureId } }
-        return OfflineFirstDataResult.Success(Unit)
-    }
+    fun setFinding(finding: FrontendFinding) = setItem(finding)
 
-    fun setFindings(findings: List<FrontendFinding>) {
-        this.findings.update { current ->
-            current + findings.associateBy { it.finding.id }
-        }
-    }
+    fun setFindings(findings: List<FrontendFinding>) = setItems(findings)
 }
