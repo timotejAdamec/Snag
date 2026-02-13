@@ -27,6 +27,6 @@ internal val appModule =
             backendModulesAggregate,
             gcsStorageModule(bucketName = "snag-floor-plans"),
         )
-        single { FileRouteConfig(routePath = "/files", uploadDirectory = "images") }
+        single { FileRouteConfig(routePath = "/files") }
         singleOf(::DevDataSeederConfiguration) bind AppConfiguration::class
     }

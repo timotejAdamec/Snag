@@ -23,6 +23,6 @@ import org.koin.dsl.module
 val fakeStorageTestModule =
     module {
         single { StorageConfig(bucketName = "test-bucket", publicBaseUrl = "https://storage.test") }
-        single { FileRouteConfig(routePath = "/files", uploadDirectory = "test-uploads") }
+        single { FileRouteConfig(routePath = "/files") }
         singleOf(::FakeStorageService) bind StorageService::class
     }

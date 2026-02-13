@@ -13,9 +13,12 @@
 package cz.adamec.timotej.snag.structures.fe.app.api
 
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
+import kotlin.uuid.Uuid
 
 interface UploadFloorPlanImageUseCase {
     suspend operator fun invoke(
+        projectId: Uuid,
+        structureId: Uuid,
         bytes: ByteArray,
         fileName: String,
     ): OnlineDataResult<String>

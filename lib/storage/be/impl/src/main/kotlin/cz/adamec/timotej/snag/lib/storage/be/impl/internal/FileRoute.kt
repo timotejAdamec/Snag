@@ -44,13 +44,22 @@ internal class FileRoute(
         var fileBytes: ByteArray? = null
         var fileName: String? = null
         var contentType: String? = null
+        var directory: String? = null
 
         val multipart = call.receiveMultipart()
         multipart.forEachPart { part ->
-            if (part is PartData.FileItem) {
-                fileName = part.originalFileName
-                contentType = part.contentType?.toString()
-                fileBytes = part.provider().readRemaining().readByteArray()
+            when (part) {
+                is PartData.FileItem -> {
+                    fileName = part.originalFileName
+                    contentType = part.contentType?.toString()
+                    fileBytes = part.provider().readRemaining().readByteArray()
+                }
+                is PartData.FormItem -> {
+                    if (part.name == "directory") {
+                        directory = part.value
+                    }
+                }
+                else -> {}
             }
             part.dispose()
         }
@@ -61,6 +70,10 @@ internal class FileRoute(
             call.respond(HttpStatusCode.BadRequest, "No file provided")
             return
         }
+        if (directory == null) {
+            call.respond(HttpStatusCode.BadRequest, "No directory provided")
+            return
+        }
 
         val extension = name.substringAfterLast('.', "bin")
         val url =
@@ -68,7 +81,7 @@ internal class FileRoute(
                 bytes = bytes,
                 contentType = contentType ?: "application/octet-stream",
                 fileExtension = extension,
-                directory = config.uploadDirectory,
+                directory = directory!!,
             )
         logger.info("File uploaded: {}", url)
         call.respond(HttpStatusCode.OK, mapOf("url" to url))

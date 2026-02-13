@@ -40,6 +40,7 @@ internal class RealFileApi(
     override suspend fun uploadFile(
         bytes: ByteArray,
         fileName: String,
+        directory: String,
     ): OnlineDataResult<String> =
         safeApiCall(logger = logger, errorContext = "Error uploading file $fileName.") {
             val response =
@@ -57,6 +58,7 @@ internal class RealFileApi(
                                         append(HttpHeaders.ContentDisposition, "filename=\"$fileName\"")
                                     },
                                 )
+                                append("directory", directory)
                             },
                         ),
                     )

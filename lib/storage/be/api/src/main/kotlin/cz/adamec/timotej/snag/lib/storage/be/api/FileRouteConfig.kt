@@ -14,5 +14,4 @@ package cz.adamec.timotej.snag.lib.storage.be.api
 
 data class FileRouteConfig(
     val routePath: String,
-    val uploadDirectory: String,
 )

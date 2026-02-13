@@ -15,12 +15,20 @@ package cz.adamec.timotej.snag.structures.fe.app.impl.internal
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
 import cz.adamec.timotej.snag.structures.fe.app.api.UploadFloorPlanImageUseCase
 import cz.adamec.timotej.snag.structures.fe.ports.StructuresFileStorage
+import kotlin.uuid.Uuid
 
 class UploadFloorPlanImageUseCaseImpl(
     private val structuresFileStorage: StructuresFileStorage,
 ) : UploadFloorPlanImageUseCase {
     override suspend fun invoke(
+        projectId: Uuid,
+        structureId: Uuid,
         bytes: ByteArray,
         fileName: String,
-    ): OnlineDataResult<String> = structuresFileStorage.uploadFile(bytes, fileName)
+    ): OnlineDataResult<String> =
+        structuresFileStorage.uploadFile(
+            bytes = bytes,
+            fileName = fileName,
+            directory = "projects/$projectId/structures/$structureId",
+        )
 }
