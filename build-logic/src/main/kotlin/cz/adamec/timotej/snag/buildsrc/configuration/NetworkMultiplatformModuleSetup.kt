@@ -24,6 +24,9 @@ internal fun Project.configureNetworkFrontendMultiplatformModule() {
                 if (!path.contains("network")) {
                     implementation(project(":lib:network:fe"))
                 }
+                if (path.endsWith(":driven:test")) {
+                    implementation(project(":lib:network:fe:test"))
+                }
                 implementation(library("kotlinx-serialization-core"))
                 implementation(library("ktor-client-core"))
                 implementation(library("ktor-client-content-negotiation"))

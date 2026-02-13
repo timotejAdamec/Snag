@@ -17,56 +17,46 @@ import cz.adamec.timotej.snag.clients.fe.ports.ClientSyncResult
 import cz.adamec.timotej.snag.clients.fe.ports.ClientsApi
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
+import cz.adamec.timotej.snag.network.fe.test.FakeApiOps
 import kotlin.uuid.Uuid
 
 class FakeClientsApi : ClientsApi {
-    private val clients = mutableMapOf<Uuid, FrontendClient>()
-    var forcedFailure: OnlineDataResult.Failure? = null
-    var saveClientResponseOverride: ((FrontendClient) -> OnlineDataResult<FrontendClient?>)? = null
-    var modifiedSinceResults: List<ClientSyncResult> = emptyList()
+    private val ops = FakeApiOps<FrontendClient, ClientSyncResult>(getId = { it.client.id })
 
-    override suspend fun getClients(): OnlineDataResult<List<FrontendClient>> {
-        val failure = forcedFailure
-        if (failure != null) return failure
-        return OnlineDataResult.Success(clients.values.toList())
-    }
-
-    override suspend fun getClient(id: Uuid): OnlineDataResult<FrontendClient> {
-        val failure = forcedFailure
-        if (failure != null) return failure
-        return clients[id]?.let { OnlineDataResult.Success(it) }
-            ?: OnlineDataResult.Failure.ProgrammerError(Exception("Not found"))
-    }
-
-    override suspend fun saveClient(client: FrontendClient): OnlineDataResult<FrontendClient?> {
-        val failure = forcedFailure
-        if (failure != null) return failure
-        val override = saveClientResponseOverride
-        return if (override != null) {
-            override(client)
-        } else {
-            clients[client.client.id] = client
-            OnlineDataResult.Success(client)
+    var forcedFailure
+        get() = ops.forcedFailure
+        set(value) {
+            ops.forcedFailure = value
         }
-    }
+
+    var saveClientResponseOverride
+        get() = ops.saveResponseOverride
+        set(value) {
+            ops.saveResponseOverride = value
+        }
+
+    var modifiedSinceResults
+        get() = ops.modifiedSinceResults
+        set(value) {
+            ops.modifiedSinceResults = value
+        }
+
+    override suspend fun getClients(): OnlineDataResult<List<FrontendClient>> =
+        ops.getAllItems()
+
+    override suspend fun getClient(id: Uuid): OnlineDataResult<FrontendClient> =
+        ops.getItemById(id)
+
+    override suspend fun saveClient(client: FrontendClient): OnlineDataResult<FrontendClient?> =
+        ops.saveItem(client)
 
     override suspend fun deleteClient(
         id: Uuid,
         deletedAt: Timestamp,
-    ): OnlineDataResult<Unit> {
-        val failure = forcedFailure
-        if (failure != null) return failure
-        clients.remove(id)
-        return OnlineDataResult.Success(Unit)
-    }
+    ): OnlineDataResult<Unit> = ops.deleteItemById(id)
 
-    override suspend fun getClientsModifiedSince(since: Timestamp): OnlineDataResult<List<ClientSyncResult>> {
-        val failure = forcedFailure
-        if (failure != null) return failure
-        return OnlineDataResult.Success(modifiedSinceResults)
-    }
+    override suspend fun getClientsModifiedSince(since: Timestamp): OnlineDataResult<List<ClientSyncResult>> =
+        ops.getModifiedSinceItems()
 
-    fun setClient(client: FrontendClient) {
-        clients[client.client.id] = client
-    }
+    fun setClient(client: FrontendClient) = ops.setItem(client)
 }

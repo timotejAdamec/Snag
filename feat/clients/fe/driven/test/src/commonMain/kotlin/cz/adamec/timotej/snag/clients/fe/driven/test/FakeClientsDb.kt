@@ -15,56 +15,33 @@ package cz.adamec.timotej.snag.clients.fe.driven.test
 import cz.adamec.timotej.snag.clients.fe.model.FrontendClient
 import cz.adamec.timotej.snag.clients.fe.ports.ClientsDb
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
+import cz.adamec.timotej.snag.lib.database.fe.test.FakeDbOps
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.update
 import kotlin.uuid.Uuid
 
 class FakeClientsDb : ClientsDb {
-    private val clients = MutableStateFlow<Map<Uuid, FrontendClient>>(emptyMap())
-    var forcedFailure: OfflineFirstDataResult.ProgrammerError? = null
+    private val ops = FakeDbOps<FrontendClient>(getId = { it.client.id })
+
+    var forcedFailure
+        get() = ops.forcedFailure
+        set(value) {
+            ops.forcedFailure = value
+        }
 
     override fun getAllClientsFlow(): Flow<OfflineFirstDataResult<List<FrontendClient>>> =
-        clients.map { OfflineFirstDataResult.Success(it.values.toList()) }
-
-    override suspend fun saveClients(clients: List<FrontendClient>): OfflineFirstDataResult<Unit> {
-        val failure = forcedFailure
-        if (failure != null) return failure
-
-        this.clients.update { current ->
-            current + clients.associateBy { it.client.id }
-        }
-        return OfflineFirstDataResult.Success(Unit)
-    }
+        ops.allItemsFlow()
 
     override fun getClientFlow(id: Uuid): Flow<OfflineFirstDataResult<FrontendClient?>> =
-        clients.map { map ->
-            val failure = forcedFailure
-            if (failure != null) {
-                failure
-            } else {
-                OfflineFirstDataResult.Success(map[id])
-            }
-        }
+        ops.itemByIdFlow(id)
 
-    override suspend fun saveClient(client: FrontendClient): OfflineFirstDataResult<Unit> {
-        val failure = forcedFailure
-        if (failure != null) return failure
+    override suspend fun saveClient(client: FrontendClient): OfflineFirstDataResult<Unit> =
+        ops.saveOneItem(client)
 
-        clients.update { it + (client.client.id to client) }
-        return OfflineFirstDataResult.Success(Unit)
-    }
+    override suspend fun saveClients(clients: List<FrontendClient>): OfflineFirstDataResult<Unit> =
+        ops.saveManyItems(clients)
 
-    override suspend fun deleteClient(id: Uuid): OfflineFirstDataResult<Unit> {
-        val failure = forcedFailure
-        if (failure != null) return failure
+    override suspend fun deleteClient(id: Uuid): OfflineFirstDataResult<Unit> =
+        ops.deleteItem(id)
 
-        clients.update { it - id }
-        return OfflineFirstDataResult.Success(Unit)
-    }
-
-    fun setClient(client: FrontendClient) {
-        clients.update { it + (client.client.id to client) }
-    }
+    fun setClient(client: FrontendClient) = ops.setItem(client)
 }

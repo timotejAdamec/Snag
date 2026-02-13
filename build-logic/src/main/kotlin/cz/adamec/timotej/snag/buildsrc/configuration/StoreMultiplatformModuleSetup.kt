@@ -23,6 +23,9 @@ internal fun Project.configureDataMultiplatformModule() {
                 if (!path.contains("database")) {
                     implementation(project(":feat:shared:database:fe:api"))
                 }
+                if (path.endsWith(":driven:test")) {
+                    implementation(project(":lib:database:fe:test"))
+                }
             }
         }
     }
