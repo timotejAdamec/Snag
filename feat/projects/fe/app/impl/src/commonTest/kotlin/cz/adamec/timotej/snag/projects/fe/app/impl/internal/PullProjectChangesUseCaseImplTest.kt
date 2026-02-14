@@ -58,7 +58,6 @@ import kotlin.test.assertTrue
 import kotlin.uuid.Uuid
 
 class PullProjectChangesUseCaseImplTest : FrontendKoinInitializedTest() {
-
     private val fakeProjectsApi: FakeProjectsApi by inject()
     private val fakeProjectsDb: FakeProjectsDb by inject()
     private val fakePullSyncTimestampDataSource: FakeProjectsPullSyncTimestampDataSource by inject()
@@ -85,79 +84,91 @@ class PullProjectChangesUseCaseImplTest : FrontendKoinInitializedTest() {
             },
         )
 
-    private fun createProject(id: Uuid) = FrontendProject(
-        project = Project(
-            id = id,
-            name = "Test Project",
-            address = "Test Address",
-            updatedAt = Timestamp(100L),
-        ),
-    )
-
-    private fun createStructure(id: Uuid, projectId: Uuid) = FrontendStructure(
-        structure = Structure(
-            id = id,
-            projectId = projectId,
-            name = "Structure",
-            floorPlanUrl = null,
-            updatedAt = Timestamp(1L),
-        ),
-    )
-
-    @Test
-    fun `upserts alive projects to db`() = runTest(testDispatcher) {
-        val project = createProject(projectId)
-        fakeProjectsApi.modifiedSinceResults = listOf(
-            ProjectSyncResult.Updated(project = project),
+    private fun createProject(id: Uuid) =
+        FrontendProject(
+            project =
+                Project(
+                    id = id,
+                    name = "Test Project",
+                    address = "Test Address",
+                    updatedAt = Timestamp(100L),
+                ),
         )
 
-        useCase()
-
-        val result = fakeProjectsDb.getProjectFlow(projectId).first()
-        assertIs<OfflineFirstDataResult.Success<FrontendProject?>>(result)
-        assertNotNull(result.data)
-        assertEquals(projectId, result.data!!.project.id)
-    }
-
-    @Test
-    fun `deletes soft-deleted projects and cascades`() = runTest(testDispatcher) {
-        val project = createProject(projectId)
-        fakeProjectsDb.setProject(project)
-
-        val structure = createStructure(id = structureId, projectId = projectId)
-        fakeStructuresDb.setStructure(structure)
-
-        fakeProjectsApi.modifiedSinceResults = listOf(
-            ProjectSyncResult.Deleted(id = projectId),
-        )
-
-        useCase()
-
-        val structuresResult = fakeStructuresDb.getStructuresFlow(projectId).first()
-        assertIs<OfflineFirstDataResult.Success<List<FrontendStructure>>>(structuresResult)
-        assertTrue(structuresResult.data.isEmpty())
-
-        val result = fakeProjectsDb.getProjectFlow(projectId).first()
-        assertIs<OfflineFirstDataResult.Success<FrontendProject?>>(result)
-        assertNull(result.data)
-    }
+    private fun createStructure(
+        id: Uuid,
+        projectId: Uuid,
+    ) = FrontendStructure(
+        structure =
+            Structure(
+                id = id,
+                projectId = projectId,
+                name = "Structure",
+                floorPlanUrl = null,
+                updatedAt = Timestamp(1L),
+            ),
+    )
 
     @Test
-    fun `stores last synced timestamp on success`() = runTest(testDispatcher) {
-        fakeProjectsApi.modifiedSinceResults = emptyList()
+    fun `upserts alive projects to db`() =
+        runTest(testDispatcher) {
+            val project = createProject(projectId)
+            fakeProjectsApi.modifiedSinceResults =
+                listOf(
+                    ProjectSyncResult.Updated(project = project),
+                )
 
-        useCase()
+            useCase()
 
-        assertNotNull(fakePullSyncTimestampDataSource.getLastSyncedAt())
-    }
+            val result = fakeProjectsDb.getProjectFlow(projectId).first()
+            assertIs<OfflineFirstDataResult.Success<FrontendProject?>>(result)
+            assertNotNull(result.data)
+            assertEquals(projectId, result.data!!.project.id)
+        }
 
     @Test
-    fun `does not store timestamp on API failure`() = runTest(testDispatcher) {
-        fakeProjectsApi.forcedFailure =
-            OnlineDataResult.Failure.ProgrammerError(Exception("API error"))
+    fun `deletes soft-deleted projects and cascades`() =
+        runTest(testDispatcher) {
+            val project = createProject(projectId)
+            fakeProjectsDb.setProject(project)
 
-        useCase()
+            val structure = createStructure(id = structureId, projectId = projectId)
+            fakeStructuresDb.setStructure(structure)
 
-        assertNull(fakePullSyncTimestampDataSource.getLastSyncedAt())
-    }
+            fakeProjectsApi.modifiedSinceResults =
+                listOf(
+                    ProjectSyncResult.Deleted(id = projectId),
+                )
+
+            useCase()
+
+            val structuresResult = fakeStructuresDb.getStructuresFlow(projectId).first()
+            assertIs<OfflineFirstDataResult.Success<List<FrontendStructure>>>(structuresResult)
+            assertTrue(structuresResult.data.isEmpty())
+
+            val result = fakeProjectsDb.getProjectFlow(projectId).first()
+            assertIs<OfflineFirstDataResult.Success<FrontendProject?>>(result)
+            assertNull(result.data)
+        }
+
+    @Test
+    fun `stores last synced timestamp on success`() =
+        runTest(testDispatcher) {
+            fakeProjectsApi.modifiedSinceResults = emptyList()
+
+            useCase()
+
+            assertNotNull(fakePullSyncTimestampDataSource.getLastSyncedAt())
+        }
+
+    @Test
+    fun `does not store timestamp on API failure`() =
+        runTest(testDispatcher) {
+            fakeProjectsApi.forcedFailure =
+                OnlineDataResult.Failure.ProgrammerError(Exception("API error"))
+
+            useCase()
+
+            assertNull(fakePullSyncTimestampDataSource.getLastSyncedAt())
+        }
 }

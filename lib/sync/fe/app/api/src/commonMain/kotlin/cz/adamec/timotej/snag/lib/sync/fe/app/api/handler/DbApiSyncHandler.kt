@@ -35,7 +35,10 @@ abstract class DbApiSyncHandler<T>(
 
     protected abstract suspend fun saveEntityToApi(entity: T): OnlineDataResult<T?>
 
-    protected abstract suspend fun deleteEntityFromApi(entityId: Uuid, deletedAt: Timestamp): OnlineDataResult<Unit>
+    protected abstract suspend fun deleteEntityFromApi(
+        entityId: Uuid,
+        deletedAt: Timestamp,
+    ): OnlineDataResult<Unit>
 
     protected abstract suspend fun saveEntityToDb(entity: T): OfflineFirstDataResult<Unit>
 

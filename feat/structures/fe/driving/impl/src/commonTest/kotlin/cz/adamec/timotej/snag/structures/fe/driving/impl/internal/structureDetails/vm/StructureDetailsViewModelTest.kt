@@ -12,9 +12,9 @@
 
 package cz.adamec.timotej.snag.structures.fe.driving.impl.internal.structureDetails.vm
 
-import cz.adamec.timotej.snag.feat.structures.fe.model.FrontendStructure
 import app.cash.turbine.test
 import cz.adamec.timotej.snag.feat.structures.business.Structure
+import cz.adamec.timotej.snag.feat.structures.fe.model.FrontendStructure
 import cz.adamec.timotej.snag.findings.fe.app.api.GetFindingsUseCase
 import cz.adamec.timotej.snag.findings.fe.driven.test.FakeFindingsApi
 import cz.adamec.timotej.snag.findings.fe.driven.test.FakeFindingsDb
@@ -49,7 +49,6 @@ import kotlin.uuid.Uuid
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class StructureDetailsViewModelTest : FrontendKoinInitializedTest() {
-
     private val fakeStructuresDb: FakeStructuresDb by inject()
 
     private val getStructureUseCase: GetStructureUseCase by inject()
@@ -58,15 +57,17 @@ class StructureDetailsViewModelTest : FrontendKoinInitializedTest() {
 
     private val projectId = Uuid.parse("00000000-0000-0000-0000-000000000001")
     private val structureId = Uuid.parse("00000000-0000-0000-0001-000000000001")
-    private val structure = FrontendStructure(
-        structure = Structure(
-            id = structureId,
-            projectId = projectId,
-            name = "Ground Floor",
-            floorPlanUrl = null,
-            updatedAt = Timestamp(10L),
+    private val structure =
+        FrontendStructure(
+            structure =
+                Structure(
+                    id = structureId,
+                    projectId = projectId,
+                    name = "Ground Floor",
+                    floorPlanUrl = null,
+                    updatedAt = Timestamp(10L),
+                ),
         )
-    )
 
     override fun additionalKoinModules(): List<Module> =
         listOf(
@@ -204,9 +205,12 @@ class StructureDetailsViewModelTest : FrontendKoinInitializedTest() {
             }
 
             // While loading
-            assertEquals(StructureDetailsUiStatus.LOADING, StructureDetailsUiState().let {
-                assertFalse(it.canInvokeDeletion)
-                it.status
-            })
+            assertEquals(
+                StructureDetailsUiStatus.LOADING,
+                StructureDetailsUiState().let {
+                    assertFalse(it.canInvokeDeletion)
+                    it.status
+                },
+            )
         }
 }

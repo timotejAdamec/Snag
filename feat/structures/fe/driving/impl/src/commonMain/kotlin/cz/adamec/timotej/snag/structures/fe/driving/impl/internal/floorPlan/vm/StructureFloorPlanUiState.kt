@@ -12,9 +12,9 @@
 
 package cz.adamec.timotej.snag.structures.fe.driving.impl.internal.floorPlan.vm
 
-import cz.adamec.timotej.snag.feat.structures.fe.model.FrontendStructure
 import androidx.compose.runtime.Immutable
 import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
+import cz.adamec.timotej.snag.feat.structures.fe.model.FrontendStructure
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlin.uuid.Uuid

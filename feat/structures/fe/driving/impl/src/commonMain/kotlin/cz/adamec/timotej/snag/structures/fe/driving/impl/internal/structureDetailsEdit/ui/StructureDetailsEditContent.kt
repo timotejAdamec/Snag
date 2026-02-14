@@ -49,6 +49,8 @@ internal fun StructureDetailsEditContent(
     state: StructureDetailsEditUiState,
     snackbarHostState: SnackbarHostState,
     onStructureNameChange: (String) -> Unit,
+    onImagePick: (bytes: ByteArray, fileName: String) -> Unit,
+    onRemoveImage: () -> Unit,
     onSaveClick: () -> Unit,
     onCancelClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -109,6 +111,12 @@ internal fun StructureDetailsEditContent(
                     .consumeWindowInsets(paddingValues),
             verticalArrangement = Arrangement.spacedBy(FullScreenDialogMeasurements.ElementSpacing),
         ) {
+            FloorPlanEditSection(
+                floorPlanUrl = state.floorPlanUrl,
+                isUploading = state.isUploadingImage,
+                onImagePick = onImagePick,
+                onRemoveImage = onRemoveImage,
+            )
             OutlinedTextField(
                 modifier =
                     Modifier
@@ -119,7 +127,7 @@ internal fun StructureDetailsEditContent(
                     Text(
                         text =
                             state.structureNameError?.let { stringResource(it) }
-                                ?: (stringResource(Res.string.required) + "*"),
+                                ?: stringResource(Res.string.required) + "*",
                     )
                 },
                 value = state.structureName,

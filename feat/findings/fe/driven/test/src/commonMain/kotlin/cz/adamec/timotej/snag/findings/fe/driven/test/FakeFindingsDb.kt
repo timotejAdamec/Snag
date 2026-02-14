@@ -36,17 +36,13 @@ class FakeFindingsDb : FindingsDb {
     override fun getFindingsFlow(structureId: Uuid): Flow<OfflineFirstDataResult<List<FrontendFinding>>> =
         ops.allItemsFlow { it.finding.structureId == structureId }
 
-    override fun getFindingFlow(id: Uuid): Flow<OfflineFirstDataResult<FrontendFinding?>> =
-        ops.itemByIdFlow(id)
+    override fun getFindingFlow(id: Uuid): Flow<OfflineFirstDataResult<FrontendFinding?>> = ops.itemByIdFlow(id)
 
-    override suspend fun saveFinding(finding: FrontendFinding): OfflineFirstDataResult<Unit> =
-        ops.saveOneItem(finding)
+    override suspend fun saveFinding(finding: FrontendFinding): OfflineFirstDataResult<Unit> = ops.saveOneItem(finding)
 
-    override suspend fun saveFindings(findings: List<FrontendFinding>): OfflineFirstDataResult<Unit> =
-        ops.saveManyItems(findings)
+    override suspend fun saveFindings(findings: List<FrontendFinding>): OfflineFirstDataResult<Unit> = ops.saveManyItems(findings)
 
-    override suspend fun deleteFinding(id: Uuid): OfflineFirstDataResult<Unit> =
-        ops.deleteItem(id)
+    override suspend fun deleteFinding(id: Uuid): OfflineFirstDataResult<Unit> = ops.deleteItem(id)
 
     override suspend fun updateFindingDetails(
         id: Uuid,

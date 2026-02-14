@@ -22,7 +22,10 @@ import kotlin.uuid.Uuid
 internal class GetStructuresModifiedSinceUseCaseImpl(
     private val structuresDb: StructuresDb,
 ) : GetStructuresModifiedSinceUseCase {
-    override suspend operator fun invoke(projectId: Uuid, since: Timestamp): List<BackendStructure> {
+    override suspend operator fun invoke(
+        projectId: Uuid,
+        since: Timestamp,
+    ): List<BackendStructure> {
         logger.debug("Getting structures modified since {} for project {} from local storage.", since, projectId)
         return structuresDb.getStructuresModifiedSince(projectId, since).also {
             logger.debug("Got {} structures modified since {} for project {} from local storage.", it.size, since, projectId)

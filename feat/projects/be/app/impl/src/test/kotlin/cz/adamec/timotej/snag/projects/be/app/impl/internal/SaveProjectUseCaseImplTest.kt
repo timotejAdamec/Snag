@@ -34,13 +34,15 @@ class SaveProjectUseCaseImplTest : BackendKoinInitializedTest() {
 
     private val project =
         BackendProject(
-            project = Project(
-                id = projectId,
-                name = "Test Project",
-                address = "Test Address",
-                updatedAt = Timestamp(10L),
-            ),
+            project =
+                Project(
+                    id = projectId,
+                    name = "Test Project",
+                    address = "Test Address",
+                    updatedAt = Timestamp(10L),
+                ),
         )
+
     @Test
     fun `saves project to data source`() =
         runTest(testDispatcher) {
@@ -53,11 +55,13 @@ class SaveProjectUseCaseImplTest : BackendKoinInitializedTest() {
     @Test
     fun `does not save project if saved updated at is later than the new one`() =
         runTest(testDispatcher) {
-            val savedProject = project.copy(
-                project = project.project.copy(
-                    updatedAt = Timestamp(value = 20L),
-                ),
-            )
+            val savedProject =
+                project.copy(
+                    project =
+                        project.project.copy(
+                            updatedAt = Timestamp(value = 20L),
+                        ),
+                )
             dataSource.saveProject(savedProject)
 
             useCase(project)
@@ -76,11 +80,13 @@ class SaveProjectUseCaseImplTest : BackendKoinInitializedTest() {
     @Test
     fun `returns saved project if saved updated at is later than the new one`() =
         runTest(testDispatcher) {
-            val savedProject = project.copy(
-                project = project.project.copy(
-                    updatedAt = Timestamp(value = 20L),
-                ),
-            )
+            val savedProject =
+                project.copy(
+                    project =
+                        project.project.copy(
+                            updatedAt = Timestamp(value = 20L),
+                        ),
+                )
             dataSource.saveProject(savedProject)
 
             val result = useCase(project)
@@ -93,12 +99,14 @@ class SaveProjectUseCaseImplTest : BackendKoinInitializedTest() {
         runTest(testDispatcher) {
             dataSource.saveProject(project)
 
-            val newerProject = project.copy(
-                project = project.project.copy(
-                    name = "New name",
-                    updatedAt = Timestamp(value = 20L),
-                ),
-            )
+            val newerProject =
+                project.copy(
+                    project =
+                        project.project.copy(
+                            name = "New name",
+                            updatedAt = Timestamp(value = 20L),
+                        ),
+                )
 
             val result = useCase(newerProject)
 
@@ -111,12 +119,14 @@ class SaveProjectUseCaseImplTest : BackendKoinInitializedTest() {
             val deletedProject = project.copy(deletedAt = Timestamp(15L))
             dataSource.saveProject(deletedProject)
 
-            val restoredProject = project.copy(
-                project = project.project.copy(
-                    name = "Restored",
-                    updatedAt = Timestamp(value = 20L),
-                ),
-            )
+            val restoredProject =
+                project.copy(
+                    project =
+                        project.project.copy(
+                            name = "Restored",
+                            updatedAt = Timestamp(value = 20L),
+                        ),
+                )
 
             val result = useCase(restoredProject)
 
@@ -133,11 +143,13 @@ class SaveProjectUseCaseImplTest : BackendKoinInitializedTest() {
             val deletedProject = project.copy(deletedAt = Timestamp(15L))
             dataSource.saveProject(deletedProject)
 
-            val olderProject = project.copy(
-                project = project.project.copy(
-                    updatedAt = Timestamp(value = 5L),
-                ),
-            )
+            val olderProject =
+                project.copy(
+                    project =
+                        project.project.copy(
+                            updatedAt = Timestamp(value = 5L),
+                        ),
+                )
 
             val result = useCase(olderProject)
 

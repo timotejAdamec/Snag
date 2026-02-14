@@ -33,13 +33,15 @@ class GetProjectUseCaseImplTest : BackendKoinInitializedTest() {
 
     private val project =
         BackendProject(
-            project = Project(
-                id = projectId,
-                name = "Test Project",
-                address = "Test Address",
-                updatedAt = Timestamp(10L),
-            ),
+            project =
+                Project(
+                    id = projectId,
+                    name = "Test Project",
+                    address = "Test Address",
+                    updatedAt = Timestamp(10L),
+                ),
         )
+
     @Test
     fun `returns project when it exists`() =
         runTest(testDispatcher) {

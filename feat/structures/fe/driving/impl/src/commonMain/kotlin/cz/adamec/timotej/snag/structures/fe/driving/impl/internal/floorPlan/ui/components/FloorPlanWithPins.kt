@@ -22,6 +22,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.painter.Painter
@@ -38,6 +39,8 @@ import kotlinx.collections.immutable.ImmutableList
 import org.jetbrains.compose.resources.painterResource
 import kotlin.math.sqrt
 import kotlin.uuid.Uuid
+
+private const val BACKGROUND_CIRCLE_SCALE = 1.3f
 
 @Composable
 internal fun FloorPlanWithPins(
@@ -59,12 +62,13 @@ internal fun FloorPlanWithPins(
             contentDescription = contentDescription,
             contentScale = ContentScale.Fit,
             onTap = { tapOffset ->
-                val tappedId = findTappedFinding(
-                    tapOffset = tapOffset,
-                    displayRect = zoomState.zoomable.contentDisplayRectF,
-                    findings = findings,
-                    touchTargetRadiusPx = touchTargetRadiusPx,
-                )
+                val tappedId =
+                    findTappedFinding(
+                        tapOffset = tapOffset,
+                        displayRect = zoomState.zoomable.contentDisplayRectF,
+                        findings = findings,
+                        touchTargetRadiusPx = touchTargetRadiusPx,
+                    )
                 if (tappedId != null) {
                     onFindingClick(tappedId)
                 }
@@ -134,7 +138,7 @@ private fun DrawScope.drawFindingPin(
     iconSize: Float,
     tint: Color,
 ) {
-    val backgroundCircleRadius = iconSize * 1.3f / 2
+    val backgroundCircleRadius = iconSize * BACKGROUND_CIRCLE_SCALE / 2
     val haloRadius = backgroundCircleRadius + 1.5.dp.toPx()
 
     // Draw white halo (outermost layer)
@@ -159,7 +163,7 @@ private fun DrawScope.drawFindingPin(
         with(painter) {
             draw(
                 size = Size(iconSize, iconSize),
-                colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(Color.White),
+                colorFilter = ColorFilter.tint(Color.White),
             )
         }
     }
@@ -178,10 +182,11 @@ private fun findTappedFinding(
 
     for (finding in findings) {
         for (coord in finding.finding.coordinates) {
-            val pinCenter = Offset(
-                x = displayRect.left + coord.x * displayRect.width,
-                y = displayRect.top + coord.y * displayRect.height,
-            )
+            val pinCenter =
+                Offset(
+                    x = displayRect.left + coord.x * displayRect.width,
+                    y = displayRect.top + coord.y * displayRect.height,
+                )
             val dx = tapOffset.x - pinCenter.x
             val dy = tapOffset.y - pinCenter.y
             val distance = sqrt(dx * dx + dy * dy)

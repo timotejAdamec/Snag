@@ -12,11 +12,11 @@
 
 package cz.adamec.timotej.snag.structures.fe.driving.impl.internal.structureDetails.ui
 
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
@@ -40,11 +40,12 @@ internal fun StructureDetailNestedNav(
     val structureFloorPlanRouteFactory = koinInject<StructureFloorPlanRouteFactory>()
     val findingsListRouteFactory = koinInject<FindingsListRouteFactory>()
     val koinEntryProvider = koinEntryProvider<StructureDetailNavRoute>()
+    val currentOnExit = rememberUpdatedState(onExit)
 
     LaunchedEffect(Unit) {
         snapshotFlow { backStack.value.size }
             .collect { size ->
-                if (size in 0..1) onExit()
+                if (size in 0..1) currentOnExit.value()
             }
     }
 
@@ -68,9 +69,10 @@ internal fun StructureDetailNestedNav(
         )
     }
 
-    val sceneStrategy = remember {
-        MapListDetailSceneStrategy<StructureDetailNavRoute>()
-    }
+    val sceneStrategy =
+        remember {
+            MapListDetailSceneStrategy<StructureDetailNavRoute>()
+        }
 
     NavDisplay(
         backStack = backStack.value,

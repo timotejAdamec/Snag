@@ -35,13 +35,15 @@ class DeleteProjectUseCaseImplTest : BackendKoinInitializedTest() {
 
     private val project =
         BackendProject(
-            project = Project(
-                id = projectId,
-                name = "Test Project",
-                address = "Test Address",
-                updatedAt = Timestamp(10L),
-            ),
+            project =
+                Project(
+                    id = projectId,
+                    name = "Test Project",
+                    address = "Test Address",
+                    updatedAt = Timestamp(10L),
+                ),
         )
+
     @Test
     fun `soft-deletes project in storage`() =
         runTest(testDispatcher) {
@@ -74,12 +76,13 @@ class DeleteProjectUseCaseImplTest : BackendKoinInitializedTest() {
         runTest(testDispatcher) {
             dataSource.saveProject(project)
 
-            val result = useCase(
-                DeleteProjectRequest(
-                    projectId = projectId,
-                    deletedAt = Timestamp(value = 1L),
-                ),
-            )
+            val result =
+                useCase(
+                    DeleteProjectRequest(
+                        projectId = projectId,
+                        deletedAt = Timestamp(value = 1L),
+                    ),
+                )
 
             assertNotNull(result)
             assertEquals(project, result)
@@ -88,12 +91,13 @@ class DeleteProjectUseCaseImplTest : BackendKoinInitializedTest() {
     @Test
     fun `returns null if no project was saved`() =
         runTest(testDispatcher) {
-            val result = useCase(
-                DeleteProjectRequest(
-                    projectId = projectId,
-                    deletedAt = Timestamp(value = 20L),
-                ),
-            )
+            val result =
+                useCase(
+                    DeleteProjectRequest(
+                        projectId = projectId,
+                        deletedAt = Timestamp(value = 20L),
+                    ),
+                )
 
             assertNull(result)
         }

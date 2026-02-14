@@ -28,20 +28,15 @@ class FakeClientsDb : ClientsDb {
             ops.forcedFailure = value
         }
 
-    override fun getAllClientsFlow(): Flow<OfflineFirstDataResult<List<FrontendClient>>> =
-        ops.allItemsFlow()
+    override fun getAllClientsFlow(): Flow<OfflineFirstDataResult<List<FrontendClient>>> = ops.allItemsFlow()
 
-    override fun getClientFlow(id: Uuid): Flow<OfflineFirstDataResult<FrontendClient?>> =
-        ops.itemByIdFlow(id)
+    override fun getClientFlow(id: Uuid): Flow<OfflineFirstDataResult<FrontendClient?>> = ops.itemByIdFlow(id)
 
-    override suspend fun saveClient(client: FrontendClient): OfflineFirstDataResult<Unit> =
-        ops.saveOneItem(client)
+    override suspend fun saveClient(client: FrontendClient): OfflineFirstDataResult<Unit> = ops.saveOneItem(client)
 
-    override suspend fun saveClients(clients: List<FrontendClient>): OfflineFirstDataResult<Unit> =
-        ops.saveManyItems(clients)
+    override suspend fun saveClients(clients: List<FrontendClient>): OfflineFirstDataResult<Unit> = ops.saveManyItems(clients)
 
-    override suspend fun deleteClient(id: Uuid): OfflineFirstDataResult<Unit> =
-        ops.deleteItem(id)
+    override suspend fun deleteClient(id: Uuid): OfflineFirstDataResult<Unit> = ops.deleteItem(id)
 
     fun setClient(client: FrontendClient) = ops.setItem(client)
 }

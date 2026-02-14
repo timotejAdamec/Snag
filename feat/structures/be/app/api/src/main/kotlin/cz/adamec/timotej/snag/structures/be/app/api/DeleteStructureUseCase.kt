@@ -16,5 +16,5 @@ import cz.adamec.timotej.snag.feat.structures.be.model.BackendStructure
 import cz.adamec.timotej.snag.structures.be.app.api.model.DeleteStructureRequest
 
 interface DeleteStructureUseCase {
-    suspend operator fun invoke(request: DeleteStructureRequest) : BackendStructure?
+    suspend operator fun invoke(request: DeleteStructureRequest): BackendStructure?
 }

@@ -31,7 +31,10 @@ internal class RealStructuresPullSyncTimestampDataSource(
             }
         }
 
-    override suspend fun setLastSyncedAt(projectId: Uuid, timestamp: Timestamp) {
+    override suspend fun setLastSyncedAt(
+        projectId: Uuid,
+        timestamp: Timestamp,
+    ) {
         withContext(ioDispatcher) {
             queries.upsert(ENTITY_TYPE, projectId.toString(), timestamp.value)
         }
