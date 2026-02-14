@@ -16,15 +16,16 @@ import com.google.cloud.storage.BlobId
 import com.google.cloud.storage.BlobInfo
 import com.google.cloud.storage.Storage
 import com.google.cloud.storage.StorageOptions
+import cz.adamec.timotej.snag.lib.core.common.UuidProvider
 import cz.adamec.timotej.snag.lib.storage.be.api.StorageConfig
 import cz.adamec.timotej.snag.lib.storage.be.api.StorageService
 import cz.adamec.timotej.snag.lib.storage.be.impl.internal.LH.logger
-import kotlin.uuid.Uuid
 
 internal class GcsStorageService(
     private val config: StorageConfig,
+    private val uuidProvider: UuidProvider,
 ) : StorageService {
-    private val storage: Storage = StorageOptions.getDefaultInstance().service
+    private val gcpStorage: Storage = StorageOptions.getDefaultInstance().service
 
     override suspend fun uploadFile(
         bytes: ByteArray,
@@ -32,7 +33,7 @@ internal class GcsStorageService(
         fileExtension: String,
         directory: String,
     ): String {
-        val fileName = "${Uuid.random()}.$fileExtension"
+        val fileName = "${uuidProvider.getUuid()}.$fileExtension"
         val objectName =
             if (directory.isNotBlank()) {
                 "$directory/$fileName"
@@ -46,7 +47,7 @@ internal class GcsStorageService(
                 .setContentType(contentType)
                 .build()
 
-        storage.create(blobInfo, bytes)
+        gcpStorage.create(blobInfo, bytes)
         val url = "${config.publicBaseUrl}/$objectName"
         logger.info("Uploaded file to {}", url)
         return url
@@ -55,7 +56,7 @@ internal class GcsStorageService(
     override suspend fun deleteFile(url: String) {
         val objectName = url.removePrefix("${config.publicBaseUrl}/")
         val blobId = BlobId.of(config.bucketName, objectName)
-        val deleted = storage.delete(blobId)
+        val deleted = gcpStorage.delete(blobId)
         if (deleted) {
             logger.info("Deleted file {}", url)
         } else {

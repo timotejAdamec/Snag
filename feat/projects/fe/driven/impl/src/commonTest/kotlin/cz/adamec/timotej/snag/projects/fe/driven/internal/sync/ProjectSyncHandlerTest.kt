@@ -15,12 +15,12 @@ package cz.adamec.timotej.snag.projects.fe.driven.internal.sync
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
-import cz.adamec.timotej.snag.lib.sync.fe.model.SyncOperationType
 import cz.adamec.timotej.snag.lib.sync.fe.app.api.handler.SyncOperationResult
+import cz.adamec.timotej.snag.lib.sync.fe.model.SyncOperationType
 import cz.adamec.timotej.snag.projects.business.Project
 import cz.adamec.timotej.snag.projects.fe.driven.test.FakeProjectsApi
-import cz.adamec.timotej.snag.projects.fe.model.FrontendProject
 import cz.adamec.timotej.snag.projects.fe.driven.test.FakeProjectsDb
+import cz.adamec.timotej.snag.projects.fe.model.FrontendProject
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsApi
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsDb
 import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
@@ -36,7 +36,6 @@ import kotlin.test.assertEquals
 import kotlin.uuid.Uuid
 
 class ProjectSyncHandlerTest : FrontendKoinInitializedTest() {
-
     private val fakeProjectsApi: FakeProjectsApi by inject()
     private val fakeProjectsDb: FakeProjectsDb by inject()
 
@@ -51,10 +50,21 @@ class ProjectSyncHandlerTest : FrontendKoinInitializedTest() {
             },
         )
 
+    private fun createProject(name: String = "Test Project") =
+        FrontendProject(
+            project =
+                Project(
+                    id = Uuid.random(),
+                    name = name,
+                    address = "123 Street",
+                    updatedAt = Timestamp(10L),
+                ),
+        )
+
     @Test
     fun `upsert reads from db and calls api`() =
         runTest(testDispatcher) {
-            val project = FrontendProject(project = Project(id = Uuid.random(), name = "Test Project", address = "123 Street", updatedAt = Timestamp(10L)))
+            val project = createProject()
             fakeProjectsDb.setProject(project)
 
             val result = handler.execute(project.project.id, SyncOperationType.UPSERT)
@@ -65,7 +75,7 @@ class ProjectSyncHandlerTest : FrontendKoinInitializedTest() {
     @Test
     fun `upsert saves fresher dto from api to db`() =
         runTest(testDispatcher) {
-            val project = FrontendProject(project = Project(id = Uuid.random(), name = "Original", address = "123 Street", updatedAt = Timestamp(10L)))
+            val project = createProject(name = "Original")
             fakeProjectsDb.setProject(project)
 
             val fresherProject = project.copy(project = project.project.copy(name = "Updated by API"))
@@ -90,7 +100,7 @@ class ProjectSyncHandlerTest : FrontendKoinInitializedTest() {
     @Test
     fun `upsert when api fails returns failure`() =
         runTest(testDispatcher) {
-            val project = FrontendProject(project = Project(id = Uuid.random(), name = "Test Project", address = "123 Street", updatedAt = Timestamp(10L)))
+            val project = createProject()
             fakeProjectsDb.setProject(project)
             fakeProjectsApi.forcedFailure =
                 OnlineDataResult.Failure.ProgrammerError(Exception("API error"))

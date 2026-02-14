@@ -15,6 +15,8 @@ package cz.adamec.timotej.snag.lib.storage.be.impl.internal
 import cz.adamec.timotej.snag.lib.storage.be.api.FileRouteConfig
 import cz.adamec.timotej.snag.lib.storage.be.api.StorageService
 import cz.adamec.timotej.snag.lib.storage.be.impl.internal.LH.logger
+import cz.adamec.timotej.snag.lib.storage.contract.FileUploadFormFields
+import cz.adamec.timotej.snag.lib.storage.contract.FileUploadResponseDto
 import cz.adamec.timotej.snag.routing.be.AppRoute
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.content.PartData
@@ -55,7 +57,7 @@ internal class FileRoute(
                     fileBytes = part.provider().readRemaining().readByteArray()
                 }
                 is PartData.FormItem -> {
-                    if (part.name == "directory") {
+                    if (part.name == FileUploadFormFields.DIRECTORY) {
                         directory = part.value
                     }
                 }
@@ -65,8 +67,7 @@ internal class FileRoute(
         }
 
         val bytes = fileBytes
-        val name = fileName
-        if (bytes == null || name == null) {
+        if (bytes == null || fileName == null) {
             call.respond(HttpStatusCode.BadRequest, "No file provided")
             return
         }
@@ -75,7 +76,7 @@ internal class FileRoute(
             return
         }
 
-        val extension = name.substringAfterLast('.', "bin")
+        val extension = fileName!!.substringAfterLast('.', "bin")
         val url =
             storageService.uploadFile(
                 bytes = bytes,
@@ -84,7 +85,7 @@ internal class FileRoute(
                 directory = directory!!,
             )
         logger.info("File uploaded: {}", url)
-        call.respond(HttpStatusCode.OK, mapOf("url" to url))
+        call.respond(HttpStatusCode.OK, FileUploadResponseDto(url = url))
     }
 
     private suspend fun handleDelete(call: RoutingCall) {

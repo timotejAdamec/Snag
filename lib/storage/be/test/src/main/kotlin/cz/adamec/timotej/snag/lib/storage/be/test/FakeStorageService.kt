@@ -12,9 +12,12 @@
 
 package cz.adamec.timotej.snag.lib.storage.be.test
 
+import cz.adamec.timotej.snag.lib.storage.be.api.StorageConfig
 import cz.adamec.timotej.snag.lib.storage.be.api.StorageService
 
-class FakeStorageService : StorageService {
+class FakeStorageService(
+    private val config: StorageConfig,
+) : StorageService {
     private var uploadCounter = 0
     val uploadedFiles = mutableMapOf<String, ByteArray>()
     val deletedUrls = mutableListOf<String>()
@@ -34,7 +37,7 @@ class FakeStorageService : StorageService {
             } else {
                 fileName
             }
-        val url = "https://storage.test/$path"
+        val url = "${config.publicBaseUrl}/$path"
         uploadedFiles[url] = bytes
         return url
     }
