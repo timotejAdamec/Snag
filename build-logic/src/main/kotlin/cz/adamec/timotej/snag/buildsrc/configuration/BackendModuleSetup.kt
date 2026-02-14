@@ -50,10 +50,14 @@ internal fun Project.configureBackendModule() {
             } else {
                 api(project("$businessDirectoryPath:business"))
             }
-        } else if (path.contains(":app:") && name == "impl") {
-            val feOrBeDirectoryPath = moduleDirectoryPath.substringBeforeLast(":app")
+        } else if (name == "impl" && hasFolderInPath(moduleDirectoryPath, "api")) {
             implementation(project("$moduleDirectoryPath:api"))
-            implementation(project("$feOrBeDirectoryPath:ports"))
+            if (path.contains(":app:")) {
+                val feOrBeDirectoryPath = moduleDirectoryPath.substringBeforeLast(":app")
+                implementation(project("$feOrBeDirectoryPath:ports"))
+            }
+        } else if (name == "test" && hasFolderInPath(moduleDirectoryPath, "api")) {
+            implementation(project("$moduleDirectoryPath:api"))
         } else if (path.contains("driven")) {
             val drivenDirectoryPath = moduleDirectoryPath.substringBeforeLast(":driven")
             api(project("$drivenDirectoryPath:ports"))
