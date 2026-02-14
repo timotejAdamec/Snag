@@ -12,7 +12,7 @@
 
 plugins {
     alias(libs.plugins.snagImplDrivingBackendModule)
-    application
+    alias(libs.plugins.ktor)
 }
 
 group = "cz.adamec.timotej.snag"
@@ -24,13 +24,20 @@ application {
     applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
 }
 
-// Currently not working, only with Kotlin 2.2.0. Wait for newer ktor.
 ktor {
     openApi {
         enabled = true
         codeInferenceEnabled = true
         onlyCommented = false
     }
+}
+
+// Ktor plugin + application plugin duplicate the module JAR in distributions
+tasks.withType<Tar> {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+tasks.withType<Zip> {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
 dependencies {

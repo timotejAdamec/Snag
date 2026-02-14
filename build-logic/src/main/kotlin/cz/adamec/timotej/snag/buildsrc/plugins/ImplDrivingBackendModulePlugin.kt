@@ -21,7 +21,6 @@ import org.gradle.kotlin.dsl.apply
 @Suppress("unused")
 class ImplDrivingBackendModulePlugin : Plugin<Project> {
     override fun apply(target: Project) = with(target) {
-        apply(plugin = pluginId("ktor"))
         apply(plugin = pluginId("kotlinSerialization"))
         apply<BackendModulePlugin>()
         configureNetworkBackendModule()
