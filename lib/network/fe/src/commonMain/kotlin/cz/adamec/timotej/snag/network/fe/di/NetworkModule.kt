@@ -12,9 +12,10 @@
 
 package cz.adamec.timotej.snag.network.fe.di
 
+import cz.adamec.timotej.snag.configuration.fe.HttpClientConfiguration
 import cz.adamec.timotej.snag.network.fe.SnagNetworkHttpClient
-import cz.adamec.timotej.snag.network.fe.internal.HttpClientFactory
 import cz.adamec.timotej.snag.network.fe.internal.SnagNetworkHttpClientImpl
+import io.ktor.client.HttpClient
 import org.koin.core.module.Module
 import org.koin.dsl.bind
 import org.koin.dsl.module
@@ -25,8 +26,15 @@ val networkModule =
         includes(networkErrorClassifierPlatformModule)
         includes(connectionStatusPlatformModule)
         single {
+            HttpClient {
+                getAll<HttpClientConfiguration>().forEach { configuration ->
+                    with(configuration) { setup() }
+                }
+            }
+        }
+        single {
             SnagNetworkHttpClientImpl(
-                httpClient = HttpClientFactory(get()).createHttpClient(),
+                httpClient = get(),
                 localHostUrlFactory = get(),
             )
         } bind SnagNetworkHttpClient::class
