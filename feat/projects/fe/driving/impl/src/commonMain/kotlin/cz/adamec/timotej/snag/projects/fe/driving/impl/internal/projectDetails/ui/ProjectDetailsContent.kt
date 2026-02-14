@@ -30,19 +30,18 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ContainedLoadingIndicator
 import androidx.compose.material3.HorizontalFloatingToolbar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.carousel.HorizontalUncontainedCarousel
-import androidx.compose.material3.carousel.rememberCarouselState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -188,24 +187,22 @@ private fun LoadedProjectDetailsContent(
                     )
                 }
                 item {
-                    val itemCount = 1 + state.inspections.size
-                    val carouselState =
-                        rememberCarouselState(initialItem = 0) { itemCount }
-                    HorizontalUncontainedCarousel(
-                        state = carouselState,
-                        itemWidth = 200.dp,
-                        itemSpacing = 12.dp,
+                    LazyRow(
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
                         contentPadding = PaddingValues(horizontal = 16.dp),
-                    ) { index ->
-                        if (index == 0) {
+                    ) {
+                        item {
                             NewInspectionCard(
-                                modifier = Modifier.fillMaxSize(),
+                                modifier = Modifier.widthIn(min = 150.dp),
                                 onClick = onNewInspectionClick,
                             )
-                        } else {
-                            val inspection = state.inspections[index - 1]
+                        }
+                        items(
+                            items = state.inspections,
+                            key = { it.inspection.id },
+                        ) { inspection ->
                             InspectionCard(
-                                modifier = Modifier.fillMaxSize(),
+                                modifier = Modifier.widthIn(min = 150.dp),
                                 feInspection = inspection,
                                 onClick = {
                                     onInspectionClick(inspection.inspection.id)
@@ -337,13 +334,9 @@ private fun NewInspectionCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Card(
+    OutlinedCard(
         modifier = modifier,
         onClick = onClick,
-        colors =
-            CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceVariant,
-            ),
     ) {
         Column(
             modifier =
