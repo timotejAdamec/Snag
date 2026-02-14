@@ -27,6 +27,7 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowSizeClass
+import cz.adamec.timotej.snag.lib.design.fe.adaptive.isScreenWide
 import cz.adamec.timotej.snag.lib.design.fe.theme.SnagTheme
 import org.jetbrains.compose.resources.painterResource
 import snag.lib.design.fe.generated.resources.Res
@@ -39,13 +40,7 @@ fun AdaptiveTonalButton(
     label: String,
     modifier: Modifier = Modifier,
 ) {
-    val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
-    val isScreenWide =
-        windowSizeClass.isWidthAtLeastBreakpoint(
-            widthDpBreakpoint = WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND,
-        )
-
-    if (isScreenWide) {
+    if (isScreenWide()) {
         FilledTonalButton(
             modifier =
                 modifier

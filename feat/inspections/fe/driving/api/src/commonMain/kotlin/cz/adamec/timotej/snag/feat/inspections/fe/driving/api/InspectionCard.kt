@@ -15,6 +15,7 @@ package cz.adamec.timotej.snag.feat.inspections.fe.driving.api
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
@@ -38,7 +39,7 @@ fun InspectionCard(
         Column(
             modifier =
                 Modifier
-                    .fillMaxWidth()
+                    .fillMaxSize()
                     .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {

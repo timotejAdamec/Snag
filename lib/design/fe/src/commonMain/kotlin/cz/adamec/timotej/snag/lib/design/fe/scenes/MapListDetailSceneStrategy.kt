@@ -44,6 +44,8 @@ import androidx.navigation3.scene.SceneStrategy
 import androidx.navigation3.scene.SceneStrategyScope
 import androidx.window.core.layout.WindowSizeClass.Companion.WIDTH_DP_EXPANDED_LOWER_BOUND
 import androidx.window.core.layout.WindowSizeClass.Companion.WIDTH_DP_MEDIUM_LOWER_BOUND
+import cz.adamec.timotej.snag.lib.design.fe.adaptive.isScreenExtraWide
+import cz.adamec.timotej.snag.lib.design.fe.adaptive.isScreenWide
 
 class MapListDetailSceneStrategy<T : Any> : SceneStrategy<T> {
     @Suppress("ReturnCount")
@@ -102,14 +104,8 @@ private class AdaptiveMapListDetailScene<T : Any>(
     override val content: @Composable () -> Unit = {
         val hostPane = remember { movableContentOf<NavEntry<T>> { it.Content() } }
 
-        val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
-        val isExpanded =
-            windowSizeClass.isWidthAtLeastBreakpoint(WIDTH_DP_EXPANDED_LOWER_BOUND)
-        val isAtLeastMedium =
-            windowSizeClass.isWidthAtLeastBreakpoint(WIDTH_DP_MEDIUM_LOWER_BOUND)
-
         when {
-            isExpanded && listEntry != null && detailEntry != null -> {
+            isScreenExtraWide() && listEntry != null && detailEntry != null -> {
                 Row(modifier = Modifier.fillMaxSize()) {
                     Column(modifier = Modifier.weight(HALF_WEIGHT)) {
                         hostPane(hostEntry)
@@ -123,7 +119,7 @@ private class AdaptiveMapListDetailScene<T : Any>(
                 }
             }
 
-            isAtLeastMedium -> {
+            isScreenWide() -> {
                 Row(modifier = Modifier.fillMaxSize()) {
                     Column(modifier = Modifier.weight(HALF_WEIGHT)) {
                         hostPane(hostEntry)

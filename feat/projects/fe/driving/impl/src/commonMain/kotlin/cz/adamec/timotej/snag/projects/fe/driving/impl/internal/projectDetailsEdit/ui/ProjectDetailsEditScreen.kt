@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.window.core.layout.WindowSizeClass
+import cz.adamec.timotej.snag.lib.design.fe.adaptive.isScreenLarge
 import cz.adamec.timotej.snag.lib.design.fe.error.ShowSnackbarOnError
 import cz.adamec.timotej.snag.lib.design.fe.events.ObserveAsEvents
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetailsEdit.vm.ProjectDetailsEditViewModel
@@ -64,14 +65,8 @@ internal fun ProjectDetailsEditScreen(
         },
     )
 
-    val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
-    val shouldPad =
-        windowSizeClass.isAtLeastBreakpoint(
-            widthDpBreakpoint = WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND,
-            heightDpBreakpoint = WindowSizeClass.HEIGHT_DP_MEDIUM_LOWER_BOUND,
-        )
     val modifier =
-        if (shouldPad) {
+        if (isScreenLarge()) {
             Modifier
                 .padding(vertical = 32.dp)
                 .consumeWindowInsets(WindowInsets.systemBars)

@@ -28,7 +28,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -115,7 +117,7 @@ internal fun ProjectDetailsContent(
 
             ProjectDetailsUiStatus.LOADED,
             ProjectDetailsUiStatus.DELETED,
-            -> {
+                -> {
                 LoadedProjectDetailsContent(
                     state = state,
                     onNewStructureClick = onNewStructureClick,
@@ -193,7 +195,8 @@ private fun LoadedProjectDetailsContent(
                     ) {
                         item {
                             NewInspectionCard(
-                                modifier = Modifier.widthIn(min = 150.dp),
+                                modifier = Modifier
+                                    .height(100.dp),
                                 onClick = onNewInspectionClick,
                             )
                         }
@@ -202,24 +205,27 @@ private fun LoadedProjectDetailsContent(
                             key = { it.inspection.id },
                         ) { inspection ->
                             InspectionCard(
-                                modifier = Modifier.widthIn(min = 150.dp),
+                                modifier = Modifier.size(
+                                    width = 200.dp,
+                                    height = 100.dp,
+                                ),
                                 feInspection = inspection,
                                 onClick = {
                                     onInspectionClick(inspection.inspection.id)
                                 },
                             )
                         }
-                    }
-                }
-                item {
-                    AnimatedVisibility(
-                        visible = state.inspectionStatus == InspectionsUiStatus.LOADING,
-                        exit = fadeOut(),
-                    ) {
-                        Box(
-                            contentAlignment = Alignment.Center,
-                        ) {
-                            LoadingIndicator()
+                        item {
+                            AnimatedVisibility(
+                                visible = state.inspectionStatus == InspectionsUiStatus.LOADING,
+                                exit = fadeOut(),
+                            ) {
+                                Box(
+                                    contentAlignment = Alignment.Center,
+                                ) {
+                                    LoadingIndicator()
+                                }
+                            }
                         }
                     }
                 }
@@ -338,10 +344,11 @@ private fun NewInspectionCard(
         modifier = modifier,
         onClick = onClick,
     ) {
+
         Column(
             modifier =
                 Modifier
-                    .fillMaxSize()
+                    .wrapContentSize()
                     .padding(16.dp),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,

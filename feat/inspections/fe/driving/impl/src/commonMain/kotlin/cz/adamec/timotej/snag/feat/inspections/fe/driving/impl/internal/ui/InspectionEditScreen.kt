@@ -31,6 +31,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.window.core.layout.WindowSizeClass
 import cz.adamec.timotej.snag.feat.inspections.fe.driving.impl.internal.vm.InspectionEditViewModel
+import cz.adamec.timotej.snag.lib.design.fe.adaptive.isScreenLarge
 import cz.adamec.timotej.snag.lib.design.fe.error.ShowSnackbarOnError
 import cz.adamec.timotej.snag.lib.design.fe.events.ObserveAsEvents
 import org.koin.compose.viewmodel.koinViewModel
@@ -64,14 +65,8 @@ internal fun InspectionEditScreen(
         },
     )
 
-    val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
-    val shouldPad =
-        windowSizeClass.isAtLeastBreakpoint(
-            widthDpBreakpoint = WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND,
-            heightDpBreakpoint = WindowSizeClass.HEIGHT_DP_MEDIUM_LOWER_BOUND,
-        )
     val modifier =
-        if (shouldPad) {
+        if (isScreenLarge()) {
             Modifier
                 .padding(vertical = 32.dp)
                 .consumeWindowInsets(WindowInsets.systemBars)

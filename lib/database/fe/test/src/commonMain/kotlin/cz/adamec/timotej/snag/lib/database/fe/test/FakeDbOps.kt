@@ -19,12 +19,15 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlin.uuid.Uuid
 
-class FakeDbOps<T>(private val getId: (T) -> Uuid) {
+class FakeDbOps<T>(
+    private val getId: (T) -> Uuid,
+) {
     val items = MutableStateFlow<Map<Uuid, T>>(emptyMap())
     var forcedFailure: OfflineFirstDataResult.ProgrammerError? = null
 
-    fun allItemsFlow(): Flow<OfflineFirstDataResult<List<T>>> =
-        items.map { OfflineFirstDataResult.Success(it.values.toList()) }
+    fun allItemsFlow(): Flow<OfflineFirstDataResult<List<T>>> = items.map {
+        OfflineFirstDataResult.Success(it.values.toList())
+    }
 
     fun allItemsFlow(filter: (T) -> Boolean): Flow<OfflineFirstDataResult<List<T>>> =
         items.map { map ->
