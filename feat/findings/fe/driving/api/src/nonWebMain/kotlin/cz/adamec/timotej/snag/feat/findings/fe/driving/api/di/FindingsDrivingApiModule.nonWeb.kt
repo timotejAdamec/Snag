@@ -12,9 +12,11 @@
 
 package cz.adamec.timotej.snag.feat.findings.fe.driving.api.di
 
+import cz.adamec.timotej.snag.feat.findings.fe.driving.api.FindingCreationRouteFactory
 import cz.adamec.timotej.snag.feat.findings.fe.driving.api.FindingDetailRouteFactory
 import cz.adamec.timotej.snag.feat.findings.fe.driving.api.FindingEditRouteFactory
 import cz.adamec.timotej.snag.feat.findings.fe.driving.api.FindingsListRouteFactory
+import cz.adamec.timotej.snag.feat.findings.fe.driving.api.NonWebFindingCreationRouteFactory
 import cz.adamec.timotej.snag.feat.findings.fe.driving.api.NonWebFindingDetailRouteFactory
 import cz.adamec.timotej.snag.feat.findings.fe.driving.api.NonWebFindingEditRouteFactory
 import cz.adamec.timotej.snag.feat.findings.fe.driving.api.NonWebFindingsListRouteFactory
@@ -26,4 +28,5 @@ internal actual val platformModule =
         factory { NonWebFindingsListRouteFactory() } bind FindingsListRouteFactory::class
         factory { NonWebFindingDetailRouteFactory() } bind FindingDetailRouteFactory::class
         factory { NonWebFindingEditRouteFactory() } bind FindingEditRouteFactory::class
+        factory { NonWebFindingCreationRouteFactory() } bind FindingCreationRouteFactory::class
     }

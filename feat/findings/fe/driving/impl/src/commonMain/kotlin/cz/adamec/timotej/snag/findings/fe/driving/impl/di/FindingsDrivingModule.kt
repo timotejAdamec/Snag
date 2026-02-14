@@ -16,6 +16,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.navigation3.scene.DialogSceneStrategy
+import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
+import cz.adamec.timotej.snag.feat.findings.fe.driving.api.FindingCreationRoute
 import cz.adamec.timotej.snag.feat.findings.fe.driving.api.FindingDetailRoute
 import cz.adamec.timotej.snag.feat.findings.fe.driving.api.FindingDetailRouteFactory
 import cz.adamec.timotej.snag.feat.findings.fe.driving.api.FindingEditRoute
@@ -104,15 +106,34 @@ internal inline fun <reified T : FindingEditRoute> Module.findingEditScreenNav()
         )
     }
 
+internal inline fun <reified T : FindingCreationRoute> Module.findingCreationScreenNav() =
+    navigation<T>(
+        metadata = DialogSceneStrategy.dialog(fullscreenDialogProperties()),
+    ) { route ->
+        FindingEditScreenSetup(
+            structureId = route.structureId,
+            findingTypeKey = route.findingTypeKey,
+            coordinate = route.coordinate,
+            onSaveFinding = { _ ->
+                val backStack = get<SnagBackStack>()
+                backStack.removeLastSafely()
+            },
+        )
+    }
+
 @Composable
 private fun Scope.FindingEditScreenSetup(
     onSaveFinding: (savedFindingId: Uuid) -> Unit,
     findingId: Uuid? = null,
     structureId: Uuid? = null,
+    findingTypeKey: String? = null,
+    coordinate: RelativeCoordinate? = null,
 ) {
     FindingDetailsEditScreen(
         findingId = findingId,
         structureId = structureId,
+        findingTypeKey = findingTypeKey,
+        coordinate = coordinate,
         onSaveFinding = { savedFindingId ->
             onSaveFinding(savedFindingId)
         },
@@ -139,11 +160,19 @@ val findingsDrivingImplModule =
                 deleteFindingUseCase = get(),
             )
         }
-        viewModel { (findingId: Uuid?, structureId: Uuid?, findingTypeKey: String?) ->
+        viewModel {
+                (
+                    findingId: Uuid?,
+                    structureId: Uuid?,
+                    findingTypeKey: String?,
+                    coordinate: RelativeCoordinate?,
+                ),
+            ->
             FindingDetailsEditViewModel(
                 findingId = findingId,
                 structureId = structureId,
                 findingTypeKey = findingTypeKey,
+                coordinate = coordinate,
                 getFindingUseCase = get(),
                 saveNewFindingUseCase = get(),
                 saveFindingDetailsUseCase = get(),

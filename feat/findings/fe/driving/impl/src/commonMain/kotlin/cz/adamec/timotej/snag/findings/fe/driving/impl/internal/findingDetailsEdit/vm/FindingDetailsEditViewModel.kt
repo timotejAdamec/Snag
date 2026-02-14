@@ -16,6 +16,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cz.adamec.timotej.snag.feat.findings.business.FindingType
 import cz.adamec.timotej.snag.feat.findings.business.Importance
+import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
 import cz.adamec.timotej.snag.feat.findings.business.Term
 import cz.adamec.timotej.snag.findings.fe.app.api.GetFindingUseCase
 import cz.adamec.timotej.snag.findings.fe.app.api.SaveFindingDetailsUseCase
@@ -42,6 +43,7 @@ internal class FindingDetailsEditViewModel(
     @InjectedParam private val findingId: Uuid?,
     @InjectedParam private val structureId: Uuid?,
     @InjectedParam private val findingTypeKey: String?,
+    @InjectedParam private val coordinate: RelativeCoordinate?,
     private val getFindingUseCase: GetFindingUseCase,
     private val saveNewFindingUseCase: SaveNewFindingUseCase,
     private val saveFindingDetailsUseCase: SaveFindingDetailsUseCase,
@@ -143,6 +145,7 @@ internal class FindingDetailsEditViewModel(
                         name = state.value.findingName,
                         description = state.value.findingDescription.ifBlank { null },
                         findingType = state.value.findingType,
+                        coordinates = listOfNotNull(coordinate),
                     ),
             )
         when (result) {
