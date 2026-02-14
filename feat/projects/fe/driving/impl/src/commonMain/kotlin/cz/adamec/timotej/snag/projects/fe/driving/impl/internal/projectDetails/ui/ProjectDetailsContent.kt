@@ -199,11 +199,13 @@ private fun LoadedProjectDetailsContent(
                     ) { index ->
                         if (index == 0) {
                             NewInspectionCard(
+                                modifier = Modifier.fillMaxSize(),
                                 onClick = onNewInspectionClick,
                             )
                         } else {
                             val inspection = state.inspections[index - 1]
                             InspectionCard(
+                                modifier = Modifier.fillMaxSize(),
                                 feInspection = inspection,
                                 onClick = {
                                     onInspectionClick(inspection.inspection.id)
@@ -336,7 +338,7 @@ private fun NewInspectionCard(
     modifier: Modifier = Modifier,
 ) {
     Card(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier,
         onClick = onClick,
         colors =
             CardDefaults.cardColors(
