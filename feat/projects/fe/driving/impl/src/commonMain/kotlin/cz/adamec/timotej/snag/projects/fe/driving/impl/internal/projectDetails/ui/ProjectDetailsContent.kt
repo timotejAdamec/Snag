@@ -255,7 +255,7 @@ private fun LoadedProjectDetailsContent(
                         contentAlignment = Alignment.TopCenter,
                     ) {
                         FlowRow(
-                            modifier = Modifier.widthIn(max = 936.dp),
+                            //modifier = Modifier.widthIn(max = 936.dp),
                             horizontalArrangement = Arrangement.spacedBy(12.dp),
                             verticalArrangement = Arrangement.spacedBy(12.dp),
                             maxItemsInEachRow = 3,
