@@ -56,7 +56,6 @@ internal class StructureDetailsEditViewModel(
     private val saveEventChannel = Channel<Uuid>()
     val saveEventFlow = saveEventChannel.receiveAsFlow()
 
-    private var originalFloorPlanUrl: String? = null
     private val resolvedStructureId: Uuid = structureId ?: UuidProvider.getUuid()
 
     init {
@@ -75,7 +74,6 @@ internal class StructureDetailsEditViewModel(
                     }
                     is OfflineFirstDataResult.Success -> {
                         result.data?.let { data ->
-                            originalFloorPlanUrl = data.structure.floorPlanUrl
                             _state.update {
                                 it.copy(
                                     structureName = data.structure.name,

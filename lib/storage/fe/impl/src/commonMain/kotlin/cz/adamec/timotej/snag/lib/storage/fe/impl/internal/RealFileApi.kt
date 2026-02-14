@@ -12,8 +12,9 @@
 
 package cz.adamec.timotej.snag.lib.storage.fe.impl.internal
 
-import co.touchlab.kermit.Logger
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
+import cz.adamec.timotej.snag.lib.storage.contract.FileUploadFormFields
+import cz.adamec.timotej.snag.lib.storage.contract.FileUploadResponseDto
 import cz.adamec.timotej.snag.lib.storage.fe.api.FileApi
 import cz.adamec.timotej.snag.lib.storage.fe.api.FileApiConfig
 import cz.adamec.timotej.snag.network.fe.SnagNetworkHttpClient
@@ -26,12 +27,6 @@ import io.ktor.http.ContentType
 import io.ktor.http.Headers
 import io.ktor.http.HttpHeaders
 import io.ktor.http.encodeURLParameter
-import kotlinx.serialization.Serializable
-
-@Serializable
-private data class FileUploadResponseDto(
-    val url: String,
-)
 
 internal class RealFileApi(
     private val httpClient: SnagNetworkHttpClient,
@@ -42,7 +37,7 @@ internal class RealFileApi(
         fileName: String,
         directory: String,
     ): OnlineDataResult<String> =
-        safeApiCall(logger = logger, errorContext = "Error uploading file $fileName.") {
+        safeApiCall(logger = LH.logger, errorContext = "Error uploading file $fileName.") {
             val response =
                 httpClient.post(
                     path = config.basePath,
@@ -52,13 +47,13 @@ internal class RealFileApi(
                         MultiPartFormDataContent(
                             formData {
                                 append(
-                                    "file",
+                                    FileUploadFormFields.FILE,
                                     bytes,
                                     Headers.build {
                                         append(HttpHeaders.ContentDisposition, "filename=\"$fileName\"")
                                     },
                                 )
-                                append("directory", directory)
+                                append(FileUploadFormFields.DIRECTORY, directory)
                             },
                         ),
                     )
@@ -67,12 +62,8 @@ internal class RealFileApi(
         }
 
     override suspend fun deleteFile(url: String): OnlineDataResult<Unit> =
-        safeApiCall(logger = logger, errorContext = "Error deleting file $url.") {
+        safeApiCall(logger = LH.logger, errorContext = "Error deleting file $url.") {
             httpClient.delete("${config.basePath}?url=${url.encodeURLParameter()}")
             Unit
         }
-
-    companion object {
-        private val logger = Logger.withTag("lib-storage-fe")
-    }
 }
