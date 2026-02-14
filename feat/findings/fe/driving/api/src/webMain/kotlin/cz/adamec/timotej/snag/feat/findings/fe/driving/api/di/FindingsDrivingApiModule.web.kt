@@ -12,10 +12,12 @@
 
 package cz.adamec.timotej.snag.feat.findings.fe.driving.api.di
 
+import cz.adamec.timotej.snag.feat.findings.fe.driving.api.FindingCreationRouteFactory
 import cz.adamec.timotej.snag.feat.findings.fe.driving.api.FindingDetailRouteFactory
 import cz.adamec.timotej.snag.feat.findings.fe.driving.api.FindingEditRouteFactory
 import cz.adamec.timotej.snag.feat.findings.fe.driving.api.FindingsBrowserHistoryFragmentBuilder
 import cz.adamec.timotej.snag.feat.findings.fe.driving.api.FindingsListRouteFactory
+import cz.adamec.timotej.snag.feat.findings.fe.driving.api.WebFindingCreationRouteFactory
 import cz.adamec.timotej.snag.feat.findings.fe.driving.api.WebFindingDetailRouteFactory
 import cz.adamec.timotej.snag.feat.findings.fe.driving.api.WebFindingEditRouteFactory
 import cz.adamec.timotej.snag.feat.findings.fe.driving.api.WebFindingsListRouteFactory
@@ -29,5 +31,6 @@ internal actual val platformModule =
         factory { WebFindingsListRouteFactory() } bind FindingsListRouteFactory::class
         factory { WebFindingDetailRouteFactory() } bind FindingDetailRouteFactory::class
         factory { WebFindingEditRouteFactory() } bind FindingEditRouteFactory::class
+        factory { WebFindingCreationRouteFactory() } bind FindingCreationRouteFactory::class
         factoryOf(::FindingsBrowserHistoryFragmentBuilder) bind BrowserHistoryFragmentBuilder::class
     }

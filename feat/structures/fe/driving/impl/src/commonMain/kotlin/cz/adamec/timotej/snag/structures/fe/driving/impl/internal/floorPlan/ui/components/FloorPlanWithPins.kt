@@ -32,6 +32,7 @@ import com.github.panpf.zoomimage.CoilZoomAsyncImage
 import com.github.panpf.zoomimage.CoilZoomState
 import com.github.panpf.zoomimage.rememberCoilZoomState
 import cz.adamec.timotej.snag.feat.findings.business.FindingType
+import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
 import cz.adamec.timotej.snag.feat.findings.fe.driving.api.findingTypeVisuals
 import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
 import kotlinx.collections.immutable.ImmutableList
@@ -46,6 +47,7 @@ internal fun FloorPlanWithPins(
     findings: ImmutableList<FrontendFinding>,
     selectedFindingId: Uuid?,
     onFindingClick: (Uuid) -> Unit,
+    onEmptySpaceTap: (RelativeCoordinate) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val zoomState = rememberCoilZoomState()
@@ -67,6 +69,15 @@ internal fun FloorPlanWithPins(
                 )
                 if (tappedId != null) {
                     onFindingClick(tappedId)
+                } else {
+                    val displayRect = zoomState.zoomable.contentDisplayRectF
+                    if (!displayRect.isEmpty) {
+                        val x = (tapOffset.x - displayRect.left) / displayRect.width
+                        val y = (tapOffset.y - displayRect.top) / displayRect.height
+                        if (x in 0f..1f && y in 0f..1f) {
+                            onEmptySpaceTap(RelativeCoordinate(x, y))
+                        }
+                    }
                 }
             },
         )
