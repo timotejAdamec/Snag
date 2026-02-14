@@ -10,8 +10,10 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.network.fe.internal
+package cz.adamec.timotej.snag.configuration.fe
 
-interface NetworkErrorClassifier {
-    fun isNetworkUnavailableError(cause: Throwable): Boolean
+import io.ktor.client.HttpClientConfig
+
+interface HttpClientConfiguration {
+    fun HttpClientConfig<*>.setup()
 }
