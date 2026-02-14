@@ -19,7 +19,6 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(project(":feat:inspections:fe:app:api"))
-                implementation(project(":feat:inspections:fe:driving:api"))
             }
         }
         commonTest {

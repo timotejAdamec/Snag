@@ -17,7 +17,6 @@ plugins {
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            api(project(":lib:sync:fe:app:api"))
             implementation(project(":lib:network:fe"))
         }
         commonTest.dependencies {

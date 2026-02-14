@@ -18,7 +18,6 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation(project(":feat:projects:fe:driving:api"))
                 implementation(project(":feat:projects:fe:app:api"))
                 implementation(project(":feat:projects:business"))
                 implementation(project(":feat:structures:fe:app:api"))

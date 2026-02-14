@@ -7,7 +7,6 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(project(":feat:findings:fe:app:api"))
-                implementation(project(":feat:findings:fe:driving:api"))
                 implementation(project(":feat:structures:fe:driving:api"))
             }
         }

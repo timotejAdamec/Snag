@@ -34,7 +34,6 @@ kotlin {
     }
     sourceSets {
         commonMain.dependencies {
-            implementation(project(":feat:shared:database:fe:api"))
             implementation(project(":lib:core:fe"))
         }
         androidMain.dependencies {
