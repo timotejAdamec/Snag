@@ -46,7 +46,7 @@ fun StructureCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Card(
+    ElevatedCard(
         modifier = modifier,
         onClick = onClick,
     ) {

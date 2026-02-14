@@ -16,9 +16,11 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -28,6 +30,8 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ContainedLoadingIndicator
 import androidx.compose.material3.HorizontalFloatingToolbar
@@ -35,6 +39,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -155,18 +160,6 @@ private fun LoadedProjectDetailsContent(
                 onClick = onBack,
             )
         },
-        topAppBarActions = {
-            AdaptiveTonalButton(
-                onClick = onNewStructureClick,
-                icon = painterResource(DesignRes.drawable.ic_add),
-                label = stringResource(Res.string.new_structure),
-            )
-            AdaptiveTonalButton(
-                onClick = onNewInspectionClick,
-                icon = painterResource(DesignRes.drawable.ic_add),
-                label = stringResource(Res.string.new_inspection),
-            )
-        },
     ) { paddingValues ->
         Box(
             modifier =
@@ -175,31 +168,94 @@ private fun LoadedProjectDetailsContent(
                     .padding(paddingValues)
                     .consumeWindowInsets(paddingValues),
         ) {
-            @OptIn(ExperimentalLayoutApi::class)
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
                 contentPadding =
                     PaddingValues(
-                        start = 16.dp,
-                        end = 16.dp,
                         top = 16.dp,
                         bottom = 72.dp,
                     ),
             ) {
                 item {
                     Text(
-                        text = stringResource(Res.string.structures_section_title),
+                        text = stringResource(Res.string.inspections_section_title),
                         style = MaterialTheme.typography.titleMedium,
-                        modifier = Modifier.padding(bottom = 8.dp),
+                        modifier =
+                            Modifier
+                                .padding(horizontal = 16.dp)
+                                .padding(bottom = 8.dp),
                     )
                 }
                 item {
+                    LazyRow(
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                        contentPadding = PaddingValues(horizontal = 16.dp),
+                    ) {
+                        item {
+                            NewInspectionCard(
+                                modifier = Modifier.widthIn(min = 150.dp),
+                                onClick = onNewInspectionClick,
+                            )
+                        }
+                        items(
+                            items = state.inspections,
+                            key = { it.inspection.id },
+                        ) { inspection ->
+                            InspectionCard(
+                                modifier = Modifier.widthIn(min = 150.dp),
+                                feInspection = inspection,
+                                onClick = {
+                                    onInspectionClick(inspection.inspection.id)
+                                },
+                            )
+                        }
+                    }
+                }
+                item {
+                    AnimatedVisibility(
+                        visible = state.inspectionStatus == InspectionsUiStatus.LOADING,
+                        exit = fadeOut(),
+                    ) {
+                        Box(
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            LoadingIndicator()
+                        }
+                    }
+                }
+                item {
+                    Spacer(modifier = Modifier.height(24.dp))
+                    Row(
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp)
+                                .padding(bottom = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text(
+                            text = stringResource(Res.string.structures_section_title),
+                            style = MaterialTheme.typography.titleMedium,
+                            modifier = Modifier.weight(1f),
+                        )
+                        AdaptiveTonalButton(
+                            onClick = onNewStructureClick,
+                            icon = painterResource(DesignRes.drawable.ic_add),
+                            label = stringResource(Res.string.new_structure),
+                        )
+                    }
+                }
+                @OptIn(ExperimentalLayoutApi::class)
+                item {
                     Box(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp),
                         contentAlignment = Alignment.TopCenter,
                     ) {
                         FlowRow(
-                            modifier = Modifier.widthIn(max = 936.dp),
+                            //modifier = Modifier.widthIn(max = 936.dp),
                             horizontalArrangement = Arrangement.spacedBy(12.dp),
                             verticalArrangement = Arrangement.spacedBy(12.dp),
                             maxItemsInEachRow = 3,
@@ -221,52 +277,6 @@ private fun LoadedProjectDetailsContent(
                 item {
                     AnimatedVisibility(
                         visible = state.structureStatus == StructuresUiStatus.LOADING,
-                        exit = fadeOut(),
-                    ) {
-                        Box(
-                            contentAlignment = Alignment.Center,
-                        ) {
-                            LoadingIndicator()
-                        }
-                    }
-                }
-                item {
-                    Spacer(modifier = Modifier.height(24.dp))
-                    Text(
-                        text = stringResource(Res.string.inspections_section_title),
-                        style = MaterialTheme.typography.titleMedium,
-                        modifier = Modifier.padding(bottom = 8.dp),
-                    )
-                }
-                item {
-                    Box(
-                        modifier = Modifier.fillMaxWidth(),
-                        contentAlignment = Alignment.TopCenter,
-                    ) {
-                        FlowRow(
-                            modifier = Modifier.widthIn(max = 936.dp),
-                            horizontalArrangement = Arrangement.spacedBy(12.dp),
-                            verticalArrangement = Arrangement.spacedBy(12.dp),
-                            maxItemsInEachRow = 3,
-                        ) {
-                            state.inspections.forEach { inspection ->
-                                InspectionCard(
-                                    modifier =
-                                        Modifier
-                                            .widthIn(min = 150.dp)
-                                            .weight(1f),
-                                    feInspection = inspection,
-                                    onClick = {
-                                        onInspectionClick(inspection.inspection.id)
-                                    },
-                                )
-                            }
-                        }
-                    }
-                }
-                item {
-                    AnimatedVisibility(
-                        visible = state.inspectionStatus == InspectionsUiStatus.LOADING,
                         exit = fadeOut(),
                     ) {
                         Box(
@@ -315,6 +325,36 @@ private fun LoadedProjectDetailsContent(
                     )
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun NewInspectionCard(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    OutlinedCard(
+        modifier = modifier,
+        onClick = onClick,
+    ) {
+        Column(
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Icon(
+                painter = painterResource(DesignRes.drawable.ic_add),
+                contentDescription = null,
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = stringResource(Res.string.new_inspection),
+                style = MaterialTheme.typography.bodyMedium,
+            )
         }
     }
 }
