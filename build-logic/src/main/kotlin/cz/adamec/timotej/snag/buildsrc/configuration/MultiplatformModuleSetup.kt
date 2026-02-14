@@ -126,12 +126,18 @@ internal fun Project.configureKotlinMultiplatformModule() {
                     } else {
                         api(project("$businessDirectoryPath:business"))
                     }
-                } else if (this@configureKotlinMultiplatformModule.path.contains(":app:") &&
-                    this@configureKotlinMultiplatformModule.name == "impl"
+                } else if (this@configureKotlinMultiplatformModule.name == "impl" &&
+                    hasFolderInPath(moduleDirectoryPath, "api")
                 ) {
-                    val feOrBeDirectoryPath = moduleDirectoryPath.substringBeforeLast(":app")
                     implementation(project("$moduleDirectoryPath:api"))
-                    implementation(project("$feOrBeDirectoryPath:ports"))
+                    if (this@configureKotlinMultiplatformModule.path.contains(":app:")) {
+                        val feOrBeDirectoryPath = moduleDirectoryPath.substringBeforeLast(":app")
+                        implementation(project("$feOrBeDirectoryPath:ports"))
+                    }
+                } else if (this@configureKotlinMultiplatformModule.name == "test" &&
+                    hasFolderInPath(moduleDirectoryPath, "api")
+                ) {
+                    implementation(project("$moduleDirectoryPath:api"))
                 } else if (this@configureKotlinMultiplatformModule.path.contains("driven")) {
                     val drivenDirectoryPath = moduleDirectoryPath.substringBeforeLast(":driven")
                     api(project("$drivenDirectoryPath:ports"))
