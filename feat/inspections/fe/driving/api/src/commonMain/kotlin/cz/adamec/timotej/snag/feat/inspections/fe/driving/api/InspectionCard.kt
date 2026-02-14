@@ -55,7 +55,7 @@ fun InspectionCard(
             ) {
                 feInspection.inspection.startedAt?.let {
                     Text(
-                        text = it.toString(),
+                        text = it.value.toString(),
                         style = MaterialTheme.typography.bodySmall,
                     )
                 }
