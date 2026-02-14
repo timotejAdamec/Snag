@@ -14,6 +14,9 @@
     <string name="projects_title">Projects</string>
     <string name="new_project">New project</string>
     <string name="new_structure">New structure</string>
+    <string name="new_inspection">New inspection</string>
+    <string name="structures_section_title">Structures</string>
+    <string name="inspections_section_title">Inspections</string>
     <string name="project_name_label">Name</string>
     <string name="project_address_label">Address</string>
     <string name="project_not_found">Project not found</string>

@@ -18,6 +18,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(project(":feat:structures:fe:app:api"))
+            implementation(project(":feat:inspections:fe:app:api"))
         }
         commonTest {
             dependencies {

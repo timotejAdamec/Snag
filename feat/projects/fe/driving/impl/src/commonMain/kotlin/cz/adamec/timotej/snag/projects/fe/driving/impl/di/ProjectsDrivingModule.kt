@@ -17,9 +17,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation3.scene.DialogSceneStrategy
 import cz.adamec.timotej.snag.clients.fe.driving.api.ClientCreationRouteFactory
-import cz.adamec.timotej.snag.lib.design.fe.dialog.fullscreenDialogProperties
+import cz.adamec.timotej.snag.feat.inspections.fe.driving.api.InspectionCreationRouteFactory
+import cz.adamec.timotej.snag.feat.inspections.fe.driving.api.InspectionEditRouteFactory
 import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureCreationRouteFactory
 import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureDetailRouteFactory
+import cz.adamec.timotej.snag.lib.design.fe.dialog.fullscreenDialogProperties
 import cz.adamec.timotej.snag.lib.navigation.fe.SnagBackStack
 import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectCreationRoute
 import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectDetailRoute
@@ -119,6 +121,8 @@ internal inline fun <reified T : ProjectDetailRoute> Module.projectDetailsScreen
         val newStructureRouteFactory = koinInject<StructureCreationRouteFactory>()
         val structureDetailRouteFactory = koinInject<StructureDetailRouteFactory>()
         val projectEditRouteFactory = koinInject<ProjectEditRouteFactory>()
+        val newInspectionRouteFactory = koinInject<InspectionCreationRouteFactory>()
+        val inspectionEditRouteFactory = koinInject<InspectionEditRouteFactory>()
         ProjectDetailsScreen(
             projectId = route.projectId,
             onNewStructureClick = {
@@ -128,6 +132,14 @@ internal inline fun <reified T : ProjectDetailRoute> Module.projectDetailsScreen
             onStructureClick = { structureId ->
                 val backStack = get<SnagBackStack>()
                 backStack.value.add(structureDetailRouteFactory.create(structureId))
+            },
+            onNewInspectionClick = {
+                val backStack = get<SnagBackStack>()
+                backStack.value.add(newInspectionRouteFactory.create(route.projectId))
+            },
+            onInspectionClick = { inspectionId ->
+                val backStack = get<SnagBackStack>()
+                backStack.value.add(inspectionEditRouteFactory.create(inspectionId))
             },
             onBack = {
                 val backStack = get<SnagBackStack>()
@@ -158,6 +170,7 @@ val projectsDrivingImplModule =
                 getProjectUseCase = get(),
                 deleteProjectUseCase = get(),
                 getStructuresUseCase = get(),
+                getInspectionsUseCase = get(),
             )
         }
     }

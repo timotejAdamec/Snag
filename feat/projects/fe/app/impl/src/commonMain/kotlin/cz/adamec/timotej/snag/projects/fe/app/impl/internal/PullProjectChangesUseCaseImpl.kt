@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.projects.fe.app.impl.internal
 
+import cz.adamec.timotej.snag.feat.inspections.fe.app.api.CascadeDeleteLocalInspectionsByProjectIdUseCase
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.common.TimestampProvider
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
@@ -27,6 +28,7 @@ internal class PullProjectChangesUseCaseImpl(
     private val projectsApi: ProjectsApi,
     private val projectsDb: ProjectsDb,
     private val cascadeDeleteLocalStructuresByProjectIdUseCase: CascadeDeleteLocalStructuresByProjectIdUseCase,
+    private val cascadeDeleteLocalInspectionsByProjectIdUseCase: CascadeDeleteLocalInspectionsByProjectIdUseCase,
     private val projectsPullSyncTimestampDataSource: ProjectsPullSyncTimestampDataSource,
     private val projectsPullSyncCoordinator: ProjectsPullSyncCoordinator,
     private val timestampProvider: TimestampProvider,
@@ -50,6 +52,7 @@ internal class PullProjectChangesUseCaseImpl(
                             is ProjectSyncResult.Deleted -> {
                                 LH.logger.d { "Processing deleted project ${syncResult.id}." }
                                 cascadeDeleteLocalStructuresByProjectIdUseCase(syncResult.id)
+                                cascadeDeleteLocalInspectionsByProjectIdUseCase(syncResult.id)
                                 projectsDb.deleteProject(syncResult.id)
                             }
                             is ProjectSyncResult.Updated -> {

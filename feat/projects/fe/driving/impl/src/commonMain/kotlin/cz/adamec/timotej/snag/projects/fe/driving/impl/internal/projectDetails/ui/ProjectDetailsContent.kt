@@ -19,11 +19,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.AlertDialog
@@ -32,6 +34,7 @@ import androidx.compose.material3.HorizontalFloatingToolbar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LoadingIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -44,6 +47,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
+import cz.adamec.timotej.snag.feat.inspections.fe.driving.api.InspectionCard
 import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureCard
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.common.UuidProvider
@@ -52,23 +56,27 @@ import cz.adamec.timotej.snag.lib.design.fe.scaffold.BackNavigationIcon
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.CollapsableTopAppBarScaffold
 import cz.adamec.timotej.snag.lib.design.fe.theme.SnagTheme
 import cz.adamec.timotej.snag.projects.business.Project
+import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.vm.InspectionsUiStatus
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.vm.ProjectDetailsUiState
-import cz.adamec.timotej.snag.projects.fe.model.FrontendProject
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.vm.ProjectDetailsUiStatus
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.vm.StructuresUiStatus
+import cz.adamec.timotej.snag.projects.fe.model.FrontendProject
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import kotlin.uuid.Uuid
 import snag.feat.projects.fe.driving.impl.generated.resources.Res
 import snag.feat.projects.fe.driving.impl.generated.resources.delete_project_confirmation_text
 import snag.feat.projects.fe.driving.impl.generated.resources.delete_project_confirmation_title
+import snag.feat.projects.fe.driving.impl.generated.resources.inspections_section_title
+import snag.feat.projects.fe.driving.impl.generated.resources.new_inspection
 import snag.feat.projects.fe.driving.impl.generated.resources.new_structure
 import snag.feat.projects.fe.driving.impl.generated.resources.project_not_found
+import snag.feat.projects.fe.driving.impl.generated.resources.structures_section_title
 import snag.lib.design.fe.generated.resources.delete
 import snag.lib.design.fe.generated.resources.edit
 import snag.lib.design.fe.generated.resources.ic_add
 import snag.lib.design.fe.generated.resources.ic_delete
 import snag.lib.design.fe.generated.resources.ic_edit
+import kotlin.uuid.Uuid
 import snag.lib.design.fe.generated.resources.Res as DesignRes
 
 @Composable
@@ -76,6 +84,8 @@ internal fun ProjectDetailsContent(
     state: ProjectDetailsUiState,
     onNewStructureClick: () -> Unit,
     onStructureClick: (structureId: Uuid) -> Unit,
+    onNewInspectionClick: () -> Unit,
+    onInspectionClick: (inspectionId: Uuid) -> Unit,
     onBack: () -> Unit,
     onEditClick: () -> Unit,
     onDelete: () -> Unit,
@@ -100,18 +110,22 @@ internal fun ProjectDetailsContent(
 
             ProjectDetailsUiStatus.LOADED,
             ProjectDetailsUiStatus.DELETED,
-                -> {
+            -> {
                 LoadedProjectDetailsContent(
                     state = state,
                     onNewStructureClick = onNewStructureClick,
                     onStructureClick = onStructureClick,
+                    onNewInspectionClick = onNewInspectionClick,
+                    onInspectionClick = onInspectionClick,
                     onBack = onBack,
                     onEditClick = onEditClick,
                     onDelete = onDelete,
                 )
             }
 
-            ProjectDetailsUiStatus.ERROR -> { onBack() }
+            ProjectDetailsUiStatus.ERROR -> {
+                onBack()
+            }
         }
     }
 }
@@ -122,15 +136,20 @@ private fun LoadedProjectDetailsContent(
     state: ProjectDetailsUiState,
     onNewStructureClick: () -> Unit,
     onStructureClick: (structureId: Uuid) -> Unit,
+    onNewInspectionClick: () -> Unit,
+    onInspectionClick: (inspectionId: Uuid) -> Unit,
     onBack: () -> Unit,
     onEditClick: () -> Unit,
     onDelete: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val project = state.project?.project
+    val projectName = project?.name.orEmpty()
+    val projectAddress = project?.address.orEmpty()
     CollapsableTopAppBarScaffold(
         modifier = modifier,
-        title = state.project?.project?.name.orEmpty(),
-        subtitle = state.project?.project?.address.orEmpty(),
+        title = projectName,
+        subtitle = projectAddress,
         topAppBarNavigationIcon = {
             BackNavigationIcon(
                 onClick = onBack,
@@ -142,7 +161,12 @@ private fun LoadedProjectDetailsContent(
                 icon = painterResource(DesignRes.drawable.ic_add),
                 label = stringResource(Res.string.new_structure),
             )
-        }
+            AdaptiveTonalButton(
+                onClick = onNewInspectionClick,
+                icon = painterResource(DesignRes.drawable.ic_add),
+                label = stringResource(Res.string.new_inspection),
+            )
+        },
     ) { paddingValues ->
         Box(
             modifier =
@@ -163,6 +187,13 @@ private fun LoadedProjectDetailsContent(
                     ),
             ) {
                 item {
+                    Text(
+                        text = stringResource(Res.string.structures_section_title),
+                        style = MaterialTheme.typography.titleMedium,
+                        modifier = Modifier.padding(bottom = 8.dp),
+                    )
+                }
+                item {
                     Box(
                         modifier = Modifier.fillMaxWidth(),
                         contentAlignment = Alignment.TopCenter,
@@ -175,10 +206,11 @@ private fun LoadedProjectDetailsContent(
                         ) {
                             state.structures.forEach { structure ->
                                 StructureCard(
-                                    modifier = Modifier
-                                        .widthIn(min = 150.dp)
-                                        .weight(1f)
-                                        .heightIn(min = 200.dp, max = 260.dp),
+                                    modifier =
+                                        Modifier
+                                            .widthIn(min = 150.dp)
+                                            .weight(1f)
+                                            .heightIn(min = 200.dp, max = 260.dp),
                                     feStructure = structure,
                                     onClick = { onStructureClick(structure.structure.id) },
                                 )
@@ -198,6 +230,52 @@ private fun LoadedProjectDetailsContent(
                         }
                     }
                 }
+                item {
+                    Spacer(modifier = Modifier.height(24.dp))
+                    Text(
+                        text = stringResource(Res.string.inspections_section_title),
+                        style = MaterialTheme.typography.titleMedium,
+                        modifier = Modifier.padding(bottom = 8.dp),
+                    )
+                }
+                item {
+                    Box(
+                        modifier = Modifier.fillMaxWidth(),
+                        contentAlignment = Alignment.TopCenter,
+                    ) {
+                        FlowRow(
+                            modifier = Modifier.widthIn(max = 936.dp),
+                            horizontalArrangement = Arrangement.spacedBy(12.dp),
+                            verticalArrangement = Arrangement.spacedBy(12.dp),
+                            maxItemsInEachRow = 3,
+                        ) {
+                            state.inspections.forEach { inspection ->
+                                InspectionCard(
+                                    modifier =
+                                        Modifier
+                                            .widthIn(min = 150.dp)
+                                            .weight(1f),
+                                    feInspection = inspection,
+                                    onClick = {
+                                        onInspectionClick(inspection.inspection.id)
+                                    },
+                                )
+                            }
+                        }
+                    }
+                }
+                item {
+                    AnimatedVisibility(
+                        visible = state.inspectionStatus == InspectionsUiStatus.LOADING,
+                        exit = fadeOut(),
+                    ) {
+                        Box(
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            LoadingIndicator()
+                        }
+                    }
+                }
             }
 
             var isShowingDeleteConfirmation by remember { mutableStateOf(false) }
@@ -207,7 +285,7 @@ private fun LoadedProjectDetailsContent(
                     onDelete = onDelete,
                     onDismiss = {
                         isShowingDeleteConfirmation = false
-                    }
+                    },
                 )
             }
             HorizontalFloatingToolbar(
@@ -286,17 +364,21 @@ private fun LoadedProjectDetailsContentPreview() {
             state =
                 ProjectDetailsUiState(
                     projectStatus = ProjectDetailsUiStatus.LOADED,
-                    project = FrontendProject(
-                        project = Project(
-                            id = UuidProvider.getUuid(),
-                            name = "Example project name",
-                            address = "Example project address",
-                            updatedAt = Timestamp(0L),
+                    project =
+                        FrontendProject(
+                            project =
+                                Project(
+                                    id = UuidProvider.getUuid(),
+                                    name = "Example project name",
+                                    address = "Example project address",
+                                    updatedAt = Timestamp(0L),
+                                ),
                         ),
-                    )
                 ),
             onNewStructureClick = {},
             onStructureClick = {},
+            onNewInspectionClick = {},
+            onInspectionClick = {},
             onBack = {},
             onEditClick = {},
             onDelete = {},
