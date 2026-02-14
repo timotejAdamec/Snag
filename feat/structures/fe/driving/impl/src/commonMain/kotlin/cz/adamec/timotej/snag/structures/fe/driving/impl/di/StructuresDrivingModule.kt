@@ -17,6 +17,8 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.navigation3.scene.DialogSceneStrategy
+import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
+import cz.adamec.timotej.snag.feat.findings.fe.driving.api.FindingCreationRouteFactory
 import cz.adamec.timotej.snag.feat.findings.fe.driving.api.FindingDetailRoute
 import cz.adamec.timotej.snag.feat.findings.fe.driving.api.FindingDetailRouteFactory
 import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureCreationRoute
@@ -74,6 +76,7 @@ internal inline fun <reified T : StructureFloorPlanRoute> Module.structureFloorP
     ) { route ->
         val structureDetailBackStack = get<StructureDetailBackStack>()
         val structureEditRouteFactory = koinInject<StructureEditRouteFactory>()
+        val findingCreationRouteFactory = koinInject<FindingCreationRouteFactory>()
         val selectedFindingId by derivedStateOf {
             structureDetailBackStack.value
                 .filterIsInstance<FindingDetailRoute>()
@@ -100,6 +103,16 @@ internal inline fun <reified T : StructureFloorPlanRoute> Module.structureFloorP
                     factory.create(
                         structureId = route.structureId,
                         findingId = findingId,
+                    ),
+                )
+            },
+            onCreateFinding = { coordinate: RelativeCoordinate, findingTypeKey: String ->
+                val rootBackStack = get<SnagBackStack>()
+                rootBackStack.value.add(
+                    findingCreationRouteFactory.create(
+                        structureId = route.structureId,
+                        coordinate = coordinate,
+                        findingTypeKey = findingTypeKey,
                     ),
                 )
             },

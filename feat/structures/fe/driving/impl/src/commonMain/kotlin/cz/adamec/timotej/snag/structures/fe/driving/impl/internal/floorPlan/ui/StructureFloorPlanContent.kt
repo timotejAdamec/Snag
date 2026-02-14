@@ -32,8 +32,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.BackNavigationIcon
 import cz.adamec.timotej.snag.lib.design.fe.scenes.LocalSheetPeekHeight
+import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.floorPlan.ui.components.FindingTypePickerDialog
 import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.floorPlan.ui.components.FloorPlanAddPlaceholder
 import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.floorPlan.ui.components.FloorPlanWithPins
 import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.floorPlan.ui.components.StructureDeletionAlertDialog
@@ -57,6 +59,7 @@ internal fun StructureFloorPlanContent(
     onEditClick: () -> Unit,
     onDelete: () -> Unit,
     onFindingClick: (Uuid) -> Unit,
+    onCreateFinding: (coordinate: RelativeCoordinate, findingTypeKey: String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(
@@ -85,6 +88,7 @@ internal fun StructureFloorPlanContent(
                     onEditClick = onEditClick,
                     onDelete = onDelete,
                     onFindingClick = onFindingClick,
+                    onCreateFinding = onCreateFinding,
                 )
             }
 
@@ -103,6 +107,7 @@ private fun LoadedStructureDetailsContent(
     onEditClick: () -> Unit,
     onDelete: () -> Unit,
     onFindingClick: (Uuid) -> Unit,
+    onCreateFinding: (coordinate: RelativeCoordinate, findingTypeKey: String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Scaffold(
@@ -135,6 +140,10 @@ private fun LoadedStructureDetailsContent(
                     .padding(paddingValues)
                     .consumeWindowInsets(paddingValues),
         ) {
+            var pendingCreationCoordinate by remember {
+                mutableStateOf<RelativeCoordinate?>(null)
+            }
+
             val floorPlanUrl = state.feStructure?.structure?.floorPlanUrl
             if (floorPlanUrl != null) {
                 FloorPlanWithPins(
@@ -144,12 +153,27 @@ private fun LoadedStructureDetailsContent(
                     findings = state.findings,
                     selectedFindingId = state.selectedFindingId,
                     onFindingClick = onFindingClick,
+                    onEmptySpaceTap = { coordinate ->
+                        pendingCreationCoordinate = coordinate
+                    },
                 )
             } else {
                 FloorPlanAddPlaceholder(
                     modifier =
                         Modifier
                             .fillMaxSize(),
+                )
+            }
+
+            pendingCreationCoordinate?.let { coordinate ->
+                FindingTypePickerDialog(
+                    onTypeSelected = { findingTypeKey ->
+                        onCreateFinding(coordinate, findingTypeKey)
+                        pendingCreationCoordinate = null
+                    },
+                    onDismiss = {
+                        pendingCreationCoordinate = null
+                    },
                 )
             }
 
