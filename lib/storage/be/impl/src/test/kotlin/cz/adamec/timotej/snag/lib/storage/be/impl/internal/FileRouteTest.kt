@@ -14,6 +14,7 @@ package cz.adamec.timotej.snag.lib.storage.be.impl.internal
 
 import cz.adamec.timotej.snag.configuration.be.AppConfiguration
 import cz.adamec.timotej.snag.lib.storage.be.test.FakeStorageService
+import cz.adamec.timotej.snag.network.be.test.jsonClient
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
 import io.ktor.client.call.body
 import io.ktor.client.request.delete
@@ -22,14 +23,12 @@ import io.ktor.client.request.forms.submitFormWithBinaryData
 import io.ktor.http.Headers
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
-import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.testing.ApplicationTestBuilder
 import io.ktor.server.testing.testApplication
 import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
-import io.ktor.client.plugins.contentnegotiation.ContentNegotiation as ClientContentNegotiation
 
 class FileRouteTest : BackendKoinInitializedTest() {
     private val fakeStorageService: FakeStorageService by inject()
@@ -42,11 +41,6 @@ class FileRouteTest : BackendKoinInitializedTest() {
             }
         }
     }
-
-    private fun ApplicationTestBuilder.jsonClient() =
-        createClient {
-            install(ClientContentNegotiation) { json() }
-        }
 
     @Test
     fun `POST file upload returns URL`() =
