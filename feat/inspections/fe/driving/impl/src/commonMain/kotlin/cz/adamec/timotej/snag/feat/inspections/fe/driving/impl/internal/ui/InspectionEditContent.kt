@@ -29,6 +29,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextOverflow
 import cz.adamec.timotej.snag.feat.inspections.fe.driving.impl.internal.vm.InspectionEditUiState
 import cz.adamec.timotej.snag.lib.design.fe.dialog.FullScreenDialogMeasurements
 import org.jetbrains.compose.resources.painterResource
@@ -79,6 +80,7 @@ internal fun InspectionEditContent(
                     Text(
                         text = text,
                         maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
                     )
                 },
                 navigationIcon = {

@@ -18,6 +18,9 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -29,6 +32,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextOverflow
 import cz.adamec.timotej.snag.lib.design.fe.dialog.FullScreenDialogMeasurements
 import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.structureDetailsEdit.vm.StructureDetailsEditUiState
 import org.jetbrains.compose.resources.painterResource
@@ -72,6 +76,7 @@ internal fun StructureDetailsEditContent(
                     Text(
                         text = text,
                         maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
                     )
                 },
                 navigationIcon = {
@@ -108,7 +113,8 @@ internal fun StructureDetailsEditContent(
                 Modifier
                     .padding(paddingValues)
                     .padding(horizontal = FullScreenDialogMeasurements.HorizontalPadding)
-                    .consumeWindowInsets(paddingValues),
+                    .consumeWindowInsets(paddingValues)
+                    .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(FullScreenDialogMeasurements.ElementSpacing),
         ) {
             FloorPlanEditSection(
@@ -127,7 +133,7 @@ internal fun StructureDetailsEditContent(
                     Text(
                         text =
                             state.structureNameError?.let { stringResource(it) }
-                                ?: stringResource(Res.string.required) + "*",
+                                ?: (stringResource(Res.string.required) + "*"),
                     )
                 },
                 value = state.structureName,

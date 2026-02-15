@@ -30,6 +30,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.BackNavigationIcon
 import cz.adamec.timotej.snag.lib.design.fe.scenes.LocalSheetPeekHeight
@@ -115,6 +116,8 @@ private fun LoadedStructureDetailsContent(
                                 ?.structure
                                 ?.name
                                 .orEmpty(),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
                     )
                 },
                 navigationIcon = {

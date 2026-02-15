@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -39,6 +40,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import cz.adamec.timotej.snag.feat.findings.business.FindingType
@@ -101,6 +103,7 @@ internal fun FindingDetailsEditContent(
                     Text(
                         text = text,
                         maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
                     )
                 },
                 navigationIcon = {
@@ -136,7 +139,8 @@ internal fun FindingDetailsEditContent(
             modifier =
                 Modifier
                     .padding(paddingValues)
-                    .padding(horizontal = FullScreenDialogMeasurements.HorizontalPadding),
+                    .padding(horizontal = FullScreenDialogMeasurements.HorizontalPadding)
+                    .consumeWindowInsets(paddingValues),
             verticalArrangement = Arrangement.spacedBy(FullScreenDialogMeasurements.ElementSpacing),
         ) {
             OutlinedTextField(
@@ -149,7 +153,7 @@ internal fun FindingDetailsEditContent(
                     Text(
                         text =
                             state.findingNameError?.let { stringResource(it) }
-                                ?: stringResource(Res.string.required) + "*",
+                                ?: (stringResource(Res.string.required) + "*"),
                     )
                 },
                 value = state.findingName,

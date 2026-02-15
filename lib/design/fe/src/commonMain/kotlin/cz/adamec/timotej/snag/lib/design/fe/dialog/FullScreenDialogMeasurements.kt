@@ -14,6 +14,9 @@ package cz.adamec.timotej.snag.lib.design.fe.dialog
 
 import androidx.compose.ui.unit.dp
 
+/**
+ * Full screen as a type of dialog. It is full screen on mobile and large screens this is not full screen.
+ */
 object FullScreenDialogMeasurements {
     val HorizontalPadding = 24.dp
     val ElementSpacing = 8.dp
