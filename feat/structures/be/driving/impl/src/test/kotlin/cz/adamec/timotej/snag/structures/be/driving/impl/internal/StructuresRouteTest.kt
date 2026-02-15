@@ -13,6 +13,7 @@
 package cz.adamec.timotej.snag.structures.be.driving.impl.internal
 
 import cz.adamec.timotej.snag.configuration.be.AppConfiguration
+import cz.adamec.timotej.snag.network.be.test.jsonClient
 import cz.adamec.timotej.snag.feat.structures.be.model.BackendStructure
 import cz.adamec.timotej.snag.feat.structures.business.Structure
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
@@ -32,7 +33,6 @@ import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
-import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.testing.ApplicationTestBuilder
 import io.ktor.server.testing.testApplication
 import org.koin.test.inject
@@ -41,7 +41,6 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.uuid.Uuid
-import io.ktor.client.plugins.contentnegotiation.ContentNegotiation as ClientContentNegotiation
 
 class StructuresRouteTest : BackendKoinInitializedTest() {
     private val dataSource: StructuresDb by inject()
@@ -68,11 +67,6 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
             }
         }
     }
-
-    private fun ApplicationTestBuilder.jsonClient() =
-        createClient {
-            install(ClientContentNegotiation) { json() }
-        }
 
     // region DELETE /structures/{id}
 

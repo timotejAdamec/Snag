@@ -9,5 +9,4 @@ dependencies {
     testImplementation(project(":feat:findings:be:ports"))
     testImplementation(project(":feat:projects:be:ports"))
     testImplementation(project(":feat:structures:be:ports"))
-    testImplementation(libs.ktor.client.content.negotiation)
 }

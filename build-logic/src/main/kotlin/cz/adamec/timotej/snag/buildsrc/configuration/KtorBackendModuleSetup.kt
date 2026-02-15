@@ -28,6 +28,6 @@ internal fun Project.configureNetworkBackendModule() {
         implementation(libs.library("ktor-server-core"))
         implementation(libs.library("koin-ktor"))
         implementation(libs.library("ktor-serialization-kotlinx-json"))
-        testImplementation(libs.library("ktor-server-test-host"))
+        testImplementation(project(":lib:network:be:test"))
     }
 }
