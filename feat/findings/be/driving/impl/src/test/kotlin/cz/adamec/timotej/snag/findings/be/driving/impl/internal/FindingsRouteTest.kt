@@ -13,6 +13,7 @@
 package cz.adamec.timotej.snag.findings.be.driving.impl.internal
 
 import cz.adamec.timotej.snag.configuration.be.AppConfiguration
+import cz.adamec.timotej.snag.network.be.test.jsonClient
 import cz.adamec.timotej.snag.feat.findings.be.model.BackendFinding
 import cz.adamec.timotej.snag.feat.findings.business.Finding
 import cz.adamec.timotej.snag.feat.findings.business.FindingType
@@ -41,7 +42,6 @@ import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
-import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.testing.ApplicationTestBuilder
 import io.ktor.server.testing.testApplication
 import org.koin.test.inject
@@ -50,7 +50,6 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.uuid.Uuid
-import io.ktor.client.plugins.contentnegotiation.ContentNegotiation as ClientContentNegotiation
 
 class FindingsRouteTest : BackendKoinInitializedTest() {
     private val dataSource: FindingsDb by inject()
@@ -91,11 +90,6 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
             }
         }
     }
-
-    private fun ApplicationTestBuilder.jsonClient() =
-        createClient {
-            install(ClientContentNegotiation) { json() }
-        }
 
     // region DELETE /findings/{id}
 

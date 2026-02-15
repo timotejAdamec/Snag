@@ -13,6 +13,7 @@
 package cz.adamec.timotej.snag.projects.be.driving.impl.internal
 
 import cz.adamec.timotej.snag.configuration.be.AppConfiguration
+import cz.adamec.timotej.snag.network.be.test.jsonClient
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.projects.be.driving.contract.DeleteProjectApiDto
 import cz.adamec.timotej.snag.projects.be.driving.contract.ProjectApiDto
@@ -29,7 +30,6 @@ import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
-import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.testing.ApplicationTestBuilder
 import io.ktor.server.testing.testApplication
 import org.koin.test.inject
@@ -38,7 +38,6 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.uuid.Uuid
-import io.ktor.client.plugins.contentnegotiation.ContentNegotiation as ClientContentNegotiation
 
 class ProjectsRouteTest : BackendKoinInitializedTest() {
     private val dataSource: ProjectsDb by inject()
@@ -51,11 +50,6 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
             }
         }
     }
-
-    private fun ApplicationTestBuilder.jsonClient() =
-        createClient {
-            install(ClientContentNegotiation) { json() }
-        }
 
     @Test
     fun `GET projects returns empty list when no projects exist`() =
