@@ -49,12 +49,13 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
     private suspend fun createParentProject() {
         projectsDb.saveProject(
             BackendProject(
-                project = Project(
-                    id = PROJECT_ID,
-                    name = "Test Project",
-                    address = "Test Address",
-                    updatedAt = Timestamp(1L),
-                ),
+                project =
+                    Project(
+                        id = PROJECT_ID,
+                        name = "Test Project",
+                        address = "Test Address",
+                        updatedAt = Timestamp(1L),
+                    ),
             ),
         )
     }
@@ -77,21 +78,23 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
             createParentProject()
             dataSource.saveStructure(
                 BackendStructure(
-                    structure = Structure(
-                        id = TEST_ID_1,
-                        projectId = PROJECT_ID,
-                        name = "To Delete",
-                        floorPlanUrl = null,
-                        updatedAt = Timestamp(100L),
-                    ),
+                    structure =
+                        Structure(
+                            id = TEST_ID_1,
+                            projectId = PROJECT_ID,
+                            name = "To Delete",
+                            floorPlanUrl = null,
+                            updatedAt = Timestamp(100L),
+                        ),
                 ),
             )
             val client = jsonClient()
 
-            val response = client.delete("/structures/$TEST_ID_1") {
-                contentType(ContentType.Application.Json)
-                setBody(DeleteStructureApiDto(deletedAt = Timestamp(200L)))
-            }
+            val response =
+                client.delete("/structures/$TEST_ID_1") {
+                    contentType(ContentType.Application.Json)
+                    setBody(DeleteStructureApiDto(deletedAt = Timestamp(200L)))
+                }
 
             assertEquals(HttpStatusCode.NoContent, response.status)
         }
@@ -103,13 +106,14 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
             createParentProject()
             dataSource.saveStructure(
                 BackendStructure(
-                    structure = Structure(
-                        id = TEST_ID_1,
-                        projectId = PROJECT_ID,
-                        name = "To Delete",
-                        floorPlanUrl = null,
-                        updatedAt = Timestamp(100L),
-                    ),
+                    structure =
+                        Structure(
+                            id = TEST_ID_1,
+                            projectId = PROJECT_ID,
+                            name = "To Delete",
+                            floorPlanUrl = null,
+                            updatedAt = Timestamp(100L),
+                        ),
                 ),
             )
             val client = jsonClient()
@@ -134,21 +138,23 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
             createParentProject()
             dataSource.saveStructure(
                 BackendStructure(
-                    structure = Structure(
-                        id = TEST_ID_1,
-                        projectId = PROJECT_ID,
-                        name = "Existing",
-                        floorPlanUrl = null,
-                        updatedAt = Timestamp(300L),
-                    ),
+                    structure =
+                        Structure(
+                            id = TEST_ID_1,
+                            projectId = PROJECT_ID,
+                            name = "Existing",
+                            floorPlanUrl = null,
+                            updatedAt = Timestamp(300L),
+                        ),
                 ),
             )
             val client = jsonClient()
 
-            val response = client.delete("/structures/$TEST_ID_1") {
-                contentType(ContentType.Application.Json)
-                setBody(DeleteStructureApiDto(deletedAt = Timestamp(200L)))
-            }
+            val response =
+                client.delete("/structures/$TEST_ID_1") {
+                    contentType(ContentType.Application.Json)
+                    setBody(DeleteStructureApiDto(deletedAt = Timestamp(200L)))
+                }
 
             assertEquals(HttpStatusCode.OK, response.status)
             val body = response.body<StructureApiDto>()
@@ -161,10 +167,11 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
             configureApp()
             val client = jsonClient()
 
-            val response = client.delete("/structures/not-a-uuid") {
-                contentType(ContentType.Application.Json)
-                setBody(DeleteStructureApiDto(deletedAt = Timestamp(200L)))
-            }
+            val response =
+                client.delete("/structures/not-a-uuid") {
+                    contentType(ContentType.Application.Json)
+                    setBody(DeleteStructureApiDto(deletedAt = Timestamp(200L)))
+                }
 
             assertEquals(HttpStatusCode.BadRequest, response.status)
         }
@@ -175,10 +182,11 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
             configureApp()
             val client = jsonClient()
 
-            val response = client.delete("/structures/$TEST_ID_1") {
-                contentType(ContentType.Application.Json)
-                setBody("{\"invalid\": true}")
-            }
+            val response =
+                client.delete("/structures/$TEST_ID_1") {
+                    contentType(ContentType.Application.Json)
+                    setBody("{\"invalid\": true}")
+                }
 
             assertEquals(HttpStatusCode.BadRequest, response.status)
         }
@@ -206,24 +214,26 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
             createParentProject()
             dataSource.saveStructure(
                 BackendStructure(
-                    structure = Structure(
-                        id = TEST_ID_1,
-                        projectId = PROJECT_ID,
-                        name = "Structure 1",
-                        floorPlanUrl = "http://example.com/plan.png",
-                        updatedAt = Timestamp(100L),
-                    ),
+                    structure =
+                        Structure(
+                            id = TEST_ID_1,
+                            projectId = PROJECT_ID,
+                            name = "Structure 1",
+                            floorPlanUrl = "http://example.com/plan.png",
+                            updatedAt = Timestamp(100L),
+                        ),
                 ),
             )
             dataSource.saveStructure(
                 BackendStructure(
-                    structure = Structure(
-                        id = TEST_ID_2,
-                        projectId = PROJECT_ID,
-                        name = "Structure 2",
-                        floorPlanUrl = null,
-                        updatedAt = Timestamp(200L),
-                    ),
+                    structure =
+                        Structure(
+                            id = TEST_ID_2,
+                            projectId = PROJECT_ID,
+                            name = "Structure 2",
+                            floorPlanUrl = null,
+                            updatedAt = Timestamp(200L),
+                        ),
                 ),
             )
             val client = jsonClient()
@@ -244,24 +254,26 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
             createParentProject()
             dataSource.saveStructure(
                 BackendStructure(
-                    structure = Structure(
-                        id = TEST_ID_1,
-                        projectId = PROJECT_ID,
-                        name = "Active",
-                        floorPlanUrl = null,
-                        updatedAt = Timestamp(100L),
-                    ),
+                    structure =
+                        Structure(
+                            id = TEST_ID_1,
+                            projectId = PROJECT_ID,
+                            name = "Active",
+                            floorPlanUrl = null,
+                            updatedAt = Timestamp(100L),
+                        ),
                 ),
             )
             dataSource.saveStructure(
                 BackendStructure(
-                    structure = Structure(
-                        id = TEST_ID_2,
-                        projectId = PROJECT_ID,
-                        name = "Deleted",
-                        floorPlanUrl = null,
-                        updatedAt = Timestamp(100L),
-                    ),
+                    structure =
+                        Structure(
+                            id = TEST_ID_2,
+                            projectId = PROJECT_ID,
+                            name = "Deleted",
+                            floorPlanUrl = null,
+                            updatedAt = Timestamp(100L),
+                        ),
                     deletedAt = Timestamp(200L),
                 ),
             )
@@ -285,13 +297,14 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
             createParentProject()
             dataSource.saveStructure(
                 BackendStructure(
-                    structure = Structure(
-                        id = TEST_ID_1,
-                        projectId = PROJECT_ID,
-                        name = "Deleted After Since",
-                        floorPlanUrl = null,
-                        updatedAt = Timestamp(50L),
-                    ),
+                    structure =
+                        Structure(
+                            id = TEST_ID_1,
+                            projectId = PROJECT_ID,
+                            name = "Deleted After Since",
+                            floorPlanUrl = null,
+                            updatedAt = Timestamp(50L),
+                        ),
                     deletedAt = Timestamp(150L),
                 ),
             )
@@ -312,24 +325,26 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
             createParentProject()
             dataSource.saveStructure(
                 BackendStructure(
-                    structure = Structure(
-                        id = TEST_ID_1,
-                        projectId = PROJECT_ID,
-                        name = "Old",
-                        floorPlanUrl = null,
-                        updatedAt = Timestamp(50L),
-                    ),
+                    structure =
+                        Structure(
+                            id = TEST_ID_1,
+                            projectId = PROJECT_ID,
+                            name = "Old",
+                            floorPlanUrl = null,
+                            updatedAt = Timestamp(50L),
+                        ),
                 ),
             )
             dataSource.saveStructure(
                 BackendStructure(
-                    structure = Structure(
-                        id = TEST_ID_2,
-                        projectId = PROJECT_ID,
-                        name = "Modified",
-                        floorPlanUrl = null,
-                        updatedAt = Timestamp(150L),
-                    ),
+                    structure =
+                        Structure(
+                            id = TEST_ID_2,
+                            projectId = PROJECT_ID,
+                            name = "Modified",
+                            floorPlanUrl = null,
+                            updatedAt = Timestamp(150L),
+                        ),
                 ),
             )
             val client = jsonClient()
@@ -364,17 +379,18 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
             createParentProject()
             val client = jsonClient()
 
-            val response = client.put("/projects/$PROJECT_ID/structures/$TEST_ID_1") {
-                contentType(ContentType.Application.Json)
-                setBody(
-                    PutStructureApiDto(
-                        projectId = PROJECT_ID,
-                        name = "New Structure",
-                        floorPlanUrl = null,
-                        updatedAt = Timestamp(100L),
-                    ),
-                )
-            }
+            val response =
+                client.put("/projects/$PROJECT_ID/structures/$TEST_ID_1") {
+                    contentType(ContentType.Application.Json)
+                    setBody(
+                        PutStructureApiDto(
+                            projectId = PROJECT_ID,
+                            name = "New Structure",
+                            floorPlanUrl = null,
+                            updatedAt = Timestamp(100L),
+                        ),
+                    )
+                }
 
             assertEquals(HttpStatusCode.NoContent, response.status)
         }
@@ -386,28 +402,30 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
             createParentProject()
             dataSource.saveStructure(
                 BackendStructure(
-                    structure = Structure(
-                        id = TEST_ID_1,
-                        projectId = PROJECT_ID,
-                        name = "Existing",
-                        floorPlanUrl = null,
-                        updatedAt = Timestamp(200L),
-                    ),
+                    structure =
+                        Structure(
+                            id = TEST_ID_1,
+                            projectId = PROJECT_ID,
+                            name = "Existing",
+                            floorPlanUrl = null,
+                            updatedAt = Timestamp(200L),
+                        ),
                 ),
             )
             val client = jsonClient()
 
-            val response = client.put("/projects/$PROJECT_ID/structures/$TEST_ID_1") {
-                contentType(ContentType.Application.Json)
-                setBody(
-                    PutStructureApiDto(
-                        projectId = PROJECT_ID,
-                        name = "New",
-                        floorPlanUrl = null,
-                        updatedAt = Timestamp(100L),
-                    ),
-                )
-            }
+            val response =
+                client.put("/projects/$PROJECT_ID/structures/$TEST_ID_1") {
+                    contentType(ContentType.Application.Json)
+                    setBody(
+                        PutStructureApiDto(
+                            projectId = PROJECT_ID,
+                            name = "New",
+                            floorPlanUrl = null,
+                            updatedAt = Timestamp(100L),
+                        ),
+                    )
+                }
 
             assertEquals(HttpStatusCode.OK, response.status)
             val body = response.body<StructureApiDto>()
@@ -422,29 +440,31 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
             createParentProject()
             dataSource.saveStructure(
                 BackendStructure(
-                    structure = Structure(
-                        id = TEST_ID_1,
-                        projectId = PROJECT_ID,
-                        name = "Deleted",
-                        floorPlanUrl = null,
-                        updatedAt = Timestamp(200L),
-                    ),
+                    structure =
+                        Structure(
+                            id = TEST_ID_1,
+                            projectId = PROJECT_ID,
+                            name = "Deleted",
+                            floorPlanUrl = null,
+                            updatedAt = Timestamp(200L),
+                        ),
                     deletedAt = Timestamp(300L),
                 ),
             )
             val client = jsonClient()
 
-            val response = client.put("/projects/$PROJECT_ID/structures/$TEST_ID_1") {
-                contentType(ContentType.Application.Json)
-                setBody(
-                    PutStructureApiDto(
-                        projectId = PROJECT_ID,
-                        name = "New",
-                        floorPlanUrl = null,
-                        updatedAt = Timestamp(100L),
-                    ),
-                )
-            }
+            val response =
+                client.put("/projects/$PROJECT_ID/structures/$TEST_ID_1") {
+                    contentType(ContentType.Application.Json)
+                    setBody(
+                        PutStructureApiDto(
+                            projectId = PROJECT_ID,
+                            name = "New",
+                            floorPlanUrl = null,
+                            updatedAt = Timestamp(100L),
+                        ),
+                    )
+                }
 
             assertEquals(HttpStatusCode.OK, response.status)
             val body = response.body<StructureApiDto>()
@@ -458,17 +478,18 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
             configureApp()
             val client = jsonClient()
 
-            val response = client.put("/projects/$PROJECT_ID/structures/not-a-uuid") {
-                contentType(ContentType.Application.Json)
-                setBody(
-                    PutStructureApiDto(
-                        projectId = PROJECT_ID,
-                        name = "New",
-                        floorPlanUrl = null,
-                        updatedAt = Timestamp(100L),
-                    ),
-                )
-            }
+            val response =
+                client.put("/projects/$PROJECT_ID/structures/not-a-uuid") {
+                    contentType(ContentType.Application.Json)
+                    setBody(
+                        PutStructureApiDto(
+                            projectId = PROJECT_ID,
+                            name = "New",
+                            floorPlanUrl = null,
+                            updatedAt = Timestamp(100L),
+                        ),
+                    )
+                }
 
             assertEquals(HttpStatusCode.BadRequest, response.status)
         }
@@ -479,10 +500,11 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
             configureApp()
             val client = jsonClient()
 
-            val response = client.put("/projects/$PROJECT_ID/structures/$TEST_ID_1") {
-                contentType(ContentType.Application.Json)
-                setBody("{\"invalid\": true}")
-            }
+            val response =
+                client.put("/projects/$PROJECT_ID/structures/$TEST_ID_1") {
+                    contentType(ContentType.Application.Json)
+                    setBody("{\"invalid\": true}")
+                }
 
             assertEquals(HttpStatusCode.BadRequest, response.status)
         }

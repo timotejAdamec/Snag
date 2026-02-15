@@ -23,16 +23,17 @@ internal class DeleteProjectUseCaseImpl(
 ) : DeleteProjectUseCase {
     override suspend operator fun invoke(request: DeleteProjectRequest): BackendProject? {
         logger.debug("Deleting project {} from local storage.", request.projectId)
-        return projectsDb.deleteProject(
-            id = request.projectId,
-            deletedAt = request.deletedAt,
-        ).also { newerProject ->
-            newerProject?.let {
-                logger.debug(
-                    "Found newer version of project {} in local storage. Returning it instead.",
-                    request.projectId
-                )
-            } ?: logger.debug("Deleted project {} from local storage.", request.projectId)
-        }
+        return projectsDb
+            .deleteProject(
+                id = request.projectId,
+                deletedAt = request.deletedAt,
+            ).also { newerProject ->
+                newerProject?.let {
+                    logger.debug(
+                        "Found newer version of project {} in local storage. Returning it instead.",
+                        request.projectId,
+                    )
+                } ?: logger.debug("Deleted project {} from local storage.", request.projectId)
+            }
     }
 }

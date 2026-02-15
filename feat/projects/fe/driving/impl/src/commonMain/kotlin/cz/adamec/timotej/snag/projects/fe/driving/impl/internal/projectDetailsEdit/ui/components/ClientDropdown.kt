@@ -44,9 +44,9 @@ import snag.feat.projects.fe.driving.impl.generated.resources.Res
 import snag.feat.projects.fe.driving.impl.generated.resources.client_label
 import snag.feat.projects.fe.driving.impl.generated.resources.create_new_client
 import snag.feat.projects.fe.driving.impl.generated.resources.none
-import snag.lib.design.fe.generated.resources.Res as DesignRes
 import snag.lib.design.fe.generated.resources.ic_add
 import kotlin.uuid.Uuid
+import snag.lib.design.fe.generated.resources.Res as DesignRes
 
 @Composable
 internal fun ClientDropdown(
@@ -157,4 +157,3 @@ private fun ClientDropdownPreview() {
         )
     }
 }
-

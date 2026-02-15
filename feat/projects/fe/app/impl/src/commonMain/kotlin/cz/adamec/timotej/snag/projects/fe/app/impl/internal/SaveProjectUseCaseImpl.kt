@@ -35,13 +35,14 @@ class SaveProjectUseCaseImpl(
     override suspend operator fun invoke(request: SaveProjectRequest): OfflineFirstDataResult<Uuid> {
         val project =
             FrontendProject(
-                project = Project(
-                    id = request.id ?: uuidProvider.getUuid(),
-                    name = request.name,
-                    address = request.address,
-                    clientId = request.clientId,
-                    updatedAt = timestampProvider.getNowTimestamp(),
-                ),
+                project =
+                    Project(
+                        id = request.id ?: uuidProvider.getUuid(),
+                        name = request.name,
+                        address = request.address,
+                        clientId = request.clientId,
+                        updatedAt = timestampProvider.getNowTimestamp(),
+                    ),
             )
 
         return projectsDb

@@ -44,12 +44,13 @@ internal class StructuresRoute(
                 val id = getIdFromParameters()
                 val deleteStructureDto = getDtoFromBody<DeleteStructureApiDto>()
 
-                val newerStructure = deleteStructureUseCase(
-                    DeleteStructureRequest(
-                        structureId = id,
-                        deletedAt = deleteStructureDto.deletedAt,
+                val newerStructure =
+                    deleteStructureUseCase(
+                        DeleteStructureRequest(
+                            structureId = id,
+                            deletedAt = deleteStructureDto.deletedAt,
+                        ),
                     )
-                )
 
                 newerStructure?.let {
                     call.respond(it.toDto())

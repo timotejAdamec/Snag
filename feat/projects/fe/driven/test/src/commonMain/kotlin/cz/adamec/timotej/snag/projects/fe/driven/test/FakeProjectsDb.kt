@@ -28,20 +28,15 @@ class FakeProjectsDb : ProjectsDb {
             ops.forcedFailure = value
         }
 
-    override fun getAllProjectsFlow(): Flow<OfflineFirstDataResult<List<FrontendProject>>> =
-        ops.allItemsFlow()
+    override fun getAllProjectsFlow(): Flow<OfflineFirstDataResult<List<FrontendProject>>> = ops.allItemsFlow()
 
-    override fun getProjectFlow(id: Uuid): Flow<OfflineFirstDataResult<FrontendProject?>> =
-        ops.itemByIdFlow(id)
+    override fun getProjectFlow(id: Uuid): Flow<OfflineFirstDataResult<FrontendProject?>> = ops.itemByIdFlow(id)
 
-    override suspend fun saveProject(project: FrontendProject): OfflineFirstDataResult<Unit> =
-        ops.saveOneItem(project)
+    override suspend fun saveProject(project: FrontendProject): OfflineFirstDataResult<Unit> = ops.saveOneItem(project)
 
-    override suspend fun saveProjects(projects: List<FrontendProject>): OfflineFirstDataResult<Unit> =
-        ops.saveManyItems(projects)
+    override suspend fun saveProjects(projects: List<FrontendProject>): OfflineFirstDataResult<Unit> = ops.saveManyItems(projects)
 
-    override suspend fun deleteProject(id: Uuid): OfflineFirstDataResult<Unit> =
-        ops.deleteItem(id)
+    override suspend fun deleteProject(id: Uuid): OfflineFirstDataResult<Unit> = ops.deleteItem(id)
 
     fun setProject(project: FrontendProject) = ops.setItem(project)
 }

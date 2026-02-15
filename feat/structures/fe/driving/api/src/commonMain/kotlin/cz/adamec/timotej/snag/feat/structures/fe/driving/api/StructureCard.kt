@@ -12,30 +12,27 @@
 
 package cz.adamec.timotej.snag.feat.structures.fe.driving.api
 
-import cz.adamec.timotej.snag.feat.structures.fe.model.FrontendStructure
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.Card
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import cz.adamec.timotej.snag.feat.structures.business.Structure
+import cz.adamec.timotej.snag.feat.structures.fe.model.FrontendStructure
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.common.UuidProvider
 import cz.adamec.timotej.snag.lib.design.fe.theme.SnagTheme
@@ -53,10 +50,11 @@ fun StructureCard(
         if (feStructure.structure.floorPlanUrl != null) {
             Column {
                 AsyncImage(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
-                        .clip(MaterialTheme.shapes.medium),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
+                            .clip(MaterialTheme.shapes.medium),
                     model = feStructure.structure.floorPlanUrl,
                     contentDescription = feStructure.structure.name,
                     contentScale = ContentScale.Crop,
@@ -96,15 +94,16 @@ private fun StructureCardPreview() {
             ) {
                 StructureCard(
                     modifier = Modifier.size(350.dp),
-                    feStructure = FrontendStructure(
-                        Structure(
-                            id = UuidProvider.getUuid(),
-                            projectId = UuidProvider.getUuid(),
-                            name = "Structure Name",
-                            floorPlanUrl = "https://saterdesign.com/cdn/shop/products/6842.M_1200x.jpeg?v=1547874083",
-                            updatedAt = Timestamp(1L),
-                        )
-                    ),
+                    feStructure =
+                        FrontendStructure(
+                            Structure(
+                                id = UuidProvider.getUuid(),
+                                projectId = UuidProvider.getUuid(),
+                                name = "Structure Name",
+                                floorPlanUrl = "https://saterdesign.com/cdn/shop/products/6842.M_1200x.jpeg?v=1547874083",
+                                updatedAt = Timestamp(1L),
+                            ),
+                        ),
                     onClick = {},
                 )
             }

@@ -41,22 +41,18 @@ class FakeClientsApi : ClientsApi {
             ops.modifiedSinceResults = value
         }
 
-    override suspend fun getClients(): OnlineDataResult<List<FrontendClient>> =
-        ops.getAllItems()
+    override suspend fun getClients(): OnlineDataResult<List<FrontendClient>> = ops.getAllItems()
 
-    override suspend fun getClient(id: Uuid): OnlineDataResult<FrontendClient> =
-        ops.getItemById(id)
+    override suspend fun getClient(id: Uuid): OnlineDataResult<FrontendClient> = ops.getItemById(id)
 
-    override suspend fun saveClient(client: FrontendClient): OnlineDataResult<FrontendClient?> =
-        ops.saveItem(client)
+    override suspend fun saveClient(client: FrontendClient): OnlineDataResult<FrontendClient?> = ops.saveItem(client)
 
     override suspend fun deleteClient(
         id: Uuid,
         deletedAt: Timestamp,
     ): OnlineDataResult<Unit> = ops.deleteItemById(id)
 
-    override suspend fun getClientsModifiedSince(since: Timestamp): OnlineDataResult<List<ClientSyncResult>> =
-        ops.getModifiedSinceItems()
+    override suspend fun getClientsModifiedSince(since: Timestamp): OnlineDataResult<List<ClientSyncResult>> = ops.getModifiedSinceItems()
 
     fun setClient(client: FrontendClient) = ops.setItem(client)
 }

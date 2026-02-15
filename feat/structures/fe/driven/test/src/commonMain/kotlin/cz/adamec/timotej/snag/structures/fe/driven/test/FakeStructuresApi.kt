@@ -48,8 +48,10 @@ class FakeStructuresApi : StructuresApi {
     override suspend fun saveStructure(frontendStructure: FrontendStructure): OnlineDataResult<FrontendStructure?> =
         ops.saveItem(frontendStructure)
 
-    override suspend fun deleteStructure(id: Uuid, deletedAt: Timestamp): OnlineDataResult<Unit> =
-        ops.deleteItemById(id)
+    override suspend fun deleteStructure(
+        id: Uuid,
+        deletedAt: Timestamp,
+    ): OnlineDataResult<Unit> = ops.deleteItemById(id)
 
     override suspend fun getStructuresModifiedSince(
         projectId: Uuid,

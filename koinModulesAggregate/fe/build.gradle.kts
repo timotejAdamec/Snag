@@ -21,7 +21,9 @@ kotlin {
             implementation(projects.lib.core.fe)
             implementation(projects.lib.configuration.fe.impl)
             implementation(projects.lib.network.fe)
+            implementation(projects.lib.storage.fe.impl)
             implementation(projects.feat.shared.database.fe.impl)
+            implementation(projects.feat.shared.storage.fe)
             implementation(projects.feat.shared.rules.business.impl)
 
             // Sync layer

@@ -109,7 +109,13 @@ private fun LoadedStructureDetailsContent(
         topBar = {
             TopAppBar(
                 title = {
-                    Text(text = state.feStructure?.structure?.name.orEmpty())
+                    Text(
+                        text =
+                            state.feStructure
+                                ?.structure
+                                ?.name
+                                .orEmpty(),
+                    )
                 },
                 navigationIcon = {
                     BackNavigationIcon(
@@ -138,8 +144,9 @@ private fun LoadedStructureDetailsContent(
                 )
             } else {
                 FloorPlanPlaceholder(
-                    modifier = Modifier
-                        .fillMaxSize(),
+                    modifier =
+                        Modifier
+                            .fillMaxSize(),
                 )
             }
 
@@ -153,9 +160,12 @@ private fun LoadedStructureDetailsContent(
                     },
                 )
             }
-            val toolbarBottomPadding = if (LocalSheetPeekHeight.current == 0.dp) {
-                16.dp
-            } else LocalSheetPeekHeight.current
+            val toolbarBottomPadding =
+                if (LocalSheetPeekHeight.current == 0.dp) {
+                    16.dp
+                } else {
+                    LocalSheetPeekHeight.current
+                }
             HorizontalFloatingToolbar(
                 modifier =
                     Modifier

@@ -32,15 +32,15 @@ internal class StructureSyncHandler(
     override val entityTypeId: String = STRUCTURE_SYNC_ENTITY_TYPE
     override val entityName: String = "structure"
 
-    override fun getEntityFlow(entityId: Uuid): Flow<OfflineFirstDataResult<FrontendStructure?>> =
-        structuresDb.getStructureFlow(entityId)
+    override fun getEntityFlow(entityId: Uuid): Flow<OfflineFirstDataResult<FrontendStructure?>> = structuresDb.getStructureFlow(entityId)
 
     override suspend fun saveEntityToApi(entity: FrontendStructure): OnlineDataResult<FrontendStructure?> =
         structuresApi.saveStructure(entity)
 
-    override suspend fun deleteEntityFromApi(entityId: Uuid, deletedAt: Timestamp): OnlineDataResult<Unit> =
-        structuresApi.deleteStructure(entityId, deletedAt)
+    override suspend fun deleteEntityFromApi(
+        entityId: Uuid,
+        deletedAt: Timestamp,
+    ): OnlineDataResult<Unit> = structuresApi.deleteStructure(entityId, deletedAt)
 
-    override suspend fun saveEntityToDb(entity: FrontendStructure): OfflineFirstDataResult<Unit> =
-        structuresDb.saveStructure(entity)
+    override suspend fun saveEntityToDb(entity: FrontendStructure): OfflineFirstDataResult<Unit> = structuresDb.saveStructure(entity)
 }

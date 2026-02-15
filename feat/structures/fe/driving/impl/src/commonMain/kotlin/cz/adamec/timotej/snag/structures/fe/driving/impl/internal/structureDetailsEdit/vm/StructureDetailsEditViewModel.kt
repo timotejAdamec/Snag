@@ -14,12 +14,17 @@ package cz.adamec.timotej.snag.structures.fe.driving.impl.internal.structureDeta
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cz.adamec.timotej.snag.lib.core.common.UuidProvider
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
+import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError.Unknown
+import cz.adamec.timotej.snag.structures.fe.app.api.DeleteFloorPlanImageUseCase
 import cz.adamec.timotej.snag.structures.fe.app.api.GetStructureUseCase
 import cz.adamec.timotej.snag.structures.fe.app.api.SaveStructureUseCase
+import cz.adamec.timotej.snag.structures.fe.app.api.UploadFloorPlanImageUseCase
 import cz.adamec.timotej.snag.structures.fe.app.api.model.SaveStructureRequest
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,6 +32,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.koin.core.annotation.InjectedParam
 import snag.lib.design.fe.generated.resources.Res
 import snag.lib.design.fe.generated.resources.error_field_required
@@ -37,6 +43,8 @@ internal class StructureDetailsEditViewModel(
     @InjectedParam private val projectId: Uuid?,
     private val getStructureUseCase: GetStructureUseCase,
     private val saveStructureUseCase: SaveStructureUseCase,
+    private val uploadFloorPlanImageUseCase: UploadFloorPlanImageUseCase,
+    private val deleteFloorPlanImageUseCase: DeleteFloorPlanImageUseCase,
 ) : ViewModel() {
     private val _state: MutableStateFlow<StructureDetailsEditUiState> =
         MutableStateFlow(StructureDetailsEditUiState(projectId = projectId))
@@ -47,6 +55,8 @@ internal class StructureDetailsEditViewModel(
 
     private val saveEventChannel = Channel<Uuid>()
     val saveEventFlow = saveEventChannel.receiveAsFlow()
+
+    private val resolvedStructureId: Uuid = structureId ?: UuidProvider.getUuid()
 
     init {
         require(structureId != null || projectId != null) {
@@ -68,6 +78,7 @@ internal class StructureDetailsEditViewModel(
                                 it.copy(
                                     structureName = data.structure.name,
                                     projectId = data.structure.projectId,
+                                    floorPlanUrl = data.structure.floorPlanUrl,
                                 )
                             }
                             cancel()
@@ -79,6 +90,46 @@ internal class StructureDetailsEditViewModel(
 
     fun onStructureNameChange(updatedName: String) {
         _state.update { it.copy(structureName = updatedName, structureNameError = null) }
+    }
+
+    fun onImagePicked(
+        bytes: ByteArray,
+        fileName: String,
+    ) = viewModelScope.launch {
+        _state.update { it.copy(isUploadingImage = true) }
+        val resolvedProjectId = _state.value.projectId ?: projectId!!
+        when (val result = uploadFloorPlanImageUseCase(resolvedProjectId, resolvedStructureId, bytes, fileName)) {
+            is OnlineDataResult.Success -> {
+                val previousPendingUrl = _state.value.pendingUploadUrl
+                _state.update {
+                    it.copy(
+                        floorPlanUrl = result.data,
+                        pendingUploadUrl = result.data,
+                        isUploadingImage = false,
+                    )
+                }
+                previousPendingUrl?.let { url ->
+                    launch { deleteFloorPlanImageUseCase(url) }
+                }
+            }
+            is OnlineDataResult.Failure -> {
+                _state.update { it.copy(isUploadingImage = false) }
+                errorEventsChannel.send(Unknown)
+            }
+        }
+    }
+
+    fun onRemoveImage() {
+        val pendingUrl = _state.value.pendingUploadUrl
+        _state.update {
+            it.copy(
+                floorPlanUrl = null,
+                pendingUploadUrl = null,
+            )
+        }
+        pendingUrl?.let { url ->
+            viewModelScope.launch { deleteFloorPlanImageUseCase(url) }
+        }
     }
 
     fun onSaveStructure() =
@@ -95,9 +146,10 @@ internal class StructureDetailsEditViewModel(
             saveStructureUseCase(
                 request =
                     SaveStructureRequest(
-                        id = structureId,
+                        id = resolvedStructureId,
                         projectId = state.value.projectId ?: projectId!!,
                         name = state.value.structureName,
+                        floorPlanUrl = state.value.floorPlanUrl,
                     ),
             )
         when (result) {
@@ -105,7 +157,20 @@ internal class StructureDetailsEditViewModel(
                 errorEventsChannel.send(Unknown)
             }
             is OfflineFirstDataResult.Success -> {
+                _state.update { it.copy(pendingUploadUrl = null) }
                 saveEventChannel.send(result.data)
+            }
+        }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        val pendingUrl = _state.value.pendingUploadUrl
+        if (pendingUrl != null) {
+            viewModelScope.launch {
+                withContext(NonCancellable) {
+                    deleteFloorPlanImageUseCase(pendingUrl)
+                }
             }
         }
     }

@@ -36,27 +36,30 @@ class SaveStructureUseCaseImplTest : BackendKoinInitializedTest() {
     private val projectId = Uuid.parse("00000000-0000-0000-0000-000000000001")
     private val backendStructure =
         BackendStructure(
-            structure = Structure(
-                id = Uuid.parse("00000000-0000-0000-0001-000000000001"),
-                projectId = projectId,
-                name = "Ground Floor",
-                floorPlanUrl = null,
-                updatedAt = Timestamp(value = 10L),
-            ),
+            structure =
+                Structure(
+                    id = Uuid.parse("00000000-0000-0000-0001-000000000001"),
+                    projectId = projectId,
+                    name = "Ground Floor",
+                    floorPlanUrl = null,
+                    updatedAt = Timestamp(value = 10L),
+                ),
         )
 
-    private fun createProject() = runTest(testDispatcher) {
-        projectsDb.saveProject(
-            BackendProject(
-                project = Project(
-                    id = projectId,
-                    name = "Test Project",
-                    address = "Test Address",
-                    updatedAt = Timestamp(1L),
+    private fun createProject() =
+        runTest(testDispatcher) {
+            projectsDb.saveProject(
+                BackendProject(
+                    project =
+                        Project(
+                            id = projectId,
+                            name = "Test Project",
+                            address = "Test Address",
+                            updatedAt = Timestamp(1L),
+                        ),
                 ),
-            ),
-        )
-    }
+            )
+        }
 
     @Test
     fun `saves structure to data source`() =
@@ -71,11 +74,13 @@ class SaveStructureUseCaseImplTest : BackendKoinInitializedTest() {
     fun `does not save structure if saved updated at is later than the new one`() =
         runTest(testDispatcher) {
             createProject()
-            val savedStructure = backendStructure.copy(
-                structure = backendStructure.structure.copy(
-                    updatedAt = Timestamp(value = 20L),
-                ),
-            )
+            val savedStructure =
+                backendStructure.copy(
+                    structure =
+                        backendStructure.structure.copy(
+                            updatedAt = Timestamp(value = 20L),
+                        ),
+                )
             dataSource.saveStructure(savedStructure)
 
             useCase(backendStructure)
@@ -96,11 +101,13 @@ class SaveStructureUseCaseImplTest : BackendKoinInitializedTest() {
     fun `returns saved structure if saved updated at is later than the new one`() =
         runTest(testDispatcher) {
             createProject()
-            val savedStructure = backendStructure.copy(
-                structure = backendStructure.structure.copy(
-                    updatedAt = Timestamp(value = 20L),
-                ),
-            )
+            val savedStructure =
+                backendStructure.copy(
+                    structure =
+                        backendStructure.structure.copy(
+                            updatedAt = Timestamp(value = 20L),
+                        ),
+                )
             dataSource.saveStructure(savedStructure)
 
             val result = useCase(backendStructure)
@@ -114,12 +121,14 @@ class SaveStructureUseCaseImplTest : BackendKoinInitializedTest() {
             createProject()
             dataSource.saveStructure(backendStructure)
 
-            val newerStructure = backendStructure.copy(
-                structure = backendStructure.structure.copy(
-                    name = "New name",
-                    updatedAt = Timestamp(value = 20L),
-                ),
-            )
+            val newerStructure =
+                backendStructure.copy(
+                    structure =
+                        backendStructure.structure.copy(
+                            name = "New name",
+                            updatedAt = Timestamp(value = 20L),
+                        ),
+                )
 
             val result = useCase(newerStructure)
 

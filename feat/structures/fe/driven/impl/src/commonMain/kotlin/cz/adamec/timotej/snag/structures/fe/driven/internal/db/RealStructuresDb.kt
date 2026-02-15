@@ -24,20 +24,15 @@ internal class RealStructuresDb(
     override fun getStructuresFlow(projectId: Uuid): Flow<OfflineFirstDataResult<List<FrontendStructure>>> =
         ops.structuresByProjectIdFlow(projectId)
 
-    override fun getStructureFlow(id: Uuid): Flow<OfflineFirstDataResult<FrontendStructure?>> =
-        ops.entityByIdFlow(id)
+    override fun getStructureFlow(id: Uuid): Flow<OfflineFirstDataResult<FrontendStructure?>> = ops.entityByIdFlow(id)
 
-    override suspend fun saveStructure(structure: FrontendStructure): OfflineFirstDataResult<Unit> =
-        ops.saveOne(structure)
+    override suspend fun saveStructure(structure: FrontendStructure): OfflineFirstDataResult<Unit> = ops.saveOne(structure)
 
-    override suspend fun saveStructures(structures: List<FrontendStructure>): OfflineFirstDataResult<Unit> =
-        ops.saveMany(structures)
+    override suspend fun saveStructures(structures: List<FrontendStructure>): OfflineFirstDataResult<Unit> = ops.saveMany(structures)
 
-    override suspend fun deleteStructure(id: Uuid): OfflineFirstDataResult<Unit> =
-        ops.deleteById(id)
+    override suspend fun deleteStructure(id: Uuid): OfflineFirstDataResult<Unit> = ops.deleteById(id)
 
-    override suspend fun getStructureIdsByProjectId(projectId: Uuid): List<Uuid> =
-        ops.getStructureIdsByProjectId(projectId)
+    override suspend fun getStructureIdsByProjectId(projectId: Uuid): List<Uuid> = ops.getStructureIdsByProjectId(projectId)
 
     override suspend fun deleteStructuresByProjectId(projectId: Uuid): OfflineFirstDataResult<Unit> =
         ops.deleteStructuresByProjectId(projectId)

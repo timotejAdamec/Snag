@@ -17,5 +17,8 @@ import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import kotlin.uuid.Uuid
 
 interface GetStructuresModifiedSinceUseCase {
-    suspend operator fun invoke(projectId: Uuid, since: Timestamp): List<BackendStructure>
+    suspend operator fun invoke(
+        projectId: Uuid,
+        since: Timestamp,
+    ): List<BackendStructure>
 }

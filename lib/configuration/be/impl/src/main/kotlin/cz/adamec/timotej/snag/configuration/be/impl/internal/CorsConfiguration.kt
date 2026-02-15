@@ -24,6 +24,7 @@ internal class CorsConfiguration : AppConfiguration {
         install(CORS) {
             // allowHost("web frontend address") TODO once web FE deployed
             allowHost("localhost:8080")
+            allowMethod(HttpMethod.Post)
             allowMethod(HttpMethod.Put)
             allowMethod(HttpMethod.Delete)
             allowMethod(HttpMethod.Options)

@@ -127,7 +127,7 @@ internal fun ProjectDetailsEditContent(
                     Text(
                         text =
                             state.projectNameError?.let { stringResource(it) }
-                                ?: (stringResource(Res.string.required) + "*"),
+                                ?: stringResource(Res.string.required) + "*",
                     )
                 },
                 value = state.projectName,
@@ -145,7 +145,7 @@ internal fun ProjectDetailsEditContent(
                     Text(
                         text =
                             state.projectAddressError?.let { stringResource(it) }
-                                ?: (stringResource(Res.string.required) + "*"),
+                                ?: stringResource(Res.string.required) + "*",
                     )
                 },
                 value = state.projectAddress,

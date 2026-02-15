@@ -42,7 +42,10 @@ class WebFindingsListRouteFactory : FindingsListRouteFactory {
 }
 
 class WebFindingDetailRouteFactory : FindingDetailRouteFactory {
-    override fun create(structureId: Uuid, findingId: Uuid): FindingDetailRoute =
+    override fun create(
+        structureId: Uuid,
+        findingId: Uuid,
+    ): FindingDetailRoute =
         WebFindingDetailRoute(
             structureId = structureId,
             findingId = findingId,
@@ -60,6 +63,8 @@ data class WebFindingEditRoute(
 }
 
 class WebFindingEditRouteFactory : FindingEditRouteFactory {
-    override fun create(structureId: Uuid, findingId: Uuid): FindingEditRoute =
-        WebFindingEditRoute(findingId = findingId)
+    override fun create(
+        structureId: Uuid,
+        findingId: Uuid,
+    ): FindingEditRoute = WebFindingEditRoute(findingId = findingId)
 }

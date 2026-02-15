@@ -10,6 +10,7 @@ kotlin {
             implementation(project(":lib:sync:fe:app:api"))
             implementation(project(":lib:sync:fe:model"))
             implementation(project(":lib:database:fe"))
+            implementation(project(":lib:storage:fe:api"))
         }
     }
 }

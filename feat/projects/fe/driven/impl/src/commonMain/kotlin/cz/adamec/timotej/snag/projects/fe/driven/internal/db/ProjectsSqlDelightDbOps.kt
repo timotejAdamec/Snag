@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.projects.fe.driven.internal.db
 
+import cz.adamec.timotej.snag.feat.shared.database.fe.db.ProjectEntity
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.ProjectEntityQueries
 import cz.adamec.timotej.snag.lib.database.fe.SqlDelightDbOps
 import cz.adamec.timotej.snag.projects.fe.driven.internal.LH
@@ -21,15 +22,15 @@ import kotlinx.coroutines.CoroutineDispatcher
 internal class ProjectsSqlDelightDbOps(
     queries: ProjectEntityQueries,
     ioDispatcher: CoroutineDispatcher,
-) : SqlDelightDbOps<cz.adamec.timotej.snag.feat.shared.database.fe.db.ProjectEntity, FrontendProject>(
-    ioDispatcher = ioDispatcher,
-    logger = LH.logger,
-    entityName = "project",
-    mapToModel = { it.toModel() },
-    mapToEntity = { it.toEntity() },
-    selectAllQuery = { queries.selectAll() },
-    selectByIdQuery = { queries.selectById(it) },
-    saveEntity = { queries.save(it) },
-    deleteEntityById = { queries.deleteById(it) },
-    runInTransaction = { block -> queries.transaction { block() } },
-)
+) : SqlDelightDbOps<ProjectEntity, FrontendProject>(
+        ioDispatcher = ioDispatcher,
+        logger = LH.logger,
+        entityName = "project",
+        mapToModel = { it.toModel() },
+        mapToEntity = { it.toEntity() },
+        selectAllQuery = { queries.selectAll() },
+        selectByIdQuery = { queries.selectById(it) },
+        saveEntity = { queries.save(it) },
+        deleteEntityById = { queries.deleteById(it) },
+        runInTransaction = { block -> queries.transaction { block() } },
+    )
