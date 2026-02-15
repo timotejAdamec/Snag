@@ -57,7 +57,7 @@ fun StructureCard(
                             .clip(MaterialTheme.shapes.medium),
                     model = feStructure.structure.floorPlanUrl,
                     contentDescription = feStructure.structure.name,
-                    contentScale = ContentScale.Crop,
+                    contentScale = ContentScale.Fit,
                 )
                 Text(
                     modifier = Modifier.padding(12.dp),
@@ -93,7 +93,6 @@ private fun StructureCardPreview() {
                 contentAlignment = Alignment.Center,
             ) {
                 StructureCard(
-                    modifier = Modifier.size(350.dp),
                     feStructure =
                         FrontendStructure(
                             Structure(

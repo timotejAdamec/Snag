@@ -52,7 +52,7 @@ internal fun ProjectsContent(
         topAppBarActions = {
             AdaptiveTonalButton(
                 onClick = onNewProjectClick,
-                icon = painterResource(DesignRes.drawable.ic_add),
+                icon = DesignRes.drawable.ic_add,
                 label = stringResource(Res.string.new_project),
             )
         },

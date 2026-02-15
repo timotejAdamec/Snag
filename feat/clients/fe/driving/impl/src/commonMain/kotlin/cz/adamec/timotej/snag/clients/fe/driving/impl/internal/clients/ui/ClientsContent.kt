@@ -52,7 +52,7 @@ internal fun ClientsContent(
         topAppBarActions = {
             AdaptiveTonalButton(
                 onClick = onNewClientClick,
-                icon = painterResource(DesignRes.drawable.ic_add),
+                icon = DesignRes.drawable.ic_add,
                 label = stringResource(Res.string.new_client),
             )
         },

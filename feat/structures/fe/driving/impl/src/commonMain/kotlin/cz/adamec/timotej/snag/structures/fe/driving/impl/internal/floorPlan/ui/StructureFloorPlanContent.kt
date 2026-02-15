@@ -34,7 +34,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.BackNavigationIcon
 import cz.adamec.timotej.snag.lib.design.fe.scenes.LocalSheetPeekHeight
-import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.floorPlan.ui.components.FloorPlanPlaceholder
+import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.floorPlan.ui.components.FloorPlanAddPlaceholder
 import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.floorPlan.ui.components.FloorPlanWithPins
 import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.floorPlan.ui.components.StructureDeletionAlertDialog
 import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.floorPlan.vm.StructureDetailsUiState
@@ -146,7 +146,7 @@ private fun LoadedStructureDetailsContent(
                     onFindingClick = onFindingClick,
                 )
             } else {
-                FloorPlanPlaceholder(
+                FloorPlanAddPlaceholder(
                     modifier =
                         Modifier
                             .fillMaxSize(),

@@ -79,7 +79,6 @@ internal fun StructureDetailsEditScreen(
         }
     StructureDetailsEditContent(
         modifier = modifier,
-        isEditMode = structureId != null,
         state = state,
         snackbarHostState = snackbarHostState,
         onStructureNameChange = {

@@ -33,7 +33,9 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import cz.adamec.timotej.snag.lib.design.fe.dialog.FullScreenDialogMeasurements
+import cz.adamec.timotej.snag.lib.design.fe.theme.SnagTheme
 import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.structureDetailsEdit.vm.StructureDetailsEditUiState
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -49,7 +51,6 @@ import snag.lib.design.fe.generated.resources.Res as DesignRes
 @Suppress("LongMethod")
 @Composable
 internal fun StructureDetailsEditContent(
-    isEditMode: Boolean,
     state: StructureDetailsEditUiState,
     snackbarHostState: SnackbarHostState,
     onStructureNameChange: (String) -> Unit,
@@ -68,7 +69,7 @@ internal fun StructureDetailsEditContent(
                         .fillMaxWidth(),
                 title = {
                     val text =
-                        if (!isEditMode && state.structureName.isBlank()) {
+                        if (!state.isEditMode && state.structureName.isBlank()) {
                             stringResource(Res.string.new_structure)
                         } else {
                             state.structureName
@@ -142,5 +143,24 @@ internal fun StructureDetailsEditContent(
                 },
             )
         }
+    }
+}
+
+@Preview
+@Composable
+private fun StructureDetailsEditContentPreview() {
+    SnagTheme {
+        StructureDetailsEditContent(
+            state =
+                StructureDetailsEditUiState(
+                    structureName = "Ground Floor",
+                ),
+            snackbarHostState = SnackbarHostState(),
+            onStructureNameChange = {},
+            onImagePick = { _, _ -> },
+            onRemoveImage = {},
+            onSaveClick = {},
+            onCancelClick = {},
+        )
     }
 }

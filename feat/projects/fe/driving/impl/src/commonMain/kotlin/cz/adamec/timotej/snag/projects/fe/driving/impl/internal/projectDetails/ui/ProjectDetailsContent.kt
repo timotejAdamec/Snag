@@ -29,6 +29,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
@@ -246,7 +247,7 @@ private fun LoadedProjectDetailsContent(
                         )
                         AdaptiveTonalButton(
                             onClick = onNewStructureClick,
-                            icon = painterResource(DesignRes.drawable.ic_add),
+                            icon = DesignRes.drawable.ic_add,
                             label = stringResource(Res.string.new_structure),
                         )
                     }
@@ -258,21 +259,21 @@ private fun LoadedProjectDetailsContent(
                             Modifier
                                 .fillMaxWidth()
                                 .padding(horizontal = 16.dp),
-                        contentAlignment = Alignment.TopCenter,
+                        contentAlignment = Alignment.TopStart,
                     ) {
                         FlowRow(
-                            //modifier = Modifier.widthIn(max = 936.dp),
                             horizontalArrangement = Arrangement.spacedBy(12.dp),
                             verticalArrangement = Arrangement.spacedBy(12.dp),
                             maxItemsInEachRow = 3,
                         ) {
                             state.structures.forEach { structure ->
+                                val minWidth = 250.dp
                                 StructureCard(
                                     modifier =
                                         Modifier
-                                            .widthIn(min = 150.dp)
-                                            .weight(1f)
-                                            .heightIn(min = 200.dp, max = 260.dp),
+                                            .widthIn(min = minWidth)
+                                            .height(minWidth + 30.dp)
+                                            .weight(1f),
                                     feStructure = structure,
                                     onClick = { onStructureClick(structure.structure.id) },
                                 )
@@ -344,11 +345,10 @@ private fun NewInspectionCard(
         modifier = modifier,
         onClick = onClick,
     ) {
-
         Column(
             modifier =
                 Modifier
-                    .wrapContentSize()
+                    .fillMaxSize()
                     .padding(16.dp),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,

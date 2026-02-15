@@ -23,7 +23,7 @@ import snag.feat.structures.fe.driving.impl.generated.resources.Res
 import snag.feat.structures.fe.driving.impl.generated.resources.no_floor_plan
 
 @Composable
-internal fun FloorPlanPlaceholder(modifier: Modifier = Modifier) {
+internal fun FloorPlanAddPlaceholder(modifier: Modifier = Modifier) {
     Box(
         modifier = modifier,
     ) {

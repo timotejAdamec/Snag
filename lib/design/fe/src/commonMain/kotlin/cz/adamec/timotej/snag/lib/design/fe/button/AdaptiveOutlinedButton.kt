@@ -12,8 +12,8 @@
 
 package cz.adamec.timotej.snag.lib.design.fe.button
 
-import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedIconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -25,20 +25,20 @@ import snag.lib.design.fe.generated.resources.Res
 import snag.lib.design.fe.generated.resources.ic_add
 
 @Composable
-fun AdaptiveTonalButton(
+fun AdaptiveOutlinedButton(
     onClick: () -> Unit,
     icon: DrawableResource,
     label: String,
     modifier: Modifier = Modifier,
 ) {
     if (isScreenWide()) {
-        TonalIconTextButton(
+        OutlinedIconTextButton(
             onClick = onClick,
             icon = icon,
             label = label,
         )
     } else {
-        FilledTonalIconButton(
+        OutlinedIconButton(
             modifier = modifier,
             onClick = onClick,
         ) {
@@ -53,9 +53,9 @@ fun AdaptiveTonalButton(
 @Preview(widthDp = 100)
 @Preview(widthDp = 600)
 @Composable
-private fun AdaptiveTonalButtonPreview() {
+private fun AdaptiveOutlinedButtonPreview() {
     SnagTheme {
-        AdaptiveTonalButton(
+        AdaptiveOutlinedButton(
             onClick = {},
             icon = Res.drawable.ic_add,
             label = "Add",
