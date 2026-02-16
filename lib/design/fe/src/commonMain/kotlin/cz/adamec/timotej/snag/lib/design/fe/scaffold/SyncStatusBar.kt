@@ -19,6 +19,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -58,29 +59,39 @@ private val ICON_SIZE = 16.dp
 fun SyncStatusBar(
     state: SyncStatusBarState,
     modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(0.dp),
+    onVisibilityChange: (Boolean) -> Unit = {},
 ) {
     var hasShownNonSynced by remember { mutableStateOf(false) }
-    var visible by remember { mutableStateOf(false) }
+    var isVisible by remember { mutableStateOf(false) }
 
     LaunchedEffect(state) {
         if (state == SyncStatusBarState.SYNCED) {
             if (hasShownNonSynced) {
-                visible = true
+                isVisible = true
                 delay(SYNCED_DISPLAY_DURATION_MS)
-                visible = false
+                isVisible = false
             }
         } else {
             hasShownNonSynced = true
-            visible = true
+            isVisible = true
         }
     }
 
+    LaunchedEffect(isVisible) {
+        onVisibilityChange(isVisible)
+    }
+
     AnimatedVisibility(
-        visible = visible,
+        visible = isVisible,
         enter = expandVertically() + fadeIn(),
         exit = shrinkVertically() + fadeOut(),
     ) {
-        SyncStatusBarContent(state = state, modifier = modifier)
+        SyncStatusBarContent(
+            modifier = modifier,
+            state = state,
+            contentPadding = contentPadding,
+        )
     }
 }
 
@@ -89,6 +100,7 @@ fun SyncStatusBar(
 private fun SyncStatusBarContent(
     state: SyncStatusBarState,
     modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(0.dp),
 ) {
     val backgroundColor: Color
     val contentColor: Color
@@ -156,9 +168,10 @@ private fun SyncStatusBarContent(
             modifier
                 .fillMaxWidth()
                 .background(backgroundColor)
+                .padding(contentPadding)
                 .padding(horizontal = 16.dp, vertical = 8.dp),
         horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically,
+        verticalAlignment = Alignment.Bottom,
     ) {
         icon()
         Text(

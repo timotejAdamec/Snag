@@ -41,6 +41,20 @@ inline fun <T, R> OnlineDataResult<T>.map(transform: (T) -> R): OnlineDataResult
         is OnlineDataResult.Failure -> this
     }
 
+inline fun <T> OnlineDataResult<T>.onSuccess(action: (T) -> Unit): OnlineDataResult<T> {
+    if (this is OnlineDataResult.Success) {
+        action(data)
+    }
+    return this
+}
+
+inline fun <T> OnlineDataResult<T>.onFailure(action: (OnlineDataResult.Failure) -> Unit): OnlineDataResult<T> {
+    if (this is OnlineDataResult.Failure) {
+        action(this)
+    }
+    return this
+}
+
 fun <T> Logger.log(
     offlineFirstDataResult: OnlineDataResult<T>,
     additionalInfo: String? = null,

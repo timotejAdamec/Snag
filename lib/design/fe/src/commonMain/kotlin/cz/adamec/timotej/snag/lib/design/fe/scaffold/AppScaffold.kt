@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.lib.design.fe.scaffold
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.runtime.Composable
@@ -22,7 +23,7 @@ import androidx.compose.ui.Modifier
 @Composable
 fun AppScaffold(
     modifier: Modifier = Modifier,
-    content: @Composable () -> Unit,
+    content: @Composable (PaddingValues) -> Unit,
 ) {
     val appScaffoldState = remember { AppScaffoldState() }
 
@@ -30,8 +31,8 @@ fun AppScaffold(
         Scaffold(
             modifier = modifier,
             snackbarHost = { SnackbarHost(appScaffoldState.snackbarHostState) },
-        ) {
-            content()
+        ) { paddingValues ->
+            content(paddingValues)
         }
     }
 }

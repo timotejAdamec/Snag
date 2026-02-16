@@ -78,7 +78,7 @@ internal class StructureDetailsEditViewModel(
                                 it.copy(
                                     structureName = data.structure.name,
                                     projectId = data.structure.projectId,
-                                    floorPlanUrl = data.structure.floorPlanUrl,
+                                    floorPlanUrl = "hfffffuff",
                                 )
                             }
                             cancel()
@@ -98,7 +98,14 @@ internal class StructureDetailsEditViewModel(
     ) = viewModelScope.launch {
         _state.update { it.copy(isUploadingImage = true) }
         val resolvedProjectId = _state.value.projectId ?: projectId!!
-        when (val result = uploadFloorPlanImageUseCase(resolvedProjectId, resolvedStructureId, bytes, fileName)) {
+        when (
+            val result = uploadFloorPlanImageUseCase(
+                projectId = resolvedProjectId,
+                structureId = resolvedStructureId,
+                bytes = bytes,
+                fileName = fileName,
+            )
+        ) {
             is OnlineDataResult.Success -> {
                 val previousPendingUrl = _state.value.pendingUploadUrl
                 _state.update {

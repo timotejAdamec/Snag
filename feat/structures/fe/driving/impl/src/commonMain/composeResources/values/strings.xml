@@ -8,7 +8,8 @@
     <string name="delete_structure_confirmation_text">This structure and all its data will be permanently deleted. This action cannot be undone.</string>
     <string name="floor_plan">Floor plan</string>
     <string name="no_floor_plan">No floor plan</string>
-    <string name="add">Add</string>
+    <string name="upload">Upload</string>
     <string name="change">Change</string>
     <string name="remove">Remove</string>
+    <string name="error_loading_image">Error loading image</string>
 </resources>

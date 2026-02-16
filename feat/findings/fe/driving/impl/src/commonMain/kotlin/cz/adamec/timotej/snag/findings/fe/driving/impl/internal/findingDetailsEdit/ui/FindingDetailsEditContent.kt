@@ -106,6 +106,26 @@ internal fun FindingDetailsEditContent(
                         overflow = TextOverflow.Ellipsis,
                     )
                 },
+                subtitle = {
+                    val visuals = findingTypeVisuals(state.findingType)
+                    Row(
+                        verticalAlignment = Alignment.Bottom,
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    ) {
+                        Icon(
+                            painter = painterResource(visuals.icon),
+                            contentDescription = null,
+                            modifier = Modifier.size(16.dp),
+                            tint = visuals.pinColor,
+                        )
+                        Text(
+                            text = stringResource(visuals.label),
+                            style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+
+                        )
+                    }
+                },
                 navigationIcon = {
                     IconButton(
                         onClick = onCancelClick,
@@ -162,23 +182,6 @@ internal fun FindingDetailsEditContent(
                     onFindingNameChange(it)
                 },
             )
-            val visuals = findingTypeVisuals(state.findingType)
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                Icon(
-                    painter = painterResource(visuals.icon),
-                    contentDescription = null,
-                    modifier = Modifier.size(20.dp),
-                    tint = visuals.pinColor,
-                )
-                Text(
-                    text = stringResource(visuals.label),
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
             val classicType = state.findingType as? FindingType.Classic
             if (classicType != null) {
                 Text(
