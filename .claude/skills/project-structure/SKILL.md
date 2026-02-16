@@ -43,7 +43,9 @@ Each feature follows hexagonal architecture with these layers:
 
 ### Library modules (`lib/`)
 
-Domain-agnostic reusable code used by `driven` and `driving` feature modules.
+Domain-agnostic reusable code. Follow same structuring as `feat` modules used with the exception
+that it can have only single top-level module or a api/impl/test split. In that case these are implicitly
+living in the adapters layer (to be used by `driven` and `driving` feature modules or other such `lib` modules).
 `core` modules can be used anywhere.
 
 ### Dependency direction
