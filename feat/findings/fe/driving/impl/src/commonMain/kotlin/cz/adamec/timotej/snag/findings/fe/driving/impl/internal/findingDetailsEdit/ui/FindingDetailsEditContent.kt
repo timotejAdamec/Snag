@@ -49,7 +49,7 @@ import cz.adamec.timotej.snag.feat.findings.business.Term
 import cz.adamec.timotej.snag.feat.findings.fe.driving.api.findingTypeVisuals
 import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetailsEdit.vm.FindingDetailsEditUiState
 import cz.adamec.timotej.snag.lib.design.fe.dialog.FullScreenDialogMeasurements
-import cz.adamec.timotej.snag.lib.design.fe.theme.SnagTheme
+import cz.adamec.timotej.snag.lib.design.fe.theme.SnagPreview
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import snag.feat.findings.fe.driving.impl.generated.resources.Res
@@ -283,7 +283,7 @@ internal fun FindingDetailsEditContent(
 @Preview
 @Composable
 private fun FindingDetailsEditContentPreview() {
-    SnagTheme {
+    SnagPreview {
         FindingDetailsEditContent(
             isEditMode = true,
             state =

@@ -38,7 +38,7 @@ internal fun PlanImagePickButton(
         scope.launch {
             val file =
                 FileKit.openFilePicker(
-                    type = FileKitType.Image,
+                    type = FileKitType.File(extensions = listOf("jpg", "jpeg", "png", "webp")),
                 )
             if (file != null) {
                 val bytes = file.readBytes()

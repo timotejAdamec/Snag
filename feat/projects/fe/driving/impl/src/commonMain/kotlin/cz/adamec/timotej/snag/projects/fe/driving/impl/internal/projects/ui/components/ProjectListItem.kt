@@ -25,7 +25,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.common.UuidProvider
-import cz.adamec.timotej.snag.lib.design.fe.theme.SnagTheme
+import cz.adamec.timotej.snag.lib.design.fe.theme.SnagPreview
 import cz.adamec.timotej.snag.projects.business.Project
 import cz.adamec.timotej.snag.projects.fe.model.FrontendProject
 import org.jetbrains.compose.resources.painterResource
@@ -68,7 +68,7 @@ internal fun ProjectListItem(
 @Composable
 @Preview
 internal fun ProjectListItemPreview() {
-    SnagTheme {
+    SnagPreview {
         ProjectListItem(
             modifier =
                 Modifier.size(

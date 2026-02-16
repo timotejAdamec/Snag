@@ -35,7 +35,7 @@ import cz.adamec.timotej.snag.clients.business.Client
 import cz.adamec.timotej.snag.clients.fe.model.FrontendClient
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.common.UuidProvider
-import cz.adamec.timotej.snag.lib.design.fe.theme.SnagTheme
+import cz.adamec.timotej.snag.lib.design.fe.theme.SnagPreview
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import org.jetbrains.compose.resources.painterResource
@@ -122,7 +122,7 @@ internal fun ClientDropdown(
 @Preview(showBackground = true)
 @Composable
 private fun ClientDropdownPreview() {
-    SnagTheme {
+    SnagPreview {
         ClientDropdown(
             modifier = Modifier.padding(16.dp),
             selectedClientName = "Acme Corp",

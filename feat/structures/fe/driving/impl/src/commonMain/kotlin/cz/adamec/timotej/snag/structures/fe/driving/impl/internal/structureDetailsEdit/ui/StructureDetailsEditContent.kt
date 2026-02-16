@@ -34,7 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import cz.adamec.timotej.snag.lib.design.fe.dialog.FullScreenDialogMeasurements
-import cz.adamec.timotej.snag.lib.design.fe.theme.SnagTheme
+import cz.adamec.timotej.snag.lib.design.fe.theme.SnagPreview
 import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.structureDetailsEdit.ui.components.FloorPlanEditSection
 import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.structureDetailsEdit.vm.StructureDetailsEditUiState
 import org.jetbrains.compose.resources.painterResource
@@ -149,7 +149,7 @@ internal fun StructureDetailsEditContent(
 @Preview
 @Composable
 private fun StructureDetailsEditContentPreview() {
-    SnagTheme {
+    SnagPreview {
         StructureDetailsEditContent(
             state =
                 StructureDetailsEditUiState(

@@ -18,7 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import cz.adamec.timotej.snag.lib.design.fe.adaptive.isScreenWide
-import cz.adamec.timotej.snag.lib.design.fe.theme.SnagTheme
+import cz.adamec.timotej.snag.lib.design.fe.theme.SnagPreview
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 import snag.lib.design.fe.generated.resources.Res
@@ -54,7 +54,7 @@ fun AdaptiveOutlinedButton(
 @Preview(widthDp = 600)
 @Composable
 private fun AdaptiveOutlinedButtonPreview() {
-    SnagTheme {
+    SnagPreview {
         AdaptiveOutlinedButton(
             onClick = {},
             icon = Res.drawable.ic_add,

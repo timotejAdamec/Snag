@@ -39,7 +39,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import cz.adamec.timotej.snag.lib.design.fe.theme.SnagTheme
+import cz.adamec.timotej.snag.lib.design.fe.theme.SnagPreview
 import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -186,7 +186,7 @@ private fun SyncStatusBarContent(
 @Preview
 @Composable
 private fun SyncStatusBarSyncedPreview() {
-    SnagTheme {
+    SnagPreview {
         SyncStatusBarContent(state = SyncStatusBarState.SYNCED)
     }
 }
@@ -194,7 +194,7 @@ private fun SyncStatusBarSyncedPreview() {
 @Preview
 @Composable
 private fun SyncStatusBarSyncingPreview() {
-    SnagTheme {
+    SnagPreview {
         SyncStatusBarContent(state = SyncStatusBarState.SYNCING)
     }
 }
@@ -202,7 +202,7 @@ private fun SyncStatusBarSyncingPreview() {
 @Preview
 @Composable
 private fun SyncStatusBarOfflinePreview() {
-    SnagTheme {
+    SnagPreview {
         SyncStatusBarContent(state = SyncStatusBarState.OFFLINE)
     }
 }
@@ -210,7 +210,7 @@ private fun SyncStatusBarOfflinePreview() {
 @Preview
 @Composable
 private fun SyncStatusBarErrorPreview() {
-    SnagTheme {
+    SnagPreview {
         SyncStatusBarContent(state = SyncStatusBarState.ERROR)
     }
 }

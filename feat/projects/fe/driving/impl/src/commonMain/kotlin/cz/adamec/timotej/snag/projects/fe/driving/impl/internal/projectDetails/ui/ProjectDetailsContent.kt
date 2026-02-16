@@ -62,7 +62,7 @@ import cz.adamec.timotej.snag.lib.core.common.UuidProvider
 import cz.adamec.timotej.snag.lib.design.fe.button.AdaptiveTonalButton
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.BackNavigationIcon
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.CollapsableTopAppBarScaffold
-import cz.adamec.timotej.snag.lib.design.fe.theme.SnagTheme
+import cz.adamec.timotej.snag.lib.design.fe.theme.SnagPreview
 import cz.adamec.timotej.snag.projects.business.Project
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.vm.InspectionsUiStatus
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.vm.ProjectDetailsUiState
@@ -406,7 +406,7 @@ private fun ProjectDeletionAlertDialog(
 @Composable
 @Suppress("FunctionNameMaxLength")
 private fun LoadedProjectDetailsContentPreview() {
-    SnagTheme {
+    SnagPreview {
         LoadedProjectDetailsContent(
             state =
                 ProjectDetailsUiState(

@@ -32,7 +32,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import cz.adamec.timotej.snag.clients.fe.driving.impl.internal.clientDetailsEdit.vm.ClientDetailsEditUiState
-import cz.adamec.timotej.snag.lib.design.fe.theme.SnagTheme
+import cz.adamec.timotej.snag.lib.design.fe.theme.SnagPreview
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import snag.feat.clients.fe.driving.impl.generated.resources.Res
@@ -133,7 +133,7 @@ internal fun ClientDetailsEditContent(
                     Text(
                         text =
                             state.clientNameError?.let { stringResource(it) }
-                                ?: stringResource(Res.string.required) + "*",
+                                ?: (stringResource(Res.string.required) + "*"),
                     )
                 },
                 value = state.clientName,
@@ -198,7 +198,7 @@ internal fun ClientDetailsEditContent(
 @Preview
 @Composable
 private fun ClientDetailsEditContentPreview() {
-    SnagTheme {
+    SnagPreview {
         ClientDetailsEditContent(
             clientId = null,
             state =

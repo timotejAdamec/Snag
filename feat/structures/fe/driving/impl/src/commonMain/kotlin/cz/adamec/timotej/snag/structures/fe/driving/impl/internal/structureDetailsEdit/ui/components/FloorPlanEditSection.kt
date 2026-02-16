@@ -37,7 +37,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import cz.adamec.timotej.snag.lib.design.fe.button.OutlinedIconTextButton
-import cz.adamec.timotej.snag.lib.design.fe.theme.SnagTheme
+import cz.adamec.timotej.snag.lib.design.fe.theme.SnagPreview
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import snag.feat.structures.fe.driving.impl.generated.resources.Res
@@ -172,7 +172,7 @@ internal fun FloorPlanEditSection(
 @Preview(showBackground = true)
 @Composable
 private fun FloorPlanEditSectionNoImagePreview() {
-    SnagTheme {
+    SnagPreview {
         FloorPlanEditSection(
             modifier = Modifier
                 .padding(16.dp),
@@ -187,7 +187,7 @@ private fun FloorPlanEditSectionNoImagePreview() {
 @Preview(showBackground = true)
 @Composable
 private fun FloorPlanEditSectionWithImagePreview() {
-    SnagTheme {
+    SnagPreview {
         FloorPlanEditSection(
             modifier = Modifier
                 .padding(16.dp),
@@ -202,7 +202,7 @@ private fun FloorPlanEditSectionWithImagePreview() {
 @Preview(showBackground = true)
 @Composable
 private fun FloorPlanEditSectionUploadingPreview() {
-    SnagTheme {
+    SnagPreview {
         FloorPlanEditSection(
             modifier = Modifier
                 .padding(16.dp),
@@ -217,7 +217,7 @@ private fun FloorPlanEditSectionUploadingPreview() {
 @Preview(showBackground = true)
 @Composable
 private fun FloorPlanEditSectionWithImageErrorPreview() {
-    SnagTheme {
+    SnagPreview {
         FloorPlanEditSection(
             modifier = Modifier
                 .padding(16.dp),
