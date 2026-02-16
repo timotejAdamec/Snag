@@ -13,6 +13,7 @@
 package cz.adamec.timotej.snag.lib.design.fe.button
 
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FilledTonalButton
@@ -29,18 +30,28 @@ fun TonalIconTextButton(
     icon: DrawableResource,
     label: String,
     modifier: Modifier = Modifier,
+    size: ButtonSize = ButtonSize.S,
 ) {
+    val containerHeight = when (size) {
+        ButtonSize.S -> ButtonDefaults.ExtraSmallContainerHeight
+        ButtonSize.M -> ButtonDefaults.MediumContainerHeight
+    }
+
     FilledTonalButton(
-        modifier = modifier,
+        modifier = modifier
+            .heightIn(containerHeight),
         onClick = onClick,
-        contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
+        contentPadding = ButtonDefaults.contentPaddingFor(containerHeight),
     ) {
         Icon(
-            modifier = Modifier.size(ButtonDefaults.IconSize),
+            modifier = Modifier.size(ButtonDefaults.iconSizeFor(containerHeight)),
             painter = painterResource(icon),
             contentDescription = label,
         )
-        Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-        Text(text = label)
+        Spacer(Modifier.size(ButtonDefaults.iconSpacingFor(containerHeight)))
+        Text(
+            text = label,
+            style = ButtonDefaults.textStyleFor(containerHeight),
+        )
     }
 }

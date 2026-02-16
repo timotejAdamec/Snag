@@ -15,6 +15,7 @@ package cz.adamec.timotej.snag.structures.fe.driving.impl.internal.structureDeta
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import cz.adamec.timotej.snag.lib.design.fe.button.ButtonSize
 import cz.adamec.timotej.snag.lib.design.fe.button.OutlinedIconTextButton
 import cz.adamec.timotej.snag.lib.design.fe.button.TonalIconTextButton
 import io.github.vinceglb.filekit.FileKit
@@ -31,7 +32,7 @@ internal fun PlanImagePickButton(
     label: String,
     onImagePick: (bytes: ByteArray, fileName: String) -> Unit,
     modifier: Modifier = Modifier,
-    isTonal: Boolean = false,
+    isSingleAction: Boolean = false,
 ) {
     val scope = rememberCoroutineScope()
     val onPick: () -> Unit = {
@@ -47,19 +48,20 @@ internal fun PlanImagePickButton(
         }
     }
 
-    if (isTonal) {
+    if (isSingleAction) {
         TonalIconTextButton(
+            modifier = modifier,
+            icon = icon,
+            label = label,
+            onClick = onPick,
+            size = ButtonSize.M,
+        )
+    } else {
+        OutlinedIconTextButton(
             modifier = modifier,
             icon = icon,
             label = label,
             onClick = onPick,
         )
     }
-
-    OutlinedIconTextButton(
-        modifier = modifier,
-        icon = icon,
-        label = label,
-        onClick = onPick,
-    )
 }

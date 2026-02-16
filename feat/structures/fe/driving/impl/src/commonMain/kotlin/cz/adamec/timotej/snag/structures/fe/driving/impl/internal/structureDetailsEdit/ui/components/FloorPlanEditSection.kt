@@ -68,7 +68,7 @@ internal fun FloorPlanEditSection(
     ) {
         Text(
             text = stringResource(Res.string.floor_plan),
-            style = MaterialTheme.typography.labelLarge,
+            style = MaterialTheme.typography.labelMedium,
         )
         Surface(
             color = MaterialTheme.colorScheme.surfaceContainerLow,
@@ -90,7 +90,7 @@ internal fun FloorPlanEditSection(
                             modifier = modifier,
                             icon = DesignRes.drawable.ic_upload,
                             label = stringResource(Res.string.upload),
-                            isTonal = true,
+                            isSingleAction = true,
                             onImagePick = onImagePick,
                         )
                     }

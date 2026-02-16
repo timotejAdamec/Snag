@@ -78,7 +78,7 @@ internal class StructureDetailsEditViewModel(
                                 it.copy(
                                     structureName = data.structure.name,
                                     projectId = data.structure.projectId,
-                                    floorPlanUrl = "hfffffuff",
+                                    floorPlanUrl = data.structure.floorPlanUrl,
                                 )
                             }
                             cancel()
