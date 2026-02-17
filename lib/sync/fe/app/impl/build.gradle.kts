@@ -17,11 +17,11 @@ plugins {
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            implementation(project(":lib:network:fe"))
+            implementation(project(":lib:network:fe:app:api"))
         }
         commonTest.dependencies {
             implementation(project(":lib:sync:fe:driven:test"))
-            implementation(project(":lib:network:fe:test"))
+            implementation(project(":lib:network:fe:driven:test"))
         }
     }
 }
