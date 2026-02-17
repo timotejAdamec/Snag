@@ -81,11 +81,11 @@ so there is no `business/` module.
 ```
 feat/reports/
 ├── be/
-│   ├── model/            # ProjectReportData, StructureWithFindings
+│   ├── model/            # ProjectReport (name + PDF bytes)
 │   ├── app/
 │   │   ├── api/          # GenerateProjectReportUseCase interface
 │   │   └── impl/         # Use case impl — orchestrates data fetching + PDF generation
-│   ├── ports/            # PdfReportGenerator port interface
+│   ├── ports/            # PdfReportGenerator port interface + report data model
 │   ├── driven/
 │   │   └── impl/         # OpenPDF implementation of PdfReportGenerator
 │   └── driving/
@@ -97,8 +97,21 @@ feat/reports/
 #### `feat/reports/be/model`
 - Plugin: `snagBackendModule`
 - Contains:
+  - `ProjectReport` — result wrapper with project name and PDF bytes
+
+```kotlin
+data class ProjectReport(
+    val projectName: String,
+    val pdfBytes: ByteArray,
+)
+```
+
+#### `feat/reports/be/ports`
+- Plugin: `snagBackendModule`
+- Contains:
   - `ProjectReportData` — aggregate data class holding all data needed for the report
   - `StructureWithFindings` — pairs a structure with its findings
+  - `PdfReportGenerator` — port interface
 
 ```kotlin
 data class ProjectReportData(
@@ -113,6 +126,10 @@ data class StructureWithFindings(
     val structure: Structure,
     val findings: List<Finding>,
 )
+
+interface PdfReportGenerator {
+    suspend fun generate(data: ProjectReportData): ByteArray
+}
 ```
 
 - Dependencies:
@@ -122,31 +139,13 @@ data class StructureWithFindings(
   - `:feat:findings:business`
   - `:feat:inspections:business`
 
-#### `feat/reports/be/ports`
-- Plugin: `snagBackendModule`
-- Contains:
-  - `PdfReportGenerator` — port interface
-
-```kotlin
-interface PdfReportGenerator {
-    suspend fun generate(data: ProjectReportData): ByteArray
-}
-```
-
-- Dependencies (auto-wired by plugin): depends on model module
-
 #### `feat/reports/be/app/api`
 - Plugin: `snagBackendModule`
 - Contains: `GenerateProjectReportUseCase` interface
 
 ```kotlin
-data class ProjectReportResult(
-    val projectName: String,
-    val pdfBytes: ByteArray,
-)
-
 interface GenerateProjectReportUseCase {
-    suspend operator fun invoke(projectId: Uuid): ProjectReportResult?
+    suspend operator fun invoke(projectId: Uuid): ProjectReport?
     // Returns null if project not found
 }
 ```
@@ -197,17 +196,17 @@ internal class ReportRoute(
     override fun Route.setup() {
         get("/projects/{projectId}/report") {
             val projectId = getIdFromParameters("projectId")
-            val result = generateProjectReportUseCase(projectId)
+            val report = generateProjectReportUseCase(projectId)
                 ?: return@get call.respond(HttpStatusCode.NotFound, "Project not found.")
 
-            val fileName = "${result.projectName}_report.pdf"
+            val fileName = "${report.projectName}_report.pdf"
             call.response.header(
                 HttpHeaders.ContentDisposition,
                 ContentDisposition.Attachment.withParameter(
                     ContentDisposition.Parameters.FileName, fileName
                 ).toString()
             )
-            call.respondBytes(result.pdfBytes, ContentType.Application.Pdf)
+            call.respondBytes(report.pdfBytes, ContentType.Application.Pdf)
         }
     }
 }
@@ -272,13 +271,6 @@ include(":feat:reports:be:driving:impl")
 plugins {
     alias(libs.plugins.snagBackendModule)
 }
-dependencies {
-    api(project(":feat:projects:business"))
-    api(project(":feat:clients:business"))
-    api(project(":feat:structures:business"))
-    api(project(":feat:findings:business"))
-    api(project(":feat:inspections:business"))
-}
 ```
 
 **`feat/reports/be/ports/build.gradle.kts`**
@@ -286,7 +278,13 @@ dependencies {
 plugins {
     alias(libs.plugins.snagBackendModule)
 }
-// Auto-wired: depends on model module via plugin convention
+dependencies {
+    api(project(":feat:projects:business"))
+    api(project(":feat:clients:business"))
+    api(project(":feat:structures:business"))
+    api(project(":feat:findings:business"))
+    api(project(":feat:inspections:business"))
+}
 ```
 
 **`feat/reports/be/app/api/build.gradle.kts`**
@@ -356,8 +354,8 @@ Structures may have a `floorPlanUrl` pointing to an image in GCS. For the PDF:
 
 1. **Add OpenPDF to version catalog** (`gradle/libs.versions.toml`)
 2. **Register modules** in `settings.gradle.kts`
-3. **`feat/reports/be/model`** — `ProjectReportData`, `StructureWithFindings`
-4. **`feat/reports/be/ports`** — `PdfReportGenerator` interface
+3. **`feat/reports/be/model`** — `ProjectReport`
+4. **`feat/reports/be/ports`** — report data model + `PdfReportGenerator` interface
 5. **`feat/reports/be/app/api`** — `GenerateProjectReportUseCase` interface
 6. **`feat/reports/be/app/impl`** — use case implementation (data aggregation)
 7. **`feat/reports/be/driven/impl`** — OpenPDF implementation of `PdfReportGenerator`
