@@ -10,12 +10,8 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.lib.design.fe.initializer
+package cz.adamec.timotej.snag.lib.design.fe.di
 
-internal class AndroidDesignInitializer(
-//    private val acti
-) : DesignInitializer {
-    override suspend fun init() {
-        TODO("Not yet implemented")
-    }
-}
+import org.koin.dsl.module
+
+internal actual val platformModule = module {}

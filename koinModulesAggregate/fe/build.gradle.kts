@@ -18,6 +18,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             // Core infrastructure
+            implementation(projects.lib.design.fe)
             implementation(projects.lib.core.fe)
             implementation(projects.lib.network.fe.app.impl)
             implementation(projects.lib.network.fe.driven.impl)

@@ -101,6 +101,19 @@ internal fun Project.configureKotlinMultiplatformModule() {
                 dependsOn(nonAndroidMain)
             }
 
+            val nonJvmMain = create("nonJvmMain") {
+                dependsOn(commonMain.get())
+            }
+            androidMain {
+                dependsOn(nonJvmMain)
+            }
+            iosMain {
+                dependsOn(nonJvmMain)
+            }
+            getByName("webMain") {
+                dependsOn(nonJvmMain)
+            }
+
             commonMain.dependencies {
                 val moduleDirectoryPath = this@configureKotlinMultiplatformModule.path.substringBeforeLast(":")
                 val modulePreDirectoryPath = moduleDirectoryPath.substringBeforeLast(":")

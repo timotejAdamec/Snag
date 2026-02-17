@@ -12,12 +12,12 @@
 
 package cz.adamec.timotej.snag.lib.design.fe.di
 
-import org.koin.core.annotation.Module
+import org.koin.core.module.Module
 import org.koin.dsl.module
 
 val designModule =
     module {
-
+        includes(platformModule)
     }
 
-//internal expect val platformModule: Module
+internal expect val platformModule: Module

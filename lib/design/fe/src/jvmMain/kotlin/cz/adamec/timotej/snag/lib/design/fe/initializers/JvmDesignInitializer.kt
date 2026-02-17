@@ -10,8 +10,13 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.lib.design.fe.initializer
+package cz.adamec.timotej.snag.lib.design.fe.initializers
 
 import cz.adamec.timotej.snag.lib.core.fe.Initializer
+import io.github.vinceglb.filekit.FileKit
 
-internal interface DesignInitializer : Initializer
+internal class JvmDesignInitializer : Initializer {
+    override suspend fun init() {
+        FileKit.init(appId = "cz.adamec.timotej.snag")
+    }
+}

@@ -70,6 +70,7 @@ internal fun Project.configureComposeMultiplatformModule() {
                 implementation(library("coil-compose"))
                 implementation(library("coil-network-ktor"))
                 implementation(library("zoomimage-compose-coil3"))
+                implementation(library("filekit.dialogs.compose"))
             }
             commonTest.dependencies {
                 implementation(library("kotlin-test"))

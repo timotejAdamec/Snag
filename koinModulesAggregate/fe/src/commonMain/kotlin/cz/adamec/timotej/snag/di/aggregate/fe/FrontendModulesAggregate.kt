@@ -28,6 +28,7 @@ import cz.adamec.timotej.snag.findings.fe.app.impl.di.findingsAppModule
 import cz.adamec.timotej.snag.findings.fe.driven.di.findingsDrivenModule
 import cz.adamec.timotej.snag.findings.fe.driving.impl.di.findingsDrivingImplModule
 import cz.adamec.timotej.snag.lib.core.fe.di.frontendCoreModule
+import cz.adamec.timotej.snag.lib.design.fe.di.designModule
 import cz.adamec.timotej.snag.lib.storage.fe.impl.di.fileStorageModule
 import cz.adamec.timotej.snag.lib.sync.fe.app.impl.di.syncAppModule
 import cz.adamec.timotej.snag.lib.sync.fe.driven.impl.di.syncDrivenModule
@@ -47,6 +48,7 @@ val frontendModulesAggregate =
     module {
         includes(
             frontendCoreModule,
+            designModule,
             networkAppModule,
             networkDrivenModule,
             databaseModule,
