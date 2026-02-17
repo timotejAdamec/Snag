@@ -27,6 +27,9 @@ internal fun Project.configureBackendModule() {
         if (!path.contains("core")) {
             implementation(project(":lib:core:be"))
         }
+        if (!path.contains("configuration") && !path.contains("core")) {
+            implementation(project(":lib:configuration:common:api"))
+        }
 
         val moduleDirectoryPath = path.substringBeforeLast(":")
         val modulePreDirectoryPath = moduleDirectoryPath.substringBeforeLast(":")
