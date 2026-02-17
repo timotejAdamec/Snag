@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.findings.fe.driving.impl.di
 
+import cz.adamec.timotej.snag.feat.findings.fe.driving.api.WebFindingCreationRoute
 import cz.adamec.timotej.snag.feat.findings.fe.driving.api.WebFindingDetailRoute
 import cz.adamec.timotej.snag.feat.findings.fe.driving.api.WebFindingEditRoute
 import cz.adamec.timotej.snag.feat.findings.fe.driving.api.WebFindingsListRoute
@@ -22,4 +23,5 @@ internal actual val platformModule =
         findingsListScreenNav<WebFindingsListRoute>()
         findingDetailScreenNav<WebFindingDetailRoute>()
         findingEditScreenNav<WebFindingEditRoute>()
+        findingCreationScreenNav<WebFindingCreationRoute>()
     }

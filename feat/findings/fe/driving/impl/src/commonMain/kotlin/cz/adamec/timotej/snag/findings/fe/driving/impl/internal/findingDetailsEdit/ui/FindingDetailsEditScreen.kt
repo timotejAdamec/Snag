@@ -34,6 +34,7 @@ import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetailsEd
 import cz.adamec.timotej.snag.lib.design.fe.adaptive.isScreenLarge
 import cz.adamec.timotej.snag.lib.design.fe.error.ShowSnackbarOnError
 import cz.adamec.timotej.snag.lib.design.fe.events.ObserveAsEvents
+import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 import kotlin.uuid.Uuid
@@ -45,12 +46,13 @@ internal fun FindingDetailsEditScreen(
     findingId: Uuid? = null,
     structureId: Uuid? = null,
     findingTypeKey: String? = null,
+    coordinate: RelativeCoordinate? = null,
     viewModel: FindingDetailsEditViewModel =
         koinViewModel(
             viewModelStoreOwner =
                 LocalViewModelStoreOwner.current
                     ?: error("No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"),
-        ) { parametersOf(findingId, structureId, findingTypeKey) },
+        ) { parametersOf(findingId, structureId, findingTypeKey, coordinate) },
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
