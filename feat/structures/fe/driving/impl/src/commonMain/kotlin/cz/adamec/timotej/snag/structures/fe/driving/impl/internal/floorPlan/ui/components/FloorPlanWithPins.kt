@@ -14,9 +14,13 @@ package cz.adamec.timotej.snag.structures.fe.driving.impl.internal.floorPlan.ui.
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
@@ -28,10 +32,12 @@ import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.dp
 import com.github.panpf.zoomimage.CoilZoomAsyncImage
 import com.github.panpf.zoomimage.CoilZoomState
 import com.github.panpf.zoomimage.rememberCoilZoomState
+import com.github.panpf.zoomimage.zoom.ContainerWhitespace
 import cz.adamec.timotej.snag.feat.findings.business.FindingType
 import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
 import cz.adamec.timotej.snag.feat.findings.fe.driving.api.visuals
@@ -52,9 +58,25 @@ internal fun FloorPlanWithPins(
     onFindingClick: (Uuid) -> Unit,
     onEmptySpaceTap: (RelativeCoordinate) -> Unit,
     modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(),
 ) {
     val zoomState = rememberCoilZoomState()
-    val touchTargetRadiusPx = with(LocalDensity.current) { 16.dp.toPx() }
+    val density = LocalDensity.current
+    val layoutDirection = LocalLayoutDirection.current
+    val touchTargetRadiusPx = with(density) { 16.dp.toPx() }
+
+    LaunchedEffect(contentPadding) {
+        with(density) {
+            zoomState.zoomable.setContainerWhitespace(
+                ContainerWhitespace(
+                    left = contentPadding.calculateStartPadding(layoutDirection).toPx(),
+                    top = contentPadding.calculateTopPadding().toPx(),
+                    right = contentPadding.calculateEndPadding(layoutDirection).toPx(),
+                    bottom = contentPadding.calculateBottomPadding().toPx(),
+                ),
+            )
+        }
+    }
 
     Box(modifier = modifier) {
         CoilZoomAsyncImage(

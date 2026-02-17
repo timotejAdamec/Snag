@@ -104,7 +104,7 @@ internal fun FindingDetailContent(
 
         FindingDetailUiStatus.LOADED,
         FindingDetailUiStatus.DELETED,
-        -> {
+            -> {
             val finding = state.finding ?: return
             var isShowingDeleteConfirmation by remember { mutableStateOf(false) }
             if (isShowingDeleteConfirmation) {
@@ -119,6 +119,7 @@ internal fun FindingDetailContent(
             val isInSheet = LocalIsInSheet.current
             val zeroInsets = WindowInsets(0, 0, 0, 0)
             Scaffold(
+                modifier = modifier,
                 containerColor =
                     if (isInSheet) Color.Transparent else MaterialTheme.colorScheme.background,
                 topBar = {
@@ -163,8 +164,13 @@ internal fun FindingDetailContent(
                                 top = paddingValues.calculateTopPadding(),
                                 bottom = paddingValues.calculateBottomPadding(),
                                 end = paddingValues.calculateEndPadding(LayoutDirection.Ltr),
-                            ).consumeWindowInsets(paddingValues)
-                            .padding(16.dp),
+                            )
+                            .consumeWindowInsets(paddingValues)
+                            .padding(
+                                start = 16.dp,
+                                end = 16.dp,
+                                top = 16.dp,
+                            ),
                 ) {
                     Column {
                         val type = finding.finding.type
@@ -208,16 +214,18 @@ internal fun FindingDetailContent(
                         val coordinateCount = finding.finding.coordinates.size
                         Text(
                             modifier = Modifier.padding(top = 16.dp),
-                            text = pluralStringResource(Res.plurals.coordinate_count, coordinateCount, coordinateCount),
+                            text = pluralStringResource(
+                                Res.plurals.coordinate_count,
+                                coordinateCount,
+                                coordinateCount
+                            ),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     }
                     HorizontalFloatingToolbar(
-                        modifier =
-                            Modifier
-                                .align(Alignment.BottomCenter)
-                                .padding(16.dp),
+                        modifier = Modifier
+                            .align(Alignment.BottomCenter),
                         expanded = true,
                     ) {
                         IconButton(

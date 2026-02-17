@@ -13,7 +13,9 @@
 package cz.adamec.timotej.snag.structures.fe.driving.impl.internal.floorPlan.ui
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ContainedLoadingIndicator
@@ -25,11 +27,16 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInParent
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
@@ -133,16 +140,34 @@ private fun LoadedStructureDetailsContent(
             )
         },
     ) { paddingValues ->
+        val density = LocalDensity.current
+        val layoutDirection = LocalLayoutDirection.current
+        var boxHeightPx by remember { mutableIntStateOf(0) }
+        var toolbarTopPx by remember { mutableIntStateOf(0) }
+
         Box(
             modifier =
                 Modifier
                     .fillMaxSize()
-                    .padding(paddingValues)
-                    .consumeWindowInsets(paddingValues),
+                    .onGloballyPositioned { boxHeightPx = it.size.height },
         ) {
             var pendingCreationCoordinate by remember {
                 mutableStateOf<RelativeCoordinate?>(null)
             }
+            val toolbarBottomPadding =
+                if (LocalSheetPeekHeight.current == 0.dp) {
+                    16.dp
+                } else {
+                    LocalSheetPeekHeight.current
+                }
+            val bottomFromToolbar =
+                with(density) { (boxHeightPx - toolbarTopPx).toDp() } + 8.dp
+            val floorPlanContentPadding =
+                PaddingValues(
+                    start = paddingValues.calculateStartPadding(layoutDirection),
+                    top = paddingValues.calculateTopPadding(),
+                    bottom = bottomFromToolbar,
+                )
 
             val floorPlanUrl = state.feStructure?.structure?.floorPlanUrl
             if (floorPlanUrl != null) {
@@ -152,6 +177,7 @@ private fun LoadedStructureDetailsContent(
                     contentDescription = state.feStructure.structure.name,
                     findings = state.findings,
                     selectedFindingId = state.selectedFindingId,
+                    contentPadding = floorPlanContentPadding,
                     onFindingClick = onFindingClick,
                     onEmptySpaceTap = { coordinate ->
                         pendingCreationCoordinate = coordinate
@@ -187,17 +213,14 @@ private fun LoadedStructureDetailsContent(
                     },
                 )
             }
-            val toolbarBottomPadding =
-                if (LocalSheetPeekHeight.current == 0.dp) {
-                    16.dp
-                } else {
-                    LocalSheetPeekHeight.current
-                }
             HorizontalFloatingToolbar(
                 modifier =
                     Modifier
                         .align(Alignment.BottomCenter)
-                        .padding(bottom = toolbarBottomPadding),
+                        .padding(bottom = toolbarBottomPadding)
+                        .onGloballyPositioned {
+                            toolbarTopPx = it.positionInParent().y.toInt()
+                        },
                 expanded = true,
             ) {
                 IconButton(
