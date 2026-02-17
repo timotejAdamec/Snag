@@ -29,11 +29,13 @@ fun OutlinedIconTextButton(
     icon: DrawableResource,
     label: String,
     modifier: Modifier = Modifier,
+    isEnabled: Boolean = true,
 ) {
     OutlinedButton(
         modifier = modifier,
         onClick = onClick,
         contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
+        enabled = isEnabled,
     ) {
         Icon(
             modifier = Modifier.size(ButtonDefaults.IconSize),

@@ -41,11 +41,13 @@ import cz.adamec.timotej.snag.lib.design.fe.theme.SnagPreview
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import snag.feat.structures.fe.driving.impl.generated.resources.Res
+import snag.feat.structures.fe.driving.impl.generated.resources.change
 import snag.feat.structures.fe.driving.impl.generated.resources.error_loading_image
 import snag.feat.structures.fe.driving.impl.generated.resources.floor_plan
 import snag.feat.structures.fe.driving.impl.generated.resources.remove
 import snag.feat.structures.fe.driving.impl.generated.resources.upload
 import snag.lib.design.fe.generated.resources.ic_close
+import snag.lib.design.fe.generated.resources.ic_edit
 import snag.lib.design.fe.generated.resources.ic_error
 import snag.lib.design.fe.generated.resources.ic_upload
 import snag.lib.design.fe.generated.resources.Res as DesignRes
@@ -61,6 +63,7 @@ internal fun FloorPlanEditSection(
     onImagePick: (bytes: ByteArray, fileName: String) -> Unit,
     onRemoveImage: () -> Unit,
     modifier: Modifier = Modifier,
+    canModifyImage: Boolean = true,
 ) {
     Column(
         modifier = modifier,
@@ -79,6 +82,8 @@ internal fun FloorPlanEditSection(
                     .padding(8.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
+                var isPicking by remember { mutableStateOf(false) }
+
                 if (floorPlanUrl == null && !isUploading) {
                     Box(
                         modifier = Modifier
@@ -92,6 +97,8 @@ internal fun FloorPlanEditSection(
                             label = stringResource(Res.string.upload),
                             isSingleAction = true,
                             onImagePick = onImagePick,
+                            isEnabled = canModifyImage && !isPicking,
+                            onIsPickingChange = { isPicking = it },
                         )
                     }
                 } else {
@@ -154,13 +161,19 @@ internal fun FloorPlanEditSection(
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
-                        ChangePlanImageButton(
+                        PlanImagePickButton(
+                            modifier = modifier,
+                            icon = DesignRes.drawable.ic_edit,
+                            label = stringResource(Res.string.change),
                             onImagePick = onImagePick,
+                            isEnabled = canModifyImage && !isPicking,
+                            onIsPickingChange = { isPicking = it },
                         )
                         OutlinedIconTextButton(
                             onClick = onRemoveImage,
                             icon = DesignRes.drawable.ic_close,
                             label = stringResource(Res.string.remove),
+                            isEnabled = canModifyImage && !isPicking,
                         )
                     }
                 }

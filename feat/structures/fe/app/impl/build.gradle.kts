@@ -18,6 +18,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(project(":feat:findings:fe:app:api"))
+            implementation(projects.lib.network.fe.app.api)
         }
         commonTest {
             dependencies {

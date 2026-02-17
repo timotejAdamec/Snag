@@ -156,6 +156,7 @@ val structuresDrivingImplModule =
                 saveStructureUseCase = get(),
                 uploadFloorPlanImageUseCase = get(),
                 deleteFloorPlanImageUseCase = get(),
+                canModifyFloorPlanImageUseCase = get(),
             )
         }
     }

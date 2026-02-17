@@ -19,6 +19,7 @@ import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError.Unknown
+import cz.adamec.timotej.snag.structures.fe.app.api.CanModifyFloorPlanImageUseCase
 import cz.adamec.timotej.snag.structures.fe.app.api.DeleteFloorPlanImageUseCase
 import cz.adamec.timotej.snag.structures.fe.app.api.GetStructureUseCase
 import cz.adamec.timotej.snag.structures.fe.app.api.SaveStructureUseCase
@@ -45,6 +46,7 @@ internal class StructureDetailsEditViewModel(
     private val saveStructureUseCase: SaveStructureUseCase,
     private val uploadFloorPlanImageUseCase: UploadFloorPlanImageUseCase,
     private val deleteFloorPlanImageUseCase: DeleteFloorPlanImageUseCase,
+    private val canModifyFloorPlanImageUseCase: CanModifyFloorPlanImageUseCase,
 ) : ViewModel() {
     private val _state: MutableStateFlow<StructureDetailsEditUiState> =
         MutableStateFlow(StructureDetailsEditUiState(projectId = projectId))
@@ -63,6 +65,7 @@ internal class StructureDetailsEditViewModel(
             "Either structureId or projectId must be provided"
         }
         structureId?.let { collectStructure(it) }
+        collectCanModifyFloorPlanImage()
     }
 
     private fun collectStructure(structureId: Uuid) =
@@ -84,6 +87,17 @@ internal class StructureDetailsEditViewModel(
                             cancel()
                         }
                     }
+                }
+            }
+        }
+
+    private fun collectCanModifyFloorPlanImage() =
+        viewModelScope.launch {
+            canModifyFloorPlanImageUseCase().collect { canModify ->
+                _state.update {
+                    it.copy(
+                        canModifyFloorPlanImage = canModify,
+                    )
                 }
             }
         }

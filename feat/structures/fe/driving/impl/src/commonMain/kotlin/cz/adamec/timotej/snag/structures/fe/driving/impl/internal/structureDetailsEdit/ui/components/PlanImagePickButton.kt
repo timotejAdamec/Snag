@@ -13,13 +13,18 @@
 package cz.adamec.timotej.snag.structures.fe.driving.impl.internal.structureDetailsEdit.ui.components
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import cz.adamec.timotej.snag.lib.design.fe.button.ButtonSize
 import cz.adamec.timotej.snag.lib.design.fe.button.OutlinedIconTextButton
 import cz.adamec.timotej.snag.lib.design.fe.button.TonalIconTextButton
 import io.github.vinceglb.filekit.FileKit
 import io.github.vinceglb.filekit.dialogs.FileKitType
+import io.github.vinceglb.filekit.dialogs.compose.rememberFilePickerLauncher
 import io.github.vinceglb.filekit.dialogs.openFilePicker
 import io.github.vinceglb.filekit.name
 import io.github.vinceglb.filekit.readBytes
@@ -32,20 +37,25 @@ internal fun PlanImagePickButton(
     label: String,
     onImagePick: (bytes: ByteArray, fileName: String) -> Unit,
     modifier: Modifier = Modifier,
+    onIsPickingChange: (Boolean) -> Unit = {},
     isSingleAction: Boolean = false,
+    isEnabled: Boolean = true,
 ) {
     val scope = rememberCoroutineScope()
-    val onPick: () -> Unit = {
+    val pickerLauncher = rememberFilePickerLauncher(
+        type = FileKitType.File(extensions = listOf("jpg", "jpeg", "png", "webp")),
+    ) { file ->
         scope.launch {
-            val file =
-                FileKit.openFilePicker(
-                    type = FileKitType.File(extensions = listOf("jpg", "jpeg", "png", "webp")),
-                )
             if (file != null) {
                 val bytes = file.readBytes()
                 onImagePick(bytes, file.name)
             }
+            onIsPickingChange(false)
         }
+    }
+    val onPick: () -> Unit = {
+        onIsPickingChange(true)
+        pickerLauncher.launch()
     }
 
     if (isSingleAction) {
@@ -55,6 +65,7 @@ internal fun PlanImagePickButton(
             label = label,
             onClick = onPick,
             size = ButtonSize.M,
+            isEnabled = isEnabled,
         )
     } else {
         OutlinedIconTextButton(
@@ -62,6 +73,7 @@ internal fun PlanImagePickButton(
             icon = icon,
             label = label,
             onClick = onPick,
+            isEnabled = isEnabled,
         )
     }
 }

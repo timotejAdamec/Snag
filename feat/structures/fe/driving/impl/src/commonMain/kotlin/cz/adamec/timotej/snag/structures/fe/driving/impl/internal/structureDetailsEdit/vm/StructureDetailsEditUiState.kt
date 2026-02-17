@@ -22,6 +22,7 @@ internal data class StructureDetailsEditUiState(
     val floorPlanUrl: String? = null,
     val pendingUploadUrl: String? = null,
     val isUploadingImage: Boolean = false,
+    val canModifyFloorPlanImage: Boolean = true,
 ) {
     val isEditMode = projectId != null
 }

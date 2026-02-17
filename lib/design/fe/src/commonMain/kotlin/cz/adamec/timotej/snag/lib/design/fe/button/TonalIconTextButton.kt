@@ -31,6 +31,7 @@ fun TonalIconTextButton(
     label: String,
     modifier: Modifier = Modifier,
     size: ButtonSize = ButtonSize.S,
+    isEnabled: Boolean = true,
 ) {
     val containerHeight = when (size) {
         ButtonSize.S -> ButtonDefaults.ExtraSmallContainerHeight
@@ -42,6 +43,7 @@ fun TonalIconTextButton(
             .heightIn(containerHeight),
         onClick = onClick,
         contentPadding = ButtonDefaults.contentPaddingFor(containerHeight),
+        enabled = isEnabled,
     ) {
         Icon(
             modifier = Modifier.size(ButtonDefaults.iconSizeFor(containerHeight)),
