@@ -18,10 +18,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -31,6 +32,7 @@ import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import cz.adamec.timotej.snag.feat.findings.business.FindingType
+import cz.adamec.timotej.snag.lib.design.fe.dialog.DividedContentDialog
 import cz.adamec.timotej.snag.lib.design.fe.theme.SnagPreview
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -48,14 +50,18 @@ fun FindingTypePickerDialog(
         FindingType.Note to FindingType.KEY_NOTE,
     )
 
-    AlertDialog(
+    DividedContentDialog(
         onDismissRequest = onDismiss,
         title = {
-            Text(text = stringResource(Res.string.select_finding_type))
+            Text(
+                text = stringResource(Res.string.select_finding_type),
+                style = MaterialTheme.typography.headlineSmall,
+            )
         },
-        text = {
+        content = {
             Column(
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                modifier = Modifier.padding(vertical = 16.dp, horizontal = 24.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 types.forEach { (type, key) ->
                     val visuals = type.visuals()
@@ -78,8 +84,7 @@ fun FindingTypePickerDialog(
                 }
             }
         },
-        confirmButton = {},
-        dismissButton = {
+        buttons = {
             TextButton(onClick = onDismiss) {
                 Text("Dismiss")
             }
