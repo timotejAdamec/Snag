@@ -79,9 +79,9 @@ lives in its own feature directory.
 
 ```
 feat/reports/
-├── business/             # Report domain model (projectId, url)
+├── business/             # Report domain model (projectId, pdfBytes)
 ├── be/
-│   ├── model/            # BackendReport (wraps Report + PDF bytes)
+│   ├── model/            # BackendReport (wraps Report)
 │   ├── app/
 │   │   ├── api/          # GenerateProjectReportUseCase interface
 │   │   └── impl/         # Use case impl — orchestrates data fetching + PDF generation
@@ -102,19 +102,18 @@ feat/reports/
 ```kotlin
 data class Report(
     val projectId: Uuid,
-    val url: String,
+    val pdfBytes: ByteArray,
 )
 ```
 
 #### `feat/reports/be/model`
 - Plugin: `snagBackendModule`
 - Contains:
-  - `BackendReport` — wraps the business `Report` with the actual PDF bytes
+  - `BackendReport` — wraps the business `Report`
 
 ```kotlin
 data class BackendReport(
     val report: Report,
-    val pdfBytes: ByteArray,
 )
 ```
 
@@ -175,8 +174,7 @@ interface GenerateProjectReportUseCase {
   5. Fetch inspections via `GetInspectionsUseCase(projectId)`; filter out soft-deleted
   6. Assemble `ProjectReportData`
   7. Call `PdfReportGenerator.generate(data)` to get the PDF bytes
-  8. Construct the file name (e.g. `"${project.name}_report.pdf"`)
-  9. Return `BackendReport(Report(projectId, fileName), pdfBytes)`
+  8. Return `BackendReport(Report(projectId, pdfBytes))`
 - Dependencies:
   - `:feat:reports:be:app:api`
   - `:feat:reports:be:ports`
@@ -213,13 +211,14 @@ internal class ReportRoute(
             val backendReport = generateProjectReportUseCase(projectId)
                 ?: return@get call.respond(HttpStatusCode.NotFound, "Project not found.")
 
+            val fileName = "${backendReport.report.projectId}_report.pdf"
             call.response.header(
                 HttpHeaders.ContentDisposition,
                 ContentDisposition.Attachment.withParameter(
-                    ContentDisposition.Parameters.FileName, backendReport.report.url
+                    ContentDisposition.Parameters.FileName, fileName
                 ).toString()
             )
-            call.respondBytes(backendReport.pdfBytes, ContentType.Application.Pdf)
+            call.respondBytes(backendReport.report.pdfBytes, ContentType.Application.Pdf)
         }
     }
 }
@@ -380,7 +379,7 @@ Structures may have a `floorPlanUrl` pointing to an image in GCS. For the PDF:
 4. **`feat/reports/be/model`** — `BackendReport`
 5. **`feat/reports/be/ports`** — report data model + `PdfReportGenerator` interface
 6. **`feat/reports/be/app/api`** — `GenerateProjectReportUseCase` interface
-7. **`feat/reports/be/app/impl`** — use case implementation (data aggregation + fileName construction)
+7. **`feat/reports/be/app/impl`** — use case implementation (data aggregation)
 8. **`feat/reports/be/driven/impl`** — OpenPDF implementation of `PdfReportGenerator`
    - Start with basic text/tables, then add floor plan rendering
 9. **`feat/reports/be/driving/impl`** — HTTP route
@@ -399,7 +398,7 @@ GET /projects/{projectId}/report
 
 Response 200:
   Content-Type: application/pdf
-  Content-Disposition: attachment; filename="{project_name}_report.pdf"
+  Content-Disposition: attachment; filename="{projectId}_report.pdf"
   Body: <PDF bytes>
 
 Response 404:
