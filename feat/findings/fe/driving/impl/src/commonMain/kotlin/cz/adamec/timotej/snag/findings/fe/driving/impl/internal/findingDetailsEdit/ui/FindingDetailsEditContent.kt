@@ -46,7 +46,7 @@ import androidx.compose.ui.unit.dp
 import cz.adamec.timotej.snag.feat.findings.business.FindingType
 import cz.adamec.timotej.snag.feat.findings.business.Importance
 import cz.adamec.timotej.snag.feat.findings.business.Term
-import cz.adamec.timotej.snag.feat.findings.fe.driving.api.findingTypeVisuals
+import cz.adamec.timotej.snag.feat.findings.fe.driving.api.visuals
 import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetailsEdit.vm.FindingDetailsEditUiState
 import cz.adamec.timotej.snag.lib.design.fe.dialog.FullScreenDialogMeasurements
 import cz.adamec.timotej.snag.lib.design.fe.theme.SnagPreview
@@ -107,7 +107,7 @@ internal fun FindingDetailsEditContent(
                     )
                 },
                 subtitle = {
-                    val visuals = findingTypeVisuals(state.findingType)
+                    val visuals = state.findingType.visuals()
                     Row(
                         verticalAlignment = Alignment.Bottom,
                         horizontalArrangement = Arrangement.spacedBy(4.dp),

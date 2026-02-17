@@ -33,7 +33,7 @@ import com.github.panpf.zoomimage.CoilZoomAsyncImage
 import com.github.panpf.zoomimage.CoilZoomState
 import com.github.panpf.zoomimage.rememberCoilZoomState
 import cz.adamec.timotej.snag.feat.findings.business.FindingType
-import cz.adamec.timotej.snag.feat.findings.fe.driving.api.findingTypeVisuals
+import cz.adamec.timotej.snag.feat.findings.fe.driving.api.visuals
 import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
 import kotlinx.collections.immutable.ImmutableList
 import org.jetbrains.compose.resources.painterResource
@@ -93,9 +93,9 @@ private fun FindingsPinsOverlay(
     val displayRect = zoomableState.zoomable.contentDisplayRectF
     if (displayRect.isEmpty) return
 
-    val classicVisuals = findingTypeVisuals(FindingType.Classic())
-    val unvisitedVisuals = findingTypeVisuals(FindingType.Unvisited)
-    val noteVisuals = findingTypeVisuals(FindingType.Note)
+    val classicVisuals = FindingType.Classic().visuals()
+    val unvisitedVisuals = FindingType.Unvisited.visuals()
+    val noteVisuals = FindingType.Note.visuals()
 
     val classicPainter = painterResource(classicVisuals.icon)
     val unvisitedPainter = painterResource(unvisitedVisuals.icon)

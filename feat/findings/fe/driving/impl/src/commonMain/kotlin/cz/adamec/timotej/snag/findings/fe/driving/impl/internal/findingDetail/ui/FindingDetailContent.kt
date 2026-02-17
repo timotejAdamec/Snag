@@ -45,7 +45,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import cz.adamec.timotej.snag.feat.findings.business.FindingType
-import cz.adamec.timotej.snag.feat.findings.fe.driving.api.findingTypeVisuals
+import cz.adamec.timotej.snag.feat.findings.fe.driving.api.visuals
 import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetail.ui.components.FindingDeletionAlertDialog
 import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetail.ui.components.ImportanceLabel
 import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetail.ui.components.TermLabel
@@ -168,7 +168,7 @@ internal fun FindingDetailContent(
                 ) {
                     Column {
                         val type = finding.finding.type
-                        val visuals = findingTypeVisuals(type)
+                        val visuals = type.visuals()
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(8.dp),

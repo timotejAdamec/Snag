@@ -33,8 +33,8 @@ data class FindingTypeVisuals(
 )
 
 @Composable
-fun findingTypeVisuals(type: FindingType): FindingTypeVisuals =
-    when (type) {
+fun FindingType.visuals(): FindingTypeVisuals =
+    when (this) {
         is FindingType.Classic ->
             FindingTypeVisuals(
                 icon = Res.drawable.ic_finding_classic,
