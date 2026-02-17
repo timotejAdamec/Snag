@@ -29,6 +29,9 @@ import cz.adamec.timotej.snag.lib.storage.be.impl.di.storageRoutingModule
 import cz.adamec.timotej.snag.projects.be.app.impl.di.projectsAppModule
 import cz.adamec.timotej.snag.projects.be.driven.impl.di.projectsDrivenModule
 import cz.adamec.timotej.snag.projects.be.driving.impl.di.projectsDrivingModule
+import cz.adamec.timotej.snag.reports.be.app.impl.di.reportsAppModule
+import cz.adamec.timotej.snag.reports.be.driven.impl.di.reportsDrivenModule
+import cz.adamec.timotej.snag.reports.be.driving.impl.di.reportsDrivingModule
 import cz.adamec.timotej.snag.shared.rules.business.impl.di.sharedRulesModule
 import cz.adamec.timotej.snag.structures.be.app.impl.di.structuresAppModule
 import cz.adamec.timotej.snag.structures.be.driven.impl.di.structuresDrivenModule
@@ -59,5 +62,8 @@ val backendModulesAggregate =
             inspectionsDrivingModule,
             inspectionsDrivenModule,
             inspectionsAppModule,
+            reportsDrivingModule,
+            reportsDrivenModule,
+            reportsAppModule,
         )
     }
