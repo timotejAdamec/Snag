@@ -23,11 +23,13 @@ internal data class ProjectDetailsUiState(
     val structureStatus: StructuresUiStatus = StructuresUiStatus.LOADING,
     val inspectionStatus: InspectionsUiStatus = InspectionsUiStatus.LOADING,
     val isBeingDeleted: Boolean = false,
+    val isDownloadingReport: Boolean = false,
     val project: FrontendProject? = null,
     val structures: ImmutableList<FrontendStructure> = persistentListOf(),
     val inspections: ImmutableList<FrontendInspection> = persistentListOf(),
 ) {
     val canInvokeDeletion = projectStatus == ProjectDetailsUiStatus.LOADED && !isBeingDeleted
+    val canDownloadReport = projectStatus == ProjectDetailsUiStatus.LOADED && !isDownloadingReport
 }
 
 internal enum class ProjectDetailsUiStatus {

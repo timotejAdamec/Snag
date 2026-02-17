@@ -171,6 +171,7 @@ val projectsDrivingImplModule =
                 deleteProjectUseCase = get(),
                 getStructuresUseCase = get(),
                 getInspectionsUseCase = get(),
+                downloadReportUseCase = get(),
             )
         }
     }
