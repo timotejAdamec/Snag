@@ -22,10 +22,10 @@ internal fun Project.configureNetworkFrontendMultiplatformModule() {
         sourceSets {
             commonMain.dependencies {
                 if (!path.contains("network")) {
-                    implementation(project(":lib:network:fe"))
+                    implementation(project(":lib:network:fe:app:api"))
                 }
                 if (path.endsWith(":driven:test")) {
-                    implementation(project(":lib:network:fe:test"))
+                    implementation(project(":lib:network:fe:driven:test"))
                 }
                 implementation(library("kotlinx-serialization-core"))
                 implementation(library("ktor-client-core"))

@@ -19,8 +19,8 @@ kotlin {
         commonMain.dependencies {
             // Core infrastructure
             implementation(projects.lib.core.fe)
-            implementation(projects.lib.configuration.fe.impl)
-            implementation(projects.lib.network.fe)
+            implementation(projects.lib.network.fe.app.impl)
+            implementation(projects.lib.network.fe.driven.impl)
             implementation(projects.lib.storage.fe.impl)
             implementation(projects.feat.shared.database.fe.impl)
             implementation(projects.feat.shared.storage.fe)

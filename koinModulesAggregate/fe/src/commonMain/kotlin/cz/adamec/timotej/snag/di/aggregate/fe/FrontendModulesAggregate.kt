@@ -16,7 +16,6 @@ import cz.adamec.timotej.snag.clients.fe.app.impl.di.clientsAppModule
 import cz.adamec.timotej.snag.clients.fe.driven.di.clientsDrivenModule
 import cz.adamec.timotej.snag.clients.fe.driving.api.di.clientsDrivingApiModule
 import cz.adamec.timotej.snag.clients.fe.driving.impl.di.clientsDrivingImplModule
-import cz.adamec.timotej.snag.configuration.fe.impl.di.configurationModule
 import cz.adamec.timotej.snag.feat.findings.fe.driving.api.di.findingsDrivingApiModule
 import cz.adamec.timotej.snag.feat.inspections.fe.app.impl.di.inspectionsAppModule
 import cz.adamec.timotej.snag.feat.inspections.fe.driven.di.inspectionsDrivenModule
@@ -32,7 +31,8 @@ import cz.adamec.timotej.snag.lib.core.fe.di.frontendCoreModule
 import cz.adamec.timotej.snag.lib.storage.fe.impl.di.fileStorageModule
 import cz.adamec.timotej.snag.lib.sync.fe.app.impl.di.syncAppModule
 import cz.adamec.timotej.snag.lib.sync.fe.driven.impl.di.syncDrivenModule
-import cz.adamec.timotej.snag.network.fe.di.networkModule
+import cz.adamec.timotej.snag.network.fe.app.impl.di.networkAppModule
+import cz.adamec.timotej.snag.network.fe.driven.impl.di.networkDrivenModule
 import cz.adamec.timotej.snag.projects.fe.app.impl.di.projectsAppModule
 import cz.adamec.timotej.snag.projects.fe.driven.di.projectsDrivenModule
 import cz.adamec.timotej.snag.projects.fe.driving.api.di.projectsDrivingApiModule
@@ -47,8 +47,8 @@ val frontendModulesAggregate =
     module {
         includes(
             frontendCoreModule,
-            configurationModule,
-            networkModule,
+            networkAppModule,
+            networkDrivenModule,
             databaseModule,
             sharedRulesModule,
             fileStorageModule,
