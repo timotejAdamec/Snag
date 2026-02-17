@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2026 Timotej Adamec
+  ~ SPDX-License-Identifier: MIT
+  ~
+  ~ This file is part of the thesis:
+  ~ "Multiplatform snagging system with code sharing maximisation"
+  ~
+  ~ Czech Technical University in Prague
+  ~ Faculty of Information Technology
+  ~ Department of Software Engineering
+  -->
+
+<resources>
+    <string name="select_finding_type">Select finding type</string>
+</resources>

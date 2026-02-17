@@ -10,7 +10,7 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.structures.fe.driving.impl.internal.floorPlan.ui.components
+package cz.adamec.timotej.snag.feat.findings.fe.driving.api
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -29,14 +29,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import cz.adamec.timotej.snag.feat.findings.business.FindingType
-import cz.adamec.timotej.snag.feat.findings.fe.driving.api.findingTypeVisuals
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import snag.feat.structures.fe.driving.impl.generated.resources.Res
-import snag.feat.structures.fe.driving.impl.generated.resources.select_finding_type
+import snag.feat.findings.fe.driving.api.generated.resources.Res
+import snag.feat.findings.fe.driving.api.generated.resources.select_finding_type
 
 @Composable
-internal fun FindingTypePickerDialog(
+fun FindingTypePickerDialog(
     onTypeSelected: (findingTypeKey: String) -> Unit,
     onDismiss: () -> Unit,
 ) {
@@ -54,7 +53,7 @@ internal fun FindingTypePickerDialog(
         text = {
             Column {
                 types.forEach { (type, key) ->
-                    val visuals = findingTypeVisuals(type)
+                    val visuals = type.visuals()
                     Row(
                         modifier =
                             Modifier

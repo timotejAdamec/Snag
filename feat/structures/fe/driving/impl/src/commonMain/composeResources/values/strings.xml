@@ -12,5 +12,4 @@
     <string name="change">Change</string>
     <string name="remove">Remove</string>
     <string name="error_loading_image">Error loading image</string>
-    <string name="select_finding_type">Select finding type</string>
 </resources>

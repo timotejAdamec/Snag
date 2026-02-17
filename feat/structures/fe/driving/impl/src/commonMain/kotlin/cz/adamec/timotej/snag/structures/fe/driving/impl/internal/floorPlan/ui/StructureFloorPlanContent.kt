@@ -35,7 +35,7 @@ import androidx.compose.ui.unit.dp
 import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.BackNavigationIcon
 import cz.adamec.timotej.snag.lib.design.fe.scenes.LocalSheetPeekHeight
-import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.floorPlan.ui.components.FindingTypePickerDialog
+import cz.adamec.timotej.snag.feat.findings.fe.driving.api.FindingTypePickerDialog
 import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.floorPlan.ui.components.FloorPlanAddPlaceholder
 import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.floorPlan.ui.components.FloorPlanWithPins
 import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.floorPlan.ui.components.StructureDeletionAlertDialog

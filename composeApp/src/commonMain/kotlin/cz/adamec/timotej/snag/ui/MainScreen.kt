@@ -49,7 +49,7 @@ internal fun MainScreen(mainViewModel: MainViewModel = koinViewModel()) {
                     contentPadding = syncBarTopContentPaddingValues,
                     onVisibilityChange = { isVisible ->
                         isSyncStatusBarVisible = isVisible
-                    }
+                    },
                 )
 
                 val navigationModifier =
