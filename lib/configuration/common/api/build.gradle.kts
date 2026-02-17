@@ -32,6 +32,9 @@ buildkonfig {
             com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING,
             "NAMESPACE",
             SNAG_NAMESPACE,
+            const = true,
         )
     }
+
+    exposeObjectWithName = "SnagBuildConfig"
 }
