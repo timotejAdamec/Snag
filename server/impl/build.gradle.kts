@@ -10,12 +10,14 @@
  * Department of Software Engineering
  */
 
+import cz.adamec.timotej.snag.buildsrc.consts.SNAG_NAMESPACE
+
 plugins {
     alias(libs.plugins.snagImplDrivingBackendModule)
     alias(libs.plugins.ktor)
 }
 
-group = "cz.adamec.timotej.snag"
+group = SNAG_NAMESPACE
 version = "1.0.0"
 application {
     mainClass.set("cz.adamec.timotej.snag.impl.ApplicationKt")

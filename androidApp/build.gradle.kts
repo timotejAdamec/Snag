@@ -10,6 +10,8 @@
  * Department of Software Engineering
  */
 
+import cz.adamec.timotej.snag.buildsrc.consts.SNAG_NAMESPACE
+
 plugins {
     id("com.android.application")
     alias(libs.plugins.composeCompiler)
@@ -20,7 +22,7 @@ android {
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {
-        applicationId = "cz.adamec.timotej.snag"
+        applicationId = SNAG_NAMESPACE
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1

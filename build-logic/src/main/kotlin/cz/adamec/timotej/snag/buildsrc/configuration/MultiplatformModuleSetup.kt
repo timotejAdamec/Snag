@@ -165,6 +165,9 @@ internal fun Project.configureKotlinMultiplatformModule() {
                 if (!path.contains("core")) {
                     implementation(project(":lib:core:common"))
                 }
+                if (!path.contains("configuration") && !path.contains("core")) {
+                    implementation(project(":lib:configuration:common:api"))
+                }
                 implementation(library("kotlinx-coroutines-core"))
                 implementation(library("kotlinx-immutable-collections"))
                 implementation(library("koin-core"))

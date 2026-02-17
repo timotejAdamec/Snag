@@ -10,6 +10,7 @@
  * Department of Software Engineering
  */
 
+import cz.adamec.timotej.snag.buildsrc.consts.SNAG_NAMESPACE
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 
@@ -65,7 +66,7 @@ compose.desktop {
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "cz.adamec.timotej.snag"
+            packageName = SNAG_NAMESPACE
             packageVersion = "1.0.0"
         }
     }
