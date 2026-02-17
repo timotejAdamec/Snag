@@ -83,6 +83,8 @@ or `BackendKoinInitializedTest` which handle all DI setup including dispatcher s
 `additionalKoinModules()` to bind fakes: `singleOf(::FakeXxxDb) bind XxxDb::class`. Use Turbine for
 StateFlow testing.
 
+Generally, follow existing patterns.
+
 ## Tech Stack
 
 - Kotlin 2.3.0, JDK 21
