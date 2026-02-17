@@ -76,15 +76,16 @@ openpdf = { module = "com.github.librepdf:openpdf", version.ref = "openpdf" }
 Following the project's hexagonal architecture. The report feature is cross-cutting
 (aggregates data from projects, clients, structures, findings, inspections), so it
 lives in its own feature directory. It is backend-only and has no persisted entity,
-so there is no `business/` or `be/model/` module.
+so there is no `business/` module.
 
 ```
 feat/reports/
 ├── be/
+│   ├── model/            # ProjectReportData, StructureWithFindings
 │   ├── app/
 │   │   ├── api/          # GenerateProjectReportUseCase interface
 │   │   └── impl/         # Use case impl — orchestrates data fetching + PDF generation
-│   ├── ports/            # PdfReportGenerator port interface + report data model
+│   ├── ports/            # PdfReportGenerator port interface
 │   ├── driven/
 │   │   └── impl/         # OpenPDF implementation of PdfReportGenerator
 │   └── driving/
@@ -93,14 +94,13 @@ feat/reports/
 
 ### Module details
 
-#### `feat/reports/be/ports`
+#### `feat/reports/be/model`
 - Plugin: `snagBackendModule`
 - Contains:
   - `ProjectReportData` — aggregate data class holding all data needed for the report
-  - `PdfReportGenerator` — port interface
+  - `StructureWithFindings` — pairs a structure with its findings
 
 ```kotlin
-// Report data model — pure data, no framework dependencies
 data class ProjectReportData(
     val project: Project,
     val client: Client?,
@@ -113,11 +113,6 @@ data class StructureWithFindings(
     val structure: Structure,
     val findings: List<Finding>,
 )
-
-// Port interface
-interface PdfReportGenerator {
-    suspend fun generate(data: ProjectReportData): ByteArray
-}
 ```
 
 - Dependencies:
@@ -126,6 +121,19 @@ interface PdfReportGenerator {
   - `:feat:structures:business`
   - `:feat:findings:business`
   - `:feat:inspections:business`
+
+#### `feat/reports/be/ports`
+- Plugin: `snagBackendModule`
+- Contains:
+  - `PdfReportGenerator` — port interface
+
+```kotlin
+interface PdfReportGenerator {
+    suspend fun generate(data: ProjectReportData): ByteArray
+}
+```
+
+- Dependencies (auto-wired by plugin): depends on model module
 
 #### `feat/reports/be/app/api`
 - Plugin: `snagBackendModule`
@@ -249,6 +257,7 @@ includes(
 Add to `settings.gradle.kts`:
 
 ```kotlin
+include(":feat:reports:be:model")
 include(":feat:reports:be:app:api")
 include(":feat:reports:be:app:impl")
 include(":feat:reports:be:ports")
@@ -258,7 +267,7 @@ include(":feat:reports:be:driving:impl")
 
 ### build.gradle.kts files
 
-**`feat/reports/be/ports/build.gradle.kts`**
+**`feat/reports/be/model/build.gradle.kts`**
 ```kotlin
 plugins {
     alias(libs.plugins.snagBackendModule)
@@ -270,6 +279,14 @@ dependencies {
     api(project(":feat:findings:business"))
     api(project(":feat:inspections:business"))
 }
+```
+
+**`feat/reports/be/ports/build.gradle.kts`**
+```kotlin
+plugins {
+    alias(libs.plugins.snagBackendModule)
+}
+// Auto-wired: depends on model module via plugin convention
 ```
 
 **`feat/reports/be/app/api/build.gradle.kts`**
@@ -339,14 +356,15 @@ Structures may have a `floorPlanUrl` pointing to an image in GCS. For the PDF:
 
 1. **Add OpenPDF to version catalog** (`gradle/libs.versions.toml`)
 2. **Register modules** in `settings.gradle.kts`
-3. **`feat/reports/be/ports`** — report data model + `PdfReportGenerator` interface
-4. **`feat/reports/be/app/api`** — `GenerateProjectReportUseCase` interface
-5. **`feat/reports/be/app/impl`** — use case implementation (data aggregation)
-6. **`feat/reports/be/driven/impl`** — OpenPDF implementation of `PdfReportGenerator`
+3. **`feat/reports/be/model`** — `ProjectReportData`, `StructureWithFindings`
+4. **`feat/reports/be/ports`** — `PdfReportGenerator` interface
+5. **`feat/reports/be/app/api`** — `GenerateProjectReportUseCase` interface
+6. **`feat/reports/be/app/impl`** — use case implementation (data aggregation)
+7. **`feat/reports/be/driven/impl`** — OpenPDF implementation of `PdfReportGenerator`
    - Start with basic text/tables, then add floor plan rendering
-7. **`feat/reports/be/driving/impl`** — HTTP route
-8. **DI wiring** — Koin modules + registration in `BackendModulesAggregate`
-9. **Tests**
+8. **`feat/reports/be/driving/impl`** — HTTP route
+9. **DI wiring** — Koin modules + registration in `BackendModulesAggregate`
+10. **Tests**
    - Use case test: mock ports, verify correct data aggregation
    - Route test: verify endpoint returns PDF bytes with correct content type
    - PDF generator test: verify output is valid PDF (can parse with PDFBox in test)
