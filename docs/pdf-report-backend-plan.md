@@ -132,8 +132,13 @@ interface PdfReportGenerator {
 - Contains: `GenerateProjectReportUseCase` interface
 
 ```kotlin
+data class ProjectReportResult(
+    val projectName: String,
+    val pdfBytes: ByteArray,
+)
+
 interface GenerateProjectReportUseCase {
-    suspend operator fun invoke(projectId: Uuid): ByteArray?
+    suspend operator fun invoke(projectId: Uuid): ProjectReportResult?
     // Returns null if project not found
 }
 ```
@@ -184,16 +189,17 @@ internal class ReportRoute(
     override fun Route.setup() {
         get("/projects/{projectId}/report") {
             val projectId = getIdFromParameters("projectId")
-            val pdfBytes = generateProjectReportUseCase(projectId)
+            val result = generateProjectReportUseCase(projectId)
                 ?: return@get call.respond(HttpStatusCode.NotFound, "Project not found.")
 
+            val fileName = "${result.projectName}_report.pdf"
             call.response.header(
                 HttpHeaders.ContentDisposition,
                 ContentDisposition.Attachment.withParameter(
-                    ContentDisposition.Parameters.FileName, "report.pdf"
+                    ContentDisposition.Parameters.FileName, fileName
                 ).toString()
             )
-            call.respondBytes(pdfBytes, ContentType.Application.Pdf)
+            call.respondBytes(result.pdfBytes, ContentType.Application.Pdf)
         }
     }
 }
@@ -354,7 +360,7 @@ GET /projects/{projectId}/report
 
 Response 200:
   Content-Type: application/pdf
-  Content-Disposition: attachment; filename="report.pdf"
+  Content-Disposition: attachment; filename="{project_name}_report.pdf"
   Body: <PDF bytes>
 
 Response 404:
@@ -365,7 +371,6 @@ Response 404:
 
 ## 9. Open Questions / Future Considerations
 
-- **Report filename**: Could include project name, e.g. `"Project-XYZ-Report.pdf"`.
 - **Locale/language**: If the app needs to support multiple languages in reports,
   the PDF text strings would need to be parameterized. For now, assume a single language.
 - **Caching**: Reports are generated on the fly. If generation becomes slow for
