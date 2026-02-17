@@ -18,8 +18,10 @@ import cz.adamec.timotej.snag.findings.be.app.api.GetFindingsUseCase
 import cz.adamec.timotej.snag.projects.be.app.api.GetProjectUseCase
 import cz.adamec.timotej.snag.reports.be.app.api.GenerateProjectReportUseCase
 import cz.adamec.timotej.snag.reports.be.app.impl.internal.LH.logger
+import cz.adamec.timotej.snag.reports.be.model.BackendReport
 import cz.adamec.timotej.snag.reports.be.ports.PdfReportGenerator
 import cz.adamec.timotej.snag.reports.be.ports.ProjectReportData
+import cz.adamec.timotej.snag.reports.business.Report
 import cz.adamec.timotej.snag.structures.be.app.api.GetStructuresUseCase
 import kotlin.uuid.Uuid
 
@@ -31,7 +33,7 @@ internal class GenerateProjectReportUseCaseImpl(
     private val getInspectionsUseCase: GetInspectionsUseCase,
     private val pdfReportGenerator: PdfReportGenerator,
 ) : GenerateProjectReportUseCase {
-    override suspend operator fun invoke(projectId: Uuid): ByteArray? {
+    override suspend operator fun invoke(projectId: Uuid): BackendReport? {
         logger.debug("Generating report for project {}.", projectId)
 
         val backendProject = getProjectUseCase(projectId) ?: return null
@@ -58,8 +60,14 @@ internal class GenerateProjectReportUseCaseImpl(
                 inspections = inspections,
             )
 
-        return pdfReportGenerator.generate(reportData).also {
-            logger.debug("Generated report for project {} ({} bytes).", projectId, it.size)
-        }
+        val bytes = pdfReportGenerator.generate(reportData)
+        logger.debug("Generated report for project {} ({} bytes).", projectId, bytes.size)
+        return BackendReport(
+            report =
+                Report(
+                    projectId = projectId,
+                    bytes = bytes,
+                ),
+        )
     }
 }

@@ -31,10 +31,10 @@ internal class ReportRoute(
         route("/projects/{projectId}/report") {
             get {
                 val projectId = getIdFromParameters("projectId")
-                val pdfBytes = generateProjectReportUseCase(projectId)
+                val report = generateProjectReportUseCase(projectId)
 
-                if (pdfBytes != null) {
-                    call.respondBytes(pdfBytes, ContentType.Application.Pdf)
+                if (report != null) {
+                    call.respondBytes(report.report.bytes, ContentType.Application.Pdf)
                 } else {
                     call.respond(HttpStatusCode.NotFound)
                 }

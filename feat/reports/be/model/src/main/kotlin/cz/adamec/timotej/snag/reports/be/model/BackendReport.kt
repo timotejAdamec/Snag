@@ -10,11 +10,10 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.reports.be.app.api
+package cz.adamec.timotej.snag.reports.be.model
 
-import cz.adamec.timotej.snag.reports.be.model.BackendReport
-import kotlin.uuid.Uuid
+import cz.adamec.timotej.snag.reports.business.Report
 
-interface GenerateProjectReportUseCase {
-    suspend operator fun invoke(projectId: Uuid): BackendReport?
-}
+data class BackendReport(
+    val report: Report,
+)

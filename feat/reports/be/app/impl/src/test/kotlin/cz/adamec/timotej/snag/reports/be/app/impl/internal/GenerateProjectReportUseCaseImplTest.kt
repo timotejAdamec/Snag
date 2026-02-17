@@ -29,6 +29,7 @@ import org.koin.dsl.bind
 import org.koin.dsl.module
 import org.koin.test.inject
 import kotlin.test.Test
+import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
@@ -72,6 +73,8 @@ class GenerateProjectReportUseCaseImplTest : BackendKoinInitializedTest() {
             val result = useCase(PROJECT_ID)
 
             assertNotNull(result)
+            assertEquals(PROJECT_ID, result.report.projectId)
+            assertContentEquals(FakePdfReportGenerator.FAKE_PDF_BYTES, result.report.bytes)
             val lastData = fakeGenerator.lastData
             assertNotNull(lastData)
             assertEquals("Test Project", lastData.project.project.name)
