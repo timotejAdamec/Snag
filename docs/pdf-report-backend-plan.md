@@ -75,13 +75,13 @@ openpdf = { module = "com.github.librepdf:openpdf", version.ref = "openpdf" }
 
 Following the project's hexagonal architecture. The report feature is cross-cutting
 (aggregates data from projects, clients, structures, findings, inspections), so it
-lives in its own feature directory. It is backend-only and has no persisted entity,
-so there is no `business/` module.
+lives in its own feature directory.
 
 ```
 feat/reports/
+├── business/             # Report domain model (projectId, url)
 ├── be/
-│   ├── model/            # ProjectReport (name + PDF bytes)
+│   ├── model/            # BackendReport (wraps Report + PDF bytes)
 │   ├── app/
 │   │   ├── api/          # GenerateProjectReportUseCase interface
 │   │   └── impl/         # Use case impl — orchestrates data fetching + PDF generation
@@ -94,14 +94,26 @@ feat/reports/
 
 ### Module details
 
+#### `feat/reports/business`
+- Plugin: `snagBusinessModule`
+- Contains:
+  - `Report` — domain model representing a generated report
+
+```kotlin
+data class Report(
+    val projectId: Uuid,
+    val url: String,
+)
+```
+
 #### `feat/reports/be/model`
 - Plugin: `snagBackendModule`
 - Contains:
-  - `ProjectReport` — result wrapper with project name and PDF bytes
+  - `BackendReport` — wraps the business `Report` with the actual PDF bytes
 
 ```kotlin
-data class ProjectReport(
-    val projectName: String,
+data class BackendReport(
+    val report: Report,
     val pdfBytes: ByteArray,
 )
 ```
@@ -145,7 +157,7 @@ interface PdfReportGenerator {
 
 ```kotlin
 interface GenerateProjectReportUseCase {
-    suspend operator fun invoke(projectId: Uuid): ProjectReport?
+    suspend operator fun invoke(projectId: Uuid): BackendReport?
     // Returns null if project not found
 }
 ```
@@ -162,7 +174,9 @@ interface GenerateProjectReportUseCase {
   4. For each structure, fetch findings via `GetFindingsUseCase(structureId)`; filter out soft-deleted
   5. Fetch inspections via `GetInspectionsUseCase(projectId)`; filter out soft-deleted
   6. Assemble `ProjectReportData`
-  7. Call `PdfReportGenerator.generate(data)` and return the bytes
+  7. Call `PdfReportGenerator.generate(data)` to get the PDF bytes
+  8. Construct the file name (e.g. `"${project.name}_report.pdf"`)
+  9. Return `BackendReport(Report(projectId, fileName), pdfBytes)`
 - Dependencies:
   - `:feat:reports:be:app:api`
   - `:feat:reports:be:ports`
@@ -196,17 +210,16 @@ internal class ReportRoute(
     override fun Route.setup() {
         get("/projects/{projectId}/report") {
             val projectId = getIdFromParameters("projectId")
-            val report = generateProjectReportUseCase(projectId)
+            val backendReport = generateProjectReportUseCase(projectId)
                 ?: return@get call.respond(HttpStatusCode.NotFound, "Project not found.")
 
-            val fileName = "${report.projectName}_report.pdf"
             call.response.header(
                 HttpHeaders.ContentDisposition,
                 ContentDisposition.Attachment.withParameter(
-                    ContentDisposition.Parameters.FileName, fileName
+                    ContentDisposition.Parameters.FileName, backendReport.report.url
                 ).toString()
             )
-            call.respondBytes(report.pdfBytes, ContentType.Application.Pdf)
+            call.respondBytes(backendReport.pdfBytes, ContentType.Application.Pdf)
         }
     }
 }
@@ -256,6 +269,7 @@ includes(
 Add to `settings.gradle.kts`:
 
 ```kotlin
+include(":feat:reports:business")
 include(":feat:reports:be:model")
 include(":feat:reports:be:app:api")
 include(":feat:reports:be:app:impl")
@@ -266,11 +280,19 @@ include(":feat:reports:be:driving:impl")
 
 ### build.gradle.kts files
 
+**`feat/reports/business/build.gradle.kts`**
+```kotlin
+plugins {
+    alias(libs.plugins.snagBusinessModule)
+}
+```
+
 **`feat/reports/be/model/build.gradle.kts`**
 ```kotlin
 plugins {
     alias(libs.plugins.snagBackendModule)
 }
+// Auto-wired: depends on business module via plugin convention
 ```
 
 **`feat/reports/be/ports/build.gradle.kts`**
@@ -354,15 +376,16 @@ Structures may have a `floorPlanUrl` pointing to an image in GCS. For the PDF:
 
 1. **Add OpenPDF to version catalog** (`gradle/libs.versions.toml`)
 2. **Register modules** in `settings.gradle.kts`
-3. **`feat/reports/be/model`** — `ProjectReport`
-4. **`feat/reports/be/ports`** — report data model + `PdfReportGenerator` interface
-5. **`feat/reports/be/app/api`** — `GenerateProjectReportUseCase` interface
-6. **`feat/reports/be/app/impl`** — use case implementation (data aggregation)
-7. **`feat/reports/be/driven/impl`** — OpenPDF implementation of `PdfReportGenerator`
+3. **`feat/reports/business`** — `Report` domain model
+4. **`feat/reports/be/model`** — `BackendReport`
+5. **`feat/reports/be/ports`** — report data model + `PdfReportGenerator` interface
+6. **`feat/reports/be/app/api`** — `GenerateProjectReportUseCase` interface
+7. **`feat/reports/be/app/impl`** — use case implementation (data aggregation + fileName construction)
+8. **`feat/reports/be/driven/impl`** — OpenPDF implementation of `PdfReportGenerator`
    - Start with basic text/tables, then add floor plan rendering
-8. **`feat/reports/be/driving/impl`** — HTTP route
-9. **DI wiring** — Koin modules + registration in `BackendModulesAggregate`
-10. **Tests**
+9. **`feat/reports/be/driving/impl`** — HTTP route
+10. **DI wiring** — Koin modules + registration in `BackendModulesAggregate`
+11. **Tests**
    - Use case test: mock ports, verify correct data aggregation
    - Route test: verify endpoint returns PDF bytes with correct content type
    - PDF generator test: verify output is valid PDF (can parse with PDFBox in test)
