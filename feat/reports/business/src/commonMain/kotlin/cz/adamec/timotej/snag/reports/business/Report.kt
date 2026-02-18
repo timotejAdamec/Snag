@@ -33,4 +33,7 @@ data class Report(
         result = 31 * result + bytes.contentHashCode()
         return result
     }
+
+    override fun toString(): String =
+        "Report(projectId=$projectId, fileName=$fileName, bytes=${bytes.size} bytes)"
 }
