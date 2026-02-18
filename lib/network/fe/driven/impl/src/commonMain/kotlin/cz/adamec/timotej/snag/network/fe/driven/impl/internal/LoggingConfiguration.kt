@@ -28,7 +28,8 @@ internal class LoggingConfiguration : HttpClientConfiguration {
                         KermitLogger.withTag("HTTP Client").v(message)
                     }
                 }
-            level = LogLevel.BODY
+            level = LogLevel.HEADERS
+            sanitizeHeader { it == "Authorization" }
         }
     }
 }
