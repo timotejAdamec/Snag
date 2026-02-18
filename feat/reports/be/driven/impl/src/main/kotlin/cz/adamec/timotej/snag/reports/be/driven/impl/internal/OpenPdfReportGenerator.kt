@@ -12,21 +12,21 @@
 
 package cz.adamec.timotej.snag.reports.be.driven.impl.internal
 
-import com.lowagie.text.Document
-import com.lowagie.text.Element
-import com.lowagie.text.Font
-import com.lowagie.text.Image
-import com.lowagie.text.PageSize
-import com.lowagie.text.Paragraph
-import com.lowagie.text.Phrase
-import com.lowagie.text.pdf.PdfPCell
-import com.lowagie.text.pdf.PdfPTable
-import com.lowagie.text.pdf.PdfWriter
 import cz.adamec.timotej.snag.feat.findings.be.model.BackendFinding
 import cz.adamec.timotej.snag.feat.findings.business.FindingType
 import cz.adamec.timotej.snag.feat.structures.be.model.BackendStructure
 import cz.adamec.timotej.snag.reports.be.ports.PdfReportGenerator
 import cz.adamec.timotej.snag.reports.be.ports.ProjectReportData
+import org.openpdf.text.Document
+import org.openpdf.text.Element
+import org.openpdf.text.Font
+import org.openpdf.text.Image
+import org.openpdf.text.PageSize
+import org.openpdf.text.Paragraph
+import org.openpdf.text.Phrase
+import org.openpdf.text.pdf.PdfPCell
+import org.openpdf.text.pdf.PdfPTable
+import org.openpdf.text.pdf.PdfWriter
 import java.awt.Color
 import java.io.ByteArrayOutputStream
 import java.net.URI

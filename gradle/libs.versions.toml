@@ -45,7 +45,7 @@ konnection = "1.4.5"
 gcs = "2.47.0"
 filekit = "0.12.0"
 buildkonfig = "0.15.2"
-openpdf = "2.0.3"
+openpdf = "3.0.0"
 
 [libraries]
 kotlin-gradle = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlinGradlePlugin" }
