@@ -28,5 +28,4 @@
     <string name="finding_type_classic">Classic</string>
     <string name="finding_type_unvisited">Unvisited</string>
     <string name="finding_type_note">Note</string>
-    <string name="download_report">Download report</string>
 </resources>

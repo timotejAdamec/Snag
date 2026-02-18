@@ -12,9 +12,10 @@
 
 package cz.adamec.timotej.snag.feat.reports.fe.ports
 
+import cz.adamec.timotej.snag.feat.reports.fe.model.FrontendReport
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
 import kotlin.uuid.Uuid
 
 interface ReportsApi {
-    suspend fun downloadReport(projectId: Uuid): OnlineDataResult<ByteArray>
+    suspend fun downloadReport(projectId: Uuid): OnlineDataResult<FrontendReport>
 }

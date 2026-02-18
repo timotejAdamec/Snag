@@ -15,6 +15,7 @@ package cz.adamec.timotej.snag.feat.reports.fe.app.impl.internal
 import cz.adamec.timotej.snag.feat.reports.fe.app.api.DownloadReportUseCase
 import cz.adamec.timotej.snag.feat.reports.fe.driven.test.FakeReportsApi
 import cz.adamec.timotej.snag.feat.reports.fe.ports.ReportsApi
+import cz.adamec.timotej.snag.feat.reports.fe.model.FrontendReport
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
 import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
 import kotlinx.coroutines.test.runTest
@@ -48,8 +49,8 @@ class DownloadReportUseCaseImplTest : FrontendKoinInitializedTest() {
 
             val result = useCase(projectId)
 
-            assertIs<OnlineDataResult.Success<ByteArray>>(result)
-            assertTrue(result.data.contentEquals(expectedBytes))
+            assertIs<OnlineDataResult.Success<FrontendReport>>(result)
+            assertTrue(result.data.report.bytes.contentEquals(expectedBytes))
         }
 
     @Test

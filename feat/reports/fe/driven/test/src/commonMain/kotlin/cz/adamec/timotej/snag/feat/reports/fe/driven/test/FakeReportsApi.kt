@@ -12,8 +12,10 @@
 
 package cz.adamec.timotej.snag.feat.reports.fe.driven.test
 
+import cz.adamec.timotej.snag.feat.reports.fe.model.FrontendReport
 import cz.adamec.timotej.snag.feat.reports.fe.ports.ReportsApi
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
+import cz.adamec.timotej.snag.reports.business.Report
 import kotlin.uuid.Uuid
 
 class FakeReportsApi : ReportsApi {
@@ -21,10 +23,18 @@ class FakeReportsApi : ReportsApi {
     var reportBytes: ByteArray = byteArrayOf()
     val downloadedProjectIds = mutableListOf<Uuid>()
 
-    override suspend fun downloadReport(projectId: Uuid): OnlineDataResult<ByteArray> {
+    override suspend fun downloadReport(projectId: Uuid): OnlineDataResult<FrontendReport> {
         downloadedProjectIds.add(projectId)
         val failure = forcedFailure
         if (failure != null) return failure
-        return OnlineDataResult.Success(reportBytes)
+        return OnlineDataResult.Success(
+            FrontendReport(
+                report =
+                    Report(
+                        projectId = projectId,
+                        bytes = reportBytes,
+                    ),
+            ),
+        )
     }
 }

@@ -127,8 +127,8 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
 
             viewModel.onDownloadReport()
 
-            val (bytes, baseName) = viewModel.reportReadyFlow.first()
-            assertTrue(bytes.contentEquals(samplePdfBytes))
+            val (report, baseName) = viewModel.reportReadyFlow.first()
+            assertTrue(report.report.bytes.contentEquals(samplePdfBytes))
             assertTrue(baseName.contains("Test"))
             assertFalse(viewModel.state.value.isDownloadingReport)
         }

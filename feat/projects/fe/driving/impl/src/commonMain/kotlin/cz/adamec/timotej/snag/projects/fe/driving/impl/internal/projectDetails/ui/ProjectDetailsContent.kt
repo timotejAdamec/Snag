@@ -75,7 +75,7 @@ import snag.feat.projects.fe.driving.impl.generated.resources.new_structure
 import snag.feat.projects.fe.driving.impl.generated.resources.project_not_found
 import snag.feat.projects.fe.driving.impl.generated.resources.structures_section_title
 import snag.lib.design.fe.generated.resources.delete
-import snag.lib.design.fe.generated.resources.download_report
+import snag.feat.projects.fe.driving.impl.generated.resources.download_report
 import snag.lib.design.fe.generated.resources.edit
 import snag.lib.design.fe.generated.resources.ic_add
 import snag.lib.design.fe.generated.resources.ic_delete
@@ -353,7 +353,7 @@ private fun LoadedProjectDetailsContent(
                     } else {
                         Icon(
                             painter = painterResource(DesignRes.drawable.ic_download),
-                            contentDescription = stringResource(DesignRes.string.download_report),
+                            contentDescription = stringResource(Res.string.download_report),
                         )
                     }
                 }
