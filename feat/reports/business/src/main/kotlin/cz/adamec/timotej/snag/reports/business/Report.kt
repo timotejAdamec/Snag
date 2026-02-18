@@ -16,16 +16,20 @@ import kotlin.uuid.Uuid
 
 data class Report(
     val projectId: Uuid,
+    val fileName: String,
     val bytes: ByteArray,
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is Report) return false
-        return projectId == other.projectId && bytes.contentEquals(other.bytes)
+        return projectId == other.projectId &&
+            fileName == other.fileName &&
+            bytes.contentEquals(other.bytes)
     }
 
     override fun hashCode(): Int {
         var result = projectId.hashCode()
+        result = 31 * result + fileName.hashCode()
         result = 31 * result + bytes.contentHashCode()
         return result
     }

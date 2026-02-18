@@ -57,10 +57,12 @@ internal class GenerateProjectReportUseCaseImpl(
 
         val bytes = pdfReportGenerator.generate(reportData)
         logger.debug("Generated report for project {} ({} bytes).", projectId, bytes.size)
+        val fileName = "${backendProject.project.name} - Report.pdf"
         return BackendReport(
             report =
                 Report(
                     projectId = projectId,
+                    fileName = fileName,
                     bytes = bytes,
                 ),
         )

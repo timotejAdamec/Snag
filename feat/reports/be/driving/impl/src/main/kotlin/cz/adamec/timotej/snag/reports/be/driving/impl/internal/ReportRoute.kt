@@ -15,8 +15,11 @@ package cz.adamec.timotej.snag.reports.be.driving.impl.internal
 import cz.adamec.timotej.snag.reports.be.app.api.GenerateProjectReportUseCase
 import cz.adamec.timotej.snag.routing.be.AppRoute
 import cz.adamec.timotej.snag.routing.be.getIdFromParameters
+import io.ktor.http.ContentDisposition
 import io.ktor.http.ContentType
+import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
+import io.ktor.server.response.header
 import io.ktor.server.response.respond
 import io.ktor.server.response.respondBytes
 import io.ktor.server.routing.Route
@@ -34,6 +37,15 @@ internal class ReportRoute(
                 val report = generateProjectReportUseCase(projectId)
 
                 if (report != null) {
+                    val disposition =
+                        ContentDisposition.Attachment.withParameter(
+                            ContentDisposition.Parameters.FileName,
+                            report.report.fileName,
+                        )
+                    call.response.header(
+                        HttpHeaders.ContentDisposition,
+                        disposition.toString(),
+                    )
                     call.respondBytes(report.report.bytes, ContentType.Application.Pdf)
                 } else {
                     call.respond(HttpStatusCode.NotFound)
