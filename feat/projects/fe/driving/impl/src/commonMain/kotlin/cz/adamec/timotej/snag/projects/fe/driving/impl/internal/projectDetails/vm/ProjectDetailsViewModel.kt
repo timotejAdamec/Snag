@@ -51,7 +51,7 @@ internal class ProjectDetailsViewModel(
     private val deletedSuccessfullyEventChannel = Channel<Unit>()
     val deletedSuccessfullyEventFlow = deletedSuccessfullyEventChannel.receiveAsFlow()
 
-    private val reportReadyChannel = Channel<Pair<FrontendReport, String>>()
+    private val reportReadyChannel = Channel<FrontendReport>()
     val reportReadyFlow = reportReadyChannel.receiveAsFlow()
 
     init {
@@ -174,17 +174,7 @@ internal class ProjectDetailsViewModel(
             _state.update { it.copy(isDownloadingReport = true) }
             when (val result = downloadReportUseCase(projectId)) {
                 is OnlineDataResult.Success -> {
-                    val projectName =
-                        _state.value.project
-                            ?.project
-                            ?.name
-                            .orEmpty()
-                    val sanitizedName =
-                        projectName
-                            .replace(Regex("[^a-zA-Z0-9._-]"), "_")
-                            .take(50)
-                            .ifEmpty { "report" }
-                    reportReadyChannel.send(result.data to sanitizedName)
+                    reportReadyChannel.send(result.data)
                 }
                 is OnlineDataResult.Failure.NetworkUnavailable -> {
                     errorEventsChannel.send(UiError.NetworkUnavailable)

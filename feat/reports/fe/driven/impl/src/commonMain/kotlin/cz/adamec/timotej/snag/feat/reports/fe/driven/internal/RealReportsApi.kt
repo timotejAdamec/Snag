@@ -19,6 +19,8 @@ import cz.adamec.timotej.snag.network.fe.SnagNetworkHttpClient
 import cz.adamec.timotej.snag.network.fe.safeApiCall
 import cz.adamec.timotej.snag.reports.business.Report
 import io.ktor.client.call.body
+import io.ktor.http.ContentDisposition
+import io.ktor.http.HttpHeaders
 import kotlin.uuid.Uuid
 
 internal class RealReportsApi(
@@ -29,11 +31,18 @@ internal class RealReportsApi(
             logger = LH.logger,
             errorContext = "Error downloading report for project $projectId.",
         ) {
-            val bytes = httpClient.get("/projects/$projectId/report").body<ByteArray>()
+            val response = httpClient.get("/projects/$projectId/report")
+            val bytes = response.body<ByteArray>()
+            val fileName =
+                response.headers[HttpHeaders.ContentDisposition]
+                    ?.let { ContentDisposition.parse(it) }
+                    ?.parameter(ContentDisposition.Parameters.FileName)
+                    ?: "report.pdf"
             FrontendReport(
                 report =
                     Report(
                         projectId = projectId,
+                        fileName = fileName,
                         bytes = bytes,
                     ),
             )

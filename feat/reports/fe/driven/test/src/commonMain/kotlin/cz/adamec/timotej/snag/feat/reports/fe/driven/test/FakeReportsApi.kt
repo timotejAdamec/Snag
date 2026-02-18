@@ -21,6 +21,7 @@ import kotlin.uuid.Uuid
 class FakeReportsApi : ReportsApi {
     var forcedFailure: OnlineDataResult.Failure? = null
     var reportBytes: ByteArray = byteArrayOf()
+    var reportFileName: String = "report.pdf"
     val downloadedProjectIds = mutableListOf<Uuid>()
 
     override suspend fun downloadReport(projectId: Uuid): OnlineDataResult<FrontendReport> {
@@ -32,6 +33,7 @@ class FakeReportsApi : ReportsApi {
                 report =
                     Report(
                         projectId = projectId,
+                        fileName = reportFileName,
                         bytes = reportBytes,
                     ),
             ),

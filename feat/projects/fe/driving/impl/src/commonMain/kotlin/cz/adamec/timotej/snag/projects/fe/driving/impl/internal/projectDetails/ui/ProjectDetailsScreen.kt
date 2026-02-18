@@ -49,10 +49,10 @@ internal fun ProjectDetailsScreen(
     )
     ObserveAsEvents(
         eventsFlow = viewModel.reportReadyFlow,
-        onEvent = { (report, baseName) ->
+        onEvent = { report ->
             fileSaverLauncher.launch(
                 bytes = report.report.bytes,
-                baseName = baseName,
+                baseName = report.report.fileName.removeSuffix(".pdf"),
                 extension = "pdf",
             )
         },

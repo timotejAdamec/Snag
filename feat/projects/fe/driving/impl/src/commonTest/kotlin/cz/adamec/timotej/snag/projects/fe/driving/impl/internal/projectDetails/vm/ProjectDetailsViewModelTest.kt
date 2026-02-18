@@ -115,21 +115,22 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
     }
 
     @Test
-    fun `downloading report on success sends bytes to reportReadyFlow`() =
+    fun `downloading report on success sends report to reportReadyFlow`() =
         runTest {
             val projectId = Uuid.random()
             seedProject(projectId)
             val samplePdfBytes = byteArrayOf(0x25, 0x50, 0x44, 0x46)
             fakeReportsApi.reportBytes = samplePdfBytes
+            fakeReportsApi.reportFileName = "Test_Project_Report.pdf"
 
             val viewModel = createViewModel(projectId)
             advanceUntilIdle()
 
             viewModel.onDownloadReport()
 
-            val (report, baseName) = viewModel.reportReadyFlow.first()
+            val report = viewModel.reportReadyFlow.first()
             assertTrue(report.report.bytes.contentEquals(samplePdfBytes))
-            assertTrue(baseName.contains("Test"))
+            assertEquals("Test_Project_Report.pdf", report.report.fileName)
             assertFalse(viewModel.state.value.isDownloadingReport)
         }
 
