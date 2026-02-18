@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ContainedLoadingIndicator
+import androidx.compose.material3.FloatingToolbarDefaults
 import androidx.compose.material3.HorizontalFloatingToolbar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -227,6 +228,7 @@ internal fun FindingDetailContent(
                         modifier = Modifier
                             .align(Alignment.BottomCenter),
                         expanded = true,
+                        colors = FloatingToolbarDefaults.vibrantFloatingToolbarColors()
                     ) {
                         IconButton(
                             onClick = onEditClick,
