@@ -26,12 +26,15 @@ kotlin {
                 implementation(project(":feat:clients:fe:driving:api"))
                 implementation(project(":feat:inspections:fe:app:api"))
                 implementation(project(":feat:inspections:fe:driving:api"))
+                implementation(project(":feat:reports:fe:app:api"))
             }
         }
         commonTest {
             dependencies {
                 implementation(project(":feat:projects:fe:driven:test"))
                 implementation(project(":feat:clients:fe:driven:test"))
+                implementation(project(":feat:reports:fe:driven:test"))
+                implementation(project(":feat:structures:fe:driven:test"))
             }
         }
     }

@@ -27,4 +27,5 @@
     <string name="client_label">Client</string>
     <string name="none">None</string>
     <string name="create_new_client">Create new client</string>
+    <string name="download_report">Download report</string>
 </resources>

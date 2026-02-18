@@ -21,6 +21,8 @@ import cz.adamec.timotej.snag.feat.inspections.fe.app.impl.di.inspectionsAppModu
 import cz.adamec.timotej.snag.feat.inspections.fe.driven.di.inspectionsDrivenModule
 import cz.adamec.timotej.snag.feat.inspections.fe.driving.api.di.inspectionsDrivingApiModule
 import cz.adamec.timotej.snag.feat.inspections.fe.driving.impl.di.inspectionsDrivingImplModule
+import cz.adamec.timotej.snag.feat.reports.fe.app.impl.di.reportsAppModule
+import cz.adamec.timotej.snag.feat.reports.fe.driven.di.reportsDrivenModule
 import cz.adamec.timotej.snag.feat.shared.database.fe.impl.di.databaseModule
 import cz.adamec.timotej.snag.feat.shared.storage.fe.di.sharedStorageModule
 import cz.adamec.timotej.snag.feat.structures.fe.driving.api.di.structuresDrivingApiModule
@@ -77,5 +79,7 @@ val frontendModulesAggregate =
             inspectionsDrivingApiModule,
             inspectionsDrivingImplModule,
             inspectionsDrivenModule,
+            reportsAppModule,
+            reportsDrivenModule,
         )
     }

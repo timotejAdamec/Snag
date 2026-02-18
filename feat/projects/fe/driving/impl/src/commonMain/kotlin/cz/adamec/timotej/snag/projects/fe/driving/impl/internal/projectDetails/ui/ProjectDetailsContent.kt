@@ -75,9 +75,11 @@ import snag.feat.projects.fe.driving.impl.generated.resources.new_structure
 import snag.feat.projects.fe.driving.impl.generated.resources.project_not_found
 import snag.feat.projects.fe.driving.impl.generated.resources.structures_section_title
 import snag.lib.design.fe.generated.resources.delete
+import snag.feat.projects.fe.driving.impl.generated.resources.download_report
 import snag.lib.design.fe.generated.resources.edit
 import snag.lib.design.fe.generated.resources.ic_add
 import snag.lib.design.fe.generated.resources.ic_delete
+import snag.lib.design.fe.generated.resources.ic_download
 import snag.lib.design.fe.generated.resources.ic_edit
 import snag.lib.design.fe.generated.resources.ic_event_note
 import snag.lib.design.fe.generated.resources.ic_space_dashboard
@@ -94,6 +96,7 @@ internal fun ProjectDetailsContent(
     onBack: () -> Unit,
     onEditClick: () -> Unit,
     onDelete: () -> Unit,
+    onDownloadReportClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(
@@ -125,6 +128,7 @@ internal fun ProjectDetailsContent(
                     onBack = onBack,
                     onEditClick = onEditClick,
                     onDelete = onDelete,
+                    onDownloadReportClick = onDownloadReportClick,
                 )
             }
 
@@ -146,6 +150,7 @@ private fun LoadedProjectDetailsContent(
     onBack: () -> Unit,
     onEditClick: () -> Unit,
     onDelete: () -> Unit,
+    onDownloadReportClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val project = state.project?.project
@@ -338,6 +343,21 @@ private fun LoadedProjectDetailsContent(
                     )
                 }
                 IconButton(
+                    enabled = state.canDownloadReport,
+                    onClick = onDownloadReportClick,
+                ) {
+                    if (state.isDownloadingReport) {
+                        LoadingIndicator(
+                            modifier = Modifier.size(24.dp),
+                        )
+                    } else {
+                        Icon(
+                            painter = painterResource(DesignRes.drawable.ic_download),
+                            contentDescription = stringResource(Res.string.download_report),
+                        )
+                    }
+                }
+                IconButton(
                     enabled = state.canInvokeDeletion,
                     onClick = {
                         isShowingDeleteConfirmation = true
@@ -416,6 +436,7 @@ private fun LoadedProjectDetailsContentPreview() {
             onBack = {},
             onEditClick = {},
             onDelete = {},
+            onDownloadReportClick = {},
         )
     }
 }

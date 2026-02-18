@@ -15,7 +15,10 @@ package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cz.adamec.timotej.snag.feat.inspections.fe.app.api.GetInspectionsUseCase
+import cz.adamec.timotej.snag.feat.reports.fe.app.api.DownloadReportUseCase
+import cz.adamec.timotej.snag.feat.reports.fe.model.FrontendReport
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
+import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.projects.fe.app.api.DeleteProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.GetProjectUseCase
@@ -36,6 +39,7 @@ internal class ProjectDetailsViewModel(
     private val deleteProjectUseCase: DeleteProjectUseCase,
     private val getStructuresUseCase: GetStructuresUseCase,
     private val getInspectionsUseCase: GetInspectionsUseCase,
+    private val downloadReportUseCase: DownloadReportUseCase,
 ) : ViewModel() {
     private val _state: MutableStateFlow<ProjectDetailsUiState> =
         MutableStateFlow(ProjectDetailsUiState())
@@ -46,6 +50,9 @@ internal class ProjectDetailsViewModel(
 
     private val deletedSuccessfullyEventChannel = Channel<Unit>()
     val deletedSuccessfullyEventFlow = deletedSuccessfullyEventChannel.receiveAsFlow()
+
+    private val reportReadyChannel = Channel<FrontendReport>()
+    val reportReadyFlow = reportReadyChannel.receiveAsFlow()
 
     init {
         collectProject(projectId)
@@ -160,5 +167,25 @@ internal class ProjectDetailsViewModel(
                     deletedSuccessfullyEventChannel.send(Unit)
                 }
             }
+        }
+
+    fun onDownloadReport() =
+        viewModelScope.launch {
+            _state.update { it.copy(isDownloadingReport = true) }
+            when (val result = downloadReportUseCase(projectId)) {
+                is OnlineDataResult.Success -> {
+                    reportReadyChannel.send(result.data)
+                }
+                is OnlineDataResult.Failure.NetworkUnavailable -> {
+                    errorEventsChannel.send(UiError.NetworkUnavailable)
+                }
+                is OnlineDataResult.Failure.UserMessageError -> {
+                    errorEventsChannel.send(UiError.CustomUserMessage(result.message))
+                }
+                is OnlineDataResult.Failure.ProgrammerError -> {
+                    errorEventsChannel.send(UiError.Unknown)
+                }
+            }
+            _state.update { it.copy(isDownloadingReport = false) }
         }
 }

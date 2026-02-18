@@ -18,6 +18,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cz.adamec.timotej.snag.lib.design.fe.error.ShowSnackbarOnError
 import cz.adamec.timotej.snag.lib.design.fe.events.ObserveAsEvents
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.vm.ProjectDetailsViewModel
+import io.github.vinceglb.filekit.dialogs.compose.rememberFileSaverLauncher
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 import kotlin.uuid.Uuid
@@ -35,6 +36,8 @@ internal fun ProjectDetailsScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
+    val fileSaverLauncher = rememberFileSaverLauncher { }
+
     ShowSnackbarOnError(
         uiErrorsFlow = viewModel.errorsFlow,
     )
@@ -42,6 +45,16 @@ internal fun ProjectDetailsScreen(
         eventsFlow = viewModel.deletedSuccessfullyEventFlow,
         onEvent = {
             onBack()
+        },
+    )
+    ObserveAsEvents(
+        eventsFlow = viewModel.reportReadyFlow,
+        onEvent = { report ->
+            fileSaverLauncher.launch(
+                bytes = report.report.bytes,
+                baseName = report.report.fileName.removeSuffix(".pdf"),
+                extension = "pdf",
+            )
         },
     )
 
@@ -54,5 +67,6 @@ internal fun ProjectDetailsScreen(
         onBack = onBack,
         onEditClick = onEditClick,
         onDelete = viewModel::onDelete,
+        onDownloadReportClick = viewModel::onDownloadReport,
     )
 }

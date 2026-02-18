@@ -23,13 +23,15 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.stateIn
 
+private const val SYNC_STATUS_DEBOUNCE_MS = 300L
+
 @OptIn(FlowPreview::class)
 internal class MainViewModel(
     getSyncStatus: GetSyncStatusUseCase,
 ) : ViewModel() {
     val syncStatus: StateFlow<SyncStatus> =
         getSyncStatus()
-            .debounce(300)
+            .debounce(SYNC_STATUS_DEBOUNCE_MS)
             .stateIn(
                 scope = viewModelScope,
                 started =
