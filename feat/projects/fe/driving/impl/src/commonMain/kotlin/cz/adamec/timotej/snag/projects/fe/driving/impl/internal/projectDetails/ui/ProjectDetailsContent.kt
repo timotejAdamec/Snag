@@ -79,9 +79,9 @@ import snag.feat.projects.fe.driving.impl.generated.resources.download_report
 import snag.lib.design.fe.generated.resources.edit
 import snag.lib.design.fe.generated.resources.ic_add
 import snag.lib.design.fe.generated.resources.ic_delete
-import snag.lib.design.fe.generated.resources.ic_download
 import snag.lib.design.fe.generated.resources.ic_edit
 import snag.lib.design.fe.generated.resources.ic_event_note
+import snag.lib.design.fe.generated.resources.ic_file_export
 import snag.lib.design.fe.generated.resources.ic_space_dashboard
 import kotlin.uuid.Uuid
 import snag.lib.design.fe.generated.resources.Res as DesignRes
@@ -352,7 +352,7 @@ private fun LoadedProjectDetailsContent(
                         )
                     } else {
                         Icon(
-                            painter = painterResource(DesignRes.drawable.ic_download),
+                            painter = painterResource(DesignRes.drawable.ic_file_export),
                             contentDescription = stringResource(Res.string.download_report),
                         )
                     }
