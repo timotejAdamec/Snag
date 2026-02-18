@@ -13,8 +13,10 @@
 package cz.adamec.timotej.snag.feat.shared.database.be.di
 
 import cz.adamec.timotej.snag.feat.shared.database.be.ClassicFindingTable
+import cz.adamec.timotej.snag.feat.shared.database.be.ClientsTable
 import cz.adamec.timotej.snag.feat.shared.database.be.FindingCoordinatesTable
 import cz.adamec.timotej.snag.feat.shared.database.be.FindingsTable
+import cz.adamec.timotej.snag.feat.shared.database.be.InspectionsTable
 import cz.adamec.timotej.snag.feat.shared.database.be.ProjectsTable
 import cz.adamec.timotej.snag.feat.shared.database.be.StructuresTable
 import cz.adamec.timotej.snag.feat.shared.database.be.internal.TestDatabaseFactory
@@ -29,11 +31,13 @@ val sharedDatabaseTestModule =
         single(createdAtStart = true) {
             transaction(get<Database>()) {
                 SchemaUtils.create(
+                    ClientsTable,
                     ProjectsTable,
                     StructuresTable,
                     FindingsTable,
                     FindingCoordinatesTable,
                     ClassicFindingTable,
+                    InspectionsTable,
                 )
             }
         }

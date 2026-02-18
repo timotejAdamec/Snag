@@ -45,6 +45,7 @@ konnection = "1.4.5"
 gcs = "2.47.0"
 filekit = "0.12.0"
 buildkonfig = "0.15.2"
+openpdf = "3.0.0"
 
 [libraries]
 kotlin-gradle = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlinGradlePlugin" }
@@ -153,6 +154,7 @@ h2 = { module = "com.h2database:h2", version.ref = "h2" }
 konnection = { module = "dev.tmapps:konnection", version.ref = "konnection" }
 google-cloud-storage = { module = "com.google.cloud:google-cloud-storage", version.ref = "gcs" }
 filekit-dialogs-compose = { module = "io.github.vinceglb:filekit-dialogs-compose", version.ref = "filekit" }
+openpdf = { module = "com.github.librepdf:openpdf", version.ref = "openpdf" }
 
 [plugins]
 snagMultiplatformModule = { id = "libs.plugins.snag.multiplatform.module" }
