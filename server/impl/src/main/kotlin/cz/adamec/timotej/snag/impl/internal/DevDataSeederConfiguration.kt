@@ -192,7 +192,7 @@ internal class DevDataSeederConfiguration(
                         id = Uuid.parse(STRUCTURE_6),
                         projectId = Uuid.parse(PROJECT_3),
                         name = "Reading Hall - Level 1",
-                        floorPlanUrl = null,
+                        floorPlanUrl = "https://storage.googleapis.com/snag-bucket-dev/projects/00000000-0000-0000-0000-000000000001/structures/00000000-0000-0000-0001-000000000003/019c6e7c-1220-7019-90e0-7025e9acbde9.png",
                         updatedAt = now,
                     ),
             ),
