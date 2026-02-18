@@ -45,8 +45,10 @@ import cz.adamec.timotej.snag.structures.fe.ports.StructuresPullSyncCoordinator
 import cz.adamec.timotej.snag.structures.fe.ports.StructuresPullSyncTimestampDataSource
 import cz.adamec.timotej.snag.structures.fe.ports.StructuresSync
 import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.koin.core.module.Module
@@ -195,5 +197,42 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
 
             assertTrue(viewModel.state.value.canDownloadReport)
             assertEquals(ProjectDetailsUiStatus.LOADED, viewModel.state.value.projectStatus)
+        }
+
+    @Test
+    fun `canDownloadReport is false when project is not loaded`() =
+        runTest {
+            val projectId = Uuid.random()
+
+            val viewModel = createViewModel(projectId)
+
+            assertFalse(viewModel.state.value.canDownloadReport)
+        }
+
+    @Test
+    fun `canDownloadReport is false while downloading`() =
+        runTest {
+            val projectId = Uuid.random()
+            seedProject(projectId)
+            val deferred = CompletableDeferred<Unit>()
+            fakeReportsApi.downloadDeferred = deferred
+
+            val viewModel = createViewModel(projectId)
+            advanceUntilIdle()
+            assertTrue(viewModel.state.value.canDownloadReport)
+
+            val reportCollector = launch { viewModel.reportReadyFlow.first() }
+            viewModel.onDownloadReport()
+            advanceUntilIdle()
+
+            assertFalse(viewModel.state.value.canDownloadReport)
+            assertTrue(viewModel.state.value.isDownloadingReport)
+
+            deferred.complete(Unit)
+            advanceUntilIdle()
+
+            assertTrue(viewModel.state.value.canDownloadReport)
+            assertFalse(viewModel.state.value.isDownloadingReport)
+            reportCollector.cancel()
         }
 }

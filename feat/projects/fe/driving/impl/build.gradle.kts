@@ -27,7 +27,6 @@ kotlin {
                 implementation(project(":feat:inspections:fe:app:api"))
                 implementation(project(":feat:inspections:fe:driving:api"))
                 implementation(project(":feat:reports:fe:app:api"))
-                implementation(libs.filekit.dialogs.compose)
             }
         }
         commonTest {
