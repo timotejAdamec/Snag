@@ -17,8 +17,7 @@ import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.projects.be.model.BackendProject
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
 import cz.adamec.timotej.snag.projects.business.Project
-import cz.adamec.timotej.snag.reports.be.ports.PdfReportGenerator
-import cz.adamec.timotej.snag.reports.be.ports.ProjectReportData
+import cz.adamec.timotej.snag.reports.be.driven.test.FakePdfReportGenerator
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
 import io.ktor.client.request.get
 import io.ktor.client.statement.readRawBytes
@@ -26,9 +25,6 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.ApplicationTestBuilder
 import io.ktor.server.testing.testApplication
-import org.koin.core.module.dsl.singleOf
-import org.koin.dsl.bind
-import org.koin.dsl.module
 import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
@@ -37,13 +33,6 @@ import kotlin.uuid.Uuid
 
 class ReportRouteTest : BackendKoinInitializedTest() {
     private val projectsDb: ProjectsDb by inject()
-
-    override fun additionalKoinModules() =
-        listOf(
-            module {
-                singleOf(::FakePdfReportGenerator) bind PdfReportGenerator::class
-            },
-        )
 
     private fun ApplicationTestBuilder.configureApp() {
         val configurations = getKoin().getAll<AppConfiguration>()
@@ -89,7 +78,7 @@ class ReportRouteTest : BackendKoinInitializedTest() {
                 ContentType.Application.Pdf,
                 response.headers["Content-Type"]?.let { ContentType.parse(it) },
             )
-            assertContentEquals(FAKE_PDF_BYTES, response.readRawBytes())
+            assertContentEquals(FakePdfReportGenerator.FAKE_PDF_BYTES, response.readRawBytes())
         }
 
     @Test
@@ -105,14 +94,5 @@ class ReportRouteTest : BackendKoinInitializedTest() {
 
     companion object {
         private val PROJECT_ID = Uuid.parse("00000000-0000-0000-0000-000000000001")
-        private val FAKE_PDF_BYTES = byteArrayOf(0x25, 0x50, 0x44, 0x46)
-    }
-}
-
-internal class FakePdfReportGenerator : PdfReportGenerator {
-    override suspend fun generate(data: ProjectReportData): ByteArray = FAKE_PDF_BYTES
-
-    companion object {
-        val FAKE_PDF_BYTES = byteArrayOf(0x25, 0x50, 0x44, 0x46)
     }
 }

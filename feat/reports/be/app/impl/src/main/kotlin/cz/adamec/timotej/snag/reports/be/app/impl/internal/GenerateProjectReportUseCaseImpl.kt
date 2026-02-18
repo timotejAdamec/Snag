@@ -37,20 +37,15 @@ internal class GenerateProjectReportUseCaseImpl(
         logger.debug("Generating report for project {}.", projectId)
 
         val backendProject = getProjectUseCase(projectId) ?: return null
-
         val backendClient = backendProject.project.clientId?.let { getClientUseCase(it) }
-
         val structures =
             getStructuresUseCase(projectId).filter { it.deletedAt == null }
-
         val findingsByStructure =
             structures.associateWith { structure ->
                 getFindingsUseCase(structure.structure.id).filter { it.deletedAt == null }
             }
-
         val inspections =
             getInspectionsUseCase(projectId).filter { it.deletedAt == null }
-
         val reportData =
             ProjectReportData(
                 project = backendProject,
