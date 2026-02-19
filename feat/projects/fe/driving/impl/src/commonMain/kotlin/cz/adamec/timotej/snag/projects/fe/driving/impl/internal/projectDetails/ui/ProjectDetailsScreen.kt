@@ -64,6 +64,8 @@ internal fun ProjectDetailsScreen(
         onStructureClick = onStructureClick,
         onNewInspectionClick = onNewInspectionClick,
         onInspectionClick = onInspectionClick,
+        onStartInspection = viewModel::onStartInspection,
+        onEndInspection = viewModel::onEndInspection,
         onBack = onBack,
         onEditClick = onEditClick,
         onDelete = viewModel::onDelete,

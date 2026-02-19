@@ -13,7 +13,9 @@
 package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.vm
 
 import cz.adamec.timotej.snag.feat.inspections.fe.app.api.GetInspectionsUseCase
+import cz.adamec.timotej.snag.feat.inspections.fe.app.api.SaveInspectionUseCase
 import cz.adamec.timotej.snag.feat.reports.fe.app.api.DownloadReportUseCase
+import cz.adamec.timotej.snag.lib.core.common.TimestampProvider
 import cz.adamec.timotej.snag.feat.reports.fe.driven.test.FakeReportsApi
 import cz.adamec.timotej.snag.feat.reports.fe.ports.ReportsApi
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
@@ -72,7 +74,9 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
     private val deleteProjectUseCase: DeleteProjectUseCase by inject()
     private val getStructuresUseCase: GetStructuresUseCase by inject()
     private val getInspectionsUseCase: GetInspectionsUseCase by inject()
+    private val saveInspectionUseCase: SaveInspectionUseCase by inject()
     private val downloadReportUseCase: DownloadReportUseCase by inject()
+    private val timestampProvider: TimestampProvider by inject()
 
     override fun additionalKoinModules(): List<Module> =
         listOf(
@@ -99,6 +103,8 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
             getStructuresUseCase = getStructuresUseCase,
             getInspectionsUseCase = getInspectionsUseCase,
             downloadReportUseCase = downloadReportUseCase,
+            saveInspectionUseCase = saveInspectionUseCase,
+            timestampProvider = timestampProvider,
         )
 
     private fun seedProject(projectId: Uuid): FrontendProject {

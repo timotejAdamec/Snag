@@ -38,7 +38,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -47,6 +46,7 @@ import cz.adamec.timotej.snag.feat.inspections.fe.driving.impl.internal.ui.compo
 import cz.adamec.timotej.snag.feat.inspections.fe.driving.impl.internal.vm.InspectionEditUiState
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.common.UuidProvider
+import cz.adamec.timotej.snag.lib.core.common.toLocalDateTime
 import cz.adamec.timotej.snag.lib.design.fe.dialog.FullScreenDialogMeasurements
 import cz.adamec.timotej.snag.lib.design.fe.dialog.TimePickerDialog
 import cz.adamec.timotej.snag.lib.design.fe.theme.SnagPreview
@@ -143,7 +143,7 @@ internal fun InspectionEditContent(
                 onDismiss = { startedAtPickerStep = PickerStep.None },
                 onConfirm = {
                     onStartedAtChange(
-                        Timestamp.from(
+                        Timestamp(
                             dateMillis = step.selectedDateMillis,
                             hour = timePickerState.hour,
                             minute = timePickerState.minute,
@@ -197,7 +197,7 @@ internal fun InspectionEditContent(
                 onDismiss = { endedAtPickerStep = PickerStep.None },
                 onConfirm = {
                     onEndedAtChange(
-                        Timestamp.from(
+                        Timestamp(
                             dateMillis = step.selectedDateMillis,
                             hour = timePickerState.hour,
                             minute = timePickerState.minute,
@@ -224,9 +224,10 @@ internal fun InspectionEditContent(
                             }
                         }
                     Text(
-                        modifier = Modifier.padding(
-                            end = 4.dp,
-                        ),
+                        modifier =
+                            Modifier.padding(
+                                end = 4.dp,
+                            ),
                         text = text,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
