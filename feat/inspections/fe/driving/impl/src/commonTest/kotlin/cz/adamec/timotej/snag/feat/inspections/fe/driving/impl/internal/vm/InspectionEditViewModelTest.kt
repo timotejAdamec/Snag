@@ -72,8 +72,8 @@ class InspectionEditViewModelTest : FrontendKoinInitializedTest() {
             val projectId = UuidProvider.getUuid()
             val viewModel = createViewModel(inspectionId = null, projectId = projectId)
 
-            assertEquals("", viewModel.state.value.startedAt)
-            assertEquals("", viewModel.state.value.endedAt)
+            assertEquals(null, viewModel.state.value.startedAt)
+            assertEquals(null, viewModel.state.value.endedAt)
             assertEquals("", viewModel.state.value.participants)
             assertEquals("", viewModel.state.value.climate)
             assertEquals("", viewModel.state.value.note)
@@ -104,8 +104,8 @@ class InspectionEditViewModelTest : FrontendKoinInitializedTest() {
 
             advanceUntilIdle()
 
-            assertEquals("100", viewModel.state.value.startedAt)
-            assertEquals("200", viewModel.state.value.endedAt)
+            assertEquals(Timestamp(100L), viewModel.state.value.startedAt)
+            assertEquals(Timestamp(200L), viewModel.state.value.endedAt)
             assertEquals("John Doe", viewModel.state.value.participants)
             assertEquals("Sunny", viewModel.state.value.climate)
             assertEquals("Test note", viewModel.state.value.note)
@@ -151,9 +151,9 @@ class InspectionEditViewModelTest : FrontendKoinInitializedTest() {
             val projectId = UuidProvider.getUuid()
             val viewModel = createViewModel(projectId = projectId)
 
-            viewModel.onStartedAtChange("12345")
+            viewModel.onStartedAtChange(Timestamp(12_345L))
 
-            assertEquals("12345", viewModel.state.value.startedAt)
+            assertEquals(Timestamp(12_345L), viewModel.state.value.startedAt)
         }
 
     @Test
@@ -162,9 +162,9 @@ class InspectionEditViewModelTest : FrontendKoinInitializedTest() {
             val projectId = UuidProvider.getUuid()
             val viewModel = createViewModel(projectId = projectId)
 
-            viewModel.onEndedAtChange("67890")
+            viewModel.onEndedAtChange(Timestamp(67_890L))
 
-            assertEquals("67890", viewModel.state.value.endedAt)
+            assertEquals(Timestamp(67_890L), viewModel.state.value.endedAt)
         }
 
     @Test

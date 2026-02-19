@@ -65,16 +65,8 @@ internal class InspectionEditViewModel(
                             _state.update {
                                 it.copy(
                                     projectId = data.inspection.projectId,
-                                    startedAt =
-                                        data.inspection.startedAt
-                                            ?.value
-                                            ?.toString()
-                                            .orEmpty(),
-                                    endedAt =
-                                        data.inspection.endedAt
-                                            ?.value
-                                            ?.toString()
-                                            .orEmpty(),
+                                    startedAt = data.inspection.startedAt,
+                                    endedAt = data.inspection.endedAt,
                                     participants =
                                         data.inspection.participants.orEmpty(),
                                     climate = data.inspection.climate.orEmpty(),
@@ -88,11 +80,11 @@ internal class InspectionEditViewModel(
             }
         }
 
-    fun onStartedAtChange(value: String) {
+    fun onStartedAtChange(value: Timestamp?) {
         _state.update { it.copy(startedAt = value) }
     }
 
-    fun onEndedAtChange(value: String) {
+    fun onEndedAtChange(value: Timestamp?) {
         _state.update { it.copy(endedAt = value) }
     }
 
@@ -121,10 +113,8 @@ internal class InspectionEditViewModel(
                     SaveInspectionRequest(
                         id = inspectionId,
                         projectId = currentState.projectId ?: projectId!!,
-                        startedAt =
-                            currentState.startedAt.toLongOrNull()?.let { Timestamp(it) },
-                        endedAt =
-                            currentState.endedAt.toLongOrNull()?.let { Timestamp(it) },
+                        startedAt = currentState.startedAt,
+                        endedAt = currentState.endedAt,
                         participants =
                             currentState.participants.ifBlank { null },
                         climate = currentState.climate.ifBlank { null },

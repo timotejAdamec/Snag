@@ -19,6 +19,7 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(project(":feat:inspections:fe:app:api"))
+                implementation(libs.kotlinx.datetime)
             }
         }
         commonTest {
