@@ -12,29 +12,22 @@
 
 package cz.adamec.timotej.snag.feat.inspections.fe.driving.impl.internal.ui
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LocalContentColor
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -45,10 +38,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
+import cz.adamec.timotej.snag.feat.inspections.fe.driving.impl.internal.ui.components.DateTimePickerField
 import cz.adamec.timotej.snag.feat.inspections.fe.driving.impl.internal.vm.InspectionEditUiState
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.design.fe.dialog.FullScreenDialogMeasurements
@@ -64,11 +56,8 @@ import snag.feat.inspections.fe.driving.impl.generated.resources.note_label
 import snag.feat.inspections.fe.driving.impl.generated.resources.participants_label
 import snag.feat.inspections.fe.driving.impl.generated.resources.started_at_label
 import snag.lib.design.fe.generated.resources.cancel
-import snag.lib.design.fe.generated.resources.clear
 import snag.lib.design.fe.generated.resources.close
-import snag.lib.design.fe.generated.resources.edit
 import snag.lib.design.fe.generated.resources.ic_close
-import snag.lib.design.fe.generated.resources.ic_event_note
 import snag.lib.design.fe.generated.resources.ok
 import snag.lib.design.fe.generated.resources.save
 import snag.lib.design.fe.generated.resources.Res as DesignRes
@@ -296,68 +285,6 @@ internal fun InspectionEditContent(
                 onValueChange = onNoteChange,
                 minLines = 3,
             )
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun DateTimePickerField(
-    label: String,
-    value: String?,
-    placeholder: String,
-    onEditClick: () -> Unit,
-    onClearClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Column(modifier = modifier) {
-        Text(
-            text = label,
-            style = MaterialTheme.typography.labelMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.padding(start = 16.dp, bottom = 4.dp),
-        )
-        Surface(
-            onClick = onEditClick,
-            shape = MaterialTheme.shapes.medium,
-            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
-            modifier = Modifier.fillMaxWidth(),
-        ) {
-            Row(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .heightIn(min = 56.dp)
-                        .padding(start = 16.dp, end = 4.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                val textColor =
-                    if (value != null) {
-                        LocalContentColor.current
-                    } else {
-                        MaterialTheme.colorScheme.onSurfaceVariant
-                    }
-                Text(
-                    text = value ?: placeholder,
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = textColor,
-                    modifier = Modifier.weight(1f),
-                )
-                if (value != null) {
-                    IconButton(onClick = onClearClick) {
-                        Icon(
-                            painter = painterResource(DesignRes.drawable.ic_close),
-                            contentDescription = stringResource(DesignRes.string.clear),
-                        )
-                    }
-                }
-                FilledTonalIconButton(onClick = onEditClick) {
-                    Icon(
-                        painter = painterResource(DesignRes.drawable.ic_event_note),
-                        contentDescription = stringResource(DesignRes.string.edit),
-                    )
-                }
-            }
         }
     }
 }
