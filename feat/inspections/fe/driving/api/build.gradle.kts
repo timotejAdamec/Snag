@@ -19,6 +19,7 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(project(":feat:inspections:fe:model"))
+                implementation(libs.kotlinx.datetime)
             }
         }
     }

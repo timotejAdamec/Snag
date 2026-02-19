@@ -15,8 +15,11 @@ package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cz.adamec.timotej.snag.feat.inspections.fe.app.api.GetInspectionsUseCase
+import cz.adamec.timotej.snag.feat.inspections.fe.app.api.SaveInspectionUseCase
+import cz.adamec.timotej.snag.feat.inspections.fe.app.api.model.SaveInspectionRequest
 import cz.adamec.timotej.snag.feat.reports.fe.app.api.DownloadReportUseCase
 import cz.adamec.timotej.snag.feat.reports.fe.model.FrontendReport
+import cz.adamec.timotej.snag.lib.core.common.TimestampProvider
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
@@ -40,6 +43,8 @@ internal class ProjectDetailsViewModel(
     private val getStructuresUseCase: GetStructuresUseCase,
     private val getInspectionsUseCase: GetInspectionsUseCase,
     private val downloadReportUseCase: DownloadReportUseCase,
+    private val saveInspectionUseCase: SaveInspectionUseCase,
+    private val timestampProvider: TimestampProvider,
 ) : ViewModel() {
     private val _state: MutableStateFlow<ProjectDetailsUiState> =
         MutableStateFlow(ProjectDetailsUiState())
@@ -167,6 +172,46 @@ internal class ProjectDetailsViewModel(
                     deletedSuccessfullyEventChannel.send(Unit)
                 }
             }
+        }
+
+    fun onStartInspection(inspectionId: Uuid) =
+        viewModelScope.launch {
+            state.value.inspections
+                .find { it.inspection.id == inspectionId }
+                ?.inspection
+                ?.let { insp ->
+                    saveInspectionUseCase(
+                        SaveInspectionRequest(
+                            id = insp.id,
+                            projectId = insp.projectId,
+                            startedAt = timestampProvider.getNowTimestamp(),
+                            endedAt = insp.endedAt,
+                            participants = insp.participants,
+                            climate = insp.climate,
+                            note = insp.note,
+                        ),
+                    )
+                }
+        }
+
+    fun onEndInspection(inspectionId: Uuid) =
+        viewModelScope.launch {
+            state.value.inspections
+                .find { it.inspection.id == inspectionId }
+                ?.inspection
+                ?.let { insp ->
+                    saveInspectionUseCase(
+                        SaveInspectionRequest(
+                            id = insp.id,
+                            projectId = insp.projectId,
+                            startedAt = insp.startedAt,
+                            endedAt = timestampProvider.getNowTimestamp(),
+                            participants = insp.participants,
+                            climate = insp.climate,
+                            note = insp.note,
+                        ),
+                    )
+                }
         }
 
     fun onDownloadReport() =

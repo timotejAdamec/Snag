@@ -1,0 +1,21 @@
+<!--
+  ~ Copyright (c) 2026 Timotej Adamec
+  ~ SPDX-License-Identifier: MIT
+  ~
+  ~ This file is part of the thesis:
+  ~ "Multiplatform snagging system with code sharing maximisation"
+  ~
+  ~ Czech Technical University in Prague
+  ~ Faculty of Information Technology
+  ~ Department of Software Engineering
+  -->
+
+<resources>
+    <string name="inspection_state_not_started">Not started</string>
+    <string name="inspection_state_scheduled">Scheduled</string>
+    <string name="inspection_state_in_progress">In progress</string>
+    <string name="inspection_state_ending_soon">Ending soon</string>
+    <string name="inspection_state_finished">Finished</string>
+    <string name="inspection_action_start">Start</string>
+    <string name="inspection_action_end">End</string>
+</resources>

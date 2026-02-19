@@ -27,6 +27,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -94,6 +95,8 @@ internal fun ProjectDetailsContent(
     onStructureClick: (structureId: Uuid) -> Unit,
     onNewInspectionClick: () -> Unit,
     onInspectionClick: (inspectionId: Uuid) -> Unit,
+    onStartInspection: (Uuid) -> Unit,
+    onEndInspection: (Uuid) -> Unit,
     onBack: () -> Unit,
     onEditClick: () -> Unit,
     onDelete: () -> Unit,
@@ -126,6 +129,8 @@ internal fun ProjectDetailsContent(
                     onStructureClick = onStructureClick,
                     onNewInspectionClick = onNewInspectionClick,
                     onInspectionClick = onInspectionClick,
+                    onStartInspection = onStartInspection,
+                    onEndInspection = onEndInspection,
                     onBack = onBack,
                     onEditClick = onEditClick,
                     onDelete = onDelete,
@@ -148,6 +153,8 @@ private fun LoadedProjectDetailsContent(
     onStructureClick: (structureId: Uuid) -> Unit,
     onNewInspectionClick: () -> Unit,
     onInspectionClick: (inspectionId: Uuid) -> Unit,
+    onStartInspection: (Uuid) -> Unit,
+    onEndInspection: (Uuid) -> Unit,
     onBack: () -> Unit,
     onEditClick: () -> Unit,
     onDelete: () -> Unit,
@@ -221,13 +228,16 @@ private fun LoadedProjectDetailsContent(
                             key = { it.inspection.id },
                         ) { inspection ->
                             InspectionCard(
-                                modifier = Modifier.size(
-                                    width = 200.dp,
-                                    height = 100.dp,
-                                ),
+                                modifier = Modifier.width(200.dp),
                                 feInspection = inspection,
                                 onClick = {
                                     onInspectionClick(inspection.inspection.id)
+                                },
+                                onStartClick = {
+                                    onStartInspection(inspection.inspection.id)
+                                },
+                                onEndClick = {
+                                    onEndInspection(inspection.inspection.id)
                                 },
                             )
                         }
@@ -435,6 +445,8 @@ private fun LoadedProjectDetailsContentPreview() {
             onStructureClick = {},
             onNewInspectionClick = {},
             onInspectionClick = {},
+            onStartInspection = {},
+            onEndInspection = {},
             onBack = {},
             onEditClick = {},
             onDelete = {},

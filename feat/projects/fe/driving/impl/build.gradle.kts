@@ -31,6 +31,7 @@ kotlin {
         }
         commonTest {
             dependencies {
+                implementation(project(":feat:inspections:fe:driven:test"))
                 implementation(project(":feat:projects:fe:driven:test"))
                 implementation(project(":feat:clients:fe:driven:test"))
                 implementation(project(":feat:reports:fe:driven:test"))

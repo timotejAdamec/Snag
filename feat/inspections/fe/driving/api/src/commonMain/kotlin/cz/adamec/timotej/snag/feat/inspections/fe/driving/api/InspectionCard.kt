@@ -14,24 +14,72 @@ package cz.adamec.timotej.snag.feat.inspections.fe.driving.api
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import cz.adamec.timotej.snag.feat.inspections.fe.model.FrontendInspection
+import cz.adamec.timotej.snag.lib.core.common.Timestamp
+import cz.adamec.timotej.snag.lib.core.common.TimestampProvider
+import cz.adamec.timotej.snag.lib.core.common.toLocalDateTime
+import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.koinInject
+import snag.feat.inspections.fe.driving.api.generated.resources.Res
+import snag.feat.inspections.fe.driving.api.generated.resources.inspection_action_end
+import snag.feat.inspections.fe.driving.api.generated.resources.inspection_action_start
+import snag.feat.inspections.fe.driving.api.generated.resources.inspection_state_ending_soon
+import snag.feat.inspections.fe.driving.api.generated.resources.inspection_state_finished
+import snag.feat.inspections.fe.driving.api.generated.resources.inspection_state_in_progress
+import snag.feat.inspections.fe.driving.api.generated.resources.inspection_state_not_started
+import snag.feat.inspections.fe.driving.api.generated.resources.inspection_state_scheduled
+
+private enum class CardStatus {
+    NOT_STARTED,
+    SCHEDULED,
+    IN_PROGRESS,
+    ENDING_SOON,
+    FINISHED,
+}
 
 @Composable
 fun InspectionCard(
     feInspection: FrontendInspection,
     onClick: () -> Unit,
+    onStartClick: () -> Unit,
+    onEndClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val timestampProvider = koinInject<TimestampProvider>()
+    val now = timestampProvider.getNowTimestamp()
+    val inspection = feInspection.inspection
+    val startedAt = inspection.startedAt
+    val endedAt = inspection.endedAt
+
+    val cardState =
+        when {
+            startedAt == null -> CardStatus.NOT_STARTED
+            startedAt > now -> CardStatus.SCHEDULED
+            endedAt == null -> CardStatus.IN_PROGRESS
+            endedAt > now -> CardStatus.ENDING_SOON
+            else -> CardStatus.FINISHED
+        }
+
+    val stateStringRes: StringResource =
+        when (cardState) {
+            CardStatus.NOT_STARTED -> Res.string.inspection_state_not_started
+            CardStatus.SCHEDULED -> Res.string.inspection_state_scheduled
+            CardStatus.IN_PROGRESS -> Res.string.inspection_state_in_progress
+            CardStatus.ENDING_SOON -> Res.string.inspection_state_ending_soon
+            CardStatus.FINISHED -> Res.string.inspection_state_finished
+        }
+
     Card(
         modifier = modifier,
         onClick = onClick,
@@ -39,11 +87,16 @@ fun InspectionCard(
         Column(
             modifier =
                 Modifier
-                    .fillMaxSize()
+                    .fillMaxWidth()
                     .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
-            feInspection.inspection.participants?.let { participants ->
+            SuggestionChip(
+                onClick = {},
+                label = { Text(text = stringResource(stateStringRes)) },
+            )
+
+            inspection.participants?.let { participants ->
                 Text(
                     text = participants,
                     style = MaterialTheme.typography.titleMedium,
@@ -51,24 +104,43 @@ fun InspectionCard(
                 )
             }
 
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                feInspection.inspection.startedAt?.let {
+            startedAt?.let {
+                Text(
+                    text = it.toDisplayString(),
+                    style = MaterialTheme.typography.bodySmall,
+                )
+            }
+
+            if (cardState == CardStatus.ENDING_SOON || cardState == CardStatus.FINISHED) {
+                endedAt?.let {
                     Text(
-                        text = it.value.toString(),
+                        text = it.toDisplayString(),
                         style = MaterialTheme.typography.bodySmall,
                     )
                 }
             }
 
-            feInspection.inspection.climate?.let { climate ->
-                Text(
-                    text = climate,
-                    style = MaterialTheme.typography.bodySmall,
-                    maxLines = 1,
-                )
+            when (cardState) {
+                CardStatus.NOT_STARTED ->
+                    TextButton(onClick = onStartClick) {
+                        Text(stringResource(Res.string.inspection_action_start))
+                    }
+                CardStatus.IN_PROGRESS ->
+                    TextButton(onClick = onEndClick) {
+                        Text(stringResource(Res.string.inspection_action_end))
+                    }
+                else -> {}
             }
         }
     }
+}
+
+private fun Timestamp.toDisplayString(): String {
+    val local = toLocalDateTime()
+    val hour = local.hour.toString().padStart(2, '0')
+    val minute = local.minute.toString().padStart(2, '0')
+    val day = local.dayOfMonth.toString().padStart(2, '0')
+    val month = local.monthNumber.toString().padStart(2, '0')
+    val year = local.year
+    return "$day.$month.$year · $hour:$minute"
 }
