@@ -35,7 +35,7 @@ internal fun Timestamp.toLocalDateTime(): LocalDateTime {
     return instant.toLocalDateTime(TimeZone.currentSystemDefault())
 }
 
-internal fun timestampFrom(
+internal fun Timestamp.Companion.from(
     dateMillis: Long,
     hour: Int,
     minute: Int,

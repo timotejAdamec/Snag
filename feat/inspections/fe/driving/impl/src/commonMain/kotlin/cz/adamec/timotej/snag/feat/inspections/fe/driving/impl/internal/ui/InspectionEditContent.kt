@@ -40,11 +40,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import cz.adamec.timotej.snag.feat.inspections.fe.driving.impl.internal.ui.components.DateTimePickerField
 import cz.adamec.timotej.snag.feat.inspections.fe.driving.impl.internal.vm.InspectionEditUiState
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
+import cz.adamec.timotej.snag.lib.core.common.UuidProvider
 import cz.adamec.timotej.snag.lib.design.fe.dialog.FullScreenDialogMeasurements
 import cz.adamec.timotej.snag.lib.design.fe.dialog.TimePickerDialog
+import cz.adamec.timotej.snag.lib.design.fe.theme.SnagPreview
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import snag.feat.inspections.fe.driving.impl.generated.resources.Res
@@ -133,7 +136,7 @@ internal fun InspectionEditContent(
                 onDismiss = { startedAtPickerStep = PickerStep.None },
                 onConfirm = {
                     onStartedAtChange(
-                        timestampFrom(
+                        Timestamp.from(
                             dateMillis = step.selectedDateMillis,
                             hour = timePickerState.hour,
                             minute = timePickerState.minute,
@@ -187,7 +190,7 @@ internal fun InspectionEditContent(
                 onDismiss = { endedAtPickerStep = PickerStep.None },
                 onConfirm = {
                     onEndedAtChange(
-                        timestampFrom(
+                        Timestamp.from(
                             dateMillis = step.selectedDateMillis,
                             hour = timePickerState.hour,
                             minute = timePickerState.minute,
@@ -286,5 +289,53 @@ internal fun InspectionEditContent(
                 minLines = 3,
             )
         }
+    }
+}
+
+@Preview
+@Composable
+@Suppress("FunctionNameMaxLength")
+private fun InspectionEditContentEmptyPreview() {
+    SnagPreview {
+        InspectionEditContent(
+            isEditMode = false,
+            state = InspectionEditUiState(),
+            snackbarHostState = SnackbarHostState(),
+            onStartedAtChange = {},
+            onEndedAtChange = {},
+            onParticipantsChange = {},
+            onClimateChange = {},
+            onNoteChange = {},
+            onSaveClick = {},
+            onCancelClick = {},
+        )
+    }
+}
+
+@Preview
+@Composable
+@Suppress("FunctionNameMaxLength")
+private fun InspectionEditContentFilledPreview() {
+    SnagPreview {
+        InspectionEditContent(
+            isEditMode = true,
+            state =
+                InspectionEditUiState(
+                    projectId = UuidProvider.getUuid(),
+                    participants = "John Doe, Jane Smith",
+                    climate = "Sunny, 18°C",
+                    startedAt = Timestamp(1_740_391_800_000L),
+                    endedAt = Timestamp(1_740_398_400_000L),
+                    note = "All defects recorded. Follow-up required for items 3 and 7.",
+                ),
+            snackbarHostState = SnackbarHostState(),
+            onStartedAtChange = {},
+            onEndedAtChange = {},
+            onParticipantsChange = {},
+            onClimateChange = {},
+            onNoteChange = {},
+            onSaveClick = {},
+            onCancelClick = {},
+        )
     }
 }

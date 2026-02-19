@@ -39,7 +39,6 @@ import snag.lib.design.fe.generated.resources.ic_close
 import snag.lib.design.fe.generated.resources.ic_edit
 import snag.lib.design.fe.generated.resources.Res as DesignRes
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun DateTimePickerField(
