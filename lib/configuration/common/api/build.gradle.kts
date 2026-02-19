@@ -36,5 +36,6 @@ buildkonfig {
         )
     }
 
-    exposeObjectWithName = "SnagBuildConfig"
+    // exposeObjectWithName not used - @JsExport on objects breaks wasmJs compilation.
+    // Instead, values are re-exported via SnagConfig.kt in commonMain.
 }
