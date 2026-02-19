@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.FilledTonalIconButton
@@ -31,11 +32,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import cz.adamec.timotej.snag.feat.inspections.business.Inspection
 import cz.adamec.timotej.snag.feat.inspections.fe.model.FrontendInspection
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.common.TimestampProvider
 import cz.adamec.timotej.snag.lib.core.common.toLocalDateTime
+import cz.adamec.timotej.snag.lib.design.fe.theme.SnagPreview
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.painterResource
@@ -54,6 +58,8 @@ import snag.feat.inspections.fe.driving.api.generated.resources.inspection_state
 import snag.lib.design.fe.generated.resources.ic_event_available
 import snag.lib.design.fe.generated.resources.ic_group
 import snag.lib.design.fe.generated.resources.ic_schedule
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 import snag.lib.design.fe.generated.resources.Res as DesignRes
 
 private enum class CardStatus {
@@ -75,18 +81,33 @@ fun InspectionCard(
     val timestampProvider = koinInject<TimestampProvider>()
     val now = timestampProvider.getNowTimestamp()
     val inspection = feInspection.inspection
-    val startedAt = inspection.startedAt
-    val endedAt = inspection.endedAt
 
     val cardState =
-        when {
-            startedAt == null -> CardStatus.NOT_STARTED
-            startedAt > now -> CardStatus.SCHEDULED
-            endedAt == null -> CardStatus.IN_PROGRESS
-            endedAt > now -> CardStatus.ENDING_SOON
-            else -> CardStatus.FINISHED
-        }
+        resolveCardStatus(
+            startedAt = inspection.startedAt,
+            endedAt = inspection.endedAt,
+            now = now,
+        )
 
+    InspectionCardContent(
+        inspection = inspection,
+        cardState = cardState,
+        onClick = onClick,
+        onStartClick = onStartClick,
+        onEndClick = onEndClick,
+        modifier = modifier,
+    )
+}
+
+@Composable
+private fun InspectionCardContent(
+    inspection: Inspection,
+    cardState: CardStatus,
+    onClick: () -> Unit,
+    onStartClick: () -> Unit,
+    onEndClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
     ElevatedCard(
         modifier = modifier,
         onClick = onClick,
@@ -118,7 +139,7 @@ fun InspectionCard(
                 )
             }
 
-            startedAt?.let {
+            inspection.startedAt?.let {
                 InspectionIconRow(
                     icon = DesignRes.drawable.ic_schedule,
                     text = it.toDisplayString(),
@@ -127,7 +148,7 @@ fun InspectionCard(
             }
 
             if (cardState == CardStatus.ENDING_SOON || cardState == CardStatus.FINISHED) {
-                endedAt?.let {
+                inspection.endedAt?.let {
                     InspectionIconRow(
                         icon = DesignRes.drawable.ic_event_available,
                         text = it.toDisplayString(),
@@ -222,6 +243,19 @@ private fun InspectionIconRow(
     }
 }
 
+private fun resolveCardStatus(
+    startedAt: Timestamp?,
+    endedAt: Timestamp?,
+    now: Timestamp,
+): CardStatus =
+    when {
+        startedAt == null -> CardStatus.NOT_STARTED
+        startedAt > now -> CardStatus.SCHEDULED
+        endedAt == null -> CardStatus.IN_PROGRESS
+        endedAt > now -> CardStatus.ENDING_SOON
+        else -> CardStatus.FINISHED
+    }
+
 @Composable
 private fun CardStatus.containerColor(): Color =
     when (this) {
@@ -250,3 +284,191 @@ private fun Timestamp.toDisplayString(): String {
     val year = local.year
     return "$day.$month.$year · $hour:$minute"
 }
+
+// region Previews
+
+@Suppress("MagicNumber")
+private val previewCardWidth = 200.dp
+
+@Suppress("MagicNumber")
+private val previewPastTimestamp = Timestamp(1_700_000_000_000L)
+
+@Suppress("MagicNumber")
+private val previewFutureTimestamp = Timestamp(1_800_000_000_000L)
+
+@Suppress("MagicNumber")
+private val previewEndTimestamp = Timestamp(1_700_003_600_000L)
+
+@OptIn(ExperimentalUuidApi::class)
+private fun previewInspection(
+    startedAt: Timestamp? = null,
+    endedAt: Timestamp? = null,
+    participants: String? = "Alice, Bob",
+) = Inspection(
+    id = Uuid.random(),
+    projectId = Uuid.random(),
+    startedAt = startedAt,
+    endedAt = endedAt,
+    participants = participants,
+    climate = "Sunny",
+    note = "Initial walkthrough",
+    updatedAt = previewPastTimestamp,
+)
+
+@Preview
+@Composable
+private fun NotStartedPreview() {
+    SnagPreview {
+        InspectionCardContent(
+            inspection = previewInspection(),
+            cardState = CardStatus.NOT_STARTED,
+            onClick = {},
+            onStartClick = {},
+            onEndClick = {},
+            modifier = Modifier.width(previewCardWidth),
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun ScheduledPreview() {
+    SnagPreview {
+        InspectionCardContent(
+            inspection =
+                previewInspection(
+                    startedAt = previewFutureTimestamp,
+                ),
+            cardState = CardStatus.SCHEDULED,
+            onClick = {},
+            onStartClick = {},
+            onEndClick = {},
+            modifier = Modifier.width(previewCardWidth),
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun InProgressPreview() {
+    SnagPreview {
+        InspectionCardContent(
+            inspection =
+                previewInspection(
+                    startedAt = previewPastTimestamp,
+                ),
+            cardState = CardStatus.IN_PROGRESS,
+            onClick = {},
+            onStartClick = {},
+            onEndClick = {},
+            modifier = Modifier.width(previewCardWidth),
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun EndingSoonPreview() {
+    SnagPreview {
+        InspectionCardContent(
+            inspection =
+                previewInspection(
+                    startedAt = previewPastTimestamp,
+                    endedAt = previewFutureTimestamp,
+                ),
+            cardState = CardStatus.ENDING_SOON,
+            onClick = {},
+            onStartClick = {},
+            onEndClick = {},
+            modifier = Modifier.width(previewCardWidth),
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun FinishedPreview() {
+    SnagPreview {
+        InspectionCardContent(
+            inspection =
+                previewInspection(
+                    startedAt = previewPastTimestamp,
+                    endedAt = previewEndTimestamp,
+                ),
+            cardState = CardStatus.FINISHED,
+            onClick = {},
+            onStartClick = {},
+            onEndClick = {},
+            modifier = Modifier.width(previewCardWidth),
+        )
+    }
+}
+
+@Preview
+@Composable
+@Suppress("FunctionNameMaxLength")
+private fun AllStatesPreview() {
+    SnagPreview {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            modifier = Modifier.padding(16.dp),
+        ) {
+            InspectionCardContent(
+                inspection = previewInspection(),
+                cardState = CardStatus.NOT_STARTED,
+                onClick = {},
+                onStartClick = {},
+                onEndClick = {},
+                modifier = Modifier.width(previewCardWidth),
+            )
+            InspectionCardContent(
+                inspection =
+                    previewInspection(
+                        startedAt = previewFutureTimestamp,
+                    ),
+                cardState = CardStatus.SCHEDULED,
+                onClick = {},
+                onStartClick = {},
+                onEndClick = {},
+                modifier = Modifier.width(previewCardWidth),
+            )
+            InspectionCardContent(
+                inspection =
+                    previewInspection(
+                        startedAt = previewPastTimestamp,
+                    ),
+                cardState = CardStatus.IN_PROGRESS,
+                onClick = {},
+                onStartClick = {},
+                onEndClick = {},
+                modifier = Modifier.width(previewCardWidth),
+            )
+            InspectionCardContent(
+                inspection =
+                    previewInspection(
+                        startedAt = previewPastTimestamp,
+                        endedAt = previewFutureTimestamp,
+                    ),
+                cardState = CardStatus.ENDING_SOON,
+                onClick = {},
+                onStartClick = {},
+                onEndClick = {},
+                modifier = Modifier.width(previewCardWidth),
+            )
+            InspectionCardContent(
+                inspection =
+                    previewInspection(
+                        startedAt = previewPastTimestamp,
+                        endedAt = previewEndTimestamp,
+                    ),
+                cardState = CardStatus.FINISHED,
+                onClick = {},
+                onStartClick = {},
+                onEndClick = {},
+                modifier = Modifier.width(previewCardWidth),
+            )
+        }
+    }
+}
+
+// endregion
