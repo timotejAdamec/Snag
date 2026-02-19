@@ -40,7 +40,7 @@ import snag.feat.inspections.fe.driving.api.generated.resources.inspection_state
 import snag.feat.inspections.fe.driving.api.generated.resources.inspection_state_not_started
 import snag.feat.inspections.fe.driving.api.generated.resources.inspection_state_scheduled
 
-private enum class CardState {
+private enum class CardStatus {
     NOT_STARTED,
     SCHEDULED,
     IN_PROGRESS,
@@ -64,20 +64,20 @@ fun InspectionCard(
 
     val cardState =
         when {
-            startedAt == null -> CardState.NOT_STARTED
-            startedAt > now -> CardState.SCHEDULED
-            endedAt == null -> CardState.IN_PROGRESS
-            endedAt > now -> CardState.ENDING_SOON
-            else -> CardState.FINISHED
+            startedAt == null -> CardStatus.NOT_STARTED
+            startedAt > now -> CardStatus.SCHEDULED
+            endedAt == null -> CardStatus.IN_PROGRESS
+            endedAt > now -> CardStatus.ENDING_SOON
+            else -> CardStatus.FINISHED
         }
 
     val stateStringRes: StringResource =
         when (cardState) {
-            CardState.NOT_STARTED -> Res.string.inspection_state_not_started
-            CardState.SCHEDULED -> Res.string.inspection_state_scheduled
-            CardState.IN_PROGRESS -> Res.string.inspection_state_in_progress
-            CardState.ENDING_SOON -> Res.string.inspection_state_ending_soon
-            CardState.FINISHED -> Res.string.inspection_state_finished
+            CardStatus.NOT_STARTED -> Res.string.inspection_state_not_started
+            CardStatus.SCHEDULED -> Res.string.inspection_state_scheduled
+            CardStatus.IN_PROGRESS -> Res.string.inspection_state_in_progress
+            CardStatus.ENDING_SOON -> Res.string.inspection_state_ending_soon
+            CardStatus.FINISHED -> Res.string.inspection_state_finished
         }
 
     Card(
@@ -111,7 +111,7 @@ fun InspectionCard(
                 )
             }
 
-            if (cardState == CardState.ENDING_SOON || cardState == CardState.FINISHED) {
+            if (cardState == CardStatus.ENDING_SOON || cardState == CardStatus.FINISHED) {
                 endedAt?.let {
                     Text(
                         text = it.toDisplayString(),
@@ -121,11 +121,11 @@ fun InspectionCard(
             }
 
             when (cardState) {
-                CardState.NOT_STARTED ->
+                CardStatus.NOT_STARTED ->
                     TextButton(onClick = onStartClick) {
                         Text(stringResource(Res.string.inspection_action_start))
                     }
-                CardState.IN_PROGRESS ->
+                CardStatus.IN_PROGRESS ->
                     TextButton(onClick = onEndClick) {
                         Text(stringResource(Res.string.inspection_action_end))
                     }
