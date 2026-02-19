@@ -123,6 +123,9 @@ private fun LoadedStructureDetailsContent(
             TopAppBar(
                 title = {
                     Text(
+                        modifier = Modifier.padding(
+                            end = 4.dp,
+                        ),
                         text =
                             state.feStructure
                                 ?.structure

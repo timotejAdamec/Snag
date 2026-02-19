@@ -47,6 +47,7 @@ import snag.lib.design.fe.generated.resources.ic_call
 import snag.lib.design.fe.generated.resources.ic_close
 import snag.lib.design.fe.generated.resources.ic_location
 import snag.lib.design.fe.generated.resources.ic_mail
+import snag.lib.design.fe.generated.resources.ic_person
 import snag.lib.design.fe.generated.resources.save
 import kotlin.uuid.Uuid
 import snag.lib.design.fe.generated.resources.Res as DesignRes
@@ -82,6 +83,9 @@ internal fun ClientDetailsEditContent(
                             state.clientName
                         }
                     Text(
+                        modifier = Modifier.padding(
+                            end = 4.dp,
+                        ),
                         text = text,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
@@ -137,6 +141,12 @@ internal fun ClientDetailsEditContent(
                     )
                 },
                 value = state.clientName,
+                leadingIcon = {
+                    Icon(
+                        painter = painterResource(DesignRes.drawable.ic_person),
+                        contentDescription = stringResource(Res.string.client_name_label),
+                    )
+                },
                 onValueChange = onClientNameChange,
             )
             OutlinedTextField(

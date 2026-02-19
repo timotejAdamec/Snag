@@ -13,11 +13,13 @@
 package cz.adamec.timotej.snag.feat.inspections.fe.driving.impl.internal.ui.components
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -37,6 +39,7 @@ import snag.lib.design.fe.generated.resources.clear
 import snag.lib.design.fe.generated.resources.edit
 import snag.lib.design.fe.generated.resources.ic_close
 import snag.lib.design.fe.generated.resources.ic_edit
+import snag.lib.design.fe.generated.resources.ic_schedule
 import snag.lib.design.fe.generated.resources.Res as DesignRes
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -48,6 +51,7 @@ internal fun DateTimePickerField(
     onEditClick: () -> Unit,
     onClearClick: () -> Unit,
     modifier: Modifier = Modifier,
+    leadingIcon: @Composable (() -> Unit)? = null,
 ) {
     Column(modifier = modifier) {
         Text(
@@ -62,14 +66,24 @@ internal fun DateTimePickerField(
             shape = MaterialTheme.shapes.medium,
             border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
         ) {
+            val startPadding = if (leadingIcon != null) 12.dp else 16.dp
             Row(
                 modifier =
                     Modifier
                         .fillMaxWidth()
                         .heightIn(min = 56.dp)
-                        .padding(start = 16.dp, end = 4.dp),
+                        .padding(start = startPadding, end = 4.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
+                leadingIcon?.let {
+                    Box(
+                        Modifier
+                            .wrapContentSize()
+                            .padding(end = 16.dp),
+                    ) {
+                        it()
+                    }
+                }
                 val textColor =
                     if (value != null) {
                         LocalContentColor.current
@@ -111,6 +125,12 @@ private fun DateTimePickerFieldPreview() {
             placeholder = "Placeholder",
             onEditClick = {},
             onClearClick = {},
+            leadingIcon = {
+                Icon(
+                    painter = painterResource(DesignRes.drawable.ic_schedule),
+                    contentDescription = null,
+                )
+            },
         )
     }
 }

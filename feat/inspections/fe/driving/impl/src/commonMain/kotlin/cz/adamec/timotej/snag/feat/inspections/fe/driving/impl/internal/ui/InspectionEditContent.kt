@@ -38,9 +38,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import cz.adamec.timotej.snag.feat.inspections.fe.driving.impl.internal.ui.components.DateTimePickerField
 import cz.adamec.timotej.snag.feat.inspections.fe.driving.impl.internal.vm.InspectionEditUiState
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
@@ -61,6 +63,11 @@ import snag.feat.inspections.fe.driving.impl.generated.resources.started_at_labe
 import snag.lib.design.fe.generated.resources.cancel
 import snag.lib.design.fe.generated.resources.close
 import snag.lib.design.fe.generated.resources.ic_close
+import snag.lib.design.fe.generated.resources.ic_event_available
+import snag.lib.design.fe.generated.resources.ic_group
+import snag.lib.design.fe.generated.resources.ic_notes
+import snag.lib.design.fe.generated.resources.ic_schedule
+import snag.lib.design.fe.generated.resources.ic_thermostat
 import snag.lib.design.fe.generated.resources.ok
 import snag.lib.design.fe.generated.resources.save
 import snag.lib.design.fe.generated.resources.Res as DesignRes
@@ -217,6 +224,9 @@ internal fun InspectionEditContent(
                             }
                         }
                     Text(
+                        modifier = Modifier.padding(
+                            end = 4.dp,
+                        ),
                         text = text,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
@@ -256,12 +266,24 @@ internal fun InspectionEditContent(
             OutlinedTextField(
                 modifier = Modifier.fillMaxWidth(),
                 label = { Text(text = stringResource(Res.string.participants_label)) },
+                leadingIcon = {
+                    Icon(
+                        painter = painterResource(DesignRes.drawable.ic_group),
+                        contentDescription = stringResource(Res.string.participants_label),
+                    )
+                },
                 value = state.participants,
                 onValueChange = onParticipantsChange,
             )
             OutlinedTextField(
                 modifier = Modifier.fillMaxWidth(),
                 label = { Text(text = stringResource(Res.string.climate_label)) },
+                leadingIcon = {
+                    Icon(
+                        painter = painterResource(DesignRes.drawable.ic_thermostat),
+                        contentDescription = stringResource(Res.string.climate_label),
+                    )
+                },
                 value = state.climate,
                 onValueChange = onClimateChange,
             )
@@ -269,6 +291,12 @@ internal fun InspectionEditContent(
                 label = stringResource(Res.string.started_at_label),
                 value = state.startedAt?.toDisplayString(),
                 placeholder = stringResource(Res.string.not_set),
+                leadingIcon = {
+                    Icon(
+                        painter = painterResource(DesignRes.drawable.ic_schedule),
+                        contentDescription = stringResource(Res.string.started_at_label),
+                    )
+                },
                 onEditClick = { startedAtPickerStep = PickerStep.DateStep },
                 onClearClick = { onStartedAtChange(null) },
                 modifier = Modifier.fillMaxWidth(),
@@ -277,6 +305,12 @@ internal fun InspectionEditContent(
                 label = stringResource(Res.string.ended_at_label),
                 value = state.endedAt?.toDisplayString(),
                 placeholder = stringResource(Res.string.not_set),
+                leadingIcon = {
+                    Icon(
+                        painter = painterResource(DesignRes.drawable.ic_event_available),
+                        contentDescription = stringResource(Res.string.ended_at_label),
+                    )
+                },
                 onEditClick = { endedAtPickerStep = PickerStep.DateStep },
                 onClearClick = { onEndedAtChange(null) },
                 modifier = Modifier.fillMaxWidth(),
@@ -284,6 +318,12 @@ internal fun InspectionEditContent(
             OutlinedTextField(
                 modifier = Modifier.fillMaxWidth(),
                 label = { Text(text = stringResource(Res.string.note_label)) },
+                leadingIcon = {
+                    Icon(
+                        painter = painterResource(DesignRes.drawable.ic_notes),
+                        contentDescription = stringResource(Res.string.note_label),
+                    )
+                },
                 value = state.note,
                 onValueChange = onNoteChange,
                 minLines = 3,

@@ -31,7 +31,6 @@ import cz.adamec.timotej.snag.clients.fe.driving.impl.internal.clients.ui.compon
 import cz.adamec.timotej.snag.clients.fe.driving.impl.internal.clients.vm.ClientsUiState
 import cz.adamec.timotej.snag.lib.design.fe.button.AdaptiveTonalButton
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.CollapsableTopAppBarScaffold
-import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import snag.feat.clients.fe.driving.impl.generated.resources.Res
 import snag.feat.clients.fe.driving.impl.generated.resources.clients_title

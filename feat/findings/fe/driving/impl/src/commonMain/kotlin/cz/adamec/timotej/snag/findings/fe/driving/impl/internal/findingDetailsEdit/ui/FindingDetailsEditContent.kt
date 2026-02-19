@@ -101,6 +101,9 @@ internal fun FindingDetailsEditContent(
                             state.findingName
                         }
                     Text(
+                        modifier = Modifier.padding(
+                            end = 4.dp,
+                        ),
                         text = text,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,

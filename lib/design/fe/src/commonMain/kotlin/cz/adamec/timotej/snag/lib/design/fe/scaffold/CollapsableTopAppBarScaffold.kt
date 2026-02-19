@@ -14,6 +14,7 @@ package cz.adamec.timotej.snag.lib.design.fe.scaffold
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.MediumFlexibleTopAppBar
 import androidx.compose.material3.Scaffold
@@ -24,6 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
 
 @Composable
 fun CollapsableTopAppBarScaffold(
@@ -48,6 +50,9 @@ fun CollapsableTopAppBarScaffold(
             MediumFlexibleTopAppBar(
                 title = {
                     Text(
+                        modifier = Modifier.padding(
+                            end = 4.dp,
+                        ),
                         text = title,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,

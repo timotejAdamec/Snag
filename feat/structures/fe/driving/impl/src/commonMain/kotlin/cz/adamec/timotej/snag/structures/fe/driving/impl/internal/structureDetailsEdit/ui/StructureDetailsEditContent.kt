@@ -33,6 +33,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import cz.adamec.timotej.snag.lib.design.fe.dialog.FullScreenDialogMeasurements
 import cz.adamec.timotej.snag.lib.design.fe.theme.SnagPreview
 import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.structureDetailsEdit.ui.components.FloorPlanEditSection
@@ -75,6 +76,9 @@ internal fun StructureDetailsEditContent(
                             state.structureName
                         }
                     Text(
+                        modifier = Modifier.padding(
+                            end = 4.dp,
+                        ),
                         text = text,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
