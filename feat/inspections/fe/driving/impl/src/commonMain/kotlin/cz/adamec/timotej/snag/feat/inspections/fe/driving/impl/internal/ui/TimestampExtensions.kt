@@ -27,7 +27,7 @@ internal fun Timestamp.toDisplayString(): String {
     val day = local.dayOfMonth.toString().padStart(2, '0')
     val month = local.monthNumber.toString().padStart(2, '0')
     val year = local.year
-    return "$hour:$minute · $day.$month.$year"
+    return "$day.$month.$year · $hour:$minute"
 }
 
 internal fun Timestamp.toLocalDateTime(): LocalDateTime {
