@@ -134,7 +134,7 @@ internal class DevDataSeederConfiguration(
                         id = Uuid.parse(STRUCTURE_1),
                         projectId = Uuid.parse(PROJECT_1),
                         name = "Block A - Ground Floor",
-                        floorPlanUrl = "https://upload.wikimedia.org/wikipedia/commons/9/9a/Sample_Floorplan.jpg",
+                        floorPlanUrl = "https://wpmedia.roomsketcher.com/content/uploads/2022/01/06145940/What-is-a-floor-plan-with-dimensions.png",
                         updatedAt = now,
                     ),
             ),

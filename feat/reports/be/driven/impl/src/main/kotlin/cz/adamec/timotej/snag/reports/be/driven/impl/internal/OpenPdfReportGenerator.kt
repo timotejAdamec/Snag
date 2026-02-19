@@ -193,8 +193,9 @@ internal class OpenPdfReportGenerator : PdfReportGenerator {
             try {
                 val bytes = URI(floorPlanUrl).toURL().readBytes()
                 Image.getInstance(bytes)
-            } catch (_: Exception) {
+            } catch (e: Exception) {
                 document.add(Paragraph("Floor plan image could not be loaded.", FONT_SMALL))
+                LH.logger.warn("Floor plan image could not be loaded: $floorPlanUrl. Exception: $e")
                 return
             }
 
