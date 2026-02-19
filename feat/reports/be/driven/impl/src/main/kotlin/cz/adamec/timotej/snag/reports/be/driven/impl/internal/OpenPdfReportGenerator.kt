@@ -56,9 +56,8 @@ internal class OpenPdfReportGenerator : PdfReportGenerator {
     ) {
         @Suppress("StringShouldBeRawString")
         document.add(Paragraph("\n\n\n"))
-        document.add(Paragraph("Project Report", FONT_TITLE))
-        document.add(Paragraph("\n"))
-        document.add(Paragraph(data.project.project.name, FONT_HEADING))
+        document.add(Paragraph(data.project.project.name, FONT_TITLE))
+        document.add(Paragraph("Project report", FONT_SMALL))
         document.add(Paragraph("\n"))
 
         val address = data.project.project.address
