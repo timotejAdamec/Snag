@@ -31,11 +31,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import cz.adamec.timotej.snag.feat.inspections.business.Inspection
 import cz.adamec.timotej.snag.feat.inspections.fe.model.FrontendInspection
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.common.TimestampProvider
 import cz.adamec.timotej.snag.lib.core.common.toLocalDateTime
+import cz.adamec.timotej.snag.lib.design.fe.theme.SnagTheme
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.painterResource
@@ -173,10 +176,8 @@ private fun InspectionCardActionButton(
         CardStatus.NOT_STARTED ->
             FilledTonalIconButton(
                 onClick = onStartClick,
-                modifier = Modifier.size(32.dp),
             ) {
                 Icon(
-                    modifier = Modifier.size(16.dp),
                     painter = painterResource(Res.drawable.ic_inspection_start),
                     contentDescription = stringResource(Res.string.inspection_action_start),
                 )
@@ -184,10 +185,8 @@ private fun InspectionCardActionButton(
         CardStatus.IN_PROGRESS ->
             FilledTonalIconButton(
                 onClick = onEndClick,
-                modifier = Modifier.size(32.dp),
             ) {
                 Icon(
-                    modifier = Modifier.size(16.dp),
                     painter = painterResource(Res.drawable.ic_inspection_end),
                     contentDescription = stringResource(Res.string.inspection_action_end),
                 )
