@@ -12,13 +12,17 @@
 
 package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.vm
 
+import cz.adamec.timotej.snag.feat.inspections.business.Inspection
 import cz.adamec.timotej.snag.feat.inspections.fe.app.api.GetInspectionsUseCase
 import cz.adamec.timotej.snag.feat.inspections.fe.app.api.SaveInspectionUseCase
+import cz.adamec.timotej.snag.feat.inspections.fe.driven.test.FakeInspectionsDb
+import cz.adamec.timotej.snag.feat.inspections.fe.driven.test.FakeInspectionsSync
+import cz.adamec.timotej.snag.feat.inspections.fe.model.FrontendInspection
 import cz.adamec.timotej.snag.feat.reports.fe.app.api.DownloadReportUseCase
-import cz.adamec.timotej.snag.lib.core.common.TimestampProvider
 import cz.adamec.timotej.snag.feat.reports.fe.driven.test.FakeReportsApi
 import cz.adamec.timotej.snag.feat.reports.fe.ports.ReportsApi
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
+import cz.adamec.timotej.snag.lib.core.common.TimestampProvider
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.projects.business.Project
@@ -67,7 +71,11 @@ import kotlin.uuid.Uuid
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
+    private val fixedNow = Timestamp(1_700_000_000_000L)
+
     private val fakeProjectsDb: FakeProjectsDb by inject()
+    private val fakeInspectionsDb: FakeInspectionsDb by inject()
+    private val fakeInspectionsSync: FakeInspectionsSync by inject()
     private val fakeReportsApi: FakeReportsApi by inject()
 
     private val getProjectUseCase: GetProjectUseCase by inject()
@@ -92,6 +100,11 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
                 singleOf(::FakeStructuresPullSyncCoordinator) bind StructuresPullSyncCoordinator::class
                 singleOf(::FakeStructuresPullSyncTimestampDataSource) bind StructuresPullSyncTimestampDataSource::class
                 singleOf(::FakeReportsApi) bind ReportsApi::class
+                single<TimestampProvider> {
+                    object : TimestampProvider {
+                        override fun getNowTimestamp() = fixedNow
+                    }
+                }
             },
         )
 
@@ -106,6 +119,33 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
             saveInspectionUseCase = saveInspectionUseCase,
             timestampProvider = timestampProvider,
         )
+
+    private fun seedInspection(
+        projectId: Uuid,
+        inspectionId: Uuid = Uuid.random(),
+        startedAt: Timestamp? = null,
+        endedAt: Timestamp? = null,
+        participants: String? = "Alice",
+        climate: String? = "sunny",
+        note: String? = "note",
+    ): FrontendInspection {
+        val inspection =
+            FrontendInspection(
+                inspection =
+                    Inspection(
+                        id = inspectionId,
+                        projectId = projectId,
+                        startedAt = startedAt,
+                        endedAt = endedAt,
+                        participants = participants,
+                        climate = climate,
+                        note = note,
+                        updatedAt = Timestamp(10L),
+                    ),
+            )
+        fakeInspectionsDb.setInspection(inspection)
+        return inspection
+    }
 
     private fun seedProject(projectId: Uuid): FrontendProject {
         val project =
@@ -240,5 +280,166 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
             assertTrue(viewModel.state.value.canDownloadReport)
             assertFalse(viewModel.state.value.isDownloadingReport)
             reportCollector.cancel()
+        }
+
+    @Test
+    fun `onStartInspection sets startedAt to current timestamp`() =
+        runTest {
+            val projectId = Uuid.random()
+            val inspectionId = Uuid.random()
+            seedProject(projectId)
+            seedInspection(projectId = projectId, inspectionId = inspectionId)
+
+            val viewModel = createViewModel(projectId)
+            advanceUntilIdle()
+
+            viewModel.onStartInspection(inspectionId)
+            advanceUntilIdle()
+
+            val saved =
+                viewModel.state.value.inspections
+                    .find { it.inspection.id == inspectionId }
+            assertEquals(fixedNow, saved?.inspection?.startedAt)
+        }
+
+    @Test
+    fun `onStartInspection preserves existing fields`() =
+        runTest {
+            val projectId = Uuid.random()
+            val inspectionId = Uuid.random()
+            seedProject(projectId)
+            seedInspection(
+                projectId = projectId,
+                inspectionId = inspectionId,
+                endedAt = Timestamp(999L),
+                participants = "Bob",
+                climate = "rainy",
+                note = "my note",
+            )
+
+            val viewModel = createViewModel(projectId)
+            advanceUntilIdle()
+
+            viewModel.onStartInspection(inspectionId)
+            advanceUntilIdle()
+
+            val saved =
+                viewModel.state.value.inspections
+                    .find { it.inspection.id == inspectionId }
+            val insp = saved?.inspection
+            assertEquals(projectId, insp?.projectId)
+            assertEquals(Timestamp(999L), insp?.endedAt)
+            assertEquals("Bob", insp?.participants)
+            assertEquals("rainy", insp?.climate)
+            assertEquals("my note", insp?.note)
+        }
+
+    @Test
+    fun `onEndInspection sets endedAt to current timestamp`() =
+        runTest {
+            val projectId = Uuid.random()
+            val inspectionId = Uuid.random()
+            seedProject(projectId)
+            seedInspection(projectId = projectId, inspectionId = inspectionId, startedAt = Timestamp(1L))
+
+            val viewModel = createViewModel(projectId)
+            advanceUntilIdle()
+
+            viewModel.onEndInspection(inspectionId)
+            advanceUntilIdle()
+
+            val saved =
+                viewModel.state.value.inspections
+                    .find { it.inspection.id == inspectionId }
+            assertEquals(fixedNow, saved?.inspection?.endedAt)
+        }
+
+    @Test
+    fun `onEndInspection preserves existing startedAt`() =
+        runTest {
+            val projectId = Uuid.random()
+            val inspectionId = Uuid.random()
+            val existingStartedAt = Timestamp(500L)
+            seedProject(projectId)
+            seedInspection(
+                projectId = projectId,
+                inspectionId = inspectionId,
+                startedAt = existingStartedAt,
+            )
+
+            val viewModel = createViewModel(projectId)
+            advanceUntilIdle()
+
+            viewModel.onEndInspection(inspectionId)
+            advanceUntilIdle()
+
+            val saved =
+                viewModel.state.value.inspections
+                    .find { it.inspection.id == inspectionId }
+            assertEquals(existingStartedAt, saved?.inspection?.startedAt)
+        }
+
+    @Test
+    fun `onStartInspection does nothing for unknown inspection id`() =
+        runTest {
+            val projectId = Uuid.random()
+            seedProject(projectId)
+
+            val viewModel = createViewModel(projectId)
+            advanceUntilIdle()
+
+            viewModel.onStartInspection(Uuid.random())
+            advanceUntilIdle()
+
+            assertTrue(fakeInspectionsSync.savedInspectionIds.isEmpty())
+        }
+
+    @Test
+    fun `onEndInspection does nothing for unknown inspection id`() =
+        runTest {
+            val projectId = Uuid.random()
+            seedProject(projectId)
+
+            val viewModel = createViewModel(projectId)
+            advanceUntilIdle()
+
+            viewModel.onEndInspection(Uuid.random())
+            advanceUntilIdle()
+
+            assertTrue(fakeInspectionsSync.savedInspectionIds.isEmpty())
+        }
+
+    @Test
+    fun `onStartInspection enqueues sync for the inspection`() =
+        runTest {
+            val projectId = Uuid.random()
+            val inspectionId = Uuid.random()
+            seedProject(projectId)
+            seedInspection(projectId = projectId, inspectionId = inspectionId)
+
+            val viewModel = createViewModel(projectId)
+            advanceUntilIdle()
+
+            viewModel.onStartInspection(inspectionId)
+            advanceUntilIdle()
+
+            assertEquals(listOf(inspectionId), fakeInspectionsSync.savedInspectionIds)
+        }
+
+    @Test
+    fun `onEndInspection enqueues sync for the inspection`() =
+        runTest {
+            val projectId = Uuid.random()
+            val inspectionId = Uuid.random()
+            seedProject(projectId)
+            seedInspection(projectId = projectId, inspectionId = inspectionId, startedAt = Timestamp(1L))
+
+            val viewModel = createViewModel(projectId)
+            advanceUntilIdle()
+
+            viewModel.onEndInspection(inspectionId)
+            advanceUntilIdle()
+
+            assertEquals(listOf(inspectionId), fakeInspectionsSync.savedInspectionIds)
         }
 }
