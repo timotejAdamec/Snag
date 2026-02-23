@@ -161,7 +161,7 @@ private fun LoadedStructureDetailsContent(
                 if (LocalSheetPeekHeight.current == 0.dp) {
                     16.dp
                 } else {
-                    LocalSheetPeekHeight.current
+                    LocalSheetPeekHeight.current + 16.dp
                 }
             val bottomFromToolbar =
                 with(density) { (boxHeightPx - toolbarTopPx).toDp() } + 8.dp

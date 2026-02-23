@@ -45,14 +45,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.tooling.preview.Preview
+import cz.adamec.timotej.snag.feat.findings.business.Finding
 import cz.adamec.timotej.snag.feat.findings.business.FindingType
+import cz.adamec.timotej.snag.feat.findings.business.Importance
+import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
+import cz.adamec.timotej.snag.feat.findings.business.Term
 import cz.adamec.timotej.snag.feat.findings.fe.driving.api.visuals
+import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
 import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetail.ui.components.FindingDeletionAlertDialog
 import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetail.ui.components.ImportanceLabel
 import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetail.ui.components.TermLabel
 import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetail.vm.FindingDetailUiState
 import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetail.vm.FindingDetailUiStatus
+import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.design.fe.scenes.LocalIsInSheet
+import cz.adamec.timotej.snag.lib.design.fe.theme.SnagPreview
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
@@ -65,6 +73,7 @@ import snag.lib.design.fe.generated.resources.edit
 import snag.lib.design.fe.generated.resources.ic_close
 import snag.lib.design.fe.generated.resources.ic_delete
 import snag.lib.design.fe.generated.resources.ic_edit
+import kotlin.uuid.Uuid
 import snag.lib.design.fe.generated.resources.Res as DesignRes
 
 @Suppress("LongMethod", "CognitiveComplexMethod")
@@ -154,8 +163,6 @@ internal fun FindingDetailContent(
                             },
                     )
                 },
-                contentWindowInsets =
-                    if (isInSheet) zeroInsets else ScaffoldDefaults.contentWindowInsets,
             ) { paddingValues ->
                 Box(
                     modifier =
@@ -167,11 +174,7 @@ internal fun FindingDetailContent(
                                 end = paddingValues.calculateEndPadding(LayoutDirection.Ltr),
                             )
                             .consumeWindowInsets(paddingValues)
-                            .padding(
-                                start = 16.dp,
-                                end = 16.dp,
-                                top = 16.dp,
-                            ),
+                            .padding(16.dp),
                 ) {
                     Column {
                         val type = finding.finding.type
@@ -253,5 +256,96 @@ internal fun FindingDetailContent(
                 }
             }
         }
+    }
+}
+
+@Preview
+@Composable
+private fun FindingDetailContentLoadedPreview() {
+    SnagPreview {
+        FindingDetailContent(
+            state =
+                FindingDetailUiState(
+                    status = FindingDetailUiStatus.LOADED,
+                    finding =
+                        FrontendFinding(
+                            finding =
+                                Finding(
+                                    id = Uuid.random(),
+                                    structureId = Uuid.random(),
+                                    name = "Cracked wall",
+                                    description = "Large crack running along the north-facing wall near the window.",
+                                    type = FindingType.Classic(
+                                        importance = Importance.HIGH,
+                                        term = Term.T2,
+                                    ),
+                                    coordinates =
+                                        listOf(
+                                            RelativeCoordinate(0.5f, 0.3f),
+                                            RelativeCoordinate(0.7f, 0.6f),
+                                        ),
+                                    updatedAt = Timestamp(0L),
+                                ),
+                        ),
+                ),
+            onBack = {},
+            onEditClick = {},
+            onDelete = {},
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun FindingDetailContentNotePreview() {
+    SnagPreview {
+        FindingDetailContent(
+            state =
+                FindingDetailUiState(
+                    status = FindingDetailUiStatus.LOADED,
+                    finding =
+                        FrontendFinding(
+                            finding =
+                                Finding(
+                                    id = Uuid.random(),
+                                    structureId = Uuid.random(),
+                                    name = "Check ventilation",
+                                    description = null,
+                                    type = FindingType.Note,
+                                    coordinates = emptyList(),
+                                    updatedAt = Timestamp(0L),
+                                ),
+                        ),
+                ),
+            onBack = {},
+            onEditClick = {},
+            onDelete = {},
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun FindingDetailContentLoadingPreview() {
+    SnagPreview {
+        FindingDetailContent(
+            state = FindingDetailUiState(),
+            onBack = {},
+            onEditClick = {},
+            onDelete = {},
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun FindingDetailContentNotFoundPreview() {
+    SnagPreview {
+        FindingDetailContent(
+            state = FindingDetailUiState(status = FindingDetailUiStatus.NOT_FOUND),
+            onBack = {},
+            onEditClick = {},
+            onDelete = {},
+        )
     }
 }

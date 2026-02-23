@@ -21,6 +21,8 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -51,6 +53,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import cz.adamec.timotej.snag.feat.inspections.fe.driving.api.InspectionCard
 import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureCard
@@ -178,7 +181,11 @@ private fun LoadedProjectDetailsContent(
             modifier =
                 Modifier
                     .fillMaxSize()
-                    .padding(paddingValues)
+                    .padding(
+                        top = paddingValues.calculateTopPadding(),
+                        start = paddingValues.calculateStartPadding(LayoutDirection.Ltr),
+                        end = paddingValues.calculateEndPadding(LayoutDirection.Ltr),
+                    )
                     .consumeWindowInsets(paddingValues),
         ) {
             LazyColumn(
@@ -186,7 +193,7 @@ private fun LoadedProjectDetailsContent(
                 contentPadding =
                     PaddingValues(
                         top = 16.dp,
-                        bottom = 72.dp,
+                        bottom = 116.dp,
                     ),
             ) {
                 item {
@@ -342,7 +349,9 @@ private fun LoadedProjectDetailsContent(
                 modifier =
                     Modifier
                         .align(Alignment.BottomCenter)
-                        .padding(bottom = 16.dp),
+                        .padding(
+                            bottom = paddingValues.calculateBottomPadding() + 16.dp,
+                        ),
                 expanded = true,
             ) {
                 IconButton(
