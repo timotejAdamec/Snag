@@ -15,14 +15,15 @@ package cz.adamec.timotej.snag.feat.inspections.fe.driving.api
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.FilledTonalIconButton
-import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -46,8 +47,6 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import snag.feat.inspections.fe.driving.api.generated.resources.Res
-import snag.feat.inspections.fe.driving.api.generated.resources.ic_inspection_end
-import snag.feat.inspections.fe.driving.api.generated.resources.ic_inspection_start
 import snag.feat.inspections.fe.driving.api.generated.resources.inspection_action_end
 import snag.feat.inspections.fe.driving.api.generated.resources.inspection_action_start
 import snag.feat.inspections.fe.driving.api.generated.resources.inspection_state_ending_soon
@@ -57,7 +56,9 @@ import snag.feat.inspections.fe.driving.api.generated.resources.inspection_state
 import snag.feat.inspections.fe.driving.api.generated.resources.inspection_state_scheduled
 import snag.lib.design.fe.generated.resources.ic_event_available
 import snag.lib.design.fe.generated.resources.ic_group
+import snag.lib.design.fe.generated.resources.ic_play_arrow_filled
 import snag.lib.design.fe.generated.resources.ic_schedule
+import snag.lib.design.fe.generated.resources.ic_stop_filled
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 import snag.lib.design.fe.generated.resources.Res as DesignRes
@@ -123,13 +124,11 @@ private fun InspectionCardContent(
                     .padding(12.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            InspectionCardHeader(
-                cardState = cardState,
-                onStartClick = onStartClick,
-                onEndClick = onEndClick,
+            Text(
+                text = stringResource(cardState.toStringRes()),
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
-
-            HorizontalDivider(thickness = 0.5.dp)
 
             inspection.participants?.let {
                 InspectionIconRow(
@@ -156,57 +155,56 @@ private fun InspectionCardContent(
                     )
                 }
             }
+
+            InspectionCardAction(
+                cardState = cardState,
+                onStartClick = onStartClick,
+                onEndClick = onEndClick,
+            )
         }
     }
 }
 
 @Composable
-private fun InspectionCardHeader(
+private fun InspectionCardAction(
     cardState: CardStatus,
     onStartClick: () -> Unit,
     onEndClick: () -> Unit,
 ) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Text(
-            text = stringResource(cardState.toStringRes()),
-            style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-        InspectionCardActionButton(
-            cardState = cardState,
-            onStartClick = onStartClick,
-            onEndClick = onEndClick,
-        )
-    }
-}
-
-@Composable
-private fun InspectionCardActionButton(
-    cardState: CardStatus,
-    onStartClick: () -> Unit,
-    onEndClick: () -> Unit,
-) {
+    val buttonHeight = ButtonDefaults.MediumContainerHeight
     when (cardState) {
         CardStatus.NOT_STARTED ->
-            FilledTonalIconButton(
+            FilledTonalButton(
                 onClick = onStartClick,
+                modifier = Modifier.fillMaxWidth(),
+                contentPadding = ButtonDefaults.contentPaddingFor(buttonHeight),
             ) {
                 Icon(
-                    painter = painterResource(Res.drawable.ic_inspection_start),
-                    contentDescription = stringResource(Res.string.inspection_action_start),
+                    modifier = Modifier.size(ButtonDefaults.iconSizeFor(buttonHeight)),
+                    painter = painterResource(DesignRes.drawable.ic_play_arrow_filled),
+                    contentDescription = null,
+                )
+                Spacer(Modifier.size(ButtonDefaults.iconSpacingFor(buttonHeight)))
+                Text(
+                    text = stringResource(Res.string.inspection_action_start),
+                    style = ButtonDefaults.textStyleFor(buttonHeight),
                 )
             }
         CardStatus.IN_PROGRESS ->
-            FilledTonalIconButton(
+            FilledTonalButton(
                 onClick = onEndClick,
+                modifier = Modifier.fillMaxWidth(),
+                contentPadding = ButtonDefaults.contentPaddingFor(buttonHeight),
             ) {
                 Icon(
-                    painter = painterResource(Res.drawable.ic_inspection_end),
-                    contentDescription = stringResource(Res.string.inspection_action_end),
+                    modifier = Modifier.size(ButtonDefaults.iconSizeFor(buttonHeight)),
+                    painter = painterResource(DesignRes.drawable.ic_stop_filled),
+                    contentDescription = null,
+                )
+                Spacer(Modifier.size(ButtonDefaults.iconSpacingFor(buttonHeight)))
+                Text(
+                    text = stringResource(Res.string.inspection_action_end),
+                    style = ButtonDefaults.textStyleFor(buttonHeight),
                 )
             }
         else -> {}
@@ -255,31 +253,34 @@ private fun resolveCardStatus(
 @Composable
 private fun CardStatus.containerColor(): Color =
     when (this) {
+        CardStatus.SCHEDULED -> MaterialTheme.colorScheme.surfaceContainerLowest
         CardStatus.NOT_STARTED -> MaterialTheme.colorScheme.surfaceContainerLow
-        CardStatus.SCHEDULED -> MaterialTheme.colorScheme.secondaryContainer
-        CardStatus.IN_PROGRESS -> MaterialTheme.colorScheme.primaryContainer
-        CardStatus.ENDING_SOON -> MaterialTheme.colorScheme.tertiaryContainer
+        CardStatus.IN_PROGRESS -> MaterialTheme.colorScheme.surfaceContainer
+        CardStatus.ENDING_SOON -> MaterialTheme.colorScheme.surfaceContainerHigh
         CardStatus.FINISHED -> MaterialTheme.colorScheme.surfaceContainerHighest
     }
 
 private fun CardStatus.toStringRes(): StringResource =
     when (this) {
-        CardStatus.NOT_STARTED -> Res.string.inspection_state_not_started
         CardStatus.SCHEDULED -> Res.string.inspection_state_scheduled
+        CardStatus.NOT_STARTED -> Res.string.inspection_state_not_started
         CardStatus.IN_PROGRESS -> Res.string.inspection_state_in_progress
         CardStatus.ENDING_SOON -> Res.string.inspection_state_ending_soon
         CardStatus.FINISHED -> Res.string.inspection_state_finished
     }
 
-private fun Timestamp.toDisplayString(): String {
-    val local = toLocalDateTime()
-    val hour = local.hour.toString().padStart(2, '0')
-    val minute = local.minute.toString().padStart(2, '0')
-    val day = local.dayOfMonth.toString().padStart(2, '0')
-    val month = local.monthNumber.toString().padStart(2, '0')
-    val year = local.year
-    return "$day.$month.$year · $hour:$minute"
-}
+private fun Timestamp.toDisplayString(): String =
+    try {
+        val local = toLocalDateTime()
+        val hour = local.hour.toString().padStart(2, '0')
+        val minute = local.minute.toString().padStart(2, '0')
+        val day = local.day.toString().padStart(2, '0')
+        val month = local.month.toString().padStart(2, '0')
+        val year = local.year
+        "$day.$month.$year · $hour:$minute"
+    } catch (_: Throwable) {
+        "--.--.---- · --:--"
+    }
 
 // region Previews
 
@@ -397,73 +398,6 @@ private fun FinishedPreview() {
             onEndClick = {},
             modifier = Modifier.width(previewCardWidth),
         )
-    }
-}
-
-@Preview
-@Composable
-@Suppress("FunctionNameMaxLength")
-private fun AllStatesPreview() {
-    SnagPreview {
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-            modifier = Modifier.padding(16.dp),
-        ) {
-            InspectionCardContent(
-                inspection = previewInspection(),
-                cardState = CardStatus.NOT_STARTED,
-                onClick = {},
-                onStartClick = {},
-                onEndClick = {},
-                modifier = Modifier.width(previewCardWidth),
-            )
-            InspectionCardContent(
-                inspection =
-                    previewInspection(
-                        startedAt = previewFutureTimestamp,
-                    ),
-                cardState = CardStatus.SCHEDULED,
-                onClick = {},
-                onStartClick = {},
-                onEndClick = {},
-                modifier = Modifier.width(previewCardWidth),
-            )
-            InspectionCardContent(
-                inspection =
-                    previewInspection(
-                        startedAt = previewPastTimestamp,
-                    ),
-                cardState = CardStatus.IN_PROGRESS,
-                onClick = {},
-                onStartClick = {},
-                onEndClick = {},
-                modifier = Modifier.width(previewCardWidth),
-            )
-            InspectionCardContent(
-                inspection =
-                    previewInspection(
-                        startedAt = previewPastTimestamp,
-                        endedAt = previewFutureTimestamp,
-                    ),
-                cardState = CardStatus.ENDING_SOON,
-                onClick = {},
-                onStartClick = {},
-                onEndClick = {},
-                modifier = Modifier.width(previewCardWidth),
-            )
-            InspectionCardContent(
-                inspection =
-                    previewInspection(
-                        startedAt = previewPastTimestamp,
-                        endedAt = previewEndTimestamp,
-                    ),
-                cardState = CardStatus.FINISHED,
-                onClick = {},
-                onStartClick = {},
-                onEndClick = {},
-                modifier = Modifier.width(previewCardWidth),
-            )
-        }
     }
 }
 

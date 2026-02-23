@@ -19,8 +19,8 @@ internal fun Timestamp.toDisplayString(): String {
     val local = toLocalDateTime()
     val hour = local.hour.toString().padStart(2, '0')
     val minute = local.minute.toString().padStart(2, '0')
-    val day = local.dayOfMonth.toString().padStart(2, '0')
-    val month = local.monthNumber.toString().padStart(2, '0')
+    val day = local.day.toString().padStart(2, '0')
+    val month = local.month.toString().padStart(2, '0')
     val year = local.year
     return "$day.$month.$year · $hour:$minute"
 }

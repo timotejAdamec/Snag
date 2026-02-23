@@ -344,7 +344,6 @@ private fun LoadedProjectDetailsContent(
                         .align(Alignment.BottomCenter)
                         .padding(bottom = 16.dp),
                 expanded = true,
-                colors = FloatingToolbarDefaults.vibrantFloatingToolbarColors(),
             ) {
                 IconButton(
                     onClick = onEditClick,
