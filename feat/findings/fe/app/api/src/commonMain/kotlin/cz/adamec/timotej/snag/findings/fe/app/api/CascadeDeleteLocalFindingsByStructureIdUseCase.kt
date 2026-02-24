@@ -14,6 +14,6 @@ package cz.adamec.timotej.snag.findings.fe.app.api
 
 import kotlin.uuid.Uuid
 
-interface DeleteLocalFindingsByStructureIdUseCase {
+interface CascadeDeleteLocalFindingsByStructureIdUseCase {
     suspend operator fun invoke(structureId: Uuid)
 }

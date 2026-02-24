@@ -12,13 +12,13 @@
 
 package cz.adamec.timotej.snag.findings.fe.app.impl.internal
 
-import cz.adamec.timotej.snag.findings.fe.app.api.DeleteLocalFindingsByStructureIdUseCase
+import cz.adamec.timotej.snag.findings.fe.app.api.CascadeDeleteLocalFindingsByStructureIdUseCase
 import cz.adamec.timotej.snag.findings.fe.ports.FindingsDb
 import kotlin.uuid.Uuid
 
-internal class DeleteLocalFindingsByStructureIdUseCaseImpl(
+internal class CascadeDeleteLocalFindingsByStructureIdUseCaseImpl(
     private val findingsDb: FindingsDb,
-) : DeleteLocalFindingsByStructureIdUseCase {
+) : CascadeDeleteLocalFindingsByStructureIdUseCase {
     override suspend operator fun invoke(structureId: Uuid) {
         findingsDb.deleteFindingsByStructureId(structureId)
     }

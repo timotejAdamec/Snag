@@ -15,7 +15,7 @@ package cz.adamec.timotej.snag.findings.fe.app.impl.internal
 import cz.adamec.timotej.snag.feat.findings.business.Finding
 import cz.adamec.timotej.snag.feat.findings.business.FindingType
 import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
-import cz.adamec.timotej.snag.findings.fe.app.api.DeleteLocalFindingsByStructureIdUseCase
+import cz.adamec.timotej.snag.findings.fe.app.api.CascadeDeleteLocalFindingsByStructureIdUseCase
 import cz.adamec.timotej.snag.findings.fe.driven.test.FakeFindingsDb
 import cz.adamec.timotej.snag.findings.fe.driven.test.FakeFindingsPullSyncCoordinator
 import cz.adamec.timotej.snag.findings.fe.driven.test.FakeFindingsPullSyncTimestampDataSource
@@ -39,10 +39,10 @@ import kotlin.test.assertIs
 import kotlin.test.assertTrue
 import kotlin.uuid.Uuid
 
-class DeleteLocalFindingsByStructureIdUseCaseImplTest : FrontendKoinInitializedTest() {
+class CascadeDeleteLocalFindingsByStructureIdUseCaseImplTest : FrontendKoinInitializedTest() {
     private val fakeFindingsDb: FakeFindingsDb by inject()
 
-    private val useCase: DeleteLocalFindingsByStructureIdUseCase by inject()
+    private val useCase: CascadeDeleteLocalFindingsByStructureIdUseCase by inject()
 
     private val structureId1 = Uuid.parse("00000000-0000-0000-0000-000000000001")
     private val structureId2 = Uuid.parse("00000000-0000-0000-0000-000000000002")
