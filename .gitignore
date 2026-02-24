@@ -308,3 +308,6 @@ fabric.properties
 
 # SQLDelight
 *.db
+
+# Claude
+.claude/worktrees
