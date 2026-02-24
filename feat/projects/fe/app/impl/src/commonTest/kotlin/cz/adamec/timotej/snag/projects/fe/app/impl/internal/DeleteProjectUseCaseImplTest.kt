@@ -18,21 +18,19 @@ import cz.adamec.timotej.snag.findings.fe.driven.test.FakeFindingsDb
 import cz.adamec.timotej.snag.findings.fe.ports.FindingsDb
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
+import cz.adamec.timotej.snag.lib.sync.fe.driven.test.FakePullSyncTimestampDb
+import cz.adamec.timotej.snag.lib.sync.fe.driven.test.FakeSyncQueue
+import cz.adamec.timotej.snag.lib.sync.fe.model.SyncOperationType
+import cz.adamec.timotej.snag.lib.sync.fe.ports.PullSyncTimestampDb
+import cz.adamec.timotej.snag.lib.sync.fe.ports.SyncQueue
 import cz.adamec.timotej.snag.projects.business.Project
 import cz.adamec.timotej.snag.projects.fe.app.api.DeleteProjectUseCase
+import cz.adamec.timotej.snag.projects.fe.app.impl.internal.sync.PROJECT_SYNC_ENTITY_TYPE
 import cz.adamec.timotej.snag.projects.fe.driven.test.FakeProjectsDb
-import cz.adamec.timotej.snag.projects.fe.driven.test.FakeProjectsSync
 import cz.adamec.timotej.snag.projects.fe.model.FrontendProject
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsDb
-import cz.adamec.timotej.snag.projects.fe.ports.ProjectsSync
 import cz.adamec.timotej.snag.structures.fe.driven.test.FakeStructuresDb
-import cz.adamec.timotej.snag.structures.fe.driven.test.FakeStructuresPullSyncCoordinator
-import cz.adamec.timotej.snag.structures.fe.driven.test.FakeStructuresPullSyncTimestampDataSource
-import cz.adamec.timotej.snag.structures.fe.driven.test.FakeStructuresSync
 import cz.adamec.timotej.snag.structures.fe.ports.StructuresDb
-import cz.adamec.timotej.snag.structures.fe.ports.StructuresPullSyncCoordinator
-import cz.adamec.timotej.snag.structures.fe.ports.StructuresPullSyncTimestampDataSource
-import cz.adamec.timotej.snag.structures.fe.ports.StructuresSync
 import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
@@ -50,7 +48,7 @@ import kotlin.uuid.Uuid
 
 class DeleteProjectUseCaseImplTest : FrontendKoinInitializedTest() {
     private val fakeProjectsDb: FakeProjectsDb by inject()
-    private val fakeProjectsSync: FakeProjectsSync by inject()
+    private val fakeSyncQueue: FakeSyncQueue by inject()
     private val fakeStructuresDb: FakeStructuresDb by inject()
 
     private val useCase: DeleteProjectUseCase by inject()
@@ -62,11 +60,9 @@ class DeleteProjectUseCaseImplTest : FrontendKoinInitializedTest() {
         listOf(
             module {
                 singleOf(::FakeProjectsDb) bind ProjectsDb::class
-                singleOf(::FakeProjectsSync) bind ProjectsSync::class
+                singleOf(::FakeSyncQueue) bind SyncQueue::class
+                singleOf(::FakePullSyncTimestampDb) bind PullSyncTimestampDb::class
                 singleOf(::FakeStructuresDb) bind StructuresDb::class
-                singleOf(::FakeStructuresSync) bind StructuresSync::class
-                singleOf(::FakeStructuresPullSyncCoordinator) bind StructuresPullSyncCoordinator::class
-                singleOf(::FakeStructuresPullSyncTimestampDataSource) bind StructuresPullSyncTimestampDataSource::class
                 singleOf(::FakeFindingsDb) bind FindingsDb::class
             },
         )
@@ -124,7 +120,11 @@ class DeleteProjectUseCaseImplTest : FrontendKoinInitializedTest() {
 
             useCase(projectId)
 
-            assertEquals(listOf(projectId), fakeProjectsSync.deletedProjectIds)
+            val pending = fakeSyncQueue.getAllPending()
+            assertEquals(1, pending.size)
+            assertEquals(PROJECT_SYNC_ENTITY_TYPE, pending[0].entityTypeId)
+            assertEquals(projectId, pending[0].entityId)
+            assertEquals(SyncOperationType.DELETE, pending[0].operationType)
         }
 
     @Test
@@ -135,6 +135,6 @@ class DeleteProjectUseCaseImplTest : FrontendKoinInitializedTest() {
 
             useCase(projectId)
 
-            assertTrue(fakeProjectsSync.deletedProjectIds.isEmpty())
+            assertTrue(fakeSyncQueue.getAllPending().isEmpty())
         }
 }

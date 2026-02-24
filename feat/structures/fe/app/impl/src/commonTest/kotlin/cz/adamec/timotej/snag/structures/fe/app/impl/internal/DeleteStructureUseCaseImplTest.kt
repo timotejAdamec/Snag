@@ -21,15 +21,15 @@ import cz.adamec.timotej.snag.findings.fe.driven.test.FakeFindingsDb
 import cz.adamec.timotej.snag.findings.fe.ports.FindingsDb
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
+import cz.adamec.timotej.snag.lib.sync.fe.driven.test.FakePullSyncTimestampDb
+import cz.adamec.timotej.snag.lib.sync.fe.driven.test.FakeSyncQueue
+import cz.adamec.timotej.snag.lib.sync.fe.model.SyncOperationType
+import cz.adamec.timotej.snag.lib.sync.fe.ports.PullSyncTimestampDb
+import cz.adamec.timotej.snag.lib.sync.fe.ports.SyncQueue
 import cz.adamec.timotej.snag.structures.fe.app.api.DeleteStructureUseCase
+import cz.adamec.timotej.snag.structures.fe.app.impl.internal.sync.STRUCTURE_SYNC_ENTITY_TYPE
 import cz.adamec.timotej.snag.structures.fe.driven.test.FakeStructuresDb
-import cz.adamec.timotej.snag.structures.fe.driven.test.FakeStructuresPullSyncCoordinator
-import cz.adamec.timotej.snag.structures.fe.driven.test.FakeStructuresPullSyncTimestampDataSource
-import cz.adamec.timotej.snag.structures.fe.driven.test.FakeStructuresSync
 import cz.adamec.timotej.snag.structures.fe.ports.StructuresDb
-import cz.adamec.timotej.snag.structures.fe.ports.StructuresPullSyncCoordinator
-import cz.adamec.timotej.snag.structures.fe.ports.StructuresPullSyncTimestampDataSource
-import cz.adamec.timotej.snag.structures.fe.ports.StructuresSync
 import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
@@ -47,7 +47,7 @@ import kotlin.uuid.Uuid
 
 class DeleteStructureUseCaseImplTest : FrontendKoinInitializedTest() {
     private val fakeStructuresDb: FakeStructuresDb by inject()
-    private val fakeStructuresSync: FakeStructuresSync by inject()
+    private val fakeSyncQueue: FakeSyncQueue by inject()
     private val fakeFindingsDb: FakeFindingsDb by inject()
 
     private val useCase: DeleteStructureUseCase by inject()
@@ -60,9 +60,8 @@ class DeleteStructureUseCaseImplTest : FrontendKoinInitializedTest() {
         listOf(
             module {
                 singleOf(::FakeStructuresDb) bind StructuresDb::class
-                singleOf(::FakeStructuresSync) bind StructuresSync::class
-                singleOf(::FakeStructuresPullSyncCoordinator) bind StructuresPullSyncCoordinator::class
-                singleOf(::FakeStructuresPullSyncTimestampDataSource) bind StructuresPullSyncTimestampDataSource::class
+                singleOf(::FakeSyncQueue) bind SyncQueue::class
+                singleOf(::FakePullSyncTimestampDb) bind PullSyncTimestampDb::class
                 singleOf(::FakeFindingsDb) bind FindingsDb::class
             },
         )
@@ -125,7 +124,11 @@ class DeleteStructureUseCaseImplTest : FrontendKoinInitializedTest() {
 
             useCase(structureId)
 
-            assertEquals(listOf(structureId), fakeStructuresSync.deletedStructureIds)
+            val pending = fakeSyncQueue.getAllPending()
+            assertEquals(1, pending.size)
+            assertEquals(STRUCTURE_SYNC_ENTITY_TYPE, pending[0].entityTypeId)
+            assertEquals(structureId, pending[0].entityId)
+            assertEquals(SyncOperationType.DELETE, pending[0].operationType)
         }
 
     @Test
@@ -136,6 +139,6 @@ class DeleteStructureUseCaseImplTest : FrontendKoinInitializedTest() {
 
             useCase(structureId)
 
-            assertTrue(fakeStructuresSync.deletedStructureIds.isEmpty())
+            assertTrue(fakeSyncQueue.getAllPending().isEmpty())
         }
 }

@@ -15,16 +15,17 @@ package cz.adamec.timotej.snag.projects.fe.app.impl.internal
 import cz.adamec.timotej.snag.feat.inspections.fe.app.api.CascadeDeleteLocalInspectionsByProjectIdUseCase
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.core.fe.log
+import cz.adamec.timotej.snag.lib.sync.fe.app.api.EnqueueSyncDeleteUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.DeleteProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.LH.logger
+import cz.adamec.timotej.snag.projects.fe.app.impl.internal.sync.PROJECT_SYNC_ENTITY_TYPE
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsDb
-import cz.adamec.timotej.snag.projects.fe.ports.ProjectsSync
 import cz.adamec.timotej.snag.structures.fe.app.api.CascadeDeleteLocalStructuresByProjectIdUseCase
 import kotlin.uuid.Uuid
 
 class DeleteProjectUseCaseImpl(
     private val projectsDb: ProjectsDb,
-    private val projectsSync: ProjectsSync,
+    private val enqueueSyncDeleteUseCase: EnqueueSyncDeleteUseCase,
     private val cascadeDeleteLocalStructuresByProjectIdUseCase: CascadeDeleteLocalStructuresByProjectIdUseCase,
     private val cascadeDeleteLocalInspectionsByProjectIdUseCase: CascadeDeleteLocalInspectionsByProjectIdUseCase,
 ) : DeleteProjectUseCase {
@@ -39,7 +40,7 @@ class DeleteProjectUseCaseImpl(
                     additionalInfo = "deleteProject, projectsDb.deleteProject($projectId)",
                 )
                 if (it is OfflineFirstDataResult.Success) {
-                    projectsSync.enqueueProjectDelete(projectId)
+                    enqueueSyncDeleteUseCase(PROJECT_SYNC_ENTITY_TYPE, projectId)
                 }
             }
     }

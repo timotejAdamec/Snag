@@ -28,6 +28,8 @@ import cz.adamec.timotej.snag.findings.fe.app.impl.internal.PullFindingChangesUs
 import cz.adamec.timotej.snag.findings.fe.app.impl.internal.SaveFindingCoordinatesUseCaseImpl
 import cz.adamec.timotej.snag.findings.fe.app.impl.internal.SaveFindingDetailsUseCaseImpl
 import cz.adamec.timotej.snag.findings.fe.app.impl.internal.SaveNewFindingUseCaseImpl
+import cz.adamec.timotej.snag.findings.fe.app.impl.internal.sync.FindingSyncHandler
+import cz.adamec.timotej.snag.lib.sync.fe.app.api.handler.SyncOperationHandler
 import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
@@ -42,4 +44,5 @@ val findingsAppModule =
         factoryOf(::SaveNewFindingUseCaseImpl) bind SaveNewFindingUseCase::class
         factoryOf(::SaveFindingDetailsUseCaseImpl) bind SaveFindingDetailsUseCase::class
         factoryOf(::SaveFindingCoordinatesUseCaseImpl) bind SaveFindingCoordinatesUseCase::class
+        factoryOf(::FindingSyncHandler) bind SyncOperationHandler::class
     }

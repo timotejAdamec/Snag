@@ -13,26 +13,29 @@
 package cz.adamec.timotej.snag.clients.fe.app.impl.internal
 
 import cz.adamec.timotej.snag.clients.fe.app.api.PullClientChangesUseCase
+import cz.adamec.timotej.snag.clients.fe.app.impl.internal.sync.CLIENT_SYNC_ENTITY_TYPE
 import cz.adamec.timotej.snag.clients.fe.ports.ClientSyncResult
 import cz.adamec.timotej.snag.clients.fe.ports.ClientsApi
 import cz.adamec.timotej.snag.clients.fe.ports.ClientsDb
-import cz.adamec.timotej.snag.clients.fe.ports.ClientsPullSyncCoordinator
-import cz.adamec.timotej.snag.clients.fe.ports.ClientsPullSyncTimestampDataSource
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.common.TimestampProvider
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
+import cz.adamec.timotej.snag.lib.sync.fe.app.api.GetLastPullSyncedAtTimestampUseCase
+import cz.adamec.timotej.snag.lib.sync.fe.app.api.SetLastPullSyncedAtTimestampUseCase
+import cz.adamec.timotej.snag.lib.sync.fe.app.api.SyncCoordinator
 
 internal class PullClientChangesUseCaseImpl(
     private val clientsApi: ClientsApi,
     private val clientsDb: ClientsDb,
-    private val clientsPullSyncTimestampDataSource: ClientsPullSyncTimestampDataSource,
-    private val clientsPullSyncCoordinator: ClientsPullSyncCoordinator,
+    private val getLastPullSyncedAtTimestampUseCase: GetLastPullSyncedAtTimestampUseCase,
+    private val setLastPullSyncedAtTimestampUseCase: SetLastPullSyncedAtTimestampUseCase,
+    private val syncCoordinator: SyncCoordinator,
     private val timestampProvider: TimestampProvider,
 ) : PullClientChangesUseCase {
     override suspend operator fun invoke() {
         LH.logger.d { "Starting pull sync for clients." }
-        clientsPullSyncCoordinator.withFlushedQueue {
-            val since = clientsPullSyncTimestampDataSource.getLastSyncedAt() ?: Timestamp(0)
+        syncCoordinator.withFlushedQueue {
+            val since = getLastPullSyncedAtTimestampUseCase(CLIENT_SYNC_ENTITY_TYPE) ?: Timestamp(0)
             val now = timestampProvider.getNowTimestamp()
             LH.logger.d { "Pulling client changes since=$since, now=$now." }
 
@@ -55,7 +58,7 @@ internal class PullClientChangesUseCaseImpl(
                             }
                         }
                     }
-                    clientsPullSyncTimestampDataSource.setLastSyncedAt(now)
+                    setLastPullSyncedAtTimestampUseCase(CLIENT_SYNC_ENTITY_TYPE, now)
                     LH.logger.d { "Pull sync for clients completed, updated lastSyncedAt=$now." }
                 }
             }

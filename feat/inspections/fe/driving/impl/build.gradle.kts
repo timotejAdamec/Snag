@@ -25,6 +25,7 @@ kotlin {
         commonTest {
             dependencies {
                 implementation(project(":feat:inspections:fe:driven:test"))
+                implementation(project(":lib:sync:fe:driven:test"))
             }
         }
     }

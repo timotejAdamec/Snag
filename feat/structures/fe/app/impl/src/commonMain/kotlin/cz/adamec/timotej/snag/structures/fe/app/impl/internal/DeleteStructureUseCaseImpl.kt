@@ -17,13 +17,14 @@ import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.core.fe.log
 import cz.adamec.timotej.snag.structures.fe.app.api.DeleteStructureUseCase
 import cz.adamec.timotej.snag.structures.fe.app.impl.internal.LH.logger
+import cz.adamec.timotej.snag.structures.fe.app.impl.internal.sync.STRUCTURE_SYNC_ENTITY_TYPE
 import cz.adamec.timotej.snag.structures.fe.ports.StructuresDb
-import cz.adamec.timotej.snag.structures.fe.ports.StructuresSync
+import cz.adamec.timotej.snag.lib.sync.fe.app.api.EnqueueSyncDeleteUseCase
 import kotlin.uuid.Uuid
 
 class DeleteStructureUseCaseImpl(
     private val structuresDb: StructuresDb,
-    private val structuresSync: StructuresSync,
+    private val enqueueSyncDeleteUseCase: EnqueueSyncDeleteUseCase,
     private val cascadeDeleteLocalFindingsByStructureIdUseCase: CascadeDeleteLocalFindingsByStructureIdUseCase,
 ) : DeleteStructureUseCase {
     override suspend operator fun invoke(structureId: Uuid): OfflineFirstDataResult<Unit> {
@@ -36,7 +37,7 @@ class DeleteStructureUseCaseImpl(
                     additionalInfo = "deleteStructure, structuresDb.deleteStructure($structureId)",
                 )
                 if (it is OfflineFirstDataResult.Success) {
-                    structuresSync.enqueueStructureDelete(structureId)
+                    enqueueSyncDeleteUseCase(STRUCTURE_SYNC_ENTITY_TYPE, structureId)
                 }
             }
     }

@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.projects.fe.app.impl.di
 
+import cz.adamec.timotej.snag.lib.sync.fe.app.api.handler.SyncOperationHandler
 import cz.adamec.timotej.snag.projects.fe.app.api.DeleteProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.GetProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.GetProjectsUseCase
@@ -22,6 +23,7 @@ import cz.adamec.timotej.snag.projects.fe.app.impl.internal.GetProjectUseCaseImp
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.GetProjectsUseCaseImpl
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.PullProjectChangesUseCaseImpl
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.SaveProjectUseCaseImpl
+import cz.adamec.timotej.snag.projects.fe.app.impl.internal.sync.ProjectSyncHandler
 import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
@@ -33,4 +35,5 @@ val projectsAppModule =
         factoryOf(::SaveProjectUseCaseImpl) bind SaveProjectUseCase::class
         factoryOf(::DeleteProjectUseCaseImpl) bind DeleteProjectUseCase::class
         factoryOf(::PullProjectChangesUseCaseImpl) bind PullProjectChangesUseCase::class
+        factoryOf(::ProjectSyncHandler) bind SyncOperationHandler::class
     }

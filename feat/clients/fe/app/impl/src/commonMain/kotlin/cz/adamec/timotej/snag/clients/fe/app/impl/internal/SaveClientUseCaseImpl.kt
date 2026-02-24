@@ -17,18 +17,19 @@ import cz.adamec.timotej.snag.clients.fe.app.api.SaveClientUseCase
 import cz.adamec.timotej.snag.clients.fe.app.api.model.SaveClientRequest
 import cz.adamec.timotej.snag.clients.fe.app.impl.internal.LH.logger
 import cz.adamec.timotej.snag.clients.fe.model.FrontendClient
+import cz.adamec.timotej.snag.clients.fe.app.impl.internal.sync.CLIENT_SYNC_ENTITY_TYPE
 import cz.adamec.timotej.snag.clients.fe.ports.ClientsDb
-import cz.adamec.timotej.snag.clients.fe.ports.ClientsSync
 import cz.adamec.timotej.snag.lib.core.common.TimestampProvider
 import cz.adamec.timotej.snag.lib.core.common.UuidProvider
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.core.fe.log
 import cz.adamec.timotej.snag.lib.core.fe.map
+import cz.adamec.timotej.snag.lib.sync.fe.app.api.EnqueueSyncSaveUseCase
 import kotlin.uuid.Uuid
 
 internal class SaveClientUseCaseImpl(
     private val clientsDb: ClientsDb,
-    private val clientsSync: ClientsSync,
+    private val enqueueSyncSaveUseCase: EnqueueSyncSaveUseCase,
     private val uuidProvider: UuidProvider,
     private val timestampProvider: TimestampProvider,
 ) : SaveClientUseCase {
@@ -54,7 +55,7 @@ internal class SaveClientUseCaseImpl(
                     additionalInfo = "SaveClientUseCase, clientsDb.saveClient($client)",
                 )
                 if (it is OfflineFirstDataResult.Success) {
-                    clientsSync.enqueueClientSave(client.client.id)
+                    enqueueSyncSaveUseCase(CLIENT_SYNC_ENTITY_TYPE, client.client.id)
                 }
             }.map {
                 client.client.id

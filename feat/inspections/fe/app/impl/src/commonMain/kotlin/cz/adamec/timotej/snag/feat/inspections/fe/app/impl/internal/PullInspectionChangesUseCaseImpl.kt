@@ -13,27 +13,34 @@
 package cz.adamec.timotej.snag.feat.inspections.fe.app.impl.internal
 
 import cz.adamec.timotej.snag.feat.inspections.fe.app.api.PullInspectionChangesUseCase
+import cz.adamec.timotej.snag.feat.inspections.fe.app.impl.internal.sync.INSPECTION_SYNC_ENTITY_TYPE
 import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionSyncResult
 import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionsApi
 import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionsDb
-import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionsPullSyncCoordinator
-import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionsPullSyncTimestampDataSource
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.common.TimestampProvider
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
+import cz.adamec.timotej.snag.lib.sync.fe.app.api.GetLastPullSyncedAtTimestampUseCase
+import cz.adamec.timotej.snag.lib.sync.fe.app.api.SetLastPullSyncedAtTimestampUseCase
+import cz.adamec.timotej.snag.lib.sync.fe.app.api.SyncCoordinator
 import kotlin.uuid.Uuid
 
 internal class PullInspectionChangesUseCaseImpl(
     private val inspectionsApi: InspectionsApi,
     private val inspectionsDb: InspectionsDb,
-    private val inspectionsPullSyncTimestampDataSource: InspectionsPullSyncTimestampDataSource,
-    private val inspectionsPullSyncCoordinator: InspectionsPullSyncCoordinator,
+    private val getLastPullSyncedAtTimestampUseCase: GetLastPullSyncedAtTimestampUseCase,
+    private val setLastPullSyncedAtTimestampUseCase: SetLastPullSyncedAtTimestampUseCase,
+    private val syncCoordinator: SyncCoordinator,
     private val timestampProvider: TimestampProvider,
 ) : PullInspectionChangesUseCase {
     override suspend operator fun invoke(projectId: Uuid) {
         LH.logger.d { "Starting pull sync for inspections in project $projectId." }
-        inspectionsPullSyncCoordinator.withFlushedQueue {
-            val since = inspectionsPullSyncTimestampDataSource.getLastSyncedAt(projectId) ?: Timestamp(0)
+        syncCoordinator.withFlushedQueue {
+            val since =
+                getLastPullSyncedAtTimestampUseCase(
+                    INSPECTION_SYNC_ENTITY_TYPE,
+                    projectId.toString(),
+                ) ?: Timestamp(0)
             val now = timestampProvider.getNowTimestamp()
             LH.logger.d { "Pulling inspection changes for project $projectId since=$since, now=$now." }
 
@@ -56,7 +63,11 @@ internal class PullInspectionChangesUseCaseImpl(
                             }
                         }
                     }
-                    inspectionsPullSyncTimestampDataSource.setLastSyncedAt(projectId, now)
+                    setLastPullSyncedAtTimestampUseCase(
+                        INSPECTION_SYNC_ENTITY_TYPE,
+                        now,
+                        projectId.toString(),
+                    )
                     LH.logger.d { "Pull sync for inspections in project $projectId completed, updated lastSyncedAt=$now." }
                 }
             }

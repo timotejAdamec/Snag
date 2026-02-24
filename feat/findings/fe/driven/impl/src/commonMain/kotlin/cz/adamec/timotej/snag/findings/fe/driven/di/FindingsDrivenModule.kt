@@ -14,17 +14,9 @@ package cz.adamec.timotej.snag.findings.fe.driven.di
 
 import cz.adamec.timotej.snag.findings.fe.driven.internal.api.RealFindingsApi
 import cz.adamec.timotej.snag.findings.fe.driven.internal.db.RealFindingsDb
-import cz.adamec.timotej.snag.findings.fe.driven.internal.sync.FindingSyncHandler
-import cz.adamec.timotej.snag.findings.fe.driven.internal.sync.RealFindingsPullSyncCoordinator
-import cz.adamec.timotej.snag.findings.fe.driven.internal.sync.RealFindingsPullSyncTimestampDataSource
-import cz.adamec.timotej.snag.findings.fe.driven.internal.sync.RealFindingsSync
 import cz.adamec.timotej.snag.findings.fe.ports.FindingsApi
 import cz.adamec.timotej.snag.findings.fe.ports.FindingsDb
-import cz.adamec.timotej.snag.findings.fe.ports.FindingsPullSyncCoordinator
-import cz.adamec.timotej.snag.findings.fe.ports.FindingsPullSyncTimestampDataSource
-import cz.adamec.timotej.snag.findings.fe.ports.FindingsSync
 import cz.adamec.timotej.snag.lib.core.common.di.getIoDispatcher
-import cz.adamec.timotej.snag.lib.sync.fe.app.api.handler.SyncOperationHandler
 import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
@@ -39,13 +31,4 @@ val findingsDrivenModule =
             )
         } bind FindingsDb::class
         factoryOf(::RealFindingsApi) bind FindingsApi::class
-        factoryOf(::FindingSyncHandler) bind SyncOperationHandler::class
-        factoryOf(::RealFindingsSync) bind FindingsSync::class
-        factory {
-            RealFindingsPullSyncTimestampDataSource(
-                queries = get(),
-                ioDispatcher = getIoDispatcher(),
-            )
-        } bind FindingsPullSyncTimestampDataSource::class
-        factoryOf(::RealFindingsPullSyncCoordinator) bind FindingsPullSyncCoordinator::class
     }

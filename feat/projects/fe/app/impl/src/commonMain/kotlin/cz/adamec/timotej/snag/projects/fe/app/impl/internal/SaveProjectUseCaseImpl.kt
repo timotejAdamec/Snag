@@ -17,18 +17,19 @@ import cz.adamec.timotej.snag.lib.core.common.UuidProvider
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.core.fe.log
 import cz.adamec.timotej.snag.lib.core.fe.map
+import cz.adamec.timotej.snag.lib.sync.fe.app.api.EnqueueSyncSaveUseCase
 import cz.adamec.timotej.snag.projects.business.Project
 import cz.adamec.timotej.snag.projects.fe.app.api.SaveProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.model.SaveProjectRequest
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.LH.logger
+import cz.adamec.timotej.snag.projects.fe.app.impl.internal.sync.PROJECT_SYNC_ENTITY_TYPE
 import cz.adamec.timotej.snag.projects.fe.model.FrontendProject
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsDb
-import cz.adamec.timotej.snag.projects.fe.ports.ProjectsSync
 import kotlin.uuid.Uuid
 
 class SaveProjectUseCaseImpl(
     private val projectsDb: ProjectsDb,
-    private val projectsSync: ProjectsSync,
+    private val enqueueSyncSaveUseCase: EnqueueSyncSaveUseCase,
     private val uuidProvider: UuidProvider,
     private val timestampProvider: TimestampProvider,
 ) : SaveProjectUseCase {
@@ -53,7 +54,7 @@ class SaveProjectUseCaseImpl(
                     additionalInfo = "SaveProjectUseCase, projectsDb.saveProject($project)",
                 )
                 if (it is OfflineFirstDataResult.Success) {
-                    projectsSync.enqueueProjectSave(project.project.id)
+                    enqueueSyncSaveUseCase(PROJECT_SYNC_ENTITY_TYPE, project.project.id)
                 }
             }.map {
                 project.project.id

@@ -14,13 +14,15 @@ package cz.adamec.timotej.snag.feat.inspections.fe.app.impl.internal
 
 import cz.adamec.timotej.snag.feat.inspections.fe.app.api.SaveInspectionUseCase
 import cz.adamec.timotej.snag.feat.inspections.fe.app.api.model.SaveInspectionRequest
+import cz.adamec.timotej.snag.feat.inspections.fe.app.impl.internal.sync.INSPECTION_SYNC_ENTITY_TYPE
 import cz.adamec.timotej.snag.feat.inspections.fe.driven.test.FakeInspectionsDb
-import cz.adamec.timotej.snag.feat.inspections.fe.driven.test.FakeInspectionsSync
 import cz.adamec.timotej.snag.feat.inspections.fe.model.FrontendInspection
 import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionsDb
-import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionsSync
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
+import cz.adamec.timotej.snag.lib.sync.fe.driven.test.FakeSyncQueue
+import cz.adamec.timotej.snag.lib.sync.fe.model.SyncOperationType
+import cz.adamec.timotej.snag.lib.sync.fe.ports.SyncQueue
 import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
@@ -38,7 +40,7 @@ import kotlin.uuid.Uuid
 
 class SaveInspectionUseCaseImplTest : FrontendKoinInitializedTest() {
     private val fakeInspectionsDb: FakeInspectionsDb by inject()
-    private val fakeInspectionsSync: FakeInspectionsSync by inject()
+    private val fakeSyncQueue: FakeSyncQueue by inject()
 
     private val useCase: SaveInspectionUseCase by inject()
 
@@ -48,7 +50,7 @@ class SaveInspectionUseCaseImplTest : FrontendKoinInitializedTest() {
         listOf(
             module {
                 singleOf(::FakeInspectionsDb) bind InspectionsDb::class
-                singleOf(::FakeInspectionsSync) bind InspectionsSync::class
+                singleOf(::FakeSyncQueue) bind SyncQueue::class
             },
         )
 
@@ -69,8 +71,11 @@ class SaveInspectionUseCaseImplTest : FrontendKoinInitializedTest() {
             val result = useCase(request)
 
             assertIs<OfflineFirstDataResult.Success<Uuid>>(result)
-            assertEquals(1, fakeInspectionsSync.savedInspectionIds.size)
-            assertEquals(result.data, fakeInspectionsSync.savedInspectionIds.first())
+            val pending = fakeSyncQueue.getAllPending()
+            assertEquals(1, pending.size)
+            assertEquals(INSPECTION_SYNC_ENTITY_TYPE, pending[0].entityTypeId)
+            assertEquals(result.data, pending[0].entityId)
+            assertEquals(SyncOperationType.UPSERT, pending[0].operationType)
         }
 
     @Test
@@ -181,7 +186,7 @@ class SaveInspectionUseCaseImplTest : FrontendKoinInitializedTest() {
 
             useCase(request)
 
-            assertTrue(fakeInspectionsSync.savedInspectionIds.isEmpty())
+            assertTrue(fakeSyncQueue.getAllPending().isEmpty())
         }
 
     private suspend fun getSavedInspection(id: Uuid): FrontendInspection {

@@ -16,26 +16,33 @@ import cz.adamec.timotej.snag.findings.fe.app.api.CascadeDeleteLocalFindingsBySt
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.common.TimestampProvider
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
+import cz.adamec.timotej.snag.lib.sync.fe.app.api.GetLastPullSyncedAtTimestampUseCase
+import cz.adamec.timotej.snag.lib.sync.fe.app.api.SetLastPullSyncedAtTimestampUseCase
+import cz.adamec.timotej.snag.lib.sync.fe.app.api.SyncCoordinator
 import cz.adamec.timotej.snag.structures.fe.app.api.PullStructureChangesUseCase
+import cz.adamec.timotej.snag.structures.fe.app.impl.internal.sync.STRUCTURE_SYNC_ENTITY_TYPE
 import cz.adamec.timotej.snag.structures.fe.ports.StructureSyncResult
 import cz.adamec.timotej.snag.structures.fe.ports.StructuresApi
 import cz.adamec.timotej.snag.structures.fe.ports.StructuresDb
-import cz.adamec.timotej.snag.structures.fe.ports.StructuresPullSyncCoordinator
-import cz.adamec.timotej.snag.structures.fe.ports.StructuresPullSyncTimestampDataSource
 import kotlin.uuid.Uuid
 
 internal class PullStructureChangesUseCaseImpl(
     private val structuresApi: StructuresApi,
     private val structuresDb: StructuresDb,
     private val cascadeDeleteLocalFindingsByStructureIdUseCase: CascadeDeleteLocalFindingsByStructureIdUseCase,
-    private val structuresPullSyncTimestampDataSource: StructuresPullSyncTimestampDataSource,
-    private val structuresPullSyncCoordinator: StructuresPullSyncCoordinator,
+    private val getLastPullSyncedAtTimestampUseCase: GetLastPullSyncedAtTimestampUseCase,
+    private val setLastPullSyncedAtTimestampUseCase: SetLastPullSyncedAtTimestampUseCase,
+    private val syncCoordinator: SyncCoordinator,
     private val timestampProvider: TimestampProvider,
 ) : PullStructureChangesUseCase {
     override suspend operator fun invoke(projectId: Uuid) {
         LH.logger.d { "Starting pull sync for structures in project $projectId." }
-        structuresPullSyncCoordinator.withFlushedQueue {
-            val since = structuresPullSyncTimestampDataSource.getLastSyncedAt(projectId) ?: Timestamp(0)
+        syncCoordinator.withFlushedQueue {
+            val since =
+                getLastPullSyncedAtTimestampUseCase(
+                    STRUCTURE_SYNC_ENTITY_TYPE,
+                    projectId.toString(),
+                ) ?: Timestamp(0)
             val now = timestampProvider.getNowTimestamp()
             LH.logger.d { "Pulling structure changes for project $projectId since=$since, now=$now." }
 
@@ -59,7 +66,11 @@ internal class PullStructureChangesUseCaseImpl(
                             }
                         }
                     }
-                    structuresPullSyncTimestampDataSource.setLastSyncedAt(projectId, now)
+                    setLastPullSyncedAtTimestampUseCase(
+                        STRUCTURE_SYNC_ENTITY_TYPE,
+                        now,
+                        projectId.toString(),
+                    )
                     LH.logger.d { "Pull sync for structures in project $projectId completed, updated lastSyncedAt=$now." }
                 }
             }

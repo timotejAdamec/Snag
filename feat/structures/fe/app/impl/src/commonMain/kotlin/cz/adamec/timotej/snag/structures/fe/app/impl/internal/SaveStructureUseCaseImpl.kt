@@ -22,13 +22,14 @@ import cz.adamec.timotej.snag.lib.core.fe.map
 import cz.adamec.timotej.snag.structures.fe.app.api.SaveStructureUseCase
 import cz.adamec.timotej.snag.structures.fe.app.api.model.SaveStructureRequest
 import cz.adamec.timotej.snag.structures.fe.app.impl.internal.LH.logger
+import cz.adamec.timotej.snag.structures.fe.app.impl.internal.sync.STRUCTURE_SYNC_ENTITY_TYPE
 import cz.adamec.timotej.snag.structures.fe.ports.StructuresDb
-import cz.adamec.timotej.snag.structures.fe.ports.StructuresSync
+import cz.adamec.timotej.snag.lib.sync.fe.app.api.EnqueueSyncSaveUseCase
 import kotlin.uuid.Uuid
 
 class SaveStructureUseCaseImpl(
     private val structuresDb: StructuresDb,
-    private val structuresSync: StructuresSync,
+    private val enqueueSyncSaveUseCase: EnqueueSyncSaveUseCase,
     private val uuidProvider: UuidProvider,
     private val timestampProvider: TimestampProvider,
 ) : SaveStructureUseCase {
@@ -53,7 +54,7 @@ class SaveStructureUseCaseImpl(
                     additionalInfo = "SaveStructureUseCase, structuresDb.saveStructure($feStructure)",
                 )
                 if (it is OfflineFirstDataResult.Success) {
-                    structuresSync.enqueueStructureSave(feStructure.structure.id)
+                    enqueueSyncSaveUseCase(STRUCTURE_SYNC_ENTITY_TYPE, feStructure.structure.id)
                 }
             }.map {
                 feStructure.structure.id
