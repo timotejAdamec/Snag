@@ -14,15 +14,16 @@ package cz.adamec.timotej.snag.findings.fe.app.impl.internal
 
 import cz.adamec.timotej.snag.findings.fe.app.api.DeleteFindingUseCase
 import cz.adamec.timotej.snag.findings.fe.app.impl.internal.LH.logger
+import cz.adamec.timotej.snag.findings.fe.app.impl.internal.sync.FINDING_SYNC_ENTITY_TYPE
 import cz.adamec.timotej.snag.findings.fe.ports.FindingsDb
-import cz.adamec.timotej.snag.findings.fe.ports.FindingsSync
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.core.fe.log
+import cz.adamec.timotej.snag.lib.sync.fe.app.api.EnqueueSyncDeleteUseCase
 import kotlin.uuid.Uuid
 
 class DeleteFindingUseCaseImpl(
     private val findingsDb: FindingsDb,
-    private val findingsSync: FindingsSync,
+    private val enqueueSyncDeleteUseCase: EnqueueSyncDeleteUseCase,
 ) : DeleteFindingUseCase {
     override suspend operator fun invoke(findingId: Uuid): OfflineFirstDataResult<Unit> =
         findingsDb
@@ -33,7 +34,7 @@ class DeleteFindingUseCaseImpl(
                     additionalInfo = "deleteFinding, findingsDb.deleteFinding($findingId)",
                 )
                 if (it is OfflineFirstDataResult.Success) {
-                    findingsSync.enqueueFindingDelete(findingId)
+                    enqueueSyncDeleteUseCase(FINDING_SYNC_ENTITY_TYPE, findingId)
                 }
             }
 }

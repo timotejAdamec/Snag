@@ -15,15 +15,16 @@ package cz.adamec.timotej.snag.findings.fe.app.impl.internal
 import cz.adamec.timotej.snag.findings.fe.app.api.SaveFindingCoordinatesUseCase
 import cz.adamec.timotej.snag.findings.fe.app.api.model.SaveFindingCoordinatesRequest
 import cz.adamec.timotej.snag.findings.fe.app.impl.internal.LH.logger
+import cz.adamec.timotej.snag.findings.fe.app.impl.internal.sync.FINDING_SYNC_ENTITY_TYPE
 import cz.adamec.timotej.snag.findings.fe.ports.FindingsDb
-import cz.adamec.timotej.snag.findings.fe.ports.FindingsSync
 import cz.adamec.timotej.snag.lib.core.common.TimestampProvider
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstUpdateDataResult
 import cz.adamec.timotej.snag.lib.core.fe.log
+import cz.adamec.timotej.snag.lib.sync.fe.app.api.EnqueueSyncSaveUseCase
 
 class SaveFindingCoordinatesUseCaseImpl(
     private val findingsDb: FindingsDb,
-    private val findingsSync: FindingsSync,
+    private val enqueueSyncSaveUseCase: EnqueueSyncSaveUseCase,
     private val timestampProvider: TimestampProvider,
 ) : SaveFindingCoordinatesUseCase {
     override suspend operator fun invoke(request: SaveFindingCoordinatesRequest): OfflineFirstUpdateDataResult =
@@ -38,7 +39,7 @@ class SaveFindingCoordinatesUseCaseImpl(
                     additionalInfo = "SaveFindingCoordinatesUseCase, findingsDb.updateFindingCoordinates(${request.findingId})",
                 )
                 if (it is OfflineFirstUpdateDataResult.Success) {
-                    findingsSync.enqueueFindingSave(request.findingId)
+                    enqueueSyncSaveUseCase(FINDING_SYNC_ENTITY_TYPE, request.findingId)
                 }
             }
 }

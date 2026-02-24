@@ -14,12 +14,14 @@ package cz.adamec.timotej.snag.clients.fe.app.impl.internal
 
 import cz.adamec.timotej.snag.clients.fe.app.api.SaveClientUseCase
 import cz.adamec.timotej.snag.clients.fe.app.api.model.SaveClientRequest
+import cz.adamec.timotej.snag.clients.fe.app.impl.internal.sync.CLIENT_SYNC_ENTITY_TYPE
 import cz.adamec.timotej.snag.clients.fe.driven.test.FakeClientsDb
-import cz.adamec.timotej.snag.clients.fe.driven.test.FakeClientsSync
 import cz.adamec.timotej.snag.clients.fe.model.FrontendClient
 import cz.adamec.timotej.snag.clients.fe.ports.ClientsDb
-import cz.adamec.timotej.snag.clients.fe.ports.ClientsSync
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
+import cz.adamec.timotej.snag.lib.sync.fe.driven.test.FakeSyncQueue
+import cz.adamec.timotej.snag.lib.sync.fe.model.SyncOperationType
+import cz.adamec.timotej.snag.lib.sync.fe.ports.SyncQueue
 import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
@@ -37,7 +39,7 @@ import kotlin.uuid.Uuid
 
 class SaveClientUseCaseImplTest : FrontendKoinInitializedTest() {
     private val fakeClientsDb: FakeClientsDb by inject()
-    private val fakeClientsSync: FakeClientsSync by inject()
+    private val fakeSyncQueue: FakeSyncQueue by inject()
 
     private val useCase: SaveClientUseCase by inject()
 
@@ -45,7 +47,7 @@ class SaveClientUseCaseImplTest : FrontendKoinInitializedTest() {
         listOf(
             module {
                 singleOf(::FakeClientsDb) bind ClientsDb::class
-                singleOf(::FakeClientsSync) bind ClientsSync::class
+                singleOf(::FakeSyncQueue) bind SyncQueue::class
             },
         )
 
@@ -64,8 +66,11 @@ class SaveClientUseCaseImplTest : FrontendKoinInitializedTest() {
             val result = useCase(request)
 
             assertIs<OfflineFirstDataResult.Success<Uuid>>(result)
-            assertEquals(1, fakeClientsSync.savedClientIds.size)
-            assertEquals(result.data, fakeClientsSync.savedClientIds.first())
+            val pending = fakeSyncQueue.getAllPending()
+            assertEquals(1, pending.size)
+            assertEquals(CLIENT_SYNC_ENTITY_TYPE, pending[0].entityTypeId)
+            assertEquals(result.data, pending[0].entityId)
+            assertEquals(SyncOperationType.SAVE, pending[0].operationType)
         }
 
     @Test
@@ -164,7 +169,7 @@ class SaveClientUseCaseImplTest : FrontendKoinInitializedTest() {
 
             useCase(request)
 
-            assertTrue(fakeClientsSync.savedClientIds.isEmpty())
+            assertTrue(fakeSyncQueue.getAllPending().isEmpty())
         }
 
     private suspend fun getSavedClient(id: Uuid): FrontendClient {

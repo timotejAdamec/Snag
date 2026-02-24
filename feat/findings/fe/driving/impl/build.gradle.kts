@@ -14,6 +14,7 @@ kotlin {
             dependencies {
                 implementation(project(":feat:findings:fe:app:impl"))
                 implementation(project(":feat:findings:fe:driven:test"))
+                implementation(project(":lib:sync:fe:driven:test"))
             }
         }
     }

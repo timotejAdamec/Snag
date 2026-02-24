@@ -13,7 +13,9 @@
 package cz.adamec.timotej.snag.lib.sync.fe.driven.impl.di
 
 import cz.adamec.timotej.snag.lib.core.common.di.getIoDispatcher
+import cz.adamec.timotej.snag.lib.sync.fe.driven.impl.RealPullSyncTimestampDb
 import cz.adamec.timotej.snag.lib.sync.fe.driven.impl.RealSyncQueue
+import cz.adamec.timotej.snag.lib.sync.fe.ports.PullSyncTimestampDb
 import cz.adamec.timotej.snag.lib.sync.fe.ports.SyncQueue
 import org.koin.dsl.bind
 import org.koin.dsl.module
@@ -27,4 +29,10 @@ val syncDrivenModule =
                 uuidProvider = get(),
             )
         } bind SyncQueue::class
+        factory {
+            RealPullSyncTimestampDb(
+                queries = get(),
+                ioDispatcher = getIoDispatcher(),
+            )
+        } bind PullSyncTimestampDb::class
     }

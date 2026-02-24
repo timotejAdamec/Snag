@@ -24,6 +24,8 @@ import cz.adamec.timotej.snag.feat.inspections.fe.app.impl.internal.GetInspectio
 import cz.adamec.timotej.snag.feat.inspections.fe.app.impl.internal.GetInspectionsUseCaseImpl
 import cz.adamec.timotej.snag.feat.inspections.fe.app.impl.internal.PullInspectionChangesUseCaseImpl
 import cz.adamec.timotej.snag.feat.inspections.fe.app.impl.internal.SaveInspectionUseCaseImpl
+import cz.adamec.timotej.snag.feat.inspections.fe.app.impl.internal.sync.InspectionSyncHandler
+import cz.adamec.timotej.snag.lib.sync.fe.app.api.handler.SyncOperationHandler
 import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
@@ -36,4 +38,5 @@ val inspectionsAppModule =
         factoryOf(::SaveInspectionUseCaseImpl) bind SaveInspectionUseCase::class
         factoryOf(::CascadeDeleteLocalInspectionsByProjectIdUseCaseImpl) bind CascadeDeleteLocalInspectionsByProjectIdUseCase::class
         factoryOf(::PullInspectionChangesUseCaseImpl) bind PullInspectionChangesUseCase::class
+        factoryOf(::InspectionSyncHandler) bind SyncOperationHandler::class
     }

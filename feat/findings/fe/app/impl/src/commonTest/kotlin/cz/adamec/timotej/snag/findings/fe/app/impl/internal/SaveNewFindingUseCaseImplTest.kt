@@ -16,11 +16,13 @@ import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
 import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
 import cz.adamec.timotej.snag.findings.fe.app.api.SaveNewFindingUseCase
 import cz.adamec.timotej.snag.findings.fe.app.api.model.SaveNewFindingRequest
+import cz.adamec.timotej.snag.findings.fe.app.impl.internal.sync.FINDING_SYNC_ENTITY_TYPE
 import cz.adamec.timotej.snag.findings.fe.driven.test.FakeFindingsDb
-import cz.adamec.timotej.snag.findings.fe.driven.test.FakeFindingsSync
 import cz.adamec.timotej.snag.findings.fe.ports.FindingsDb
-import cz.adamec.timotej.snag.findings.fe.ports.FindingsSync
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
+import cz.adamec.timotej.snag.lib.sync.fe.driven.test.FakeSyncQueue
+import cz.adamec.timotej.snag.lib.sync.fe.model.SyncOperationType
+import cz.adamec.timotej.snag.lib.sync.fe.ports.SyncQueue
 import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
@@ -37,7 +39,7 @@ import kotlin.uuid.Uuid
 
 class SaveNewFindingUseCaseImplTest : FrontendKoinInitializedTest() {
     private val fakeFindingsDb: FakeFindingsDb by inject()
-    private val fakeFindingsSync: FakeFindingsSync by inject()
+    private val fakeSyncQueue: FakeSyncQueue by inject()
 
     private val useCase: SaveNewFindingUseCase by inject()
 
@@ -47,7 +49,7 @@ class SaveNewFindingUseCaseImplTest : FrontendKoinInitializedTest() {
         listOf(
             module {
                 singleOf(::FakeFindingsDb) bind FindingsDb::class
-                singleOf(::FakeFindingsSync) bind FindingsSync::class
+                singleOf(::FakeSyncQueue) bind SyncQueue::class
             },
         )
 
@@ -64,8 +66,11 @@ class SaveNewFindingUseCaseImplTest : FrontendKoinInitializedTest() {
             val result = useCase(request)
 
             assertIs<OfflineFirstDataResult.Success<Uuid>>(result)
-            assertEquals(1, fakeFindingsSync.savedFindingIds.size)
-            assertEquals(result.data, fakeFindingsSync.savedFindingIds.first())
+            val pending = fakeSyncQueue.getAllPending()
+            assertEquals(1, pending.size)
+            assertEquals(FINDING_SYNC_ENTITY_TYPE, pending[0].entityTypeId)
+            assertEquals(result.data, pending[0].entityId)
+            assertEquals(SyncOperationType.SAVE, pending[0].operationType)
         }
 
     @Test
@@ -135,7 +140,7 @@ class SaveNewFindingUseCaseImplTest : FrontendKoinInitializedTest() {
 
             useCase(request)
 
-            assertTrue(fakeFindingsSync.savedFindingIds.isEmpty())
+            assertTrue(fakeSyncQueue.getAllPending().isEmpty())
         }
 
     @Test

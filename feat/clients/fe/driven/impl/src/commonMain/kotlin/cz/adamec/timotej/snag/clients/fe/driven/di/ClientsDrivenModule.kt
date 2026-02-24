@@ -15,17 +15,9 @@ package cz.adamec.timotej.snag.clients.fe.driven.di
 import cz.adamec.timotej.snag.clients.fe.driven.internal.api.RealClientsApi
 import cz.adamec.timotej.snag.clients.fe.driven.internal.db.ClientsSqlDelightDbOps
 import cz.adamec.timotej.snag.clients.fe.driven.internal.db.RealClientsDb
-import cz.adamec.timotej.snag.clients.fe.driven.internal.sync.ClientSyncHandler
-import cz.adamec.timotej.snag.clients.fe.driven.internal.sync.RealClientsPullSyncCoordinator
-import cz.adamec.timotej.snag.clients.fe.driven.internal.sync.RealClientsPullSyncTimestampDataSource
-import cz.adamec.timotej.snag.clients.fe.driven.internal.sync.RealClientsSync
 import cz.adamec.timotej.snag.clients.fe.ports.ClientsApi
 import cz.adamec.timotej.snag.clients.fe.ports.ClientsDb
-import cz.adamec.timotej.snag.clients.fe.ports.ClientsPullSyncCoordinator
-import cz.adamec.timotej.snag.clients.fe.ports.ClientsPullSyncTimestampDataSource
-import cz.adamec.timotej.snag.clients.fe.ports.ClientsSync
 import cz.adamec.timotej.snag.lib.core.common.di.getIoDispatcher
-import cz.adamec.timotej.snag.lib.sync.fe.app.api.handler.SyncOperationHandler
 import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
@@ -40,13 +32,4 @@ val clientsDrivenModule =
         }
         factory { RealClientsDb(ops = get()) } bind ClientsDb::class
         factoryOf(::RealClientsApi) bind ClientsApi::class
-        factoryOf(::ClientSyncHandler) bind SyncOperationHandler::class
-        factoryOf(::RealClientsSync) bind ClientsSync::class
-        factory {
-            RealClientsPullSyncTimestampDataSource(
-                queries = get(),
-                ioDispatcher = getIoDispatcher(),
-            )
-        } bind ClientsPullSyncTimestampDataSource::class
-        factoryOf(::RealClientsPullSyncCoordinator) bind ClientsPullSyncCoordinator::class
     }

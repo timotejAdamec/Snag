@@ -17,18 +17,19 @@ import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
 import cz.adamec.timotej.snag.findings.fe.app.api.SaveNewFindingUseCase
 import cz.adamec.timotej.snag.findings.fe.app.api.model.SaveNewFindingRequest
 import cz.adamec.timotej.snag.findings.fe.app.impl.internal.LH.logger
+import cz.adamec.timotej.snag.findings.fe.app.impl.internal.sync.FINDING_SYNC_ENTITY_TYPE
 import cz.adamec.timotej.snag.findings.fe.ports.FindingsDb
-import cz.adamec.timotej.snag.findings.fe.ports.FindingsSync
 import cz.adamec.timotej.snag.lib.core.common.TimestampProvider
 import cz.adamec.timotej.snag.lib.core.common.UuidProvider
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.core.fe.log
 import cz.adamec.timotej.snag.lib.core.fe.map
+import cz.adamec.timotej.snag.lib.sync.fe.app.api.EnqueueSyncSaveUseCase
 import kotlin.uuid.Uuid
 
 class SaveNewFindingUseCaseImpl(
     private val findingsDb: FindingsDb,
-    private val findingsSync: FindingsSync,
+    private val enqueueSyncSaveUseCase: EnqueueSyncSaveUseCase,
     private val uuidProvider: UuidProvider,
     private val timestampProvider: TimestampProvider,
 ) : SaveNewFindingUseCase {
@@ -54,7 +55,7 @@ class SaveNewFindingUseCaseImpl(
                     additionalInfo = "SaveNewFindingUseCase, findingsDb.saveFinding($frontendFinding)",
                 )
                 if (it is OfflineFirstDataResult.Success) {
-                    findingsSync.enqueueFindingSave(finding.id)
+                    enqueueSyncSaveUseCase(FINDING_SYNC_ENTITY_TYPE, finding.id)
                 }
             }.map {
                 finding.id

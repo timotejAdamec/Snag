@@ -22,18 +22,17 @@ import cz.adamec.timotej.snag.findings.fe.ports.FindingsDb
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
+import cz.adamec.timotej.snag.lib.sync.fe.driven.test.FakePullSyncTimestampDb
+import cz.adamec.timotej.snag.lib.sync.fe.driven.test.FakeSyncQueue
+import cz.adamec.timotej.snag.lib.sync.fe.ports.PullSyncTimestampDb
+import cz.adamec.timotej.snag.lib.sync.fe.ports.SyncQueue
 import cz.adamec.timotej.snag.structures.fe.app.api.PullStructureChangesUseCase
+import cz.adamec.timotej.snag.structures.fe.app.impl.internal.sync.STRUCTURE_SYNC_ENTITY_TYPE
 import cz.adamec.timotej.snag.structures.fe.driven.test.FakeStructuresApi
 import cz.adamec.timotej.snag.structures.fe.driven.test.FakeStructuresDb
-import cz.adamec.timotej.snag.structures.fe.driven.test.FakeStructuresPullSyncCoordinator
-import cz.adamec.timotej.snag.structures.fe.driven.test.FakeStructuresPullSyncTimestampDataSource
-import cz.adamec.timotej.snag.structures.fe.driven.test.FakeStructuresSync
 import cz.adamec.timotej.snag.structures.fe.ports.StructureSyncResult
 import cz.adamec.timotej.snag.structures.fe.ports.StructuresApi
 import cz.adamec.timotej.snag.structures.fe.ports.StructuresDb
-import cz.adamec.timotej.snag.structures.fe.ports.StructuresPullSyncCoordinator
-import cz.adamec.timotej.snag.structures.fe.ports.StructuresPullSyncTimestampDataSource
-import cz.adamec.timotej.snag.structures.fe.ports.StructuresSync
 import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
@@ -53,7 +52,7 @@ import kotlin.uuid.Uuid
 class PullStructureChangesUseCaseImplTest : FrontendKoinInitializedTest() {
     private val fakeStructuresApi: FakeStructuresApi by inject()
     private val fakeStructuresDb: FakeStructuresDb by inject()
-    private val fakePullSyncTimestampDataSource: FakeStructuresPullSyncTimestampDataSource by inject()
+    private val fakePullSyncTimestampDb: FakePullSyncTimestampDb by inject()
     private val fakeFindingsDb: FakeFindingsDb by inject()
 
     private val useCase: PullStructureChangesUseCase by inject()
@@ -67,9 +66,8 @@ class PullStructureChangesUseCaseImplTest : FrontendKoinInitializedTest() {
             module {
                 singleOf(::FakeStructuresApi) bind StructuresApi::class
                 singleOf(::FakeStructuresDb) bind StructuresDb::class
-                singleOf(::FakeStructuresSync) bind StructuresSync::class
-                singleOf(::FakeStructuresPullSyncCoordinator) bind StructuresPullSyncCoordinator::class
-                singleOf(::FakeStructuresPullSyncTimestampDataSource) bind StructuresPullSyncTimestampDataSource::class
+                singleOf(::FakeSyncQueue) bind SyncQueue::class
+                singleOf(::FakePullSyncTimestampDb) bind PullSyncTimestampDb::class
                 singleOf(::FakeFindingsDb) bind FindingsDb::class
             },
         )
@@ -151,7 +149,7 @@ class PullStructureChangesUseCaseImplTest : FrontendKoinInitializedTest() {
 
             useCase(projectId)
 
-            assertNotNull(fakePullSyncTimestampDataSource.getLastSyncedAt(projectId))
+            assertNotNull(fakePullSyncTimestampDb.getLastSyncedAt(STRUCTURE_SYNC_ENTITY_TYPE, projectId.toString()))
         }
 
     @Test
@@ -162,6 +160,6 @@ class PullStructureChangesUseCaseImplTest : FrontendKoinInitializedTest() {
 
             useCase(projectId)
 
-            assertNull(fakePullSyncTimestampDataSource.getLastSyncedAt(projectId))
+            assertNull(fakePullSyncTimestampDb.getLastSyncedAt(STRUCTURE_SYNC_ENTITY_TYPE, projectId.toString()))
         }
 }

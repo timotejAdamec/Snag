@@ -16,7 +16,6 @@ import cz.adamec.timotej.snag.feat.inspections.business.Inspection
 import cz.adamec.timotej.snag.feat.inspections.fe.app.api.GetInspectionsUseCase
 import cz.adamec.timotej.snag.feat.inspections.fe.app.api.SaveInspectionUseCase
 import cz.adamec.timotej.snag.feat.inspections.fe.driven.test.FakeInspectionsDb
-import cz.adamec.timotej.snag.feat.inspections.fe.driven.test.FakeInspectionsSync
 import cz.adamec.timotej.snag.feat.inspections.fe.model.FrontendInspection
 import cz.adamec.timotej.snag.feat.reports.fe.app.api.DownloadReportUseCase
 import cz.adamec.timotej.snag.feat.reports.fe.driven.test.FakeReportsApi
@@ -25,31 +24,23 @@ import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.common.TimestampProvider
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
+import cz.adamec.timotej.snag.lib.sync.fe.driven.test.FakePullSyncTimestampDb
+import cz.adamec.timotej.snag.lib.sync.fe.driven.test.FakeSyncQueue
+import cz.adamec.timotej.snag.lib.sync.fe.ports.PullSyncTimestampDb
+import cz.adamec.timotej.snag.lib.sync.fe.ports.SyncQueue
 import cz.adamec.timotej.snag.projects.business.Project
 import cz.adamec.timotej.snag.projects.fe.app.api.DeleteProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.GetProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.driven.test.FakeProjectsApi
 import cz.adamec.timotej.snag.projects.fe.driven.test.FakeProjectsDb
-import cz.adamec.timotej.snag.projects.fe.driven.test.FakeProjectsPullSyncCoordinator
-import cz.adamec.timotej.snag.projects.fe.driven.test.FakeProjectsPullSyncTimestampDataSource
-import cz.adamec.timotej.snag.projects.fe.driven.test.FakeProjectsSync
 import cz.adamec.timotej.snag.projects.fe.model.FrontendProject
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsApi
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsDb
-import cz.adamec.timotej.snag.projects.fe.ports.ProjectsPullSyncCoordinator
-import cz.adamec.timotej.snag.projects.fe.ports.ProjectsPullSyncTimestampDataSource
-import cz.adamec.timotej.snag.projects.fe.ports.ProjectsSync
 import cz.adamec.timotej.snag.structures.fe.app.api.GetStructuresUseCase
 import cz.adamec.timotej.snag.structures.fe.driven.test.FakeStructuresApi
 import cz.adamec.timotej.snag.structures.fe.driven.test.FakeStructuresDb
-import cz.adamec.timotej.snag.structures.fe.driven.test.FakeStructuresPullSyncCoordinator
-import cz.adamec.timotej.snag.structures.fe.driven.test.FakeStructuresPullSyncTimestampDataSource
-import cz.adamec.timotej.snag.structures.fe.driven.test.FakeStructuresSync
 import cz.adamec.timotej.snag.structures.fe.ports.StructuresApi
 import cz.adamec.timotej.snag.structures.fe.ports.StructuresDb
-import cz.adamec.timotej.snag.structures.fe.ports.StructuresPullSyncCoordinator
-import cz.adamec.timotej.snag.structures.fe.ports.StructuresPullSyncTimestampDataSource
-import cz.adamec.timotej.snag.structures.fe.ports.StructuresSync
 import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -75,7 +66,7 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
 
     private val fakeProjectsDb: FakeProjectsDb by inject()
     private val fakeInspectionsDb: FakeInspectionsDb by inject()
-    private val fakeInspectionsSync: FakeInspectionsSync by inject()
+    private val fakeSyncQueue: FakeSyncQueue by inject()
     private val fakeReportsApi: FakeReportsApi by inject()
 
     private val getProjectUseCase: GetProjectUseCase by inject()
@@ -91,15 +82,11 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
             module {
                 singleOf(::FakeProjectsApi) bind ProjectsApi::class
                 singleOf(::FakeProjectsDb) bind ProjectsDb::class
-                singleOf(::FakeProjectsSync) bind ProjectsSync::class
-                singleOf(::FakeProjectsPullSyncCoordinator) bind ProjectsPullSyncCoordinator::class
-                singleOf(::FakeProjectsPullSyncTimestampDataSource) bind ProjectsPullSyncTimestampDataSource::class
                 singleOf(::FakeStructuresApi) bind StructuresApi::class
                 singleOf(::FakeStructuresDb) bind StructuresDb::class
-                singleOf(::FakeStructuresSync) bind StructuresSync::class
-                singleOf(::FakeStructuresPullSyncCoordinator) bind StructuresPullSyncCoordinator::class
-                singleOf(::FakeStructuresPullSyncTimestampDataSource) bind StructuresPullSyncTimestampDataSource::class
                 singleOf(::FakeReportsApi) bind ReportsApi::class
+                singleOf(::FakeSyncQueue) bind SyncQueue::class
+                singleOf(::FakePullSyncTimestampDb) bind PullSyncTimestampDb::class
                 single<TimestampProvider> {
                     object : TimestampProvider {
                         override fun getNowTimestamp() = fixedNow
@@ -391,7 +378,7 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
             viewModel.onStartInspection(Uuid.random())
             advanceUntilIdle()
 
-            assertTrue(fakeInspectionsSync.savedInspectionIds.isEmpty())
+            assertTrue(fakeSyncQueue.getAllPending().isEmpty())
         }
 
     @Test
@@ -406,7 +393,7 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
             viewModel.onEndInspection(Uuid.random())
             advanceUntilIdle()
 
-            assertTrue(fakeInspectionsSync.savedInspectionIds.isEmpty())
+            assertTrue(fakeSyncQueue.getAllPending().isEmpty())
         }
 
     @Test
@@ -423,7 +410,7 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
             viewModel.onStartInspection(inspectionId)
             advanceUntilIdle()
 
-            assertEquals(listOf(inspectionId), fakeInspectionsSync.savedInspectionIds)
+            assertEquals(listOf(inspectionId), fakeSyncQueue.getAllPending().map { it.entityId })
         }
 
     @Test
@@ -440,6 +427,6 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
             viewModel.onEndInspection(inspectionId)
             advanceUntilIdle()
 
-            assertEquals(listOf(inspectionId), fakeInspectionsSync.savedInspectionIds)
+            assertEquals(listOf(inspectionId), fakeSyncQueue.getAllPending().map { it.entityId })
         }
 }

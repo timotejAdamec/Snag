@@ -30,6 +30,8 @@ import cz.adamec.timotej.snag.structures.fe.app.impl.internal.GetStructuresUseCa
 import cz.adamec.timotej.snag.structures.fe.app.impl.internal.PullStructureChangesUseCaseImpl
 import cz.adamec.timotej.snag.structures.fe.app.impl.internal.SaveStructureUseCaseImpl
 import cz.adamec.timotej.snag.structures.fe.app.impl.internal.UploadFloorPlanImageUseCaseImpl
+import cz.adamec.timotej.snag.structures.fe.app.impl.internal.sync.StructureSyncHandler
+import cz.adamec.timotej.snag.lib.sync.fe.app.api.handler.SyncOperationHandler
 import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
@@ -45,4 +47,5 @@ val structuresAppModule =
         factoryOf(::UploadFloorPlanImageUseCaseImpl) bind UploadFloorPlanImageUseCase::class
         factoryOf(::DeleteFloorPlanImageUseCaseImpl) bind DeleteFloorPlanImageUseCase::class
         factoryOf(::CanModifyFloorPlanImageUseCaseImpl) bind CanModifyFloorPlanImageUseCase::class
+        factoryOf(::StructureSyncHandler) bind SyncOperationHandler::class
     }

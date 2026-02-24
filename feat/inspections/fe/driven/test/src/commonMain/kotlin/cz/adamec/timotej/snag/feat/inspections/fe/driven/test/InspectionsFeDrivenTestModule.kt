@@ -13,9 +13,6 @@
 package cz.adamec.timotej.snag.feat.inspections.fe.driven.test
 
 import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionsDb
-import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionsPullSyncCoordinator
-import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionsPullSyncTimestampDataSource
-import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionsSync
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
@@ -23,7 +20,4 @@ import org.koin.dsl.module
 val inspectionsFeDrivenTestModule =
     module {
         singleOf(::FakeInspectionsDb) bind InspectionsDb::class
-        singleOf(::FakeInspectionsSync) bind InspectionsSync::class
-        singleOf(::FakeInspectionsPullSyncCoordinator) bind InspectionsPullSyncCoordinator::class
-        singleOf(::FakeInspectionsPullSyncTimestampDataSource) bind InspectionsPullSyncTimestampDataSource::class
     }

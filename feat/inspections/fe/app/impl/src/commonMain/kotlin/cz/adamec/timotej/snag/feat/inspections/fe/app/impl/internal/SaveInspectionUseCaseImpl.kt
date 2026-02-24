@@ -17,18 +17,19 @@ import cz.adamec.timotej.snag.feat.inspections.fe.app.api.SaveInspectionUseCase
 import cz.adamec.timotej.snag.feat.inspections.fe.app.api.model.SaveInspectionRequest
 import cz.adamec.timotej.snag.feat.inspections.fe.app.impl.internal.LH.logger
 import cz.adamec.timotej.snag.feat.inspections.fe.model.FrontendInspection
+import cz.adamec.timotej.snag.feat.inspections.fe.app.impl.internal.sync.INSPECTION_SYNC_ENTITY_TYPE
 import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionsDb
-import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionsSync
 import cz.adamec.timotej.snag.lib.core.common.TimestampProvider
 import cz.adamec.timotej.snag.lib.core.common.UuidProvider
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.core.fe.log
 import cz.adamec.timotej.snag.lib.core.fe.map
+import cz.adamec.timotej.snag.lib.sync.fe.app.api.EnqueueSyncSaveUseCase
 import kotlin.uuid.Uuid
 
 class SaveInspectionUseCaseImpl(
     private val inspectionsDb: InspectionsDb,
-    private val inspectionsSync: InspectionsSync,
+    private val enqueueSyncSaveUseCase: EnqueueSyncSaveUseCase,
     private val uuidProvider: UuidProvider,
     private val timestampProvider: TimestampProvider,
 ) : SaveInspectionUseCase {
@@ -54,7 +55,7 @@ class SaveInspectionUseCaseImpl(
             additionalInfo = "SaveInspectionUseCase, inspectionsDb.saveInspection($feInspection)",
         )
         if (result is OfflineFirstDataResult.Success) {
-            inspectionsSync.enqueueInspectionSave(feInspection.inspection.id)
+            enqueueSyncSaveUseCase(INSPECTION_SYNC_ENTITY_TYPE, feInspection.inspection.id)
         }
         return result.map {
             feInspection.inspection.id

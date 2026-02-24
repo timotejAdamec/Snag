@@ -17,15 +17,13 @@ import cz.adamec.timotej.snag.feat.findings.business.FindingType
 import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
 import cz.adamec.timotej.snag.findings.fe.app.api.CascadeDeleteLocalFindingsByStructureIdUseCase
 import cz.adamec.timotej.snag.findings.fe.driven.test.FakeFindingsDb
-import cz.adamec.timotej.snag.findings.fe.driven.test.FakeFindingsPullSyncCoordinator
-import cz.adamec.timotej.snag.findings.fe.driven.test.FakeFindingsPullSyncTimestampDataSource
-import cz.adamec.timotej.snag.findings.fe.driven.test.FakeFindingsSync
 import cz.adamec.timotej.snag.findings.fe.ports.FindingsDb
-import cz.adamec.timotej.snag.findings.fe.ports.FindingsPullSyncCoordinator
-import cz.adamec.timotej.snag.findings.fe.ports.FindingsPullSyncTimestampDataSource
-import cz.adamec.timotej.snag.findings.fe.ports.FindingsSync
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
+import cz.adamec.timotej.snag.lib.sync.fe.driven.test.FakePullSyncTimestampDb
+import cz.adamec.timotej.snag.lib.sync.fe.driven.test.FakeSyncQueue
+import cz.adamec.timotej.snag.lib.sync.fe.ports.PullSyncTimestampDb
+import cz.adamec.timotej.snag.lib.sync.fe.ports.SyncQueue
 import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
@@ -51,9 +49,8 @@ class CascadeDeleteLocalFindingsByStructureIdUseCaseImplTest : FrontendKoinIniti
         listOf(
             module {
                 singleOf(::FakeFindingsDb) bind FindingsDb::class
-                singleOf(::FakeFindingsSync) bind FindingsSync::class
-                singleOf(::FakeFindingsPullSyncCoordinator) bind FindingsPullSyncCoordinator::class
-                singleOf(::FakeFindingsPullSyncTimestampDataSource) bind FindingsPullSyncTimestampDataSource::class
+                singleOf(::FakeSyncQueue) bind SyncQueue::class
+                singleOf(::FakePullSyncTimestampDb) bind PullSyncTimestampDb::class
             },
         )
 

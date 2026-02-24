@@ -19,28 +19,21 @@ import cz.adamec.timotej.snag.findings.fe.ports.FindingsDb
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
+import cz.adamec.timotej.snag.lib.sync.fe.driven.test.FakePullSyncTimestampDb
+import cz.adamec.timotej.snag.lib.sync.fe.driven.test.FakeSyncQueue
+import cz.adamec.timotej.snag.lib.sync.fe.ports.PullSyncTimestampDb
+import cz.adamec.timotej.snag.lib.sync.fe.ports.SyncQueue
 import cz.adamec.timotej.snag.projects.business.Project
 import cz.adamec.timotej.snag.projects.fe.app.api.PullProjectChangesUseCase
+import cz.adamec.timotej.snag.projects.fe.app.impl.internal.sync.PROJECT_SYNC_ENTITY_TYPE
 import cz.adamec.timotej.snag.projects.fe.driven.test.FakeProjectsApi
 import cz.adamec.timotej.snag.projects.fe.driven.test.FakeProjectsDb
-import cz.adamec.timotej.snag.projects.fe.driven.test.FakeProjectsPullSyncCoordinator
-import cz.adamec.timotej.snag.projects.fe.driven.test.FakeProjectsPullSyncTimestampDataSource
-import cz.adamec.timotej.snag.projects.fe.driven.test.FakeProjectsSync
 import cz.adamec.timotej.snag.projects.fe.model.FrontendProject
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectSyncResult
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsApi
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsDb
-import cz.adamec.timotej.snag.projects.fe.ports.ProjectsPullSyncCoordinator
-import cz.adamec.timotej.snag.projects.fe.ports.ProjectsPullSyncTimestampDataSource
-import cz.adamec.timotej.snag.projects.fe.ports.ProjectsSync
 import cz.adamec.timotej.snag.structures.fe.driven.test.FakeStructuresDb
-import cz.adamec.timotej.snag.structures.fe.driven.test.FakeStructuresPullSyncCoordinator
-import cz.adamec.timotej.snag.structures.fe.driven.test.FakeStructuresPullSyncTimestampDataSource
-import cz.adamec.timotej.snag.structures.fe.driven.test.FakeStructuresSync
 import cz.adamec.timotej.snag.structures.fe.ports.StructuresDb
-import cz.adamec.timotej.snag.structures.fe.ports.StructuresPullSyncCoordinator
-import cz.adamec.timotej.snag.structures.fe.ports.StructuresPullSyncTimestampDataSource
-import cz.adamec.timotej.snag.structures.fe.ports.StructuresSync
 import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
@@ -60,7 +53,7 @@ import kotlin.uuid.Uuid
 class PullProjectChangesUseCaseImplTest : FrontendKoinInitializedTest() {
     private val fakeProjectsApi: FakeProjectsApi by inject()
     private val fakeProjectsDb: FakeProjectsDb by inject()
-    private val fakePullSyncTimestampDataSource: FakeProjectsPullSyncTimestampDataSource by inject()
+    private val fakePullSyncTimestampDb: FakePullSyncTimestampDb by inject()
     private val fakeStructuresDb: FakeStructuresDb by inject()
 
     private val useCase: PullProjectChangesUseCase by inject()
@@ -73,13 +66,9 @@ class PullProjectChangesUseCaseImplTest : FrontendKoinInitializedTest() {
             module {
                 singleOf(::FakeProjectsApi) bind ProjectsApi::class
                 singleOf(::FakeProjectsDb) bind ProjectsDb::class
-                singleOf(::FakeProjectsSync) bind ProjectsSync::class
-                singleOf(::FakeProjectsPullSyncTimestampDataSource) bind ProjectsPullSyncTimestampDataSource::class
-                singleOf(::FakeProjectsPullSyncCoordinator) bind ProjectsPullSyncCoordinator::class
+                singleOf(::FakeSyncQueue) bind SyncQueue::class
+                singleOf(::FakePullSyncTimestampDb) bind PullSyncTimestampDb::class
                 singleOf(::FakeStructuresDb) bind StructuresDb::class
-                singleOf(::FakeStructuresSync) bind StructuresSync::class
-                singleOf(::FakeStructuresPullSyncCoordinator) bind StructuresPullSyncCoordinator::class
-                singleOf(::FakeStructuresPullSyncTimestampDataSource) bind StructuresPullSyncTimestampDataSource::class
                 singleOf(::FakeFindingsDb) bind FindingsDb::class
             },
         )
@@ -158,7 +147,7 @@ class PullProjectChangesUseCaseImplTest : FrontendKoinInitializedTest() {
 
             useCase()
 
-            assertNotNull(fakePullSyncTimestampDataSource.getLastSyncedAt())
+            assertNotNull(fakePullSyncTimestampDb.getLastSyncedAt(PROJECT_SYNC_ENTITY_TYPE, ""))
         }
 
     @Test
@@ -169,6 +158,6 @@ class PullProjectChangesUseCaseImplTest : FrontendKoinInitializedTest() {
 
             useCase()
 
-            assertNull(fakePullSyncTimestampDataSource.getLastSyncedAt())
+            assertNull(fakePullSyncTimestampDb.getLastSyncedAt(PROJECT_SYNC_ENTITY_TYPE, ""))
         }
 }

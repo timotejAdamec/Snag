@@ -19,12 +19,15 @@ kotlin {
         commonMain.dependencies {
             implementation(project(":feat:structures:fe:app:api"))
             implementation(project(":feat:inspections:fe:app:api"))
+            implementation(project(":lib:sync:fe:app:api"))
+            implementation(project(":lib:sync:fe:model"))
         }
         commonTest {
             dependencies {
                 implementation(project(":feat:projects:fe:driven:test"))
                 implementation(project(":feat:structures:fe:driven:test"))
                 implementation(project(":feat:findings:fe:driven:test"))
+                implementation(project(":lib:sync:fe:driven:test"))
             }
         }
     }

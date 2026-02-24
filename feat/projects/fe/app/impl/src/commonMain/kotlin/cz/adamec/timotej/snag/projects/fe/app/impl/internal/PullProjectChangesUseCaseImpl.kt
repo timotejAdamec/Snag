@@ -16,12 +16,14 @@ import cz.adamec.timotej.snag.feat.inspections.fe.app.api.CascadeDeleteLocalInsp
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.common.TimestampProvider
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
+import cz.adamec.timotej.snag.lib.sync.fe.app.api.GetLastPullSyncedAtTimestampUseCase
+import cz.adamec.timotej.snag.lib.sync.fe.app.api.SetLastPullSyncedAtTimestampUseCase
+import cz.adamec.timotej.snag.lib.sync.fe.app.api.SyncCoordinator
 import cz.adamec.timotej.snag.projects.fe.app.api.PullProjectChangesUseCase
+import cz.adamec.timotej.snag.projects.fe.app.impl.internal.sync.PROJECT_SYNC_ENTITY_TYPE
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectSyncResult
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsApi
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsDb
-import cz.adamec.timotej.snag.projects.fe.ports.ProjectsPullSyncCoordinator
-import cz.adamec.timotej.snag.projects.fe.ports.ProjectsPullSyncTimestampDataSource
 import cz.adamec.timotej.snag.structures.fe.app.api.CascadeDeleteLocalStructuresByProjectIdUseCase
 
 internal class PullProjectChangesUseCaseImpl(
@@ -29,14 +31,15 @@ internal class PullProjectChangesUseCaseImpl(
     private val projectsDb: ProjectsDb,
     private val cascadeDeleteLocalStructuresByProjectIdUseCase: CascadeDeleteLocalStructuresByProjectIdUseCase,
     private val cascadeDeleteLocalInspectionsByProjectIdUseCase: CascadeDeleteLocalInspectionsByProjectIdUseCase,
-    private val projectsPullSyncTimestampDataSource: ProjectsPullSyncTimestampDataSource,
-    private val projectsPullSyncCoordinator: ProjectsPullSyncCoordinator,
+    private val getLastPullSyncedAtTimestampUseCase: GetLastPullSyncedAtTimestampUseCase,
+    private val setLastPullSyncedAtTimestampUseCase: SetLastPullSyncedAtTimestampUseCase,
+    private val syncCoordinator: SyncCoordinator,
     private val timestampProvider: TimestampProvider,
 ) : PullProjectChangesUseCase {
     override suspend operator fun invoke() {
         LH.logger.d { "Starting pull sync for projects." }
-        projectsPullSyncCoordinator.withFlushedQueue {
-            val since = projectsPullSyncTimestampDataSource.getLastSyncedAt() ?: Timestamp(0)
+        syncCoordinator.withFlushedQueue {
+            val since = getLastPullSyncedAtTimestampUseCase(PROJECT_SYNC_ENTITY_TYPE) ?: Timestamp(0)
             val now = timestampProvider.getNowTimestamp()
             LH.logger.d { "Pulling project changes since=$since, now=$now." }
 
@@ -61,7 +64,7 @@ internal class PullProjectChangesUseCaseImpl(
                             }
                         }
                     }
-                    projectsPullSyncTimestampDataSource.setLastSyncedAt(now)
+                    setLastPullSyncedAtTimestampUseCase(PROJECT_SYNC_ENTITY_TYPE, now)
                     LH.logger.d { "Pull sync for projects completed, updated lastSyncedAt=$now." }
                 }
             }

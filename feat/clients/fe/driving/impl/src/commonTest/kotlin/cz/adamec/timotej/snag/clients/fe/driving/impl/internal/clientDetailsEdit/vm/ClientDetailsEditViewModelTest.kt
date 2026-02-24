@@ -17,14 +17,14 @@ import cz.adamec.timotej.snag.clients.fe.app.api.GetClientUseCase
 import cz.adamec.timotej.snag.clients.fe.app.api.SaveClientUseCase
 import cz.adamec.timotej.snag.clients.fe.driven.test.FakeClientsApi
 import cz.adamec.timotej.snag.clients.fe.driven.test.FakeClientsDb
-import cz.adamec.timotej.snag.clients.fe.driven.test.FakeClientsSync
 import cz.adamec.timotej.snag.clients.fe.model.FrontendClient
 import cz.adamec.timotej.snag.clients.fe.ports.ClientsApi
 import cz.adamec.timotej.snag.clients.fe.ports.ClientsDb
-import cz.adamec.timotej.snag.clients.fe.ports.ClientsSync
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
+import cz.adamec.timotej.snag.lib.sync.fe.driven.test.FakeSyncQueue
+import cz.adamec.timotej.snag.lib.sync.fe.ports.SyncQueue
 import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
@@ -55,7 +55,7 @@ class ClientDetailsEditViewModelTest : FrontendKoinInitializedTest() {
             module {
                 singleOf(::FakeClientsApi) bind ClientsApi::class
                 singleOf(::FakeClientsDb) bind ClientsDb::class
-                singleOf(::FakeClientsSync) bind ClientsSync::class
+                singleOf(::FakeSyncQueue) bind SyncQueue::class
             },
         )
 

@@ -14,15 +14,16 @@ package cz.adamec.timotej.snag.clients.fe.app.impl.internal
 
 import cz.adamec.timotej.snag.clients.fe.app.api.DeleteClientUseCase
 import cz.adamec.timotej.snag.clients.fe.app.impl.internal.LH.logger
+import cz.adamec.timotej.snag.clients.fe.app.impl.internal.sync.CLIENT_SYNC_ENTITY_TYPE
 import cz.adamec.timotej.snag.clients.fe.ports.ClientsDb
-import cz.adamec.timotej.snag.clients.fe.ports.ClientsSync
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.core.fe.log
+import cz.adamec.timotej.snag.lib.sync.fe.app.api.EnqueueSyncDeleteUseCase
 import kotlin.uuid.Uuid
 
 internal class DeleteClientUseCaseImpl(
     private val clientsDb: ClientsDb,
-    private val clientsSync: ClientsSync,
+    private val enqueueSyncDeleteUseCase: EnqueueSyncDeleteUseCase,
 ) : DeleteClientUseCase {
     override suspend operator fun invoke(clientId: Uuid): OfflineFirstDataResult<Unit> =
         clientsDb
@@ -33,7 +34,7 @@ internal class DeleteClientUseCaseImpl(
                     additionalInfo = "deleteClient, clientsDb.deleteClient($clientId)",
                 )
                 if (it is OfflineFirstDataResult.Success) {
-                    clientsSync.enqueueClientDelete(clientId)
+                    enqueueSyncDeleteUseCase(CLIENT_SYNC_ENTITY_TYPE, clientId)
                 }
             }
 }

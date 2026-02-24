@@ -36,6 +36,7 @@ kotlin {
                 implementation(project(":feat:clients:fe:driven:test"))
                 implementation(project(":feat:reports:fe:driven:test"))
                 implementation(project(":feat:structures:fe:driven:test"))
+                implementation(project(":lib:sync:fe:driven:test"))
             }
         }
     }

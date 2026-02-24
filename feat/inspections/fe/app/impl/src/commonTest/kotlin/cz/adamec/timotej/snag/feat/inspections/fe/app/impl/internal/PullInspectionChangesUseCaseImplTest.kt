@@ -14,21 +14,20 @@ package cz.adamec.timotej.snag.feat.inspections.fe.app.impl.internal
 
 import cz.adamec.timotej.snag.feat.inspections.business.Inspection
 import cz.adamec.timotej.snag.feat.inspections.fe.app.api.PullInspectionChangesUseCase
+import cz.adamec.timotej.snag.feat.inspections.fe.app.impl.internal.sync.INSPECTION_SYNC_ENTITY_TYPE
 import cz.adamec.timotej.snag.feat.inspections.fe.driven.test.FakeInspectionsApi
 import cz.adamec.timotej.snag.feat.inspections.fe.driven.test.FakeInspectionsDb
-import cz.adamec.timotej.snag.feat.inspections.fe.driven.test.FakeInspectionsPullSyncCoordinator
-import cz.adamec.timotej.snag.feat.inspections.fe.driven.test.FakeInspectionsPullSyncTimestampDataSource
-import cz.adamec.timotej.snag.feat.inspections.fe.driven.test.FakeInspectionsSync
 import cz.adamec.timotej.snag.feat.inspections.fe.model.FrontendInspection
 import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionSyncResult
 import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionsApi
 import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionsDb
-import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionsPullSyncCoordinator
-import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionsPullSyncTimestampDataSource
-import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionsSync
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
+import cz.adamec.timotej.snag.lib.sync.fe.driven.test.FakePullSyncTimestampDb
+import cz.adamec.timotej.snag.lib.sync.fe.driven.test.FakeSyncQueue
+import cz.adamec.timotej.snag.lib.sync.fe.ports.PullSyncTimestampDb
+import cz.adamec.timotej.snag.lib.sync.fe.ports.SyncQueue
 import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
@@ -47,7 +46,7 @@ import kotlin.uuid.Uuid
 class PullInspectionChangesUseCaseImplTest : FrontendKoinInitializedTest() {
     private val fakeInspectionsApi: FakeInspectionsApi by inject()
     private val fakeInspectionsDb: FakeInspectionsDb by inject()
-    private val fakePullSyncTimestampDataSource: FakeInspectionsPullSyncTimestampDataSource by inject()
+    private val fakePullSyncTimestampDb: FakePullSyncTimestampDb by inject()
 
     private val useCase: PullInspectionChangesUseCase by inject()
 
@@ -59,9 +58,8 @@ class PullInspectionChangesUseCaseImplTest : FrontendKoinInitializedTest() {
             module {
                 singleOf(::FakeInspectionsApi) bind InspectionsApi::class
                 singleOf(::FakeInspectionsDb) bind InspectionsDb::class
-                singleOf(::FakeInspectionsSync) bind InspectionsSync::class
-                singleOf(::FakeInspectionsPullSyncTimestampDataSource) bind InspectionsPullSyncTimestampDataSource::class
-                singleOf(::FakeInspectionsPullSyncCoordinator) bind InspectionsPullSyncCoordinator::class
+                singleOf(::FakeSyncQueue) bind SyncQueue::class
+                singleOf(::FakePullSyncTimestampDb) bind PullSyncTimestampDb::class
             },
         )
 
@@ -122,7 +120,12 @@ class PullInspectionChangesUseCaseImplTest : FrontendKoinInitializedTest() {
 
             useCase(projectId)
 
-            assertNotNull(fakePullSyncTimestampDataSource.getLastSyncedAt(projectId))
+            assertNotNull(
+                fakePullSyncTimestampDb.getLastSyncedAt(
+                    INSPECTION_SYNC_ENTITY_TYPE,
+                    projectId.toString(),
+                ),
+            )
         }
 
     @Test
@@ -133,6 +136,11 @@ class PullInspectionChangesUseCaseImplTest : FrontendKoinInitializedTest() {
 
             useCase(projectId)
 
-            assertNull(fakePullSyncTimestampDataSource.getLastSyncedAt(projectId))
+            assertNull(
+                fakePullSyncTimestampDb.getLastSyncedAt(
+                    INSPECTION_SYNC_ENTITY_TYPE,
+                    projectId.toString(),
+                ),
+            )
         }
 }

@@ -14,21 +14,20 @@ package cz.adamec.timotej.snag.clients.fe.app.impl.internal
 
 import cz.adamec.timotej.snag.clients.business.Client
 import cz.adamec.timotej.snag.clients.fe.app.api.PullClientChangesUseCase
+import cz.adamec.timotej.snag.clients.fe.app.impl.internal.sync.CLIENT_SYNC_ENTITY_TYPE
 import cz.adamec.timotej.snag.clients.fe.driven.test.FakeClientsApi
 import cz.adamec.timotej.snag.clients.fe.driven.test.FakeClientsDb
-import cz.adamec.timotej.snag.clients.fe.driven.test.FakeClientsPullSyncCoordinator
-import cz.adamec.timotej.snag.clients.fe.driven.test.FakeClientsPullSyncTimestampDataSource
-import cz.adamec.timotej.snag.clients.fe.driven.test.FakeClientsSync
 import cz.adamec.timotej.snag.clients.fe.model.FrontendClient
 import cz.adamec.timotej.snag.clients.fe.ports.ClientSyncResult
 import cz.adamec.timotej.snag.clients.fe.ports.ClientsApi
 import cz.adamec.timotej.snag.clients.fe.ports.ClientsDb
-import cz.adamec.timotej.snag.clients.fe.ports.ClientsPullSyncCoordinator
-import cz.adamec.timotej.snag.clients.fe.ports.ClientsPullSyncTimestampDataSource
-import cz.adamec.timotej.snag.clients.fe.ports.ClientsSync
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
+import cz.adamec.timotej.snag.lib.sync.fe.driven.test.FakePullSyncTimestampDb
+import cz.adamec.timotej.snag.lib.sync.fe.driven.test.FakeSyncQueue
+import cz.adamec.timotej.snag.lib.sync.fe.ports.PullSyncTimestampDb
+import cz.adamec.timotej.snag.lib.sync.fe.ports.SyncQueue
 import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
@@ -47,7 +46,7 @@ import kotlin.uuid.Uuid
 class PullClientChangesUseCaseImplTest : FrontendKoinInitializedTest() {
     private val fakeClientsApi: FakeClientsApi by inject()
     private val fakeClientsDb: FakeClientsDb by inject()
-    private val fakePullSyncTimestampDataSource: FakeClientsPullSyncTimestampDataSource by inject()
+    private val fakePullSyncTimestampDb: FakePullSyncTimestampDb by inject()
 
     private val useCase: PullClientChangesUseCase by inject()
 
@@ -58,9 +57,8 @@ class PullClientChangesUseCaseImplTest : FrontendKoinInitializedTest() {
             module {
                 singleOf(::FakeClientsApi) bind ClientsApi::class
                 singleOf(::FakeClientsDb) bind ClientsDb::class
-                singleOf(::FakeClientsSync) bind ClientsSync::class
-                singleOf(::FakeClientsPullSyncTimestampDataSource) bind ClientsPullSyncTimestampDataSource::class
-                singleOf(::FakeClientsPullSyncCoordinator) bind ClientsPullSyncCoordinator::class
+                singleOf(::FakeSyncQueue) bind SyncQueue::class
+                singleOf(::FakePullSyncTimestampDb) bind PullSyncTimestampDb::class
             },
         )
 
@@ -119,7 +117,7 @@ class PullClientChangesUseCaseImplTest : FrontendKoinInitializedTest() {
 
             useCase()
 
-            assertNotNull(fakePullSyncTimestampDataSource.getLastSyncedAt())
+            assertNotNull(fakePullSyncTimestampDb.getLastSyncedAt(CLIENT_SYNC_ENTITY_TYPE, ""))
         }
 
     @Test
@@ -130,6 +128,6 @@ class PullClientChangesUseCaseImplTest : FrontendKoinInitializedTest() {
 
             useCase()
 
-            assertNull(fakePullSyncTimestampDataSource.getLastSyncedAt())
+            assertNull(fakePullSyncTimestampDb.getLastSyncedAt(CLIENT_SYNC_ENTITY_TYPE, ""))
         }
 }

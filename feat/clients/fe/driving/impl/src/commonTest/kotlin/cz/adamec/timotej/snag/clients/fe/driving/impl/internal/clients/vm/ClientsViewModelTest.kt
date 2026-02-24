@@ -16,16 +16,14 @@ import cz.adamec.timotej.snag.clients.business.Client
 import cz.adamec.timotej.snag.clients.fe.app.api.GetClientsUseCase
 import cz.adamec.timotej.snag.clients.fe.driven.test.FakeClientsApi
 import cz.adamec.timotej.snag.clients.fe.driven.test.FakeClientsDb
-import cz.adamec.timotej.snag.clients.fe.driven.test.FakeClientsPullSyncCoordinator
-import cz.adamec.timotej.snag.clients.fe.driven.test.FakeClientsPullSyncTimestampDataSource
-import cz.adamec.timotej.snag.clients.fe.driven.test.FakeClientsSync
 import cz.adamec.timotej.snag.clients.fe.model.FrontendClient
 import cz.adamec.timotej.snag.clients.fe.ports.ClientsApi
 import cz.adamec.timotej.snag.clients.fe.ports.ClientsDb
-import cz.adamec.timotej.snag.clients.fe.ports.ClientsPullSyncCoordinator
-import cz.adamec.timotej.snag.clients.fe.ports.ClientsPullSyncTimestampDataSource
-import cz.adamec.timotej.snag.clients.fe.ports.ClientsSync
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
+import cz.adamec.timotej.snag.lib.sync.fe.driven.test.FakePullSyncTimestampDb
+import cz.adamec.timotej.snag.lib.sync.fe.driven.test.FakeSyncQueue
+import cz.adamec.timotej.snag.lib.sync.fe.ports.PullSyncTimestampDb
+import cz.adamec.timotej.snag.lib.sync.fe.ports.SyncQueue
 import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -50,10 +48,9 @@ class ClientsViewModelTest : FrontendKoinInitializedTest() {
         listOf(
             module {
                 singleOf(::FakeClientsDb) bind ClientsDb::class
-                singleOf(::FakeClientsSync) bind ClientsSync::class
+                singleOf(::FakeSyncQueue) bind SyncQueue::class
                 singleOf(::FakeClientsApi) bind ClientsApi::class
-                singleOf(::FakeClientsPullSyncCoordinator) bind ClientsPullSyncCoordinator::class
-                singleOf(::FakeClientsPullSyncTimestampDataSource) bind ClientsPullSyncTimestampDataSource::class
+                singleOf(::FakePullSyncTimestampDb) bind PullSyncTimestampDb::class
             },
         )
 
