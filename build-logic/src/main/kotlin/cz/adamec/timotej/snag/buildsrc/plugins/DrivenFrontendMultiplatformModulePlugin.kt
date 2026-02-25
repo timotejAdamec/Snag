@@ -22,6 +22,7 @@ import org.gradle.kotlin.dsl.apply
 class DrivenFrontendMultiplatformModulePlugin : Plugin<Project> {
     override fun apply(target: Project) = with(target) {
         apply(plugin = pluginId("kotlinSerialization"))
+        apply(plugin = pluginId("sqldelight"))
         apply<NetworkFrontendMultiplatformModulePlugin>()
         configureDataMultiplatformModule()
     }

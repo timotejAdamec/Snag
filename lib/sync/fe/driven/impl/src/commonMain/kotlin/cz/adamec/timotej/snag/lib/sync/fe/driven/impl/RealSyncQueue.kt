@@ -13,7 +13,7 @@
 package cz.adamec.timotej.snag.lib.sync.fe.driven.impl
 
 import app.cash.sqldelight.async.coroutines.awaitAsList
-import cz.adamec.timotej.snag.feat.shared.database.fe.db.SyncOperationEntityQueries
+import cz.adamec.timotej.snag.lib.sync.fe.driven.impl.db.SyncOperationEntityQueries
 import cz.adamec.timotej.snag.lib.core.common.UuidProvider
 import cz.adamec.timotej.snag.lib.sync.fe.driven.internal.LH.logger
 import cz.adamec.timotej.snag.lib.sync.fe.model.SyncOperationType
