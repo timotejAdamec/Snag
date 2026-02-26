@@ -15,6 +15,7 @@ package cz.adamec.timotej.snag.network.fe.driven.impl.di
 import cz.adamec.timotej.snag.network.fe.driven.impl.internal.ContentNegotiationConfiguration
 import cz.adamec.timotej.snag.network.fe.driven.impl.internal.LoggingConfiguration
 import cz.adamec.timotej.snag.network.fe.driven.impl.internal.ResponseValidationConfiguration
+import cz.adamec.timotej.snag.network.fe.driven.impl.internal.RetryConfiguration
 import cz.adamec.timotej.snag.network.fe.ports.HttpClientConfiguration
 import io.ktor.client.HttpClient
 import org.koin.core.module.Module
@@ -30,6 +31,7 @@ val networkDrivenModule =
         singleOf(::LoggingConfiguration) bind HttpClientConfiguration::class
         singleOf(::ContentNegotiationConfiguration) bind HttpClientConfiguration::class
         singleOf(::ResponseValidationConfiguration) bind HttpClientConfiguration::class
+        singleOf(::RetryConfiguration) bind HttpClientConfiguration::class
         single {
             HttpClient {
                 getAll<HttpClientConfiguration>().forEach { configuration ->
