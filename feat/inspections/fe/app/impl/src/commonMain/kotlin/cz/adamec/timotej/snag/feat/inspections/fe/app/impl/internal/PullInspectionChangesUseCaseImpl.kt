@@ -44,8 +44,8 @@ internal class PullInspectionChangesUseCaseImpl(
             }
             val since =
                 getLastPullSyncedAtTimestampUseCase(
-                    INSPECTION_SYNC_ENTITY_TYPE,
-                    projectId.toString(),
+                    entityType = INSPECTION_SYNC_ENTITY_TYPE,
+                    scopeId = projectId.toString(),
                 ) ?: Timestamp(0)
             val now = timestampProvider.getNowTimestamp()
             LH.logger.d { "Pulling inspection changes for project $projectId since=$since, now=$now." }
@@ -70,9 +70,9 @@ internal class PullInspectionChangesUseCaseImpl(
                         }
                     }
                     setLastPullSyncedAtTimestampUseCase(
-                        INSPECTION_SYNC_ENTITY_TYPE,
-                        now,
-                        projectId.toString(),
+                        entityType = INSPECTION_SYNC_ENTITY_TYPE,
+                        timestamp = now,
+                        scopeId = projectId.toString(),
                     )
                     LH.logger.d { "Pull sync for inspections in project $projectId completed, updated lastSyncedAt=$now." }
                 }

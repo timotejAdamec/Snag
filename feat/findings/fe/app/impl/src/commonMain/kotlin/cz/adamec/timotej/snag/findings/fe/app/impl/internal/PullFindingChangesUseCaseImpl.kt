@@ -44,8 +44,8 @@ internal class PullFindingChangesUseCaseImpl(
             }
             val since =
                 getLastPullSyncedAtTimestampUseCase(
-                    FINDING_SYNC_ENTITY_TYPE,
-                    structureId.toString(),
+                    entityType = FINDING_SYNC_ENTITY_TYPE,
+                    scopeId = structureId.toString(),
                 ) ?: Timestamp(0)
             val now = timestampProvider.getNowTimestamp()
             LH.logger.d { "Pulling finding changes for structure $structureId since=$since, now=$now." }
@@ -70,9 +70,9 @@ internal class PullFindingChangesUseCaseImpl(
                         }
                     }
                     setLastPullSyncedAtTimestampUseCase(
-                        FINDING_SYNC_ENTITY_TYPE,
-                        now,
-                        structureId.toString(),
+                        entityType = FINDING_SYNC_ENTITY_TYPE,
+                        timestamp = now,
+                        scopeId = structureId.toString(),
                     )
                     LH.logger.d { "Pull sync for findings in structure $structureId completed, updated lastSyncedAt=$now." }
                 }

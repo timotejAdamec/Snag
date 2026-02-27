@@ -62,7 +62,10 @@ internal class PullClientChangesUseCaseImpl(
                             }
                         }
                     }
-                    setLastPullSyncedAtTimestampUseCase(CLIENT_SYNC_ENTITY_TYPE, now)
+                    setLastPullSyncedAtTimestampUseCase(
+                        entityType = CLIENT_SYNC_ENTITY_TYPE,
+                        timestamp = now,
+                    )
                     LH.logger.d { "Pull sync for clients completed, updated lastSyncedAt=$now." }
                 }
             }

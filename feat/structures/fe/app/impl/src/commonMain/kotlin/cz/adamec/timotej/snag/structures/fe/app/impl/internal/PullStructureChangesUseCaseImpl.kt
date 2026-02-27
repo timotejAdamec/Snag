@@ -46,8 +46,8 @@ internal class PullStructureChangesUseCaseImpl(
             }
             val since =
                 getLastPullSyncedAtTimestampUseCase(
-                    STRUCTURE_SYNC_ENTITY_TYPE,
-                    projectId.toString(),
+                    entityType = STRUCTURE_SYNC_ENTITY_TYPE,
+                    scopeId = projectId.toString(),
                 ) ?: Timestamp(0)
             val now = timestampProvider.getNowTimestamp()
             LH.logger.d { "Pulling structure changes for project $projectId since=$since, now=$now." }
@@ -75,9 +75,9 @@ internal class PullStructureChangesUseCaseImpl(
                         }
                     }
                     setLastPullSyncedAtTimestampUseCase(
-                        STRUCTURE_SYNC_ENTITY_TYPE,
-                        now,
-                        projectId.toString(),
+                        entityType = STRUCTURE_SYNC_ENTITY_TYPE,
+                        timestamp = now,
+                        scopeId = projectId.toString(),
                     )
                     LH.logger.d { "Pull sync for structures in project $projectId completed, updated lastSyncedAt=$now." }
                 }

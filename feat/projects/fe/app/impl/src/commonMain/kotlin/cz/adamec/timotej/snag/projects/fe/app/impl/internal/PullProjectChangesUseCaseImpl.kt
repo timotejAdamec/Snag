@@ -68,7 +68,10 @@ internal class PullProjectChangesUseCaseImpl(
                             }
                         }
                     }
-                    setLastPullSyncedAtTimestampUseCase(PROJECT_SYNC_ENTITY_TYPE, now)
+                    setLastPullSyncedAtTimestampUseCase(
+                        entityType = PROJECT_SYNC_ENTITY_TYPE,
+                        timestamp = now,
+                    )
                     LH.logger.d { "Pull sync for projects completed, updated lastSyncedAt=$now." }
                 }
             }
