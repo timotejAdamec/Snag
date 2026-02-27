@@ -38,7 +38,11 @@ internal class PullProjectChangesUseCaseImpl(
 ) : PullProjectChangesUseCase {
     override suspend operator fun invoke() {
         LH.logger.d { "Starting pull sync for projects." }
-        syncCoordinator.withFlushedQueue {
+        syncCoordinator.withFlushedQueue { wasFlushingSuccessful ->
+            if (!wasFlushingSuccessful) {
+                LH.logger.w("Flushing sync queue was not successful, skipping pull sync for projects.")
+                return@withFlushedQueue
+            }
             val since = getLastPullSyncedAtTimestampUseCase(PROJECT_SYNC_ENTITY_TYPE) ?: Timestamp(0)
             val now = timestampProvider.getNowTimestamp()
             LH.logger.d { "Pulling project changes since=$since, now=$now." }

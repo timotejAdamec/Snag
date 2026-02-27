@@ -35,7 +35,13 @@ internal class PullFindingChangesUseCaseImpl(
 ) : PullFindingChangesUseCase {
     override suspend operator fun invoke(structureId: Uuid) {
         LH.logger.d { "Starting pull sync for findings in structure $structureId." }
-        syncCoordinator.withFlushedQueue {
+        syncCoordinator.withFlushedQueue { wasFlushingSuccessful ->
+            if (!wasFlushingSuccessful) {
+                LH.logger.w {
+                    "Flushing sync queue was not successful, skipping pull sync for findings in structure $structureId."
+                }
+                return@withFlushedQueue
+            }
             val since =
                 getLastPullSyncedAtTimestampUseCase(
                     FINDING_SYNC_ENTITY_TYPE,

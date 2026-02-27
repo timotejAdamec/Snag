@@ -60,7 +60,9 @@ abstract class DbApiSyncHandler<T>(
                     entityResult.data
                 }
                 is OfflineFirstDataResult.ProgrammerError -> {
-                    logger.e { "DB error reading $entityName $entityId for sync." }
+                    logger.e(throwable = entityResult.throwable) {
+                        "DB error reading $entityName $entityId for sync. Error: ${entityResult.throwable}"
+                    }
                     return SyncOperationResult.Failure
                 }
             }

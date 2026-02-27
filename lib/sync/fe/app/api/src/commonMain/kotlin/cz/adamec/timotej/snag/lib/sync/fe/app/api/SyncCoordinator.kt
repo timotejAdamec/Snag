@@ -13,5 +13,7 @@
 package cz.adamec.timotej.snag.lib.sync.fe.app.api
 
 interface SyncCoordinator {
-    suspend fun <T> withFlushedQueue(block: suspend () -> T): T
+    suspend fun <T> withFlushedQueue(
+        block: suspend (wasFlushingSuccessful: Boolean) -> T,
+    ): T
 }

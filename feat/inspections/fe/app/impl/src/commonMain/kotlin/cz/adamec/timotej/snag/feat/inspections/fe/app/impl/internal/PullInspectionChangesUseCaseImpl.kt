@@ -35,7 +35,13 @@ internal class PullInspectionChangesUseCaseImpl(
 ) : PullInspectionChangesUseCase {
     override suspend operator fun invoke(projectId: Uuid) {
         LH.logger.d { "Starting pull sync for inspections in project $projectId." }
-        syncCoordinator.withFlushedQueue {
+        syncCoordinator.withFlushedQueue { wasFlushingSuccessful ->
+            if (!wasFlushingSuccessful) {
+                LH.logger.w {
+                    "Flushing sync queue was not successful, skipping pull sync for for inspections in project $projectId."
+                }
+                return@withFlushedQueue
+            }
             val since =
                 getLastPullSyncedAtTimestampUseCase(
                     INSPECTION_SYNC_ENTITY_TYPE,

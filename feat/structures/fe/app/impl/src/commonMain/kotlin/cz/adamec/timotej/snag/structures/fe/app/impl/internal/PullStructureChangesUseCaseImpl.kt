@@ -37,7 +37,13 @@ internal class PullStructureChangesUseCaseImpl(
 ) : PullStructureChangesUseCase {
     override suspend operator fun invoke(projectId: Uuid) {
         LH.logger.d { "Starting pull sync for structures in project $projectId." }
-        syncCoordinator.withFlushedQueue {
+        syncCoordinator.withFlushedQueue { wasFlushingSuccessful ->
+            if (!wasFlushingSuccessful) {
+                LH.logger.w {
+                    "Flushing sync queue was not successful, skipping pull sync for structures in project $projectId."
+                }
+                return@withFlushedQueue
+            }
             val since =
                 getLastPullSyncedAtTimestampUseCase(
                     STRUCTURE_SYNC_ENTITY_TYPE,
@@ -50,6 +56,7 @@ internal class PullStructureChangesUseCaseImpl(
                 is OnlineDataResult.Failure -> {
                     LH.logger.w { "Error pulling structure changes for project $projectId." }
                 }
+
                 is OnlineDataResult.Success -> {
                     val changes = result.data
                     LH.logger.d { "Received ${changes.size} structure change(s) for project $projectId." }
@@ -60,6 +67,7 @@ internal class PullStructureChangesUseCaseImpl(
                                 cascadeDeleteLocalFindingsByStructureIdUseCase(syncResult.id)
                                 structuresDb.deleteStructure(syncResult.id)
                             }
+
                             is StructureSyncResult.Updated -> {
                                 LH.logger.d { "Processing updated structure ${syncResult.structure.structure.id}." }
                                 structuresDb.saveStructure(syncResult.structure)

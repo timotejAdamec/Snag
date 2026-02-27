@@ -34,7 +34,11 @@ internal class PullClientChangesUseCaseImpl(
 ) : PullClientChangesUseCase {
     override suspend operator fun invoke() {
         LH.logger.d { "Starting pull sync for clients." }
-        syncCoordinator.withFlushedQueue {
+        syncCoordinator.withFlushedQueue { wasFlushingSuccessful ->
+            if (!wasFlushingSuccessful) {
+                LH.logger.w { "Flushing sync queue was not successful, skipping pull sync for clients." }
+                return@withFlushedQueue
+            }
             val since = getLastPullSyncedAtTimestampUseCase(CLIENT_SYNC_ENTITY_TYPE) ?: Timestamp(0)
             val now = timestampProvider.getNowTimestamp()
             LH.logger.d { "Pulling client changes since=$since, now=$now." }

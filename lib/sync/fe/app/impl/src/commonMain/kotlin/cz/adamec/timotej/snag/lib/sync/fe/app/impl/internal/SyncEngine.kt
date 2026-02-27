@@ -13,6 +13,7 @@
 package cz.adamec.timotej.snag.lib.sync.fe.app.impl.internal
 
 import cz.adamec.timotej.snag.lib.core.common.ApplicationScope
+import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
 import cz.adamec.timotej.snag.lib.sync.fe.app.api.SyncCoordinator
 import cz.adamec.timotej.snag.lib.sync.fe.app.api.handler.SyncOperationHandler
 import cz.adamec.timotej.snag.lib.sync.fe.app.api.handler.SyncOperationResult
@@ -50,11 +51,12 @@ internal class SyncEngine(
         }
     }
 
-    override suspend fun <T> withFlushedQueue(block: suspend () -> T): T =
-        mutex.withLock {
-            processAllPending()
-            block()
-        }
+    override suspend fun <T> withFlushedQueue(
+        block: suspend (wasFlushingSuccessful: Boolean) -> T,
+    ): T = mutex.withLock {
+        val result = processAllPending()
+        block(result)
+    }
 
     private suspend fun processAll() {
         mutex.withLock {
@@ -62,11 +64,14 @@ internal class SyncEngine(
         }
     }
 
-    private suspend fun processAllPending() {
+    /**
+     * @return `true` if all pending operations were processed successfully, `false` otherwise.
+     */
+    private suspend fun processAllPending(): Boolean {
         val pending = syncQueue.getAllPending()
         if (pending.isEmpty()) {
             _status.value = SyncEngineStatus.Idle
-            return
+            return true
         }
         _status.value = SyncEngineStatus.Syncing
         for (operation in pending) {
@@ -80,17 +85,20 @@ internal class SyncEngine(
                     LH.logger.d { "Sync operation ${operation.id} succeeded, removing from queue." }
                     syncQueue.remove(operation.id)
                 }
+
                 SyncOperationResult.EntityNotFound -> {
                     LH.logger.d { "Entity not found for operation ${operation.id}, discarding." }
                     syncQueue.remove(operation.id)
                 }
+
                 SyncOperationResult.Failure -> {
                     LH.logger.w { "Sync operation ${operation.id} failed, stopping processing." }
                     _status.value = SyncEngineStatus.Failed
-                    return
+                    return false
                 }
             }
         }
         _status.value = SyncEngineStatus.Idle
+        return true
     }
 }
