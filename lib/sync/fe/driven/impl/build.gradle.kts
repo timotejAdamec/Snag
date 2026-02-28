@@ -14,6 +14,7 @@ import cz.adamec.timotej.snag.buildsrc.extensions.library
 
 plugins {
     alias(libs.plugins.snagDrivenFrontendMultiplatformModule)
+    alias(libs.plugins.sqldelight)
 }
 
 kotlin {
@@ -28,6 +29,8 @@ sqldelight {
     databases {
         create("SyncDatabase") {
             packageName = "cz.adamec.timotej.snag.lib.sync.fe.driven.impl.db"
+            val sqldelightDir = "src/commonMain/sqldelight/cz/adamec/timotej/snag/lib/sync/fe/driven/impl"
+            schemaOutputDirectory = file("$sqldelightDir/schemas")
             generateAsync = true
             verifyMigrations = true
             dialect(library("sqldelight-sqlite-dialect"))
