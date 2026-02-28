@@ -12,82 +12,35 @@
 
 package cz.adamec.timotej.snag.feat.shared.database.fe.impl.di
 
-import app.cash.sqldelight.db.SqlDriver
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.ClassicFindingEntityQueries
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.ClientEntityQueries
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.FindingEntityQueries
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.InspectionEntityQueries
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.ProjectEntityQueries
-import cz.adamec.timotej.snag.feat.shared.database.fe.db.PullSyncTimestampEntityQueries
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.SnagDatabase
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.StructureEntityQueries
-import cz.adamec.timotej.snag.feat.shared.database.fe.db.SyncOperationEntityQueries
-import cz.adamec.timotej.snag.feat.shared.database.fe.impl.internal.DatabaseInitializer
-import cz.adamec.timotej.snag.feat.shared.database.fe.impl.internal.DriverFactory
-import cz.adamec.timotej.snag.lib.core.common.di.getDefaultDispatcher
-import cz.adamec.timotej.snag.lib.core.fe.Initializer
-import org.koin.core.module.Module
+import cz.adamec.timotej.snag.lib.database.fe.sqlDelightDatabaseModule
+import org.koin.core.qualifier.named
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
+private val snagDatabaseInfraModule =
+    sqlDelightDatabaseModule(
+        schema = SnagDatabase.Schema,
+        name = "snag.db",
+        qualifier = named("snagDb"),
+    )
+
 val databaseModule =
     module {
-        includes(platformModule)
+        includes(snagDatabaseInfraModule)
 
-        single {
-            get<DriverFactory>().createDriver()
-        } bind SqlDriver::class
+        single { SnagDatabase(driver = get(named("snagDb"))) } bind SnagDatabase::class
 
-        single {
-            SnagDatabase(driver = get())
-        } bind SnagDatabase::class
-
-        factory {
-            val snagDatabase = get<SnagDatabase>()
-            snagDatabase.clientEntityQueries
-        } bind ClientEntityQueries::class
-
-        factory {
-            val snagDatabase = get<SnagDatabase>()
-            snagDatabase.projectEntityQueries
-        } bind ProjectEntityQueries::class
-
-        factory {
-            val snagDatabase = get<SnagDatabase>()
-            snagDatabase.structureEntityQueries
-        } bind StructureEntityQueries::class
-
-        factory {
-            val snagDatabase = get<SnagDatabase>()
-            snagDatabase.findingEntityQueries
-        } bind FindingEntityQueries::class
-
-        factory {
-            val snagDatabase = get<SnagDatabase>()
-            snagDatabase.classicFindingEntityQueries
-        } bind ClassicFindingEntityQueries::class
-
-        factory {
-            val snagDatabase = get<SnagDatabase>()
-            snagDatabase.inspectionEntityQueries
-        } bind InspectionEntityQueries::class
-
-        factory {
-            val snagDatabase = get<SnagDatabase>()
-            snagDatabase.syncOperationEntityQueries
-        } bind SyncOperationEntityQueries::class
-
-        factory {
-            val snagDatabase = get<SnagDatabase>()
-            snagDatabase.pullSyncTimestampEntityQueries
-        } bind PullSyncTimestampEntityQueries::class
-
-        single {
-            DatabaseInitializer(
-                databaseDriver = get(),
-                defaultDispatcher = getDefaultDispatcher(),
-            )
-        } bind Initializer::class
+        factory { get<SnagDatabase>().clientEntityQueries } bind ClientEntityQueries::class
+        factory { get<SnagDatabase>().projectEntityQueries } bind ProjectEntityQueries::class
+        factory { get<SnagDatabase>().structureEntityQueries } bind StructureEntityQueries::class
+        factory { get<SnagDatabase>().findingEntityQueries } bind FindingEntityQueries::class
+        factory { get<SnagDatabase>().classicFindingEntityQueries } bind ClassicFindingEntityQueries::class
+        factory { get<SnagDatabase>().inspectionEntityQueries } bind InspectionEntityQueries::class
     }
-
-internal expect val platformModule: Module

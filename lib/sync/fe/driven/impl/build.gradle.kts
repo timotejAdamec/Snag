@@ -10,14 +10,27 @@
  * Department of Software Engineering
  */
 
+import cz.adamec.timotej.snag.buildsrc.extensions.library
+
 plugins {
-    alias(libs.plugins.snagFrontendMultiplatformModule)
+    alias(libs.plugins.snagDrivenFrontendMultiplatformModule)
 }
 
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            implementation(project(":feat:shared:database:fe:api"))
+            implementation(project(":lib:database:fe"))
+        }
+    }
+}
+
+sqldelight {
+    databases {
+        create("SyncDatabase") {
+            packageName = "cz.adamec.timotej.snag.lib.sync.fe.driven.impl.db"
+            generateAsync = true
+            verifyMigrations = true
+            dialect(library("sqldelight-sqlite-dialect"))
         }
     }
 }

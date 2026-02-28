@@ -13,15 +13,34 @@
 package cz.adamec.timotej.snag.lib.sync.fe.driven.impl.di
 
 import cz.adamec.timotej.snag.lib.core.common.di.getIoDispatcher
+import cz.adamec.timotej.snag.lib.database.fe.sqlDelightDatabaseModule
 import cz.adamec.timotej.snag.lib.sync.fe.driven.impl.RealPullSyncTimestampDb
 import cz.adamec.timotej.snag.lib.sync.fe.driven.impl.RealSyncQueue
+import cz.adamec.timotej.snag.lib.sync.fe.driven.impl.db.PullSyncTimestampEntityQueries
+import cz.adamec.timotej.snag.lib.sync.fe.driven.impl.db.SyncDatabase
+import cz.adamec.timotej.snag.lib.sync.fe.driven.impl.db.SyncOperationEntityQueries
 import cz.adamec.timotej.snag.lib.sync.fe.ports.PullSyncTimestampDb
 import cz.adamec.timotej.snag.lib.sync.fe.ports.SyncQueue
+import org.koin.core.qualifier.named
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
+private val syncDatabaseModule =
+    sqlDelightDatabaseModule(
+        schema = SyncDatabase.Schema,
+        name = "sync.db",
+        qualifier = named("syncDb"),
+    )
+
 val syncDrivenModule =
     module {
+        includes(syncDatabaseModule)
+
+        single { SyncDatabase(driver = get(named("syncDb"))) } bind SyncDatabase::class
+
+        factory { get<SyncDatabase>().syncOperationEntityQueries } bind SyncOperationEntityQueries::class
+        factory { get<SyncDatabase>().pullSyncTimestampEntityQueries } bind PullSyncTimestampEntityQueries::class
+
         factory {
             RealSyncQueue(
                 syncOperationEntityQueries = get(),

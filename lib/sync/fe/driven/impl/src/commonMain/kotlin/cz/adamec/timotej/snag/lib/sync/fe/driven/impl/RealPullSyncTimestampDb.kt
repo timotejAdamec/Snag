@@ -13,7 +13,7 @@
 package cz.adamec.timotej.snag.lib.sync.fe.driven.impl
 
 import app.cash.sqldelight.async.coroutines.awaitAsOneOrNull
-import cz.adamec.timotej.snag.feat.shared.database.fe.db.PullSyncTimestampEntityQueries
+import cz.adamec.timotej.snag.lib.sync.fe.driven.impl.db.PullSyncTimestampEntityQueries
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.sync.fe.ports.PullSyncTimestampDb
 import kotlinx.coroutines.CoroutineDispatcher
