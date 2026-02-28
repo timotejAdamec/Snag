@@ -2,19 +2,6 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Workflow
-
-For each new task create a new worktree with a new branch. After finishing the work, push and create a PR.
-
-## Model Usage Guidelines
-
-- Use **Sonnet** for:
-    - Running tests and other Gradle tasks
-    - Code linting & formatting fixes
-    - Simple file operations
-
-- Use **Opus** (default) for everything else.
-
 ## Build Commands
 
 ```bash
