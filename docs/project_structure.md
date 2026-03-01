@@ -59,7 +59,9 @@ The `shared` directory contains cross-cutting concerns used by multiple features
 
 ### Cross-feature dependencies
 
-Dependencies between features is handled by accessing use cases (`app/api`) from the different feature.
+Dependencies between features and libs is handled by accessing:
+- use cases (`app/api`) for business logic.
+- `driving/api` for navigation or UI components.
 
 ## Library modules
 Library modules are located in the `lib` directory. These contain "domain-agnostic" code.
