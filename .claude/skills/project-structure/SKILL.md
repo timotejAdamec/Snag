@@ -41,9 +41,13 @@ Each feature follows hexagonal architecture with these layers:
 
 ### Library modules (`lib/`)
 
-Domain-agnostic reusable code. Follow same structuring as `feat` modules used with the exception
-that it can have only single top-level module or a api/impl/test split. In that case these are implicitly
-living in the adapters layer (to be used by `driven` and `driving` feature modules or other such `lib` modules).
+Feature-agnostic reusable code (not tied to a specific domain area). Two kinds:
+- **Infrastructural** (e.g., network, database, design, routing) — purely adapter/connector role.
+  Can be a single top-level module or an api/impl/test split. Implicitly living in the adapters layer
+  (to be used by `driven` and `driving` feature modules or other such `lib` modules).
+- **Cross-cutting domain logic** (e.g., sync) — structured the same as `feat` modules
+  (app/api, app/impl, ports, driven, etc.).
+
 `core` modules can be used anywhere.
 
 ### Dependency management

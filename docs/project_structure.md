@@ -64,13 +64,19 @@ Dependencies between features and libs is handled by accessing:
 - `driving/api` for navigation or UI components.
 
 ## Library modules
-Library modules are located in the `lib` directory. These contain "domain-agnostic" code.
-"Domain-agnostic" means it can theoretically be used in other projects.
+Library modules are located in the `lib` directory. These contain **feature-agnostic** code –
+functionality not tied to a specific domain area (feature) that can theoretically be reused in other
+projects.
 
-They can be structured into submodules just as features. However, if the library is only part of
-infrastructure, so integrating with technologies – a driven adapter – then architecture layering can
-be omitted and the code is understood to be driven/driving. The only exception are the `core` modules,
-which can be used in any layer.
+Some library modules are purely infrastructural (connector/adapter role) – e.g., network, database,
+design system, routing. These integrate with technologies and their code lives implicitly in the
+adapters layer. For such modules architecture layering can be omitted and the code is understood to
+be driven/driving.
+
+Other library modules contain cross-cutting domain logic shared by multiple features – e.g., sync.
+These are structured into submodules just as features (app/api, app/impl, ports, driven, etc.).
+
+The only exception are the `core` modules, which can be used in any layer.
 
 ## Modules configurations
 The project uses custom plugins located in the top-level `build-logic` module.

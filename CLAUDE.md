@@ -45,7 +45,7 @@ feat/<feature>/
         ├── api/  # Public screen contracts
         └── impl/ # Screen implementations + ViewModels
 
-lib/              # Domain-agnostic reusable libraries
+lib/              # Feature-agnostic reusable libraries (infra or cross-cutting domain logic)
 ├── core/         # Core utilities (used anywhere)
 ├── sync/         # Sync logic
 ├── design/       # Design system components
