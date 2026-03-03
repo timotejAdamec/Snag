@@ -29,7 +29,8 @@ feat/<feature>/
         ├── api/  # Public use case interfaces
         └── impl/ # Use case implementations
 │   ├── ports/    # Data source interfaces
-│   ├── driven/   # Port implementations (database)
+│   ├── driven/   
+        └── impl/ # Port implementations (database)
 │   └── driving/  # HTTP routes (Ktor)
 │       ├── contract/  # API contracts
 │       └── impl/      # Route implementations
