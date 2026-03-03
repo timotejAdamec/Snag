@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.structures.be.driven.impl.di
 
-import cz.adamec.timotej.snag.structures.be.driven.impl.internal.ExposedStructuresDb
+import cz.adamec.timotej.snag.structures.be.driven.impl.internal.RealStructuresDb
 import cz.adamec.timotej.snag.structures.be.ports.StructuresDb
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
@@ -20,5 +20,5 @@ import org.koin.dsl.module
 
 val structuresDrivenModule =
     module {
-        singleOf(::ExposedStructuresDb) bind StructuresDb::class
+        singleOf(::RealStructuresDb) bind StructuresDb::class
     }

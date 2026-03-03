@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.feat.inspections.be.driven.impl.di
 
-import cz.adamec.timotej.snag.feat.inspections.be.driven.impl.internal.ExposedInspectionsDb
+import cz.adamec.timotej.snag.feat.inspections.be.driven.impl.internal.RealInspectionsDb
 import cz.adamec.timotej.snag.feat.inspections.be.ports.InspectionsDb
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
@@ -20,5 +20,5 @@ import org.koin.dsl.module
 
 val inspectionsDrivenModule =
     module {
-        singleOf(::ExposedInspectionsDb) bind InspectionsDb::class
+        singleOf(::RealInspectionsDb) bind InspectionsDb::class
     }

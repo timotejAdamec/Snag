@@ -33,7 +33,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertIs
 import kotlin.uuid.Uuid
 
-class ExposedFindingsDbFindingTypesTest : BackendKoinInitializedTest() {
+class RealFindingsDbFindingTypesTest : BackendKoinInitializedTest() {
     private val findingsDb: FindingsDb by inject()
     private val projectsDb: ProjectsDb by inject()
     private val structuresDb: StructuresDb by inject()
