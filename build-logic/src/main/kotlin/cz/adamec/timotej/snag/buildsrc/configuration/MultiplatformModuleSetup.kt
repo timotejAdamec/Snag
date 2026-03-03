@@ -18,7 +18,6 @@ import cz.adamec.timotej.snag.buildsrc.extensions.library
 import cz.adamec.timotej.snag.buildsrc.extensions.version
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
-import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.invoke
 import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
@@ -28,7 +27,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 internal fun Project.configureKotlinMultiplatformModule() {
 
     // Fixes a problem where kotlin stdlib has a different version than the compiler
-    configurations.all {
+    configurations.configureEach {
         resolutionStrategy.eachDependency {
             if (requested.group == "org.jetbrains.kotlin") {
                 useVersion(version("kotlin"))
@@ -171,7 +170,7 @@ internal fun Project.configureKotlinMultiplatformModule() {
                 implementation(library("kotlinx-coroutines-core"))
                 implementation(library("kotlinx-immutable-collections"))
                 implementation(library("koin-core"))
-                api(library("koin-annotations"))
+                implementation(library("koin-annotations"))
             }
             commonTest.dependencies {
                 implementation(library("kotlin-test"))
@@ -188,10 +187,4 @@ internal fun Project.configureKotlinMultiplatformModule() {
         }
     }
 
-    dependencies {
-        val koinKspCompilerLib = library("koin-ksp-compiler")
-        configurations.matching { it.name.startsWith("ksp") && it.name != "ksp" }.all {
-            add(this.name, koinKspCompilerLib)
-        }
-    }
 }
