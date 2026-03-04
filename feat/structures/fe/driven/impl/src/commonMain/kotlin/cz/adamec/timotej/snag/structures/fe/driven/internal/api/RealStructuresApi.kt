@@ -45,7 +45,7 @@ internal class RealStructuresApi(
     ): OnlineDataResult<Unit> {
         LH.logger.d { "Deleting structure $id from API..." }
         return safeApiCall(logger = LH.logger, errorContext = "Error deleting structure $id from API.") {
-            httpClient.delete("/structures/$id") {
+            httpClient.patch("/structures/$id") {
                 setBody(DeleteStructureApiDto(deletedAt = deletedAt))
             }
             Unit

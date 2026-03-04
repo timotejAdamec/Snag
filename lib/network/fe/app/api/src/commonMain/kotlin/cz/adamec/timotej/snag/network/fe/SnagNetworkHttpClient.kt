@@ -34,6 +34,12 @@ interface SnagNetworkHttpClient {
         block: HttpRequestBuilder.() -> Unit = {},
     ): HttpResponse
 
+    suspend fun patch(
+        path: String,
+        contentType: ContentType = ContentType.Application.Json,
+        block: HttpRequestBuilder.() -> Unit = {},
+    ): HttpResponse
+
     suspend fun delete(
         path: String,
         contentType: ContentType = ContentType.Application.Json,

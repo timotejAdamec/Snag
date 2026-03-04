@@ -26,7 +26,7 @@ import cz.adamec.timotej.snag.structures.be.driving.contract.StructureApiDto
 import cz.adamec.timotej.snag.structures.be.ports.StructuresDb
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
 import io.ktor.client.call.body
-import io.ktor.client.request.delete
+import io.ktor.client.request.patch
 import io.ktor.client.request.get
 import io.ktor.client.request.put
 import io.ktor.client.request.setBody
@@ -69,10 +69,10 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
         }
     }
 
-    // region DELETE /structures/{id}
+    // region PATCH /structures/{id}
 
     @Test
-    fun `DELETE structure returns 204 when successfully deleted`() =
+    fun `PATCH soft-delete structure returns 204 when successfully deleted`() =
         testApplication {
             configureApp()
             createParentProject()
@@ -91,7 +91,7 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
             val client = jsonClient()
 
             val response =
-                client.delete("/structures/$TEST_ID_1") {
+                client.patch("/structures/$TEST_ID_1") {
                     contentType(ContentType.Application.Json)
                     setBody(DeleteStructureApiDto(deletedAt = Timestamp(200L)))
                 }
@@ -100,7 +100,7 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
         }
 
     @Test
-    fun `DELETE structure sets deletedAt on successful deletion`() =
+    fun `PATCH soft-delete structure sets deletedAt on successful deletion`() =
         testApplication {
             configureApp()
             createParentProject()
@@ -118,7 +118,7 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
             )
             val client = jsonClient()
 
-            client.delete("/structures/$TEST_ID_1") {
+            client.patch("/structures/$TEST_ID_1") {
                 contentType(ContentType.Application.Json)
                 setBody(DeleteStructureApiDto(deletedAt = Timestamp(200L)))
             }
@@ -132,7 +132,7 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
         }
 
     @Test
-    fun `DELETE structure returns existing structure on conflict`() =
+    fun `PATCH soft-delete structure returns existing structure on conflict`() =
         testApplication {
             configureApp()
             createParentProject()
@@ -151,7 +151,7 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
             val client = jsonClient()
 
             val response =
-                client.delete("/structures/$TEST_ID_1") {
+                client.patch("/structures/$TEST_ID_1") {
                     contentType(ContentType.Application.Json)
                     setBody(DeleteStructureApiDto(deletedAt = Timestamp(200L)))
                 }
@@ -162,13 +162,13 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
         }
 
     @Test
-    fun `DELETE structure with invalid id returns 400`() =
+    fun `PATCH soft-delete structure with invalid id returns 400`() =
         testApplication {
             configureApp()
             val client = jsonClient()
 
             val response =
-                client.delete("/structures/not-a-uuid") {
+                client.patch("/structures/not-a-uuid") {
                     contentType(ContentType.Application.Json)
                     setBody(DeleteStructureApiDto(deletedAt = Timestamp(200L)))
                 }
@@ -177,13 +177,13 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
         }
 
     @Test
-    fun `DELETE structure with invalid body returns 400`() =
+    fun `PATCH soft-delete structure with invalid body returns 400`() =
         testApplication {
             configureApp()
             val client = jsonClient()
 
             val response =
-                client.delete("/structures/$TEST_ID_1") {
+                client.patch("/structures/$TEST_ID_1") {
                     contentType(ContentType.Application.Json)
                     setBody("{\"invalid\": true}")
                 }

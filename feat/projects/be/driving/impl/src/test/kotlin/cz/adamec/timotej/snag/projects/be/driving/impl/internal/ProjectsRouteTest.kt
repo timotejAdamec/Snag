@@ -23,7 +23,7 @@ import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
 import cz.adamec.timotej.snag.projects.business.Project
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
 import io.ktor.client.call.body
-import io.ktor.client.request.delete
+import io.ktor.client.request.patch
 import io.ktor.client.request.get
 import io.ktor.client.request.put
 import io.ktor.client.request.setBody
@@ -378,7 +378,7 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
         }
 
     @Test
-    fun `DELETE project returns 204 when successfully deleted`() =
+    fun `PATCH soft-delete project returns 204 when successfully deleted`() =
         testApplication {
             configureApp()
             dataSource.saveProject(
@@ -395,7 +395,7 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
             val client = jsonClient()
 
             val response =
-                client.delete("/projects/$TEST_ID_1") {
+                client.patch("/projects/$TEST_ID_1") {
                     contentType(ContentType.Application.Json)
                     setBody(DeleteProjectApiDto(deletedAt = Timestamp(200L)))
                 }
@@ -404,7 +404,7 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
         }
 
     @Test
-    fun `DELETE project sets deletedAt on successful deletion`() =
+    fun `PATCH soft-delete project sets deletedAt on successful deletion`() =
         testApplication {
             configureApp()
             dataSource.saveProject(
@@ -420,7 +420,7 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
             )
             val client = jsonClient()
 
-            client.delete("/projects/$TEST_ID_1") {
+            client.patch("/projects/$TEST_ID_1") {
                 contentType(ContentType.Application.Json)
                 setBody(DeleteProjectApiDto(deletedAt = Timestamp(200L)))
             }
@@ -433,7 +433,7 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
         }
 
     @Test
-    fun `DELETE project returns existing project on conflict`() =
+    fun `PATCH soft-delete project returns existing project on conflict`() =
         testApplication {
             configureApp()
             dataSource.saveProject(
@@ -450,7 +450,7 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
             val client = jsonClient()
 
             val response =
-                client.delete("/projects/$TEST_ID_1") {
+                client.patch("/projects/$TEST_ID_1") {
                     contentType(ContentType.Application.Json)
                     setBody(DeleteProjectApiDto(deletedAt = Timestamp(200L)))
                 }
@@ -461,13 +461,13 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
         }
 
     @Test
-    fun `DELETE project with invalid id returns 400`() =
+    fun `PATCH soft-delete project with invalid id returns 400`() =
         testApplication {
             configureApp()
             val client = jsonClient()
 
             val response =
-                client.delete("/projects/not-a-uuid") {
+                client.patch("/projects/not-a-uuid") {
                     contentType(ContentType.Application.Json)
                     setBody(DeleteProjectApiDto(deletedAt = Timestamp(200L)))
                 }
@@ -476,13 +476,13 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
         }
 
     @Test
-    fun `DELETE project with invalid body returns 400`() =
+    fun `PATCH soft-delete project with invalid body returns 400`() =
         testApplication {
             configureApp()
             val client = jsonClient()
 
             val response =
-                client.delete("/projects/$TEST_ID_1") {
+                client.patch("/projects/$TEST_ID_1") {
                     contentType(ContentType.Application.Json)
                     setBody("{\"invalid\": true}")
                 }
