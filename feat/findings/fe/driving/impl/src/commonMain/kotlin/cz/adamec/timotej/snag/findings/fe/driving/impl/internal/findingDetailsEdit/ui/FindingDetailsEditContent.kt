@@ -22,7 +22,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonGroupDefaults
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -71,7 +70,6 @@ import snag.lib.design.fe.generated.resources.ic_close
 import snag.lib.design.fe.generated.resources.save
 import snag.lib.design.fe.generated.resources.Res as DesignRes
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Suppress("LongMethod", "CognitiveComplexMethod", "CyclomaticComplexMethod")
 @Composable
 internal fun FindingDetailsEditContent(

@@ -12,12 +12,21 @@
 
 package cz.adamec.timotej.snag.lib.design.fe.theme
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialExpressiveTheme
+import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.expressiveLightColorScheme
 import androidx.compose.runtime.Composable
 
 @Composable
 fun SnagTheme(content: @Composable () -> Unit) {
-    MaterialExpressiveTheme {
+    val colorScheme = if (isSystemInDarkTheme()) {
+        darkColorScheme()
+    } else {
+        expressiveLightColorScheme()
+    }
+
+    MaterialExpressiveTheme(colorScheme = colorScheme) {
         content()
     }
 }
