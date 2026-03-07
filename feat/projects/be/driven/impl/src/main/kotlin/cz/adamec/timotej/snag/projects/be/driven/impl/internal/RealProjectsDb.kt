@@ -24,7 +24,7 @@ import org.jetbrains.exposed.v1.jdbc.Database
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 import kotlin.uuid.Uuid
 
-internal class ExposedProjectsDb(
+internal class RealProjectsDb(
     private val database: Database,
 ) : ProjectsDb {
     override suspend fun getProjects(): List<BackendProject> =

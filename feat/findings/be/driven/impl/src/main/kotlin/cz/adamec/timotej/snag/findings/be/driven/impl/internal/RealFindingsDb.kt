@@ -30,7 +30,7 @@ import org.jetbrains.exposed.v1.jdbc.Database
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 import kotlin.uuid.Uuid
 
-internal class ExposedFindingsDb(
+internal class RealFindingsDb(
     private val database: Database,
 ) : FindingsDb {
     override suspend fun getFindings(structureId: Uuid): List<BackendFinding> =
