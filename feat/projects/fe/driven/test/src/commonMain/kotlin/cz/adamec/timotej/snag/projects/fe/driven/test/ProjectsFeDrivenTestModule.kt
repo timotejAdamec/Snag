@@ -10,16 +10,16 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.feat.inspections.fe.driven.test
+package cz.adamec.timotej.snag.projects.fe.driven.test
 
-import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionsApi
-import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionsDb
+import cz.adamec.timotej.snag.projects.fe.ports.ProjectsApi
+import cz.adamec.timotej.snag.projects.fe.ports.ProjectsDb
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
-val inspectionsFeDrivenTestModule =
+val projectsFeDrivenTestModule =
     module {
-        singleOf(::FakeInspectionsDb) bind InspectionsDb::class
-        singleOf(::FakeInspectionsApi) bind InspectionsApi::class
+        singleOf(::FakeProjectsDb) bind ProjectsDb::class
+        singleOf(::FakeProjectsApi) bind ProjectsApi::class
     }

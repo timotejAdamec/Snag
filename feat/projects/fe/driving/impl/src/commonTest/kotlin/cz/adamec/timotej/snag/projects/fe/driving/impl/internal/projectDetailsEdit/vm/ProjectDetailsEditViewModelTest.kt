@@ -14,35 +14,21 @@ package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetailsE
 
 import cz.adamec.timotej.snag.clients.business.Client
 import cz.adamec.timotej.snag.clients.fe.app.api.GetClientsUseCase
-import cz.adamec.timotej.snag.clients.fe.driven.test.FakeClientsApi
 import cz.adamec.timotej.snag.clients.fe.driven.test.FakeClientsDb
 import cz.adamec.timotej.snag.clients.fe.model.FrontendClient
-import cz.adamec.timotej.snag.clients.fe.ports.ClientsApi
-import cz.adamec.timotej.snag.clients.fe.ports.ClientsDb
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
-import cz.adamec.timotej.snag.lib.sync.fe.driven.test.FakePullSyncTimestampDb
-import cz.adamec.timotej.snag.lib.sync.fe.driven.test.FakeSyncQueue
-import cz.adamec.timotej.snag.lib.sync.fe.ports.PullSyncTimestampDb
-import cz.adamec.timotej.snag.lib.sync.fe.ports.SyncQueue
 import cz.adamec.timotej.snag.projects.business.Project
 import cz.adamec.timotej.snag.projects.fe.app.api.GetProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.SaveProjectUseCase
-import cz.adamec.timotej.snag.projects.fe.driven.test.FakeProjectsApi
 import cz.adamec.timotej.snag.projects.fe.driven.test.FakeProjectsDb
 import cz.adamec.timotej.snag.projects.fe.model.FrontendProject
-import cz.adamec.timotej.snag.projects.fe.ports.ProjectsApi
-import cz.adamec.timotej.snag.projects.fe.ports.ProjectsDb
 import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
-import org.koin.core.module.Module
-import org.koin.core.module.dsl.singleOf
-import org.koin.dsl.bind
-import org.koin.dsl.module
 import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -59,18 +45,6 @@ class ProjectDetailsEditViewModelTest : FrontendKoinInitializedTest() {
     private val getProjectUseCase: GetProjectUseCase by inject()
     private val saveProjectUseCase: SaveProjectUseCase by inject()
     private val getClientsUseCase: GetClientsUseCase by inject()
-
-    override fun additionalKoinModules(): List<Module> =
-        listOf(
-            module {
-                singleOf(::FakeProjectsApi) bind ProjectsApi::class
-                singleOf(::FakeProjectsDb) bind ProjectsDb::class
-                singleOf(::FakeClientsApi) bind ClientsApi::class
-                singleOf(::FakeClientsDb) bind ClientsDb::class
-                singleOf(::FakeSyncQueue) bind SyncQueue::class
-                singleOf(::FakePullSyncTimestampDb) bind PullSyncTimestampDb::class
-            },
-        )
 
     private fun createViewModel(projectId: Uuid? = null) =
         ProjectDetailsEditViewModel(

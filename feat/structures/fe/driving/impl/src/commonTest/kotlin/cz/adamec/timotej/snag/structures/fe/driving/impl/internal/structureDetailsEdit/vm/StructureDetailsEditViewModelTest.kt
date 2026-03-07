@@ -19,27 +19,18 @@ import cz.adamec.timotej.snag.lib.core.common.UuidProvider
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
-import cz.adamec.timotej.snag.lib.storage.fe.api.FileApi
 import cz.adamec.timotej.snag.lib.storage.fe.test.FakeFileApi
-import cz.adamec.timotej.snag.lib.sync.fe.driven.test.FakePullSyncTimestampDb
-import cz.adamec.timotej.snag.lib.sync.fe.driven.test.FakeSyncQueue
-import cz.adamec.timotej.snag.lib.sync.fe.ports.PullSyncTimestampDb
-import cz.adamec.timotej.snag.lib.sync.fe.ports.SyncQueue
+import cz.adamec.timotej.snag.structures.fe.app.api.CanModifyFloorPlanImageUseCase
 import cz.adamec.timotej.snag.structures.fe.app.api.DeleteFloorPlanImageUseCase
 import cz.adamec.timotej.snag.structures.fe.app.api.GetStructureUseCase
 import cz.adamec.timotej.snag.structures.fe.app.api.SaveStructureUseCase
 import cz.adamec.timotej.snag.structures.fe.app.api.UploadFloorPlanImageUseCase
 import cz.adamec.timotej.snag.structures.fe.driven.test.FakeStructuresDb
-import cz.adamec.timotej.snag.structures.fe.ports.StructuresDb
 import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
-import org.koin.core.module.Module
-import org.koin.core.module.dsl.singleOf
-import org.koin.dsl.bind
-import org.koin.dsl.module
 import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -60,16 +51,7 @@ class StructureDetailsEditViewModelTest : FrontendKoinInitializedTest() {
     private val saveStructureUseCase: SaveStructureUseCase by inject()
     private val uploadFloorPlanImageUseCase: UploadFloorPlanImageUseCase by inject()
     private val deleteFloorPlanImageUseCase: DeleteFloorPlanImageUseCase by inject()
-
-    override fun additionalKoinModules(): List<Module> =
-        listOf(
-            module {
-                singleOf(::FakeStructuresDb) bind StructuresDb::class
-                singleOf(::FakeSyncQueue) bind SyncQueue::class
-                singleOf(::FakePullSyncTimestampDb) bind PullSyncTimestampDb::class
-                singleOf(::FakeFileApi) bind FileApi::class
-            },
-        )
+    private val canModifyFloorPlanImageUseCase: CanModifyFloorPlanImageUseCase by inject()
 
     private fun createViewModel(
         structureId: Uuid? = null,
@@ -81,6 +63,7 @@ class StructureDetailsEditViewModelTest : FrontendKoinInitializedTest() {
         saveStructureUseCase = saveStructureUseCase,
         uploadFloorPlanImageUseCase = uploadFloorPlanImageUseCase,
         deleteFloorPlanImageUseCase = deleteFloorPlanImageUseCase,
+        canModifyFloorPlanImageUseCase = canModifyFloorPlanImageUseCase,
     )
 
     @Test
