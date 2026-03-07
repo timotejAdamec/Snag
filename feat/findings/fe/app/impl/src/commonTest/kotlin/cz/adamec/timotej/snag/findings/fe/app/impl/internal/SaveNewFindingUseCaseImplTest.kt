@@ -70,7 +70,7 @@ class SaveNewFindingUseCaseImplTest : FrontendKoinInitializedTest() {
             assertEquals(1, pending.size)
             assertEquals(FINDING_SYNC_ENTITY_TYPE, pending[0].entityTypeId)
             assertEquals(result.data, pending[0].entityId)
-            assertEquals(SyncOperationType.SAVE, pending[0].operationType)
+            assertEquals(SyncOperationType.UPSERT, pending[0].operationType)
         }
 
     @Test

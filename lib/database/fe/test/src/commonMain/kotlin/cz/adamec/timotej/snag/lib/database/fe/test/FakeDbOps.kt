@@ -25,9 +25,10 @@ class FakeDbOps<T>(
     val items = MutableStateFlow<Map<Uuid, T>>(emptyMap())
     var forcedFailure: OfflineFirstDataResult.ProgrammerError? = null
 
-    fun allItemsFlow(): Flow<OfflineFirstDataResult<List<T>>> = items.map {
-        OfflineFirstDataResult.Success(it.values.toList())
-    }
+    fun allItemsFlow(): Flow<OfflineFirstDataResult<List<T>>> =
+        items.map {
+            OfflineFirstDataResult.Success(it.values.toList())
+        }
 
     fun allItemsFlow(filter: (T) -> Boolean): Flow<OfflineFirstDataResult<List<T>>> =
         items.map { map ->

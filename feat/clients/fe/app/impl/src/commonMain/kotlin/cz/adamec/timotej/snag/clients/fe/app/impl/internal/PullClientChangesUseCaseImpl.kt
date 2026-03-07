@@ -32,6 +32,7 @@ internal class PullClientChangesUseCaseImpl(
     private val syncCoordinator: SyncCoordinator,
     private val timestampProvider: TimestampProvider,
 ) : PullClientChangesUseCase {
+    @Suppress("LabeledExpression")
     override suspend operator fun invoke() {
         LH.logger.d { "Starting pull sync for clients." }
         syncCoordinator.withFlushedQueue { wasFlushingSuccessful ->

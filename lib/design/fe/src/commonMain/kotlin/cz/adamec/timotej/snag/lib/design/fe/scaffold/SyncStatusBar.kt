@@ -33,6 +33,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -64,6 +65,7 @@ fun SyncStatusBar(
 ) {
     var hasShownNonSynced by remember { mutableStateOf(false) }
     var isVisible by remember { mutableStateOf(false) }
+    val currentOnVisibilityChange by rememberUpdatedState(onVisibilityChange)
 
     LaunchedEffect(state) {
         if (state == SyncStatusBarState.SYNCED) {
@@ -79,7 +81,7 @@ fun SyncStatusBar(
     }
 
     LaunchedEffect(isVisible) {
-        onVisibilityChange(isVisible)
+        currentOnVisibilityChange(isVisible)
     }
 
     AnimatedVisibility(

@@ -34,6 +34,5 @@ data class Report(
         return result
     }
 
-    override fun toString(): String =
-        "Report(projectId=$projectId, fileName=$fileName, bytes=${bytes.size} bytes)"
+    override fun toString(): String = "Report(projectId=$projectId, fileName=$fileName, bytes=${bytes.size} bytes)"
 }

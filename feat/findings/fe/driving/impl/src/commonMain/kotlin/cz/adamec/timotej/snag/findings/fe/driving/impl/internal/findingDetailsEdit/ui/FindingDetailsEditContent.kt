@@ -174,7 +174,7 @@ internal fun FindingDetailsEditContent(
                     Text(
                         text =
                             state.findingNameError?.let { stringResource(it) }
-                                ?: (stringResource(Res.string.required) + "*"),
+                                ?: stringResource(Res.string.required) + "*",
                     )
                 },
                 value = state.findingName,

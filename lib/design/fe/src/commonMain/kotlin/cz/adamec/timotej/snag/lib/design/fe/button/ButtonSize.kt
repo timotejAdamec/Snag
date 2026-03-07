@@ -13,5 +13,6 @@
 package cz.adamec.timotej.snag.lib.design.fe.button
 
 enum class ButtonSize {
-    S, M
+    S,
+    M,
 }

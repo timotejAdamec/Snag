@@ -83,9 +83,10 @@ internal fun ClientDetailsEditContent(
                             state.clientName
                         }
                     Text(
-                        modifier = Modifier.padding(
-                            end = 4.dp,
-                        ),
+                        modifier =
+                            Modifier.padding(
+                                end = 4.dp,
+                            ),
                         text = text,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
@@ -137,7 +138,7 @@ internal fun ClientDetailsEditContent(
                     Text(
                         text =
                             state.clientNameError?.let { stringResource(it) }
-                                ?: (stringResource(Res.string.required) + "*"),
+                                ?: stringResource(Res.string.required) + "*",
                     )
                 },
                 value = state.clientName,

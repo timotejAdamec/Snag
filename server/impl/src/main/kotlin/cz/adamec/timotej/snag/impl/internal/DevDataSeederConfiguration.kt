@@ -134,7 +134,7 @@ internal class DevDataSeederConfiguration(
                         id = Uuid.parse(STRUCTURE_1),
                         projectId = Uuid.parse(PROJECT_1),
                         name = "Block A - Ground Floor",
-                        floorPlanUrl = "https://wpmedia.roomsketcher.com/content/uploads/2022/01/06145940/What-is-a-floor-plan-with-dimensions.png",
+                        floorPlanUrl = FLOOR_PLAN_URL_1,
                         updatedAt = now,
                     ),
             ),
@@ -192,7 +192,7 @@ internal class DevDataSeederConfiguration(
                         id = Uuid.parse(STRUCTURE_6),
                         projectId = Uuid.parse(PROJECT_3),
                         name = "Reading Hall - Level 1",
-                        floorPlanUrl = "https://storage.googleapis.com/snag-bucket-dev/projects/00000000-0000-0000-0000-000000000001/structures/00000000-0000-0000-0001-000000000003/019c6e7c-1220-7019-90e0-7025e9acbde9.png",
+                        floorPlanUrl = FLOOR_PLAN_URL_6,
                         updatedAt = now,
                     ),
             ),
@@ -349,5 +349,12 @@ internal class DevDataSeederConfiguration(
         private const val INSPECTION_2 = "00000000-0000-0000-0004-000000000002"
         private const val INSPECTION_3 = "00000000-0000-0000-0004-000000000003"
         private const val INSPECTION_4 = "00000000-0000-0000-0004-000000000004"
+
+        private const val FLOOR_PLAN_URL_1 =
+            "https://wpmedia.roomsketcher.com/content/uploads/2022/01/06145940/What-is-a-floor-plan-with-dimensions.png"
+        private const val FLOOR_PLAN_URL_6 =
+            "https://storage.googleapis.com/snag-bucket-dev/projects/" +
+                "00000000-0000-0000-0000-000000000001/structures/" +
+                "00000000-0000-0000-0001-000000000003/019c6e7c-1220-7019-90e0-7025e9acbde9.png"
     }
 }

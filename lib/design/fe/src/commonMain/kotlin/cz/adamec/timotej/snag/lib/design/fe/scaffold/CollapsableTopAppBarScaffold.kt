@@ -50,9 +50,10 @@ fun CollapsableTopAppBarScaffold(
             MediumFlexibleTopAppBar(
                 title = {
                     Text(
-                        modifier = Modifier.padding(
-                            end = 4.dp,
-                        ),
+                        modifier =
+                            Modifier.padding(
+                                end = 4.dp,
+                            ),
                         text = title,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,

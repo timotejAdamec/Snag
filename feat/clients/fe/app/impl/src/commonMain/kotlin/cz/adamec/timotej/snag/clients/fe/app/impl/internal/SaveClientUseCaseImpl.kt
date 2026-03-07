@@ -16,8 +16,8 @@ import cz.adamec.timotej.snag.clients.business.Client
 import cz.adamec.timotej.snag.clients.fe.app.api.SaveClientUseCase
 import cz.adamec.timotej.snag.clients.fe.app.api.model.SaveClientRequest
 import cz.adamec.timotej.snag.clients.fe.app.impl.internal.LH.logger
-import cz.adamec.timotej.snag.clients.fe.model.FrontendClient
 import cz.adamec.timotej.snag.clients.fe.app.impl.internal.sync.CLIENT_SYNC_ENTITY_TYPE
+import cz.adamec.timotej.snag.clients.fe.model.FrontendClient
 import cz.adamec.timotej.snag.clients.fe.ports.ClientsDb
 import cz.adamec.timotej.snag.lib.core.common.TimestampProvider
 import cz.adamec.timotej.snag.lib.core.common.UuidProvider

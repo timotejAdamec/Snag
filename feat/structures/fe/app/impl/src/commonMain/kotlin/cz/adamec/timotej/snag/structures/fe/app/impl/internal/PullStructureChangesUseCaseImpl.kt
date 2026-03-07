@@ -35,6 +35,7 @@ internal class PullStructureChangesUseCaseImpl(
     private val syncCoordinator: SyncCoordinator,
     private val timestampProvider: TimestampProvider,
 ) : PullStructureChangesUseCase {
+    @Suppress("LabeledExpression")
     override suspend operator fun invoke(projectId: Uuid) {
         LH.logger.d { "Starting pull sync for structures in project $projectId." }
         syncCoordinator.withFlushedQueue { wasFlushingSuccessful ->

@@ -33,14 +33,16 @@ fun TonalIconTextButton(
     size: ButtonSize = ButtonSize.S,
     isEnabled: Boolean = true,
 ) {
-    val containerHeight = when (size) {
-        ButtonSize.S -> ButtonDefaults.ExtraSmallContainerHeight
-        ButtonSize.M -> ButtonDefaults.MediumContainerHeight
-    }
+    val containerHeight =
+        when (size) {
+            ButtonSize.S -> ButtonDefaults.ExtraSmallContainerHeight
+            ButtonSize.M -> ButtonDefaults.MediumContainerHeight
+        }
 
     FilledTonalButton(
-        modifier = modifier
-            .heightIn(containerHeight),
+        modifier =
+            modifier
+                .heightIn(containerHeight),
         onClick = onClick,
         contentPadding = ButtonDefaults.contentPaddingFor(containerHeight),
         enabled = isEnabled,
