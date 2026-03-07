@@ -55,7 +55,10 @@ internal class SaveClientUseCaseImpl(
                     additionalInfo = "SaveClientUseCase, clientsDb.saveClient($client)",
                 )
                 if (it is OfflineFirstDataResult.Success) {
-                    enqueueSyncSaveUseCase(CLIENT_SYNC_ENTITY_TYPE, client.client.id)
+                    enqueueSyncSaveUseCase(
+                        entityTypeId = CLIENT_SYNC_ENTITY_TYPE,
+                        entityId = client.client.id,
+                    )
                 }
             }.map {
                 client.client.id

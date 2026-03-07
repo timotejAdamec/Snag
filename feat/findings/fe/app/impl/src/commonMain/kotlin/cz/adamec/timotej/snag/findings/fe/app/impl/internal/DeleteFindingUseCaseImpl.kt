@@ -34,7 +34,10 @@ class DeleteFindingUseCaseImpl(
                     additionalInfo = "deleteFinding, findingsDb.deleteFinding($findingId)",
                 )
                 if (it is OfflineFirstDataResult.Success) {
-                    enqueueSyncDeleteUseCase(FINDING_SYNC_ENTITY_TYPE, findingId)
+                    enqueueSyncDeleteUseCase(
+                        entityTypeId = FINDING_SYNC_ENTITY_TYPE,
+                        entityId = findingId,
+                    )
                 }
             }
 }

@@ -34,7 +34,10 @@ class DeleteInspectionUseCaseImpl(
                     additionalInfo = "deleteInspection, inspectionsDb.deleteInspection($inspectionId)",
                 )
                 if (it is OfflineFirstDataResult.Success) {
-                    enqueueSyncDeleteUseCase(INSPECTION_SYNC_ENTITY_TYPE, inspectionId)
+                    enqueueSyncDeleteUseCase(
+                        entityTypeId = INSPECTION_SYNC_ENTITY_TYPE,
+                        entityId = inspectionId,
+                    )
                 }
             }
 }

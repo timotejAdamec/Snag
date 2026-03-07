@@ -40,7 +40,10 @@ class DeleteProjectUseCaseImpl(
                     additionalInfo = "deleteProject, projectsDb.deleteProject($projectId)",
                 )
                 if (it is OfflineFirstDataResult.Success) {
-                    enqueueSyncDeleteUseCase(PROJECT_SYNC_ENTITY_TYPE, projectId)
+                    enqueueSyncDeleteUseCase(
+                        entityTypeId = PROJECT_SYNC_ENTITY_TYPE,
+                        entityId = projectId,
+                    )
                 }
             }
     }

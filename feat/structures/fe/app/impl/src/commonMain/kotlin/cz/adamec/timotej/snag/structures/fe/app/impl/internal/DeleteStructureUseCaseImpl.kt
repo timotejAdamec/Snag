@@ -37,7 +37,10 @@ class DeleteStructureUseCaseImpl(
                     additionalInfo = "deleteStructure, structuresDb.deleteStructure($structureId)",
                 )
                 if (it is OfflineFirstDataResult.Success) {
-                    enqueueSyncDeleteUseCase(STRUCTURE_SYNC_ENTITY_TYPE, structureId)
+                    enqueueSyncDeleteUseCase(
+                        entityTypeId = STRUCTURE_SYNC_ENTITY_TYPE,
+                        entityId = structureId,
+                    )
                 }
             }
     }

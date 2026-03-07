@@ -54,7 +54,10 @@ class SaveStructureUseCaseImpl(
                     additionalInfo = "SaveStructureUseCase, structuresDb.saveStructure($feStructure)",
                 )
                 if (it is OfflineFirstDataResult.Success) {
-                    enqueueSyncSaveUseCase(STRUCTURE_SYNC_ENTITY_TYPE, feStructure.structure.id)
+                    enqueueSyncSaveUseCase(
+                        entityTypeId = STRUCTURE_SYNC_ENTITY_TYPE,
+                        entityId = feStructure.structure.id,
+                    )
                 }
             }.map {
                 feStructure.structure.id

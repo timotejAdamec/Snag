@@ -54,7 +54,10 @@ class SaveProjectUseCaseImpl(
                     additionalInfo = "SaveProjectUseCase, projectsDb.saveProject($project)",
                 )
                 if (it is OfflineFirstDataResult.Success) {
-                    enqueueSyncSaveUseCase(PROJECT_SYNC_ENTITY_TYPE, project.project.id)
+                    enqueueSyncSaveUseCase(
+                        entityTypeId = PROJECT_SYNC_ENTITY_TYPE,
+                        entityId = project.project.id,
+                    )
                 }
             }.map {
                 project.project.id

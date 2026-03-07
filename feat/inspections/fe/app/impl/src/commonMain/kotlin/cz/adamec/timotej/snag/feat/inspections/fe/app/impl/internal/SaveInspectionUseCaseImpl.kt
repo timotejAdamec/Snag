@@ -55,7 +55,10 @@ class SaveInspectionUseCaseImpl(
             additionalInfo = "SaveInspectionUseCase, inspectionsDb.saveInspection($feInspection)",
         )
         if (result is OfflineFirstDataResult.Success) {
-            enqueueSyncSaveUseCase(INSPECTION_SYNC_ENTITY_TYPE, feInspection.inspection.id)
+            enqueueSyncSaveUseCase(
+                entityTypeId = INSPECTION_SYNC_ENTITY_TYPE,
+                entityId = feInspection.inspection.id,
+            )
         }
         return result.map {
             feInspection.inspection.id

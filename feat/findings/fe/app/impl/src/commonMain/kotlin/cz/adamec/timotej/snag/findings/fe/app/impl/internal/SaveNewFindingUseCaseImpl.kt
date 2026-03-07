@@ -55,7 +55,10 @@ class SaveNewFindingUseCaseImpl(
                     additionalInfo = "SaveNewFindingUseCase, findingsDb.saveFinding($frontendFinding)",
                 )
                 if (it is OfflineFirstDataResult.Success) {
-                    enqueueSyncSaveUseCase(FINDING_SYNC_ENTITY_TYPE, finding.id)
+                    enqueueSyncSaveUseCase(
+                        entityTypeId = FINDING_SYNC_ENTITY_TYPE,
+                        entityId = finding.id,
+                    )
                 }
             }.map {
                 finding.id

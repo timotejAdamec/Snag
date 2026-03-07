@@ -34,7 +34,10 @@ internal class DeleteClientUseCaseImpl(
                     additionalInfo = "deleteClient, clientsDb.deleteClient($clientId)",
                 )
                 if (it is OfflineFirstDataResult.Success) {
-                    enqueueSyncDeleteUseCase(CLIENT_SYNC_ENTITY_TYPE, clientId)
+                    enqueueSyncDeleteUseCase(
+                        entityTypeId = CLIENT_SYNC_ENTITY_TYPE,
+                        entityId = clientId,
+                    )
                 }
             }
 }

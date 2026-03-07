@@ -39,7 +39,10 @@ class SaveFindingCoordinatesUseCaseImpl(
                     additionalInfo = "SaveFindingCoordinatesUseCase, findingsDb.updateFindingCoordinates(${request.findingId})",
                 )
                 if (it is OfflineFirstUpdateDataResult.Success) {
-                    enqueueSyncSaveUseCase(FINDING_SYNC_ENTITY_TYPE, request.findingId)
+                    enqueueSyncSaveUseCase(
+                        entityTypeId = FINDING_SYNC_ENTITY_TYPE,
+                        entityId = request.findingId,
+                    )
                 }
             }
 }
