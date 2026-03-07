@@ -39,6 +39,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import cz.adamec.timotej.snag.feat.findings.business.FindingTypeKey
 import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.BackNavigationIcon
 import cz.adamec.timotej.snag.lib.design.fe.scenes.LocalSheetPeekHeight
@@ -66,7 +67,7 @@ internal fun StructureFloorPlanContent(
     onEditClick: () -> Unit,
     onDelete: () -> Unit,
     onFindingClick: (Uuid) -> Unit,
-    onCreateFinding: (coordinate: RelativeCoordinate, findingTypeKey: String) -> Unit,
+    onCreateFinding: (coordinate: RelativeCoordinate, findingTypeKey: FindingTypeKey) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(
@@ -114,7 +115,7 @@ private fun LoadedStructureDetailsContent(
     onEditClick: () -> Unit,
     onDelete: () -> Unit,
     onFindingClick: (Uuid) -> Unit,
-    onCreateFinding: (coordinate: RelativeCoordinate, findingTypeKey: String) -> Unit,
+    onCreateFinding: (coordinate: RelativeCoordinate, findingTypeKey: FindingTypeKey) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Scaffold(

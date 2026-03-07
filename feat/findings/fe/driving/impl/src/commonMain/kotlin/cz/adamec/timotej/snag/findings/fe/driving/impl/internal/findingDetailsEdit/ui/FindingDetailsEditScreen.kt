@@ -34,6 +34,7 @@ import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetailsEd
 import cz.adamec.timotej.snag.lib.design.fe.adaptive.isScreenLarge
 import cz.adamec.timotej.snag.lib.design.fe.error.ShowSnackbarOnError
 import cz.adamec.timotej.snag.lib.design.fe.events.ObserveAsEvents
+import cz.adamec.timotej.snag.feat.findings.business.FindingTypeKey
 import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -45,7 +46,7 @@ internal fun FindingDetailsEditScreen(
     onCancelClick: () -> Unit,
     findingId: Uuid? = null,
     structureId: Uuid? = null,
-    findingTypeKey: String? = null,
+    findingTypeKey: FindingTypeKey? = null,
     coordinate: RelativeCoordinate? = null,
     viewModel: FindingDetailsEditViewModel =
         koinViewModel(

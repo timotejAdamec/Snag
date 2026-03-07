@@ -15,7 +15,9 @@ package cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetailsE
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cz.adamec.timotej.snag.feat.findings.business.FindingType
+import cz.adamec.timotej.snag.feat.findings.business.FindingTypeKey
 import cz.adamec.timotej.snag.feat.findings.business.Importance
+import cz.adamec.timotej.snag.feat.findings.business.toDefaultFindingType
 import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
 import cz.adamec.timotej.snag.feat.findings.business.Term
 import cz.adamec.timotej.snag.findings.fe.app.api.GetFindingUseCase
@@ -42,7 +44,7 @@ import kotlin.uuid.Uuid
 internal class FindingDetailsEditViewModel(
     @InjectedParam private val findingId: Uuid?,
     @InjectedParam private val structureId: Uuid?,
-    @InjectedParam private val findingTypeKey: String?,
+    @InjectedParam private val findingTypeKey: FindingTypeKey?,
     @InjectedParam private val coordinate: RelativeCoordinate?,
     private val getFindingUseCase: GetFindingUseCase,
     private val saveNewFindingUseCase: SaveNewFindingUseCase,
@@ -51,7 +53,7 @@ internal class FindingDetailsEditViewModel(
     private val _state: MutableStateFlow<FindingDetailsEditUiState> =
         MutableStateFlow(
             FindingDetailsEditUiState(
-                findingType = findingTypeKey.toFindingType(),
+                findingType = findingTypeKey?.toDefaultFindingType() ?: FindingType.Classic(),
             ),
         )
     val state: StateFlow<FindingDetailsEditUiState> = _state
@@ -181,10 +183,4 @@ internal class FindingDetailsEditViewModel(
         }
     }
 
-    private fun String?.toFindingType(): FindingType =
-        when (this) {
-            FindingType.KEY_UNVISITED -> FindingType.Unvisited
-            FindingType.KEY_NOTE -> FindingType.Note
-            else -> FindingType.Classic()
-        }
 }

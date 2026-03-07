@@ -15,25 +15,28 @@ package cz.adamec.timotej.snag.findings.be.driven.impl.internal
 import cz.adamec.timotej.snag.feat.findings.be.model.BackendFinding
 import cz.adamec.timotej.snag.feat.findings.business.Finding
 import cz.adamec.timotej.snag.feat.findings.business.FindingType
+import cz.adamec.timotej.snag.feat.findings.business.FindingTypeKey
 import cz.adamec.timotej.snag.feat.findings.business.Importance
+import cz.adamec.timotej.snag.feat.findings.business.key
 import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
 import cz.adamec.timotej.snag.feat.findings.business.Term
 import cz.adamec.timotej.snag.feat.shared.database.be.ClassicFindingEntity
 import cz.adamec.timotej.snag.feat.shared.database.be.FindingEntity
-import cz.adamec.timotej.snag.feat.shared.database.be.FindingsTable
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 
-internal fun FindingType.toDbString(): String =
-    when (this) {
-        is FindingType.Classic -> FindingsTable.TYPE_CLASSIC
-        is FindingType.Unvisited -> FindingsTable.TYPE_UNVISITED
-        is FindingType.Note -> FindingsTable.TYPE_NOTE
-    }
+internal fun FindingType.toDbString(): String = key.name
 
 internal fun FindingEntity.toModel(): BackendFinding {
+    val typeKey =
+        try {
+            FindingTypeKey.valueOf(type)
+        } catch (_: IllegalArgumentException) {
+            LH.logger.error("Unknown finding type in DB: '{}', defaulting to Classic", type)
+            null
+        }
     val findingType =
-        when (type) {
-            FindingsTable.TYPE_CLASSIC -> {
+        when (typeKey) {
+            FindingTypeKey.CLASSIC -> {
                 val classic = ClassicFindingEntity.findById(id)
                 if (classic != null) {
                     FindingType.Classic(
@@ -44,14 +47,13 @@ internal fun FindingEntity.toModel(): BackendFinding {
                     FindingType.Classic()
                 }
             }
-            FindingsTable.TYPE_UNVISITED -> {
+            FindingTypeKey.UNVISITED -> {
                 FindingType.Unvisited
             }
-            FindingsTable.TYPE_NOTE -> {
+            FindingTypeKey.NOTE -> {
                 FindingType.Note
             }
-            else -> {
-                LH.logger.error("Unknown finding type in DB: '{}', defaulting to Classic", type)
+            null -> {
                 FindingType.Classic()
             }
         }

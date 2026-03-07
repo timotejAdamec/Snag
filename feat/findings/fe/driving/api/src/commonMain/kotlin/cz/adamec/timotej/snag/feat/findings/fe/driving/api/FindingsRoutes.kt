@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.feat.findings.fe.driving.api
 
+import cz.adamec.timotej.snag.feat.findings.business.FindingTypeKey
 import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
 import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureDetailNavRoute
 import cz.adamec.timotej.snag.lib.navigation.fe.SnagNavRoute
@@ -50,13 +51,13 @@ interface FindingEditRouteFactory {
 interface FindingCreationRoute : SnagNavRoute {
     val structureId: Uuid
     val coordinate: RelativeCoordinate
-    val findingTypeKey: String
+    val findingTypeKey: FindingTypeKey
 }
 
 interface FindingCreationRouteFactory {
     fun create(
         structureId: Uuid,
         coordinate: RelativeCoordinate,
-        findingTypeKey: String,
+        findingTypeKey: FindingTypeKey,
     ): FindingCreationRoute
 }

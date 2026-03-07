@@ -32,6 +32,9 @@ import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import cz.adamec.timotej.snag.feat.findings.business.FindingType
+import cz.adamec.timotej.snag.feat.findings.business.FindingTypeKey
+import cz.adamec.timotej.snag.feat.findings.business.key
+import cz.adamec.timotej.snag.feat.findings.business.toDefaultFindingType
 import cz.adamec.timotej.snag.lib.design.fe.dialog.DividedContentDialog
 import cz.adamec.timotej.snag.lib.design.fe.theme.SnagPreview
 import org.jetbrains.compose.resources.painterResource
@@ -41,14 +44,10 @@ import snag.feat.findings.fe.driving.api.generated.resources.select_finding_type
 
 @Composable
 fun FindingTypePickerDialog(
-    onTypeSelected: (findingTypeKey: String) -> Unit,
+    onTypeSelected: (findingTypeKey: FindingTypeKey) -> Unit,
     onDismiss: () -> Unit,
 ) {
-    val types = listOf(
-        FindingType.Classic() to FindingType.KEY_CLASSIC,
-        FindingType.Unvisited to FindingType.KEY_UNVISITED,
-        FindingType.Note to FindingType.KEY_NOTE,
-    )
+    val types = FindingTypeKey.entries
 
     DividedContentDialog(
         onDismissRequest = onDismiss,
@@ -63,13 +62,13 @@ fun FindingTypePickerDialog(
                 modifier = Modifier.padding(vertical = 16.dp, horizontal = 24.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
-                types.forEach { (type, key) ->
-                    val visuals = type.visuals()
+                types.forEach { typeKey ->
+                    val visuals = typeKey.toDefaultFindingType().visuals()
                     Row(
                         modifier =
                             Modifier
                                 .fillMaxWidth()
-                                .clickable { onTypeSelected(key) },
+                                .clickable { onTypeSelected(typeKey) },
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Icon(

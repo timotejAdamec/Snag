@@ -35,7 +35,7 @@ internal class FindingsBrowserHistoryFragmentBuilder : BrowserHistoryFragmentBui
                         "structureId" to route.structureId.toString(),
                         "x" to route.coordinateX.toString(),
                         "y" to route.coordinateY.toString(),
-                        "type" to route.findingTypeKey,
+                        "type" to route.findingTypeKey.name,
                     ),
                 )
 
