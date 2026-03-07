@@ -14,24 +14,13 @@ package cz.adamec.timotej.snag.clients.fe.driving.impl.internal.clients.vm
 
 import cz.adamec.timotej.snag.clients.business.Client
 import cz.adamec.timotej.snag.clients.fe.app.api.GetClientsUseCase
-import cz.adamec.timotej.snag.clients.fe.driven.test.FakeClientsApi
 import cz.adamec.timotej.snag.clients.fe.driven.test.FakeClientsDb
 import cz.adamec.timotej.snag.clients.fe.model.FrontendClient
-import cz.adamec.timotej.snag.clients.fe.ports.ClientsApi
-import cz.adamec.timotej.snag.clients.fe.ports.ClientsDb
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
-import cz.adamec.timotej.snag.lib.sync.fe.driven.test.FakePullSyncTimestampDb
-import cz.adamec.timotej.snag.lib.sync.fe.driven.test.FakeSyncQueue
-import cz.adamec.timotej.snag.lib.sync.fe.ports.PullSyncTimestampDb
-import cz.adamec.timotej.snag.lib.sync.fe.ports.SyncQueue
 import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
-import org.koin.core.module.Module
-import org.koin.core.module.dsl.singleOf
-import org.koin.dsl.bind
-import org.koin.dsl.module
 import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -43,16 +32,6 @@ class ClientsViewModelTest : FrontendKoinInitializedTest() {
     private val fakeClientsDb: FakeClientsDb by inject()
 
     private val getClientsUseCase: GetClientsUseCase by inject()
-
-    override fun additionalKoinModules(): List<Module> =
-        listOf(
-            module {
-                singleOf(::FakeClientsDb) bind ClientsDb::class
-                singleOf(::FakeSyncQueue) bind SyncQueue::class
-                singleOf(::FakeClientsApi) bind ClientsApi::class
-                singleOf(::FakePullSyncTimestampDb) bind PullSyncTimestampDb::class
-            },
-        )
 
     private fun createViewModel() =
         ClientsViewModel(

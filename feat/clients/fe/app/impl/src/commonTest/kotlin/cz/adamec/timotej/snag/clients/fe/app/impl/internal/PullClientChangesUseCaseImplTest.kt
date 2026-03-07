@@ -19,22 +19,13 @@ import cz.adamec.timotej.snag.clients.fe.driven.test.FakeClientsApi
 import cz.adamec.timotej.snag.clients.fe.driven.test.FakeClientsDb
 import cz.adamec.timotej.snag.clients.fe.model.FrontendClient
 import cz.adamec.timotej.snag.clients.fe.ports.ClientSyncResult
-import cz.adamec.timotej.snag.clients.fe.ports.ClientsApi
-import cz.adamec.timotej.snag.clients.fe.ports.ClientsDb
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
 import cz.adamec.timotej.snag.lib.sync.fe.driven.test.FakePullSyncTimestampDb
-import cz.adamec.timotej.snag.lib.sync.fe.driven.test.FakeSyncQueue
-import cz.adamec.timotej.snag.lib.sync.fe.ports.PullSyncTimestampDb
-import cz.adamec.timotej.snag.lib.sync.fe.ports.SyncQueue
 import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
-import org.koin.core.module.Module
-import org.koin.core.module.dsl.singleOf
-import org.koin.dsl.bind
-import org.koin.dsl.module
 import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -51,16 +42,6 @@ class PullClientChangesUseCaseImplTest : FrontendKoinInitializedTest() {
     private val useCase: PullClientChangesUseCase by inject()
 
     private val clientId = Uuid.parse("00000000-0000-0000-0000-000000000001")
-
-    override fun additionalKoinModules(): List<Module> =
-        listOf(
-            module {
-                singleOf(::FakeClientsApi) bind ClientsApi::class
-                singleOf(::FakeClientsDb) bind ClientsDb::class
-                singleOf(::FakeSyncQueue) bind SyncQueue::class
-                singleOf(::FakePullSyncTimestampDb) bind PullSyncTimestampDb::class
-            },
-        )
 
     private fun createClient(id: Uuid) =
         FrontendClient(

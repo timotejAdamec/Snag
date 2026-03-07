@@ -17,22 +17,15 @@ import cz.adamec.timotej.snag.feat.inspections.fe.app.api.GetInspectionUseCase
 import cz.adamec.timotej.snag.feat.inspections.fe.app.api.SaveInspectionUseCase
 import cz.adamec.timotej.snag.feat.inspections.fe.driven.test.FakeInspectionsDb
 import cz.adamec.timotej.snag.feat.inspections.fe.model.FrontendInspection
-import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionsDb
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.common.UuidProvider
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
-import cz.adamec.timotej.snag.lib.sync.fe.driven.test.FakeSyncQueue
-import cz.adamec.timotej.snag.lib.sync.fe.ports.SyncQueue
 import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
-import org.koin.core.module.Module
-import org.koin.core.module.dsl.singleOf
-import org.koin.dsl.bind
-import org.koin.dsl.module
 import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -47,14 +40,6 @@ class InspectionEditViewModelTest : FrontendKoinInitializedTest() {
 
     private val getInspectionUseCase: GetInspectionUseCase by inject()
     private val saveInspectionUseCase: SaveInspectionUseCase by inject()
-
-    override fun additionalKoinModules(): List<Module> =
-        listOf(
-            module {
-                singleOf(::FakeInspectionsDb) bind InspectionsDb::class
-                singleOf(::FakeSyncQueue) bind SyncQueue::class
-            },
-        )
 
     private fun createViewModel(
         inspectionId: Uuid? = null,

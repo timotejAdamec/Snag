@@ -15,25 +15,16 @@ package cz.adamec.timotej.snag.clients.fe.driving.impl.internal.clientDetailsEdi
 import cz.adamec.timotej.snag.clients.business.Client
 import cz.adamec.timotej.snag.clients.fe.app.api.GetClientUseCase
 import cz.adamec.timotej.snag.clients.fe.app.api.SaveClientUseCase
-import cz.adamec.timotej.snag.clients.fe.driven.test.FakeClientsApi
 import cz.adamec.timotej.snag.clients.fe.driven.test.FakeClientsDb
 import cz.adamec.timotej.snag.clients.fe.model.FrontendClient
-import cz.adamec.timotej.snag.clients.fe.ports.ClientsApi
-import cz.adamec.timotej.snag.clients.fe.ports.ClientsDb
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
-import cz.adamec.timotej.snag.lib.sync.fe.driven.test.FakeSyncQueue
-import cz.adamec.timotej.snag.lib.sync.fe.ports.SyncQueue
 import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
-import org.koin.core.module.Module
-import org.koin.core.module.dsl.singleOf
-import org.koin.dsl.bind
-import org.koin.dsl.module
 import org.koin.test.get
 import org.koin.test.inject
 import kotlin.test.Test
@@ -49,15 +40,6 @@ class ClientDetailsEditViewModelTest : FrontendKoinInitializedTest() {
 
     private val getClientUseCase: GetClientUseCase by inject()
     private val saveClientUseCase: SaveClientUseCase by inject()
-
-    override fun additionalKoinModules(): List<Module> =
-        listOf(
-            module {
-                singleOf(::FakeClientsApi) bind ClientsApi::class
-                singleOf(::FakeClientsDb) bind ClientsDb::class
-                singleOf(::FakeSyncQueue) bind SyncQueue::class
-            },
-        )
 
     private fun createViewModel(clientId: Uuid? = null) =
         ClientDetailsEditViewModel(

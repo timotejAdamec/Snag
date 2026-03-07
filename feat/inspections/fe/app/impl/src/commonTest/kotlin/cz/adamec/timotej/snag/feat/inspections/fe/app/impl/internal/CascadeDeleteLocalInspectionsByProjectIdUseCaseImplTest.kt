@@ -16,16 +16,11 @@ import cz.adamec.timotej.snag.feat.inspections.business.Inspection
 import cz.adamec.timotej.snag.feat.inspections.fe.app.api.CascadeDeleteLocalInspectionsByProjectIdUseCase
 import cz.adamec.timotej.snag.feat.inspections.fe.driven.test.FakeInspectionsDb
 import cz.adamec.timotej.snag.feat.inspections.fe.model.FrontendInspection
-import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionsDb
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
-import org.koin.core.module.Module
-import org.koin.core.module.dsl.singleOf
-import org.koin.dsl.bind
-import org.koin.dsl.module
 import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertIs
@@ -43,13 +38,6 @@ class CascadeDeleteLocalInspectionsByProjectIdUseCaseImplTest : FrontendKoinInit
     private val inspectionId1 = Uuid.parse("00000000-0000-0000-0001-000000000001")
     private val inspectionId2 = Uuid.parse("00000000-0000-0000-0001-000000000002")
     private val inspectionId3 = Uuid.parse("00000000-0000-0000-0001-000000000003")
-
-    override fun additionalKoinModules(): List<Module> =
-        listOf(
-            module {
-                singleOf(::FakeInspectionsDb) bind InspectionsDb::class
-            },
-        )
 
     private fun createInspection(
         id: Uuid,
