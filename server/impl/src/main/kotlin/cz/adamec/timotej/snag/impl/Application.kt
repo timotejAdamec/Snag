@@ -24,9 +24,10 @@ import org.koin.ktor.plugin.Koin
 import org.koin.logger.slf4jLogger
 
 fun main() {
+    val port = System.getenv("PORT")?.toIntOrNull() ?: Host.Localhost.PORT
     embeddedServer(
         factory = Netty,
-        port = Host.Localhost.PORT,
+        port = port,
         host = "0.0.0.0",
         module = Application::main,
     ).start(wait = true)
