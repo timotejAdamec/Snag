@@ -17,13 +17,14 @@ import cz.adamec.timotej.snag.buildsrc.extensions.library
 import cz.adamec.timotej.snag.buildsrc.extensions.version
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
+import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.invoke
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
 internal fun Project.configureComposeMultiplatformModule() {
 
     // Fixes a problem where skiko runtime has a different version than skiko-awt
-    configurations.all {
+    configurations.configureEach {
         resolutionStrategy.eachDependency {
             if (requested.group == "org.jetbrains.skiko") {
                 useVersion(version("skiko"))
@@ -87,6 +88,13 @@ internal fun Project.configureComposeMultiplatformModule() {
                 languageSettings.optIn("androidx.compose.material3.ExperimentalMaterial3Api")
                 languageSettings.optIn("androidx.compose.material3.ExperimentalMaterial3ExpressiveApi")
             }
+        }
+    }
+
+    dependencies {
+        val koinKspCompilerLib = library("koin-ksp-compiler")
+        configurations.matching { it.name.startsWith("ksp") && it.name != "ksp" }.configureEach {
+            add(this.name, koinKspCompilerLib)
         }
     }
 }
