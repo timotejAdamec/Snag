@@ -22,5 +22,8 @@ import org.koin.dsl.module
 internal val appModule =
     module {
         includes(backendModulesAggregate)
-        singleOf(::DevDataSeederConfiguration) bind AppConfiguration::class
+        val seedData = System.getenv("SEED_DATA")?.toBooleanStrictOrNull() ?: true
+        if (seedData) {
+            singleOf(::DevDataSeederConfiguration) bind AppConfiguration::class
+        }
     }

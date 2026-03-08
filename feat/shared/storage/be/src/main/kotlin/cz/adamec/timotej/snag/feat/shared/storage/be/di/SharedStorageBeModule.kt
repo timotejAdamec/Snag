@@ -18,6 +18,7 @@ import org.koin.dsl.module
 
 val sharedStorageBeModule =
     module {
-        includes(gcsStorageModule(bucketName = "snag-bucket-dev"))
+        val bucketName = System.getenv("GCS_BUCKET_NAME") ?: "snag-bucket-dev"
+        includes(gcsStorageModule(bucketName = bucketName))
         single { FileRouteConfig(routePath = "/files") }
     }

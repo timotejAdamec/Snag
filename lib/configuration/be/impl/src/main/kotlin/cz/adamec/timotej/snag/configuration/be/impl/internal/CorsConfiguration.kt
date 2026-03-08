@@ -21,9 +21,21 @@ import io.ktor.server.plugins.cors.routing.CORS
 
 internal class CorsConfiguration : AppConfiguration {
     override fun Application.setup() {
+        val allowedHosts = System.getenv("CORS_ALLOWED_HOSTS")
+            ?.split(",")
+            ?.map { it.trim() }
+            ?.filter { it.isNotEmpty() }
+            ?: listOf("localhost:8080")
+
         install(CORS) {
-            // allowHost("web frontend address") TODO once web FE deployed
-            allowHost("localhost:8080")
+            for (host in allowedHosts) {
+                if ("://" in host) {
+                    val (scheme, rest) = host.split("://", limit = 2)
+                    allowHost(rest, schemes = listOf(scheme))
+                } else {
+                    allowHost(host)
+                }
+            }
             allowMethod(HttpMethod.Post)
             allowMethod(HttpMethod.Put)
             allowMethod(HttpMethod.Delete)
