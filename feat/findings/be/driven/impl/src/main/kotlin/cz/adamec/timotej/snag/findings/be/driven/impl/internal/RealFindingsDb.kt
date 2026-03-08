@@ -57,7 +57,7 @@ internal class RealFindingsDb(
                     return@transaction existing.toModel()
                 }
                 existing.structure = StructureEntity[finding.finding.structureId]
-                existing.type = finding.finding.type.toDbKey().name
+                existing.type = finding.finding.type.toEntityKey().name
                 existing.name = finding.finding.name
                 existing.description = finding.finding.description
                 existing.updatedAt = finding.finding.updatedAt.value
@@ -66,7 +66,7 @@ internal class RealFindingsDb(
             } else {
                 FindingEntity.new(finding.finding.id) {
                     structure = StructureEntity[finding.finding.structureId]
-                    type = finding.finding.type.toDbKey().name
+                    type = finding.finding.type.toEntityKey().name
                     name = finding.finding.name
                     description = finding.finding.description
                     updatedAt = finding.finding.updatedAt.value

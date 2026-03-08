@@ -70,20 +70,20 @@ private fun toFindingType(
 ): FindingType {
     val dbValue =
         try {
-            DbFindingTypeKey.valueOf(type)
+            FindingTypeEntityKey.valueOf(type)
         } catch (_: IllegalArgumentException) {
             LH.logger.e { "Unknown finding type in DB: '$type', defaulting to Classic" }
             return FindingType.Classic()
         }
     return when (dbValue) {
-        DbFindingTypeKey.CLASSIC ->
+        FindingTypeEntityKey.CLASSIC ->
             FindingType.Classic(
                 importance = importance?.let { Importance.valueOf(it) } ?: Importance.MEDIUM,
                 term = term?.let { Term.valueOf(it) } ?: Term.T1,
             )
 
-        DbFindingTypeKey.UNVISITED -> FindingType.Unvisited
-        DbFindingTypeKey.NOTE -> FindingType.Note
+        FindingTypeEntityKey.UNVISITED -> FindingType.Unvisited
+        FindingTypeEntityKey.NOTE -> FindingType.Note
     }
 }
 
@@ -91,7 +91,7 @@ internal fun FrontendFinding.toEntity() =
     FindingEntity(
         id = finding.id.toString(),
         structureId = finding.structureId.toString(),
-        type = finding.type.toDbKey().name,
+        type = finding.type.toEntityKey().name,
         name = finding.name,
         description = finding.description,
         coordinates = serializeCoordinates(finding.coordinates),
@@ -107,3 +107,10 @@ internal fun serializeCoordinates(coordinates: List<RelativeCoordinate>): String
     Json.encodeToString(
         coordinates.map { RelativeCoordinateJson(x = it.x, y = it.y) },
     )
+
+internal fun FindingType.toEntityKey(): FindingTypeEntityKey =
+    when (this) {
+        is FindingType.Classic -> FindingTypeEntityKey.CLASSIC
+        is FindingType.Unvisited -> FindingTypeEntityKey.UNVISITED
+        is FindingType.Note -> FindingTypeEntityKey.NOTE
+    }
