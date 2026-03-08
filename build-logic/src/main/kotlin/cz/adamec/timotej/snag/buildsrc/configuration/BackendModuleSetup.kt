@@ -27,7 +27,7 @@ internal fun Project.configureBackendModule() {
         if (!path.contains("core")) {
             implementation(project(":lib:core:be"))
         }
-        if (!path.contains("core") && !path.contains("sync")) {
+        if (!path.contains("core") && !path.startsWith(":lib:sync")) {
             implementation(project(":lib:sync:be"))
         }
         if (!path.contains("configuration") && !path.contains("core")) {
