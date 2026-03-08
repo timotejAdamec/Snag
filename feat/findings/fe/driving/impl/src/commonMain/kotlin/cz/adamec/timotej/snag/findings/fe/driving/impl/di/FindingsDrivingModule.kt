@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.navigation3.scene.DialogSceneStrategy
+import cz.adamec.timotej.snag.feat.findings.business.FindingTypeKey
 import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
 import cz.adamec.timotej.snag.feat.findings.fe.driving.api.FindingCreationRoute
 import cz.adamec.timotej.snag.feat.findings.fe.driving.api.FindingDetailRoute
@@ -126,7 +127,7 @@ private fun Scope.FindingEditScreenSetup(
     onSaveFinding: (savedFindingId: Uuid) -> Unit,
     findingId: Uuid? = null,
     structureId: Uuid? = null,
-    findingTypeKey: String? = null,
+    findingTypeKey: FindingTypeKey? = null,
     coordinate: RelativeCoordinate? = null,
 ) {
     FindingDetailsEditScreen(
@@ -164,7 +165,7 @@ val findingsDrivingImplModule =
                 (
                     findingId: Uuid?,
                     structureId: Uuid?,
-                    findingTypeKey: String?,
+                    findingTypeKey: FindingTypeKey?,
                     coordinate: RelativeCoordinate?,
                 ),
             ->

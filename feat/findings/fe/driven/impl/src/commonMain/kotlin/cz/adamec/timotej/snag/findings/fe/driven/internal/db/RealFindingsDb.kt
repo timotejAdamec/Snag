@@ -103,7 +103,7 @@ internal class RealFindingsDb(
                     findingEntityQueries.updateDetails(
                         name = name,
                         description = description,
-                        type = findingType.toDbString(),
+                        type = findingType.toDbKey().name,
                         updatedAt = updatedAt.value,
                         id = id.toString(),
                     )

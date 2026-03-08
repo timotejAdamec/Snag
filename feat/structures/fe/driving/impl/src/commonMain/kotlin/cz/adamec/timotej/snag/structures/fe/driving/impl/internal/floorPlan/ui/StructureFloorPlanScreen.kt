@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import cz.adamec.timotej.snag.feat.findings.business.FindingTypeKey
 import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
 import cz.adamec.timotej.snag.lib.design.fe.error.ShowSnackbarOnError
 import cz.adamec.timotej.snag.lib.design.fe.events.ObserveAsEvents
@@ -31,7 +32,7 @@ internal fun StructureFloorPlanScreen(
     onBack: () -> Unit,
     onEditClick: () -> Unit,
     onFindingClick: (Uuid) -> Unit,
-    onCreateFinding: (coordinate: RelativeCoordinate, findingTypeKey: String) -> Unit,
+    onCreateFinding: (coordinate: RelativeCoordinate, findingTypeKey: FindingTypeKey) -> Unit,
     viewModel: StructureFloorPlanViewModel =
         koinViewModel {
             parametersOf(structureId)

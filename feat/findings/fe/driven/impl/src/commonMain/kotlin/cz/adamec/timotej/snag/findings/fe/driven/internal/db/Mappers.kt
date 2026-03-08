@@ -29,10 +29,6 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlin.uuid.Uuid
 
-internal const val DB_TYPE_CLASSIC = "CLASSIC"
-internal const val DB_TYPE_UNVISITED = "UNVISITED"
-internal const val DB_TYPE_NOTE = "NOTE"
-
 @Serializable
 internal data class RelativeCoordinateJson(
     val x: Float,
@@ -71,39 +67,36 @@ private fun toFindingType(
     type: String,
     importance: String?,
     term: String?,
-): FindingType =
-    when (type) {
-        DB_TYPE_CLASSIC ->
+): FindingType {
+    val dbValue =
+        try {
+            DbFindingTypeKey.valueOf(type)
+        } catch (_: IllegalArgumentException) {
+            LH.logger.e { "Unknown finding type in DB: '$type', defaulting to Classic" }
+            return FindingType.Classic()
+        }
+    return when (dbValue) {
+        DbFindingTypeKey.CLASSIC ->
             FindingType.Classic(
                 importance = importance?.let { Importance.valueOf(it) } ?: Importance.MEDIUM,
                 term = term?.let { Term.valueOf(it) } ?: Term.T1,
             )
 
-        DB_TYPE_UNVISITED -> FindingType.Unvisited
-        DB_TYPE_NOTE -> FindingType.Note
-        else ->
-            FindingType.Classic().also {
-                LH.logger.e { "Unknown finding type in DB: '$type', defaulting to Classic" }
-            }
+        DbFindingTypeKey.UNVISITED -> FindingType.Unvisited
+        DbFindingTypeKey.NOTE -> FindingType.Note
     }
+}
 
 internal fun FrontendFinding.toEntity() =
     FindingEntity(
         id = finding.id.toString(),
         structureId = finding.structureId.toString(),
-        type = finding.type.toDbString(),
+        type = finding.type.toDbKey().name,
         name = finding.name,
         description = finding.description,
         coordinates = serializeCoordinates(finding.coordinates),
         updatedAt = finding.updatedAt.value,
     )
-
-internal fun FindingType.toDbString(): String =
-    when (this) {
-        is FindingType.Classic -> DB_TYPE_CLASSIC
-        is FindingType.Unvisited -> DB_TYPE_UNVISITED
-        is FindingType.Note -> DB_TYPE_NOTE
-    }
 
 private fun parseCoordinates(json: String): List<RelativeCoordinate> =
     Json.decodeFromString<List<RelativeCoordinateJson>>(json).map {

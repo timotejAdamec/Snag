@@ -13,6 +13,7 @@
 package cz.adamec.timotej.snag.feat.findings.fe.driving.api
 
 import androidx.compose.runtime.Immutable
+import cz.adamec.timotej.snag.feat.findings.business.FindingTypeKey
 import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
 import kotlinx.serialization.Serializable
 import kotlin.uuid.Uuid
@@ -76,7 +77,7 @@ data class WebFindingCreationRoute(
     override val structureId: Uuid,
     val coordinateX: Float,
     val coordinateY: Float,
-    override val findingTypeKey: String,
+    override val findingTypeKey: FindingTypeKey,
 ) : FindingCreationRoute {
     override val coordinate: RelativeCoordinate
         get() = RelativeCoordinate(coordinateX, coordinateY)
@@ -90,7 +91,7 @@ class WebFindingCreationRouteFactory : FindingCreationRouteFactory {
     override fun create(
         structureId: Uuid,
         coordinate: RelativeCoordinate,
-        findingTypeKey: String,
+        findingTypeKey: FindingTypeKey,
     ): FindingCreationRoute =
         WebFindingCreationRoute(
             structureId = structureId,

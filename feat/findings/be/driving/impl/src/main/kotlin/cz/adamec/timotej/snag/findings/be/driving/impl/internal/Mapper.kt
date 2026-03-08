@@ -15,11 +15,12 @@ package cz.adamec.timotej.snag.findings.be.driving.impl.internal
 import cz.adamec.timotej.snag.feat.findings.be.model.BackendFinding
 import cz.adamec.timotej.snag.feat.findings.business.Finding
 import cz.adamec.timotej.snag.feat.findings.business.FindingType
+import cz.adamec.timotej.snag.feat.findings.business.FindingTypeKey
 import cz.adamec.timotej.snag.feat.findings.business.Importance
+import cz.adamec.timotej.snag.feat.findings.business.key
 import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
 import cz.adamec.timotej.snag.feat.findings.business.Term
 import cz.adamec.timotej.snag.findings.be.driving.contract.FindingApiDto
-import cz.adamec.timotej.snag.findings.be.driving.contract.FindingTypeStringApiDto
 import cz.adamec.timotej.snag.findings.be.driving.contract.PutFindingApiDto
 import cz.adamec.timotej.snag.findings.be.driving.contract.RelativeCoordinateApiDto
 import kotlin.uuid.Uuid
@@ -28,9 +29,9 @@ internal fun BackendFinding.toDto(): FindingApiDto {
     val (typeStr, importanceStr, termStr) =
         when (val type = finding.type) {
             is FindingType.Classic ->
-                Triple(FindingTypeStringApiDto.CLASSIC, type.importance.name, type.term.name)
-            is FindingType.Unvisited -> Triple(FindingTypeStringApiDto.UNVISITED, null, null)
-            is FindingType.Note -> Triple(FindingTypeStringApiDto.NOTE, null, null)
+                Triple(type.key.name, type.importance.name, type.term.name)
+            is FindingType.Unvisited -> Triple(type.key.name, null, null)
+            is FindingType.Note -> Triple(type.key.name, null, null)
         }
     return FindingApiDto(
         id = finding.id,
@@ -53,22 +54,28 @@ internal fun RelativeCoordinate.toDto() =
     )
 
 internal fun PutFindingApiDto.toModel(id: Uuid): BackendFinding {
+    val typeKey =
+        try {
+            FindingTypeKey.valueOf(type)
+        } catch (_: IllegalArgumentException) {
+            LH.logger.error("Unknown finding type from API: '{}', defaulting to Classic", type)
+            null
+        }
     val findingType =
-        when (type) {
-            FindingTypeStringApiDto.CLASSIC -> {
+        when (typeKey) {
+            FindingTypeKey.CLASSIC -> {
                 FindingType.Classic(
                     importance = importance?.let { Importance.valueOf(it) } ?: Importance.MEDIUM,
                     term = term?.let { Term.valueOf(it) } ?: Term.T1,
                 )
             }
-            FindingTypeStringApiDto.UNVISITED -> {
+            FindingTypeKey.UNVISITED -> {
                 FindingType.Unvisited
             }
-            FindingTypeStringApiDto.NOTE -> {
+            FindingTypeKey.NOTE -> {
                 FindingType.Note
             }
-            else -> {
-                LH.logger.error("Unknown finding type from API: '{}', defaulting to Classic", type)
+            null -> {
                 FindingType.Classic()
             }
         }

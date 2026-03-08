@@ -12,6 +12,12 @@
 
 package cz.adamec.timotej.snag.feat.findings.business
 
+enum class FindingTypeKey {
+    CLASSIC,
+    UNVISITED,
+    NOTE,
+}
+
 sealed interface FindingType {
     data class Classic(
         val importance: Importance = Importance.MEDIUM,
@@ -21,10 +27,19 @@ sealed interface FindingType {
     data object Unvisited : FindingType
 
     data object Note : FindingType
-
-    companion object {
-        const val KEY_CLASSIC = "CLASSIC"
-        const val KEY_UNVISITED = "UNVISITED"
-        const val KEY_NOTE = "NOTE"
-    }
 }
+
+val FindingType.key: FindingTypeKey
+    get() =
+        when (this) {
+            is FindingType.Classic -> FindingTypeKey.CLASSIC
+            is FindingType.Note -> FindingTypeKey.NOTE
+            is FindingType.Unvisited -> FindingTypeKey.UNVISITED
+        }
+
+fun FindingTypeKey.toDefaultFindingType(): FindingType =
+    when (this) {
+        FindingTypeKey.CLASSIC -> FindingType.Classic()
+        FindingTypeKey.UNVISITED -> FindingType.Unvisited
+        FindingTypeKey.NOTE -> FindingType.Note
+    }

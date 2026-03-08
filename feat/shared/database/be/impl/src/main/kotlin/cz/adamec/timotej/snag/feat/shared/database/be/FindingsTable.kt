@@ -23,12 +23,10 @@ private const val IMPORTANCE_MAX_LENGTH = 6
 private const val TERM_MAX_LENGTH = 3
 
 object FindingsTable : UuidTable("findings") {
-    const val TYPE_CLASSIC = "CLASSIC"
-    const val TYPE_UNVISITED = "UNVISITED"
-    const val TYPE_NOTE = "NOTE"
+    private const val DEFAULT_TYPE = "CLASSIC"
 
     val structure = reference("structure_id", StructuresTable).index()
-    val type = varchar("type", TYPE_MAX_LENGTH).default(TYPE_CLASSIC)
+    val type = varchar("type", TYPE_MAX_LENGTH).default(DEFAULT_TYPE)
     val name = varchar("name", NAME_MAX_LENGTH)
     val description = text("description", eagerLoading = true).nullable()
     val updatedAt = long("updated_at").index()

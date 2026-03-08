@@ -20,20 +20,19 @@ import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
 import cz.adamec.timotej.snag.feat.findings.business.Term
 import cz.adamec.timotej.snag.feat.shared.database.be.ClassicFindingEntity
 import cz.adamec.timotej.snag.feat.shared.database.be.FindingEntity
-import cz.adamec.timotej.snag.feat.shared.database.be.FindingsTable
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 
-internal fun FindingType.toDbString(): String =
-    when (this) {
-        is FindingType.Classic -> FindingsTable.TYPE_CLASSIC
-        is FindingType.Unvisited -> FindingsTable.TYPE_UNVISITED
-        is FindingType.Note -> FindingsTable.TYPE_NOTE
-    }
-
 internal fun FindingEntity.toModel(): BackendFinding {
+    val dbKey =
+        try {
+            DbFindingTypeKey.valueOf(type)
+        } catch (_: IllegalArgumentException) {
+            LH.logger.error("Unknown finding type in DB: '{}', defaulting to Classic", type)
+            null
+        }
     val findingType =
-        when (type) {
-            FindingsTable.TYPE_CLASSIC -> {
+        when (dbKey) {
+            DbFindingTypeKey.CLASSIC -> {
                 val classic = ClassicFindingEntity.findById(id)
                 if (classic != null) {
                     FindingType.Classic(
@@ -44,14 +43,13 @@ internal fun FindingEntity.toModel(): BackendFinding {
                     FindingType.Classic()
                 }
             }
-            FindingsTable.TYPE_UNVISITED -> {
+            DbFindingTypeKey.UNVISITED -> {
                 FindingType.Unvisited
             }
-            FindingsTable.TYPE_NOTE -> {
+            DbFindingTypeKey.NOTE -> {
                 FindingType.Note
             }
-            else -> {
-                LH.logger.error("Unknown finding type in DB: '{}', defaulting to Classic", type)
+            null -> {
                 FindingType.Classic()
             }
         }
