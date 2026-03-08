@@ -39,7 +39,7 @@ class RealFindingsDbFindingTypesTest : BackendKoinInitializedTest() {
     private val structuresDb: StructuresDb by inject()
 
     private suspend fun seedParentEntities() {
-        projectsDb.saveProject(
+        projectsDb.upsertProject(
             BackendProject(
                 project =
                     Project(
@@ -50,7 +50,7 @@ class RealFindingsDbFindingTypesTest : BackendKoinInitializedTest() {
                     ),
             ),
         )
-        structuresDb.saveStructure(
+        structuresDb.upsertStructure(
             BackendStructure(
                 structure =
                     Structure(
@@ -125,7 +125,7 @@ class RealFindingsDbFindingTypesTest : BackendKoinInitializedTest() {
             seedParentEntities()
             val finding = classicFinding(importance = Importance.HIGH, term = Term.T2)
 
-            findingsDb.saveFinding(finding)
+            findingsDb.upsertFinding(finding)
 
             val result = findingsDb.getFindings(STRUCTURE_ID).single()
             assertEquals(FindingType.Classic(Importance.HIGH, Term.T2), result.finding.type)
@@ -137,7 +137,7 @@ class RealFindingsDbFindingTypesTest : BackendKoinInitializedTest() {
             seedParentEntities()
             val finding = unvisitedFinding()
 
-            findingsDb.saveFinding(finding)
+            findingsDb.upsertFinding(finding)
 
             val result = findingsDb.getFindings(STRUCTURE_ID).single()
             assertIs<FindingType.Unvisited>(result.finding.type)
@@ -149,7 +149,7 @@ class RealFindingsDbFindingTypesTest : BackendKoinInitializedTest() {
             seedParentEntities()
             val finding = noteFinding()
 
-            findingsDb.saveFinding(finding)
+            findingsDb.upsertFinding(finding)
 
             val result = findingsDb.getFindings(STRUCTURE_ID).single()
             assertIs<FindingType.Note>(result.finding.type)
@@ -161,9 +161,9 @@ class RealFindingsDbFindingTypesTest : BackendKoinInitializedTest() {
     fun `changing Classic to Unvisited removes classic details`() =
         runTest(testDispatcher) {
             seedParentEntities()
-            findingsDb.saveFinding(classicFinding(importance = Importance.HIGH, term = Term.T1, updatedAt = 100L))
+            findingsDb.upsertFinding(classicFinding(importance = Importance.HIGH, term = Term.T1, updatedAt = 100L))
 
-            findingsDb.saveFinding(unvisitedFinding(updatedAt = 200L))
+            findingsDb.upsertFinding(unvisitedFinding(updatedAt = 200L))
 
             val result = findingsDb.getFindings(STRUCTURE_ID).single()
             assertIs<FindingType.Unvisited>(result.finding.type)
@@ -173,9 +173,9 @@ class RealFindingsDbFindingTypesTest : BackendKoinInitializedTest() {
     fun `changing Classic to Note removes classic details`() =
         runTest(testDispatcher) {
             seedParentEntities()
-            findingsDb.saveFinding(classicFinding(updatedAt = 100L))
+            findingsDb.upsertFinding(classicFinding(updatedAt = 100L))
 
-            findingsDb.saveFinding(noteFinding(updatedAt = 200L))
+            findingsDb.upsertFinding(noteFinding(updatedAt = 200L))
 
             val result = findingsDb.getFindings(STRUCTURE_ID).single()
             assertIs<FindingType.Note>(result.finding.type)
@@ -187,9 +187,9 @@ class RealFindingsDbFindingTypesTest : BackendKoinInitializedTest() {
     fun `changing Unvisited to Classic creates classic details`() =
         runTest(testDispatcher) {
             seedParentEntities()
-            findingsDb.saveFinding(unvisitedFinding(updatedAt = 100L))
+            findingsDb.upsertFinding(unvisitedFinding(updatedAt = 100L))
 
-            findingsDb.saveFinding(classicFinding(importance = Importance.LOW, term = Term.T3, updatedAt = 200L))
+            findingsDb.upsertFinding(classicFinding(importance = Importance.LOW, term = Term.T3, updatedAt = 200L))
 
             val result = findingsDb.getFindings(STRUCTURE_ID).single()
             assertEquals(FindingType.Classic(Importance.LOW, Term.T3), result.finding.type)
@@ -199,9 +199,9 @@ class RealFindingsDbFindingTypesTest : BackendKoinInitializedTest() {
     fun `changing Note to Classic creates classic details`() =
         runTest(testDispatcher) {
             seedParentEntities()
-            findingsDb.saveFinding(noteFinding(updatedAt = 100L))
+            findingsDb.upsertFinding(noteFinding(updatedAt = 100L))
 
-            findingsDb.saveFinding(classicFinding(importance = Importance.MEDIUM, term = Term.CON, updatedAt = 200L))
+            findingsDb.upsertFinding(classicFinding(importance = Importance.MEDIUM, term = Term.CON, updatedAt = 200L))
 
             val result = findingsDb.getFindings(STRUCTURE_ID).single()
             assertEquals(FindingType.Classic(Importance.MEDIUM, Term.CON), result.finding.type)
@@ -213,9 +213,9 @@ class RealFindingsDbFindingTypesTest : BackendKoinInitializedTest() {
     fun `updating Classic importance and term modifies existing classic details`() =
         runTest(testDispatcher) {
             seedParentEntities()
-            findingsDb.saveFinding(classicFinding(importance = Importance.HIGH, term = Term.T1, updatedAt = 100L))
+            findingsDb.upsertFinding(classicFinding(importance = Importance.HIGH, term = Term.T1, updatedAt = 100L))
 
-            findingsDb.saveFinding(classicFinding(importance = Importance.MEDIUM, term = Term.T2, updatedAt = 200L))
+            findingsDb.upsertFinding(classicFinding(importance = Importance.MEDIUM, term = Term.T2, updatedAt = 200L))
 
             val result = findingsDb.getFindings(STRUCTURE_ID).single()
             assertEquals(FindingType.Classic(Importance.MEDIUM, Term.T2), result.finding.type)
@@ -225,11 +225,11 @@ class RealFindingsDbFindingTypesTest : BackendKoinInitializedTest() {
     fun `soft-deleting Classic finding and re-saving as Unvisited works`() =
         runTest(testDispatcher) {
             seedParentEntities()
-            findingsDb.saveFinding(classicFinding(updatedAt = 100L))
+            findingsDb.upsertFinding(classicFinding(updatedAt = 100L))
 
-            findingsDb.deleteFinding(FINDING_ID_1, Timestamp(200L))
+            findingsDb.softDeleteFinding(FINDING_ID_1, Timestamp(200L))
 
-            findingsDb.saveFinding(unvisitedFinding(updatedAt = 300L))
+            findingsDb.upsertFinding(unvisitedFinding(updatedAt = 300L))
 
             val result = findingsDb.getFindings(STRUCTURE_ID).single()
             assertIs<FindingType.Unvisited>(result.finding.type)
@@ -239,9 +239,9 @@ class RealFindingsDbFindingTypesTest : BackendKoinInitializedTest() {
     fun `multiple findings of different types in same structure`() =
         runTest(testDispatcher) {
             seedParentEntities()
-            findingsDb.saveFinding(classicFinding(id = FINDING_ID_1, importance = Importance.HIGH, term = Term.T1))
-            findingsDb.saveFinding(unvisitedFinding(id = FINDING_ID_2))
-            findingsDb.saveFinding(noteFinding(id = FINDING_ID_3))
+            findingsDb.upsertFinding(classicFinding(id = FINDING_ID_1, importance = Importance.HIGH, term = Term.T1))
+            findingsDb.upsertFinding(unvisitedFinding(id = FINDING_ID_2))
+            findingsDb.upsertFinding(noteFinding(id = FINDING_ID_3))
 
             val results = findingsDb.getFindings(STRUCTURE_ID)
 
@@ -252,38 +252,38 @@ class RealFindingsDbFindingTypesTest : BackendKoinInitializedTest() {
             assertIs<FindingType.Note>(byId[FINDING_ID_3]!!.finding.type)
         }
 
-    // Group 5: Conflict Resolution with Type
+    // Group 5: Upsert Overwrites Type
 
     @Test
-    fun `conflict resolution preserves Classic type when server is newer`() =
+    fun `upsert overwrites Classic with Unvisited regardless of timestamp`() =
         runTest(testDispatcher) {
             seedParentEntities()
-            findingsDb.saveFinding(classicFinding(importance = Importance.HIGH, term = Term.T1, updatedAt = 200L))
+            findingsDb.upsertFinding(classicFinding(importance = Importance.HIGH, term = Term.T1, updatedAt = 200L))
 
-            findingsDb.saveFinding(unvisitedFinding(updatedAt = 100L))
-
-            val result = findingsDb.getFindings(STRUCTURE_ID).single()
-            assertEquals(FindingType.Classic(Importance.HIGH, Term.T1), result.finding.type)
-        }
-
-    @Test
-    fun `conflict resolution preserves Unvisited type when server is newer`() =
-        runTest(testDispatcher) {
-            seedParentEntities()
-            findingsDb.saveFinding(unvisitedFinding(updatedAt = 200L))
-
-            findingsDb.saveFinding(classicFinding(updatedAt = 100L))
+            findingsDb.upsertFinding(unvisitedFinding(updatedAt = 100L))
 
             val result = findingsDb.getFindings(STRUCTURE_ID).single()
             assertIs<FindingType.Unvisited>(result.finding.type)
         }
 
     @Test
+    fun `upsert overwrites Unvisited with Classic regardless of timestamp`() =
+        runTest(testDispatcher) {
+            seedParentEntities()
+            findingsDb.upsertFinding(unvisitedFinding(updatedAt = 200L))
+
+            findingsDb.upsertFinding(classicFinding(updatedAt = 100L))
+
+            val result = findingsDb.getFindings(STRUCTURE_ID).single()
+            assertIs<FindingType.Classic>(result.finding.type)
+        }
+
+    @Test
     fun `getFindingsModifiedSince returns findings with correct types`() =
         runTest(testDispatcher) {
             seedParentEntities()
-            findingsDb.saveFinding(classicFinding(id = FINDING_ID_1, importance = Importance.HIGH, term = Term.T1, updatedAt = 200L))
-            findingsDb.saveFinding(noteFinding(id = FINDING_ID_2, updatedAt = 300L))
+            findingsDb.upsertFinding(classicFinding(id = FINDING_ID_1, importance = Importance.HIGH, term = Term.T1, updatedAt = 200L))
+            findingsDb.upsertFinding(noteFinding(id = FINDING_ID_2, updatedAt = 300L))
 
             val results = findingsDb.getFindingsModifiedSince(STRUCTURE_ID, since = Timestamp(150L))
 

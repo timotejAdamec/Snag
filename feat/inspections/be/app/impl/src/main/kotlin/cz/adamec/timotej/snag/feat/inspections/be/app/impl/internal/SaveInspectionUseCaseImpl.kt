@@ -16,21 +16,30 @@ import cz.adamec.timotej.snag.feat.inspections.be.app.api.SaveInspectionUseCase
 import cz.adamec.timotej.snag.feat.inspections.be.app.impl.internal.LH.logger
 import cz.adamec.timotej.snag.feat.inspections.be.model.BackendInspection
 import cz.adamec.timotej.snag.feat.inspections.be.ports.InspectionsDb
+import cz.adamec.timotej.snag.lib.sync.be.SaveConflictResult
+import cz.adamec.timotej.snag.lib.sync.be.resolveConflictForSave
 
 internal class SaveInspectionUseCaseImpl(
     private val inspectionsDb: InspectionsDb,
 ) : SaveInspectionUseCase {
     override suspend operator fun invoke(backendInspection: BackendInspection): BackendInspection? {
         logger.debug("Saving inspection {} to local storage.", backendInspection)
-        return inspectionsDb.saveInspection(backendInspection).also {
-            it?.let {
+        val existing = inspectionsDb.getInspection(backendInspection.id)
+        return when (val result = resolveConflictForSave(existing, backendInspection)) {
+            is SaveConflictResult.Proceed -> {
+                inspectionsDb.upsertInspection(backendInspection)
+                logger.debug("Saved inspection {} to local storage.", backendInspection)
+                null
+            }
+            is SaveConflictResult.Rejected -> {
                 logger.debug(
                     "Didn't save inspection {} to local storage as there is a newer one." +
                         " Returning the newer one ({}).",
                     backendInspection,
-                    it,
+                    result.serverVersion,
                 )
-            } ?: logger.debug("Saved inspection {} to local storage.", backendInspection)
+                result.serverVersion
+            }
         }
     }
 }

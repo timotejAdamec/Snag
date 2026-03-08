@@ -36,20 +36,10 @@ internal class RealClientsDb(
             ClientEntity.findById(id)?.toModel()
         }
 
-    @Suppress("ReturnCount", "LabeledExpression")
-    override suspend fun saveClient(client: BackendClient): BackendClient? =
+    override suspend fun upsertClient(client: BackendClient) {
         transaction(database) {
             val existing = ClientEntity.findById(client.client.id)
-
             if (existing != null) {
-                val serverTimestamp =
-                    maxOf(
-                        Timestamp(existing.updatedAt),
-                        existing.deletedAt?.let { Timestamp(it) } ?: Timestamp(0),
-                    )
-                if (serverTimestamp >= client.client.updatedAt) {
-                    return@transaction existing.toModel()
-                }
                 existing.name = client.client.name
                 existing.address = client.client.address
                 existing.phoneNumber = client.client.phoneNumber
@@ -66,27 +56,18 @@ internal class RealClientsDb(
                     deletedAt = client.deletedAt?.value
                 }
             }
-            null
         }
+    }
 
-    @Suppress("ReturnCount", "LabeledExpression")
-    override suspend fun deleteClient(
+    override suspend fun softDeleteClient(
         id: Uuid,
         deletedAt: Timestamp,
-    ): BackendClient? =
+    ) {
         transaction(database) {
-            val existing =
-                ClientEntity.findById(id)
-                    ?: return@transaction null
-
-            if (existing.deletedAt != null) return@transaction null
-            if (Timestamp(existing.updatedAt) >= deletedAt) {
-                return@transaction existing.toModel()
-            }
-
+            val existing = ClientEntity.findById(id) ?: return@transaction
             existing.deletedAt = deletedAt.value
-            null
         }
+    }
 
     override suspend fun getClientsModifiedSince(since: Timestamp): List<BackendClient> =
         transaction(database) {

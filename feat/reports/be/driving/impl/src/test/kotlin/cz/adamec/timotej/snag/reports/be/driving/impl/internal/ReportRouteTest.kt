@@ -58,7 +58,7 @@ class ReportRouteTest : BackendKoinInitializedTest() {
     fun `GET report returns PDF for existing project`() =
         testApplication {
             configureApp()
-            projectsDb.saveProject(
+            projectsDb.upsertProject(
                 BackendProject(
                     project =
                         Project(

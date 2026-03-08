@@ -37,20 +37,10 @@ internal class RealProjectsDb(
             ProjectEntity.findById(id)?.toModel()
         }
 
-    @Suppress("ReturnCount", "LabeledExpression")
-    override suspend fun saveProject(project: BackendProject): BackendProject? =
+    override suspend fun upsertProject(project: BackendProject) {
         transaction(database) {
             val existing = ProjectEntity.findById(project.project.id)
-
             if (existing != null) {
-                val serverTimestamp =
-                    maxOf(
-                        Timestamp(existing.updatedAt),
-                        existing.deletedAt?.let { Timestamp(it) } ?: Timestamp(0),
-                    )
-                if (serverTimestamp >= project.project.updatedAt) {
-                    return@transaction existing.toModel()
-                }
                 existing.name = project.project.name
                 existing.address = project.project.address
                 existing.client = project.project.clientId?.let { ClientEntity.findById(it) }
@@ -65,27 +55,18 @@ internal class RealProjectsDb(
                     deletedAt = project.deletedAt?.value
                 }
             }
-            null
         }
+    }
 
-    @Suppress("ReturnCount", "LabeledExpression")
-    override suspend fun deleteProject(
+    override suspend fun softDeleteProject(
         id: Uuid,
         deletedAt: Timestamp,
-    ): BackendProject? =
+    ) {
         transaction(database) {
-            val existing =
-                ProjectEntity.findById(id)
-                    ?: return@transaction null
-
-            if (existing.deletedAt != null) return@transaction null
-            if (Timestamp(existing.updatedAt) >= deletedAt) {
-                return@transaction existing.toModel()
-            }
-
+            val existing = ProjectEntity.findById(id) ?: return@transaction
             existing.deletedAt = deletedAt.value
-            null
         }
+    }
 
     override suspend fun getProjectsModifiedSince(since: Timestamp): List<BackendProject> =
         transaction(database) {

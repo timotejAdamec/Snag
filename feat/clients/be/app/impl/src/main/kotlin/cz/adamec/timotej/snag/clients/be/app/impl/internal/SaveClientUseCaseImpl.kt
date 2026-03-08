@@ -16,21 +16,30 @@ import cz.adamec.timotej.snag.clients.be.app.api.SaveClientUseCase
 import cz.adamec.timotej.snag.clients.be.app.impl.internal.LH.logger
 import cz.adamec.timotej.snag.clients.be.model.BackendClient
 import cz.adamec.timotej.snag.clients.be.ports.ClientsDb
+import cz.adamec.timotej.snag.lib.sync.be.SaveConflictResult
+import cz.adamec.timotej.snag.lib.sync.be.resolveConflictForSave
 
 internal class SaveClientUseCaseImpl(
     private val clientsDb: ClientsDb,
 ) : SaveClientUseCase {
     override suspend operator fun invoke(client: BackendClient): BackendClient? {
         logger.debug("Saving client {} to local storage.", client.client.id)
-        return clientsDb.saveClient(client).also {
-            it?.let {
+        val existing = clientsDb.getClient(client.id)
+        return when (val result = resolveConflictForSave(existing, client)) {
+            is SaveConflictResult.Proceed -> {
+                clientsDb.upsertClient(client)
+                logger.debug("Saved client {} to local storage.", client)
+                null
+            }
+            is SaveConflictResult.Rejected -> {
                 logger.debug(
                     "Didn't save client {} to local storage as there is a newer one." +
                         " Returning the newer one ({}).",
                     client,
-                    it,
+                    result.serverVersion,
                 )
-            } ?: logger.debug("Saved client {} to local storage.", client)
+                result.serverVersion
+            }
         }
     }
 }

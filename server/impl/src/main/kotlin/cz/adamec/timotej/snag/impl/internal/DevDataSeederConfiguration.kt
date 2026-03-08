@@ -81,7 +81,7 @@ internal class DevDataSeederConfiguration(
                         updatedAt = now,
                     ),
             ),
-        ).forEach { clientsDb.saveClient(it) }
+        ).forEach { clientsDb.upsertClient(it) }
     }
 
     private suspend fun seedProjects() {
@@ -117,13 +117,13 @@ internal class DevDataSeederConfiguration(
                         updatedAt = now,
                     ),
             ),
-        ).forEach { projectsDb.saveProject(it) }
+        ).forEach { projectsDb.upsertProject(it) }
     }
 
     private suspend fun seedStructures() {
         val now = timestampProvider.getNowTimestamp()
         (project1Structures(now) + project2Structures(now) + project3Structures(now))
-            .forEach { structuresDb.saveStructure(it) }
+            .forEach { structuresDb.upsertStructure(it) }
     }
 
     private fun project1Structures(now: Timestamp) =
@@ -266,7 +266,7 @@ internal class DevDataSeederConfiguration(
                         updatedAt = now,
                     ),
             ),
-        ).forEach { findingsDb.saveFinding(it) }
+        ).forEach { findingsDb.upsertFinding(it) }
     }
 
     @Suppress("MagicNumber", "UnderscoresInNumericLiterals")
@@ -325,7 +325,7 @@ internal class DevDataSeederConfiguration(
                         updatedAt = now,
                     ),
             ),
-        ).forEach { inspectionsDb.saveInspection(it) }
+        ).forEach { inspectionsDb.upsertInspection(it) }
     }
 
     private companion object {

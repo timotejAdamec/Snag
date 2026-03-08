@@ -19,12 +19,14 @@ import kotlin.uuid.Uuid
 interface InspectionsDb {
     suspend fun getInspections(projectId: Uuid): List<BackendInspection>
 
-    suspend fun saveInspection(backendInspection: BackendInspection): BackendInspection?
+    suspend fun getInspection(id: Uuid): BackendInspection?
 
-    suspend fun deleteInspection(
+    suspend fun upsertInspection(backendInspection: BackendInspection)
+
+    suspend fun softDeleteInspection(
         id: Uuid,
         deletedAt: Timestamp,
-    ): BackendInspection?
+    )
 
     suspend fun getInspectionsModifiedSince(
         projectId: Uuid,

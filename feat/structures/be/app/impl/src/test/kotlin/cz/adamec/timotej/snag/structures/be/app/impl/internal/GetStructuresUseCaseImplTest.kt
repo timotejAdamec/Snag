@@ -77,7 +77,7 @@ class GetStructuresUseCaseImplTest : BackendKoinInitializedTest() {
     @Test
     fun `returns structures for project`() =
         runTest(testDispatcher) {
-            projectsDb.saveProject(
+            projectsDb.upsertProject(
                 BackendProject(
                     project =
                         Project(
@@ -88,7 +88,7 @@ class GetStructuresUseCaseImplTest : BackendKoinInitializedTest() {
                         ),
                 ),
             )
-            projectsDb.saveProject(
+            projectsDb.upsertProject(
                 BackendProject(
                     project =
                         Project(
@@ -99,9 +99,9 @@ class GetStructuresUseCaseImplTest : BackendKoinInitializedTest() {
                         ),
                 ),
             )
-            dataSource.saveStructure(structure1)
-            dataSource.saveStructure(structure2)
-            dataSource.saveStructure(otherStructure)
+            dataSource.upsertStructure(structure1)
+            dataSource.upsertStructure(structure2)
+            dataSource.upsertStructure(otherStructure)
 
             val result = useCase(projectId)
 
@@ -111,7 +111,7 @@ class GetStructuresUseCaseImplTest : BackendKoinInitializedTest() {
     @Test
     fun `excludes other project structures`() =
         runTest(testDispatcher) {
-            projectsDb.saveProject(
+            projectsDb.upsertProject(
                 BackendProject(
                     project =
                         Project(
@@ -122,7 +122,7 @@ class GetStructuresUseCaseImplTest : BackendKoinInitializedTest() {
                         ),
                 ),
             )
-            dataSource.saveStructure(otherStructure)
+            dataSource.upsertStructure(otherStructure)
 
             val result = useCase(projectId)
 

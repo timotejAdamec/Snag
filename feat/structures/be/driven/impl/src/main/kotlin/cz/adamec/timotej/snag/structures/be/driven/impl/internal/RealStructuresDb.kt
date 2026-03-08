@@ -37,21 +37,15 @@ internal class RealStructuresDb(
                 }.map { it.toModel() }
         }
 
-    @Suppress("ReturnCount", "LabeledExpression")
-    override suspend fun saveStructure(backendStructure: BackendStructure): BackendStructure? =
+    override suspend fun getStructure(id: Uuid): BackendStructure? =
         transaction(database) {
-            val existing =
-                StructureEntity.findById(backendStructure.structure.id)
+            StructureEntity.findById(id)?.toModel()
+        }
 
+    override suspend fun upsertStructure(backendStructure: BackendStructure) {
+        transaction(database) {
+            val existing = StructureEntity.findById(backendStructure.structure.id)
             if (existing != null) {
-                val serverTimestamp =
-                    maxOf(
-                        Timestamp(existing.updatedAt),
-                        existing.deletedAt?.let { Timestamp(it) } ?: Timestamp(0),
-                    )
-                if (serverTimestamp >= backendStructure.structure.updatedAt) {
-                    return@transaction existing.toModel()
-                }
                 existing.project = ProjectEntity[backendStructure.structure.projectId]
                 existing.name = backendStructure.structure.name
                 existing.floorPlanUrl = backendStructure.structure.floorPlanUrl
@@ -66,27 +60,18 @@ internal class RealStructuresDb(
                     deletedAt = backendStructure.deletedAt?.value
                 }
             }
-            null
         }
+    }
 
-    @Suppress("ReturnCount", "LabeledExpression")
-    override suspend fun deleteStructure(
+    override suspend fun softDeleteStructure(
         id: Uuid,
         deletedAt: Timestamp,
-    ): BackendStructure? =
+    ) {
         transaction(database) {
-            val existing =
-                StructureEntity.findById(id)
-                    ?: return@transaction null
-
-            if (existing.deletedAt != null) return@transaction null
-            if (Timestamp(existing.updatedAt) >= deletedAt) {
-                return@transaction existing.toModel()
-            }
-
+            val existing = StructureEntity.findById(id) ?: return@transaction
             existing.deletedAt = deletedAt.value
-            null
         }
+    }
 
     override suspend fun getStructuresModifiedSince(
         projectId: Uuid,

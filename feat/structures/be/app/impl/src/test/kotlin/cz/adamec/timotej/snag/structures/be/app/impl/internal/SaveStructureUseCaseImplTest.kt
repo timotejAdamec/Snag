@@ -48,7 +48,7 @@ class SaveStructureUseCaseImplTest : BackendKoinInitializedTest() {
 
     private fun createProject() =
         runTest(testDispatcher) {
-            projectsDb.saveProject(
+            projectsDb.upsertProject(
                 BackendProject(
                     project =
                         Project(
@@ -81,7 +81,7 @@ class SaveStructureUseCaseImplTest : BackendKoinInitializedTest() {
                             updatedAt = Timestamp(value = 20L),
                         ),
                 )
-            dataSource.saveStructure(savedStructure)
+            dataSource.upsertStructure(savedStructure)
 
             useCase(backendStructure)
 
@@ -108,7 +108,7 @@ class SaveStructureUseCaseImplTest : BackendKoinInitializedTest() {
                             updatedAt = Timestamp(value = 20L),
                         ),
                 )
-            dataSource.saveStructure(savedStructure)
+            dataSource.upsertStructure(savedStructure)
 
             val result = useCase(backendStructure)
 
@@ -119,7 +119,7 @@ class SaveStructureUseCaseImplTest : BackendKoinInitializedTest() {
     fun `returns null if saved updated at is earlier than the new one`() =
         runTest(testDispatcher) {
             createProject()
-            dataSource.saveStructure(backendStructure)
+            dataSource.upsertStructure(backendStructure)
 
             val newerStructure =
                 backendStructure.copy(

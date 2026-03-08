@@ -42,20 +42,15 @@ internal class RealFindingsDb(
                 .map { it.toModel() }
         }
 
-    @Suppress("ReturnCount", "LabeledExpression")
-    override suspend fun saveFinding(finding: BackendFinding): BackendFinding? =
+    override suspend fun getFinding(id: Uuid): BackendFinding? =
+        transaction(database) {
+            FindingEntity.findById(id)?.toModel()
+        }
+
+    override suspend fun upsertFinding(finding: BackendFinding) {
         transaction(database) {
             val existing = FindingEntity.findById(finding.finding.id)
-
             if (existing != null) {
-                val serverTimestamp =
-                    maxOf(
-                        Timestamp(existing.updatedAt),
-                        existing.deletedAt?.let { Timestamp(it) } ?: Timestamp(0),
-                    )
-                if (serverTimestamp >= finding.finding.updatedAt) {
-                    return@transaction existing.toModel()
-                }
                 existing.structure = StructureEntity[finding.finding.structureId]
                 existing.type = finding.finding.type.toEntityKey().name
                 existing.name = finding.finding.name
@@ -84,27 +79,18 @@ internal class RealFindingsDb(
                     orderIndex = index
                 }
             }
-            null
         }
+    }
 
-    @Suppress("ReturnCount", "LabeledExpression")
-    override suspend fun deleteFinding(
+    override suspend fun softDeleteFinding(
         id: Uuid,
         deletedAt: Timestamp,
-    ): BackendFinding? =
+    ) {
         transaction(database) {
-            val existing =
-                FindingEntity.findById(id)
-                    ?: return@transaction null
-
-            if (existing.deletedAt != null) return@transaction null
-            if (Timestamp(existing.updatedAt) >= deletedAt) {
-                return@transaction existing.toModel()
-            }
-
+            val existing = FindingEntity.findById(id) ?: return@transaction
             existing.deletedAt = deletedAt.value
-            null
         }
+    }
 
     override suspend fun getFindingsModifiedSince(
         structureId: Uuid,

@@ -21,12 +21,12 @@ interface ClientsDb {
 
     suspend fun getClient(id: Uuid): BackendClient?
 
-    suspend fun saveClient(client: BackendClient): BackendClient?
+    suspend fun upsertClient(client: BackendClient)
 
-    suspend fun deleteClient(
+    suspend fun softDeleteClient(
         id: Uuid,
         deletedAt: Timestamp,
-    ): BackendClient?
+    )
 
     suspend fun getClientsModifiedSince(since: Timestamp): List<BackendClient>
 }

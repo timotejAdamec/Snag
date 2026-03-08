@@ -50,7 +50,7 @@ class GetProjectsModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
                             updatedAt = Timestamp(200L),
                         ),
                 )
-            dataSource.saveProject(project)
+            dataSource.upsertProject(project)
 
             val result = useCase(since = Timestamp(100L))
 
@@ -70,7 +70,7 @@ class GetProjectsModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
                             updatedAt = Timestamp(50L),
                         ),
                 )
-            dataSource.saveProject(project)
+            dataSource.upsertProject(project)
 
             val result = useCase(since = Timestamp(100L))
 
@@ -91,7 +91,7 @@ class GetProjectsModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
                         ),
                     deletedAt = Timestamp(200L),
                 )
-            dataSource.saveProject(project)
+            dataSource.upsertProject(project)
 
             val result = useCase(since = Timestamp(100L))
 
@@ -112,7 +112,7 @@ class GetProjectsModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
                         ),
                     deletedAt = Timestamp(80L),
                 )
-            dataSource.saveProject(project)
+            dataSource.upsertProject(project)
 
             val result = useCase(since = Timestamp(100L))
 

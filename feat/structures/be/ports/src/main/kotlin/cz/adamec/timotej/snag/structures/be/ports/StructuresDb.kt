@@ -19,12 +19,14 @@ import kotlin.uuid.Uuid
 interface StructuresDb {
     suspend fun getStructures(projectId: Uuid): List<BackendStructure>
 
-    suspend fun saveStructure(backendStructure: BackendStructure): BackendStructure?
+    suspend fun getStructure(id: Uuid): BackendStructure?
 
-    suspend fun deleteStructure(
+    suspend fun upsertStructure(backendStructure: BackendStructure)
+
+    suspend fun softDeleteStructure(
         id: Uuid,
         deletedAt: Timestamp,
-    ): BackendStructure?
+    )
 
     suspend fun getStructuresModifiedSince(
         projectId: Uuid,

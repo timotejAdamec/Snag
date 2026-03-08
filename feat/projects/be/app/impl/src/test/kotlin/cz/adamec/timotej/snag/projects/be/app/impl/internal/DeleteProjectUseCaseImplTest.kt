@@ -47,7 +47,7 @@ class DeleteProjectUseCaseImplTest : BackendKoinInitializedTest() {
     @Test
     fun `soft-deletes project in storage`() =
         runTest(testDispatcher) {
-            dataSource.saveProject(project)
+            dataSource.upsertProject(project)
 
             useCase(DeleteProjectRequest(projectId = projectId, deletedAt = Timestamp(20L)))
 
@@ -59,7 +59,7 @@ class DeleteProjectUseCaseImplTest : BackendKoinInitializedTest() {
     @Test
     fun `does not delete project when saved updated at is later than deleted at`() =
         runTest(testDispatcher) {
-            dataSource.saveProject(project)
+            dataSource.upsertProject(project)
 
             useCase(
                 DeleteProjectRequest(
@@ -74,7 +74,7 @@ class DeleteProjectUseCaseImplTest : BackendKoinInitializedTest() {
     @Test
     fun `returns saved project when saved updated at is later than deleted at`() =
         runTest(testDispatcher) {
-            dataSource.saveProject(project)
+            dataSource.upsertProject(project)
 
             val result =
                 useCase(

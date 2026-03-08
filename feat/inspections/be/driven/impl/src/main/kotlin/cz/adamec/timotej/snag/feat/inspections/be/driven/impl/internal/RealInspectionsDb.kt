@@ -37,21 +37,15 @@ internal class RealInspectionsDb(
                 }.map { it.toModel() }
         }
 
-    @Suppress("ReturnCount", "LabeledExpression")
-    override suspend fun saveInspection(backendInspection: BackendInspection): BackendInspection? =
+    override suspend fun getInspection(id: Uuid): BackendInspection? =
         transaction(database) {
-            val existing =
-                InspectionEntity.findById(backendInspection.inspection.id)
+            InspectionEntity.findById(id)?.toModel()
+        }
 
+    override suspend fun upsertInspection(backendInspection: BackendInspection) {
+        transaction(database) {
+            val existing = InspectionEntity.findById(backendInspection.inspection.id)
             if (existing != null) {
-                val serverTimestamp =
-                    maxOf(
-                        Timestamp(existing.updatedAt),
-                        existing.deletedAt?.let { Timestamp(it) } ?: Timestamp(0),
-                    )
-                if (serverTimestamp >= backendInspection.inspection.updatedAt) {
-                    return@transaction existing.toModel()
-                }
                 existing.project = ProjectEntity[backendInspection.inspection.projectId]
                 existing.startedAt = backendInspection.inspection.startedAt?.value
                 existing.endedAt = backendInspection.inspection.endedAt?.value
@@ -72,27 +66,18 @@ internal class RealInspectionsDb(
                     deletedAt = backendInspection.deletedAt?.value
                 }
             }
-            null
         }
+    }
 
-    @Suppress("ReturnCount", "LabeledExpression")
-    override suspend fun deleteInspection(
+    override suspend fun softDeleteInspection(
         id: Uuid,
         deletedAt: Timestamp,
-    ): BackendInspection? =
+    ) {
         transaction(database) {
-            val existing =
-                InspectionEntity.findById(id)
-                    ?: return@transaction null
-
-            if (existing.deletedAt != null) return@transaction null
-            if (Timestamp(existing.updatedAt) >= deletedAt) {
-                return@transaction existing.toModel()
-            }
-
+            val existing = InspectionEntity.findById(id) ?: return@transaction
             existing.deletedAt = deletedAt.value
-            null
         }
+    }
 
     override suspend fun getInspectionsModifiedSince(
         projectId: Uuid,

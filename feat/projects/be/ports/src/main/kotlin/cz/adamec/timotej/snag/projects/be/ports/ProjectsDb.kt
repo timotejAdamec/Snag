@@ -21,12 +21,12 @@ interface ProjectsDb {
 
     suspend fun getProject(id: Uuid): BackendProject?
 
-    suspend fun saveProject(project: BackendProject): BackendProject?
+    suspend fun upsertProject(project: BackendProject)
 
-    suspend fun deleteProject(
+    suspend fun softDeleteProject(
         id: Uuid,
         deletedAt: Timestamp,
-    ): BackendProject?
+    )
 
     suspend fun getProjectsModifiedSince(since: Timestamp): List<BackendProject>
 }

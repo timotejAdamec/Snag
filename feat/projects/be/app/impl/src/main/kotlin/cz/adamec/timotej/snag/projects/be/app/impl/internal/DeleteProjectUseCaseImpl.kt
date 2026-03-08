@@ -12,6 +12,8 @@
 
 package cz.adamec.timotej.snag.projects.be.app.impl.internal
 
+import cz.adamec.timotej.snag.lib.sync.be.DeleteConflictResult
+import cz.adamec.timotej.snag.lib.sync.be.resolveConflictForDelete
 import cz.adamec.timotej.snag.projects.be.app.api.DeleteProjectUseCase
 import cz.adamec.timotej.snag.projects.be.app.api.model.DeleteProjectRequest
 import cz.adamec.timotej.snag.projects.be.app.impl.internal.LH.logger
@@ -23,17 +25,28 @@ internal class DeleteProjectUseCaseImpl(
 ) : DeleteProjectUseCase {
     override suspend operator fun invoke(request: DeleteProjectRequest): BackendProject? {
         logger.debug("Deleting project {} from local storage.", request.projectId)
-        return projectsDb
-            .deleteProject(
-                id = request.projectId,
-                deletedAt = request.deletedAt,
-            ).also { newerProject ->
-                newerProject?.let {
-                    logger.debug(
-                        "Found newer version of project {} in local storage. Returning it instead.",
-                        request.projectId,
-                    )
-                } ?: logger.debug("Deleted project {} from local storage.", request.projectId)
+        val existing = projectsDb.getProject(request.projectId)
+        return when (val result = resolveConflictForDelete(existing, request.deletedAt)) {
+            is DeleteConflictResult.Proceed -> {
+                projectsDb.softDeleteProject(id = request.projectId, deletedAt = request.deletedAt)
+                logger.debug("Deleted project {} from local storage.", request.projectId)
+                null
             }
+            is DeleteConflictResult.NotFound -> {
+                logger.debug("Project {} not found in local storage.", request.projectId)
+                null
+            }
+            is DeleteConflictResult.AlreadyDeleted -> {
+                logger.debug("Project {} already deleted in local storage.", request.projectId)
+                null
+            }
+            is DeleteConflictResult.Rejected -> {
+                logger.debug(
+                    "Found newer version of project {} in local storage. Returning it instead.",
+                    request.projectId,
+                )
+                result.serverVersion
+            }
+        }
     }
 }
