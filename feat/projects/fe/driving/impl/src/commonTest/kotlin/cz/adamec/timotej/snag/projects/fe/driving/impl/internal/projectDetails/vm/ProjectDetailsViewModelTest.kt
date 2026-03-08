@@ -379,14 +379,12 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
         }
 
     @Test
-    fun `onStartInspection enqueues sync for the inspection`() =
+    fun `onStartInspection syncs the inspection`() =
         runTest {
             val projectId = Uuid.random()
             val inspectionId = Uuid.random()
             seedProject(projectId)
             seedInspection(projectId = projectId, inspectionId = inspectionId)
-            // Prevent background pull-sync from consuming the enqueued item
-            fakeInspectionsApi.forcedFailure = OnlineDataResult.Failure.NetworkUnavailable
 
             val viewModel = createViewModel(projectId)
             advanceUntilIdle()
@@ -394,18 +392,20 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
             viewModel.onStartInspection(inspectionId)
             advanceUntilIdle()
 
-            assertEquals(listOf(inspectionId), fakeSyncQueue.getAllPending().map { it.entityId })
+            assertTrue(fakeSyncQueue.getAllPending().isEmpty())
+            val apiResult = fakeInspectionsApi.getInspections(projectId)
+            assertIs<OnlineDataResult.Success<List<FrontendInspection>>>(apiResult)
+            val synced = apiResult.data.find { it.inspection.id == inspectionId }
+            assertEquals(fixedNow, synced?.inspection?.startedAt)
         }
 
     @Test
-    fun `onEndInspection enqueues sync for the inspection`() =
+    fun `onEndInspection syncs the inspection`() =
         runTest {
             val projectId = Uuid.random()
             val inspectionId = Uuid.random()
             seedProject(projectId)
             seedInspection(projectId = projectId, inspectionId = inspectionId, startedAt = Timestamp(1L))
-            // Prevent background pull-sync from consuming the enqueued item
-            fakeInspectionsApi.forcedFailure = OnlineDataResult.Failure.NetworkUnavailable
 
             val viewModel = createViewModel(projectId)
             advanceUntilIdle()
@@ -413,6 +413,10 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
             viewModel.onEndInspection(inspectionId)
             advanceUntilIdle()
 
-            assertEquals(listOf(inspectionId), fakeSyncQueue.getAllPending().map { it.entityId })
+            assertTrue(fakeSyncQueue.getAllPending().isEmpty())
+            val apiResult = fakeInspectionsApi.getInspections(projectId)
+            assertIs<OnlineDataResult.Success<List<FrontendInspection>>>(apiResult)
+            val synced = apiResult.data.find { it.inspection.id == inspectionId }
+            assertEquals(fixedNow, synced?.inspection?.endedAt)
         }
 }
