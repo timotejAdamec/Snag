@@ -24,7 +24,7 @@ internal class SaveProjectUseCaseImpl(
 ) : SaveProjectUseCase {
     override suspend operator fun invoke(project: BackendProject): BackendProject? {
         logger.debug("Saving project {} to local storage.", project)
-        val existing = projectsDb.getProject(project.id)
+        val existing = projectsDb.getProject(project.project.id)
         return when (val result = resolveConflictForSave(existing, project)) {
             is SaveConflictResult.Proceed -> {
                 projectsDb.upsertProject(project)

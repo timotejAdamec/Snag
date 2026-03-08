@@ -13,11 +13,8 @@
 package cz.adamec.timotej.snag.lib.sync.be
 
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
-import kotlin.uuid.Uuid
 
 interface Syncable {
-    val id: Uuid
-
     val updatedAt: Timestamp
 
     val deletedAt: Timestamp?

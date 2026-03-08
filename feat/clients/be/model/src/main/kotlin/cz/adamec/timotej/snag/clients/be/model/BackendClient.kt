@@ -15,13 +15,10 @@ package cz.adamec.timotej.snag.clients.be.model
 import cz.adamec.timotej.snag.clients.business.Client
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.sync.be.Syncable
-import kotlin.uuid.Uuid
 
 data class BackendClient(
     val client: Client,
     override val deletedAt: Timestamp? = null,
 ) : Syncable {
-    override val id: Uuid get() = client.id
-
     override val updatedAt: Timestamp get() = client.updatedAt
 }

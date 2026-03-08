@@ -24,7 +24,7 @@ internal class SaveStructureUseCaseImpl(
 ) : SaveStructureUseCase {
     override suspend operator fun invoke(backendStructure: BackendStructure): BackendStructure? {
         logger.debug("Saving structure {} to local storage.", backendStructure)
-        val existing = structuresDb.getStructure(backendStructure.id)
+        val existing = structuresDb.getStructure(backendStructure.structure.id)
         return when (val result = resolveConflictForSave(existing, backendStructure)) {
             is SaveConflictResult.Proceed -> {
                 structuresDb.upsertStructure(backendStructure)

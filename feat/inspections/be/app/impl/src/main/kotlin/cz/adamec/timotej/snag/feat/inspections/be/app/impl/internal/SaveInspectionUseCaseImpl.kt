@@ -24,7 +24,7 @@ internal class SaveInspectionUseCaseImpl(
 ) : SaveInspectionUseCase {
     override suspend operator fun invoke(backendInspection: BackendInspection): BackendInspection? {
         logger.debug("Saving inspection {} to local storage.", backendInspection)
-        val existing = inspectionsDb.getInspection(backendInspection.id)
+        val existing = inspectionsDb.getInspection(backendInspection.inspection.id)
         return when (val result = resolveConflictForSave(existing, backendInspection)) {
             is SaveConflictResult.Proceed -> {
                 inspectionsDb.upsertInspection(backendInspection)

@@ -16,14 +16,12 @@ import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
-import kotlin.uuid.Uuid
 
 class ConflictResolutionTest {
     private fun entity(
         updatedAt: Long,
         deletedAt: Long? = null,
     ) = TestSyncable(
-        id = TEST_ID,
         updatedAt = Timestamp(updatedAt),
         deletedAt = deletedAt?.let { Timestamp(it) },
     )
@@ -143,13 +141,9 @@ class ConflictResolutionTest {
 
     // endregion
 
-    companion object {
-        private val TEST_ID = Uuid.parse("00000000-0000-0000-0000-000000000001")
-    }
 }
 
 private data class TestSyncable(
-    override val id: Uuid,
     override val updatedAt: Timestamp,
     override val deletedAt: Timestamp?,
 ) : Syncable

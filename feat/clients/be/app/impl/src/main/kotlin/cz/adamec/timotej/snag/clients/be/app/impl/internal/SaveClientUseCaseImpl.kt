@@ -24,7 +24,7 @@ internal class SaveClientUseCaseImpl(
 ) : SaveClientUseCase {
     override suspend operator fun invoke(client: BackendClient): BackendClient? {
         logger.debug("Saving client {} to local storage.", client.client.id)
-        val existing = clientsDb.getClient(client.id)
+        val existing = clientsDb.getClient(client.client.id)
         return when (val result = resolveConflictForSave(existing, client)) {
             is SaveConflictResult.Proceed -> {
                 clientsDb.upsertClient(client)

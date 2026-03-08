@@ -24,7 +24,7 @@ internal class SaveFindingUseCaseImpl(
 ) : SaveFindingUseCase {
     override suspend operator fun invoke(finding: BackendFinding): BackendFinding? {
         logger.debug("Saving finding {} to local storage.", finding)
-        val existing = findingsDb.getFinding(finding.id)
+        val existing = findingsDb.getFinding(finding.finding.id)
         return when (val result = resolveConflictForSave(existing, finding)) {
             is SaveConflictResult.Proceed -> {
                 findingsDb.upsertFinding(finding)
