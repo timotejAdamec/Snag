@@ -35,7 +35,7 @@ import cz.adamec.timotej.snag.projects.business.Project
 import cz.adamec.timotej.snag.structures.be.ports.StructuresDb
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
 import io.ktor.client.call.body
-import io.ktor.client.request.delete
+import io.ktor.client.request.patch
 import io.ktor.client.request.get
 import io.ktor.client.request.put
 import io.ktor.client.request.setBody
@@ -91,10 +91,10 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
         }
     }
 
-    // region DELETE /findings/{id}
+    // region PATCH /findings/{id}
 
     @Test
-    fun `DELETE finding returns 204 when successfully deleted`() =
+    fun `PATCH soft-delete finding returns 204 when successfully deleted`() =
         testApplication {
             configureApp()
             seedParentEntities()
@@ -115,7 +115,7 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
             val client = jsonClient()
 
             val response =
-                client.delete("/findings/$TEST_ID_1") {
+                client.patch("/findings/$TEST_ID_1") {
                     contentType(ContentType.Application.Json)
                     setBody(DeleteFindingApiDto(deletedAt = Timestamp(200L)))
                 }
@@ -124,7 +124,7 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
         }
 
     @Test
-    fun `DELETE finding sets deletedAt on successful deletion`() =
+    fun `PATCH soft-delete finding sets deletedAt on successful deletion`() =
         testApplication {
             configureApp()
             seedParentEntities()
@@ -144,7 +144,7 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
             )
             val client = jsonClient()
 
-            client.delete("/findings/$TEST_ID_1") {
+            client.patch("/findings/$TEST_ID_1") {
                 contentType(ContentType.Application.Json)
                 setBody(DeleteFindingApiDto(deletedAt = Timestamp(200L)))
             }
@@ -158,7 +158,7 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
         }
 
     @Test
-    fun `DELETE finding returns existing finding on conflict`() =
+    fun `PATCH soft-delete finding returns existing finding on conflict`() =
         testApplication {
             configureApp()
             seedParentEntities()
@@ -179,7 +179,7 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
             val client = jsonClient()
 
             val response =
-                client.delete("/findings/$TEST_ID_1") {
+                client.patch("/findings/$TEST_ID_1") {
                     contentType(ContentType.Application.Json)
                     setBody(DeleteFindingApiDto(deletedAt = Timestamp(200L)))
                 }
@@ -190,13 +190,13 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
         }
 
     @Test
-    fun `DELETE finding with invalid id returns 400`() =
+    fun `PATCH soft-delete finding with invalid id returns 400`() =
         testApplication {
             configureApp()
             val client = jsonClient()
 
             val response =
-                client.delete("/findings/not-a-uuid") {
+                client.patch("/findings/not-a-uuid") {
                     contentType(ContentType.Application.Json)
                     setBody(DeleteFindingApiDto(deletedAt = Timestamp(200L)))
                 }
@@ -205,13 +205,13 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
         }
 
     @Test
-    fun `DELETE finding with invalid body returns 400`() =
+    fun `PATCH soft-delete finding with invalid body returns 400`() =
         testApplication {
             configureApp()
             val client = jsonClient()
 
             val response =
-                client.delete("/findings/$TEST_ID_1") {
+                client.patch("/findings/$TEST_ID_1") {
                     contentType(ContentType.Application.Json)
                     setBody("{\"invalid\": true}")
                 }

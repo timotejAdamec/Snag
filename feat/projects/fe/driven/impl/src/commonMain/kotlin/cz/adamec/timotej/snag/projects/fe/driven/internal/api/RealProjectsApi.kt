@@ -68,7 +68,7 @@ internal class RealProjectsApi(
     ): OnlineDataResult<Unit> {
         LH.logger.d { "Deleting project $id from API..." }
         return safeApiCall(logger = LH.logger, errorContext = "Error deleting project $id from API.") {
-            httpClient.delete("/projects/$id") {
+            httpClient.patch("/projects/$id") {
                 setBody(DeleteProjectApiDto(deletedAt = deletedAt))
             }
             Unit

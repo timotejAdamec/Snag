@@ -17,6 +17,7 @@ import cz.adamec.timotej.snag.network.fe.ports.LocalHostUrlFactory
 import io.ktor.client.HttpClient
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.delete
+import io.ktor.client.request.patch
 import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.request.put
@@ -56,6 +57,18 @@ internal class SnagNetworkHttpClientImpl(
         block: HttpRequestBuilder.() -> Unit,
     ): HttpResponse =
         httpClient.put(
+            urlString = localHostUrlFactory.createUrl() + path,
+        ) {
+            contentType(contentType)
+            block()
+        }
+
+    override suspend fun patch(
+        path: String,
+        contentType: ContentType,
+        block: HttpRequestBuilder.() -> Unit,
+    ): HttpResponse =
+        httpClient.patch(
             urlString = localHostUrlFactory.createUrl() + path,
         ) {
             contentType(contentType)

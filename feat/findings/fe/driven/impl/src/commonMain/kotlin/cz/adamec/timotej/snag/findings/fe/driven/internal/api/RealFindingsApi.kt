@@ -45,7 +45,7 @@ internal class RealFindingsApi(
     ): OnlineDataResult<Unit> {
         LH.logger.d { "Deleting finding $id from API..." }
         return safeApiCall(logger = LH.logger, errorContext = "Error deleting finding $id from API.") {
-            httpClient.delete("/findings/$id") {
+            httpClient.patch("/findings/$id") {
                 setBody(DeleteFindingApiDto(deletedAt = deletedAt))
             }
             Unit

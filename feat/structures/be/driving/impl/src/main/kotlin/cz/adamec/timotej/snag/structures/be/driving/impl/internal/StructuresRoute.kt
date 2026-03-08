@@ -26,7 +26,7 @@ import cz.adamec.timotej.snag.structures.be.driving.contract.PutStructureApiDto
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
-import io.ktor.server.routing.delete
+import io.ktor.server.routing.patch
 import io.ktor.server.routing.get
 import io.ktor.server.routing.put
 import io.ktor.server.routing.route
@@ -40,7 +40,7 @@ internal class StructuresRoute(
 ) : AppRoute {
     override fun Route.setup() {
         route("/structures") {
-            delete("/{id}") {
+            patch("/{id}") {
                 val id = getIdFromParameters()
                 val deleteStructureDto = getDtoFromBody<DeleteStructureApiDto>()
 
