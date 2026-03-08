@@ -22,30 +22,30 @@ import cz.adamec.timotej.snag.feat.shared.database.be.ClassicFindingEntity
 import cz.adamec.timotej.snag.feat.shared.database.be.FindingEntity
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 
-internal enum class FindingTypeDbValue {
+internal enum class DbFindingTypeKey {
     CLASSIC,
     UNVISITED,
     NOTE,
 }
 
-internal fun FindingType.toDbValue(): FindingTypeDbValue =
+internal fun FindingType.toDbKey(): DbFindingTypeKey =
     when (this) {
-        is FindingType.Classic -> FindingTypeDbValue.CLASSIC
-        is FindingType.Unvisited -> FindingTypeDbValue.UNVISITED
-        is FindingType.Note -> FindingTypeDbValue.NOTE
+        is FindingType.Classic -> DbFindingTypeKey.CLASSIC
+        is FindingType.Unvisited -> DbFindingTypeKey.UNVISITED
+        is FindingType.Note -> DbFindingTypeKey.NOTE
     }
 
 internal fun FindingEntity.toModel(): BackendFinding {
-    val dbValue =
+    val dbKey =
         try {
-            FindingTypeDbValue.valueOf(type)
+            DbFindingTypeKey.valueOf(type)
         } catch (_: IllegalArgumentException) {
             LH.logger.error("Unknown finding type in DB: '{}', defaulting to Classic", type)
             null
         }
     val findingType =
-        when (dbValue) {
-            FindingTypeDbValue.CLASSIC -> {
+        when (dbKey) {
+            DbFindingTypeKey.CLASSIC -> {
                 val classic = ClassicFindingEntity.findById(id)
                 if (classic != null) {
                     FindingType.Classic(
@@ -56,10 +56,10 @@ internal fun FindingEntity.toModel(): BackendFinding {
                     FindingType.Classic()
                 }
             }
-            FindingTypeDbValue.UNVISITED -> {
+            DbFindingTypeKey.UNVISITED -> {
                 FindingType.Unvisited
             }
-            FindingTypeDbValue.NOTE -> {
+            DbFindingTypeKey.NOTE -> {
                 FindingType.Note
             }
             null -> {

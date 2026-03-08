@@ -29,17 +29,17 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlin.uuid.Uuid
 
-internal enum class FindingTypeDbValue {
+internal enum class DbFindingTypeKey {
     CLASSIC,
     UNVISITED,
     NOTE,
 }
 
-internal fun FindingType.toDbValue(): FindingTypeDbValue =
+internal fun FindingType.toDbKey(): DbFindingTypeKey =
     when (this) {
-        is FindingType.Classic -> FindingTypeDbValue.CLASSIC
-        is FindingType.Unvisited -> FindingTypeDbValue.UNVISITED
-        is FindingType.Note -> FindingTypeDbValue.NOTE
+        is FindingType.Classic -> DbFindingTypeKey.CLASSIC
+        is FindingType.Unvisited -> DbFindingTypeKey.UNVISITED
+        is FindingType.Note -> DbFindingTypeKey.NOTE
     }
 
 @Serializable
@@ -83,20 +83,20 @@ private fun toFindingType(
 ): FindingType {
     val dbValue =
         try {
-            FindingTypeDbValue.valueOf(type)
+            DbFindingTypeKey.valueOf(type)
         } catch (_: IllegalArgumentException) {
             LH.logger.e { "Unknown finding type in DB: '$type', defaulting to Classic" }
             return FindingType.Classic()
         }
     return when (dbValue) {
-        FindingTypeDbValue.CLASSIC ->
+        DbFindingTypeKey.CLASSIC ->
             FindingType.Classic(
                 importance = importance?.let { Importance.valueOf(it) } ?: Importance.MEDIUM,
                 term = term?.let { Term.valueOf(it) } ?: Term.T1,
             )
 
-        FindingTypeDbValue.UNVISITED -> FindingType.Unvisited
-        FindingTypeDbValue.NOTE -> FindingType.Note
+        DbFindingTypeKey.UNVISITED -> FindingType.Unvisited
+        DbFindingTypeKey.NOTE -> FindingType.Note
     }
 }
 
@@ -104,7 +104,7 @@ internal fun FrontendFinding.toEntity() =
     FindingEntity(
         id = finding.id.toString(),
         structureId = finding.structureId.toString(),
-        type = finding.type.toDbValue().name,
+        type = finding.type.toDbKey().name,
         name = finding.name,
         description = finding.description,
         coordinates = serializeCoordinates(finding.coordinates),
