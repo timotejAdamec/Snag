@@ -15,28 +15,37 @@ package cz.adamec.timotej.snag.findings.be.driven.impl.internal
 import cz.adamec.timotej.snag.feat.findings.be.model.BackendFinding
 import cz.adamec.timotej.snag.feat.findings.business.Finding
 import cz.adamec.timotej.snag.feat.findings.business.FindingType
-import cz.adamec.timotej.snag.feat.findings.business.FindingTypeKey
 import cz.adamec.timotej.snag.feat.findings.business.Importance
-import cz.adamec.timotej.snag.feat.findings.business.key
 import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
 import cz.adamec.timotej.snag.feat.findings.business.Term
 import cz.adamec.timotej.snag.feat.shared.database.be.ClassicFindingEntity
 import cz.adamec.timotej.snag.feat.shared.database.be.FindingEntity
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 
-internal fun FindingType.toDbString(): String = key.name
+internal enum class FindingTypeDbValue {
+    CLASSIC,
+    UNVISITED,
+    NOTE,
+}
+
+internal fun FindingType.toDbValue(): FindingTypeDbValue =
+    when (this) {
+        is FindingType.Classic -> FindingTypeDbValue.CLASSIC
+        is FindingType.Unvisited -> FindingTypeDbValue.UNVISITED
+        is FindingType.Note -> FindingTypeDbValue.NOTE
+    }
 
 internal fun FindingEntity.toModel(): BackendFinding {
-    val typeKey =
+    val dbValue =
         try {
-            FindingTypeKey.valueOf(type)
+            FindingTypeDbValue.valueOf(type)
         } catch (_: IllegalArgumentException) {
             LH.logger.error("Unknown finding type in DB: '{}', defaulting to Classic", type)
             null
         }
     val findingType =
-        when (typeKey) {
-            FindingTypeKey.CLASSIC -> {
+        when (dbValue) {
+            FindingTypeDbValue.CLASSIC -> {
                 val classic = ClassicFindingEntity.findById(id)
                 if (classic != null) {
                     FindingType.Classic(
@@ -47,10 +56,10 @@ internal fun FindingEntity.toModel(): BackendFinding {
                     FindingType.Classic()
                 }
             }
-            FindingTypeKey.UNVISITED -> {
+            FindingTypeDbValue.UNVISITED -> {
                 FindingType.Unvisited
             }
-            FindingTypeKey.NOTE -> {
+            FindingTypeDbValue.NOTE -> {
                 FindingType.Note
             }
             null -> {

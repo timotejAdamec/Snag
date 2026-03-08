@@ -16,9 +16,7 @@ package cz.adamec.timotej.snag.findings.fe.driven.internal.db
 
 import cz.adamec.timotej.snag.feat.findings.business.Finding
 import cz.adamec.timotej.snag.feat.findings.business.FindingType
-import cz.adamec.timotej.snag.feat.findings.business.FindingTypeKey
 import cz.adamec.timotej.snag.feat.findings.business.Importance
-import cz.adamec.timotej.snag.feat.findings.business.key
 import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
 import cz.adamec.timotej.snag.feat.findings.business.Term
 import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
@@ -30,6 +28,19 @@ import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlin.uuid.Uuid
+
+internal enum class FindingTypeDbValue {
+    CLASSIC,
+    UNVISITED,
+    NOTE,
+}
+
+internal fun FindingType.toDbValue(): FindingTypeDbValue =
+    when (this) {
+        is FindingType.Classic -> FindingTypeDbValue.CLASSIC
+        is FindingType.Unvisited -> FindingTypeDbValue.UNVISITED
+        is FindingType.Note -> FindingTypeDbValue.NOTE
+    }
 
 @Serializable
 internal data class RelativeCoordinateJson(
@@ -70,22 +81,22 @@ private fun toFindingType(
     importance: String?,
     term: String?,
 ): FindingType {
-    val key =
+    val dbValue =
         try {
-            FindingTypeKey.valueOf(type)
+            FindingTypeDbValue.valueOf(type)
         } catch (_: IllegalArgumentException) {
             LH.logger.e { "Unknown finding type in DB: '$type', defaulting to Classic" }
             return FindingType.Classic()
         }
-    return when (key) {
-        FindingTypeKey.CLASSIC ->
+    return when (dbValue) {
+        FindingTypeDbValue.CLASSIC ->
             FindingType.Classic(
                 importance = importance?.let { Importance.valueOf(it) } ?: Importance.MEDIUM,
                 term = term?.let { Term.valueOf(it) } ?: Term.T1,
             )
 
-        FindingTypeKey.UNVISITED -> FindingType.Unvisited
-        FindingTypeKey.NOTE -> FindingType.Note
+        FindingTypeDbValue.UNVISITED -> FindingType.Unvisited
+        FindingTypeDbValue.NOTE -> FindingType.Note
     }
 }
 
@@ -93,14 +104,12 @@ internal fun FrontendFinding.toEntity() =
     FindingEntity(
         id = finding.id.toString(),
         structureId = finding.structureId.toString(),
-        type = finding.type.toDbString(),
+        type = finding.type.toDbValue().name,
         name = finding.name,
         description = finding.description,
         coordinates = serializeCoordinates(finding.coordinates),
         updatedAt = finding.updatedAt.value,
     )
-
-internal fun FindingType.toDbString(): String = key.name
 
 private fun parseCoordinates(json: String): List<RelativeCoordinate> =
     Json.decodeFromString<List<RelativeCoordinateJson>>(json).map {
