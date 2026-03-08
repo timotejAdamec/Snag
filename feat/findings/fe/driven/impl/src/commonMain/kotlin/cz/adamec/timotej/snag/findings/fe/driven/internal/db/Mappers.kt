@@ -107,3 +107,10 @@ internal fun serializeCoordinates(coordinates: List<RelativeCoordinate>): String
     Json.encodeToString(
         coordinates.map { RelativeCoordinateJson(x = it.x, y = it.y) },
     )
+
+internal fun FindingType.toEntityKey(): FindingTypeEntityKey =
+    when (this) {
+        is FindingType.Classic -> FindingTypeEntityKey.CLASSIC
+        is FindingType.Unvisited -> FindingTypeEntityKey.UNVISITED
+        is FindingType.Note -> FindingTypeEntityKey.NOTE
+    }

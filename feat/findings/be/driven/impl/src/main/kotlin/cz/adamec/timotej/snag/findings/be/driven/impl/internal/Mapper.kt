@@ -22,6 +22,13 @@ import cz.adamec.timotej.snag.feat.shared.database.be.ClassicFindingEntity
 import cz.adamec.timotej.snag.feat.shared.database.be.FindingEntity
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 
+internal fun FindingType.toEntityKey(): FindingTypeEntityKey =
+    when (this) {
+        is FindingType.Classic -> FindingTypeEntityKey.CLASSIC
+        is FindingType.Unvisited -> FindingTypeEntityKey.UNVISITED
+        is FindingType.Note -> FindingTypeEntityKey.NOTE
+    }
+
 internal fun FindingEntity.toModel(): BackendFinding {
     val dbKey =
         try {

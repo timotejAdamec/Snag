@@ -63,6 +63,13 @@ internal fun RelativeCoordinateApiDto.toBusiness() =
         y = y,
     )
 
+internal fun FindingType.toDtoKey(): FindingTypeDtoKey =
+    when (this) {
+        is FindingType.Classic -> FindingTypeDtoKey.CLASSIC
+        is FindingType.Unvisited -> FindingTypeDtoKey.UNVISITED
+        is FindingType.Note -> FindingTypeDtoKey.NOTE
+    }
+
 internal fun FrontendFinding.toPutApiDto(): PutFindingApiDto {
     val type = finding.type
     val classic = type as? FindingType.Classic

@@ -12,17 +12,8 @@
 
 package cz.adamec.timotej.snag.findings.fe.driven.internal.api
 
-import cz.adamec.timotej.snag.feat.findings.business.FindingType
-
 internal enum class FindingTypeDtoKey {
     CLASSIC,
     UNVISITED,
     NOTE,
 }
-
-internal fun FindingType.toDtoKey(): FindingTypeDtoKey =
-    when (this) {
-        is FindingType.Classic -> FindingTypeDtoKey.CLASSIC
-        is FindingType.Unvisited -> FindingTypeDtoKey.UNVISITED
-        is FindingType.Note -> FindingTypeDtoKey.NOTE
-    }

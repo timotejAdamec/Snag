@@ -23,6 +23,13 @@ import cz.adamec.timotej.snag.findings.be.driving.contract.PutFindingApiDto
 import cz.adamec.timotej.snag.findings.be.driving.contract.RelativeCoordinateApiDto
 import kotlin.uuid.Uuid
 
+internal fun FindingType.toDtoKey(): FindingTypeDtoKey =
+    when (this) {
+        is FindingType.Classic -> FindingTypeDtoKey.CLASSIC
+        is FindingType.Unvisited -> FindingTypeDtoKey.UNVISITED
+        is FindingType.Note -> FindingTypeDtoKey.NOTE
+    }
+
 internal fun BackendFinding.toDto(): FindingApiDto {
     val type = finding.type
     val classic = type as? FindingType.Classic
