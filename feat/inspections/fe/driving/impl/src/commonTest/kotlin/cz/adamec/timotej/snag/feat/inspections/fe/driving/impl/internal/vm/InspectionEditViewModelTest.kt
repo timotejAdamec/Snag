@@ -53,7 +53,7 @@ class InspectionEditViewModelTest : FrontendKoinInitializedTest() {
 
     @Test
     fun `initial state is empty when creating with projectId provided and inspectionId null`() =
-        runTest {
+        runTest(testDispatcher) {
             val projectId = UuidProvider.getUuid()
             val viewModel = createViewModel(inspectionId = null, projectId = projectId)
 
@@ -67,7 +67,7 @@ class InspectionEditViewModelTest : FrontendKoinInitializedTest() {
 
     @Test
     fun `loading inspection data updates state when editing with inspectionId provided`() =
-        runTest {
+        runTest(testDispatcher) {
             val projectId = UuidProvider.getUuid()
             val inspectionId = UuidProvider.getUuid()
             val inspection =
@@ -99,7 +99,7 @@ class InspectionEditViewModelTest : FrontendKoinInitializedTest() {
 
     @Test
     fun `onParticipantsChange updates state`() =
-        runTest {
+        runTest(testDispatcher) {
             val projectId = UuidProvider.getUuid()
             val viewModel = createViewModel(projectId = projectId)
 
@@ -110,7 +110,7 @@ class InspectionEditViewModelTest : FrontendKoinInitializedTest() {
 
     @Test
     fun `onClimateChange updates state`() =
-        runTest {
+        runTest(testDispatcher) {
             val projectId = UuidProvider.getUuid()
             val viewModel = createViewModel(projectId = projectId)
 
@@ -121,7 +121,7 @@ class InspectionEditViewModelTest : FrontendKoinInitializedTest() {
 
     @Test
     fun `onNoteChange updates state`() =
-        runTest {
+        runTest(testDispatcher) {
             val projectId = UuidProvider.getUuid()
             val viewModel = createViewModel(projectId = projectId)
 
@@ -132,7 +132,7 @@ class InspectionEditViewModelTest : FrontendKoinInitializedTest() {
 
     @Test
     fun `onStartedAtChange updates state`() =
-        runTest {
+        runTest(testDispatcher) {
             val projectId = UuidProvider.getUuid()
             val viewModel = createViewModel(projectId = projectId)
 
@@ -143,7 +143,7 @@ class InspectionEditViewModelTest : FrontendKoinInitializedTest() {
 
     @Test
     fun `onEndedAtChange updates state`() =
-        runTest {
+        runTest(testDispatcher) {
             val projectId = UuidProvider.getUuid()
             val viewModel = createViewModel(projectId = projectId)
 
@@ -154,7 +154,7 @@ class InspectionEditViewModelTest : FrontendKoinInitializedTest() {
 
     @Test
     fun `onSaveInspection successful in create mode sends save event`() =
-        runTest {
+        runTest(testDispatcher) {
             val projectId = UuidProvider.getUuid()
             val viewModel = createViewModel(projectId = projectId)
             viewModel.onParticipantsChange("John Doe")
@@ -175,7 +175,7 @@ class InspectionEditViewModelTest : FrontendKoinInitializedTest() {
 
     @Test
     fun `onSaveInspection successful in edit mode sends save event`() =
-        runTest {
+        runTest(testDispatcher) {
             val projectId = UuidProvider.getUuid()
             val inspectionId = UuidProvider.getUuid()
             val inspection =
@@ -214,7 +214,7 @@ class InspectionEditViewModelTest : FrontendKoinInitializedTest() {
 
     @Test
     fun `onSaveInspection failure sends error`() =
-        runTest {
+        runTest(testDispatcher) {
             val projectId = UuidProvider.getUuid()
             val viewModel = createViewModel(projectId = projectId)
 

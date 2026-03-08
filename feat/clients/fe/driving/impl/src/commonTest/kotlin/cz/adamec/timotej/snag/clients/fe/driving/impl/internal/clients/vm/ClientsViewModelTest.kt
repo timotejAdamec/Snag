@@ -40,7 +40,7 @@ class ClientsViewModelTest : FrontendKoinInitializedTest() {
 
     @Test
     fun `initial state has empty clients list`() =
-        runTest {
+        runTest(testDispatcher) {
             val viewModel = createViewModel()
 
             val clients = viewModel.state.value.clients
@@ -49,7 +49,7 @@ class ClientsViewModelTest : FrontendKoinInitializedTest() {
 
     @Test
     fun `loads clients from db`() =
-        runTest {
+        runTest(testDispatcher) {
             val client =
                 FrontendClient(
                     client =

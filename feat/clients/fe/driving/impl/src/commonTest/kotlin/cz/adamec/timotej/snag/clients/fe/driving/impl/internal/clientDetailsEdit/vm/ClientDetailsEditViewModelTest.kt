@@ -52,7 +52,7 @@ class ClientDetailsEditViewModelTest : FrontendKoinInitializedTest() {
 
     @Test
     fun `initial state is empty when clientId is null`() =
-        runTest {
+        runTest(testDispatcher) {
             val viewModel = createViewModel(clientId = null)
 
             assertEquals("", viewModel.state.value.clientName)
@@ -63,7 +63,7 @@ class ClientDetailsEditViewModelTest : FrontendKoinInitializedTest() {
 
     @Test
     fun `loading client data updates state when clientId is provided`() =
-        runTest {
+        runTest(testDispatcher) {
             val clientId = Uuid.random()
             val client =
                 FrontendClient(
@@ -91,7 +91,7 @@ class ClientDetailsEditViewModelTest : FrontendKoinInitializedTest() {
 
     @Test
     fun `onClientNameChange updates state`() =
-        runTest {
+        runTest(testDispatcher) {
             val viewModel = createViewModel()
 
             viewModel.onClientNameChange("New Name")
@@ -101,7 +101,7 @@ class ClientDetailsEditViewModelTest : FrontendKoinInitializedTest() {
 
     @Test
     fun `onClientAddressChange updates state`() =
-        runTest {
+        runTest(testDispatcher) {
             val viewModel = createViewModel()
 
             viewModel.onClientAddressChange("New Address")
@@ -111,7 +111,7 @@ class ClientDetailsEditViewModelTest : FrontendKoinInitializedTest() {
 
     @Test
     fun `onClientPhoneNumberChange updates state`() =
-        runTest {
+        runTest(testDispatcher) {
             val viewModel = createViewModel()
 
             viewModel.onClientPhoneNumberChange("+420999888777")
@@ -121,7 +121,7 @@ class ClientDetailsEditViewModelTest : FrontendKoinInitializedTest() {
 
     @Test
     fun `onClientEmailChange updates state`() =
-        runTest {
+        runTest(testDispatcher) {
             val viewModel = createViewModel()
 
             viewModel.onClientEmailChange("new@example.com")
@@ -131,7 +131,7 @@ class ClientDetailsEditViewModelTest : FrontendKoinInitializedTest() {
 
     @Test
     fun `onSaveClient with empty name shows inline error`() =
-        runTest {
+        runTest(testDispatcher) {
             val viewModel = createViewModel()
 
             viewModel.onSaveClient()
@@ -142,7 +142,7 @@ class ClientDetailsEditViewModelTest : FrontendKoinInitializedTest() {
 
     @Test
     fun `onSaveClient with invalid email shows inline error`() =
-        runTest {
+        runTest(testDispatcher) {
             val viewModel = createViewModel()
             viewModel.onClientNameChange("Name")
             viewModel.onClientEmailChange("invalid")
@@ -156,7 +156,7 @@ class ClientDetailsEditViewModelTest : FrontendKoinInitializedTest() {
 
     @Test
     fun `onSaveClient with invalid phone shows inline error`() =
-        runTest {
+        runTest(testDispatcher) {
             val viewModel = createViewModel()
             viewModel.onClientNameChange("Name")
             viewModel.onClientPhoneNumberChange("abc")
@@ -170,7 +170,7 @@ class ClientDetailsEditViewModelTest : FrontendKoinInitializedTest() {
 
     @Test
     fun `onSaveClient with valid optional fields passes validation`() =
-        runTest {
+        runTest(testDispatcher) {
             val viewModel = createViewModel()
             viewModel.onClientNameChange("Name")
             viewModel.onClientEmailChange("test@example.com")
@@ -187,7 +187,7 @@ class ClientDetailsEditViewModelTest : FrontendKoinInitializedTest() {
 
     @Test
     fun `editing field clears its error`() =
-        runTest {
+        runTest(testDispatcher) {
             val viewModel = createViewModel()
             viewModel.onSaveClient()
             advanceUntilIdle()
@@ -200,7 +200,7 @@ class ClientDetailsEditViewModelTest : FrontendKoinInitializedTest() {
 
     @Test
     fun `onSaveClient successful sends save event`() =
-        runTest {
+        runTest(testDispatcher) {
             val viewModel = createViewModel()
             viewModel.onClientNameChange("Name")
 
@@ -216,7 +216,7 @@ class ClientDetailsEditViewModelTest : FrontendKoinInitializedTest() {
 
     @Test
     fun `onSaveClient failure sends error`() =
-        runTest {
+        runTest(testDispatcher) {
             val viewModel = createViewModel()
             viewModel.onClientNameChange("Name")
 

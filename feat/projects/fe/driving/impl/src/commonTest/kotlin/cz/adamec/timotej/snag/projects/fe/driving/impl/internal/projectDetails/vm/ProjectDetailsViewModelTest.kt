@@ -133,7 +133,7 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
 
     @Test
     fun `downloading report on success sends report to reportReadyFlow`() =
-        runTest {
+        runTest(testDispatcher) {
             val projectId = Uuid.random()
             seedProject(projectId)
             val samplePdfBytes = byteArrayOf(0x25, 0x50, 0x44, 0x46)
@@ -153,7 +153,7 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
 
     @Test
     fun `downloading report on network failure shows network error`() =
-        runTest {
+        runTest(testDispatcher) {
             val projectId = Uuid.random()
             seedProject(projectId)
             fakeReportsApi.forcedFailure = OnlineDataResult.Failure.NetworkUnavailable
@@ -170,7 +170,7 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
 
     @Test
     fun `downloading report on generic failure shows unknown error`() =
-        runTest {
+        runTest(testDispatcher) {
             val projectId = Uuid.random()
             seedProject(projectId)
             fakeReportsApi.forcedFailure =
@@ -188,7 +188,7 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
 
     @Test
     fun `downloading report calls use case with correct projectId`() =
-        runTest {
+        runTest(testDispatcher) {
             val projectId = Uuid.random()
             seedProject(projectId)
 
@@ -203,7 +203,7 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
 
     @Test
     fun `canDownloadReport is true when loaded and not downloading`() =
-        runTest {
+        runTest(testDispatcher) {
             val projectId = Uuid.random()
             seedProject(projectId)
 
@@ -216,7 +216,7 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
 
     @Test
     fun `canDownloadReport is false when project is not loaded`() =
-        runTest {
+        runTest(testDispatcher) {
             val projectId = Uuid.random()
 
             val viewModel = createViewModel(projectId)
@@ -226,7 +226,7 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
 
     @Test
     fun `canDownloadReport is false while downloading`() =
-        runTest {
+        runTest(testDispatcher) {
             val projectId = Uuid.random()
             seedProject(projectId)
             val deferred = CompletableDeferred<Unit>()
@@ -253,7 +253,7 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
 
     @Test
     fun `onStartInspection sets startedAt to current timestamp`() =
-        runTest {
+        runTest(testDispatcher) {
             val projectId = Uuid.random()
             val inspectionId = Uuid.random()
             seedProject(projectId)
@@ -273,7 +273,7 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
 
     @Test
     fun `onStartInspection preserves existing fields`() =
-        runTest {
+        runTest(testDispatcher) {
             val projectId = Uuid.random()
             val inspectionId = Uuid.random()
             seedProject(projectId)
@@ -305,7 +305,7 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
 
     @Test
     fun `onEndInspection sets endedAt to current timestamp`() =
-        runTest {
+        runTest(testDispatcher) {
             val projectId = Uuid.random()
             val inspectionId = Uuid.random()
             seedProject(projectId)
@@ -325,7 +325,7 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
 
     @Test
     fun `onEndInspection preserves existing startedAt`() =
-        runTest {
+        runTest(testDispatcher) {
             val projectId = Uuid.random()
             val inspectionId = Uuid.random()
             val existingStartedAt = Timestamp(500L)
@@ -350,7 +350,7 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
 
     @Test
     fun `onStartInspection does nothing for unknown inspection id`() =
-        runTest {
+        runTest(testDispatcher) {
             val projectId = Uuid.random()
             seedProject(projectId)
 
@@ -365,7 +365,7 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
 
     @Test
     fun `onEndInspection does nothing for unknown inspection id`() =
-        runTest {
+        runTest(testDispatcher) {
             val projectId = Uuid.random()
             seedProject(projectId)
 
@@ -380,7 +380,7 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
 
     @Test
     fun `onStartInspection syncs the inspection`() =
-        runTest {
+        runTest(testDispatcher) {
             val projectId = Uuid.random()
             val inspectionId = Uuid.random()
             seedProject(projectId)
@@ -401,7 +401,7 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
 
     @Test
     fun `onEndInspection syncs the inspection`() =
-        runTest {
+        runTest(testDispatcher) {
             val projectId = Uuid.random()
             val inspectionId = Uuid.random()
             seedProject(projectId)

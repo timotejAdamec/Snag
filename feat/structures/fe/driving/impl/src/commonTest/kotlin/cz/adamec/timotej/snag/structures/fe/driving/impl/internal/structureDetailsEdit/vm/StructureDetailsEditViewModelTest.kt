@@ -68,7 +68,7 @@ class StructureDetailsEditViewModelTest : FrontendKoinInitializedTest() {
 
     @Test
     fun `initial state is empty when creating with projectId provided and structureId null`() =
-        runTest {
+        runTest(testDispatcher) {
             val projectId = UuidProvider.getUuid()
             val viewModel = createViewModel(structureId = null, projectId = projectId)
 
@@ -78,7 +78,7 @@ class StructureDetailsEditViewModelTest : FrontendKoinInitializedTest() {
 
     @Test
     fun `loading structure data updates state and projectId when editing with structureId provided`() =
-        runTest {
+        runTest(testDispatcher) {
             val projectId = UuidProvider.getUuid()
             val structureId = UuidProvider.getUuid()
             val structure =
@@ -103,7 +103,7 @@ class StructureDetailsEditViewModelTest : FrontendKoinInitializedTest() {
 
     @Test
     fun `onStructureNameChange updates state`() =
-        runTest {
+        runTest(testDispatcher) {
             val projectId = UuidProvider.getUuid()
             val viewModel = createViewModel(projectId = projectId)
 
@@ -114,7 +114,7 @@ class StructureDetailsEditViewModelTest : FrontendKoinInitializedTest() {
 
     @Test
     fun `onSaveStructure with empty name shows inline error`() =
-        runTest {
+        runTest(testDispatcher) {
             val projectId = UuidProvider.getUuid()
             val viewModel = createViewModel(projectId = projectId)
 
@@ -126,7 +126,7 @@ class StructureDetailsEditViewModelTest : FrontendKoinInitializedTest() {
 
     @Test
     fun `editing name clears its error`() =
-        runTest {
+        runTest(testDispatcher) {
             val projectId = UuidProvider.getUuid()
             val viewModel = createViewModel(projectId = projectId)
 
@@ -140,7 +140,7 @@ class StructureDetailsEditViewModelTest : FrontendKoinInitializedTest() {
 
     @Test
     fun `onSaveStructure successful in create mode sends save event`() =
-        runTest {
+        runTest(testDispatcher) {
             val projectId = UuidProvider.getUuid()
             val viewModel = createViewModel(projectId = projectId)
             viewModel.onStructureNameChange("Name")
@@ -160,7 +160,7 @@ class StructureDetailsEditViewModelTest : FrontendKoinInitializedTest() {
 
     @Test
     fun `onSaveStructure successful in edit mode sends save event`() =
-        runTest {
+        runTest(testDispatcher) {
             val projectId = UuidProvider.getUuid()
             val structureId = UuidProvider.getUuid()
             val structure =
@@ -197,7 +197,7 @@ class StructureDetailsEditViewModelTest : FrontendKoinInitializedTest() {
 
     @Test
     fun `onSaveStructure failure sends error`() =
-        runTest {
+        runTest(testDispatcher) {
             val projectId = UuidProvider.getUuid()
             val viewModel = createViewModel(projectId = projectId)
             viewModel.onStructureNameChange("Name")
@@ -222,7 +222,7 @@ class StructureDetailsEditViewModelTest : FrontendKoinInitializedTest() {
 
     @Test
     fun `onImagePicked uploads file and updates floorPlanUrl`() =
-        runTest {
+        runTest(testDispatcher) {
             val projectId = UuidProvider.getUuid()
             val viewModel = createViewModel(projectId = projectId)
             val bytes = byteArrayOf(1, 2, 3)
@@ -243,7 +243,7 @@ class StructureDetailsEditViewModelTest : FrontendKoinInitializedTest() {
 
     @Test
     fun `onImagePicked replaces previous pending upload and deletes old one`() =
-        runTest {
+        runTest(testDispatcher) {
             val projectId = UuidProvider.getUuid()
             val viewModel = createViewModel(projectId = projectId)
 
@@ -264,7 +264,7 @@ class StructureDetailsEditViewModelTest : FrontendKoinInitializedTest() {
 
     @Test
     fun `onRemoveImage clears floorPlanUrl and deletes pending upload`() =
-        runTest {
+        runTest(testDispatcher) {
             val projectId = UuidProvider.getUuid()
             val viewModel = createViewModel(projectId = projectId)
 
@@ -282,7 +282,7 @@ class StructureDetailsEditViewModelTest : FrontendKoinInitializedTest() {
 
     @Test
     fun `onSaveStructure includes floorPlanUrl in saved structure`() =
-        runTest {
+        runTest(testDispatcher) {
             val projectId = UuidProvider.getUuid()
             val viewModel = createViewModel(projectId = projectId)
             viewModel.onStructureNameChange("Name")
@@ -303,7 +303,7 @@ class StructureDetailsEditViewModelTest : FrontendKoinInitializedTest() {
 
     @Test
     fun `onImagePicked failure sends error event`() =
-        runTest {
+        runTest(testDispatcher) {
             val projectId = UuidProvider.getUuid()
             val viewModel = createViewModel(projectId = projectId)
 
@@ -321,7 +321,7 @@ class StructureDetailsEditViewModelTest : FrontendKoinInitializedTest() {
 
     @Test
     fun `loading existing structure with floorPlanUrl updates state`() =
-        runTest {
+        runTest(testDispatcher) {
             val projectId = UuidProvider.getUuid()
             val structureId = UuidProvider.getUuid()
             val floorPlanUrl = "https://storage.test/existing-plan.png"

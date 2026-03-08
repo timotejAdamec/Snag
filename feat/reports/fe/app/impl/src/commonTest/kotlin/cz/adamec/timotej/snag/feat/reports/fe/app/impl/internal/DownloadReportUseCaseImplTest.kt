@@ -30,7 +30,7 @@ class DownloadReportUseCaseImplTest : FrontendKoinInitializedTest() {
 
     @Test
     fun `returns success with bytes on happy path`() =
-        runTest {
+        runTest(testDispatcher) {
             val projectId = Uuid.random()
             val expectedBytes = byteArrayOf(0x25, 0x50, 0x44, 0x46)
             fakeReportsApi.reportBytes = expectedBytes
@@ -43,7 +43,7 @@ class DownloadReportUseCaseImplTest : FrontendKoinInitializedTest() {
 
     @Test
     fun `propagates API failure`() =
-        runTest {
+        runTest(testDispatcher) {
             val projectId = Uuid.random()
             fakeReportsApi.forcedFailure = OnlineDataResult.Failure.NetworkUnavailable
 
