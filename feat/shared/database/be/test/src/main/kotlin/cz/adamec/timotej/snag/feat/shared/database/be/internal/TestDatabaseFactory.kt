@@ -13,12 +13,14 @@
 package cz.adamec.timotej.snag.feat.shared.database.be.internal
 
 import org.jetbrains.exposed.v1.jdbc.Database
-import kotlin.uuid.Uuid
 
 internal object TestDatabaseFactory {
-    fun create(): Database =
+    private val database: Database by lazy {
         Database.connect(
-            url = "jdbc:h2:mem:${Uuid.random()};DB_CLOSE_DELAY=-1",
+            url = "jdbc:h2:mem:test-shared;DB_CLOSE_DELAY=-1",
             driver = "org.h2.Driver",
         )
+    }
+
+    fun create(): Database = database
 }

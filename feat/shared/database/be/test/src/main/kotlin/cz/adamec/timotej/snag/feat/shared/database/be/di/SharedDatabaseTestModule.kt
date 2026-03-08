@@ -12,33 +12,18 @@
 
 package cz.adamec.timotej.snag.feat.shared.database.be.di
 
-import cz.adamec.timotej.snag.feat.shared.database.be.ClassicFindingTable
-import cz.adamec.timotej.snag.feat.shared.database.be.ClientsTable
-import cz.adamec.timotej.snag.feat.shared.database.be.FindingCoordinatesTable
-import cz.adamec.timotej.snag.feat.shared.database.be.FindingsTable
-import cz.adamec.timotej.snag.feat.shared.database.be.InspectionsTable
-import cz.adamec.timotej.snag.feat.shared.database.be.ProjectsTable
-import cz.adamec.timotej.snag.feat.shared.database.be.StructuresTable
+import cz.adamec.timotej.snag.feat.shared.database.be.internal.TestDatabaseCleaner
 import cz.adamec.timotej.snag.feat.shared.database.be.internal.TestDatabaseFactory
+import cz.adamec.timotej.snag.feat.shared.database.be.internal.TestSchemaInitializer
 import org.jetbrains.exposed.v1.jdbc.Database
-import org.jetbrains.exposed.v1.jdbc.SchemaUtils
-import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 import org.koin.dsl.module
 
 val sharedDatabaseTestModule =
     module {
-        single<Database> { TestDatabaseFactory.create() }
-        single(createdAtStart = true) {
-            transaction(get<Database>()) {
-                SchemaUtils.create(
-                    ClientsTable,
-                    ProjectsTable,
-                    StructuresTable,
-                    FindingsTable,
-                    FindingCoordinatesTable,
-                    ClassicFindingTable,
-                    InspectionsTable,
-                )
+        single<Database> {
+            TestDatabaseFactory.create().also { database ->
+                TestSchemaInitializer.ensureCreated(database)
+                TestDatabaseCleaner.cleanAll(database)
             }
         }
     }
