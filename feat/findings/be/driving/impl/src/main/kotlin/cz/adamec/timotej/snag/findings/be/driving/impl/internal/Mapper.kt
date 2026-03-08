@@ -24,21 +24,16 @@ import cz.adamec.timotej.snag.findings.be.driving.contract.RelativeCoordinateApi
 import kotlin.uuid.Uuid
 
 internal fun BackendFinding.toDto(): FindingApiDto {
-    val (typeStr, importanceStr, termStr) =
-        when (val type = finding.type) {
-            is FindingType.Classic ->
-                Triple(type.toDtoKey().name, type.importance.name, type.term.name)
-            is FindingType.Unvisited -> Triple(type.toDtoKey().name, null, null)
-            is FindingType.Note -> Triple(type.toDtoKey().name, null, null)
-        }
+    val type = finding.type
+    val classic = type as? FindingType.Classic
     return FindingApiDto(
         id = finding.id,
         structureId = finding.structureId,
-        type = typeStr,
+        type = type.toDtoKey().name,
         name = finding.name,
         description = finding.description,
-        importance = importanceStr,
-        term = termStr,
+        importance = classic?.importance?.name,
+        term = classic?.term?.name,
         coordinates = finding.coordinates.map { it.toDto() },
         updatedAt = finding.updatedAt,
         deletedAt = deletedAt,

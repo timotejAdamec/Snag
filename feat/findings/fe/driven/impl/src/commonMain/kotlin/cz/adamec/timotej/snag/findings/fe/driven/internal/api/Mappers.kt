@@ -64,21 +64,15 @@ internal fun RelativeCoordinateApiDto.toBusiness() =
     )
 
 internal fun FrontendFinding.toPutApiDto(): PutFindingApiDto {
-    val (typeStr, importanceStr, termStr) =
-        when (val type = finding.type) {
-            is FindingType.Classic ->
-                Triple(type.toDtoKey().name, type.importance.name, type.term.name)
-
-            is FindingType.Unvisited -> Triple(type.toDtoKey().name, null, null)
-            is FindingType.Note -> Triple(type.toDtoKey().name, null, null)
-        }
+    val type = finding.type
+    val classic = type as? FindingType.Classic
     return PutFindingApiDto(
         structureId = finding.structureId,
-        type = typeStr,
+        type = type.toDtoKey().name,
         name = finding.name,
         description = finding.description,
-        importance = importanceStr,
-        term = termStr,
+        importance = classic?.importance?.name,
+        term = classic?.term?.name,
         coordinates = finding.coordinates.map { RelativeCoordinateApiDto(x = it.x, y = it.y) },
         updatedAt = finding.updatedAt,
     )
