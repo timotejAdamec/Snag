@@ -22,19 +22,6 @@ import cz.adamec.timotej.snag.feat.shared.database.be.ClassicFindingEntity
 import cz.adamec.timotej.snag.feat.shared.database.be.FindingEntity
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 
-internal enum class DbFindingTypeKey {
-    CLASSIC,
-    UNVISITED,
-    NOTE,
-}
-
-internal fun FindingType.toDbKey(): DbFindingTypeKey =
-    when (this) {
-        is FindingType.Classic -> DbFindingTypeKey.CLASSIC
-        is FindingType.Unvisited -> DbFindingTypeKey.UNVISITED
-        is FindingType.Note -> DbFindingTypeKey.NOTE
-    }
-
 internal fun FindingEntity.toModel(): BackendFinding {
     val dbKey =
         try {

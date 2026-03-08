@@ -29,19 +29,6 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlin.uuid.Uuid
 
-internal enum class DbFindingTypeKey {
-    CLASSIC,
-    UNVISITED,
-    NOTE,
-}
-
-internal fun FindingType.toDbKey(): DbFindingTypeKey =
-    when (this) {
-        is FindingType.Classic -> DbFindingTypeKey.CLASSIC
-        is FindingType.Unvisited -> DbFindingTypeKey.UNVISITED
-        is FindingType.Note -> DbFindingTypeKey.NOTE
-    }
-
 @Serializable
 internal data class RelativeCoordinateJson(
     val x: Float,
