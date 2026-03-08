@@ -385,6 +385,7 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
             val inspectionId = Uuid.random()
             seedProject(projectId)
             seedInspection(projectId = projectId, inspectionId = inspectionId)
+            // Prevent background pull-sync from consuming the enqueued item
             fakeInspectionsApi.forcedFailure = OnlineDataResult.Failure.NetworkUnavailable
 
             val viewModel = createViewModel(projectId)
@@ -403,6 +404,7 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
             val inspectionId = Uuid.random()
             seedProject(projectId)
             seedInspection(projectId = projectId, inspectionId = inspectionId, startedAt = Timestamp(1L))
+            // Prevent background pull-sync from consuming the enqueued item
             fakeInspectionsApi.forcedFailure = OnlineDataResult.Failure.NetworkUnavailable
 
             val viewModel = createViewModel(projectId)
