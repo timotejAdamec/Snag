@@ -25,14 +25,14 @@ import cz.adamec.timotej.snag.lib.core.common.Timestamp
 internal fun FindingEntity.toModel(): BackendFinding {
     val dbKey =
         try {
-            DbFindingTypeKey.valueOf(type)
+            FindingTypeEntityKey.valueOf(type)
         } catch (_: IllegalArgumentException) {
             LH.logger.error("Unknown finding type in DB: '{}', defaulting to Classic", type)
             null
         }
     val findingType =
         when (dbKey) {
-            DbFindingTypeKey.CLASSIC -> {
+            FindingTypeEntityKey.CLASSIC -> {
                 val classic = ClassicFindingEntity.findById(id)
                 if (classic != null) {
                     FindingType.Classic(
@@ -43,10 +43,10 @@ internal fun FindingEntity.toModel(): BackendFinding {
                     FindingType.Classic()
                 }
             }
-            DbFindingTypeKey.UNVISITED -> {
+            FindingTypeEntityKey.UNVISITED -> {
                 FindingType.Unvisited
             }
-            DbFindingTypeKey.NOTE -> {
+            FindingTypeEntityKey.NOTE -> {
                 FindingType.Note
             }
             null -> {

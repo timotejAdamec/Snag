@@ -24,7 +24,6 @@ import cz.adamec.timotej.snag.feat.structures.be.model.BackendStructure
 import cz.adamec.timotej.snag.feat.structures.business.Structure
 import cz.adamec.timotej.snag.findings.be.driving.contract.DeleteFindingApiDto
 import cz.adamec.timotej.snag.findings.be.driving.contract.FindingApiDto
-import cz.adamec.timotej.snag.feat.findings.business.FindingTypeKey
 import cz.adamec.timotej.snag.findings.be.driving.contract.PutFindingApiDto
 import cz.adamec.timotej.snag.findings.be.driving.contract.RelativeCoordinateApiDto
 import cz.adamec.timotej.snag.findings.be.ports.FindingsDb
@@ -427,7 +426,7 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
                             structureId = STRUCTURE_ID,
                             name = "New Finding",
                             description = "New Desc",
-                            type = FindingTypeKey.CLASSIC.name,
+                            type = FindingTypeDtoKey.CLASSIC.name,
                             importance = "MEDIUM",
                             term = "T1",
                             coordinates = listOf(RelativeCoordinateApiDto(0.3f, 0.4f)),
@@ -468,7 +467,7 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
                             structureId = STRUCTURE_ID,
                             name = "New",
                             description = null,
-                            type = FindingTypeKey.CLASSIC.name,
+                            type = FindingTypeDtoKey.CLASSIC.name,
                             importance = "MEDIUM",
                             term = "T1",
                             coordinates = emptyList(),
@@ -513,7 +512,7 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
                             structureId = STRUCTURE_ID,
                             name = "New",
                             description = null,
-                            type = FindingTypeKey.CLASSIC.name,
+                            type = FindingTypeDtoKey.CLASSIC.name,
                             importance = "MEDIUM",
                             term = "T1",
                             coordinates = emptyList(),
@@ -542,7 +541,7 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
                             structureId = STRUCTURE_ID,
                             name = "New",
                             description = null,
-                            type = FindingTypeKey.CLASSIC.name,
+                            type = FindingTypeDtoKey.CLASSIC.name,
                             importance = "MEDIUM",
                             term = "T1",
                             coordinates = emptyList(),
