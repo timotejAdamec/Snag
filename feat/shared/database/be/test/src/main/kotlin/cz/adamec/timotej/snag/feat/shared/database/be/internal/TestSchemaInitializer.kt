@@ -10,22 +10,22 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.feat.shared.database.be.di
+package cz.adamec.timotej.snag.feat.shared.database.be.internal
 
 import cz.adamec.timotej.snag.feat.shared.database.be.allTables
-import cz.adamec.timotej.snag.feat.shared.database.be.internal.DatabaseFactory
 import org.jetbrains.exposed.v1.jdbc.Database
 import org.jetbrains.exposed.v1.jdbc.SchemaUtils
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
-import org.koin.dsl.module
 
-val sharedDatabaseModule =
-    module {
-        single<Database> {
-            DatabaseFactory.create().also { database ->
-                transaction(database) {
-                    SchemaUtils.create(*allTables)
-                }
+internal object TestSchemaInitializer {
+    private var initialized = false
+
+    fun ensureCreated(database: Database) {
+        if (!initialized) {
+            transaction(database) {
+                SchemaUtils.create(*allTables)
             }
+            initialized = true
         }
     }
+}

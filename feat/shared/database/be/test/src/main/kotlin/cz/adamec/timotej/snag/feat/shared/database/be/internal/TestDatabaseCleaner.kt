@@ -12,15 +12,14 @@
 
 package cz.adamec.timotej.snag.feat.shared.database.be.internal
 
+import cz.adamec.timotej.snag.feat.shared.database.be.allTables
 import org.jetbrains.exposed.v1.jdbc.Database
+import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 
-internal object TestDatabaseFactory {
-    private val database: Database by lazy {
-        Database.connect(
-            url = "jdbc:h2:mem:test-shared;DB_CLOSE_DELAY=-1",
-            driver = "org.h2.Driver",
-        )
+internal object TestDatabaseCleaner {
+    fun cleanAll(database: Database) {
+        transaction(database) {
+            allTables.reversed().forEach { it.deleteAll() }
+        }
     }
-
-    fun create(): Database = database
 }
