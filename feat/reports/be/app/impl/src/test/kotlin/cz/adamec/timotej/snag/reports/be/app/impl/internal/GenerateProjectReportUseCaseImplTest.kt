@@ -39,14 +39,14 @@ class GenerateProjectReportUseCaseImplTest : BackendKoinInitializedTest() {
 
     @Test
     fun `returns null when project does not exist`() =
-        runTest {
+        runTest(testDispatcher) {
             val result = useCase(Uuid.parse("00000000-0000-0000-0000-000000000099"))
             assertNull(result)
         }
 
     @Test
     fun `generates report for existing project`() =
-        runTest {
+        runTest(testDispatcher) {
             projectsDb.saveProject(
                 BackendProject(
                     project =
@@ -71,7 +71,7 @@ class GenerateProjectReportUseCaseImplTest : BackendKoinInitializedTest() {
 
     @Test
     fun `filters soft-deleted structures`() =
-        runTest {
+        runTest(testDispatcher) {
             projectsDb.saveProject(
                 BackendProject(
                     project =

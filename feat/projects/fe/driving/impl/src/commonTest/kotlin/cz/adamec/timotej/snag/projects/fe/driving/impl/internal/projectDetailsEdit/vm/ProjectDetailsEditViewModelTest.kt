@@ -56,7 +56,7 @@ class ProjectDetailsEditViewModelTest : FrontendKoinInitializedTest() {
 
     @Test
     fun `initial state is empty when projectId is null`() =
-        runTest {
+        runTest(testDispatcher) {
             val viewModel = createViewModel(projectId = null)
 
             assertEquals("", viewModel.state.value.projectName)
@@ -67,7 +67,7 @@ class ProjectDetailsEditViewModelTest : FrontendKoinInitializedTest() {
 
     @Test
     fun `loading project data updates state when projectId is provided`() =
-        runTest {
+        runTest(testDispatcher) {
             val projectId = Uuid.random()
             val project =
                 FrontendProject(
@@ -91,7 +91,7 @@ class ProjectDetailsEditViewModelTest : FrontendKoinInitializedTest() {
 
     @Test
     fun `onProjectNameChange updates state`() =
-        runTest {
+        runTest(testDispatcher) {
             val viewModel = createViewModel()
 
             viewModel.onProjectNameChange("New Name")
@@ -101,7 +101,7 @@ class ProjectDetailsEditViewModelTest : FrontendKoinInitializedTest() {
 
     @Test
     fun `onProjectAddressChange updates state`() =
-        runTest {
+        runTest(testDispatcher) {
             val viewModel = createViewModel()
 
             viewModel.onProjectAddressChange("New Address")
@@ -111,7 +111,7 @@ class ProjectDetailsEditViewModelTest : FrontendKoinInitializedTest() {
 
     @Test
     fun `onSaveProject with empty name shows inline error`() =
-        runTest {
+        runTest(testDispatcher) {
             val viewModel = createViewModel()
             viewModel.onProjectAddressChange("Address")
 
@@ -124,7 +124,7 @@ class ProjectDetailsEditViewModelTest : FrontendKoinInitializedTest() {
 
     @Test
     fun `onSaveProject with empty address shows inline error`() =
-        runTest {
+        runTest(testDispatcher) {
             val viewModel = createViewModel()
             viewModel.onProjectNameChange("Name")
 
@@ -137,7 +137,7 @@ class ProjectDetailsEditViewModelTest : FrontendKoinInitializedTest() {
 
     @Test
     fun `editing field clears its error`() =
-        runTest {
+        runTest(testDispatcher) {
             val viewModel = createViewModel()
 
             viewModel.onSaveProject()
@@ -154,7 +154,7 @@ class ProjectDetailsEditViewModelTest : FrontendKoinInitializedTest() {
 
     @Test
     fun `onSaveProject successful sends save event`() =
-        runTest {
+        runTest(testDispatcher) {
             val viewModel = createViewModel()
             viewModel.onProjectNameChange("Name")
             viewModel.onProjectAddressChange("Address")
@@ -173,7 +173,7 @@ class ProjectDetailsEditViewModelTest : FrontendKoinInitializedTest() {
 
     @Test
     fun `onSaveProject failure sends error`() =
-        runTest {
+        runTest(testDispatcher) {
             val viewModel = createViewModel()
             viewModel.onProjectNameChange("Name")
             viewModel.onProjectAddressChange("Address")
@@ -188,7 +188,7 @@ class ProjectDetailsEditViewModelTest : FrontendKoinInitializedTest() {
 
     @Test
     fun `clients are loaded into state`() =
-        runTest {
+        runTest(testDispatcher) {
             val clientId = Uuid.random()
             fakeClientsDb.setClient(
                 FrontendClient(
@@ -214,7 +214,7 @@ class ProjectDetailsEditViewModelTest : FrontendKoinInitializedTest() {
 
     @Test
     fun `selecting a client updates state`() =
-        runTest {
+        runTest(testDispatcher) {
             val clientId = Uuid.random()
             val viewModel = createViewModel()
 
@@ -226,7 +226,7 @@ class ProjectDetailsEditViewModelTest : FrontendKoinInitializedTest() {
 
     @Test
     fun `clearing client selection updates state`() =
-        runTest {
+        runTest(testDispatcher) {
             val clientId = Uuid.random()
             val viewModel = createViewModel()
             viewModel.onClientSelected(clientId, "ACME Corp")
@@ -239,7 +239,7 @@ class ProjectDetailsEditViewModelTest : FrontendKoinInitializedTest() {
 
     @Test
     fun `saving project with client includes clientId`() =
-        runTest {
+        runTest(testDispatcher) {
             val clientId = Uuid.random()
             val viewModel = createViewModel()
             viewModel.onProjectNameChange("Name")
@@ -256,7 +256,7 @@ class ProjectDetailsEditViewModelTest : FrontendKoinInitializedTest() {
 
     @Test
     fun `editing project with clientId pre-selects client`() =
-        runTest {
+        runTest(testDispatcher) {
             val projectId = Uuid.random()
             val clientId = Uuid.random()
             fakeClientsDb.setClient(
@@ -294,7 +294,7 @@ class ProjectDetailsEditViewModelTest : FrontendKoinInitializedTest() {
 
     @Test
     fun `onClientCreated selects newly created client`() =
-        runTest {
+        runTest(testDispatcher) {
             val clientId = Uuid.random()
             fakeClientsDb.setClient(
                 FrontendClient(
