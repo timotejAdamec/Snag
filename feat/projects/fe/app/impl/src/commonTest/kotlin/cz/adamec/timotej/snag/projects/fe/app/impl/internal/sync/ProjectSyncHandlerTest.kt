@@ -21,15 +21,9 @@ import cz.adamec.timotej.snag.projects.business.Project
 import cz.adamec.timotej.snag.projects.fe.driven.test.FakeProjectsApi
 import cz.adamec.timotej.snag.projects.fe.driven.test.FakeProjectsDb
 import cz.adamec.timotej.snag.projects.fe.model.FrontendProject
-import cz.adamec.timotej.snag.projects.fe.ports.ProjectsApi
-import cz.adamec.timotej.snag.projects.fe.ports.ProjectsDb
 import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
-import org.koin.core.module.Module
-import org.koin.core.module.dsl.singleOf
-import org.koin.dsl.bind
-import org.koin.dsl.module
 import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -40,15 +34,6 @@ class ProjectSyncHandlerTest : FrontendKoinInitializedTest() {
     private val fakeProjectsDb: FakeProjectsDb by inject()
 
     private val handler: ProjectSyncHandler by inject()
-
-    override fun additionalKoinModules(): List<Module> =
-        listOf(
-            module {
-                singleOf(::FakeProjectsApi) bind ProjectsApi::class
-                singleOf(::FakeProjectsDb) bind ProjectsDb::class
-                singleOf(::ProjectSyncHandler)
-            },
-        )
 
     private fun createProject(name: String = "Test Project") =
         FrontendProject(

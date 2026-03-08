@@ -17,19 +17,13 @@ import cz.adamec.timotej.snag.feat.inspections.fe.app.api.DeleteInspectionUseCas
 import cz.adamec.timotej.snag.feat.inspections.fe.app.impl.internal.sync.INSPECTION_SYNC_ENTITY_TYPE
 import cz.adamec.timotej.snag.feat.inspections.fe.driven.test.FakeInspectionsDb
 import cz.adamec.timotej.snag.feat.inspections.fe.model.FrontendInspection
-import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionsDb
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.sync.fe.driven.test.FakeSyncQueue
 import cz.adamec.timotej.snag.lib.sync.fe.model.SyncOperationType
-import cz.adamec.timotej.snag.lib.sync.fe.ports.SyncQueue
 import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
-import org.koin.core.module.Module
-import org.koin.core.module.dsl.singleOf
-import org.koin.dsl.bind
-import org.koin.dsl.module
 import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -46,14 +40,6 @@ class DeleteInspectionUseCaseImplTest : FrontendKoinInitializedTest() {
 
     private val projectId = Uuid.parse("00000000-0000-0000-0000-000000000001")
     private val inspectionId = Uuid.parse("00000000-0000-0000-0001-000000000001")
-
-    override fun additionalKoinModules(): List<Module> =
-        listOf(
-            module {
-                singleOf(::FakeInspectionsDb) bind InspectionsDb::class
-                singleOf(::FakeSyncQueue) bind SyncQueue::class
-            },
-        )
 
     private fun createInspection(id: Uuid) =
         FrontendInspection(

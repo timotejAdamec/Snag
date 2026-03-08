@@ -14,15 +14,10 @@ package cz.adamec.timotej.snag.feat.reports.fe.app.impl.internal
 
 import cz.adamec.timotej.snag.feat.reports.fe.app.api.DownloadReportUseCase
 import cz.adamec.timotej.snag.feat.reports.fe.driven.test.FakeReportsApi
-import cz.adamec.timotej.snag.feat.reports.fe.ports.ReportsApi
 import cz.adamec.timotej.snag.feat.reports.fe.model.FrontendReport
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
 import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
 import kotlinx.coroutines.test.runTest
-import org.koin.core.module.Module
-import org.koin.core.module.dsl.singleOf
-import org.koin.dsl.bind
-import org.koin.dsl.module
 import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertIs
@@ -32,13 +27,6 @@ import kotlin.uuid.Uuid
 class DownloadReportUseCaseImplTest : FrontendKoinInitializedTest() {
     private val fakeReportsApi: FakeReportsApi by inject()
     private val useCase: DownloadReportUseCase by inject()
-
-    override fun additionalKoinModules(): List<Module> =
-        listOf(
-            module {
-                singleOf(::FakeReportsApi) bind ReportsApi::class
-            },
-        )
 
     @Test
     fun `returns success with bytes on happy path`() =

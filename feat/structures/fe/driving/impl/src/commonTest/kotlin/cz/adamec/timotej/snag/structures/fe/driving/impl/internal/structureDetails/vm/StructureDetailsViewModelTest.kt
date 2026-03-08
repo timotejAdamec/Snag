@@ -16,31 +16,18 @@ import app.cash.turbine.test
 import cz.adamec.timotej.snag.feat.structures.business.Structure
 import cz.adamec.timotej.snag.feat.structures.fe.model.FrontendStructure
 import cz.adamec.timotej.snag.findings.fe.app.api.GetFindingsUseCase
-import cz.adamec.timotej.snag.findings.fe.driven.test.FakeFindingsApi
-import cz.adamec.timotej.snag.findings.fe.driven.test.FakeFindingsDb
-import cz.adamec.timotej.snag.findings.fe.ports.FindingsApi
-import cz.adamec.timotej.snag.findings.fe.ports.FindingsDb
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
-import cz.adamec.timotej.snag.lib.sync.fe.driven.test.FakePullSyncTimestampDb
-import cz.adamec.timotej.snag.lib.sync.fe.driven.test.FakeSyncQueue
-import cz.adamec.timotej.snag.lib.sync.fe.ports.PullSyncTimestampDb
-import cz.adamec.timotej.snag.lib.sync.fe.ports.SyncQueue
 import cz.adamec.timotej.snag.structures.fe.app.api.DeleteStructureUseCase
 import cz.adamec.timotej.snag.structures.fe.app.api.GetStructureUseCase
-import cz.adamec.timotej.snag.structures.fe.driven.test.FakeStructuresDb
 import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.floorPlan.vm.StructureDetailsUiState
 import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.floorPlan.vm.StructureDetailsUiStatus
+import cz.adamec.timotej.snag.structures.fe.driven.test.FakeStructuresDb
 import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.floorPlan.vm.StructureFloorPlanViewModel
-import cz.adamec.timotej.snag.structures.fe.ports.StructuresDb
 import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
-import org.koin.core.module.Module
-import org.koin.core.module.dsl.singleOf
-import org.koin.dsl.bind
-import org.koin.dsl.module
 import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -69,17 +56,6 @@ class StructureDetailsViewModelTest : FrontendKoinInitializedTest() {
                     floorPlanUrl = null,
                     updatedAt = Timestamp(10L),
                 ),
-        )
-
-    override fun additionalKoinModules(): List<Module> =
-        listOf(
-            module {
-                singleOf(::FakeStructuresDb) bind StructuresDb::class
-                singleOf(::FakeSyncQueue) bind SyncQueue::class
-                singleOf(::FakePullSyncTimestampDb) bind PullSyncTimestampDb::class
-                singleOf(::FakeFindingsDb) bind FindingsDb::class
-                singleOf(::FakeFindingsApi) bind FindingsApi::class
-            },
         )
 
     private fun createViewModel() =

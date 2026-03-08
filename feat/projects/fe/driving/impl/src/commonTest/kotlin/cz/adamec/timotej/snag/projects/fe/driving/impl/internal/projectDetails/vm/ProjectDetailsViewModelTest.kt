@@ -15,32 +15,22 @@ package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.
 import cz.adamec.timotej.snag.feat.inspections.business.Inspection
 import cz.adamec.timotej.snag.feat.inspections.fe.app.api.GetInspectionsUseCase
 import cz.adamec.timotej.snag.feat.inspections.fe.app.api.SaveInspectionUseCase
+import cz.adamec.timotej.snag.feat.inspections.fe.driven.test.FakeInspectionsApi
 import cz.adamec.timotej.snag.feat.inspections.fe.driven.test.FakeInspectionsDb
 import cz.adamec.timotej.snag.feat.inspections.fe.model.FrontendInspection
 import cz.adamec.timotej.snag.feat.reports.fe.app.api.DownloadReportUseCase
 import cz.adamec.timotej.snag.feat.reports.fe.driven.test.FakeReportsApi
-import cz.adamec.timotej.snag.feat.reports.fe.ports.ReportsApi
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.common.TimestampProvider
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
-import cz.adamec.timotej.snag.lib.sync.fe.driven.test.FakePullSyncTimestampDb
 import cz.adamec.timotej.snag.lib.sync.fe.driven.test.FakeSyncQueue
-import cz.adamec.timotej.snag.lib.sync.fe.ports.PullSyncTimestampDb
-import cz.adamec.timotej.snag.lib.sync.fe.ports.SyncQueue
 import cz.adamec.timotej.snag.projects.business.Project
 import cz.adamec.timotej.snag.projects.fe.app.api.DeleteProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.GetProjectUseCase
-import cz.adamec.timotej.snag.projects.fe.driven.test.FakeProjectsApi
 import cz.adamec.timotej.snag.projects.fe.driven.test.FakeProjectsDb
 import cz.adamec.timotej.snag.projects.fe.model.FrontendProject
-import cz.adamec.timotej.snag.projects.fe.ports.ProjectsApi
-import cz.adamec.timotej.snag.projects.fe.ports.ProjectsDb
 import cz.adamec.timotej.snag.structures.fe.app.api.GetStructuresUseCase
-import cz.adamec.timotej.snag.structures.fe.driven.test.FakeStructuresApi
-import cz.adamec.timotej.snag.structures.fe.driven.test.FakeStructuresDb
-import cz.adamec.timotej.snag.structures.fe.ports.StructuresApi
-import cz.adamec.timotej.snag.structures.fe.ports.StructuresDb
 import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -49,8 +39,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.koin.core.module.Module
-import org.koin.core.module.dsl.singleOf
-import org.koin.dsl.bind
 import org.koin.dsl.module
 import org.koin.test.inject
 import kotlin.test.Test
@@ -66,6 +54,7 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
 
     private val fakeProjectsDb: FakeProjectsDb by inject()
     private val fakeInspectionsDb: FakeInspectionsDb by inject()
+    private val fakeInspectionsApi: FakeInspectionsApi by inject()
     private val fakeSyncQueue: FakeSyncQueue by inject()
     private val fakeReportsApi: FakeReportsApi by inject()
 
@@ -80,13 +69,6 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
     override fun additionalKoinModules(): List<Module> =
         listOf(
             module {
-                singleOf(::FakeProjectsApi) bind ProjectsApi::class
-                singleOf(::FakeProjectsDb) bind ProjectsDb::class
-                singleOf(::FakeStructuresApi) bind StructuresApi::class
-                singleOf(::FakeStructuresDb) bind StructuresDb::class
-                singleOf(::FakeReportsApi) bind ReportsApi::class
-                singleOf(::FakeSyncQueue) bind SyncQueue::class
-                singleOf(::FakePullSyncTimestampDb) bind PullSyncTimestampDb::class
                 single<TimestampProvider> {
                     object : TimestampProvider {
                         override fun getNowTimestamp() = fixedNow
@@ -397,7 +379,7 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
         }
 
     @Test
-    fun `onStartInspection enqueues sync for the inspection`() =
+    fun `onStartInspection syncs the inspection`() =
         runTest {
             val projectId = Uuid.random()
             val inspectionId = Uuid.random()
@@ -410,11 +392,15 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
             viewModel.onStartInspection(inspectionId)
             advanceUntilIdle()
 
-            assertEquals(listOf(inspectionId), fakeSyncQueue.getAllPending().map { it.entityId })
+            assertTrue(fakeSyncQueue.getAllPending().isEmpty())
+            val apiResult = fakeInspectionsApi.getInspections(projectId)
+            assertIs<OnlineDataResult.Success<List<FrontendInspection>>>(apiResult)
+            val synced = apiResult.data.find { it.inspection.id == inspectionId }
+            assertEquals(fixedNow, synced?.inspection?.startedAt)
         }
 
     @Test
-    fun `onEndInspection enqueues sync for the inspection`() =
+    fun `onEndInspection syncs the inspection`() =
         runTest {
             val projectId = Uuid.random()
             val inspectionId = Uuid.random()
@@ -427,6 +413,10 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
             viewModel.onEndInspection(inspectionId)
             advanceUntilIdle()
 
-            assertEquals(listOf(inspectionId), fakeSyncQueue.getAllPending().map { it.entityId })
+            assertTrue(fakeSyncQueue.getAllPending().isEmpty())
+            val apiResult = fakeInspectionsApi.getInspections(projectId)
+            assertIs<OnlineDataResult.Success<List<FrontendInspection>>>(apiResult)
+            val synced = apiResult.data.find { it.inspection.id == inspectionId }
+            assertEquals(fixedNow, synced?.inspection?.endedAt)
         }
 }
