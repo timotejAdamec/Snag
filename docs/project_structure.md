@@ -80,3 +80,5 @@ The only exception are the `core` modules, which can be used in any layer.
 
 ## Modules configurations
 The project uses custom plugins located in the top-level `build-logic` module.
+Convention plugins auto-wire most inter-module dependencies — when creating a new module, apply only
+the convention plugin and add explicit dependencies only if the build requires them.

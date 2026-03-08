@@ -46,6 +46,8 @@ feat/<feature>/
 
 Applied in `build.gradle.kts` as: `alias(libs.plugins.<alias>)`
 
+**Auto-wiring:** Convention plugins handle most inter-module dependencies automatically. When creating a new module, start with only the plugin — add explicit dependencies only if the build requires them.
+
 ## Plugin inheritance chain
 
 ```

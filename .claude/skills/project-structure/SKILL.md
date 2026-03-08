@@ -52,7 +52,7 @@ Feature-agnostic reusable code (not tied to a specific domain area). Two kinds:
 
 ### Dependency management
 
-Most dependencies are autowired via convention plugins.
+Most dependencies are auto-wired via convention plugins. When creating a new module, start with only the convention plugin applied — add explicit dependencies only if the build requires them.
 
 #### Dependency direction
 
