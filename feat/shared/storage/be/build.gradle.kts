@@ -3,6 +3,7 @@ plugins {
 }
 
 dependencies {
+    implementation(projects.lib.configuration.be.api)
     implementation(projects.lib.storage.be.api)
     implementation(projects.lib.storage.be.impl)
 }
