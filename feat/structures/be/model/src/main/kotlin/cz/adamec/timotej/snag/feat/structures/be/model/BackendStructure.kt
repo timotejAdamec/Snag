@@ -14,7 +14,7 @@ package cz.adamec.timotej.snag.feat.structures.be.model
 
 import cz.adamec.timotej.snag.feat.structures.business.Structure
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
-import cz.adamec.timotej.snag.lib.sync.be.Syncable
+import cz.adamec.timotej.snag.lib.sync.be.model.Syncable
 
 data class BackendStructure(
     val structure: Structure,

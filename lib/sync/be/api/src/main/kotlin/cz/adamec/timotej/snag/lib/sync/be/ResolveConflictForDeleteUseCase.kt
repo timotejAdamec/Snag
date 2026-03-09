@@ -13,6 +13,17 @@
 package cz.adamec.timotej.snag.lib.sync.be
 
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
+import cz.adamec.timotej.snag.lib.sync.be.model.Syncable
+
+sealed interface DeleteConflictResult<out T : Syncable> {
+    data object Proceed : DeleteConflictResult<Nothing>
+
+    data object NotFound : DeleteConflictResult<Nothing>
+
+    data object AlreadyDeleted : DeleteConflictResult<Nothing>
+
+    data class Rejected<T : Syncable>(val serverVersion: T) : DeleteConflictResult<T>
+}
 
 interface ResolveConflictForDeleteUseCase {
     operator fun <T : Syncable> invoke(

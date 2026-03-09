@@ -14,7 +14,7 @@ package cz.adamec.timotej.snag.feat.inspections.be.model
 
 import cz.adamec.timotej.snag.feat.inspections.business.Inspection
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
-import cz.adamec.timotej.snag.lib.sync.be.Syncable
+import cz.adamec.timotej.snag.lib.sync.be.model.Syncable
 
 data class BackendInspection(
     val inspection: Inspection,

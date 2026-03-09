@@ -12,6 +12,14 @@
 
 package cz.adamec.timotej.snag.lib.sync.be
 
+import cz.adamec.timotej.snag.lib.sync.be.model.Syncable
+
+sealed interface SaveConflictResult<out T : Syncable> {
+    data object Proceed : SaveConflictResult<Nothing>
+
+    data class Rejected<T : Syncable>(val serverVersion: T) : SaveConflictResult<T>
+}
+
 interface ResolveConflictForSaveUseCase {
     operator fun <T : Syncable> invoke(
         existing: T?,

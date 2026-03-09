@@ -13,6 +13,7 @@
 package cz.adamec.timotej.snag.lib.sync.be
 
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
+import cz.adamec.timotej.snag.lib.sync.be.model.Syncable
 import cz.adamec.timotej.snag.lib.sync.be.internal.ResolveConflictForDeleteUseCaseImpl
 import cz.adamec.timotej.snag.lib.sync.be.internal.ResolveConflictForSaveUseCaseImpl
 import kotlin.test.Test

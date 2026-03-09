@@ -14,7 +14,7 @@ package cz.adamec.timotej.snag.feat.findings.be.model
 
 import cz.adamec.timotej.snag.feat.findings.business.Finding
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
-import cz.adamec.timotej.snag.lib.sync.be.Syncable
+import cz.adamec.timotej.snag.lib.sync.be.model.Syncable
 
 data class BackendFinding(
     val finding: Finding,

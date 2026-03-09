@@ -15,7 +15,7 @@ package cz.adamec.timotej.snag.lib.sync.be.internal
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.sync.be.ResolveConflictForSaveUseCase
 import cz.adamec.timotej.snag.lib.sync.be.SaveConflictResult
-import cz.adamec.timotej.snag.lib.sync.be.Syncable
+import cz.adamec.timotej.snag.lib.sync.be.model.Syncable
 
 internal class ResolveConflictForSaveUseCaseImpl : ResolveConflictForSaveUseCase {
     override operator fun <T : Syncable> invoke(
