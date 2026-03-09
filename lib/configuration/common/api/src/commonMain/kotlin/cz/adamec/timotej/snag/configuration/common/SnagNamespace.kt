@@ -12,6 +12,4 @@
 
 package cz.adamec.timotej.snag.configuration.common
 
-object SnagConfig {
-    val NAMESPACE: String = SnagBuildConfig.NAMESPACE
-}
+const val SNAG_NAMESPACE: String = SnagBuildConfig.NAMESPACE

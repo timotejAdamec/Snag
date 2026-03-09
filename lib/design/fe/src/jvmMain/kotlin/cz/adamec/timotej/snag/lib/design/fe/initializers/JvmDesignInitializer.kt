@@ -12,12 +12,12 @@
 
 package cz.adamec.timotej.snag.lib.design.fe.initializers
 
-import cz.adamec.timotej.snag.configuration.common.SnagConfig
+import cz.adamec.timotej.snag.configuration.common.SNAG_NAMESPACE
 import cz.adamec.timotej.snag.lib.core.fe.Initializer
 import io.github.vinceglb.filekit.FileKit
 
 internal class JvmDesignInitializer : Initializer {
     override suspend fun init() {
-        FileKit.init(appId = SnagConfig.NAMESPACE)
+        FileKit.init(appId = SNAG_NAMESPACE)
     }
 }
