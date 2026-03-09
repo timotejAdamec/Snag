@@ -16,4 +16,12 @@ sealed interface Host {
     data object Localhost : Host {
         const val PORT: Int = 8081
     }
+
+    data object DevRemote : Host {
+        const val URL: String = "https://snag-server-dev-ioifzecczq-ey.a.run.app"
+    }
+
+    data object DemoRemote : Host {
+        val URL: String = TODO()
+    }
 }

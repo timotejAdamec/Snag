@@ -111,6 +111,21 @@ in your IDE's toolbar or run it directly from the terminal:
 To build and run the development version of the iOS app, use the run configuration from the run widget
 in your IDE’s toolbar or open the [/iosApp](./iosApp) directory in Xcode and run it from there.
 
+# Server Target
+
+By default, frontend clients connect to `localhost`. To target a Cloud Run deployment instead, pass the `snag.serverTarget` Gradle property:
+
+```shell
+./gradlew <task> -Psnag.serverTarget=dev  # Cloud Run dev environment
+```
+
+For example, to build the Android app against the dev backend:
+```shell
+./gradlew :androidApp:assembleDebug -Psnag.serverTarget=dev
+```
+
+A `demo` target is also defined but not yet configured.
+
 # Project Structure
 
 See [Project Structure](docs/project_structure.md).

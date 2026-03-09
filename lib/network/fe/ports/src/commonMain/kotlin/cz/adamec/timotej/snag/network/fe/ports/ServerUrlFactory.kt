@@ -12,6 +12,6 @@
 
 package cz.adamec.timotej.snag.network.fe.ports
 
-interface LocalHostUrlFactory {
+interface ServerUrlFactory {
     fun createUrl(): String
 }
