@@ -22,17 +22,17 @@ internal class SaveProjectUseCaseImpl(
 ) : SaveProjectUseCase {
     override suspend operator fun invoke(project: BackendProject): BackendProject? {
         logger.debug("Saving project {} to local storage.", project)
-        val rejected = projectsDb.saveProject(project)
-        if (rejected != null) {
+        val isRejected = projectsDb.saveProject(project)
+        if (isRejected != null) {
             logger.debug(
                 "Didn't save project {} to local storage as there is a newer one." +
                     " Returning the newer one ({}).",
                 project,
-                rejected,
+                isRejected,
             )
         } else {
             logger.debug("Saved project {} to local storage.", project)
         }
-        return rejected
+        return isRejected
     }
 }

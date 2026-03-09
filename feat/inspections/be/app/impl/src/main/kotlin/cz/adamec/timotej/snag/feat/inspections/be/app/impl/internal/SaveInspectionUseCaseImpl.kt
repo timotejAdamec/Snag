@@ -22,17 +22,17 @@ internal class SaveInspectionUseCaseImpl(
 ) : SaveInspectionUseCase {
     override suspend operator fun invoke(backendInspection: BackendInspection): BackendInspection? {
         logger.debug("Saving inspection {} to local storage.", backendInspection)
-        val rejected = inspectionsDb.saveInspection(backendInspection)
-        if (rejected != null) {
+        val isRejected = inspectionsDb.saveInspection(backendInspection)
+        if (isRejected != null) {
             logger.debug(
                 "Didn't save inspection {} to local storage as there is a newer one." +
                     " Returning the newer one ({}).",
                 backendInspection,
-                rejected,
+                isRejected,
             )
         } else {
             logger.debug("Saved inspection {} to local storage.", backendInspection)
         }
-        return rejected
+        return isRejected
     }
 }

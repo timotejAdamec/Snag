@@ -23,9 +23,9 @@ internal class DeleteFindingUseCaseImpl(
 ) : DeleteFindingUseCase {
     override suspend operator fun invoke(request: DeleteFindingRequest): BackendFinding? {
         logger.debug("Deleting finding {} from local storage.", request.findingId)
-        val rejected =
+        val isRejected =
             findingsDb.deleteFinding(id = request.findingId, deletedAt = request.deletedAt)
-        if (rejected != null) {
+        if (isRejected != null) {
             logger.debug(
                 "Found newer version of finding {} in local storage. Returning it instead.",
                 request.findingId,
@@ -33,6 +33,6 @@ internal class DeleteFindingUseCaseImpl(
         } else {
             logger.debug("Deleted finding {} from local storage.", request.findingId)
         }
-        return rejected
+        return isRejected
     }
 }

@@ -22,17 +22,17 @@ internal class SaveClientUseCaseImpl(
 ) : SaveClientUseCase {
     override suspend operator fun invoke(client: BackendClient): BackendClient? {
         logger.debug("Saving client {} to local storage.", client.client.id)
-        val rejected = clientsDb.saveClient(client)
-        if (rejected != null) {
+        val isRejected = clientsDb.saveClient(client)
+        if (isRejected != null) {
             logger.debug(
                 "Didn't save client {} to local storage as there is a newer one." +
                     " Returning the newer one ({}).",
                 client,
-                rejected,
+                isRejected,
             )
         } else {
             logger.debug("Saved client {} to local storage.", client)
         }
-        return rejected
+        return isRejected
     }
 }

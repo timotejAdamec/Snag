@@ -23,9 +23,9 @@ internal class DeleteInspectionUseCaseImpl(
 ) : DeleteInspectionUseCase {
     override suspend operator fun invoke(request: DeleteInspectionRequest): BackendInspection? {
         logger.debug("Deleting inspection {} from local storage.", request.inspectionId)
-        val rejected =
+        val isRejected =
             inspectionsDb.deleteInspection(id = request.inspectionId, deletedAt = request.deletedAt)
-        if (rejected != null) {
+        if (isRejected != null) {
             logger.debug(
                 "Found newer version of inspection {} in local storage. Returning it instead.",
                 request.inspectionId,
@@ -33,6 +33,6 @@ internal class DeleteInspectionUseCaseImpl(
         } else {
             logger.debug("Deleted inspection {} from local storage.", request.inspectionId)
         }
-        return rejected
+        return isRejected
     }
 }

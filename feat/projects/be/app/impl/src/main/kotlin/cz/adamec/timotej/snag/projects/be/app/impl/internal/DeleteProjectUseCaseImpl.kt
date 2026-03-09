@@ -23,9 +23,9 @@ internal class DeleteProjectUseCaseImpl(
 ) : DeleteProjectUseCase {
     override suspend operator fun invoke(request: DeleteProjectRequest): BackendProject? {
         logger.debug("Deleting project {} from local storage.", request.projectId)
-        val rejected =
+        val isRejected =
             projectsDb.deleteProject(id = request.projectId, deletedAt = request.deletedAt)
-        if (rejected != null) {
+        if (isRejected != null) {
             logger.debug(
                 "Found newer version of project {} in local storage. Returning it instead.",
                 request.projectId,
@@ -33,6 +33,6 @@ internal class DeleteProjectUseCaseImpl(
         } else {
             logger.debug("Deleted project {} from local storage.", request.projectId)
         }
-        return rejected
+        return isRejected
     }
 }
