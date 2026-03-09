@@ -22,6 +22,6 @@ sealed interface Host {
     }
 
     data object DemoRemote : Host {
-        const val URL: String = "https://snag-server-demo-ioifzecczq-ey.a.run.app"
+        val URL: String = TODO()
     }
 }
