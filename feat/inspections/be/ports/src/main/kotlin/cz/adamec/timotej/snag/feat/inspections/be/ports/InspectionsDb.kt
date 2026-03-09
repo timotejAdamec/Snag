@@ -19,6 +19,8 @@ import kotlin.uuid.Uuid
 interface InspectionsDb {
     suspend fun getInspections(projectId: Uuid): List<BackendInspection>
 
+    suspend fun getInspection(id: Uuid): BackendInspection?
+
     suspend fun saveInspection(backendInspection: BackendInspection): BackendInspection?
 
     suspend fun deleteInspection(

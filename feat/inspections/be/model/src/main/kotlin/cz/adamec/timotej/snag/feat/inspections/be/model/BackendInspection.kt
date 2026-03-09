@@ -14,8 +14,11 @@ package cz.adamec.timotej.snag.feat.inspections.be.model
 
 import cz.adamec.timotej.snag.feat.inspections.business.Inspection
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
+import cz.adamec.timotej.snag.lib.sync.be.model.Syncable
 
 data class BackendInspection(
     val inspection: Inspection,
-    val deletedAt: Timestamp? = null,
-)
+    override val deletedAt: Timestamp? = null,
+) : Syncable {
+    override val updatedAt: Timestamp get() = inspection.updatedAt
+}

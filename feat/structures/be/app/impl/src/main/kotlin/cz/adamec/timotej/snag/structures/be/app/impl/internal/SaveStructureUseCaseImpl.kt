@@ -22,15 +22,17 @@ internal class SaveStructureUseCaseImpl(
 ) : SaveStructureUseCase {
     override suspend operator fun invoke(backendStructure: BackendStructure): BackendStructure? {
         logger.debug("Saving structure {} to local storage.", backendStructure)
-        return structuresDb.saveStructure(backendStructure).also {
-            it?.let {
-                logger.debug(
-                    "Didn't save structure {} to local storage as there is a newer one." +
-                        " Returning the newer one ({}).",
-                    backendStructure,
-                    it,
-                )
-            } ?: logger.debug("Saved structure {} to local storage.", backendStructure)
+        val isRejected = structuresDb.saveStructure(backendStructure)
+        if (isRejected != null) {
+            logger.debug(
+                "Didn't save structure {} to local storage as there is a newer one." +
+                    " Returning the newer one ({}).",
+                backendStructure,
+                isRejected,
+            )
+        } else {
+            logger.debug("Saved structure {} to local storage.", backendStructure)
         }
+        return isRejected
     }
 }

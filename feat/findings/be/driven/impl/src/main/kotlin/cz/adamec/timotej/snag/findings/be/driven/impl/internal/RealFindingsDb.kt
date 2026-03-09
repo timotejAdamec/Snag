@@ -21,6 +21,10 @@ import cz.adamec.timotej.snag.feat.shared.database.be.FindingsTable
 import cz.adamec.timotej.snag.feat.shared.database.be.StructureEntity
 import cz.adamec.timotej.snag.findings.be.ports.FindingsDb
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
+import cz.adamec.timotej.snag.lib.sync.be.DeleteConflictResult
+import cz.adamec.timotej.snag.lib.sync.be.ResolveConflictForDeleteUseCase
+import cz.adamec.timotej.snag.lib.sync.be.ResolveConflictForSaveUseCase
+import cz.adamec.timotej.snag.lib.sync.be.SaveConflictResult
 import org.jetbrains.exposed.v1.core.and
 import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.core.greater
@@ -32,6 +36,8 @@ import kotlin.uuid.Uuid
 
 internal class RealFindingsDb(
     private val database: Database,
+    private val resolveConflictForSave: ResolveConflictForSaveUseCase,
+    private val resolveConflictForDelete: ResolveConflictForDeleteUseCase,
 ) : FindingsDb {
     override suspend fun getFindings(structureId: Uuid): List<BackendFinding> =
         transaction(database) {
@@ -42,68 +48,66 @@ internal class RealFindingsDb(
                 .map { it.toModel() }
         }
 
-    @Suppress("ReturnCount", "LabeledExpression")
+    override suspend fun getFinding(id: Uuid): BackendFinding? =
+        transaction(database) {
+            FindingEntity.findById(id)?.toModel()
+        }
+
     override suspend fun saveFinding(finding: BackendFinding): BackendFinding? =
         transaction(database) {
             val existing = FindingEntity.findById(finding.finding.id)
+            when (val result = resolveConflictForSave(existing?.toModel(), finding)) {
+                is SaveConflictResult.Proceed -> {
+                    if (existing != null) {
+                        existing.structure = StructureEntity[finding.finding.structureId]
+                        existing.type = finding.finding.type.toEntityKey().name
+                        existing.name = finding.finding.name
+                        existing.description = finding.finding.description
+                        existing.updatedAt = finding.finding.updatedAt.value
+                        existing.deletedAt = finding.deletedAt?.value
+                        existing.coordinates.forEach { it.delete() }
+                    } else {
+                        FindingEntity.new(finding.finding.id) {
+                            structure = StructureEntity[finding.finding.structureId]
+                            type = finding.finding.type.toEntityKey().name
+                            name = finding.finding.name
+                            description = finding.finding.description
+                            updatedAt = finding.finding.updatedAt.value
+                            deletedAt = finding.deletedAt?.value
+                        }
+                    }
+                    saveClassicFindingDetails(finding)
 
-            if (existing != null) {
-                val serverTimestamp =
-                    maxOf(
-                        Timestamp(existing.updatedAt),
-                        existing.deletedAt?.let { Timestamp(it) } ?: Timestamp(0),
-                    )
-                if (serverTimestamp >= finding.finding.updatedAt) {
-                    return@transaction existing.toModel()
+                    val findingEntity = FindingEntity[finding.finding.id]
+                    finding.finding.coordinates.forEachIndexed { index, coordinate ->
+                        FindingCoordinateEntity.new {
+                            this.finding = findingEntity
+                            x = coordinate.x
+                            y = coordinate.y
+                            orderIndex = index
+                        }
+                    }
+                    null
                 }
-                existing.structure = StructureEntity[finding.finding.structureId]
-                existing.type = finding.finding.type.toEntityKey().name
-                existing.name = finding.finding.name
-                existing.description = finding.finding.description
-                existing.updatedAt = finding.finding.updatedAt.value
-                existing.deletedAt = finding.deletedAt?.value
-                existing.coordinates.forEach { it.delete() }
-            } else {
-                FindingEntity.new(finding.finding.id) {
-                    structure = StructureEntity[finding.finding.structureId]
-                    type = finding.finding.type.toEntityKey().name
-                    name = finding.finding.name
-                    description = finding.finding.description
-                    updatedAt = finding.finding.updatedAt.value
-                    deletedAt = finding.deletedAt?.value
-                }
+                is SaveConflictResult.Rejected -> result.serverVersion
             }
-            saveClassicFindingDetails(finding)
-
-            val findingEntity = FindingEntity[finding.finding.id]
-            finding.finding.coordinates.forEachIndexed { index, coordinate ->
-                FindingCoordinateEntity.new {
-                    this.finding = findingEntity
-                    x = coordinate.x
-                    y = coordinate.y
-                    orderIndex = index
-                }
-            }
-            null
         }
 
-    @Suppress("ReturnCount", "LabeledExpression")
     override suspend fun deleteFinding(
         id: Uuid,
         deletedAt: Timestamp,
     ): BackendFinding? =
         transaction(database) {
-            val existing =
-                FindingEntity.findById(id)
-                    ?: return@transaction null
-
-            if (existing.deletedAt != null) return@transaction null
-            if (Timestamp(existing.updatedAt) >= deletedAt) {
-                return@transaction existing.toModel()
+            val existing = FindingEntity.findById(id)
+            when (val result = resolveConflictForDelete(existing?.toModel(), deletedAt)) {
+                is DeleteConflictResult.Proceed -> {
+                    existing!!.deletedAt = deletedAt.value
+                    null
+                }
+                is DeleteConflictResult.NotFound -> null
+                is DeleteConflictResult.AlreadyDeleted -> null
+                is DeleteConflictResult.Rejected -> result.serverVersion
             }
-
-            existing.deletedAt = deletedAt.value
-            null
         }
 
     override suspend fun getFindingsModifiedSince(

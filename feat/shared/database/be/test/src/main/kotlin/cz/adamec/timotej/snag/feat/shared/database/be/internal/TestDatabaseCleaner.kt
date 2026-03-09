@@ -14,6 +14,7 @@ package cz.adamec.timotej.snag.feat.shared.database.be.internal
 
 import cz.adamec.timotej.snag.feat.shared.database.be.allTables
 import org.jetbrains.exposed.v1.jdbc.Database
+import org.jetbrains.exposed.v1.jdbc.deleteAll
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 
 internal object TestDatabaseCleaner {

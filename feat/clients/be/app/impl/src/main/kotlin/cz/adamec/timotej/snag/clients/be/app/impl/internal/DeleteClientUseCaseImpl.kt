@@ -23,12 +23,16 @@ internal class DeleteClientUseCaseImpl(
 ) : DeleteClientUseCase {
     override suspend operator fun invoke(request: DeleteClientRequest): BackendClient? {
         logger.debug("Deleting client {} from local storage.", request.clientId)
-        val result =
-            clientsDb.deleteClient(
-                id = request.clientId,
-                deletedAt = request.deletedAt,
+        val isRejected =
+            clientsDb.deleteClient(id = request.clientId, deletedAt = request.deletedAt)
+        if (isRejected != null) {
+            logger.debug(
+                "Found newer version of client {} in local storage. Returning it instead.",
+                request.clientId,
             )
-        logger.debug("Deleted client {} from local storage.", request.clientId)
-        return result
+        } else {
+            logger.debug("Deleted client {} from local storage.", request.clientId)
+        }
+        return isRejected
     }
 }

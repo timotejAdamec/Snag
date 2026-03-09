@@ -13,9 +13,12 @@
 package cz.adamec.timotej.snag.projects.be.model
 
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
+import cz.adamec.timotej.snag.lib.sync.be.model.Syncable
 import cz.adamec.timotej.snag.projects.business.Project
 
 data class BackendProject(
     val project: Project,
-    val deletedAt: Timestamp? = null,
-)
+    override val deletedAt: Timestamp? = null,
+) : Syncable {
+    override val updatedAt: Timestamp get() = project.updatedAt
+}

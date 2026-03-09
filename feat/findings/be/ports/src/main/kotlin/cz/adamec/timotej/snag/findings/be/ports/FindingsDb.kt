@@ -19,6 +19,8 @@ import kotlin.uuid.Uuid
 interface FindingsDb {
     suspend fun getFindings(structureId: Uuid): List<BackendFinding>
 
+    suspend fun getFinding(id: Uuid): BackendFinding?
+
     suspend fun saveFinding(finding: BackendFinding): BackendFinding?
 
     suspend fun deleteFinding(

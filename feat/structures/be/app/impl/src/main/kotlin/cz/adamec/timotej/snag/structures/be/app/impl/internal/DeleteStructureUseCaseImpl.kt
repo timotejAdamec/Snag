@@ -23,17 +23,16 @@ internal class DeleteStructureUseCaseImpl(
 ) : DeleteStructureUseCase {
     override suspend operator fun invoke(request: DeleteStructureRequest): BackendStructure? {
         logger.debug("Deleting structure {} from local storage.", request.structureId)
-        return structuresDb
-            .deleteStructure(
-                id = request.structureId,
-                deletedAt = request.deletedAt,
-            ).also { newerStructure ->
-                newerStructure?.let {
-                    logger.debug(
-                        "Found newer version of structure {} in local storage. Returning it instead.",
-                        request.structureId,
-                    )
-                } ?: logger.debug("Deleted structure {} from local storage.", request.structureId)
-            }
+        val isRejected =
+            structuresDb.deleteStructure(id = request.structureId, deletedAt = request.deletedAt)
+        if (isRejected != null) {
+            logger.debug(
+                "Found newer version of structure {} in local storage. Returning it instead.",
+                request.structureId,
+            )
+        } else {
+            logger.debug("Deleted structure {} from local storage.", request.structureId)
+        }
+        return isRejected
     }
 }

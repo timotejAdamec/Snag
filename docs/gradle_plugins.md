@@ -134,6 +134,13 @@ Adds on top of Multiplatform:
 - Kotlin serialization core
 - Ktor serialization JSON
 
+## Auto-wiring
+
+Convention plugins automatically wire most inter-module dependencies (e.g., `ports` → `business`,
+`app` → `ports`, `lib:core:be` for all backend modules). When creating a new module, start with
+only the convention plugin applied and no explicit dependencies in `build.gradle.kts` — add manual
+dependencies only for what the build actually requires beyond what the plugin provides.
+
 ## Module path → plugin
 
 For feature modules at `feat/<feature>/`, the path determines the plugin:

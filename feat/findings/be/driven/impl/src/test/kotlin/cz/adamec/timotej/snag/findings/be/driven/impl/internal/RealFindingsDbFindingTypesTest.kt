@@ -252,30 +252,30 @@ class RealFindingsDbFindingTypesTest : BackendKoinInitializedTest() {
             assertIs<FindingType.Note>(byId[FINDING_ID_3]!!.finding.type)
         }
 
-    // Group 5: Conflict Resolution with Type
+    // Group 5: Save Overwrites Type
 
     @Test
-    fun `conflict resolution preserves Classic type when server is newer`() =
+    fun `save overwrites Classic with Unvisited when newer`() =
         runTest(testDispatcher) {
             seedParentEntities()
-            findingsDb.saveFinding(classicFinding(importance = Importance.HIGH, term = Term.T1, updatedAt = 200L))
+            findingsDb.saveFinding(classicFinding(importance = Importance.HIGH, term = Term.T1, updatedAt = 100L))
 
-            findingsDb.saveFinding(unvisitedFinding(updatedAt = 100L))
-
-            val result = findingsDb.getFindings(STRUCTURE_ID).single()
-            assertEquals(FindingType.Classic(Importance.HIGH, Term.T1), result.finding.type)
-        }
-
-    @Test
-    fun `conflict resolution preserves Unvisited type when server is newer`() =
-        runTest(testDispatcher) {
-            seedParentEntities()
             findingsDb.saveFinding(unvisitedFinding(updatedAt = 200L))
-
-            findingsDb.saveFinding(classicFinding(updatedAt = 100L))
 
             val result = findingsDb.getFindings(STRUCTURE_ID).single()
             assertIs<FindingType.Unvisited>(result.finding.type)
+        }
+
+    @Test
+    fun `save overwrites Unvisited with Classic when newer`() =
+        runTest(testDispatcher) {
+            seedParentEntities()
+            findingsDb.saveFinding(unvisitedFinding(updatedAt = 100L))
+
+            findingsDb.saveFinding(classicFinding(updatedAt = 200L))
+
+            val result = findingsDb.getFindings(STRUCTURE_ID).single()
+            assertIs<FindingType.Classic>(result.finding.type)
         }
 
     @Test

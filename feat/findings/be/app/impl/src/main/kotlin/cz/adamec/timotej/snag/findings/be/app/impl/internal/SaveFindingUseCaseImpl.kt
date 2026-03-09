@@ -22,15 +22,17 @@ internal class SaveFindingUseCaseImpl(
 ) : SaveFindingUseCase {
     override suspend operator fun invoke(finding: BackendFinding): BackendFinding? {
         logger.debug("Saving finding {} to local storage.", finding)
-        return findingsDb.saveFinding(finding).also {
-            it?.let {
-                logger.debug(
-                    "Didn't save finding {} to local storage as there is a newer one." +
-                        " Returning the newer one ({}).",
-                    finding,
-                    it,
-                )
-            } ?: logger.debug("Saved finding {} to local storage.", finding)
+        val isRejected = findingsDb.saveFinding(finding)
+        if (isRejected != null) {
+            logger.debug(
+                "Didn't save finding {} to local storage as there is a newer one." +
+                    " Returning the newer one ({}).",
+                finding,
+                isRejected,
+            )
+        } else {
+            logger.debug("Saved finding {} to local storage.", finding)
         }
+        return isRejected
     }
 }

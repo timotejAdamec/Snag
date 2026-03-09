@@ -26,6 +26,7 @@ import cz.adamec.timotej.snag.findings.be.driven.impl.di.findingsDrivenModule
 import cz.adamec.timotej.snag.findings.be.driving.impl.di.findingsDrivingModule
 import cz.adamec.timotej.snag.lib.core.be.backendCoreModule
 import cz.adamec.timotej.snag.lib.storage.be.impl.di.storageRoutingModule
+import cz.adamec.timotej.snag.lib.sync.be.di.syncBeModule
 import cz.adamec.timotej.snag.projects.be.app.impl.di.projectsAppModule
 import cz.adamec.timotej.snag.projects.be.driven.impl.di.projectsDrivenModule
 import cz.adamec.timotej.snag.projects.be.driving.impl.di.projectsDrivingModule
@@ -42,6 +43,7 @@ val backendModulesAggregate =
     module {
         includes(
             backendCoreModule,
+            syncBeModule,
             configurationModule,
             sharedDatabaseModule,
             sharedRulesModule,

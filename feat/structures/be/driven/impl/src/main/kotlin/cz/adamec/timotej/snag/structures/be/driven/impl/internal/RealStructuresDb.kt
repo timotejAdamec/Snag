@@ -17,6 +17,10 @@ import cz.adamec.timotej.snag.feat.shared.database.be.StructureEntity
 import cz.adamec.timotej.snag.feat.shared.database.be.StructuresTable
 import cz.adamec.timotej.snag.feat.structures.be.model.BackendStructure
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
+import cz.adamec.timotej.snag.lib.sync.be.DeleteConflictResult
+import cz.adamec.timotej.snag.lib.sync.be.ResolveConflictForDeleteUseCase
+import cz.adamec.timotej.snag.lib.sync.be.ResolveConflictForSaveUseCase
+import cz.adamec.timotej.snag.lib.sync.be.SaveConflictResult
 import cz.adamec.timotej.snag.structures.be.ports.StructuresDb
 import org.jetbrains.exposed.v1.core.and
 import org.jetbrains.exposed.v1.core.eq
@@ -28,6 +32,8 @@ import kotlin.uuid.Uuid
 
 internal class RealStructuresDb(
     private val database: Database,
+    private val resolveConflictForSave: ResolveConflictForSaveUseCase,
+    private val resolveConflictForDelete: ResolveConflictForDeleteUseCase,
 ) : StructuresDb {
     override suspend fun getStructures(projectId: Uuid): List<BackendStructure> =
         transaction(database) {
@@ -37,55 +43,52 @@ internal class RealStructuresDb(
                 }.map { it.toModel() }
         }
 
-    @Suppress("ReturnCount", "LabeledExpression")
-    override suspend fun saveStructure(backendStructure: BackendStructure): BackendStructure? =
+    override suspend fun getStructure(id: Uuid): BackendStructure? =
         transaction(database) {
-            val existing =
-                StructureEntity.findById(backendStructure.structure.id)
-
-            if (existing != null) {
-                val serverTimestamp =
-                    maxOf(
-                        Timestamp(existing.updatedAt),
-                        existing.deletedAt?.let { Timestamp(it) } ?: Timestamp(0),
-                    )
-                if (serverTimestamp >= backendStructure.structure.updatedAt) {
-                    return@transaction existing.toModel()
-                }
-                existing.project = ProjectEntity[backendStructure.structure.projectId]
-                existing.name = backendStructure.structure.name
-                existing.floorPlanUrl = backendStructure.structure.floorPlanUrl
-                existing.updatedAt = backendStructure.structure.updatedAt.value
-                existing.deletedAt = backendStructure.deletedAt?.value
-            } else {
-                StructureEntity.new(backendStructure.structure.id) {
-                    project = ProjectEntity[backendStructure.structure.projectId]
-                    name = backendStructure.structure.name
-                    floorPlanUrl = backendStructure.structure.floorPlanUrl
-                    updatedAt = backendStructure.structure.updatedAt.value
-                    deletedAt = backendStructure.deletedAt?.value
-                }
-            }
-            null
+            StructureEntity.findById(id)?.toModel()
         }
 
-    @Suppress("ReturnCount", "LabeledExpression")
+    override suspend fun saveStructure(backendStructure: BackendStructure): BackendStructure? =
+        transaction(database) {
+            val existing = StructureEntity.findById(backendStructure.structure.id)
+            when (val result = resolveConflictForSave(existing?.toModel(), backendStructure)) {
+                is SaveConflictResult.Proceed -> {
+                    if (existing != null) {
+                        existing.project = ProjectEntity[backendStructure.structure.projectId]
+                        existing.name = backendStructure.structure.name
+                        existing.floorPlanUrl = backendStructure.structure.floorPlanUrl
+                        existing.updatedAt = backendStructure.structure.updatedAt.value
+                        existing.deletedAt = backendStructure.deletedAt?.value
+                    } else {
+                        StructureEntity.new(backendStructure.structure.id) {
+                            project = ProjectEntity[backendStructure.structure.projectId]
+                            name = backendStructure.structure.name
+                            floorPlanUrl = backendStructure.structure.floorPlanUrl
+                            updatedAt = backendStructure.structure.updatedAt.value
+                            deletedAt = backendStructure.deletedAt?.value
+                        }
+                    }
+                    null
+                }
+                is SaveConflictResult.Rejected -> result.serverVersion
+            }
+        }
+
     override suspend fun deleteStructure(
         id: Uuid,
         deletedAt: Timestamp,
     ): BackendStructure? =
         transaction(database) {
-            val existing =
-                StructureEntity.findById(id)
-                    ?: return@transaction null
-
-            if (existing.deletedAt != null) return@transaction null
-            if (Timestamp(existing.updatedAt) >= deletedAt) {
-                return@transaction existing.toModel()
+            val existing = StructureEntity.findById(id)
+            when (val result = resolveConflictForDelete(existing?.toModel(), deletedAt)) {
+                is DeleteConflictResult.Proceed -> {
+                    existing!!.deletedAt = deletedAt.value
+                    null
+                }
+                is DeleteConflictResult.NotFound -> null
+                is DeleteConflictResult.AlreadyDeleted -> null
+                is DeleteConflictResult.Rejected -> result.serverVersion
             }
-
-            existing.deletedAt = deletedAt.value
-            null
         }
 
     override suspend fun getStructuresModifiedSince(

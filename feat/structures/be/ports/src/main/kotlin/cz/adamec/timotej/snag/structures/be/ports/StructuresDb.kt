@@ -19,6 +19,8 @@ import kotlin.uuid.Uuid
 interface StructuresDb {
     suspend fun getStructures(projectId: Uuid): List<BackendStructure>
 
+    suspend fun getStructure(id: Uuid): BackendStructure?
+
     suspend fun saveStructure(backendStructure: BackendStructure): BackendStructure?
 
     suspend fun deleteStructure(
