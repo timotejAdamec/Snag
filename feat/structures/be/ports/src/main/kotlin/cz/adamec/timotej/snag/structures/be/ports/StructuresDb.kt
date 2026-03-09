@@ -21,12 +21,12 @@ interface StructuresDb {
 
     suspend fun getStructure(id: Uuid): BackendStructure?
 
-    suspend fun upsertStructure(backendStructure: BackendStructure)
+    suspend fun saveStructure(backendStructure: BackendStructure): BackendStructure?
 
-    suspend fun softDeleteStructure(
+    suspend fun deleteStructure(
         id: Uuid,
         deletedAt: Timestamp,
-    )
+    ): BackendStructure?
 
     suspend fun getStructuresModifiedSince(
         projectId: Uuid,

@@ -47,7 +47,7 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
     private val projectsDb: ProjectsDb by inject()
 
     private suspend fun createParentProject() {
-        projectsDb.upsertProject(
+        projectsDb.saveProject(
             BackendProject(
                 project =
                     Project(
@@ -76,7 +76,7 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
         testApplication {
             configureApp()
             createParentProject()
-            dataSource.upsertStructure(
+            dataSource.saveStructure(
                 BackendStructure(
                     structure =
                         Structure(
@@ -104,7 +104,7 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
         testApplication {
             configureApp()
             createParentProject()
-            dataSource.upsertStructure(
+            dataSource.saveStructure(
                 BackendStructure(
                     structure =
                         Structure(
@@ -136,7 +136,7 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
         testApplication {
             configureApp()
             createParentProject()
-            dataSource.upsertStructure(
+            dataSource.saveStructure(
                 BackendStructure(
                     structure =
                         Structure(
@@ -212,7 +212,7 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
         testApplication {
             configureApp()
             createParentProject()
-            dataSource.upsertStructure(
+            dataSource.saveStructure(
                 BackendStructure(
                     structure =
                         Structure(
@@ -224,7 +224,7 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
                         ),
                 ),
             )
-            dataSource.upsertStructure(
+            dataSource.saveStructure(
                 BackendStructure(
                     structure =
                         Structure(
@@ -252,7 +252,7 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
         testApplication {
             configureApp()
             createParentProject()
-            dataSource.upsertStructure(
+            dataSource.saveStructure(
                 BackendStructure(
                     structure =
                         Structure(
@@ -264,7 +264,7 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
                         ),
                 ),
             )
-            dataSource.upsertStructure(
+            dataSource.saveStructure(
                 BackendStructure(
                     structure =
                         Structure(
@@ -295,7 +295,7 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
         testApplication {
             configureApp()
             createParentProject()
-            dataSource.upsertStructure(
+            dataSource.saveStructure(
                 BackendStructure(
                     structure =
                         Structure(
@@ -323,7 +323,7 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
         testApplication {
             configureApp()
             createParentProject()
-            dataSource.upsertStructure(
+            dataSource.saveStructure(
                 BackendStructure(
                     structure =
                         Structure(
@@ -335,7 +335,7 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
                         ),
                 ),
             )
-            dataSource.upsertStructure(
+            dataSource.saveStructure(
                 BackendStructure(
                     structure =
                         Structure(
@@ -400,7 +400,7 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
         testApplication {
             configureApp()
             createParentProject()
-            dataSource.upsertStructure(
+            dataSource.saveStructure(
                 BackendStructure(
                     structure =
                         Structure(
@@ -438,7 +438,7 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
         testApplication {
             configureApp()
             createParentProject()
-            dataSource.upsertStructure(
+            dataSource.saveStructure(
                 BackendStructure(
                     structure =
                         Structure(

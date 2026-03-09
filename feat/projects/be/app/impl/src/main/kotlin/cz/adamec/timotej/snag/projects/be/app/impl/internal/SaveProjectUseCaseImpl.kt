@@ -12,8 +12,6 @@
 
 package cz.adamec.timotej.snag.projects.be.app.impl.internal
 
-import cz.adamec.timotej.snag.lib.sync.be.SaveConflictResult
-import cz.adamec.timotej.snag.lib.sync.be.resolveConflictForSave
 import cz.adamec.timotej.snag.projects.be.app.api.SaveProjectUseCase
 import cz.adamec.timotej.snag.projects.be.app.impl.internal.LH.logger
 import cz.adamec.timotej.snag.projects.be.model.BackendProject
@@ -24,22 +22,17 @@ internal class SaveProjectUseCaseImpl(
 ) : SaveProjectUseCase {
     override suspend operator fun invoke(project: BackendProject): BackendProject? {
         logger.debug("Saving project {} to local storage.", project)
-        val existing = projectsDb.getProject(project.project.id)
-        return when (val result = resolveConflictForSave(existing, project)) {
-            is SaveConflictResult.Proceed -> {
-                projectsDb.upsertProject(project)
-                logger.debug("Saved project {} to local storage.", project)
-                null
-            }
-            is SaveConflictResult.Rejected -> {
-                logger.debug(
-                    "Didn't save project {} to local storage as there is a newer one." +
-                        " Returning the newer one ({}).",
-                    project,
-                    result.serverVersion,
-                )
-                result.serverVersion
-            }
+        val rejected = projectsDb.saveProject(project)
+        if (rejected != null) {
+            logger.debug(
+                "Didn't save project {} to local storage as there is a newer one." +
+                    " Returning the newer one ({}).",
+                project,
+                rejected,
+            )
+        } else {
+            logger.debug("Saved project {} to local storage.", project)
         }
+        return rejected
     }
 }

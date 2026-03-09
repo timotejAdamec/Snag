@@ -56,7 +56,7 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
     private val structuresDb: StructuresDb by inject()
 
     private suspend fun seedParentEntities() {
-        projectsDb.upsertProject(
+        projectsDb.saveProject(
             BackendProject(
                 project =
                     Project(
@@ -67,7 +67,7 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
                     ),
             ),
         )
-        structuresDb.upsertStructure(
+        structuresDb.saveStructure(
             BackendStructure(
                 structure =
                     Structure(
@@ -97,7 +97,7 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
         testApplication {
             configureApp()
             seedParentEntities()
-            dataSource.upsertFinding(
+            dataSource.saveFinding(
                 BackendFinding(
                     finding =
                         Finding(
@@ -127,7 +127,7 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
         testApplication {
             configureApp()
             seedParentEntities()
-            dataSource.upsertFinding(
+            dataSource.saveFinding(
                 BackendFinding(
                     finding =
                         Finding(
@@ -161,7 +161,7 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
         testApplication {
             configureApp()
             seedParentEntities()
-            dataSource.upsertFinding(
+            dataSource.saveFinding(
                 BackendFinding(
                     finding =
                         Finding(
@@ -239,7 +239,7 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
         testApplication {
             configureApp()
             seedParentEntities()
-            dataSource.upsertFinding(
+            dataSource.saveFinding(
                 BackendFinding(
                     finding =
                         Finding(
@@ -253,7 +253,7 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
                         ),
                 ),
             )
-            dataSource.upsertFinding(
+            dataSource.saveFinding(
                 BackendFinding(
                     finding =
                         Finding(
@@ -281,7 +281,7 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
         testApplication {
             configureApp()
             seedParentEntities()
-            dataSource.upsertFinding(
+            dataSource.saveFinding(
                 BackendFinding(
                     finding =
                         Finding(
@@ -295,7 +295,7 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
                         ),
                 ),
             )
-            dataSource.upsertFinding(
+            dataSource.saveFinding(
                 BackendFinding(
                     finding =
                         Finding(
@@ -328,7 +328,7 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
         testApplication {
             configureApp()
             seedParentEntities()
-            dataSource.upsertFinding(
+            dataSource.saveFinding(
                 BackendFinding(
                     finding =
                         Finding(
@@ -358,7 +358,7 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
         testApplication {
             configureApp()
             seedParentEntities()
-            dataSource.upsertFinding(
+            dataSource.saveFinding(
                 BackendFinding(
                     finding =
                         Finding(
@@ -372,7 +372,7 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
                         ),
                 ),
             )
-            dataSource.upsertFinding(
+            dataSource.saveFinding(
                 BackendFinding(
                     finding =
                         Finding(
@@ -443,7 +443,7 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
         testApplication {
             configureApp()
             seedParentEntities()
-            dataSource.upsertFinding(
+            dataSource.saveFinding(
                 BackendFinding(
                     finding =
                         Finding(
@@ -487,7 +487,7 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
         testApplication {
             configureApp()
             seedParentEntities()
-            dataSource.upsertFinding(
+            dataSource.saveFinding(
                 BackendFinding(
                     finding =
                         Finding(

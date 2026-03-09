@@ -67,7 +67,7 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
     fun `GET projects returns all projects`() =
         testApplication {
             configureApp()
-            dataSource.upsertProject(
+            dataSource.saveProject(
                 BackendProject(
                     project =
                         Project(
@@ -78,7 +78,7 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
                         ),
                 ),
             )
-            dataSource.upsertProject(
+            dataSource.saveProject(
                 BackendProject(
                     project =
                         Project(
@@ -102,7 +102,7 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
     fun `GET projects includes deletedAt for soft-deleted projects`() =
         testApplication {
             configureApp()
-            dataSource.upsertProject(
+            dataSource.saveProject(
                 BackendProject(
                     project =
                         Project(
@@ -113,7 +113,7 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
                         ),
                 ),
             )
-            dataSource.upsertProject(
+            dataSource.saveProject(
                 BackendProject(
                     project =
                         Project(
@@ -142,7 +142,7 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
     fun `GET projects with since parameter returns modified projects`() =
         testApplication {
             configureApp()
-            dataSource.upsertProject(
+            dataSource.saveProject(
                 BackendProject(
                     project =
                         Project(
@@ -153,7 +153,7 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
                         ),
                 ),
             )
-            dataSource.upsertProject(
+            dataSource.saveProject(
                 BackendProject(
                     project =
                         Project(
@@ -178,7 +178,7 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
     fun `GET projects with since returns soft-deleted projects with deletedAt`() =
         testApplication {
             configureApp()
-            dataSource.upsertProject(
+            dataSource.saveProject(
                 BackendProject(
                     project =
                         Project(
@@ -204,7 +204,7 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
     fun `GET project by id returns project when found`() =
         testApplication {
             configureApp()
-            dataSource.upsertProject(
+            dataSource.saveProject(
                 BackendProject(
                     project =
                         Project(
@@ -229,7 +229,7 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
     fun `GET project by id includes deletedAt when soft-deleted`() =
         testApplication {
             configureApp()
-            dataSource.upsertProject(
+            dataSource.saveProject(
                 BackendProject(
                     project =
                         Project(
@@ -292,7 +292,7 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
     fun `PUT project returns existing project on conflict`() =
         testApplication {
             configureApp()
-            dataSource.upsertProject(
+            dataSource.saveProject(
                 BackendProject(
                     project =
                         Project(
@@ -321,7 +321,7 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
     fun `PUT project conflict includes deletedAt when existing is soft-deleted`() =
         testApplication {
             configureApp()
-            dataSource.upsertProject(
+            dataSource.saveProject(
                 BackendProject(
                     project =
                         Project(
@@ -381,7 +381,7 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
     fun `PATCH soft-delete project returns 204 when successfully deleted`() =
         testApplication {
             configureApp()
-            dataSource.upsertProject(
+            dataSource.saveProject(
                 BackendProject(
                     project =
                         Project(
@@ -407,7 +407,7 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
     fun `PATCH soft-delete project sets deletedAt on successful deletion`() =
         testApplication {
             configureApp()
-            dataSource.upsertProject(
+            dataSource.saveProject(
                 BackendProject(
                     project =
                         Project(
@@ -436,7 +436,7 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
     fun `PATCH soft-delete project returns existing project on conflict`() =
         testApplication {
             configureApp()
-            dataSource.upsertProject(
+            dataSource.saveProject(
                 BackendProject(
                     project =
                         Project(

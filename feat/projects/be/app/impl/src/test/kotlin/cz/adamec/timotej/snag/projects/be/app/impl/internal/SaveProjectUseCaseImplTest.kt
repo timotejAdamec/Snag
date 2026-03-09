@@ -62,7 +62,7 @@ class SaveProjectUseCaseImplTest : BackendKoinInitializedTest() {
                             updatedAt = Timestamp(value = 20L),
                         ),
                 )
-            dataSource.upsertProject(savedProject)
+            dataSource.saveProject(savedProject)
 
             useCase(project)
 
@@ -87,7 +87,7 @@ class SaveProjectUseCaseImplTest : BackendKoinInitializedTest() {
                             updatedAt = Timestamp(value = 20L),
                         ),
                 )
-            dataSource.upsertProject(savedProject)
+            dataSource.saveProject(savedProject)
 
             val result = useCase(project)
 
@@ -97,7 +97,7 @@ class SaveProjectUseCaseImplTest : BackendKoinInitializedTest() {
     @Test
     fun `returns null if saved updated at is earlier than the new one`() =
         runTest(testDispatcher) {
-            dataSource.upsertProject(project)
+            dataSource.saveProject(project)
 
             val newerProject =
                 project.copy(
@@ -117,7 +117,7 @@ class SaveProjectUseCaseImplTest : BackendKoinInitializedTest() {
     fun `restores soft-deleted project when saved with newer updatedAt`() =
         runTest(testDispatcher) {
             val deletedProject = project.copy(deletedAt = Timestamp(15L))
-            dataSource.upsertProject(deletedProject)
+            dataSource.saveProject(deletedProject)
 
             val restoredProject =
                 project.copy(
@@ -141,7 +141,7 @@ class SaveProjectUseCaseImplTest : BackendKoinInitializedTest() {
     fun `does not restore soft-deleted project when saved with older updatedAt`() =
         runTest(testDispatcher) {
             val deletedProject = project.copy(deletedAt = Timestamp(15L))
-            dataSource.upsertProject(deletedProject)
+            dataSource.saveProject(deletedProject)
 
             val olderProject =
                 project.copy(

@@ -45,7 +45,7 @@ class GetProjectUseCaseImplTest : BackendKoinInitializedTest() {
     @Test
     fun `returns project when it exists`() =
         runTest(testDispatcher) {
-            dataSource.upsertProject(project)
+            dataSource.saveProject(project)
 
             val result = useCase(projectId)
 

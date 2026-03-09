@@ -13,11 +13,19 @@
 package cz.adamec.timotej.snag.lib.sync.be
 
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
+import cz.adamec.timotej.snag.lib.sync.be.internal.ResolveConflictForDeleteUseCaseImpl
+import cz.adamec.timotej.snag.lib.sync.be.internal.ResolveConflictForSaveUseCaseImpl
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
 
 class ConflictResolutionTest {
+    private val resolveConflictForSave: ResolveConflictForSaveUseCase =
+        ResolveConflictForSaveUseCaseImpl()
+
+    private val resolveConflictForDelete: ResolveConflictForDeleteUseCase =
+        ResolveConflictForDeleteUseCaseImpl()
+
     private fun entity(
         updatedAt: Long,
         deletedAt: Long? = null,

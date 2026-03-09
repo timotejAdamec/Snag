@@ -21,12 +21,12 @@ interface InspectionsDb {
 
     suspend fun getInspection(id: Uuid): BackendInspection?
 
-    suspend fun upsertInspection(backendInspection: BackendInspection)
+    suspend fun saveInspection(backendInspection: BackendInspection): BackendInspection?
 
-    suspend fun softDeleteInspection(
+    suspend fun deleteInspection(
         id: Uuid,
         deletedAt: Timestamp,
-    )
+    ): BackendInspection?
 
     suspend fun getInspectionsModifiedSince(
         projectId: Uuid,

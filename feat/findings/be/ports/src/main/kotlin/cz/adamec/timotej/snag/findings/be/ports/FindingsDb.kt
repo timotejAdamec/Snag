@@ -21,12 +21,12 @@ interface FindingsDb {
 
     suspend fun getFinding(id: Uuid): BackendFinding?
 
-    suspend fun upsertFinding(finding: BackendFinding)
+    suspend fun saveFinding(finding: BackendFinding): BackendFinding?
 
-    suspend fun softDeleteFinding(
+    suspend fun deleteFinding(
         id: Uuid,
         deletedAt: Timestamp,
-    )
+    ): BackendFinding?
 
     suspend fun getFindingsModifiedSince(
         structureId: Uuid,

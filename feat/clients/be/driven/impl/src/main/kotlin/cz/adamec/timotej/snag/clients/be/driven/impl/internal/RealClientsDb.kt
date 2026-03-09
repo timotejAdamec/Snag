@@ -17,6 +17,10 @@ import cz.adamec.timotej.snag.clients.be.ports.ClientsDb
 import cz.adamec.timotej.snag.feat.shared.database.be.ClientEntity
 import cz.adamec.timotej.snag.feat.shared.database.be.ClientsTable
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
+import cz.adamec.timotej.snag.lib.sync.be.DeleteConflictResult
+import cz.adamec.timotej.snag.lib.sync.be.ResolveConflictForDeleteUseCase
+import cz.adamec.timotej.snag.lib.sync.be.ResolveConflictForSaveUseCase
+import cz.adamec.timotej.snag.lib.sync.be.SaveConflictResult
 import org.jetbrains.exposed.v1.core.greater
 import org.jetbrains.exposed.v1.core.or
 import org.jetbrains.exposed.v1.jdbc.Database
@@ -25,6 +29,8 @@ import kotlin.uuid.Uuid
 
 internal class RealClientsDb(
     private val database: Database,
+    private val resolveConflictForSave: ResolveConflictForSaveUseCase,
+    private val resolveConflictForDelete: ResolveConflictForDeleteUseCase,
 ) : ClientsDb {
     override suspend fun getClients(): List<BackendClient> =
         transaction(database) {
@@ -36,38 +42,50 @@ internal class RealClientsDb(
             ClientEntity.findById(id)?.toModel()
         }
 
-    override suspend fun upsertClient(client: BackendClient) {
+    override suspend fun saveClient(client: BackendClient): BackendClient? =
         transaction(database) {
             val existing = ClientEntity.findById(client.client.id)
-            if (existing != null) {
-                existing.name = client.client.name
-                existing.address = client.client.address
-                existing.phoneNumber = client.client.phoneNumber
-                existing.email = client.client.email
-                existing.updatedAt = client.client.updatedAt.value
-                existing.deletedAt = client.deletedAt?.value
-            } else {
-                ClientEntity.new(client.client.id) {
-                    name = client.client.name
-                    address = client.client.address
-                    phoneNumber = client.client.phoneNumber
-                    email = client.client.email
-                    updatedAt = client.client.updatedAt.value
-                    deletedAt = client.deletedAt?.value
+            when (val result = resolveConflictForSave(existing?.toModel(), client)) {
+                is SaveConflictResult.Proceed -> {
+                    if (existing != null) {
+                        existing.name = client.client.name
+                        existing.address = client.client.address
+                        existing.phoneNumber = client.client.phoneNumber
+                        existing.email = client.client.email
+                        existing.updatedAt = client.client.updatedAt.value
+                        existing.deletedAt = client.deletedAt?.value
+                    } else {
+                        ClientEntity.new(client.client.id) {
+                            name = client.client.name
+                            address = client.client.address
+                            phoneNumber = client.client.phoneNumber
+                            email = client.client.email
+                            updatedAt = client.client.updatedAt.value
+                            deletedAt = client.deletedAt?.value
+                        }
+                    }
+                    null
                 }
+                is SaveConflictResult.Rejected -> result.serverVersion
             }
         }
-    }
 
-    override suspend fun softDeleteClient(
+    override suspend fun deleteClient(
         id: Uuid,
         deletedAt: Timestamp,
-    ) {
+    ): BackendClient? =
         transaction(database) {
-            val existing = ClientEntity.findById(id) ?: return@transaction
-            existing.deletedAt = deletedAt.value
+            val existing = ClientEntity.findById(id)
+            when (val result = resolveConflictForDelete(existing?.toModel(), deletedAt)) {
+                is DeleteConflictResult.Proceed -> {
+                    existing!!.deletedAt = deletedAt.value
+                    null
+                }
+                is DeleteConflictResult.NotFound -> null
+                is DeleteConflictResult.AlreadyDeleted -> null
+                is DeleteConflictResult.Rejected -> result.serverVersion
+            }
         }
-    }
 
     override suspend fun getClientsModifiedSince(since: Timestamp): List<BackendClient> =
         transaction(database) {

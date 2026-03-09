@@ -43,7 +43,7 @@ class GetFindingsModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
     private val otherStructureId = Uuid.parse("00000000-0000-0000-0001-000000000002")
 
     private suspend fun seedParentEntities() {
-        projectsDb.upsertProject(
+        projectsDb.saveProject(
             BackendProject(
                 project =
                     Project(
@@ -54,7 +54,7 @@ class GetFindingsModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
                     ),
             ),
         )
-        structuresDb.upsertStructure(
+        structuresDb.saveStructure(
             BackendStructure(
                 structure =
                     Structure(
@@ -66,7 +66,7 @@ class GetFindingsModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
                     ),
             ),
         )
-        structuresDb.upsertStructure(
+        structuresDb.saveStructure(
             BackendStructure(
                 structure =
                     Structure(
@@ -105,7 +105,7 @@ class GetFindingsModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
                             updatedAt = Timestamp(200L),
                         ),
                 )
-            dataSource.upsertFinding(finding)
+            dataSource.saveFinding(finding)
 
             val result = useCase(structureId = structureId, since = Timestamp(100L))
 
@@ -129,7 +129,7 @@ class GetFindingsModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
                             updatedAt = Timestamp(200L),
                         ),
                 )
-            dataSource.upsertFinding(finding)
+            dataSource.saveFinding(finding)
 
             val result = useCase(structureId = structureId, since = Timestamp(100L))
 
@@ -154,7 +154,7 @@ class GetFindingsModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
                         ),
                     deletedAt = Timestamp(200L),
                 )
-            dataSource.upsertFinding(finding)
+            dataSource.saveFinding(finding)
 
             val result = useCase(structureId = structureId, since = Timestamp(100L))
 
@@ -178,7 +178,7 @@ class GetFindingsModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
                             updatedAt = Timestamp(50L),
                         ),
                 )
-            dataSource.upsertFinding(finding)
+            dataSource.saveFinding(finding)
 
             val result = useCase(structureId = structureId, since = Timestamp(100L))
 

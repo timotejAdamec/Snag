@@ -51,7 +51,7 @@ class DeleteStructureUseCaseImplTest : BackendKoinInitializedTest() {
 
     private fun createProject() =
         runTest(testDispatcher) {
-            projectsDb.upsertProject(
+            projectsDb.saveProject(
                 BackendProject(
                     project =
                         Project(
@@ -68,7 +68,7 @@ class DeleteStructureUseCaseImplTest : BackendKoinInitializedTest() {
     fun `soft-deletes structure in storage`() =
         runTest(testDispatcher) {
             createProject()
-            dataSource.upsertStructure(structure)
+            dataSource.saveStructure(structure)
 
             useCase(
                 DeleteStructureRequest(
@@ -87,7 +87,7 @@ class DeleteStructureUseCaseImplTest : BackendKoinInitializedTest() {
     fun `does not delete structure when saved updated at is later than deleted at`() =
         runTest(testDispatcher) {
             createProject()
-            dataSource.upsertStructure(structure)
+            dataSource.saveStructure(structure)
 
             useCase(
                 DeleteStructureRequest(
@@ -105,7 +105,7 @@ class DeleteStructureUseCaseImplTest : BackendKoinInitializedTest() {
     fun `returns saved structure when saved updated at is later than deleted at`() =
         runTest(testDispatcher) {
             createProject()
-            dataSource.upsertStructure(structure)
+            dataSource.saveStructure(structure)
 
             val result =
                 useCase(

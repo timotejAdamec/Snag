@@ -59,8 +59,8 @@ class GetProjectsUseCaseImplTest : BackendKoinInitializedTest() {
                             updatedAt = Timestamp(10L),
                         ),
                 )
-            dataSource.upsertProject(project1)
-            dataSource.upsertProject(project2)
+            dataSource.saveProject(project1)
+            dataSource.saveProject(project2)
 
             val result = useCase()
 

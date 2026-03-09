@@ -18,6 +18,10 @@ import cz.adamec.timotej.snag.feat.shared.database.be.InspectionEntity
 import cz.adamec.timotej.snag.feat.shared.database.be.InspectionsTable
 import cz.adamec.timotej.snag.feat.shared.database.be.ProjectEntity
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
+import cz.adamec.timotej.snag.lib.sync.be.DeleteConflictResult
+import cz.adamec.timotej.snag.lib.sync.be.ResolveConflictForDeleteUseCase
+import cz.adamec.timotej.snag.lib.sync.be.ResolveConflictForSaveUseCase
+import cz.adamec.timotej.snag.lib.sync.be.SaveConflictResult
 import org.jetbrains.exposed.v1.core.and
 import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.core.greater
@@ -28,6 +32,8 @@ import kotlin.uuid.Uuid
 
 internal class RealInspectionsDb(
     private val database: Database,
+    private val resolveConflictForSave: ResolveConflictForSaveUseCase,
+    private val resolveConflictForDelete: ResolveConflictForDeleteUseCase,
 ) : InspectionsDb {
     override suspend fun getInspections(projectId: Uuid): List<BackendInspection> =
         transaction(database) {
@@ -42,42 +48,54 @@ internal class RealInspectionsDb(
             InspectionEntity.findById(id)?.toModel()
         }
 
-    override suspend fun upsertInspection(backendInspection: BackendInspection) {
+    override suspend fun saveInspection(backendInspection: BackendInspection): BackendInspection? =
         transaction(database) {
             val existing = InspectionEntity.findById(backendInspection.inspection.id)
-            if (existing != null) {
-                existing.project = ProjectEntity[backendInspection.inspection.projectId]
-                existing.startedAt = backendInspection.inspection.startedAt?.value
-                existing.endedAt = backendInspection.inspection.endedAt?.value
-                existing.participants = backendInspection.inspection.participants
-                existing.climate = backendInspection.inspection.climate
-                existing.note = backendInspection.inspection.note
-                existing.updatedAt = backendInspection.inspection.updatedAt.value
-                existing.deletedAt = backendInspection.deletedAt?.value
-            } else {
-                InspectionEntity.new(backendInspection.inspection.id) {
-                    project = ProjectEntity[backendInspection.inspection.projectId]
-                    startedAt = backendInspection.inspection.startedAt?.value
-                    endedAt = backendInspection.inspection.endedAt?.value
-                    participants = backendInspection.inspection.participants
-                    climate = backendInspection.inspection.climate
-                    note = backendInspection.inspection.note
-                    updatedAt = backendInspection.inspection.updatedAt.value
-                    deletedAt = backendInspection.deletedAt?.value
+            when (val result = resolveConflictForSave(existing?.toModel(), backendInspection)) {
+                is SaveConflictResult.Proceed -> {
+                    if (existing != null) {
+                        existing.project = ProjectEntity[backendInspection.inspection.projectId]
+                        existing.startedAt = backendInspection.inspection.startedAt?.value
+                        existing.endedAt = backendInspection.inspection.endedAt?.value
+                        existing.participants = backendInspection.inspection.participants
+                        existing.climate = backendInspection.inspection.climate
+                        existing.note = backendInspection.inspection.note
+                        existing.updatedAt = backendInspection.inspection.updatedAt.value
+                        existing.deletedAt = backendInspection.deletedAt?.value
+                    } else {
+                        InspectionEntity.new(backendInspection.inspection.id) {
+                            project = ProjectEntity[backendInspection.inspection.projectId]
+                            startedAt = backendInspection.inspection.startedAt?.value
+                            endedAt = backendInspection.inspection.endedAt?.value
+                            participants = backendInspection.inspection.participants
+                            climate = backendInspection.inspection.climate
+                            note = backendInspection.inspection.note
+                            updatedAt = backendInspection.inspection.updatedAt.value
+                            deletedAt = backendInspection.deletedAt?.value
+                        }
+                    }
+                    null
                 }
+                is SaveConflictResult.Rejected -> result.serverVersion
             }
         }
-    }
 
-    override suspend fun softDeleteInspection(
+    override suspend fun deleteInspection(
         id: Uuid,
         deletedAt: Timestamp,
-    ) {
+    ): BackendInspection? =
         transaction(database) {
-            val existing = InspectionEntity.findById(id) ?: return@transaction
-            existing.deletedAt = deletedAt.value
+            val existing = InspectionEntity.findById(id)
+            when (val result = resolveConflictForDelete(existing?.toModel(), deletedAt)) {
+                is DeleteConflictResult.Proceed -> {
+                    existing!!.deletedAt = deletedAt.value
+                    null
+                }
+                is DeleteConflictResult.NotFound -> null
+                is DeleteConflictResult.AlreadyDeleted -> null
+                is DeleteConflictResult.Rejected -> result.serverVersion
+            }
         }
-    }
 
     override suspend fun getInspectionsModifiedSince(
         projectId: Uuid,
