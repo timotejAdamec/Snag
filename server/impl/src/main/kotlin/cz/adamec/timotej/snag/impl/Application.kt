@@ -13,8 +13,8 @@
 package cz.adamec.timotej.snag.impl
 
 import cz.adamec.timotej.snag.configuration.be.AppConfiguration
+import cz.adamec.timotej.snag.configuration.be.SnagConfig
 import cz.adamec.timotej.snag.impl.di.appModule
-import cz.adamec.timotej.snag.server.api.Host
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
 import io.ktor.server.engine.embeddedServer
@@ -24,7 +24,7 @@ import org.koin.ktor.plugin.Koin
 import org.koin.logger.slf4jLogger
 
 fun main() {
-    val port = System.getenv("PORT")?.toIntOrNull() ?: Host.Localhost.PORT
+    val port = SnagConfig.port
     embeddedServer(
         factory = Netty,
         port = port,

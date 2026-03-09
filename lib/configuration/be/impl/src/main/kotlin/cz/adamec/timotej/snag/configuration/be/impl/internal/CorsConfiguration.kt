@@ -13,6 +13,7 @@
 package cz.adamec.timotej.snag.configuration.be.impl.internal
 
 import cz.adamec.timotej.snag.configuration.be.AppConfiguration
+import cz.adamec.timotej.snag.configuration.be.SnagConfig
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
 import io.ktor.server.application.Application
@@ -21,14 +22,8 @@ import io.ktor.server.plugins.cors.routing.CORS
 
 internal class CorsConfiguration : AppConfiguration {
     override fun Application.setup() {
-        val allowedHosts = System.getenv("CORS_ALLOWED_HOSTS")
-            ?.split(",")
-            ?.map { it.trim() }
-            ?.filter { it.isNotEmpty() }
-            ?: listOf("localhost:8080")
-
         install(CORS) {
-            for (host in allowedHosts) {
+            for (host in SnagConfig.corsAllowedHosts) {
                 if ("://" in host) {
                     val (scheme, rest) = host.split("://", limit = 2)
                     allowHost(rest, schemes = listOf(scheme))
