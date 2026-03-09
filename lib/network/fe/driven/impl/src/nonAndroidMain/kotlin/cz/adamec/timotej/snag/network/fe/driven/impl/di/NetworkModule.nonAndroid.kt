@@ -12,13 +12,10 @@
 
 package cz.adamec.timotej.snag.network.fe.driven.impl.di
 
-import cz.adamec.timotej.snag.network.fe.driven.impl.internal.NonAndroidLocalHostUrlFactory
-import cz.adamec.timotej.snag.network.fe.ports.LocalHostUrlFactory
-import org.koin.core.module.dsl.singleOf
-import org.koin.dsl.bind
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
-internal actual val localHostPlatformModule =
+internal actual val serverUrlPlatformModule =
     module {
-        singleOf(::NonAndroidLocalHostUrlFactory) bind LocalHostUrlFactory::class
+        single(named("localhostAddress")) { "localhost" }
     }

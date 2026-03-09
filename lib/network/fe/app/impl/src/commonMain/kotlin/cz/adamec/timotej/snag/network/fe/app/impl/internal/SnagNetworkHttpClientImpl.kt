@@ -13,7 +13,7 @@
 package cz.adamec.timotej.snag.network.fe.app.impl.internal
 
 import cz.adamec.timotej.snag.network.fe.SnagNetworkHttpClient
-import cz.adamec.timotej.snag.network.fe.ports.LocalHostUrlFactory
+import cz.adamec.timotej.snag.network.fe.ports.ServerUrlFactory
 import io.ktor.client.HttpClient
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.delete
@@ -27,14 +27,14 @@ import io.ktor.http.contentType
 
 internal class SnagNetworkHttpClientImpl(
     private val httpClient: HttpClient,
-    private val localHostUrlFactory: LocalHostUrlFactory,
+    private val serverUrlFactory: ServerUrlFactory,
 ) : SnagNetworkHttpClient {
     override suspend fun get(
         path: String,
         block: HttpRequestBuilder.() -> Unit,
     ): HttpResponse =
         httpClient.get(
-            urlString = localHostUrlFactory.createUrl() + path,
+            urlString = serverUrlFactory.createUrl() + path,
         ) {
             block()
         }
@@ -45,7 +45,7 @@ internal class SnagNetworkHttpClientImpl(
         block: HttpRequestBuilder.() -> Unit,
     ): HttpResponse =
         httpClient.post(
-            urlString = localHostUrlFactory.createUrl() + path,
+            urlString = serverUrlFactory.createUrl() + path,
         ) {
             contentType(contentType)
             block()
@@ -57,7 +57,7 @@ internal class SnagNetworkHttpClientImpl(
         block: HttpRequestBuilder.() -> Unit,
     ): HttpResponse =
         httpClient.put(
-            urlString = localHostUrlFactory.createUrl() + path,
+            urlString = serverUrlFactory.createUrl() + path,
         ) {
             contentType(contentType)
             block()
@@ -69,7 +69,7 @@ internal class SnagNetworkHttpClientImpl(
         block: HttpRequestBuilder.() -> Unit,
     ): HttpResponse =
         httpClient.patch(
-            urlString = localHostUrlFactory.createUrl() + path,
+            urlString = serverUrlFactory.createUrl() + path,
         ) {
             contentType(contentType)
             block()
@@ -81,7 +81,7 @@ internal class SnagNetworkHttpClientImpl(
         block: HttpRequestBuilder.() -> Unit,
     ): HttpResponse =
         httpClient.delete(
-            urlString = localHostUrlFactory.createUrl() + path,
+            urlString = serverUrlFactory.createUrl() + path,
         ) {
             contentType(contentType)
             block()

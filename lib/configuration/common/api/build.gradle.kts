@@ -34,6 +34,12 @@ buildkonfig {
             SNAG_NAMESPACE,
             const = true,
         )
+        buildConfigField(
+            com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING,
+            "SERVER_TARGET",
+            findProperty("snag.serverTarget")?.toString() ?: "localhost",
+            const = true,
+        )
     }
 
     // exposeObjectWithName not used - @JsExport on objects breaks wasmJs compilation.

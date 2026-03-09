@@ -16,18 +16,26 @@ import cz.adamec.timotej.snag.network.fe.driven.impl.internal.ContentNegotiation
 import cz.adamec.timotej.snag.network.fe.driven.impl.internal.LoggingConfiguration
 import cz.adamec.timotej.snag.network.fe.driven.impl.internal.ResponseValidationConfiguration
 import cz.adamec.timotej.snag.network.fe.driven.impl.internal.RetryConfiguration
+import cz.adamec.timotej.snag.network.fe.driven.impl.internal.ServerUrlFactoryImpl
 import cz.adamec.timotej.snag.network.fe.ports.HttpClientConfiguration
+import cz.adamec.timotej.snag.network.fe.ports.ServerUrlFactory
 import io.ktor.client.HttpClient
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.singleOf
+import org.koin.core.qualifier.named
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
 val networkDrivenModule =
     module {
-        includes(localHostPlatformModule)
+        includes(serverUrlPlatformModule)
         includes(networkErrorClassifierPlatformModule)
         includes(connectionStatusPlatformModule)
+        single<ServerUrlFactory> {
+            ServerUrlFactoryImpl(
+                localhostAddress = get<String>(named("localhostAddress")),
+            )
+        }
         singleOf(::LoggingConfiguration) bind HttpClientConfiguration::class
         singleOf(::ContentNegotiationConfiguration) bind HttpClientConfiguration::class
         singleOf(::ResponseValidationConfiguration) bind HttpClientConfiguration::class
@@ -41,6 +49,6 @@ val networkDrivenModule =
         }
     }
 
-internal expect val localHostPlatformModule: Module
+internal expect val serverUrlPlatformModule: Module
 internal expect val networkErrorClassifierPlatformModule: Module
 internal expect val connectionStatusPlatformModule: Module
