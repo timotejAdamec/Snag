@@ -99,9 +99,10 @@ internal fun FindingDetailsEditContent(
                             state.findingName
                         }
                     Text(
-                        modifier = Modifier.padding(
-                            end = 4.dp,
-                        ),
+                        modifier =
+                            Modifier.padding(
+                                end = 4.dp,
+                            ),
                         text = text,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
@@ -123,7 +124,6 @@ internal fun FindingDetailsEditContent(
                             text = stringResource(visuals.label),
                             style = MaterialTheme.typography.labelMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
-
                         )
                     }
                 },

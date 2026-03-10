@@ -31,19 +31,20 @@ class UploadFloorPlanImageUseCaseImpl(
         LH.logger.d {
             "Uploading floor plan image $fileName for structure $structureId in project $projectId."
         }
-        return structuresFileStorage.uploadFile(
-            bytes = bytes,
-            fileName = fileName,
-            directory = "projects/$projectId/structures/$structureId",
-        ).onSuccess {
-            LH.logger.d {
-                "Uploaded floor plan image $fileName for structure $structureId in project $projectId." +
+        return structuresFileStorage
+            .uploadFile(
+                bytes = bytes,
+                fileName = fileName,
+                directory = "projects/$projectId/structures/$structureId",
+            ).onSuccess {
+                LH.logger.d {
+                    "Uploaded floor plan image $fileName for structure $structureId in project $projectId." +
                         " The floor plan is now available at $it."
+                }
+            }.onFailure {
+                LH.logger.w {
+                    "Error uploading floor plan image $fileName for structure $structureId in project $projectId."
+                }
             }
-        }.onFailure {
-            LH.logger.w {
-                "Error uploading floor plan image $fileName for structure $structureId in project $projectId."
-            }
-        }
     }
 }

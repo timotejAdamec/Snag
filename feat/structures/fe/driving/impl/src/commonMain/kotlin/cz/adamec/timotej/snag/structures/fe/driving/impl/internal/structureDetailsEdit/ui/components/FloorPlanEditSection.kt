@@ -78,21 +78,23 @@ internal fun FloorPlanEditSection(
             shape = MaterialTheme.shapes.medium,
         ) {
             Column(
-                modifier = Modifier
-                    .padding(8.dp),
+                modifier =
+                    Modifier
+                        .padding(8.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 var isPicking by remember { mutableStateOf(false) }
 
                 if (floorPlanUrl == null && !isUploading) {
                     Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .aspectRatio(ASPECT_RATIO_WIDTH / ASPECT_RATIO_HEIGHT),
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .aspectRatio(ASPECT_RATIO_WIDTH / ASPECT_RATIO_HEIGHT),
                         contentAlignment = Alignment.Center,
                     ) {
                         PlanImagePickButton(
-                            modifier = modifier,
+                            modifier = Modifier,
                             icon = DesignRes.drawable.ic_upload,
                             label = stringResource(Res.string.upload),
                             isSingleAction = true,
@@ -117,8 +119,9 @@ internal fun FloorPlanEditSection(
 
                             if (floorPlanUrl != null) {
                                 AsyncImage(
-                                    modifier = Modifier
-                                        .fillMaxSize(),
+                                    modifier =
+                                        Modifier
+                                            .fillMaxSize(),
                                     model = floorPlanUrl,
                                     contentDescription = null,
                                     contentScale = ContentScale.Fit,
@@ -162,7 +165,7 @@ internal fun FloorPlanEditSection(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
                         PlanImagePickButton(
-                            modifier = modifier,
+                            modifier = Modifier,
                             icon = DesignRes.drawable.ic_edit,
                             label = stringResource(Res.string.change),
                             onImagePick = onImagePick,
@@ -187,8 +190,9 @@ internal fun FloorPlanEditSection(
 private fun FloorPlanEditSectionNoImagePreview() {
     SnagPreview {
         FloorPlanEditSection(
-            modifier = Modifier
-                .padding(16.dp),
+            modifier =
+                Modifier
+                    .padding(16.dp),
             floorPlanUrl = null,
             isUploading = false,
             onImagePick = { _, _ -> },
@@ -202,8 +206,9 @@ private fun FloorPlanEditSectionNoImagePreview() {
 private fun FloorPlanEditSectionWithImagePreview() {
     SnagPreview {
         FloorPlanEditSection(
-            modifier = Modifier
-                .padding(16.dp),
+            modifier =
+                Modifier
+                    .padding(16.dp),
             floorPlanUrl = "https://saterdesign.com/cdn/shop/products/6842.M_1200x.jpeg?v=1547874083",
             isUploading = false,
             onImagePick = { _, _ -> },
@@ -217,8 +222,9 @@ private fun FloorPlanEditSectionWithImagePreview() {
 private fun FloorPlanEditSectionUploadingPreview() {
     SnagPreview {
         FloorPlanEditSection(
-            modifier = Modifier
-                .padding(16.dp),
+            modifier =
+                Modifier
+                    .padding(16.dp),
             floorPlanUrl = null,
             isUploading = true,
             onImagePick = { _, _ -> },
@@ -232,8 +238,9 @@ private fun FloorPlanEditSectionUploadingPreview() {
 private fun FloorPlanEditSectionWithImageErrorPreview() {
     SnagPreview {
         FloorPlanEditSection(
-            modifier = Modifier
-                .padding(16.dp),
+            modifier =
+                Modifier
+                    .padding(16.dp),
             floorPlanUrl = "nonexistent URL",
             isUploading = false,
             onImagePick = { _, _ -> },

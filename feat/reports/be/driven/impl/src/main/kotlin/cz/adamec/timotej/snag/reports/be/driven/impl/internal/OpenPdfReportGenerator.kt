@@ -30,6 +30,7 @@ import org.openpdf.text.pdf.PdfPTable
 import org.openpdf.text.pdf.PdfWriter
 import java.awt.BasicStroke
 import java.awt.Color
+import java.awt.Graphics2D
 import java.awt.RenderingHints
 import java.awt.image.BufferedImage
 import java.io.ByteArrayInputStream
@@ -39,7 +40,9 @@ import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import javax.imageio.ImageIO
+import java.awt.Font as AwtFont
 
+@Suppress("TooManyFunctions")
 internal class OpenPdfReportGenerator : PdfReportGenerator {
     override suspend fun generate(data: ProjectReportData): ByteArray {
         val outputStream = ByteArrayOutputStream()
@@ -188,6 +191,7 @@ internal class OpenPdfReportGenerator : PdfReportGenerator {
         document.add(table)
     }
 
+    @Suppress("ReturnCount", "TooGenericExceptionCaught")
     private fun addFloorPlan(
         document: Document,
         structure: BackendStructure,
@@ -231,13 +235,15 @@ internal class OpenPdfReportGenerator : PdfReportGenerator {
         imageBytes: ByteArray,
         findings: List<BackendFinding>,
     ): ByteArray {
-        val bufferedImage = ImageIO.read(ByteArrayInputStream(imageBytes))
-            ?: return imageBytes
-        val canvas = BufferedImage(
-            bufferedImage.width,
-            bufferedImage.height,
-            BufferedImage.TYPE_INT_ARGB,
-        )
+        val bufferedImage =
+            ImageIO.read(ByteArrayInputStream(imageBytes))
+                ?: return imageBytes
+        val canvas =
+            BufferedImage(
+                bufferedImage.width,
+                bufferedImage.height,
+                BufferedImage.TYPE_INT_ARGB,
+            )
         val g = canvas.createGraphics()
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
         g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON)
@@ -245,7 +251,7 @@ internal class OpenPdfReportGenerator : PdfReportGenerator {
 
         val markerRadius = maxOf(canvas.width, canvas.height) / MARKER_RADIUS_DIVISOR
         val fontSize = (markerRadius * MARKER_FONT_SCALE).toFloat()
-        g.font = g.font.deriveFont(java.awt.Font.BOLD, fontSize)
+        g.font = g.font.deriveFont(AwtFont.BOLD, fontSize)
 
         findings.forEachIndexed { index, backendFinding ->
             val label = "${index + 1}"
@@ -263,7 +269,7 @@ internal class OpenPdfReportGenerator : PdfReportGenerator {
     }
 
     private fun drawMarker(
-        g: java.awt.Graphics2D,
+        g: Graphics2D,
         coord: RelativeCoordinate,
         imageWidth: Int,
         imageHeight: Int,

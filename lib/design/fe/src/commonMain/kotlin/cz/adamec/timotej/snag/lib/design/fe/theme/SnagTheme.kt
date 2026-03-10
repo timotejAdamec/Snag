@@ -20,11 +20,12 @@ import androidx.compose.runtime.Composable
 
 @Composable
 fun SnagTheme(content: @Composable () -> Unit) {
-    val colorScheme = if (isSystemInDarkTheme()) {
-        darkColorScheme()
-    } else {
-        expressiveLightColorScheme()
-    }
+    val colorScheme =
+        if (isSystemInDarkTheme()) {
+            darkColorScheme()
+        } else {
+            expressiveLightColorScheme()
+        }
 
     MaterialExpressiveTheme(colorScheme = colorScheme) {
         content()

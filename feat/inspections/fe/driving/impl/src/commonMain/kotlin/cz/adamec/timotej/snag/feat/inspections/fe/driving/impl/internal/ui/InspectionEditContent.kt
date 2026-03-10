@@ -355,7 +355,7 @@ private fun InspectionEditContentEmptyPreview() {
 
 @Preview
 @Composable
-@Suppress("FunctionNameMaxLength")
+@Suppress("FunctionNameMaxLength", "MagicNumber")
 private fun InspectionEditContentFilledPreview() {
     SnagPreview {
         InspectionEditContent(

@@ -36,7 +36,6 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ContainedLoadingIndicator
-import androidx.compose.material3.FloatingToolbarDefaults
 import androidx.compose.material3.HorizontalFloatingToolbar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -74,13 +73,13 @@ import org.jetbrains.compose.resources.stringResource
 import snag.feat.projects.fe.driving.impl.generated.resources.Res
 import snag.feat.projects.fe.driving.impl.generated.resources.delete_project_confirmation_text
 import snag.feat.projects.fe.driving.impl.generated.resources.delete_project_confirmation_title
+import snag.feat.projects.fe.driving.impl.generated.resources.download_report
 import snag.feat.projects.fe.driving.impl.generated.resources.inspections_section_title
 import snag.feat.projects.fe.driving.impl.generated.resources.new_inspection
 import snag.feat.projects.fe.driving.impl.generated.resources.new_structure
 import snag.feat.projects.fe.driving.impl.generated.resources.project_not_found
 import snag.feat.projects.fe.driving.impl.generated.resources.structures_section_title
 import snag.lib.design.fe.generated.resources.delete
-import snag.feat.projects.fe.driving.impl.generated.resources.download_report
 import snag.lib.design.fe.generated.resources.edit
 import snag.lib.design.fe.generated.resources.ic_add
 import snag.lib.design.fe.generated.resources.ic_delete
@@ -125,7 +124,7 @@ internal fun ProjectDetailsContent(
 
             ProjectDetailsUiStatus.LOADED,
             ProjectDetailsUiStatus.DELETED,
-                -> {
+            -> {
                 LoadedProjectDetailsContent(
                     state = state,
                     onNewStructureClick = onNewStructureClick,
@@ -185,8 +184,7 @@ private fun LoadedProjectDetailsContent(
                         top = paddingValues.calculateTopPadding(),
                         start = paddingValues.calculateStartPadding(LayoutDirection.Ltr),
                         end = paddingValues.calculateEndPadding(LayoutDirection.Ltr),
-                    )
-                    .consumeWindowInsets(paddingValues),
+                    ).consumeWindowInsets(paddingValues),
         ) {
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),

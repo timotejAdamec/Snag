@@ -76,9 +76,10 @@ internal fun StructureDetailsEditContent(
                             state.structureName
                         }
                     Text(
-                        modifier = Modifier.padding(
-                            end = 4.dp,
-                        ),
+                        modifier =
+                            Modifier.padding(
+                                end = 4.dp,
+                            ),
                         text = text,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,

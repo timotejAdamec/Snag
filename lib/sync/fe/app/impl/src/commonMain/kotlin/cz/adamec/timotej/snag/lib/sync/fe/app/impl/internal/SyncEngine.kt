@@ -13,7 +13,6 @@
 package cz.adamec.timotej.snag.lib.sync.fe.app.impl.internal
 
 import cz.adamec.timotej.snag.lib.core.common.ApplicationScope
-import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
 import cz.adamec.timotej.snag.lib.sync.fe.app.api.SyncCoordinator
 import cz.adamec.timotej.snag.lib.sync.fe.app.api.handler.SyncOperationHandler
 import cz.adamec.timotej.snag.lib.sync.fe.app.api.handler.SyncOperationResult
@@ -51,12 +50,11 @@ internal class SyncEngine(
         }
     }
 
-    override suspend fun <T> withFlushedQueue(
-        block: suspend (wasFlushingSuccessful: Boolean) -> T,
-    ): T = mutex.withLock {
-        val result = processAllPending()
-        block(result)
-    }
+    override suspend fun <T> withFlushedQueue(block: suspend (wasFlushingSuccessful: Boolean) -> T): T =
+        mutex.withLock {
+            val result = processAllPending()
+            block(result)
+        }
 
     private suspend fun processAll() {
         mutex.withLock {
@@ -64,9 +62,7 @@ internal class SyncEngine(
         }
     }
 
-    /**
-     * @return `true` if all pending operations were processed successfully, `false` otherwise.
-     */
+    @Suppress("ReturnCount", "CommentOverPrivateFunction")
     private suspend fun processAllPending(): Boolean {
         val pending = syncQueue.getAllPending()
         if (pending.isEmpty()) {
