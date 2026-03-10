@@ -70,7 +70,9 @@ internal class RealStructuresDb(
                     }
                     null
                 }
-                is SaveConflictResult.Rejected -> { result.serverVersion }
+                is SaveConflictResult.Rejected -> {
+                    result.serverVersion
+                }
             }
         }
 
@@ -85,9 +87,15 @@ internal class RealStructuresDb(
                     existing!!.deletedAt = deletedAt.value
                     null
                 }
-                is DeleteConflictResult.NotFound -> { null }
-                is DeleteConflictResult.AlreadyDeleted -> { null }
-                is DeleteConflictResult.Rejected -> { result.serverVersion }
+                is DeleteConflictResult.NotFound -> {
+                    null
+                }
+                is DeleteConflictResult.AlreadyDeleted -> {
+                    null
+                }
+                is DeleteConflictResult.Rejected -> {
+                    result.serverVersion
+                }
             }
         }
 

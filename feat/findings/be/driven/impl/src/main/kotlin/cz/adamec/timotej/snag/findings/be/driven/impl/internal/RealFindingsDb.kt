@@ -60,7 +60,10 @@ internal class RealFindingsDb(
                 is SaveConflictResult.Proceed -> {
                     if (existing != null) {
                         existing.structure = StructureEntity[finding.finding.structureId]
-                        existing.type = finding.finding.type.toEntityKey().name
+                        existing.type =
+                            finding.finding.type
+                                .toEntityKey()
+                                .name
                         existing.name = finding.finding.name
                         existing.description = finding.finding.description
                         existing.updatedAt = finding.finding.updatedAt.value
@@ -69,7 +72,10 @@ internal class RealFindingsDb(
                     } else {
                         FindingEntity.new(finding.finding.id) {
                             structure = StructureEntity[finding.finding.structureId]
-                            type = finding.finding.type.toEntityKey().name
+                            type =
+                                finding.finding.type
+                                    .toEntityKey()
+                                    .name
                             name = finding.finding.name
                             description = finding.finding.description
                             updatedAt = finding.finding.updatedAt.value
@@ -89,7 +95,9 @@ internal class RealFindingsDb(
                     }
                     null
                 }
-                is SaveConflictResult.Rejected -> { result.serverVersion }
+                is SaveConflictResult.Rejected -> {
+                    result.serverVersion
+                }
             }
         }
 
@@ -104,9 +112,15 @@ internal class RealFindingsDb(
                     existing!!.deletedAt = deletedAt.value
                     null
                 }
-                is DeleteConflictResult.NotFound -> { null }
-                is DeleteConflictResult.AlreadyDeleted -> { null }
-                is DeleteConflictResult.Rejected -> { result.serverVersion }
+                is DeleteConflictResult.NotFound -> {
+                    null
+                }
+                is DeleteConflictResult.AlreadyDeleted -> {
+                    null
+                }
+                is DeleteConflictResult.Rejected -> {
+                    result.serverVersion
+                }
             }
         }
 

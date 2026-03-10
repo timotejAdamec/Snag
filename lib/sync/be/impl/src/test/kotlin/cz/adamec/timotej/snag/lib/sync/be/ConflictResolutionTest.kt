@@ -13,9 +13,9 @@
 package cz.adamec.timotej.snag.lib.sync.be
 
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
-import cz.adamec.timotej.snag.lib.sync.be.model.Syncable
 import cz.adamec.timotej.snag.lib.sync.be.internal.ResolveConflictForDeleteUseCaseImpl
 import cz.adamec.timotej.snag.lib.sync.be.internal.ResolveConflictForSaveUseCaseImpl
+import cz.adamec.timotej.snag.lib.sync.be.model.Syncable
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
@@ -46,10 +46,11 @@ class ConflictResolutionTest {
 
     @Test
     fun `save proceeds when incoming is newer than existing`() {
-        val result = resolveConflictForSave(
-            existing = entity(100L),
-            incoming = entity(200L),
-        )
+        val result =
+            resolveConflictForSave(
+                existing = entity(100L),
+                incoming = entity(200L),
+            )
 
         assertIs<SaveConflictResult.Proceed>(result)
     }
@@ -86,10 +87,11 @@ class ConflictResolutionTest {
 
     @Test
     fun `save proceeds when incoming is newer than both updatedAt and deletedAt`() {
-        val result = resolveConflictForSave(
-            existing = entity(updatedAt = 100L, deletedAt = 200L),
-            incoming = entity(300L),
-        )
+        val result =
+            resolveConflictForSave(
+                existing = entity(updatedAt = 100L, deletedAt = 200L),
+                incoming = entity(300L),
+            )
 
         assertIs<SaveConflictResult.Proceed>(result)
     }
@@ -100,30 +102,33 @@ class ConflictResolutionTest {
 
     @Test
     fun `delete returns not found when no existing entity`() {
-        val result = resolveConflictForDelete<TestSyncable>(
-            existing = null,
-            deletedAt = Timestamp(100L),
-        )
+        val result =
+            resolveConflictForDelete<TestSyncable>(
+                existing = null,
+                deletedAt = Timestamp(100L),
+            )
 
         assertIs<DeleteConflictResult.NotFound>(result)
     }
 
     @Test
     fun `delete returns already deleted when existing is soft-deleted`() {
-        val result = resolveConflictForDelete(
-            existing = entity(updatedAt = 100L, deletedAt = 200L),
-            deletedAt = Timestamp(300L),
-        )
+        val result =
+            resolveConflictForDelete(
+                existing = entity(updatedAt = 100L, deletedAt = 200L),
+                deletedAt = Timestamp(300L),
+            )
 
         assertIs<DeleteConflictResult.AlreadyDeleted>(result)
     }
 
     @Test
     fun `delete proceeds when deletedAt is newer than existing updatedAt`() {
-        val result = resolveConflictForDelete(
-            existing = entity(100L),
-            deletedAt = Timestamp(200L),
-        )
+        val result =
+            resolveConflictForDelete(
+                existing = entity(100L),
+                deletedAt = Timestamp(200L),
+            )
 
         assertIs<DeleteConflictResult.Proceed>(result)
     }
@@ -149,7 +154,6 @@ class ConflictResolutionTest {
     }
 
     // endregion
-
 }
 
 private data class TestSyncable(
