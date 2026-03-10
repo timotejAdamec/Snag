@@ -30,4 +30,4 @@ jobs:
         # WasmJs tests are excluded: compiling them links the full dependency closure
         # into a single binary, which consistently OOMs the Kotlin daemon on the
         # 16 GB ubuntu-latest runner. JS tests cover the same code paths.
-        run: ./gradlew check --stacktrace -x wasmJsBrowserTest -x wasmJsNodeTest
+        run: ./gradlew check --stacktrace -x wasmJsBrowserTest
