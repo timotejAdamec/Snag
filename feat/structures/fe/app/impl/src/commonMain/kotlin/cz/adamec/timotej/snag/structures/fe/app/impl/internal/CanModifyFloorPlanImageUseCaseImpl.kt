@@ -21,14 +21,15 @@ import kotlinx.coroutines.flow.onEach
 internal class CanModifyFloorPlanImageUseCaseImpl(
     private val internetConnectionStatusListener: InternetConnectionStatusListener,
 ) : CanModifyFloorPlanImageUseCase {
-    override fun invoke(): Flow<Boolean> = internetConnectionStatusListener
-        .isConnectedFlow()
-        .distinctUntilChanged()
-        .onEach {
-            if (it) {
-                LH.logger.v("Can modify floor plan image: internet connection is available")
-            } else {
-                LH.logger.v("Cannot modify floor plan image: internet connection is unavailable")
+    override fun invoke(): Flow<Boolean> =
+        internetConnectionStatusListener
+            .isConnectedFlow()
+            .distinctUntilChanged()
+            .onEach {
+                if (it) {
+                    LH.logger.v("Can modify floor plan image: internet connection is available")
+                } else {
+                    LH.logger.v("Cannot modify floor plan image: internet connection is unavailable")
+                }
             }
-        }
 }

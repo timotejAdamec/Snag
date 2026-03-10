@@ -14,7 +14,6 @@ package cz.adamec.timotej.snag.structures.fe.driving.impl.internal.floorPlan.ui
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -41,9 +40,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import cz.adamec.timotej.snag.feat.findings.business.FindingTypeKey
 import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
+import cz.adamec.timotej.snag.feat.findings.fe.driving.api.FindingTypePickerDialog
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.BackNavigationIcon
 import cz.adamec.timotej.snag.lib.design.fe.scenes.LocalSheetPeekHeight
-import cz.adamec.timotej.snag.feat.findings.fe.driving.api.FindingTypePickerDialog
 import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.floorPlan.ui.components.FloorPlanAddPlaceholder
 import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.floorPlan.ui.components.FloorPlanWithPins
 import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.floorPlan.ui.components.StructureDeletionAlertDialog
@@ -124,9 +123,10 @@ private fun LoadedStructureDetailsContent(
             TopAppBar(
                 title = {
                     Text(
-                        modifier = Modifier.padding(
-                            end = 4.dp,
-                        ),
+                        modifier =
+                            Modifier.padding(
+                                end = 4.dp,
+                            ),
                         text =
                             state.feStructure
                                 ?.structure
@@ -197,7 +197,7 @@ private fun LoadedStructureDetailsContent(
 
             pendingCreationCoordinate?.let { coordinate ->
                 FindingTypePickerDialog(
-                    onTypeSelected = { findingTypeKey ->
+                    onTypeSelect = { findingTypeKey ->
                         onCreateFinding(coordinate, findingTypeKey)
                         pendingCreationCoordinate = null
                     },

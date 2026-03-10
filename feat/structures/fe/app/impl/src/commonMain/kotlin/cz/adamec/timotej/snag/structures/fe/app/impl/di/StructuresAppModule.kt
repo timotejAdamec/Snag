@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.structures.fe.app.impl.di
 
+import cz.adamec.timotej.snag.lib.sync.fe.app.api.handler.SyncOperationHandler
 import cz.adamec.timotej.snag.structures.fe.app.api.CanModifyFloorPlanImageUseCase
 import cz.adamec.timotej.snag.structures.fe.app.api.CascadeDeleteLocalStructuresByProjectIdUseCase
 import cz.adamec.timotej.snag.structures.fe.app.api.DeleteFloorPlanImageUseCase
@@ -31,7 +32,6 @@ import cz.adamec.timotej.snag.structures.fe.app.impl.internal.PullStructureChang
 import cz.adamec.timotej.snag.structures.fe.app.impl.internal.SaveStructureUseCaseImpl
 import cz.adamec.timotej.snag.structures.fe.app.impl.internal.UploadFloorPlanImageUseCaseImpl
 import cz.adamec.timotej.snag.structures.fe.app.impl.internal.sync.StructureSyncHandler
-import cz.adamec.timotej.snag.lib.sync.fe.app.api.handler.SyncOperationHandler
 import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.bind
 import org.koin.dsl.module

@@ -13,7 +13,8 @@
 package cz.adamec.timotej.snag.configuration.be
 
 object SnagConfig {
-    val port: Int = System.getenv("PORT")?.toIntOrNull() ?: 8081
+    private const val DEFAULT_PORT = 8081
+    val port: Int = System.getenv("PORT")?.toIntOrNull() ?: DEFAULT_PORT
     val gcsBucketName: String = System.getenv("GCS_BUCKET_NAME") ?: "snag-bucket-dev"
     val corsAllowedHosts: List<String> = parseCorsAllowedHosts()
     val seedData: Boolean = System.getenv("SEED_DATA")?.toBooleanStrictOrNull() ?: true

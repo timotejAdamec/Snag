@@ -22,7 +22,9 @@ sealed interface DeleteConflictResult<out T : Syncable> {
 
     data object AlreadyDeleted : DeleteConflictResult<Nothing>
 
-    data class Rejected<T : Syncable>(val serverVersion: T) : DeleteConflictResult<T>
+    data class Rejected<T : Syncable>(
+        val serverVersion: T,
+    ) : DeleteConflictResult<T>
 }
 
 interface ResolveConflictForDeleteUseCase {

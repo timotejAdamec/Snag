@@ -161,13 +161,14 @@ val findingsDrivingImplModule =
                 deleteFindingUseCase = get(),
             )
         }
+        @Suppress("DestructuringDeclarationWithTooManyEntries")
         viewModel {
-                (
-                    findingId: Uuid?,
-                    structureId: Uuid?,
-                    findingTypeKey: FindingTypeKey?,
-                    coordinate: RelativeCoordinate?,
-                ),
+            (
+                findingId: Uuid?,
+                structureId: Uuid?,
+                findingTypeKey: FindingTypeKey?,
+                coordinate: RelativeCoordinate?,
+            ),
             ->
             FindingDetailsEditViewModel(
                 findingId = findingId,

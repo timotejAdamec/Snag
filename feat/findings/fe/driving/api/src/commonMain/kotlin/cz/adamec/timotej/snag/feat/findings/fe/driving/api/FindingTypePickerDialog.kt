@@ -31,9 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import cz.adamec.timotej.snag.feat.findings.business.FindingType
 import cz.adamec.timotej.snag.feat.findings.business.FindingTypeKey
-import cz.adamec.timotej.snag.feat.findings.business.key
 import cz.adamec.timotej.snag.feat.findings.business.toDefaultFindingType
 import cz.adamec.timotej.snag.lib.design.fe.dialog.DividedContentDialog
 import cz.adamec.timotej.snag.lib.design.fe.theme.SnagPreview
@@ -44,13 +42,15 @@ import snag.feat.findings.fe.driving.api.generated.resources.select_finding_type
 
 @Composable
 fun FindingTypePickerDialog(
-    onTypeSelected: (findingTypeKey: FindingTypeKey) -> Unit,
+    onTypeSelect: (findingTypeKey: FindingTypeKey) -> Unit,
     onDismiss: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val types = FindingTypeKey.entries
 
     DividedContentDialog(
         onDismissRequest = onDismiss,
+        modifier = modifier,
         title = {
             Text(
                 text = stringResource(Res.string.select_finding_type),
@@ -68,7 +68,7 @@ fun FindingTypePickerDialog(
                         modifier =
                             Modifier
                                 .fillMaxWidth()
-                                .clickable { onTypeSelected(typeKey) },
+                                .clickable { onTypeSelect(typeKey) },
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Icon(
@@ -96,7 +96,7 @@ fun FindingTypePickerDialog(
 private fun FindingTypePickerDialogPreview() {
     SnagPreview {
         FindingTypePickerDialog(
-            onTypeSelected = {},
+            onTypeSelect = {},
             onDismiss = {},
         )
     }

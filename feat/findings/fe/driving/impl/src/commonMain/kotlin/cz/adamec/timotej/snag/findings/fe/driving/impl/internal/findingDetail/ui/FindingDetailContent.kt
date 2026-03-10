@@ -31,7 +31,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.ScaffoldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -43,9 +42,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.tooling.preview.Preview
 import cz.adamec.timotej.snag.feat.findings.business.Finding
 import cz.adamec.timotej.snag.feat.findings.business.FindingType
 import cz.adamec.timotej.snag.feat.findings.business.Importance
@@ -114,7 +113,7 @@ internal fun FindingDetailContent(
 
         FindingDetailUiStatus.LOADED,
         FindingDetailUiStatus.DELETED,
-            -> {
+        -> {
             val finding = state.finding ?: return
             var isShowingDeleteConfirmation by remember { mutableStateOf(false) }
             if (isShowingDeleteConfirmation) {
@@ -172,8 +171,7 @@ internal fun FindingDetailContent(
                                 top = paddingValues.calculateTopPadding(),
                                 bottom = paddingValues.calculateBottomPadding(),
                                 end = paddingValues.calculateEndPadding(LayoutDirection.Ltr),
-                            )
-                            .consumeWindowInsets(paddingValues)
+                            ).consumeWindowInsets(paddingValues)
                             .padding(16.dp),
                 ) {
                     Column {
@@ -218,20 +216,22 @@ internal fun FindingDetailContent(
                         val coordinateCount = finding.finding.coordinates.size
                         Text(
                             modifier = Modifier.padding(top = 16.dp),
-                            text = pluralStringResource(
-                                Res.plurals.coordinate_count,
-                                coordinateCount,
-                                coordinateCount
-                            ),
+                            text =
+                                pluralStringResource(
+                                    Res.plurals.coordinate_count,
+                                    coordinateCount,
+                                    coordinateCount,
+                                ),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     }
                     HorizontalFloatingToolbar(
-                        modifier = Modifier
-                            .align(Alignment.BottomCenter),
+                        modifier =
+                            Modifier
+                                .align(Alignment.BottomCenter),
                         expanded = true,
-                        colors = FloatingToolbarDefaults.vibrantFloatingToolbarColors()
+                        colors = FloatingToolbarDefaults.vibrantFloatingToolbarColors(),
                     ) {
                         IconButton(
                             onClick = onEditClick,
@@ -259,6 +259,7 @@ internal fun FindingDetailContent(
     }
 }
 
+@Suppress("MagicNumber")
 @Preview
 @Composable
 private fun FindingDetailContentLoadedPreview() {
@@ -275,10 +276,11 @@ private fun FindingDetailContentLoadedPreview() {
                                     structureId = Uuid.random(),
                                     name = "Cracked wall",
                                     description = "Large crack running along the north-facing wall near the window.",
-                                    type = FindingType.Classic(
-                                        importance = Importance.HIGH,
-                                        term = Term.T2,
-                                    ),
+                                    type =
+                                        FindingType.Classic(
+                                            importance = Importance.HIGH,
+                                            term = Term.T2,
+                                        ),
                                     coordinates =
                                         listOf(
                                             RelativeCoordinate(0.5f, 0.3f),

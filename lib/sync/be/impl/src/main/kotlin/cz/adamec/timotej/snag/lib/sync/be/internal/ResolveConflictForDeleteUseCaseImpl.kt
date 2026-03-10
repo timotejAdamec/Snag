@@ -23,11 +23,10 @@ internal class ResolveConflictForDeleteUseCaseImpl : ResolveConflictForDeleteUse
         deletedAt: Timestamp,
     ): DeleteConflictResult<T> {
         if (existing == null) return DeleteConflictResult.NotFound
-        if (existing.deletedAt != null) return DeleteConflictResult.AlreadyDeleted
-        return if (existing.updatedAt >= deletedAt) {
-            DeleteConflictResult.Rejected(existing)
-        } else {
-            DeleteConflictResult.Proceed
+        return when {
+            existing.deletedAt != null -> DeleteConflictResult.AlreadyDeleted
+            existing.updatedAt >= deletedAt -> DeleteConflictResult.Rejected(existing)
+            else -> DeleteConflictResult.Proceed
         }
     }
 }

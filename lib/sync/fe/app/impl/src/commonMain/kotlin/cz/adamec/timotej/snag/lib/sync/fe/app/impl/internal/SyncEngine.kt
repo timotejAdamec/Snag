@@ -13,11 +13,11 @@
 package cz.adamec.timotej.snag.lib.sync.fe.app.impl.internal
 
 import cz.adamec.timotej.snag.lib.core.common.ApplicationScope
-import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
 import cz.adamec.timotej.snag.lib.sync.fe.app.api.SyncCoordinator
 import cz.adamec.timotej.snag.lib.sync.fe.app.api.handler.SyncOperationHandler
 import cz.adamec.timotej.snag.lib.sync.fe.app.api.handler.SyncOperationResult
 import cz.adamec.timotej.snag.lib.sync.fe.model.SyncOperationType
+import cz.adamec.timotej.snag.lib.sync.fe.ports.SyncOperation
 import cz.adamec.timotej.snag.lib.sync.fe.ports.SyncQueue
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -51,12 +51,11 @@ internal class SyncEngine(
         }
     }
 
-    override suspend fun <T> withFlushedQueue(
-        block: suspend (wasFlushingSuccessful: Boolean) -> T,
-    ): T = mutex.withLock {
-        val result = processAllPending()
-        block(result)
-    }
+    override suspend fun <T> withFlushedQueue(block: suspend (wasFlushingSuccessful: Boolean) -> T): T =
+        mutex.withLock {
+            val result = processAllPending()
+            block(result)
+        }
 
     private suspend fun processAll() {
         mutex.withLock {
@@ -64,9 +63,6 @@ internal class SyncEngine(
         }
     }
 
-    /**
-     * @return `true` if all pending operations were processed successfully, `false` otherwise.
-     */
     private suspend fun processAllPending(): Boolean {
         val pending = syncQueue.getAllPending()
         if (pending.isEmpty()) {
@@ -74,6 +70,12 @@ internal class SyncEngine(
             return true
         }
         _status.value = SyncEngineStatus.Syncing
+        val succeeded = processPendingOperations(pending)
+        _status.value = if (succeeded) SyncEngineStatus.Idle else SyncEngineStatus.Failed
+        return succeeded
+    }
+
+    private suspend fun processPendingOperations(pending: List<SyncOperation>): Boolean {
         for (operation in pending) {
             val handler =
                 handlers.find { it.entityTypeId == operation.entityTypeId }
@@ -93,12 +95,10 @@ internal class SyncEngine(
 
                 SyncOperationResult.Failure -> {
                     LH.logger.w { "Sync operation ${operation.id} failed, stopping processing." }
-                    _status.value = SyncEngineStatus.Failed
                     return false
                 }
             }
         }
-        _status.value = SyncEngineStatus.Idle
         return true
     }
 }

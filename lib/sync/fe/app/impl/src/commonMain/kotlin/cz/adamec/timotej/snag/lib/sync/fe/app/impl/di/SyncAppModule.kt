@@ -14,16 +14,16 @@ package cz.adamec.timotej.snag.lib.sync.fe.app.impl.di
 
 import cz.adamec.timotej.snag.lib.sync.fe.app.api.EnqueueSyncDeleteUseCase
 import cz.adamec.timotej.snag.lib.sync.fe.app.api.EnqueueSyncSaveUseCase
-import cz.adamec.timotej.snag.lib.sync.fe.app.api.GetSyncStatusUseCase
 import cz.adamec.timotej.snag.lib.sync.fe.app.api.GetLastPullSyncedAtTimestampUseCase
+import cz.adamec.timotej.snag.lib.sync.fe.app.api.GetSyncStatusUseCase
 import cz.adamec.timotej.snag.lib.sync.fe.app.api.SetLastPullSyncedAtTimestampUseCase
 import cz.adamec.timotej.snag.lib.sync.fe.app.api.SyncCoordinator
 import cz.adamec.timotej.snag.lib.sync.fe.app.api.handler.SyncOperationHandler
 import cz.adamec.timotej.snag.lib.sync.fe.app.impl.internal.EnqueueSyncDeleteUseCaseImpl
 import cz.adamec.timotej.snag.lib.sync.fe.app.impl.internal.EnqueueSyncOperationUseCase
 import cz.adamec.timotej.snag.lib.sync.fe.app.impl.internal.EnqueueSyncSaveUseCaseImpl
-import cz.adamec.timotej.snag.lib.sync.fe.app.impl.internal.GetSyncStatusUseCaseImpl
 import cz.adamec.timotej.snag.lib.sync.fe.app.impl.internal.GetLastPullSyncedAtTimestampUseCaseImpl
+import cz.adamec.timotej.snag.lib.sync.fe.app.impl.internal.GetSyncStatusUseCaseImpl
 import cz.adamec.timotej.snag.lib.sync.fe.app.impl.internal.SetLastPullSyncedAtTimestampUseCaseImpl
 import cz.adamec.timotej.snag.lib.sync.fe.app.impl.internal.SyncEngine
 import org.koin.core.module.dsl.factoryOf

@@ -38,7 +38,10 @@ class DownloadReportUseCaseImplTest : FrontendKoinInitializedTest() {
             val result = useCase(projectId)
 
             assertIs<OnlineDataResult.Success<FrontendReport>>(result)
-            assertTrue(result.data.report.bytes.contentEquals(expectedBytes))
+            assertTrue(
+                result.data.report.bytes
+                    .contentEquals(expectedBytes),
+            )
         }
 
     @Test

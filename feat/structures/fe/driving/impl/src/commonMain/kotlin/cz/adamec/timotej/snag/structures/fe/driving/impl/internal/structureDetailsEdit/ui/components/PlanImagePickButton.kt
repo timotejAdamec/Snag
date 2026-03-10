@@ -14,18 +14,14 @@ package cz.adamec.timotej.snag.structures.fe.driving.impl.internal.structureDeta
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import cz.adamec.timotej.snag.lib.design.fe.button.ButtonSize
 import cz.adamec.timotej.snag.lib.design.fe.button.OutlinedIconTextButton
 import cz.adamec.timotej.snag.lib.design.fe.button.TonalIconTextButton
-import io.github.vinceglb.filekit.FileKit
 import io.github.vinceglb.filekit.dialogs.FileKitType
 import io.github.vinceglb.filekit.dialogs.compose.rememberFilePickerLauncher
-import io.github.vinceglb.filekit.dialogs.openFilePicker
 import io.github.vinceglb.filekit.name
 import io.github.vinceglb.filekit.readBytes
 import kotlinx.coroutines.launch
@@ -42,17 +38,18 @@ internal fun PlanImagePickButton(
     isEnabled: Boolean = true,
 ) {
     val scope = rememberCoroutineScope()
-    val pickerLauncher = rememberFilePickerLauncher(
-        type = FileKitType.File(extensions = listOf("jpg", "jpeg", "png", "webp")),
-    ) { file ->
-        scope.launch {
-            if (file != null) {
-                val bytes = file.readBytes()
-                onImagePick(bytes, file.name)
+    val pickerLauncher =
+        rememberFilePickerLauncher(
+            type = FileKitType.File(extensions = listOf("jpg", "jpeg", "png", "webp")),
+        ) { file ->
+            scope.launch {
+                if (file != null) {
+                    val bytes = file.readBytes()
+                    onImagePick(bytes, file.name)
+                }
+                onIsPickingChange(false)
             }
-            onIsPickingChange(false)
         }
-    }
     val onPick: () -> Unit = {
         onIsPickingChange(true)
         pickerLauncher.launch()
