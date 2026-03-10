@@ -27,7 +27,7 @@ jobs:
           printf "\norg.gradle.jvmargs=-Xmx4g -XX:MaxMetaspaceSize=1g\nkotlin.daemon.jvmargs=-Xmx8g\norg.gradle.workers.max=4\n" >> gradle.properties
 
       - name: Run Check
-        # WasmJs tests are excluded: compiling them links the full dependency closure
-        # into a single binary, which consistently OOMs the Kotlin daemon on the
-        # 16 GB ubuntu-latest runner. JS tests cover the same code paths.
-        run: ./gradlew check --stacktrace -x wasmJsBrowserTest
+        # Browser-based tests (JS/WasmJs) are excluded: they spawn Chromium on top of
+        # heavy Kotlin IR compilation and consistently OOM-kill the runner (silently,
+        # via Linux OOM killer). JVM tests cover the same shared logic and remain enabled.
+        run: ./gradlew check --stacktrace -x jsBrowserTest -x wasmJsBrowserTest
