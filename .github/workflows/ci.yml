@@ -24,9 +24,7 @@ jobs:
 
       - name: Configure Gradle memory for CI
         run: |
-          echo "org.gradle.jvmargs=-Xmx6g -XX:MaxMetaspaceSize=1g" >> gradle.properties
-          echo "kotlin.daemon.jvmargs=-Xmx4g" >> gradle.properties
-          echo "org.gradle.workers.max=4" >> gradle.properties
+          printf "\norg.gradle.jvmargs=-Xmx6g -XX:MaxMetaspaceSize=1g\nkotlin.daemon.jvmargs=-Xmx4g\norg.gradle.workers.max=4\n" >> gradle.properties
 
       - name: Run Check
         run: ./gradlew check --stacktrace
