@@ -311,3 +311,4 @@ fabric.properties
 
 # Claude
 .claude/worktrees
+.worktrees/
