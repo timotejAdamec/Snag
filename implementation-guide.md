@@ -156,13 +156,3 @@ This matrix mirrors the thesis permission matrix table. Legend: ✓ = unrestrict
 \* VS also has access to projects created by service workers.
 † VP assigns/removes only TP and VP roles.
 ‡ VS assigns/removes only Ser. and VS roles; also has access to service worker projects.
-
----
-
-### NP5 (was NP4) — Offline access with 10-second sync
-- Synchronisation must complete within **10 seconds** of a change once connectivity is restored.
-
-### NP6 (was NP5) — LWW conflict resolution
-- Conflict resolution strategy: **last-write-wins** based on the **time the change was created** (not the time of synchronisation).
-- Each change record must carry a precise creation timestamp.
-- On conflict, the record with the later creation timestamp wins.
