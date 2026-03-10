@@ -2,6 +2,7 @@ name: CI
 
 on:
   push:
+    branches: [main]
   pull_request:
 
 jobs:
@@ -28,4 +29,4 @@ jobs:
           echo "org.gradle.workers.max=4" >> gradle.properties
 
       - name: Run Check
-        run: ./gradlew check --no-daemon --stacktrace
+        run: ./gradlew check --stacktrace
