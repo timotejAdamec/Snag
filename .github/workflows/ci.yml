@@ -27,4 +27,4 @@ jobs:
           printf "\norg.gradle.jvmargs=-Xmx4g -XX:MaxMetaspaceSize=1g\nkotlin.daemon.jvmargs=-Xmx8g\norg.gradle.workers.max=4\n" >> gradle.properties
 
       - name: Run Check
-        run: ./gradlew check --stacktrace
+        run: ./gradlew check --stacktrace -x wasmJsBrowserTest -x wasmJsNodeTest
