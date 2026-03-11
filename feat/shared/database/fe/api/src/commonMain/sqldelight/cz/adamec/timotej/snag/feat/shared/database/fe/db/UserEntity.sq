@@ -1,0 +1,26 @@
+CREATE TABLE IF NOT EXISTS UserEntity (
+    id TEXT NOT NULL PRIMARY KEY,
+    entraId TEXT NOT NULL,
+    email TEXT NOT NULL,
+    role TEXT
+);
+
+save:
+INSERT INTO UserEntity(id, entraId, email, role)
+VALUES ?
+ON CONFLICT(id) DO UPDATE SET
+    entraId = excluded.entraId,
+    email = excluded.email,
+    role = excluded.role;
+
+selectAll:
+SELECT * FROM UserEntity;
+
+selectById:
+SELECT * FROM UserEntity WHERE id = :id;
+
+deleteById:
+DELETE FROM UserEntity WHERE id = :id;
+
+deleteAll:
+DELETE FROM UserEntity;

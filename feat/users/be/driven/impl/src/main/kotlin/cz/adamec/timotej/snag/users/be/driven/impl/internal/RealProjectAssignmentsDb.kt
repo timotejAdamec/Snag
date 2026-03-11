@@ -1,0 +1,67 @@
+/*
+ * Copyright (c) 2026 Timotej Adamec
+ * SPDX-License-Identifier: MIT
+ *
+ * This file is part of the thesis:
+ * "Multiplatform snagging system with code sharing maximisation"
+ *
+ * Czech Technical University in Prague
+ * Faculty of Information Technology
+ * Department of Software Engineering
+ */
+
+package cz.adamec.timotej.snag.users.be.driven.impl.internal
+
+import cz.adamec.timotej.snag.feat.shared.database.be.ProjectAssignmentsTable
+import cz.adamec.timotej.snag.feat.shared.database.be.UserEntity
+import cz.adamec.timotej.snag.users.be.model.BackendUser
+import cz.adamec.timotej.snag.users.be.ports.ProjectAssignmentsDb
+import org.jetbrains.exposed.v1.core.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.v1.core.and
+import org.jetbrains.exposed.v1.jdbc.Database
+import org.jetbrains.exposed.v1.jdbc.deleteWhere
+import org.jetbrains.exposed.v1.jdbc.insert
+import org.jetbrains.exposed.v1.jdbc.selectAll
+import org.jetbrains.exposed.v1.jdbc.transactions.transaction
+import kotlin.uuid.Uuid
+
+internal class RealProjectAssignmentsDb(
+    private val database: Database,
+) : ProjectAssignmentsDb {
+    override suspend fun getAssignedUsers(projectId: Uuid): List<BackendUser> =
+        transaction(database) {
+            ProjectAssignmentsTable
+                .selectAll()
+                .where { ProjectAssignmentsTable.projectId eq projectId }
+                .map { row ->
+                    val userId = row[ProjectAssignmentsTable.userId]
+                    UserEntity.findById(userId)!!.toModel()
+                }
+        }
+
+    override suspend fun assignUser(userId: Uuid, projectId: Uuid) {
+        transaction(database) {
+            ProjectAssignmentsTable.insert {
+                it[ProjectAssignmentsTable.userId] = userId
+                it[ProjectAssignmentsTable.projectId] = projectId
+            }
+        }
+    }
+
+    override suspend fun removeUser(userId: Uuid, projectId: Uuid) {
+        transaction(database) {
+            ProjectAssignmentsTable.deleteWhere {
+                (ProjectAssignmentsTable.userId eq userId) and
+                    (ProjectAssignmentsTable.projectId eq projectId)
+            }
+        }
+    }
+
+    override suspend fun getProjectsForUser(userId: Uuid): List<Uuid> =
+        transaction(database) {
+            ProjectAssignmentsTable
+                .selectAll()
+                .where { ProjectAssignmentsTable.userId eq userId }
+                .map { it[ProjectAssignmentsTable.projectId] }
+        }
+}

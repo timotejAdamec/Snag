@@ -64,6 +64,12 @@ kotlin {
             // Reports feature
             implementation(projects.feat.reports.fe.app.impl)
             implementation(projects.feat.reports.fe.driven.impl)
+
+            // Users feature
+            implementation(projects.feat.users.fe.app.impl)
+            implementation(projects.feat.users.fe.driving.api)
+            implementation(projects.feat.users.fe.driving.impl)
+            implementation(projects.feat.users.fe.driven.impl)
         }
     }
 }
