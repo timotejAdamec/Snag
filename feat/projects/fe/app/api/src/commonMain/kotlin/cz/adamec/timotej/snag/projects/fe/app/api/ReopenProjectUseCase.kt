@@ -10,16 +10,11 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.projects.business
+package cz.adamec.timotej.snag.projects.fe.app.api
 
-import cz.adamec.timotej.snag.lib.core.common.Timestamp
+import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
 import kotlin.uuid.Uuid
 
-data class Project(
-    val id: Uuid,
-    val name: String,
-    val address: String,
-    val clientId: Uuid? = null,
-    val isClosed: Boolean = false,
-    val updatedAt: Timestamp,
-)
+interface ReopenProjectUseCase {
+    suspend operator fun invoke(projectId: Uuid): OnlineDataResult<Unit>
+}

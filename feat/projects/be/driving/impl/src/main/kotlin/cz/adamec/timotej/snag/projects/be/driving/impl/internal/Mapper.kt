@@ -25,6 +25,7 @@ internal fun BackendProject.toDto() =
             name = name,
             address = address,
             clientId = clientId,
+            isClosed = isClosed,
             updatedAt = updatedAt,
             deletedAt = this@toDto.deletedAt,
         )
@@ -38,6 +39,7 @@ internal fun PutProjectApiDto.toModel(id: Uuid) =
                 name = name,
                 address = address,
                 clientId = clientId,
+                isClosed = isClosed,
                 updatedAt = updatedAt,
             ),
     )

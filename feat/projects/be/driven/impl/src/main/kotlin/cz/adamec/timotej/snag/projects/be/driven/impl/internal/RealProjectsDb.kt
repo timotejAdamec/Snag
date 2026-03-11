@@ -52,6 +52,7 @@ internal class RealProjectsDb(
                         existing.name = project.project.name
                         existing.address = project.project.address
                         existing.client = project.project.clientId?.let { ClientEntity.findById(it) }
+                        existing.isClosed = project.project.isClosed
                         existing.updatedAt = project.project.updatedAt.value
                         existing.deletedAt = project.deletedAt?.value
                     } else {
@@ -59,6 +60,7 @@ internal class RealProjectsDb(
                             name = project.project.name
                             address = project.project.address
                             client = project.project.clientId?.let { ClientEntity.findById(it) }
+                            isClosed = project.project.isClosed
                             updatedAt = project.project.updatedAt.value
                             deletedAt = project.deletedAt?.value
                         }

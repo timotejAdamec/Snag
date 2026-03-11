@@ -22,6 +22,8 @@ import cz.adamec.timotej.snag.projects.be.app.impl.internal.GetProjectUseCaseImp
 import cz.adamec.timotej.snag.projects.be.app.impl.internal.GetProjectsModifiedSinceUseCaseImpl
 import cz.adamec.timotej.snag.projects.be.app.impl.internal.GetProjectsUseCaseImpl
 import cz.adamec.timotej.snag.projects.be.app.impl.internal.SaveProjectUseCaseImpl
+import cz.adamec.timotej.snag.projects.business.CanEditProjectEntitiesRule
+import cz.adamec.timotej.snag.projects.business.CanEditProjectEntitiesRuleImpl
 import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
@@ -33,4 +35,5 @@ val projectsAppModule =
         factoryOf(::SaveProjectUseCaseImpl) bind SaveProjectUseCase::class
         factoryOf(::DeleteProjectUseCaseImpl) bind DeleteProjectUseCase::class
         factoryOf(::GetProjectsModifiedSinceUseCaseImpl) bind GetProjectsModifiedSinceUseCase::class
+        factoryOf(::CanEditProjectEntitiesRuleImpl) bind CanEditProjectEntitiesRule::class
     }

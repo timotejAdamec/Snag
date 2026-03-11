@@ -23,8 +23,10 @@ import cz.adamec.timotej.snag.lib.core.common.TimestampProvider
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
+import cz.adamec.timotej.snag.projects.fe.app.api.CloseProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.DeleteProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.GetProjectUseCase
+import cz.adamec.timotej.snag.projects.fe.app.api.ReopenProjectUseCase
 import cz.adamec.timotej.snag.structures.fe.app.api.GetStructuresUseCase
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.channels.Channel
@@ -44,6 +46,8 @@ internal class ProjectDetailsViewModel(
     private val getInspectionsUseCase: GetInspectionsUseCase,
     private val downloadReportUseCase: DownloadReportUseCase,
     private val saveInspectionUseCase: SaveInspectionUseCase,
+    private val closeProjectUseCase: CloseProjectUseCase,
+    private val reopenProjectUseCase: ReopenProjectUseCase,
     private val timestampProvider: TimestampProvider,
 ) : ViewModel() {
     private val _state: MutableStateFlow<ProjectDetailsUiState> =
@@ -212,6 +216,32 @@ internal class ProjectDetailsViewModel(
                         ),
                     )
                 }
+        }
+
+    fun onToggleClose() =
+        viewModelScope.launch {
+            _state.update { it.copy(isClosingOrReopening = true) }
+            val result =
+                if (state.value.isClosed) {
+                    reopenProjectUseCase(projectId)
+                } else {
+                    closeProjectUseCase(projectId)
+                }
+            when (result) {
+                is OnlineDataResult.Success -> {
+                    // project flow will update the state automatically
+                }
+                is OnlineDataResult.Failure.NetworkUnavailable -> {
+                    errorEventsChannel.send(UiError.NetworkUnavailable)
+                }
+                is OnlineDataResult.Failure.UserMessageError -> {
+                    errorEventsChannel.send(UiError.CustomUserMessage(result.message))
+                }
+                is OnlineDataResult.Failure.ProgrammerError -> {
+                    errorEventsChannel.send(UiError.Unknown)
+                }
+            }
+            _state.update { it.copy(isClosingOrReopening = false) }
         }
 
     fun onDownloadReport() =

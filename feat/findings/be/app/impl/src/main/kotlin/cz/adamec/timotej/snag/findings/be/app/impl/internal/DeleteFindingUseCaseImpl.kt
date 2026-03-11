@@ -17,11 +17,28 @@ import cz.adamec.timotej.snag.findings.be.app.api.DeleteFindingUseCase
 import cz.adamec.timotej.snag.findings.be.app.api.model.DeleteFindingRequest
 import cz.adamec.timotej.snag.findings.be.app.impl.internal.LH.logger
 import cz.adamec.timotej.snag.findings.be.ports.FindingsDb
+import cz.adamec.timotej.snag.lib.core.be.ProjectClosedException
+import cz.adamec.timotej.snag.projects.be.app.api.GetProjectUseCase
+import cz.adamec.timotej.snag.projects.business.CanEditProjectEntitiesRule
+import cz.adamec.timotej.snag.structures.be.ports.StructuresDb
 
 internal class DeleteFindingUseCaseImpl(
     private val findingsDb: FindingsDb,
+    private val structuresDb: StructuresDb,
+    private val getProjectUseCase: GetProjectUseCase,
+    private val canEditProjectEntitiesRule: CanEditProjectEntitiesRule,
 ) : DeleteFindingUseCase {
     override suspend operator fun invoke(request: DeleteFindingRequest): BackendFinding? {
+        val finding = findingsDb.getFinding(request.findingId)
+        if (finding != null) {
+            val structure = structuresDb.getStructure(finding.finding.structureId)
+            if (structure != null) {
+                val project = getProjectUseCase(structure.structure.projectId)
+                if (project != null && !canEditProjectEntitiesRule(project.project)) {
+                    throw ProjectClosedException()
+                }
+            }
+        }
         logger.debug("Deleting finding {} from local storage.", request.findingId)
         val isRejected =
             findingsDb.deleteFinding(id = request.findingId, deletedAt = request.deletedAt)

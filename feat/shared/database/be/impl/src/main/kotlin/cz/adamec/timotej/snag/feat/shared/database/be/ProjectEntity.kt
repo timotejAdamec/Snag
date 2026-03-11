@@ -23,6 +23,7 @@ class ProjectEntity(
     var name by ProjectsTable.name
     var address by ProjectsTable.address
     var client by ClientEntity optionalReferencedOn ProjectsTable.client
+    var isClosed by ProjectsTable.isClosed
     var updatedAt by ProjectsTable.updatedAt
     var deletedAt by ProjectsTable.deletedAt
     val structures by StructureEntity referrersOn StructuresTable.project

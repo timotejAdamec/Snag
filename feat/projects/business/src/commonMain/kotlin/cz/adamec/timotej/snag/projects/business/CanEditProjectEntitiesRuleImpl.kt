@@ -12,14 +12,6 @@
 
 package cz.adamec.timotej.snag.projects.business
 
-import cz.adamec.timotej.snag.lib.core.common.Timestamp
-import kotlin.uuid.Uuid
-
-data class Project(
-    val id: Uuid,
-    val name: String,
-    val address: String,
-    val clientId: Uuid? = null,
-    val isClosed: Boolean = false,
-    val updatedAt: Timestamp,
-)
+class CanEditProjectEntitiesRuleImpl : CanEditProjectEntitiesRule {
+    override fun invoke(project: Project) = !project.isClosed
+}

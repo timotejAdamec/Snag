@@ -173,6 +173,8 @@ val projectsDrivingImplModule =
                 getInspectionsUseCase = get(),
                 downloadReportUseCase = get(),
                 saveInspectionUseCase = get(),
+                closeProjectUseCase = get(),
+                reopenProjectUseCase = get(),
                 timestampProvider = get(),
             )
         }
