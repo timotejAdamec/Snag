@@ -177,7 +177,7 @@ private fun InspectionCardAction(
     val buttonHeight = ButtonDefaults.MediumContainerHeight
     when (cardState) {
         CardStatus.NOT_STARTED ->
-            FilledTonalButton(
+            Button(
                 onClick = onStartClick,
                 modifier = Modifier.fillMaxWidth(),
                 contentPadding = ButtonDefaults.contentPaddingFor(buttonHeight),
@@ -254,11 +254,11 @@ private fun resolveCardStatus(
 @Composable
 private fun CardStatus.containerColor() =
     when (this) {
-        CardStatus.NOT_STARTED -> MaterialTheme.colorScheme.surfaceContainerLow
+        CardStatus.NOT_STARTED -> MaterialTheme.colorScheme.surfaceContainerHigh
         CardStatus.SCHEDULED -> MaterialTheme.colorScheme.secondaryContainer
         CardStatus.IN_PROGRESS -> MaterialTheme.colorScheme.primaryContainer
         CardStatus.ENDING_SOON -> MaterialTheme.colorScheme.tertiaryContainer
-        CardStatus.FINISHED -> MaterialTheme.colorScheme.surfaceContainerHighest
+        CardStatus.FINISHED -> MaterialTheme.colorScheme.surfaceContainerLow
     }
 
 @Composable
