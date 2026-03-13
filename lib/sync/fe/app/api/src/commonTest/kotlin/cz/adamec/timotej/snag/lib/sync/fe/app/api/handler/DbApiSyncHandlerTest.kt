@@ -79,6 +79,12 @@ class DbApiSyncHandlerTest {
             return OfflineFirstDataResult.Success(Unit)
         }
 
+        var lastDeleteRejectedEntityId: Uuid? = null
+
+        override suspend fun onDeleteRejected(entityId: Uuid) {
+            lastDeleteRejectedEntityId = entityId
+        }
+
         fun getDbEntity(id: Uuid): TestEntity? = db[id]
     }
 
@@ -185,6 +191,30 @@ class DbApiSyncHandlerTest {
 
             assertEquals(SyncOperationResult.Success, result)
             assertNull(handler.getDbEntity(entityId))
+        }
+
+    @Test
+    fun `executeDelete calls onDeleteRejected when api returns entity`() =
+        runTest(testDispatcher) {
+            val entity = createEntity(name = "Restored by API")
+            val handler =
+                TestDbApiSyncHandler(
+                    apiDeleteResponse = { OnlineDataResult.Success(entity) },
+                )
+
+            handler.execute(entity.id, SyncOperationType.DELETE)
+
+            assertEquals(entity.id, handler.lastDeleteRejectedEntityId)
+        }
+
+    @Test
+    fun `executeDelete does not call onDeleteRejected when api returns null`() =
+        runTest(testDispatcher) {
+            val handler = TestDbApiSyncHandler()
+
+            handler.execute(UuidProvider.getUuid(), SyncOperationType.DELETE)
+
+            assertNull(handler.lastDeleteRejectedEntityId)
         }
 
     @Test

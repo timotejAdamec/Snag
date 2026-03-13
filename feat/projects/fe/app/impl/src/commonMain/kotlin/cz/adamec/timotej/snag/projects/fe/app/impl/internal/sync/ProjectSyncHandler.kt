@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.projects.fe.app.impl.internal.sync
 
+import cz.adamec.timotej.snag.feat.inspections.fe.app.api.CascadeRestoreLocalInspectionsByProjectIdUseCase
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.common.TimestampProvider
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
@@ -21,12 +22,17 @@ import cz.adamec.timotej.snag.projects.fe.app.impl.internal.LH
 import cz.adamec.timotej.snag.projects.fe.model.FrontendProject
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsApi
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsDb
+import cz.adamec.timotej.snag.structures.fe.app.api.CascadeRestoreLocalStructuresByProjectIdUseCase
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
 import kotlin.uuid.Uuid
 
 internal class ProjectSyncHandler(
     private val projectsApi: ProjectsApi,
     private val projectsDb: ProjectsDb,
+    private val cascadeRestoreLocalStructuresByProjectIdUseCase: CascadeRestoreLocalStructuresByProjectIdUseCase,
+    private val cascadeRestoreLocalInspectionsByProjectIdUseCase: CascadeRestoreLocalInspectionsByProjectIdUseCase,
     timestampProvider: TimestampProvider,
 ) : DbApiSyncHandler<FrontendProject>(LH.logger, timestampProvider) {
     override val entityTypeId: String = PROJECT_SYNC_ENTITY_TYPE
@@ -42,4 +48,11 @@ internal class ProjectSyncHandler(
     ): OnlineDataResult<FrontendProject?> = projectsApi.deleteProject(entityId, deletedAt)
 
     override suspend fun saveEntityToDb(entity: FrontendProject): OfflineFirstDataResult<Unit> = projectsDb.saveProject(entity)
+
+    override suspend fun onDeleteRejected(entityId: Uuid) {
+        coroutineScope {
+            launch { cascadeRestoreLocalStructuresByProjectIdUseCase(entityId) }
+            launch { cascadeRestoreLocalInspectionsByProjectIdUseCase(entityId) }
+        }
+    }
 }

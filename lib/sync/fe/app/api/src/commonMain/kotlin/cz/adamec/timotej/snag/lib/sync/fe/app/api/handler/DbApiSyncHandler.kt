@@ -42,6 +42,8 @@ abstract class DbApiSyncHandler<T>(
 
     protected abstract suspend fun saveEntityToDb(entity: T): OfflineFirstDataResult<Unit>
 
+    protected open suspend fun onDeleteRejected(entityId: Uuid) {}
+
     override suspend fun execute(
         entityId: Uuid,
         operationType: SyncOperationType,
@@ -94,6 +96,7 @@ abstract class DbApiSyncHandler<T>(
                 result.data?.let { updatedEntity ->
                     logger.d { "Delete of $entityName $entityId rejected by API. Saving fresher $updatedEntity to DB." }
                     saveEntityToDb(updatedEntity)
+                    onDeleteRejected(entityId)
                 } ?: logger.d { "Deleted $entityName $entityId from API." }
                 SyncOperationResult.Success
             }

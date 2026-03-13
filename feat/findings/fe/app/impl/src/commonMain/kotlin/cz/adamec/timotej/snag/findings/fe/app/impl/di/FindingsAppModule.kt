@@ -13,6 +13,7 @@
 package cz.adamec.timotej.snag.findings.fe.app.impl.di
 
 import cz.adamec.timotej.snag.findings.fe.app.api.CascadeDeleteLocalFindingsByStructureIdUseCase
+import cz.adamec.timotej.snag.findings.fe.app.api.CascadeRestoreLocalFindingsByStructureIdUseCase
 import cz.adamec.timotej.snag.findings.fe.app.api.DeleteFindingUseCase
 import cz.adamec.timotej.snag.findings.fe.app.api.GetFindingUseCase
 import cz.adamec.timotej.snag.findings.fe.app.api.GetFindingsUseCase
@@ -21,6 +22,7 @@ import cz.adamec.timotej.snag.findings.fe.app.api.SaveFindingCoordinatesUseCase
 import cz.adamec.timotej.snag.findings.fe.app.api.SaveFindingDetailsUseCase
 import cz.adamec.timotej.snag.findings.fe.app.api.SaveNewFindingUseCase
 import cz.adamec.timotej.snag.findings.fe.app.impl.internal.CascadeDeleteLocalFindingsByStructureIdUseCaseImpl
+import cz.adamec.timotej.snag.findings.fe.app.impl.internal.CascadeRestoreLocalFindingsByStructureIdUseCaseImpl
 import cz.adamec.timotej.snag.findings.fe.app.impl.internal.DeleteFindingUseCaseImpl
 import cz.adamec.timotej.snag.findings.fe.app.impl.internal.GetFindingUseCaseImpl
 import cz.adamec.timotej.snag.findings.fe.app.impl.internal.GetFindingsUseCaseImpl
@@ -38,6 +40,7 @@ val findingsAppModule =
     module {
         factoryOf(::DeleteFindingUseCaseImpl) bind DeleteFindingUseCase::class
         factoryOf(::CascadeDeleteLocalFindingsByStructureIdUseCaseImpl) bind CascadeDeleteLocalFindingsByStructureIdUseCase::class
+        factoryOf(::CascadeRestoreLocalFindingsByStructureIdUseCaseImpl) bind CascadeRestoreLocalFindingsByStructureIdUseCase::class
         factoryOf(::GetFindingUseCaseImpl) bind GetFindingUseCase::class
         factoryOf(::GetFindingsUseCaseImpl) bind GetFindingsUseCase::class
         factoryOf(::PullFindingChangesUseCaseImpl) bind PullFindingChangesUseCase::class

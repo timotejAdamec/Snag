@@ -15,6 +15,7 @@ package cz.adamec.timotej.snag.structures.fe.app.impl.di
 import cz.adamec.timotej.snag.lib.sync.fe.app.api.handler.SyncOperationHandler
 import cz.adamec.timotej.snag.structures.fe.app.api.CanModifyFloorPlanImageUseCase
 import cz.adamec.timotej.snag.structures.fe.app.api.CascadeDeleteLocalStructuresByProjectIdUseCase
+import cz.adamec.timotej.snag.structures.fe.app.api.CascadeRestoreLocalStructuresByProjectIdUseCase
 import cz.adamec.timotej.snag.structures.fe.app.api.DeleteFloorPlanImageUseCase
 import cz.adamec.timotej.snag.structures.fe.app.api.DeleteStructureUseCase
 import cz.adamec.timotej.snag.structures.fe.app.api.GetStructureUseCase
@@ -24,6 +25,7 @@ import cz.adamec.timotej.snag.structures.fe.app.api.SaveStructureUseCase
 import cz.adamec.timotej.snag.structures.fe.app.api.UploadFloorPlanImageUseCase
 import cz.adamec.timotej.snag.structures.fe.app.impl.internal.CanModifyFloorPlanImageUseCaseImpl
 import cz.adamec.timotej.snag.structures.fe.app.impl.internal.CascadeDeleteLocalStructuresByProjectIdUseCaseImpl
+import cz.adamec.timotej.snag.structures.fe.app.impl.internal.CascadeRestoreLocalStructuresByProjectIdUseCaseImpl
 import cz.adamec.timotej.snag.structures.fe.app.impl.internal.DeleteFloorPlanImageUseCaseImpl
 import cz.adamec.timotej.snag.structures.fe.app.impl.internal.DeleteStructureUseCaseImpl
 import cz.adamec.timotej.snag.structures.fe.app.impl.internal.GetStructureUseCaseImpl
@@ -43,6 +45,7 @@ val structuresAppModule =
         factoryOf(::GetStructuresUseCaseImpl) bind GetStructuresUseCase::class
         factoryOf(::SaveStructureUseCaseImpl) bind SaveStructureUseCase::class
         factoryOf(::CascadeDeleteLocalStructuresByProjectIdUseCaseImpl) bind CascadeDeleteLocalStructuresByProjectIdUseCase::class
+        factoryOf(::CascadeRestoreLocalStructuresByProjectIdUseCaseImpl) bind CascadeRestoreLocalStructuresByProjectIdUseCase::class
         factoryOf(::PullStructureChangesUseCaseImpl) bind PullStructureChangesUseCase::class
         factoryOf(::UploadFloorPlanImageUseCaseImpl) bind UploadFloorPlanImageUseCase::class
         factoryOf(::DeleteFloorPlanImageUseCaseImpl) bind DeleteFloorPlanImageUseCase::class
