@@ -26,11 +26,8 @@ internal class RealProjectsDb(
 
     override fun getProjectFlow(id: Uuid): Flow<OfflineFirstDataResult<FrontendProject?>> = ops.entityByIdFlow(id)
 
-    override suspend fun getProject(id: Uuid): FrontendProject? =
-        when (val result = ops.entityByIdFlow(id).first()) {
-            is OfflineFirstDataResult.Success -> result.data
-            is OfflineFirstDataResult.ProgrammerError -> null
-        }
+    override suspend fun getProject(id: Uuid): OfflineFirstDataResult<FrontendProject?> =
+        ops.entityByIdFlow(id).first()
 
     override suspend fun saveProject(project: FrontendProject): OfflineFirstDataResult<Unit> = ops.saveOne(project)
 

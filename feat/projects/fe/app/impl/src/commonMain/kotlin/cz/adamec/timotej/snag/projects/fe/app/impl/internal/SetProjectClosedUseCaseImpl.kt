@@ -13,6 +13,7 @@
 package cz.adamec.timotej.snag.projects.fe.app.impl.internal
 
 import cz.adamec.timotej.snag.lib.core.common.TimestampProvider
+import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
 import cz.adamec.timotej.snag.projects.fe.app.api.SetProjectClosedUseCase
 import cz.adamec.timotej.snag.projects.fe.model.FrontendProject
@@ -30,10 +31,15 @@ class SetProjectClosedUseCaseImpl(
         isClosed: Boolean,
     ): OnlineDataResult<Unit> {
         val localProject =
-            projectsDb.getProject(projectId)
-                ?: return OnlineDataResult.Failure.ProgrammerError(
-                    IllegalStateException("Project $projectId not found locally"),
-                )
+            when (val dbResult = projectsDb.getProject(projectId)) {
+                is OfflineFirstDataResult.Success ->
+                    dbResult.data
+                        ?: return OnlineDataResult.Failure.ProgrammerError(
+                            IllegalStateException("Project $projectId not found locally"),
+                        )
+                is OfflineFirstDataResult.ProgrammerError ->
+                    return OnlineDataResult.Failure.ProgrammerError(dbResult.throwable)
+            }
         val updatedProject =
             FrontendProject(
                 project =
