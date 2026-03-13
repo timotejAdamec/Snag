@@ -10,23 +10,13 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.users.be.ports
+package cz.adamec.timotej.snag.projects.be.app.api
 
-import cz.adamec.timotej.snag.users.be.model.BackendUser
 import kotlin.uuid.Uuid
 
-interface ProjectAssignmentsDb {
-    suspend fun getAssignedUsers(projectId: Uuid): List<BackendUser>
-
-    suspend fun assignUser(
+interface RemoveUserFromProjectUseCase {
+    suspend operator fun invoke(
         userId: Uuid,
         projectId: Uuid,
     )
-
-    suspend fun removeUser(
-        userId: Uuid,
-        projectId: Uuid,
-    )
-
-    suspend fun getProjectsForUser(userId: Uuid): List<Uuid>
 }

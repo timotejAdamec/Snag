@@ -20,7 +20,7 @@ import cz.adamec.timotej.snag.users.business.User
 import cz.adamec.timotej.snag.users.business.UserRole
 import kotlin.uuid.Uuid
 
-internal fun BackendUser.toDto() =
+fun BackendUser.toDto() =
     UserApiDto(
         id = user.id.toString(),
         entraId = user.entraId,

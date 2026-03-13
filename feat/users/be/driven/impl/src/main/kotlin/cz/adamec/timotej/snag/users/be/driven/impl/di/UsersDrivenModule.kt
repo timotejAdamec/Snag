@@ -12,9 +12,7 @@
 
 package cz.adamec.timotej.snag.users.be.driven.impl.di
 
-import cz.adamec.timotej.snag.users.be.driven.impl.internal.RealProjectAssignmentsDb
 import cz.adamec.timotej.snag.users.be.driven.impl.internal.RealUsersDb
-import cz.adamec.timotej.snag.users.be.ports.ProjectAssignmentsDb
 import cz.adamec.timotej.snag.users.be.ports.UsersDb
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
@@ -23,5 +21,4 @@ import org.koin.dsl.module
 val usersDrivenModule =
     module {
         singleOf(::RealUsersDb) bind UsersDb::class
-        singleOf(::RealProjectAssignmentsDb) bind ProjectAssignmentsDb::class
     }

@@ -10,7 +10,7 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.users.be.app.api
+package cz.adamec.timotej.snag.projects.be.app.api
 
 import kotlin.uuid.Uuid
 

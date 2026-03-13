@@ -12,15 +12,21 @@
 
 package cz.adamec.timotej.snag.projects.be.app.impl.di
 
+import cz.adamec.timotej.snag.projects.be.app.api.AssignUserToProjectUseCase
 import cz.adamec.timotej.snag.projects.be.app.api.DeleteProjectUseCase
+import cz.adamec.timotej.snag.projects.be.app.api.GetProjectAssignmentsUseCase
 import cz.adamec.timotej.snag.projects.be.app.api.GetProjectUseCase
 import cz.adamec.timotej.snag.projects.be.app.api.GetProjectsModifiedSinceUseCase
 import cz.adamec.timotej.snag.projects.be.app.api.GetProjectsUseCase
+import cz.adamec.timotej.snag.projects.be.app.api.RemoveUserFromProjectUseCase
 import cz.adamec.timotej.snag.projects.be.app.api.SaveProjectUseCase
+import cz.adamec.timotej.snag.projects.be.app.impl.internal.AssignUserToProjectUseCaseImpl
 import cz.adamec.timotej.snag.projects.be.app.impl.internal.DeleteProjectUseCaseImpl
+import cz.adamec.timotej.snag.projects.be.app.impl.internal.GetProjectAssignmentsUseCaseImpl
 import cz.adamec.timotej.snag.projects.be.app.impl.internal.GetProjectUseCaseImpl
 import cz.adamec.timotej.snag.projects.be.app.impl.internal.GetProjectsModifiedSinceUseCaseImpl
 import cz.adamec.timotej.snag.projects.be.app.impl.internal.GetProjectsUseCaseImpl
+import cz.adamec.timotej.snag.projects.be.app.impl.internal.RemoveUserFromProjectUseCaseImpl
 import cz.adamec.timotej.snag.projects.be.app.impl.internal.SaveProjectUseCaseImpl
 import cz.adamec.timotej.snag.projects.business.CanEditProjectEntitiesRule
 import org.koin.core.module.dsl.factoryOf
@@ -34,5 +40,8 @@ val projectsAppModule =
         factoryOf(::SaveProjectUseCaseImpl) bind SaveProjectUseCase::class
         factoryOf(::DeleteProjectUseCaseImpl) bind DeleteProjectUseCase::class
         factoryOf(::GetProjectsModifiedSinceUseCaseImpl) bind GetProjectsModifiedSinceUseCase::class
+        factoryOf(::GetProjectAssignmentsUseCaseImpl) bind GetProjectAssignmentsUseCase::class
+        factoryOf(::AssignUserToProjectUseCaseImpl) bind AssignUserToProjectUseCase::class
+        factoryOf(::RemoveUserFromProjectUseCaseImpl) bind RemoveUserFromProjectUseCase::class
         factoryOf(::CanEditProjectEntitiesRule)
     }

@@ -10,13 +10,16 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.users.be.driven.impl.internal
+package cz.adamec.timotej.snag.projects.be.driven.impl.internal
 
 import cz.adamec.timotej.snag.feat.shared.database.be.ProjectAssignmentsTable
 import cz.adamec.timotej.snag.feat.shared.database.be.UserEntity
 import cz.adamec.timotej.snag.feat.shared.database.be.UsersTable
+import cz.adamec.timotej.snag.lib.core.common.Timestamp
+import cz.adamec.timotej.snag.projects.be.ports.ProjectAssignmentsDb
 import cz.adamec.timotej.snag.users.be.model.BackendUser
-import cz.adamec.timotej.snag.users.be.ports.ProjectAssignmentsDb
+import cz.adamec.timotej.snag.users.business.User
+import cz.adamec.timotej.snag.users.business.UserRole
 import org.jetbrains.exposed.v1.core.and
 import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.core.inList
@@ -40,7 +43,7 @@ internal class RealProjectAssignmentsDb(
 
             UserEntity
                 .find { UsersTable.id inList userIds }
-                .map { it.toModel() }
+                .map { it.toBackendUser() }
         }
 
     override suspend fun assignUser(
@@ -75,3 +78,15 @@ internal class RealProjectAssignmentsDb(
                 .map { it[ProjectAssignmentsTable.projectId] }
         }
 }
+
+private fun UserEntity.toBackendUser() =
+    BackendUser(
+        user =
+            User(
+                id = id.value,
+                entraId = entraId,
+                email = email,
+                role = role?.let { UserRole.valueOf(it) },
+                updatedAt = Timestamp(updatedAt),
+            ),
+    )

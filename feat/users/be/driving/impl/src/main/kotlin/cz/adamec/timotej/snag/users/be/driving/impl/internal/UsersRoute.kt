@@ -16,31 +16,24 @@ import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.routing.be.AppRoute
 import cz.adamec.timotej.snag.routing.be.getDtoFromBody
 import cz.adamec.timotej.snag.routing.be.getIdFromParameters
-import cz.adamec.timotej.snag.users.be.app.api.AssignUserToProjectUseCase
-import cz.adamec.timotej.snag.users.be.app.api.GetProjectAssignmentsUseCase
 import cz.adamec.timotej.snag.users.be.app.api.GetUserUseCase
 import cz.adamec.timotej.snag.users.be.app.api.GetUsersModifiedSinceUseCase
 import cz.adamec.timotej.snag.users.be.app.api.GetUsersUseCase
-import cz.adamec.timotej.snag.users.be.app.api.RemoveUserFromProjectUseCase
 import cz.adamec.timotej.snag.users.be.app.api.SaveUserUseCase
 import cz.adamec.timotej.snag.users.be.driving.contract.PutUserApiDto
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
-import io.ktor.server.routing.delete
 import io.ktor.server.routing.get
 import io.ktor.server.routing.put
 import io.ktor.server.routing.route
 
-@Suppress("LabeledExpression", "StringLiteralDuplication")
+@Suppress("LabeledExpression")
 internal class UsersRoute(
     private val getUsersUseCase: GetUsersUseCase,
     private val getUsersModifiedSinceUseCase: GetUsersModifiedSinceUseCase,
     private val getUserUseCase: GetUserUseCase,
     private val saveUserUseCase: SaveUserUseCase,
-    private val getProjectAssignmentsUseCase: GetProjectAssignmentsUseCase,
-    private val assignUserToProjectUseCase: AssignUserToProjectUseCase,
-    private val removeUserFromProjectUseCase: RemoveUserFromProjectUseCase,
 ) : AppRoute {
     override fun Route.setup() {
         route("/users") {
@@ -74,28 +67,6 @@ internal class UsersRoute(
                 val putUserDto = getDtoFromBody<PutUserApiDto>()
                 val savedUser = saveUserUseCase(putUserDto.toModel(id))
                 call.respond(savedUser.toDto())
-            }
-        }
-
-        route("/projects/{projectId}/assignments") {
-            get {
-                val projectId = getIdFromParameters("projectId")
-                val dtoUsers = getProjectAssignmentsUseCase(projectId).map { it.toDto() }
-                call.respond(dtoUsers)
-            }
-
-            put("/{userId}") {
-                val projectId = getIdFromParameters("projectId")
-                val userId = getIdFromParameters("userId")
-                assignUserToProjectUseCase(userId, projectId)
-                call.respond(HttpStatusCode.NoContent)
-            }
-
-            delete("/{userId}") {
-                val projectId = getIdFromParameters("projectId")
-                val userId = getIdFromParameters("userId")
-                removeUserFromProjectUseCase(userId, projectId)
-                call.respond(HttpStatusCode.NoContent)
             }
         }
     }

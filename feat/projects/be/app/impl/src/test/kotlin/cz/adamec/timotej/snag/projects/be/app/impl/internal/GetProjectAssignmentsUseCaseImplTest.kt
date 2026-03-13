@@ -10,16 +10,16 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.users.be.app.impl.internal
+package cz.adamec.timotej.snag.projects.be.app.impl.internal
 
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
+import cz.adamec.timotej.snag.projects.be.app.api.GetProjectAssignmentsUseCase
 import cz.adamec.timotej.snag.projects.be.model.BackendProject
+import cz.adamec.timotej.snag.projects.be.ports.ProjectAssignmentsDb
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
 import cz.adamec.timotej.snag.projects.business.Project
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
-import cz.adamec.timotej.snag.users.be.app.api.GetProjectAssignmentsUseCase
 import cz.adamec.timotej.snag.users.be.model.BackendUser
-import cz.adamec.timotej.snag.users.be.ports.ProjectAssignmentsDb
 import cz.adamec.timotej.snag.users.be.ports.UsersDb
 import cz.adamec.timotej.snag.users.business.User
 import cz.adamec.timotej.snag.users.business.UserRole

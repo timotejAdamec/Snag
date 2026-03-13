@@ -12,7 +12,9 @@
 
 package cz.adamec.timotej.snag.projects.be.driven.impl.di
 
+import cz.adamec.timotej.snag.projects.be.driven.impl.internal.RealProjectAssignmentsDb
 import cz.adamec.timotej.snag.projects.be.driven.impl.internal.RealProjectsDb
+import cz.adamec.timotej.snag.projects.be.ports.ProjectAssignmentsDb
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
@@ -21,4 +23,5 @@ import org.koin.dsl.module
 val projectsDrivenModule =
     module {
         singleOf(::RealProjectsDb) bind ProjectsDb::class
+        singleOf(::RealProjectAssignmentsDb) bind ProjectAssignmentsDb::class
     }

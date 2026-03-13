@@ -10,12 +10,12 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.users.be.app.impl.internal
+package cz.adamec.timotej.snag.projects.be.app.impl.internal
 
-import cz.adamec.timotej.snag.users.be.app.api.GetProjectAssignmentsUseCase
-import cz.adamec.timotej.snag.users.be.app.impl.internal.LH.logger
+import cz.adamec.timotej.snag.projects.be.app.api.GetProjectAssignmentsUseCase
+import cz.adamec.timotej.snag.projects.be.app.impl.internal.LH.logger
+import cz.adamec.timotej.snag.projects.be.ports.ProjectAssignmentsDb
 import cz.adamec.timotej.snag.users.be.model.BackendUser
-import cz.adamec.timotej.snag.users.be.ports.ProjectAssignmentsDb
 import kotlin.uuid.Uuid
 
 internal class GetProjectAssignmentsUseCaseImpl(

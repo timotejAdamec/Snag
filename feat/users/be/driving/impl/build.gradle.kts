@@ -19,6 +19,4 @@ dependencies {
     implementation(project(":feat:users:be:app:api"))
     testImplementation(project(":lib:configuration:be:api"))
     testImplementation(project(":feat:users:be:ports"))
-    testImplementation(project(":feat:projects:be:ports"))
-    testImplementation(project(":feat:projects:be:model"))
 }
