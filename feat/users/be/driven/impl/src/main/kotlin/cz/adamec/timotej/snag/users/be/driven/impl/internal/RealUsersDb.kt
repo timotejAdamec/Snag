@@ -16,7 +16,6 @@ import cz.adamec.timotej.snag.feat.shared.database.be.UserEntity
 import cz.adamec.timotej.snag.feat.shared.database.be.UsersTable
 import cz.adamec.timotej.snag.users.be.model.BackendUser
 import cz.adamec.timotej.snag.users.be.ports.UsersDb
-import cz.adamec.timotej.snag.users.business.UserRole
 import org.jetbrains.exposed.v1.jdbc.Database
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 import kotlin.uuid.Uuid
@@ -56,10 +55,4 @@ internal class RealUsersDb(
             }
         }
 
-    override suspend fun updateRole(id: Uuid, role: UserRole?): BackendUser? =
-        transaction(database) {
-            val existing = UserEntity.findById(id) ?: return@transaction null
-            existing.role = role?.name
-            existing.toModel()
-        }
 }

@@ -13,7 +13,6 @@
 package cz.adamec.timotej.snag.users.be.ports
 
 import cz.adamec.timotej.snag.users.be.model.BackendUser
-import cz.adamec.timotej.snag.users.business.UserRole
 import kotlin.uuid.Uuid
 
 interface UsersDb {
@@ -24,6 +23,4 @@ interface UsersDb {
     suspend fun getUserByEntraId(entraId: String): BackendUser?
 
     suspend fun saveUser(user: BackendUser): BackendUser
-
-    suspend fun updateRole(id: Uuid, role: UserRole?): BackendUser?
 }

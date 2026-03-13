@@ -21,10 +21,7 @@ import cz.adamec.timotej.snag.users.be.app.api.GetUserUseCase
 import cz.adamec.timotej.snag.users.be.app.api.GetUsersUseCase
 import cz.adamec.timotej.snag.users.be.app.api.RemoveUserFromProjectUseCase
 import cz.adamec.timotej.snag.users.be.app.api.SaveUserUseCase
-import cz.adamec.timotej.snag.users.be.app.api.UpdateUserRoleUseCase
 import cz.adamec.timotej.snag.users.be.driving.contract.PutUserApiDto
-import cz.adamec.timotej.snag.users.be.driving.contract.UpdateUserRoleApiDto
-import cz.adamec.timotej.snag.users.business.UserRole
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
@@ -38,7 +35,6 @@ internal class UsersRoute(
     private val getUsersUseCase: GetUsersUseCase,
     private val getUserUseCase: GetUserUseCase,
     private val saveUserUseCase: SaveUserUseCase,
-    private val updateUserRoleUseCase: UpdateUserRoleUseCase,
     private val getProjectAssignmentsUseCase: GetProjectAssignmentsUseCase,
     private val assignUserToProjectUseCase: AssignUserToProjectUseCase,
     private val removeUserFromProjectUseCase: RemoveUserFromProjectUseCase,
@@ -68,21 +64,6 @@ internal class UsersRoute(
                 val putUserDto = getDtoFromBody<PutUserApiDto>()
                 val savedUser = saveUserUseCase(putUserDto.toModel(id))
                 call.respond(savedUser.toDto())
-            }
-
-            put("/{id}/role") {
-                val id = getIdFromParameters()
-                val updateRoleDto = getDtoFromBody<UpdateUserRoleApiDto>()
-                val role = updateRoleDto.role?.let { UserRole.valueOf(it) }
-
-                val updatedUser =
-                    updateUserRoleUseCase(id, role)
-                        ?: return@put call.respond(
-                            status = HttpStatusCode.NotFound,
-                            message = "User not found.",
-                        )
-
-                call.respond(updatedUser.toDto())
             }
         }
 
