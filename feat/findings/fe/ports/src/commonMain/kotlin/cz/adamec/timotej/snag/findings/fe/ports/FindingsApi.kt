@@ -35,7 +35,7 @@ interface FindingsApi {
     suspend fun deleteFinding(
         id: Uuid,
         deletedAt: Timestamp,
-    ): OnlineDataResult<Unit>
+    ): OnlineDataResult<FrontendFinding?>
 
     suspend fun getFindingsModifiedSince(
         structureId: Uuid,

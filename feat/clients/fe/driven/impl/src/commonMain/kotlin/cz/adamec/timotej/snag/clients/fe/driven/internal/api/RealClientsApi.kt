@@ -65,13 +65,18 @@ internal class RealClientsApi(
     override suspend fun deleteClient(
         id: Uuid,
         deletedAt: Timestamp,
-    ): OnlineDataResult<Unit> {
+    ): OnlineDataResult<FrontendClient?> {
         LH.logger.d { "Deleting client $id from API..." }
         return safeApiCall(logger = LH.logger, errorContext = "Error deleting client $id from API.") {
-            httpClient.delete("/clients/$id") {
-                setBody(DeleteClientApiDto(deletedAt = deletedAt))
+            val response =
+                httpClient.delete("/clients/$id") {
+                    setBody(DeleteClientApiDto(deletedAt = deletedAt))
+                }
+            if (response.status != HttpStatusCode.NoContent) {
+                response.body<ClientApiDto>().toModel()
+            } else {
+                null
             }
-            Unit
         }.also { if (it is OnlineDataResult.Success) LH.logger.d { "Deleted client $id from API." } }
     }
 

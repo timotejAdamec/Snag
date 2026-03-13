@@ -35,7 +35,7 @@ interface StructuresApi {
     suspend fun deleteStructure(
         id: Uuid,
         deletedAt: Timestamp,
-    ): OnlineDataResult<Unit>
+    ): OnlineDataResult<FrontendStructure?>
 
     suspend fun getStructuresModifiedSince(
         projectId: Uuid,

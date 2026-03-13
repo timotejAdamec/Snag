@@ -35,7 +35,7 @@ interface InspectionsApi {
     suspend fun deleteInspection(
         id: Uuid,
         deletedAt: Timestamp,
-    ): OnlineDataResult<Unit>
+    ): OnlineDataResult<FrontendInspection?>
 
     suspend fun getInspectionsModifiedSince(
         projectId: Uuid,

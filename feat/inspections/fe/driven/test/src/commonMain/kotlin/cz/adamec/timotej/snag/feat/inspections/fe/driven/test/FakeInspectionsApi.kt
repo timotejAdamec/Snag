@@ -48,7 +48,7 @@ class FakeInspectionsApi : InspectionsApi {
     override suspend fun deleteInspection(
         id: Uuid,
         deletedAt: Timestamp,
-    ): OnlineDataResult<Unit> = ops.deleteItemById(id)
+    ): OnlineDataResult<FrontendInspection?> = ops.deleteItemById(id)
 
     override suspend fun saveInspection(frontendInspection: FrontendInspection): OnlineDataResult<FrontendInspection?> =
         ops.saveItem(frontendInspection)

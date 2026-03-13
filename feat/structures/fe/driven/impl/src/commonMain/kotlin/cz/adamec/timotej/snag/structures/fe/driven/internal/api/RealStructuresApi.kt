@@ -42,13 +42,18 @@ internal class RealStructuresApi(
     override suspend fun deleteStructure(
         id: Uuid,
         deletedAt: Timestamp,
-    ): OnlineDataResult<Unit> {
+    ): OnlineDataResult<FrontendStructure?> {
         LH.logger.d { "Deleting structure $id from API..." }
         return safeApiCall(logger = LH.logger, errorContext = "Error deleting structure $id from API.") {
-            httpClient.patch("/structures/$id") {
-                setBody(DeleteStructureApiDto(deletedAt = deletedAt))
+            val response =
+                httpClient.patch("/structures/$id") {
+                    setBody(DeleteStructureApiDto(deletedAt = deletedAt))
+                }
+            if (response.status != HttpStatusCode.NoContent) {
+                response.body<StructureApiDto>().toModel()
+            } else {
+                null
             }
-            Unit
         }.also { if (it is OnlineDataResult.Success) LH.logger.d { "Deleted structure $id from API." } }
     }
 
