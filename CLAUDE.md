@@ -15,6 +15,11 @@ For new code, tests should be created.
 
 Before creating a PR, run `check`.
 
+### Following patterns
+
+After implementation, verify if all changed files are in line with existing implementations of other
+features/libs and if there are any oddities, tell the developer working with you.
+
 ## Database changes
 
 Do not worry about migrations, this is not in production yet.
