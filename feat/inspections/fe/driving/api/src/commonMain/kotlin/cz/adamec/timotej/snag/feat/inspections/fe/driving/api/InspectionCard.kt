@@ -21,8 +21,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -30,8 +30,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -109,32 +109,34 @@ private fun InspectionCardContent(
     onEndClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    ElevatedCard(
+    Card(
         modifier = modifier,
         onClick = onClick,
+        shape = MaterialTheme.shapes.large,
         colors =
-            CardDefaults.elevatedCardColors(
+            CardDefaults.cardColors(
                 containerColor = cardState.containerColor(),
+                contentColor = cardState.contentColor(),
             ),
     ) {
         Column(
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .padding(12.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
+                    .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Text(
                 text = stringResource(cardState.toStringRes()),
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.labelMedium,
+                fontWeight = FontWeight.Medium,
             )
 
             inspection.participants?.let {
                 InspectionIconRow(
                     icon = DesignRes.drawable.ic_group,
                     text = it,
-                    style = MaterialTheme.typography.titleSmall,
+                    style = MaterialTheme.typography.titleMedium,
                 )
             }
 
@@ -142,7 +144,7 @@ private fun InspectionCardContent(
                 InspectionIconRow(
                     icon = DesignRes.drawable.ic_schedule,
                     text = it.toDisplayString(),
-                    style = MaterialTheme.typography.bodySmall,
+                    style = MaterialTheme.typography.bodyMedium,
                 )
             }
 
@@ -151,7 +153,7 @@ private fun InspectionCardContent(
                     InspectionIconRow(
                         icon = DesignRes.drawable.ic_event_available,
                         text = it.toDisplayString(),
-                        style = MaterialTheme.typography.bodySmall,
+                        style = MaterialTheme.typography.bodyMedium,
                     )
                 }
             }
@@ -218,19 +220,17 @@ private fun InspectionIconRow(
     style: TextStyle,
 ) {
     Row(
-        horizontalArrangement = Arrangement.spacedBy(6.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
-            modifier = Modifier.size(14.dp),
+            modifier = Modifier.size(18.dp),
             painter = painterResource(icon),
             contentDescription = null,
-            tint = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         Text(
             text = text,
             style = style,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
@@ -251,13 +251,23 @@ private fun resolveCardStatus(
     }
 
 @Composable
-private fun CardStatus.containerColor(): Color =
+private fun CardStatus.containerColor() =
     when (this) {
-        CardStatus.SCHEDULED -> MaterialTheme.colorScheme.surfaceContainerLowest
         CardStatus.NOT_STARTED -> MaterialTheme.colorScheme.surfaceContainerLow
-        CardStatus.IN_PROGRESS -> MaterialTheme.colorScheme.surfaceContainer
-        CardStatus.ENDING_SOON -> MaterialTheme.colorScheme.surfaceContainerHigh
+        CardStatus.SCHEDULED -> MaterialTheme.colorScheme.secondaryContainer
+        CardStatus.IN_PROGRESS -> MaterialTheme.colorScheme.primaryContainer
+        CardStatus.ENDING_SOON -> MaterialTheme.colorScheme.tertiaryContainer
         CardStatus.FINISHED -> MaterialTheme.colorScheme.surfaceContainerHighest
+    }
+
+@Composable
+private fun CardStatus.contentColor() =
+    when (this) {
+        CardStatus.NOT_STARTED -> MaterialTheme.colorScheme.onSurface
+        CardStatus.SCHEDULED -> MaterialTheme.colorScheme.onSecondaryContainer
+        CardStatus.IN_PROGRESS -> MaterialTheme.colorScheme.onPrimaryContainer
+        CardStatus.ENDING_SOON -> MaterialTheme.colorScheme.onTertiaryContainer
+        CardStatus.FINISHED -> MaterialTheme.colorScheme.onSurface
     }
 
 private fun CardStatus.toStringRes(): StringResource =
