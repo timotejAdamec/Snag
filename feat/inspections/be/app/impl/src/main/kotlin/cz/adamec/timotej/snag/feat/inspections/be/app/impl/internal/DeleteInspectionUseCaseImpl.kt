@@ -17,7 +17,6 @@ import cz.adamec.timotej.snag.feat.inspections.be.app.api.model.DeleteInspection
 import cz.adamec.timotej.snag.feat.inspections.be.app.impl.internal.LH.logger
 import cz.adamec.timotej.snag.feat.inspections.be.model.BackendInspection
 import cz.adamec.timotej.snag.feat.inspections.be.ports.InspectionsDb
-import cz.adamec.timotej.snag.lib.core.be.ProjectClosedException
 import cz.adamec.timotej.snag.projects.be.app.api.GetProjectUseCase
 import cz.adamec.timotej.snag.projects.business.CanEditProjectEntitiesRule
 
@@ -31,7 +30,7 @@ internal class DeleteInspectionUseCaseImpl(
         if (inspection != null) {
             val project = getProjectUseCase(inspection.inspection.projectId)
             if (project != null && !canEditProjectEntitiesRule(project.project)) {
-                throw ProjectClosedException()
+                return inspection
             }
         }
         logger.debug("Deleting inspection {} from local storage.", request.inspectionId)

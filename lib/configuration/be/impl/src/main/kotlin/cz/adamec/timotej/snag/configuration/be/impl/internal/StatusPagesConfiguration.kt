@@ -13,7 +13,6 @@
 package cz.adamec.timotej.snag.configuration.be.impl.internal
 
 import cz.adamec.timotej.snag.configuration.be.AppConfiguration
-import cz.adamec.timotej.snag.lib.core.be.ProjectClosedException
 import cz.adamec.timotej.snag.routing.be.InvalidBodyException
 import cz.adamec.timotej.snag.routing.be.InvalidIdException
 import io.ktor.http.HttpStatusCode
@@ -35,12 +34,6 @@ internal class StatusPagesConfiguration : AppConfiguration {
                 call.respond(
                     status = HttpStatusCode.BadRequest,
                     message = "Invalid request body.",
-                )
-            }
-            exception<ProjectClosedException> { call, _ ->
-                call.respond(
-                    status = HttpStatusCode.Forbidden,
-                    message = "Project is closed. No modifications allowed.",
                 )
             }
         }

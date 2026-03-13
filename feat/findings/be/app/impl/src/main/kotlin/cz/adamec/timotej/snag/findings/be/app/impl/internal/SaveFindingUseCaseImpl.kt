@@ -16,7 +16,6 @@ import cz.adamec.timotej.snag.feat.findings.be.model.BackendFinding
 import cz.adamec.timotej.snag.findings.be.app.api.SaveFindingUseCase
 import cz.adamec.timotej.snag.findings.be.app.impl.internal.LH.logger
 import cz.adamec.timotej.snag.findings.be.ports.FindingsDb
-import cz.adamec.timotej.snag.lib.core.be.ProjectClosedException
 import cz.adamec.timotej.snag.projects.be.app.api.GetProjectUseCase
 import cz.adamec.timotej.snag.projects.business.CanEditProjectEntitiesRule
 import cz.adamec.timotej.snag.structures.be.ports.StructuresDb
@@ -32,7 +31,7 @@ internal class SaveFindingUseCaseImpl(
         if (structure != null) {
             val project = getProjectUseCase(structure.structure.projectId)
             if (project != null && !canEditProjectEntitiesRule(project.project)) {
-                throw ProjectClosedException()
+                return findingsDb.getFinding(finding.finding.id)
             }
         }
         logger.debug("Saving finding {} to local storage.", finding)

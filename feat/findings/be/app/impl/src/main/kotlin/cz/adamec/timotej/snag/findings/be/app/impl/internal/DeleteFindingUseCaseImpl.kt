@@ -17,7 +17,6 @@ import cz.adamec.timotej.snag.findings.be.app.api.DeleteFindingUseCase
 import cz.adamec.timotej.snag.findings.be.app.api.model.DeleteFindingRequest
 import cz.adamec.timotej.snag.findings.be.app.impl.internal.LH.logger
 import cz.adamec.timotej.snag.findings.be.ports.FindingsDb
-import cz.adamec.timotej.snag.lib.core.be.ProjectClosedException
 import cz.adamec.timotej.snag.projects.be.app.api.GetProjectUseCase
 import cz.adamec.timotej.snag.projects.business.CanEditProjectEntitiesRule
 import cz.adamec.timotej.snag.structures.be.ports.StructuresDb
@@ -35,7 +34,7 @@ internal class DeleteFindingUseCaseImpl(
             if (structure != null) {
                 val project = getProjectUseCase(structure.structure.projectId)
                 if (project != null && !canEditProjectEntitiesRule(project.project)) {
-                    throw ProjectClosedException()
+                    return finding
                 }
             }
         }
