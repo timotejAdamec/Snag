@@ -31,7 +31,7 @@ internal data class ProjectDetailsUiState(
 ) {
     val isClosed: Boolean get() = project?.project?.isClosed == true
     val isProjectEditable: Boolean get() = projectStatus == ProjectDetailsUiStatus.LOADED && !isClosed
-    val canInvokeDeletion = projectStatus == ProjectDetailsUiStatus.LOADED && !isBeingDeleted && !isClosed
+    val canInvokeDeletion = isProjectEditable && !isBeingDeleted
     val canDownloadReport = projectStatus == ProjectDetailsUiStatus.LOADED && !isDownloadingReport
     val canToggleClosed = projectStatus == ProjectDetailsUiStatus.LOADED && !isClosingOrReopening
 }

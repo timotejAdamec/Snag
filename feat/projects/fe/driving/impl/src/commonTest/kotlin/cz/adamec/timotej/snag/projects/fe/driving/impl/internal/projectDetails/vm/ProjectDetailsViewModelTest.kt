@@ -26,10 +26,9 @@ import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.lib.sync.fe.driven.test.FakeSyncQueue
 import cz.adamec.timotej.snag.projects.business.Project
-import cz.adamec.timotej.snag.projects.fe.app.api.CloseProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.DeleteProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.GetProjectUseCase
-import cz.adamec.timotej.snag.projects.fe.app.api.ReopenProjectUseCase
+import cz.adamec.timotej.snag.projects.fe.app.api.SetProjectClosedUseCase
 import cz.adamec.timotej.snag.projects.fe.driven.test.FakeProjectsDb
 import cz.adamec.timotej.snag.projects.fe.model.FrontendProject
 import cz.adamec.timotej.snag.structures.fe.app.api.GetStructuresUseCase
@@ -66,8 +65,7 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
     private val getInspectionsUseCase: GetInspectionsUseCase by inject()
     private val saveInspectionUseCase: SaveInspectionUseCase by inject()
     private val downloadReportUseCase: DownloadReportUseCase by inject()
-    private val closeProjectUseCase: CloseProjectUseCase by inject()
-    private val reopenProjectUseCase: ReopenProjectUseCase by inject()
+    private val setProjectClosedUseCase: SetProjectClosedUseCase by inject()
     private val timestampProvider: TimestampProvider by inject()
 
     override fun additionalKoinModules(): List<Module> =
@@ -90,8 +88,7 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
             getInspectionsUseCase = getInspectionsUseCase,
             downloadReportUseCase = downloadReportUseCase,
             saveInspectionUseCase = saveInspectionUseCase,
-            closeProjectUseCase = closeProjectUseCase,
-            reopenProjectUseCase = reopenProjectUseCase,
+            setProjectClosedUseCase = setProjectClosedUseCase,
             timestampProvider = timestampProvider,
         )
 

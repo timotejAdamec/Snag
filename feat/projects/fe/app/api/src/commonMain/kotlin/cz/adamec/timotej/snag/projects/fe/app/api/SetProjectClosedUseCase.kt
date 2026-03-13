@@ -15,6 +15,9 @@ package cz.adamec.timotej.snag.projects.fe.app.api
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
 import kotlin.uuid.Uuid
 
-interface ReopenProjectUseCase {
-    suspend operator fun invoke(projectId: Uuid): OnlineDataResult<Unit>
+interface SetProjectClosedUseCase {
+    suspend operator fun invoke(
+        projectId: Uuid,
+        isClosed: Boolean,
+    ): OnlineDataResult<Unit>
 }

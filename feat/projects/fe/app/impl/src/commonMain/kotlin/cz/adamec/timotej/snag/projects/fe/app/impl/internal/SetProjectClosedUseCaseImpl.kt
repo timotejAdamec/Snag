@@ -14,18 +14,21 @@ package cz.adamec.timotej.snag.projects.fe.app.impl.internal
 
 import cz.adamec.timotej.snag.lib.core.common.TimestampProvider
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
-import cz.adamec.timotej.snag.projects.fe.app.api.ReopenProjectUseCase
+import cz.adamec.timotej.snag.projects.fe.app.api.SetProjectClosedUseCase
 import cz.adamec.timotej.snag.projects.fe.model.FrontendProject
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsApi
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsDb
 import kotlin.uuid.Uuid
 
-class ReopenProjectUseCaseImpl(
+class SetProjectClosedUseCaseImpl(
     private val projectsApi: ProjectsApi,
     private val projectsDb: ProjectsDb,
     private val timestampProvider: TimestampProvider,
-) : ReopenProjectUseCase {
-    override suspend fun invoke(projectId: Uuid): OnlineDataResult<Unit> {
+) : SetProjectClosedUseCase {
+    override suspend fun invoke(
+        projectId: Uuid,
+        isClosed: Boolean,
+    ): OnlineDataResult<Unit> {
         val localProject =
             projectsDb.getProject(projectId)
                 ?: return OnlineDataResult.Failure.ProgrammerError(
@@ -35,7 +38,7 @@ class ReopenProjectUseCaseImpl(
             FrontendProject(
                 project =
                     localProject.project.copy(
-                        isClosed = false,
+                        isClosed = isClosed,
                         updatedAt = timestampProvider.getNowTimestamp(),
                     ),
             )
