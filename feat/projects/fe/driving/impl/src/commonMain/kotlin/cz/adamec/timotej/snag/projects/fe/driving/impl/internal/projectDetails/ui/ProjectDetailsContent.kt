@@ -376,9 +376,9 @@ private fun LoadedProjectDetailsContent(
                             painter =
                                 painterResource(
                                     if (state.isClosed) {
-                                        DesignRes.drawable.ic_lock
-                                    } else {
                                         DesignRes.drawable.ic_lock_open
+                                    } else {
+                                        DesignRes.drawable.ic_lock
                                     },
                                 ),
                             contentDescription =
