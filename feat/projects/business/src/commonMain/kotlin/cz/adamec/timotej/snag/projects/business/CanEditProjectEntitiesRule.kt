@@ -12,6 +12,6 @@
 
 package cz.adamec.timotej.snag.projects.business
 
-interface CanEditProjectEntitiesRule {
-    operator fun invoke(project: Project): Boolean
+class CanEditProjectEntitiesRule {
+    operator fun invoke(project: Project) = !project.isClosed
 }
