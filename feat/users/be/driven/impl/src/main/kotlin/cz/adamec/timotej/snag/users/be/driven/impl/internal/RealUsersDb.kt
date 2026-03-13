@@ -16,6 +16,7 @@ import cz.adamec.timotej.snag.feat.shared.database.be.UserEntity
 import cz.adamec.timotej.snag.feat.shared.database.be.UsersTable
 import cz.adamec.timotej.snag.users.be.model.BackendUser
 import cz.adamec.timotej.snag.users.be.ports.UsersDb
+import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.jdbc.Database
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 import kotlin.uuid.Uuid
@@ -54,5 +55,4 @@ internal class RealUsersDb(
                 }.toModel()
             }
         }
-
 }
