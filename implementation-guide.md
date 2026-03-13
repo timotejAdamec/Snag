@@ -90,9 +90,9 @@ When a project is **closed**, only the creator retains access. Assigned users lo
 The following features are new compared to the original analysis (which had no roles):
 
 1. **Project closure and reopening** — projects can be closed (access revoked) and reopened; no deletion of projects.
-2. **User assignment to / removal from project** — leads can add/remove technicians or service workers.
+2. **User assignment to / removal from project** — leads can add/remove technicians or service workers. *(Done — BE API + DB, Phase 1)*
 3. **Authentication (EntraID)** — mandatory Microsoft EntraID login (standalone mechanism, not a UC).
-4. **Role management (UC7)** — admin manages all roles; passport lead delegates technician role; service lead delegates service worker role.
+4. **Role management (UC7)** — admin manages all roles; passport lead delegates technician role; service lead delegates service worker role. *(Done — BE API: role set via PUT /users/{id}, Phase 1)*
 5. **Inspection deletion** — UC5 Scenario E.
 6. **Service protocol** — second PDF export format with signature fields.
 
@@ -100,20 +100,20 @@ The following features are new compared to the original analysis (which had no r
 
 ## 7. New Functional Requirements
 
-| FP | Description | UC |
-|---|---|---|
-| FP4 | Close project — revoke access, preserve data | UC1 |
-| FP4b | Reopen project — reopen a closed project | UC1 |
-| FP4c | Assign user to project | UC1 |
-| FP4d | Remove user from project | UC1 |
-| FP4e | Close project — creator access: only creator retains access to closed project | UC1 |
-| FP31 | Delete inspection | UC5 |
-| FP32b | Generate service protocol — PDF with work description and signature fields | UC6 |
-| FP34 | Authentication via Microsoft EntraID | — |
-| FP35 | Deny access without authentication | — |
-| FP36 | Role management by administrator | UC7 |
-| FP37 | Delegate and remove passport technician role | UC7 |
-| FP38 | Delegate and remove service worker role | UC7 |
+| FP | Description | UC | Status |
+|---|---|---|---|
+| FP4 | Close project — revoke access, preserve data | UC1 | |
+| FP4b | Reopen project — reopen a closed project | UC1 | |
+| FP4c | Assign user to project | UC1 | Done (BE API + DB) |
+| FP4d | Remove user from project | UC1 | Done (BE API + DB) |
+| FP4e | Close project — creator access: only creator retains access to closed project | UC1 | |
+| FP31 | Delete inspection | UC5 | |
+| FP32b | Generate service protocol — PDF with work description and signature fields | UC6 | |
+| FP34 | Authentication via Microsoft EntraID | — | |
+| FP35 | Deny access without authentication | — | |
+| FP36 | Role management by administrator | UC7 | Done (BE API: PUT /users/{id} with role) |
+| FP37 | Delegate and remove passport technician role | UC7 | Done (BE API: PUT /users/{id} with role) |
+| FP38 | Delegate and remove service worker role | UC7 | Done (BE API: PUT /users/{id} with role) |
 
 ---
 
