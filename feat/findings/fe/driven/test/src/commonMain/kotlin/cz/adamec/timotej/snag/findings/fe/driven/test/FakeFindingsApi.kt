@@ -50,7 +50,7 @@ class FakeFindingsApi : FindingsApi {
     override suspend fun deleteFinding(
         id: Uuid,
         deletedAt: Timestamp,
-    ): OnlineDataResult<Unit> = ops.deleteItemById(id)
+    ): OnlineDataResult<FrontendFinding?> = ops.deleteItemById(id)
 
     override suspend fun getFindingsModifiedSince(
         structureId: Uuid,

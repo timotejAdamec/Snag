@@ -37,7 +37,7 @@ interface ProjectsApi {
     suspend fun deleteProject(
         id: Uuid,
         deletedAt: Timestamp,
-    ): OnlineDataResult<Unit>
+    ): OnlineDataResult<FrontendProject?>
 
     suspend fun getProjectsModifiedSince(since: Timestamp): OnlineDataResult<List<ProjectSyncResult>>
 }

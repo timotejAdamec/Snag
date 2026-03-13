@@ -21,6 +21,7 @@ class FakeApiOps<T, SyncResultType>(
     val apiItems = mutableMapOf<Uuid, T>()
     var forcedFailure: OnlineDataResult.Failure? = null
     var saveResponseOverride: ((T) -> OnlineDataResult<T?>)? = null
+    var deleteResponseOverride: ((Uuid) -> OnlineDataResult<T?>)? = null
     var modifiedSinceResults: List<SyncResultType> = emptyList()
 
     fun getAllItems(): OnlineDataResult<List<T>> {
@@ -54,11 +55,16 @@ class FakeApiOps<T, SyncResultType>(
         }
     }
 
-    fun deleteItemById(id: Uuid): OnlineDataResult<Unit> {
+    fun deleteItemById(id: Uuid): OnlineDataResult<T?> {
         val failure = forcedFailure
         if (failure != null) return failure
-        apiItems.remove(id)
-        return OnlineDataResult.Success(Unit)
+        val override = deleteResponseOverride
+        return if (override != null) {
+            override(id)
+        } else {
+            apiItems.remove(id)
+            OnlineDataResult.Success(null)
+        }
     }
 
     fun getModifiedSinceItems(): OnlineDataResult<List<SyncResultType>> {

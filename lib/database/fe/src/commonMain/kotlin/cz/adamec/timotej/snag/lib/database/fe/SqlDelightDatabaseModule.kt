@@ -30,7 +30,7 @@ fun sqlDelightDatabaseModule(
         createPlatformSqlDriver(schema, name)
     } bind SqlDriver::class
 
-    single<Initializer> {
+    single<Initializer>(qualifier) {
         SqlDelightDatabaseInitializer(
             databaseDriver = get(qualifier),
             schema = schema,

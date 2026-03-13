@@ -37,7 +37,7 @@ interface ClientsApi {
     suspend fun deleteClient(
         id: Uuid,
         deletedAt: Timestamp,
-    ): OnlineDataResult<Unit>
+    ): OnlineDataResult<FrontendClient?>
 
     suspend fun getClientsModifiedSince(since: Timestamp): OnlineDataResult<List<ClientSyncResult>>
 }

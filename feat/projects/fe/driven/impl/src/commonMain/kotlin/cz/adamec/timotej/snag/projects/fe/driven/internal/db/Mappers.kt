@@ -24,6 +24,7 @@ internal fun FrontendProject.toEntity() =
         name = project.name,
         address = project.address,
         clientId = project.clientId?.toString(),
+        isClosed = if (project.isClosed) 1L else 0L,
         updatedAt = project.updatedAt.value,
     )
 
@@ -35,6 +36,7 @@ internal fun ProjectEntity.toModel() =
                 name = name,
                 address = address,
                 clientId = clientId?.let { Uuid.parse(it) },
+                isClosed = isClosed == 1L,
                 updatedAt = Timestamp(updatedAt),
             ),
     )

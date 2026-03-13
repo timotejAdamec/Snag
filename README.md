@@ -113,18 +113,20 @@ in your IDE’s toolbar or open the [/iosApp](./iosApp) directory in Xcode and r
 
 # Server Target
 
-By default, frontend clients connect to `localhost`. To target a Cloud Run deployment instead, pass the `snag.serverTarget` Gradle property:
+By default, frontend clients connect to `localhost`. To target a Cloud Run deployment instead, set the `snag.serverTarget` property in `gradle.properties`:
 
-```shell
-./gradlew <task> -Psnag.serverTarget=dev  # Cloud Run dev environment
+```properties
+snag.serverTarget=dev
 ```
 
-For example, to build the Android app against the dev backend:
-```shell
-./gradlew :androidApp:assembleDebug -Psnag.serverTarget=dev
-```
+Valid values: `localhost` (default), `dev`, `demo`.
 
-A `demo` target is also defined but not yet configured.
+After changing the value, re-sync the Gradle project in your IDE. This applies to all build targets (Android, desktop, web).
+
+Alternatively, you can pass it as a command-line flag without modifying any files:
+```shell
+./gradlew <task> -Psnag.serverTarget=dev
+```
 
 # Project Structure
 
