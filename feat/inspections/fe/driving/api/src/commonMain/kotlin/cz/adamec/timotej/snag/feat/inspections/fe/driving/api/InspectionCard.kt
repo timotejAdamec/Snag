@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -193,7 +194,7 @@ private fun InspectionCardAction(
                 )
             }
         CardStatus.IN_PROGRESS ->
-            FilledTonalButton(
+            Button(
                 onClick = onEndClick,
                 modifier = Modifier.fillMaxWidth(),
                 contentPadding = ButtonDefaults.contentPaddingFor(buttonHeight),
@@ -284,12 +285,13 @@ private fun Timestamp.toDisplayString(): String =
         val local = toLocalDateTime()
         val hour = local.hour.toString().padStart(2, '0')
         val minute = local.minute.toString().padStart(2, '0')
-        val day = local.day.toString().padStart(2, '0')
-        val month = local.month.toString().padStart(2, '0')
+        val day = local.day
+        @Suppress("DEPRECATION")
+        val month = local.monthNumber
         val year = local.year
-        "$day.$month.$year · $hour:$minute"
+        "$day. $month. $year $hour:$minute"
     } catch (_: Throwable) {
-        "--.--.---- · --:--"
+        "-- -- ---- --:--"
     }
 
 // region Previews
