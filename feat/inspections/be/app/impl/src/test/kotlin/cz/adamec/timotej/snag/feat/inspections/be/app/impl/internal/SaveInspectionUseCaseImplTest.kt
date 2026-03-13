@@ -17,6 +17,7 @@ import cz.adamec.timotej.snag.feat.inspections.be.model.BackendInspection
 import cz.adamec.timotej.snag.feat.inspections.be.ports.InspectionsDb
 import cz.adamec.timotej.snag.feat.inspections.business.Inspection
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
+import cz.adamec.timotej.snag.lib.core.common.UuidProvider
 import cz.adamec.timotej.snag.projects.be.model.BackendProject
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
 import cz.adamec.timotej.snag.projects.business.Project
@@ -26,15 +27,14 @@ import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
-import kotlin.uuid.Uuid
 
 class SaveInspectionUseCaseImplTest : BackendKoinInitializedTest() {
     private val inspectionsDb: InspectionsDb by inject()
     private val projectsDb: ProjectsDb by inject()
     private val useCase: SaveInspectionUseCase by inject()
 
-    private val projectId = Uuid.parse("00000000-0000-0000-0000-000000000001")
-    private val inspectionId = Uuid.parse("00000000-0000-0000-0003-000000000001")
+    private val projectId = UuidProvider.getUuid()
+    private val inspectionId = UuidProvider.getUuid()
 
     private val backendInspection =
         BackendInspection(

@@ -22,6 +22,7 @@ import cz.adamec.timotej.snag.feat.reports.fe.app.api.DownloadReportUseCase
 import cz.adamec.timotej.snag.feat.reports.fe.driven.test.FakeReportsApi
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.common.TimestampProvider
+import cz.adamec.timotej.snag.lib.core.common.UuidProvider
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.lib.sync.fe.driven.test.FakeSyncQueue
@@ -443,7 +444,7 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
     @Test
     fun `onToggleClose on open project sets isClosed to true`() =
         runTest(testDispatcher) {
-            val projectId = Uuid.random()
+            val projectId = UuidProvider.getUuid()
             seedProject(projectId)
 
             val viewModel = createViewModel(projectId)
@@ -460,7 +461,7 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
     @Test
     fun `onToggleClose on closed project sets isClosed to false`() =
         runTest(testDispatcher) {
-            val projectId = Uuid.random()
+            val projectId = UuidProvider.getUuid()
             seedClosedProject(projectId)
 
             val viewModel = createViewModel(projectId)
@@ -477,7 +478,7 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
     @Test
     fun `onToggleClose network failure sends error`() =
         runTest(testDispatcher) {
-            val projectId = Uuid.random()
+            val projectId = UuidProvider.getUuid()
             seedProject(projectId)
             val fakeProjectsApi: FakeProjectsApi by inject()
             fakeProjectsApi.forcedFailure = OnlineDataResult.Failure.NetworkUnavailable
@@ -494,7 +495,7 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
     @Test
     fun `canToggleClosed is false when not loaded`() =
         runTest(testDispatcher) {
-            val projectId = Uuid.random()
+            val projectId = UuidProvider.getUuid()
 
             val viewModel = createViewModel(projectId)
 

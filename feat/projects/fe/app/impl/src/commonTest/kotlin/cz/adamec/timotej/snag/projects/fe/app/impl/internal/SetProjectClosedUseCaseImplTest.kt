@@ -13,6 +13,7 @@
 package cz.adamec.timotej.snag.projects.fe.app.impl.internal
 
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
+import cz.adamec.timotej.snag.lib.core.common.UuidProvider
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
 import cz.adamec.timotej.snag.projects.business.Project
@@ -27,14 +28,13 @@ import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertIs
 import kotlin.test.assertTrue
-import kotlin.uuid.Uuid
 
 class SetProjectClosedUseCaseImplTest : FrontendKoinInitializedTest() {
     private val fakeProjectsDb: FakeProjectsDb by inject()
     private val fakeProjectsApi: FakeProjectsApi by inject()
     private val useCase: SetProjectClosedUseCase by inject()
 
-    private val projectId = Uuid.parse("00000000-0000-0000-0000-000000000001")
+    private val projectId = UuidProvider.getUuid()
 
     private fun seedOpenProject() {
         fakeProjectsDb.setProject(

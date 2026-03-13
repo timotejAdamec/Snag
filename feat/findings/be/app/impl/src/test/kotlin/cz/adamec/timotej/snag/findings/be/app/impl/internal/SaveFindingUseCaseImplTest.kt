@@ -20,6 +20,7 @@ import cz.adamec.timotej.snag.feat.structures.business.Structure
 import cz.adamec.timotej.snag.findings.be.app.api.SaveFindingUseCase
 import cz.adamec.timotej.snag.findings.be.ports.FindingsDb
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
+import cz.adamec.timotej.snag.lib.core.common.UuidProvider
 import cz.adamec.timotej.snag.projects.be.model.BackendProject
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
 import cz.adamec.timotej.snag.projects.business.Project
@@ -30,7 +31,6 @@ import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
-import kotlin.uuid.Uuid
 
 class SaveFindingUseCaseImplTest : BackendKoinInitializedTest() {
     private val findingsDb: FindingsDb by inject()
@@ -38,9 +38,9 @@ class SaveFindingUseCaseImplTest : BackendKoinInitializedTest() {
     private val structuresDb: StructuresDb by inject()
     private val useCase: SaveFindingUseCase by inject()
 
-    private val projectId = Uuid.parse("00000000-0000-0000-0000-000000000001")
-    private val structureId = Uuid.parse("00000000-0000-0000-0001-000000000001")
-    private val findingId = Uuid.parse("00000000-0000-0000-0002-000000000001")
+    private val projectId = UuidProvider.getUuid()
+    private val structureId = UuidProvider.getUuid()
+    private val findingId = UuidProvider.getUuid()
 
     private val backendFinding =
         BackendFinding(
