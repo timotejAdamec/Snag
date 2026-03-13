@@ -50,7 +50,7 @@ class FakeProjectsApi : ProjectsApi {
     override suspend fun deleteProject(
         id: Uuid,
         deletedAt: Timestamp,
-    ): OnlineDataResult<Unit> = ops.deleteItemById(id)
+    ): OnlineDataResult<FrontendProject?> = ops.deleteItemById(id)
 
     override suspend fun getProjectsModifiedSince(since: Timestamp): OnlineDataResult<List<ProjectSyncResult>> = ops.getModifiedSinceItems()
 

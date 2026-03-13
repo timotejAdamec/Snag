@@ -42,13 +42,18 @@ internal class RealFindingsApi(
     override suspend fun deleteFinding(
         id: Uuid,
         deletedAt: Timestamp,
-    ): OnlineDataResult<Unit> {
+    ): OnlineDataResult<FrontendFinding?> {
         LH.logger.d { "Deleting finding $id from API..." }
         return safeApiCall(logger = LH.logger, errorContext = "Error deleting finding $id from API.") {
-            httpClient.patch("/findings/$id") {
-                setBody(DeleteFindingApiDto(deletedAt = deletedAt))
+            val response =
+                httpClient.patch("/findings/$id") {
+                    setBody(DeleteFindingApiDto(deletedAt = deletedAt))
+                }
+            if (response.status != HttpStatusCode.NoContent) {
+                response.body<FindingApiDto>().toModel()
+            } else {
+                null
             }
-            Unit
         }.also { if (it is OnlineDataResult.Success) LH.logger.d { "Deleted finding $id from API." } }
     }
 

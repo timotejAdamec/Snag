@@ -65,13 +65,18 @@ internal class RealProjectsApi(
     override suspend fun deleteProject(
         id: Uuid,
         deletedAt: Timestamp,
-    ): OnlineDataResult<Unit> {
+    ): OnlineDataResult<FrontendProject?> {
         LH.logger.d { "Deleting project $id from API..." }
         return safeApiCall(logger = LH.logger, errorContext = "Error deleting project $id from API.") {
-            httpClient.patch("/projects/$id") {
-                setBody(DeleteProjectApiDto(deletedAt = deletedAt))
+            val response =
+                httpClient.patch("/projects/$id") {
+                    setBody(DeleteProjectApiDto(deletedAt = deletedAt))
+                }
+            if (response.status != HttpStatusCode.NoContent) {
+                response.body<ProjectApiDto>().toModel()
+            } else {
+                null
             }
-            Unit
         }.also { if (it is OnlineDataResult.Success) LH.logger.d { "Deleted project $id from API." } }
     }
 

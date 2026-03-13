@@ -50,7 +50,7 @@ class FakeClientsApi : ClientsApi {
     override suspend fun deleteClient(
         id: Uuid,
         deletedAt: Timestamp,
-    ): OnlineDataResult<Unit> = ops.deleteItemById(id)
+    ): OnlineDataResult<FrontendClient?> = ops.deleteItemById(id)
 
     override suspend fun getClientsModifiedSince(since: Timestamp): OnlineDataResult<List<ClientSyncResult>> = ops.getModifiedSinceItems()
 

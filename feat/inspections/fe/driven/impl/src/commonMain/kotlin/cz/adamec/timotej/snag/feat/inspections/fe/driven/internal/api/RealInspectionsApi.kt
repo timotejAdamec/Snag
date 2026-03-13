@@ -47,14 +47,19 @@ internal class RealInspectionsApi(
     override suspend fun deleteInspection(
         id: Uuid,
         deletedAt: Timestamp,
-    ): OnlineDataResult<Unit> {
+    ): OnlineDataResult<FrontendInspection?> {
         LH.logger.d { "Deleting inspection $id from API..." }
         val result =
             safeApiCall(logger = LH.logger, errorContext = "Error deleting inspection $id from API.") {
-                httpClient.delete("/inspections/$id") {
-                    setBody(DeleteInspectionApiDto(deletedAt = deletedAt))
+                val response =
+                    httpClient.delete("/inspections/$id") {
+                        setBody(DeleteInspectionApiDto(deletedAt = deletedAt))
+                    }
+                if (response.status != HttpStatusCode.NoContent) {
+                    response.body<InspectionApiDto>().toModel()
+                } else {
+                    null
                 }
-                Unit
             }
         if (result is OnlineDataResult.Success) {
             LH.logger.d { "Deleted inspection $id from API." }

@@ -38,7 +38,7 @@ abstract class DbApiSyncHandler<T>(
     protected abstract suspend fun deleteEntityFromApi(
         entityId: Uuid,
         deletedAt: Timestamp,
-    ): OnlineDataResult<Unit>
+    ): OnlineDataResult<T?>
 
     protected abstract suspend fun saveEntityToDb(entity: T): OfflineFirstDataResult<Unit>
 
@@ -89,9 +89,12 @@ abstract class DbApiSyncHandler<T>(
     }
 
     private suspend fun executeDelete(entityId: Uuid): SyncOperationResult =
-        when (deleteEntityFromApi(entityId, timestampProvider.getNowTimestamp())) {
+        when (val result = deleteEntityFromApi(entityId, timestampProvider.getNowTimestamp())) {
             is OnlineDataResult.Success -> {
-                logger.d { "Deleted $entityName $entityId from API." }
+                result.data?.let { updatedEntity ->
+                    logger.d { "Delete of $entityName $entityId rejected by API. Saving fresher $updatedEntity to DB." }
+                    saveEntityToDb(updatedEntity)
+                } ?: logger.d { "Deleted $entityName $entityId from API." }
                 SyncOperationResult.Success
             }
             is OnlineDataResult.Failure -> {
