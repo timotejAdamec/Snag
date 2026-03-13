@@ -24,7 +24,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -286,8 +285,7 @@ private fun Timestamp.toDisplayString(): String =
         val hour = local.hour.toString().padStart(2, '0')
         val minute = local.minute.toString().padStart(2, '0')
         val day = local.day
-        @Suppress("DEPRECATION")
-        val month = local.monthNumber
+        val month = local.month.ordinal
         val year = local.year
         "$day. $month. $year $hour:$minute"
     } catch (_: Throwable) {

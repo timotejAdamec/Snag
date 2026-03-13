@@ -77,7 +77,7 @@ class FindingDetailViewModelTest : FrontendKoinInitializedTest() {
                 val loadedState = awaitItem()
                 assertEquals(FindingDetailUiStatus.LOADED, loadedState.status)
                 assertNotNull(loadedState.finding)
-                assertEquals("Crack in wall", loadedState.finding?.finding?.name)
+                assertEquals("Crack in wall", loadedState.finding.finding.name)
 
                 cancelAndIgnoreRemainingEvents()
             }
