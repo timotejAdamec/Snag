@@ -31,14 +31,9 @@ class SetProjectClosedUseCaseImpl(
         isClosed: Boolean,
     ): OnlineDataResult<Unit> {
         val localProject =
-            when (val dbResult = projectsDb.getProject(projectId)) {
-                is OfflineFirstDataResult.Success ->
-                    dbResult.data
-                        ?: return OnlineDataResult.Failure.ProgrammerError(
-                            IllegalStateException("Project $projectId not found locally"),
-                        )
-                is OfflineFirstDataResult.ProgrammerError ->
-                    return OnlineDataResult.Failure.ProgrammerError(dbResult.throwable)
+            when (val r = getLocalProjectOrFailure(projectId)) {
+                is OnlineDataResult.Success -> r.data
+                is OnlineDataResult.Failure -> return r
             }
         val updatedProject =
             FrontendProject(
@@ -59,4 +54,15 @@ class SetProjectClosedUseCaseImpl(
             }
         }
     }
+
+    private suspend fun getLocalProjectOrFailure(projectId: Uuid): OnlineDataResult<FrontendProject> =
+        when (val dbResult = projectsDb.getProject(projectId)) {
+            is OfflineFirstDataResult.Success ->
+                dbResult.data?.let { OnlineDataResult.Success(it) }
+                    ?: OnlineDataResult.Failure.ProgrammerError(
+                        IllegalStateException("Project $projectId not found locally"),
+                    )
+            is OfflineFirstDataResult.ProgrammerError ->
+                OnlineDataResult.Failure.ProgrammerError(dbResult.throwable)
+        }
 }

@@ -23,6 +23,7 @@ import cz.adamec.timotej.snag.lib.core.common.TimestampProvider
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
+import cz.adamec.timotej.snag.lib.design.fe.error.toUiError
 import cz.adamec.timotej.snag.projects.fe.app.api.DeleteProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.GetProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.SetProjectClosedUseCase
@@ -238,12 +239,5 @@ internal class ProjectDetailsViewModel(
                 }
             }
             _state.update { it.copy(isDownloadingReport = false) }
-        }
-
-    private fun OnlineDataResult.Failure.toUiError(): UiError =
-        when (this) {
-            is OnlineDataResult.Failure.NetworkUnavailable -> UiError.NetworkUnavailable
-            is OnlineDataResult.Failure.UserMessageError -> UiError.CustomUserMessage(message)
-            is OnlineDataResult.Failure.ProgrammerError -> UiError.Unknown
         }
 }
