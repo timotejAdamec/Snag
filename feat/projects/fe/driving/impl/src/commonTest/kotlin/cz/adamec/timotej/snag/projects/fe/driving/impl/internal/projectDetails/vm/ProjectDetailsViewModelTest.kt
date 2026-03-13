@@ -29,6 +29,7 @@ import cz.adamec.timotej.snag.projects.business.Project
 import cz.adamec.timotej.snag.projects.fe.app.api.DeleteProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.GetProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.SetProjectClosedUseCase
+import cz.adamec.timotej.snag.projects.fe.driven.test.FakeProjectsApi
 import cz.adamec.timotej.snag.projects.fe.driven.test.FakeProjectsDb
 import cz.adamec.timotej.snag.projects.fe.model.FrontendProject
 import cz.adamec.timotej.snag.structures.fe.app.api.GetStructuresUseCase
@@ -421,5 +422,82 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
             assertIs<OnlineDataResult.Success<List<FrontendInspection>>>(apiResult)
             val synced = apiResult.data.find { it.inspection.id == inspectionId }
             assertEquals(fixedNow, synced?.inspection?.endedAt)
+        }
+
+    private fun seedClosedProject(projectId: Uuid): FrontendProject {
+        val project =
+            FrontendProject(
+                project =
+                    Project(
+                        id = projectId,
+                        name = "Closed Project",
+                        address = "Test Address",
+                        isClosed = true,
+                        updatedAt = Timestamp(10L),
+                    ),
+            )
+        fakeProjectsDb.setProject(project)
+        return project
+    }
+
+    @Test
+    fun `onToggleClose on open project sets isClosed to true`() =
+        runTest(testDispatcher) {
+            val projectId = Uuid.random()
+            seedProject(projectId)
+
+            val viewModel = createViewModel(projectId)
+            advanceUntilIdle()
+
+            assertFalse(viewModel.state.value.isClosed)
+
+            viewModel.onToggleClose()
+            advanceUntilIdle()
+
+            assertTrue(viewModel.state.value.isClosed)
+        }
+
+    @Test
+    fun `onToggleClose on closed project sets isClosed to false`() =
+        runTest(testDispatcher) {
+            val projectId = Uuid.random()
+            seedClosedProject(projectId)
+
+            val viewModel = createViewModel(projectId)
+            advanceUntilIdle()
+
+            assertTrue(viewModel.state.value.isClosed)
+
+            viewModel.onToggleClose()
+            advanceUntilIdle()
+
+            assertFalse(viewModel.state.value.isClosed)
+        }
+
+    @Test
+    fun `onToggleClose network failure sends error`() =
+        runTest(testDispatcher) {
+            val projectId = Uuid.random()
+            seedProject(projectId)
+            val fakeProjectsApi: FakeProjectsApi by inject()
+            fakeProjectsApi.forcedFailure = OnlineDataResult.Failure.NetworkUnavailable
+
+            val viewModel = createViewModel(projectId)
+            advanceUntilIdle()
+
+            viewModel.onToggleClose()
+
+            val error = viewModel.errorsFlow.first()
+            assertIs<UiError.NetworkUnavailable>(error)
+        }
+
+    @Test
+    fun `canToggleClosed is false when not loaded`() =
+        runTest(testDispatcher) {
+            val projectId = Uuid.random()
+
+            val viewModel = createViewModel(projectId)
+
+            assertFalse(viewModel.state.value.canToggleClosed)
         }
 }
