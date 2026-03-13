@@ -13,6 +13,7 @@
 package cz.adamec.timotej.snag.structures.fe.app.impl.internal.sync
 
 import cz.adamec.timotej.snag.feat.structures.fe.model.FrontendStructure
+import cz.adamec.timotej.snag.findings.fe.app.api.CascadeRestoreLocalFindingsByStructureIdUseCase
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.common.TimestampProvider
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
@@ -27,6 +28,7 @@ import kotlin.uuid.Uuid
 internal class StructureSyncHandler(
     private val structuresApi: StructuresApi,
     private val structuresDb: StructuresDb,
+    private val cascadeRestoreLocalFindingsByStructureIdUseCase: CascadeRestoreLocalFindingsByStructureIdUseCase,
     timestampProvider: TimestampProvider,
 ) : DbApiSyncHandler<FrontendStructure>(LH.logger, timestampProvider) {
     override val entityTypeId: String = STRUCTURE_SYNC_ENTITY_TYPE
@@ -43,4 +45,8 @@ internal class StructureSyncHandler(
     ): OnlineDataResult<FrontendStructure?> = structuresApi.deleteStructure(entityId, deletedAt)
 
     override suspend fun saveEntityToDb(entity: FrontendStructure): OfflineFirstDataResult<Unit> = structuresDb.saveStructure(entity)
+
+    override suspend fun onDeleteRejected(entityId: Uuid) {
+        cascadeRestoreLocalFindingsByStructureIdUseCase(entityId)
+    }
 }
