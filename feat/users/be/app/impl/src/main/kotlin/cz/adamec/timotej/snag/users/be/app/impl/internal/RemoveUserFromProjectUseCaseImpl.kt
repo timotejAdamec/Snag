@@ -20,7 +20,10 @@ import kotlin.uuid.Uuid
 internal class RemoveUserFromProjectUseCaseImpl(
     private val projectAssignmentsDb: ProjectAssignmentsDb,
 ) : RemoveUserFromProjectUseCase {
-    override suspend operator fun invoke(userId: Uuid, projectId: Uuid) {
+    override suspend operator fun invoke(
+        userId: Uuid,
+        projectId: Uuid,
+    ) {
         logger.debug("Removing user {} from project {}.", userId, projectId)
         projectAssignmentsDb.removeUser(userId, projectId)
         logger.debug("Removed user {} from project {}.", userId, projectId)

@@ -15,5 +15,8 @@ package cz.adamec.timotej.snag.users.be.app.api
 import kotlin.uuid.Uuid
 
 interface AssignUserToProjectUseCase {
-    suspend operator fun invoke(userId: Uuid, projectId: Uuid)
+    suspend operator fun invoke(
+        userId: Uuid,
+        projectId: Uuid,
+    )
 }

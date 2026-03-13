@@ -2,16 +2,18 @@ CREATE TABLE IF NOT EXISTS UserEntity (
     id TEXT NOT NULL PRIMARY KEY,
     entraId TEXT NOT NULL,
     email TEXT NOT NULL,
-    role TEXT
+    role TEXT,
+    updatedAt INTEGER NOT NULL
 );
 
 save:
-INSERT INTO UserEntity(id, entraId, email, role)
+INSERT INTO UserEntity(id, entraId, email, role, updatedAt)
 VALUES ?
 ON CONFLICT(id) DO UPDATE SET
     entraId = excluded.entraId,
     email = excluded.email,
-    role = excluded.role;
+    role = excluded.role,
+    updatedAt = excluded.updatedAt;
 
 selectAll:
 SELECT * FROM UserEntity;

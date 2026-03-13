@@ -38,13 +38,15 @@ internal class RealProjectAssignmentsDb(
                     .where { ProjectAssignmentsTable.projectId eq projectId }
                     .map { it[ProjectAssignmentsTable.userId] }
 
-            if (userIds.isEmpty()) return@transaction emptyList()
-
-            UserEntity.find { UsersTable.id inList userIds }
+            UserEntity
+                .find { UsersTable.id inList userIds }
                 .map { it.toModel() }
         }
 
-    override suspend fun assignUser(userId: Uuid, projectId: Uuid) {
+    override suspend fun assignUser(
+        userId: Uuid,
+        projectId: Uuid,
+    ) {
         transaction(database) {
             ProjectAssignmentsTable.insertIgnore {
                 it[ProjectAssignmentsTable.userId] = userId
@@ -53,10 +55,13 @@ internal class RealProjectAssignmentsDb(
         }
     }
 
-    override suspend fun removeUser(userId: Uuid, projectId: Uuid) {
+    override suspend fun removeUser(
+        userId: Uuid,
+        projectId: Uuid,
+    ) {
         transaction(database) {
             ProjectAssignmentsTable.deleteWhere {
-                (ProjectAssignmentsTable.userId eq userId) and
+                ProjectAssignmentsTable.userId eq userId and
                     (ProjectAssignmentsTable.projectId eq projectId)
             }
         }

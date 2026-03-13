@@ -20,4 +20,5 @@ object UsersTable : UuidTable("users") {
     val entraId = varchar("entra_id", VARCHAR_MAX_LENGTH).uniqueIndex()
     val email = varchar("email", VARCHAR_MAX_LENGTH)
     val role = varchar("role", VARCHAR_MAX_LENGTH).nullable()
+    val updatedAt = long("updated_at")
 }

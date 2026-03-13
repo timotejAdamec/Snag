@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.users.fe.driven.internal.api
 
+import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.users.be.driving.contract.UserApiDto
 import cz.adamec.timotej.snag.users.business.User
 import cz.adamec.timotej.snag.users.business.UserRole
@@ -26,5 +27,6 @@ internal fun UserApiDto.toModel() =
                 entraId = entraId,
                 email = email,
                 role = role?.let { UserRole.valueOf(it) },
+                updatedAt = Timestamp(updatedAt),
             ),
     )

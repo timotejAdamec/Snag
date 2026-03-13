@@ -26,6 +26,7 @@ kotlin {
             implementation(projects.feat.projects.fe.driven.test)
             implementation(projects.feat.reports.fe.driven.test)
             implementation(projects.feat.structures.fe.driven.test)
+            implementation(projects.feat.users.fe.driven.test)
             implementation(projects.lib.network.fe.driven.test)
             implementation(projects.lib.storage.fe.test)
             implementation(projects.lib.sync.fe.driven.test)

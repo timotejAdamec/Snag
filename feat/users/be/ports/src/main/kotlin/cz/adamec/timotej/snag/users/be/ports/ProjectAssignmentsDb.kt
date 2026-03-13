@@ -18,9 +18,15 @@ import kotlin.uuid.Uuid
 interface ProjectAssignmentsDb {
     suspend fun getAssignedUsers(projectId: Uuid): List<BackendUser>
 
-    suspend fun assignUser(userId: Uuid, projectId: Uuid)
+    suspend fun assignUser(
+        userId: Uuid,
+        projectId: Uuid,
+    )
 
-    suspend fun removeUser(userId: Uuid, projectId: Uuid)
+    suspend fun removeUser(
+        userId: Uuid,
+        projectId: Uuid,
+    )
 
     suspend fun getProjectsForUser(userId: Uuid): List<Uuid>
 }

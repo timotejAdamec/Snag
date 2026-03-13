@@ -10,11 +10,6 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.users.fe.app.api
+package cz.adamec.timotej.snag.users.fe.app.impl.internal.sync
 
-import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
-import cz.adamec.timotej.snag.users.fe.model.FrontendUser
-
-interface GetCurrentUserUseCase {
-    suspend operator fun invoke(): OnlineDataResult<FrontendUser>
-}
+internal const val USER_SYNC_ENTITY_TYPE = "user"

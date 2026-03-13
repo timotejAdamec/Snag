@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.users.be.ports
 
+import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.users.be.model.BackendUser
 import kotlin.uuid.Uuid
 
@@ -23,4 +24,6 @@ interface UsersDb {
     suspend fun getUserByEntraId(entraId: String): BackendUser?
 
     suspend fun saveUser(user: BackendUser): BackendUser
+
+    suspend fun getUsersModifiedSince(since: Timestamp): List<BackendUser>
 }

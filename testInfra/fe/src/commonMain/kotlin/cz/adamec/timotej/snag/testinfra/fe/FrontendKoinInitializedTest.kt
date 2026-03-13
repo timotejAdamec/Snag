@@ -24,6 +24,7 @@ import cz.adamec.timotej.snag.network.fe.test.networkFeDrivenTestModule
 import cz.adamec.timotej.snag.projects.fe.driven.test.projectsFeDrivenTestModule
 import cz.adamec.timotej.snag.structures.fe.driven.test.structuresFeDrivenTestModule
 import cz.adamec.timotej.snag.testinfra.KoinInitializedTest
+import cz.adamec.timotej.snag.users.fe.driven.test.usersFeDrivenTestModule
 import org.koin.core.module.Module
 
 abstract class FrontendKoinInitializedTest : KoinInitializedTest() {
@@ -37,6 +38,7 @@ abstract class FrontendKoinInitializedTest : KoinInitializedTest() {
             projectsFeDrivenTestModule,
             reportsFeDrivenTestModule,
             structuresFeDrivenTestModule,
+            usersFeDrivenTestModule,
             networkFeDrivenTestModule,
             storageFeTestModule,
             syncFeDrivenTestModule,

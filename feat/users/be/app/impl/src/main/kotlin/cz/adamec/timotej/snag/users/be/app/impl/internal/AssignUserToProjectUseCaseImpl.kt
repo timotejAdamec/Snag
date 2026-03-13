@@ -20,7 +20,10 @@ import kotlin.uuid.Uuid
 internal class AssignUserToProjectUseCaseImpl(
     private val projectAssignmentsDb: ProjectAssignmentsDb,
 ) : AssignUserToProjectUseCase {
-    override suspend operator fun invoke(userId: Uuid, projectId: Uuid) {
+    override suspend operator fun invoke(
+        userId: Uuid,
+        projectId: Uuid,
+    ) {
         logger.debug("Assigning user {} to project {}.", userId, projectId)
         projectAssignmentsDb.assignUser(userId, projectId)
         logger.debug("Assigned user {} to project {}.", userId, projectId)

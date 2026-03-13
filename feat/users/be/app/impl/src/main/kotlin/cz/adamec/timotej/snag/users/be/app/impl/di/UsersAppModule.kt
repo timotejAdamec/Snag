@@ -15,12 +15,14 @@ package cz.adamec.timotej.snag.users.be.app.impl.di
 import cz.adamec.timotej.snag.users.be.app.api.AssignUserToProjectUseCase
 import cz.adamec.timotej.snag.users.be.app.api.GetProjectAssignmentsUseCase
 import cz.adamec.timotej.snag.users.be.app.api.GetUserUseCase
+import cz.adamec.timotej.snag.users.be.app.api.GetUsersModifiedSinceUseCase
 import cz.adamec.timotej.snag.users.be.app.api.GetUsersUseCase
 import cz.adamec.timotej.snag.users.be.app.api.RemoveUserFromProjectUseCase
 import cz.adamec.timotej.snag.users.be.app.api.SaveUserUseCase
 import cz.adamec.timotej.snag.users.be.app.impl.internal.AssignUserToProjectUseCaseImpl
 import cz.adamec.timotej.snag.users.be.app.impl.internal.GetProjectAssignmentsUseCaseImpl
 import cz.adamec.timotej.snag.users.be.app.impl.internal.GetUserUseCaseImpl
+import cz.adamec.timotej.snag.users.be.app.impl.internal.GetUsersModifiedSinceUseCaseImpl
 import cz.adamec.timotej.snag.users.be.app.impl.internal.GetUsersUseCaseImpl
 import cz.adamec.timotej.snag.users.be.app.impl.internal.RemoveUserFromProjectUseCaseImpl
 import cz.adamec.timotej.snag.users.be.app.impl.internal.SaveUserUseCaseImpl
@@ -32,6 +34,7 @@ val usersAppModule =
     module {
         factoryOf(::GetUsersUseCaseImpl) bind GetUsersUseCase::class
         factoryOf(::GetUserUseCaseImpl) bind GetUserUseCase::class
+        factoryOf(::GetUsersModifiedSinceUseCaseImpl) bind GetUsersModifiedSinceUseCase::class
         factoryOf(::SaveUserUseCaseImpl) bind SaveUserUseCase::class
         factoryOf(::GetProjectAssignmentsUseCaseImpl) bind GetProjectAssignmentsUseCase::class
         factoryOf(::AssignUserToProjectUseCaseImpl) bind AssignUserToProjectUseCase::class

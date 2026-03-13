@@ -12,12 +12,14 @@
 
 package cz.adamec.timotej.snag.users.fe.driven.internal.api
 
+import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
 import cz.adamec.timotej.snag.network.fe.SnagNetworkHttpClient
 import cz.adamec.timotej.snag.network.fe.safeApiCall
 import cz.adamec.timotej.snag.users.be.driving.contract.UserApiDto
 import cz.adamec.timotej.snag.users.fe.driven.internal.LH
 import cz.adamec.timotej.snag.users.fe.model.FrontendUser
+import cz.adamec.timotej.snag.users.fe.ports.UserSyncResult
 import cz.adamec.timotej.snag.users.fe.ports.UsersApi
 import io.ktor.client.call.body
 import kotlin.uuid.Uuid
@@ -41,10 +43,12 @@ internal class RealUsersApi(
         }.also { if (it is OnlineDataResult.Success) LH.logger.d { "Fetched user $id." } }
     }
 
-    override suspend fun getCurrentUser(): OnlineDataResult<FrontendUser> {
-        LH.logger.d { "Fetching current user..." }
-        return safeApiCall(logger = LH.logger, errorContext = "Error fetching current user.") {
-            httpClient.get("/users/me").body<UserApiDto>().toModel()
-        }.also { if (it is OnlineDataResult.Success) LH.logger.d { "Fetched current user." } }
+    override suspend fun getUsersModifiedSince(since: Timestamp): OnlineDataResult<List<UserSyncResult>> {
+        LH.logger.d { "Fetching users modified since $since..." }
+        return safeApiCall(logger = LH.logger, errorContext = "Error fetching users modified since $since.") {
+            httpClient.get("/users?since=${since.value}").body<List<UserApiDto>>().map {
+                UserSyncResult.Updated(it.toModel())
+            }
+        }.also { if (it is OnlineDataResult.Success) LH.logger.d { "Fetched ${it.data.size} modified users." } }
     }
 }

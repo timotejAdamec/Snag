@@ -14,9 +14,11 @@ package cz.adamec.timotej.snag.users.be.driven.impl.internal
 
 import cz.adamec.timotej.snag.feat.shared.database.be.UserEntity
 import cz.adamec.timotej.snag.feat.shared.database.be.UsersTable
+import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.users.be.model.BackendUser
 import cz.adamec.timotej.snag.users.be.ports.UsersDb
 import org.jetbrains.exposed.v1.core.eq
+import org.jetbrains.exposed.v1.core.greater
 import org.jetbrains.exposed.v1.jdbc.Database
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 import kotlin.uuid.Uuid
@@ -46,13 +48,23 @@ internal class RealUsersDb(
                 existing.entraId = user.user.entraId
                 existing.email = user.user.email
                 existing.role = user.user.role?.name
+                existing.updatedAt = user.user.updatedAt.value
                 existing.toModel()
             } else {
-                UserEntity.new(user.user.id) {
-                    entraId = user.user.entraId
-                    email = user.user.email
-                    role = user.user.role?.name
-                }.toModel()
+                UserEntity
+                    .new(user.user.id) {
+                        entraId = user.user.entraId
+                        email = user.user.email
+                        role = user.user.role?.name
+                        updatedAt = user.user.updatedAt.value
+                    }.toModel()
             }
+        }
+
+    override suspend fun getUsersModifiedSince(since: Timestamp): List<BackendUser> =
+        transaction(database) {
+            UserEntity
+                .find { UsersTable.updatedAt greater since.value }
+                .map { it.toModel() }
         }
 }

@@ -13,6 +13,7 @@
 package cz.adamec.timotej.snag.users.be.driven.impl.internal
 
 import cz.adamec.timotej.snag.feat.shared.database.be.UserEntity
+import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.users.be.model.BackendUser
 import cz.adamec.timotej.snag.users.business.User
 import cz.adamec.timotej.snag.users.business.UserRole
@@ -25,5 +26,6 @@ internal fun UserEntity.toModel() =
                 entraId = entraId,
                 email = email,
                 role = role?.let { UserRole.valueOf(it) },
+                updatedAt = Timestamp(updatedAt),
             ),
     )

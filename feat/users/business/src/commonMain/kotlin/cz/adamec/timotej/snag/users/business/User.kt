@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.users.business
 
+import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import kotlin.uuid.Uuid
 
 data class User(
@@ -19,4 +20,5 @@ data class User(
     val entraId: String,
     val email: String,
     val role: UserRole? = null,
+    val updatedAt: Timestamp,
 )

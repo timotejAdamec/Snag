@@ -19,6 +19,7 @@ import cz.adamec.timotej.snag.feat.shared.database.fe.db.InspectionEntityQueries
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.ProjectEntityQueries
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.SnagDatabase
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.StructureEntityQueries
+import cz.adamec.timotej.snag.feat.shared.database.fe.db.UserEntityQueries
 import cz.adamec.timotej.snag.lib.database.fe.sqlDelightDatabaseModule
 import org.koin.core.qualifier.named
 import org.koin.dsl.bind
@@ -43,4 +44,5 @@ val databaseModule =
         factory { get<SnagDatabase>().findingEntityQueries } bind FindingEntityQueries::class
         factory { get<SnagDatabase>().classicFindingEntityQueries } bind ClassicFindingEntityQueries::class
         factory { get<SnagDatabase>().inspectionEntityQueries } bind InspectionEntityQueries::class
+        factory { get<SnagDatabase>().userEntityQueries } bind UserEntityQueries::class
     }

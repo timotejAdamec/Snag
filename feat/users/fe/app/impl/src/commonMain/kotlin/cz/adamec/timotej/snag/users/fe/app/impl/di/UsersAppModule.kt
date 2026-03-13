@@ -12,10 +12,10 @@
 
 package cz.adamec.timotej.snag.users.fe.app.impl.di
 
-import cz.adamec.timotej.snag.users.fe.app.api.GetCurrentUserUseCase
 import cz.adamec.timotej.snag.users.fe.app.api.GetUsersUseCase
-import cz.adamec.timotej.snag.users.fe.app.impl.internal.GetCurrentUserUseCaseImpl
+import cz.adamec.timotej.snag.users.fe.app.api.PullUserChangesUseCase
 import cz.adamec.timotej.snag.users.fe.app.impl.internal.GetUsersUseCaseImpl
+import cz.adamec.timotej.snag.users.fe.app.impl.internal.PullUserChangesUseCaseImpl
 import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
@@ -23,5 +23,5 @@ import org.koin.dsl.module
 val usersAppModule =
     module {
         factoryOf(::GetUsersUseCaseImpl) bind GetUsersUseCase::class
-        factoryOf(::GetCurrentUserUseCaseImpl) bind GetCurrentUserUseCase::class
+        factoryOf(::PullUserChangesUseCaseImpl) bind PullUserChangesUseCase::class
     }

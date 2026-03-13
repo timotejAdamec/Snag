@@ -19,4 +19,5 @@ data class PutUserApiDto(
     val entraId: String,
     val email: String,
     val role: String? = null,
+    val updatedAt: Long,
 )

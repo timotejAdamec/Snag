@@ -12,12 +12,14 @@
 
 package cz.adamec.timotej.snag.users.be.driving.impl.internal
 
+import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.routing.be.AppRoute
 import cz.adamec.timotej.snag.routing.be.getDtoFromBody
 import cz.adamec.timotej.snag.routing.be.getIdFromParameters
 import cz.adamec.timotej.snag.users.be.app.api.AssignUserToProjectUseCase
 import cz.adamec.timotej.snag.users.be.app.api.GetProjectAssignmentsUseCase
 import cz.adamec.timotej.snag.users.be.app.api.GetUserUseCase
+import cz.adamec.timotej.snag.users.be.app.api.GetUsersModifiedSinceUseCase
 import cz.adamec.timotej.snag.users.be.app.api.GetUsersUseCase
 import cz.adamec.timotej.snag.users.be.app.api.RemoveUserFromProjectUseCase
 import cz.adamec.timotej.snag.users.be.app.api.SaveUserUseCase
@@ -30,9 +32,10 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.put
 import io.ktor.server.routing.route
 
-@Suppress("LabeledExpression")
+@Suppress("LabeledExpression", "StringLiteralDuplication")
 internal class UsersRoute(
     private val getUsersUseCase: GetUsersUseCase,
+    private val getUsersModifiedSinceUseCase: GetUsersModifiedSinceUseCase,
     private val getUserUseCase: GetUserUseCase,
     private val saveUserUseCase: SaveUserUseCase,
     private val getProjectAssignmentsUseCase: GetProjectAssignmentsUseCase,
@@ -42,8 +45,15 @@ internal class UsersRoute(
     override fun Route.setup() {
         route("/users") {
             get {
-                val dtoUsers = getUsersUseCase().map { it.toDto() }
-                call.respond(dtoUsers)
+                val sinceParam = call.request.queryParameters["since"]
+                if (sinceParam != null) {
+                    val since = Timestamp(sinceParam.toLong())
+                    val modified = getUsersModifiedSinceUseCase(since).map { it.toDto() }
+                    call.respond(modified)
+                } else {
+                    val dtoUsers = getUsersUseCase().map { it.toDto() }
+                    call.respond(dtoUsers)
+                }
             }
 
             get("/{id}") {

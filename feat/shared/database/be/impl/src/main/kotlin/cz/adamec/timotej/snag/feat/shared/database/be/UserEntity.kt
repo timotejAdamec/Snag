@@ -23,6 +23,7 @@ class UserEntity(
     var entraId by UsersTable.entraId
     var email by UsersTable.email
     var role by UsersTable.role
+    var updatedAt by UsersTable.updatedAt
 
     companion object : UuidEntityClass<UserEntity>(UsersTable)
 }

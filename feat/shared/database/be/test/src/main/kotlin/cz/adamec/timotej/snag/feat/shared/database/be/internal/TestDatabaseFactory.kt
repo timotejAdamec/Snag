@@ -17,7 +17,7 @@ import org.jetbrains.exposed.v1.jdbc.Database
 internal object TestDatabaseFactory {
     private val database: Database by lazy {
         Database.connect(
-            url = "jdbc:h2:mem:test-shared;DB_CLOSE_DELAY=-1",
+            url = "jdbc:h2:mem:test-shared;DB_CLOSE_DELAY=-1;MODE=MySQL",
             driver = "org.h2.Driver",
         )
     }
