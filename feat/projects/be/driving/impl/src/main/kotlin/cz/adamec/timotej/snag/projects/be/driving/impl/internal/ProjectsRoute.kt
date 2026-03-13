@@ -27,7 +27,7 @@ import cz.adamec.timotej.snag.projects.be.driving.contract.PutProjectApiDto
 import cz.adamec.timotej.snag.routing.be.AppRoute
 import cz.adamec.timotej.snag.routing.be.getDtoFromBody
 import cz.adamec.timotej.snag.routing.be.getIdFromParameters
-import cz.adamec.timotej.snag.users.be.driving.impl.internal.toDto
+import cz.adamec.timotej.snag.users.be.driving.api.toDto
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route

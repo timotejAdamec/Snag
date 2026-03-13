@@ -11,13 +11,10 @@
  */
 
 plugins {
-    alias(libs.plugins.snagImplDrivingBackendModule)
+    alias(libs.plugins.snagBackendModule)
 }
 
 dependencies {
-    implementation(project(":feat:users:be:driving:api"))
     implementation(project(":feat:users:be:driving:contract"))
-    implementation(project(":feat:users:be:app:api"))
-    testImplementation(project(":lib:configuration:be:api"))
-    testImplementation(project(":feat:users:be:ports"))
+    implementation(project(":feat:users:be:model"))
 }

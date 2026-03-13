@@ -20,6 +20,7 @@ import cz.adamec.timotej.snag.users.be.app.api.GetUserUseCase
 import cz.adamec.timotej.snag.users.be.app.api.GetUsersModifiedSinceUseCase
 import cz.adamec.timotej.snag.users.be.app.api.GetUsersUseCase
 import cz.adamec.timotej.snag.users.be.app.api.SaveUserUseCase
+import cz.adamec.timotej.snag.users.be.driving.api.toDto
 import cz.adamec.timotej.snag.users.be.driving.contract.PutUserApiDto
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.response.respond
