@@ -13,17 +13,17 @@
 package cz.adamec.timotej.snag.projects.business
 
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
+import cz.adamec.timotej.snag.lib.core.common.UuidProvider
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
-import kotlin.uuid.Uuid
 
 class CanEditProjectEntitiesRuleTest {
     private val rule = CanEditProjectEntitiesRule()
 
     private fun createProject(isClosed: Boolean) =
         Project(
-            id = Uuid.parse("00000000-0000-0000-0000-000000000001"),
+            id = UuidProvider.getUuid(),
             name = "Test Project",
             address = "Test Address",
             isClosed = isClosed,
