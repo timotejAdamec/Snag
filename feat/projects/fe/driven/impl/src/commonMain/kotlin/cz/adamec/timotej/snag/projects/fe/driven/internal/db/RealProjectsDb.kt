@@ -16,6 +16,7 @@ import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.projects.fe.model.FrontendProject
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsDb
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlin.uuid.Uuid
 
 internal class RealProjectsDb(
@@ -24,6 +25,8 @@ internal class RealProjectsDb(
     override fun getAllProjectsFlow(): Flow<OfflineFirstDataResult<List<FrontendProject>>> = ops.allEntitiesFlow()
 
     override fun getProjectFlow(id: Uuid): Flow<OfflineFirstDataResult<FrontendProject?>> = ops.entityByIdFlow(id)
+
+    override suspend fun getProject(id: Uuid): OfflineFirstDataResult<FrontendProject?> = ops.entityByIdFlow(id).first()
 
     override suspend fun saveProject(project: FrontendProject): OfflineFirstDataResult<Unit> = ops.saveOne(project)
 

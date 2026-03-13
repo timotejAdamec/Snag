@@ -25,6 +25,7 @@ internal fun ProjectEntity.toModel() =
                 name = name,
                 address = address,
                 clientId = client?.id?.value,
+                isClosed = isClosed,
                 updatedAt = Timestamp(updatedAt),
             ),
         deletedAt = deletedAt?.let { Timestamp(it) },

@@ -31,14 +31,14 @@ This document is a reference for the implementation team. It describes what the 
 ```
 
 ### On project close
-- The project state is set to "closed".
-- Users assigned to the project lose access to it (they no longer see it in their project list).
-- All project data is preserved — **no data is deleted**.
-- Pending synchronisation queue entries for this project should be discarded / ignored.
+- [x] The project state is set to "closed".
+- [ ] Users assigned to the project lose access to it (they no longer see it in their project list). *(requires roles/assignment — not yet implemented)*
+- [x] All project data is preserved — **no data is deleted**.
+- [x] Pending synchronisation queue entries for this project should be discarded / ignored. *(backend returns server entity instead of 403, frontend treats as success — queue unblocks)*
 
 ### On project reopen
-- The project state is set back to "open".
-- Previously assigned users regain access.
+- [x] The project state is set back to "open".
+- [ ] Previously assigned users regain access. *(requires roles/assignment — not yet implemented)*
 
 ---
 
@@ -62,6 +62,8 @@ Both the **creator** and any **assigned user** of an open project have **full CR
 - Photo documentation (of objects and findings)
 
 When a project is **closed**, only the creator retains access. Assigned users lose all access immediately.
+
+> **Status**: [x] Backend rejects sub-entity save/delete on closed projects (returns server entity for sync compatibility). [ ] Creator-only access enforcement requires roles — not yet implemented.
 
 ---
 
@@ -102,11 +104,11 @@ The following features are new compared to the original analysis (which had no r
 
 | FP | Description | UC |
 |---|---|---|
-| FP4 | Close project — revoke access, preserve data | UC1 |
-| FP4b | Reopen project — reopen a closed project | UC1 |
+| FP4 | Close project — revoke access, preserve data | UC1 | **Partial** — close mechanism done, access revocation requires roles |
+| FP4b | Reopen project — reopen a closed project | UC1 | **Partial** — reopen mechanism done, access restoration requires roles |
 | FP4c | Assign user to project | UC1 |
 | FP4d | Remove user from project | UC1 |
-| FP4e | Close project — creator access: only creator retains access to closed project | UC1 |
+| FP4e | Close project — creator access: only creator retains access to closed project | UC1 | **Partial** — sub-entity editing blocked on closed projects, creator-only enforcement requires roles |
 | FP31 | Delete inspection | UC5 |
 | FP32b | Generate service protocol — PDF with work description and signature fields | UC6 |
 | FP34 | Authentication via Microsoft EntraID | — |

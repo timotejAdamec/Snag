@@ -13,6 +13,7 @@
 package cz.adamec.timotej.snag.lib.design.fe.error
 
 import androidx.compose.runtime.Immutable
+import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
 import org.jetbrains.compose.resources.getString
 import snag.lib.design.fe.generated.resources.Res
 import snag.lib.design.fe.generated.resources.error_network
@@ -28,6 +29,13 @@ sealed interface UiError {
         val message: String,
     ) : UiError
 }
+
+fun OnlineDataResult.Failure.toUiError(): UiError =
+    when (this) {
+        is OnlineDataResult.Failure.NetworkUnavailable -> UiError.NetworkUnavailable
+        is OnlineDataResult.Failure.UserMessageError -> UiError.CustomUserMessage(message)
+        is OnlineDataResult.Failure.ProgrammerError -> UiError.Unknown
+    }
 
 suspend fun UiError.toInformativeMessage(): String =
     when (this) {

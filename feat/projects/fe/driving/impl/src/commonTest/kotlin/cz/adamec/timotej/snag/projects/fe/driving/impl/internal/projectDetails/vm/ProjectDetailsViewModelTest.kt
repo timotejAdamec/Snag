@@ -22,12 +22,15 @@ import cz.adamec.timotej.snag.feat.reports.fe.app.api.DownloadReportUseCase
 import cz.adamec.timotej.snag.feat.reports.fe.driven.test.FakeReportsApi
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.common.TimestampProvider
+import cz.adamec.timotej.snag.lib.core.common.UuidProvider
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.lib.sync.fe.driven.test.FakeSyncQueue
 import cz.adamec.timotej.snag.projects.business.Project
 import cz.adamec.timotej.snag.projects.fe.app.api.DeleteProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.GetProjectUseCase
+import cz.adamec.timotej.snag.projects.fe.app.api.SetProjectClosedUseCase
+import cz.adamec.timotej.snag.projects.fe.driven.test.FakeProjectsApi
 import cz.adamec.timotej.snag.projects.fe.driven.test.FakeProjectsDb
 import cz.adamec.timotej.snag.projects.fe.model.FrontendProject
 import cz.adamec.timotej.snag.structures.fe.app.api.GetStructuresUseCase
@@ -64,6 +67,7 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
     private val getInspectionsUseCase: GetInspectionsUseCase by inject()
     private val saveInspectionUseCase: SaveInspectionUseCase by inject()
     private val downloadReportUseCase: DownloadReportUseCase by inject()
+    private val setProjectClosedUseCase: SetProjectClosedUseCase by inject()
     private val timestampProvider: TimestampProvider by inject()
 
     override fun additionalKoinModules(): List<Module> =
@@ -86,6 +90,7 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
             getInspectionsUseCase = getInspectionsUseCase,
             downloadReportUseCase = downloadReportUseCase,
             saveInspectionUseCase = saveInspectionUseCase,
+            setProjectClosedUseCase = setProjectClosedUseCase,
             timestampProvider = timestampProvider,
         )
 
@@ -418,5 +423,82 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
             assertIs<OnlineDataResult.Success<List<FrontendInspection>>>(apiResult)
             val synced = apiResult.data.find { it.inspection.id == inspectionId }
             assertEquals(fixedNow, synced?.inspection?.endedAt)
+        }
+
+    private fun seedClosedProject(projectId: Uuid): FrontendProject {
+        val project =
+            FrontendProject(
+                project =
+                    Project(
+                        id = projectId,
+                        name = "Closed Project",
+                        address = "Test Address",
+                        isClosed = true,
+                        updatedAt = Timestamp(10L),
+                    ),
+            )
+        fakeProjectsDb.setProject(project)
+        return project
+    }
+
+    @Test
+    fun `onToggleClose on open project sets isClosed to true`() =
+        runTest(testDispatcher) {
+            val projectId = UuidProvider.getUuid()
+            seedProject(projectId)
+
+            val viewModel = createViewModel(projectId)
+            advanceUntilIdle()
+
+            assertFalse(viewModel.state.value.isClosed)
+
+            viewModel.onToggleClose()
+            advanceUntilIdle()
+
+            assertTrue(viewModel.state.value.isClosed)
+        }
+
+    @Test
+    fun `onToggleClose on closed project sets isClosed to false`() =
+        runTest(testDispatcher) {
+            val projectId = UuidProvider.getUuid()
+            seedClosedProject(projectId)
+
+            val viewModel = createViewModel(projectId)
+            advanceUntilIdle()
+
+            assertTrue(viewModel.state.value.isClosed)
+
+            viewModel.onToggleClose()
+            advanceUntilIdle()
+
+            assertFalse(viewModel.state.value.isClosed)
+        }
+
+    @Test
+    fun `onToggleClose network failure sends error`() =
+        runTest(testDispatcher) {
+            val projectId = UuidProvider.getUuid()
+            seedProject(projectId)
+            val fakeProjectsApi: FakeProjectsApi by inject()
+            fakeProjectsApi.forcedFailure = OnlineDataResult.Failure.NetworkUnavailable
+
+            val viewModel = createViewModel(projectId)
+            advanceUntilIdle()
+
+            viewModel.onToggleClose()
+
+            val error = viewModel.errorsFlow.first()
+            assertIs<UiError.NetworkUnavailable>(error)
+        }
+
+    @Test
+    fun `canToggleClosed is false when not loaded`() =
+        runTest(testDispatcher) {
+            val projectId = UuidProvider.getUuid()
+
+            val viewModel = createViewModel(projectId)
+
+            assertFalse(viewModel.state.value.canToggleClosed)
         }
 }

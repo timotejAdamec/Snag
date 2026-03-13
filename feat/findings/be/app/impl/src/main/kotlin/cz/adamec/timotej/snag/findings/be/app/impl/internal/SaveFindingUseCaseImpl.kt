@@ -16,11 +16,24 @@ import cz.adamec.timotej.snag.feat.findings.be.model.BackendFinding
 import cz.adamec.timotej.snag.findings.be.app.api.SaveFindingUseCase
 import cz.adamec.timotej.snag.findings.be.app.impl.internal.LH.logger
 import cz.adamec.timotej.snag.findings.be.ports.FindingsDb
+import cz.adamec.timotej.snag.projects.be.app.api.GetProjectUseCase
+import cz.adamec.timotej.snag.projects.business.CanEditProjectEntitiesRule
+import cz.adamec.timotej.snag.structures.be.ports.StructuresDb
 
 internal class SaveFindingUseCaseImpl(
     private val findingsDb: FindingsDb,
+    private val structuresDb: StructuresDb,
+    private val getProjectUseCase: GetProjectUseCase,
+    private val canEditProjectEntitiesRule: CanEditProjectEntitiesRule,
 ) : SaveFindingUseCase {
     override suspend operator fun invoke(finding: BackendFinding): BackendFinding? {
+        val structure = structuresDb.getStructure(finding.finding.structureId)
+        if (structure != null) {
+            val project = getProjectUseCase(structure.structure.projectId)
+            if (project != null && !canEditProjectEntitiesRule(project.project)) {
+                return findingsDb.getFinding(finding.finding.id)
+            }
+        }
         logger.debug("Saving finding {} to local storage.", finding)
         val isRejected = findingsDb.saveFinding(finding)
         if (isRejected != null) {

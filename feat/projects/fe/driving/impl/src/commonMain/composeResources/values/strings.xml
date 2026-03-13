@@ -28,4 +28,6 @@
     <string name="none">None</string>
     <string name="create_new_client">Create new client</string>
     <string name="download_report">Download report</string>
+    <string name="close_project">Close project</string>
+    <string name="reopen_project">Reopen project</string>
 </resources>

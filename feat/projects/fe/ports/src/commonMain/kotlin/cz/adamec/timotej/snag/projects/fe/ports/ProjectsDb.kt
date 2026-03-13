@@ -24,6 +24,8 @@ interface ProjectsDb {
 
     fun getProjectFlow(id: Uuid): Flow<OfflineFirstDataResult<FrontendProject?>>
 
+    suspend fun getProject(id: Uuid): OfflineFirstDataResult<FrontendProject?>
+
     suspend fun saveProject(project: FrontendProject): OfflineFirstDataResult<Unit>
 
     suspend fun deleteProject(id: Uuid): OfflineFirstDataResult<Unit>

@@ -71,6 +71,7 @@ import cz.adamec.timotej.snag.projects.fe.model.FrontendProject
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import snag.feat.projects.fe.driving.impl.generated.resources.Res
+import snag.feat.projects.fe.driving.impl.generated.resources.close_project
 import snag.feat.projects.fe.driving.impl.generated.resources.delete_project_confirmation_text
 import snag.feat.projects.fe.driving.impl.generated.resources.delete_project_confirmation_title
 import snag.feat.projects.fe.driving.impl.generated.resources.download_report
@@ -78,6 +79,7 @@ import snag.feat.projects.fe.driving.impl.generated.resources.inspections_sectio
 import snag.feat.projects.fe.driving.impl.generated.resources.new_inspection
 import snag.feat.projects.fe.driving.impl.generated.resources.new_structure
 import snag.feat.projects.fe.driving.impl.generated.resources.project_not_found
+import snag.feat.projects.fe.driving.impl.generated.resources.reopen_project
 import snag.feat.projects.fe.driving.impl.generated.resources.structures_section_title
 import snag.lib.design.fe.generated.resources.delete
 import snag.lib.design.fe.generated.resources.edit
@@ -86,6 +88,8 @@ import snag.lib.design.fe.generated.resources.ic_delete
 import snag.lib.design.fe.generated.resources.ic_edit
 import snag.lib.design.fe.generated.resources.ic_event_note
 import snag.lib.design.fe.generated.resources.ic_file_export
+import snag.lib.design.fe.generated.resources.ic_lock
+import snag.lib.design.fe.generated.resources.ic_lock_open
 import snag.lib.design.fe.generated.resources.ic_space_dashboard
 import kotlin.uuid.Uuid
 import snag.lib.design.fe.generated.resources.Res as DesignRes
@@ -103,6 +107,7 @@ internal fun ProjectDetailsContent(
     onEditClick: () -> Unit,
     onDelete: () -> Unit,
     onDownloadReportClick: () -> Unit,
+    onToggleClose: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(
@@ -137,6 +142,7 @@ internal fun ProjectDetailsContent(
                     onEditClick = onEditClick,
                     onDelete = onDelete,
                     onDownloadReportClick = onDownloadReportClick,
+                    onToggleClose = onToggleClose,
                 )
             }
 
@@ -147,7 +153,7 @@ internal fun ProjectDetailsContent(
     }
 }
 
-@Suppress("LongMethod")
+@Suppress("LongMethod", "CognitiveComplexMethod")
 @Composable
 private fun LoadedProjectDetailsContent(
     state: ProjectDetailsUiState,
@@ -161,6 +167,7 @@ private fun LoadedProjectDetailsContent(
     onEditClick: () -> Unit,
     onDelete: () -> Unit,
     onDownloadReportClick: () -> Unit,
+    onToggleClose: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val project = state.project?.project
@@ -216,11 +223,13 @@ private fun LoadedProjectDetailsContent(
                                 style = MaterialTheme.typography.titleMedium,
                             )
                         }
-                        AdaptiveTonalButton(
-                            onClick = onNewInspectionClick,
-                            icon = DesignRes.drawable.ic_add,
-                            label = stringResource(Res.string.new_inspection),
-                        )
+                        if (state.isProjectEditable) {
+                            AdaptiveTonalButton(
+                                onClick = onNewInspectionClick,
+                                icon = DesignRes.drawable.ic_add,
+                                label = stringResource(Res.string.new_inspection),
+                            )
+                        }
                     }
                 }
                 item {
@@ -283,11 +292,13 @@ private fun LoadedProjectDetailsContent(
                                 style = MaterialTheme.typography.titleMedium,
                             )
                         }
-                        AdaptiveTonalButton(
-                            onClick = onNewStructureClick,
-                            icon = DesignRes.drawable.ic_add,
-                            label = stringResource(Res.string.new_structure),
-                        )
+                        if (state.isProjectEditable) {
+                            AdaptiveTonalButton(
+                                onClick = onNewStructureClick,
+                                icon = DesignRes.drawable.ic_add,
+                                label = stringResource(Res.string.new_structure),
+                            )
+                        }
                     }
                 }
                 @OptIn(ExperimentalLayoutApi::class)
@@ -353,6 +364,36 @@ private fun LoadedProjectDetailsContent(
                 expanded = true,
             ) {
                 IconButton(
+                    enabled = state.canToggleClosed,
+                    onClick = onToggleClose,
+                ) {
+                    if (state.isClosingOrReopening) {
+                        LoadingIndicator(
+                            modifier = Modifier.size(24.dp),
+                        )
+                    } else {
+                        Icon(
+                            painter =
+                                painterResource(
+                                    if (state.isClosed) {
+                                        DesignRes.drawable.ic_lock
+                                    } else {
+                                        DesignRes.drawable.ic_lock_open
+                                    },
+                                ),
+                            contentDescription =
+                                stringResource(
+                                    if (state.isClosed) {
+                                        Res.string.reopen_project
+                                    } else {
+                                        Res.string.close_project
+                                    },
+                                ),
+                        )
+                    }
+                }
+                IconButton(
+                    enabled = state.isProjectEditable,
                     onClick = onEditClick,
                 ) {
                     Icon(
@@ -457,6 +498,7 @@ private fun LoadedProjectDetailsContentPreview() {
             onEditClick = {},
             onDelete = {},
             onDownloadReportClick = {},
+            onToggleClose = {},
         )
     }
 }

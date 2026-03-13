@@ -134,4 +134,51 @@ class SaveStructureUseCaseImplTest : BackendKoinInitializedTest() {
 
             assertNull(result)
         }
+
+    private fun createClosedProject() =
+        runTest(testDispatcher) {
+            projectsDb.saveProject(
+                BackendProject(
+                    project =
+                        Project(
+                            id = projectId,
+                            name = "Test Project",
+                            address = "Test Address",
+                            isClosed = true,
+                            updatedAt = Timestamp(1L),
+                        ),
+                ),
+            )
+        }
+
+    @Test
+    fun `returns existing entity when project is closed`() =
+        runTest(testDispatcher) {
+            createClosedProject()
+            dataSource.saveStructure(backendStructure)
+
+            val newStructure =
+                backendStructure.copy(
+                    structure =
+                        backendStructure.structure.copy(
+                            name = "Updated name",
+                            updatedAt = Timestamp(value = 20L),
+                        ),
+                )
+
+            val result = useCase(newStructure)
+
+            assertEquals(backendStructure, result)
+            assertEquals(listOf(backendStructure), dataSource.getStructures(projectId))
+        }
+
+    @Test
+    fun `returns null when project is closed and entity not in DB`() =
+        runTest(testDispatcher) {
+            createClosedProject()
+
+            val result = useCase(backendStructure)
+
+            assertNull(result)
+        }
 }

@@ -20,5 +20,6 @@ data class Project(
     val name: String,
     val address: String,
     val clientId: Uuid? = null,
+    val isClosed: Boolean = false,
     val updatedAt: Timestamp,
 )

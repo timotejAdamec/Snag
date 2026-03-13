@@ -25,6 +25,7 @@ internal fun ProjectApiDto.toModel() =
                 name = name,
                 address = address,
                 clientId = clientId,
+                isClosed = isClosed,
                 updatedAt = updatedAt,
             ),
     )
@@ -34,5 +35,6 @@ internal fun FrontendProject.toPutApiDto() =
         name = project.name,
         address = project.address,
         clientId = project.clientId,
+        isClosed = project.isClosed,
         updatedAt = project.updatedAt,
     )

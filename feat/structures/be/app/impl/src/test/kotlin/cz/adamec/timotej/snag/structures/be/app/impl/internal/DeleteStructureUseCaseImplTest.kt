@@ -132,4 +132,40 @@ class DeleteStructureUseCaseImplTest : BackendKoinInitializedTest() {
 
             assertNull(result)
         }
+
+    private fun createClosedProject() =
+        runTest(testDispatcher) {
+            projectsDb.saveProject(
+                BackendProject(
+                    project =
+                        Project(
+                            id = projectId,
+                            name = "Test Project",
+                            address = "Test Address",
+                            isClosed = true,
+                            updatedAt = Timestamp(1L),
+                        ),
+                ),
+            )
+        }
+
+    @Test
+    fun `returns existing entity when project is closed`() =
+        runTest(testDispatcher) {
+            createClosedProject()
+            dataSource.saveStructure(structure)
+
+            val result =
+                useCase(
+                    DeleteStructureRequest(
+                        structureId = structureId,
+                        deletedAt = Timestamp(value = 20L),
+                    ),
+                )
+
+            assertEquals(structure, result)
+            val stored =
+                dataSource.getStructures(projectId).find { it.structure.id == structureId }
+            assertNull(stored?.deletedAt)
+        }
 }
