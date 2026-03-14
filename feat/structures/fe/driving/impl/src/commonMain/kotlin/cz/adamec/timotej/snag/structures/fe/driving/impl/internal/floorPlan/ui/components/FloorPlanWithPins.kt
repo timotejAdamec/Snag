@@ -28,7 +28,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.graphics.drawscope.translate
+import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
@@ -136,16 +136,19 @@ private fun FindingsPinsOverlay(
 
     val selectedPinColor = MaterialTheme.colorScheme.primary
 
+    val normalIconSize = with(LocalDensity.current) { 22.dp.toPx() }
+    val selectedScale = 30f / 22f
+
     Canvas(modifier = modifier.fillMaxSize()) {
+        // Draw non-selected pins first, then selected pin on top
         findings.forEach { finding ->
+            if (finding.finding.id == selectedFindingId) return@forEach
             finding.finding.coordinates.forEach { coord ->
                 val drawPoint =
                     Offset(
                         x = displayRect.left + coord.x * displayRect.width,
                         y = displayRect.top + coord.y * displayRect.height,
                     )
-                val isSelected = finding.finding.id == selectedFindingId
-                val iconSize = if (isSelected) 30.dp.toPx() else 22.dp.toPx()
 
                 val (painter, color) =
                     when (finding.finding.type) {
@@ -157,10 +160,45 @@ private fun FindingsPinsOverlay(
                 drawFindingPin(
                     center = drawPoint,
                     painter = painter,
-                    iconSize = iconSize,
-                    tint = if (isSelected) selectedPinColor else color,
+                    iconDrawSize = normalIconSize,
+                    tint = color,
                 )
             }
+        }
+
+        // Draw selected pins last so it appears on top
+        if (selectedFindingId != null) {
+            findings
+                .find { it.finding.id == selectedFindingId }
+                ?.let { finding ->
+                    finding.finding.coordinates.forEach { coord ->
+                        val drawPoint =
+                            Offset(
+                                x = displayRect.left + coord.x * displayRect.width,
+                                y = displayRect.top + coord.y * displayRect.height,
+                            )
+
+                        val (painter, _) =
+                            when (finding.finding.type) {
+                                is FindingType.Classic ->
+                                    classicPainter to classicVisuals.pinColor
+
+                                is FindingType.Unvisited ->
+                                    unvisitedPainter to unvisitedVisuals.pinColor
+
+                                is FindingType.Note ->
+                                    notePainter to noteVisuals.pinColor
+                            }
+
+                        drawFindingPin(
+                            center = drawPoint,
+                            painter = painter,
+                            iconDrawSize = normalIconSize,
+                            pinScale = selectedScale,
+                            tint = selectedPinColor,
+                        )
+                    }
+                }
         }
     }
 }
@@ -168,10 +206,12 @@ private fun FindingsPinsOverlay(
 private fun DrawScope.drawFindingPin(
     center: Offset,
     painter: Painter,
-    iconSize: Float,
+    iconDrawSize: Float,
     tint: Color,
+    pinScale: Float = 1f,
 ) {
-    val backgroundCircleRadius = iconSize * BACKGROUND_CIRCLE_SCALE / 2
+    val scaledIconSize = iconDrawSize * pinScale
+    val backgroundCircleRadius = scaledIconSize * BACKGROUND_CIRCLE_SCALE / 2
     val haloRadius = backgroundCircleRadius + 1.5.dp.toPx()
 
     // Draw white halo (outermost layer)
@@ -188,14 +228,16 @@ private fun DrawScope.drawFindingPin(
         center = center,
     )
 
-    // Draw white icon on top
-    translate(
-        left = center.x - iconSize / 2,
-        top = center.y - iconSize / 2.15F,
-    ) {
+    // Draw white icon on top — always pass the same iconDrawSize to avoid Painter
+    // internal state mutation; use canvas scale for size differences instead
+    withTransform({
+        translate(left = center.x, top = center.y)
+        scale(pinScale, pinScale, Offset.Zero)
+        translate(left = -iconDrawSize / 2, top = -iconDrawSize / 2)
+    }) {
         with(painter) {
             draw(
-                size = Size(iconSize, iconSize),
+                size = Size(iconDrawSize, iconDrawSize),
                 colorFilter = ColorFilter.tint(Color.White),
             )
         }
