@@ -41,8 +41,8 @@ Each feature module/directory can be split into submodules if there is a need fo
     adapter layer (not in the core `business` layer).
 - `impl` — Production implementations. Depends on `api`/`contract`.
 - `test` — In-memory and other non-production unit-test-friendly implementations for use instead
-  of `impl`. Depends on `api`/`contract`. Typical for the `driven` layer so that tests in
-  `driving` and `app` layers can run with non-production unit-test-friendly adapter `ports`.
+  of `impl`. Typical for the `driven` layer so that tests in `driving` and `app` layers can run with
+  non-production unit-test-friendly adapter `ports`.
 
 ### Shared modules (`feat/shared/`)
 

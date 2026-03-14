@@ -116,7 +116,6 @@ private fun InspectionCardContent(
         colors =
             CardDefaults.cardColors(
                 containerColor = cardState.containerColor(),
-                contentColor = cardState.contentColor(),
             ),
     ) {
         Column(
@@ -258,16 +257,6 @@ private fun CardStatus.containerColor() =
         CardStatus.IN_PROGRESS -> MaterialTheme.colorScheme.primaryContainer
         CardStatus.ENDING_SOON -> MaterialTheme.colorScheme.tertiaryContainer
         CardStatus.FINISHED -> MaterialTheme.colorScheme.surfaceContainerLow
-    }
-
-@Composable
-private fun CardStatus.contentColor() =
-    when (this) {
-        CardStatus.NOT_STARTED -> MaterialTheme.colorScheme.onSurface
-        CardStatus.SCHEDULED -> MaterialTheme.colorScheme.onSecondaryContainer
-        CardStatus.IN_PROGRESS -> MaterialTheme.colorScheme.onPrimaryContainer
-        CardStatus.ENDING_SOON -> MaterialTheme.colorScheme.onTertiaryContainer
-        CardStatus.FINISHED -> MaterialTheme.colorScheme.onSurface
     }
 
 private fun CardStatus.toStringRes(): StringResource =
