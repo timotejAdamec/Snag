@@ -22,13 +22,10 @@ import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ContainedLoadingIndicator
-import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.FloatingToolbarDefaults
 import androidx.compose.material3.HorizontalFloatingToolbar
 import androidx.compose.material3.Icon
@@ -224,22 +221,10 @@ internal fun FindingDetailContent(
                             }
                         }
                         finding.finding.description?.let { description ->
-                            ElevatedCard(
-                                modifier = Modifier.fillMaxWidth(),
-                                shape = MaterialTheme.shapes.large,
-                                colors =
-                                    CardDefaults.elevatedCardColors(
-                                        containerColor =
-                                            MaterialTheme.colorScheme.surfaceContainerLow,
-                                    ),
-                            ) {
-                                Text(
-                                    modifier =
-                                        Modifier.padding(16.dp),
-                                    text = description,
-                                    style = MaterialTheme.typography.bodyLarge,
-                                )
-                            }
+                            Text(
+                                text = description,
+                                style = MaterialTheme.typography.bodyLarge,
+                            )
                         }
                         val coordinateCount = finding.finding.coordinates.size
                         Text(
