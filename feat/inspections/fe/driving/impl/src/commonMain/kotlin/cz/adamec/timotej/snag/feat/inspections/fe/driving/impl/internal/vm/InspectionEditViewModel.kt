@@ -20,6 +20,7 @@ import cz.adamec.timotej.snag.feat.inspections.fe.app.api.model.SaveInspectionRe
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
+import cz.adamec.timotej.snag.projects.fe.app.api.IsProjectClosedUseCase
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -35,6 +36,7 @@ internal class InspectionEditViewModel(
     @InjectedParam private val projectId: Uuid?,
     private val getInspectionUseCase: GetInspectionUseCase,
     private val saveInspectionUseCase: SaveInspectionUseCase,
+    private val isProjectClosedUseCase: IsProjectClosedUseCase,
 ) : ViewModel() {
     private val _state: MutableStateFlow<InspectionEditUiState> =
         MutableStateFlow(InspectionEditUiState(projectId = projectId))
@@ -51,7 +53,15 @@ internal class InspectionEditViewModel(
             "Either inspectionId or projectId must be provided"
         }
         inspectionId?.let { collectInspection(it) }
+        projectId?.let { collectProjectClosed(it) }
     }
+
+    private fun collectProjectClosed(projectId: Uuid) =
+        viewModelScope.launch {
+            isProjectClosedUseCase(projectId).collect { isClosed ->
+                _state.update { it.copy(isProjectClosed = isClosed) }
+            }
+        }
 
     private fun collectInspection(inspectionId: Uuid) =
         viewModelScope.launch {
@@ -72,6 +82,9 @@ internal class InspectionEditViewModel(
                                     climate = data.inspection.climate.orEmpty(),
                                     note = data.inspection.note.orEmpty(),
                                 )
+                            }
+                            if (projectId == null) {
+                                collectProjectClosed(data.inspection.projectId)
                             }
                             cancel()
                         }

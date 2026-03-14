@@ -19,6 +19,7 @@ import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError.Unknown
 import cz.adamec.timotej.snag.lib.design.fe.state.DEFAULT_NO_STATE_SUBSCRIBER_TIMEOUT
+import cz.adamec.timotej.snag.projects.fe.app.api.IsProjectClosedUseCase
 import cz.adamec.timotej.snag.structures.fe.app.api.DeleteStructureUseCase
 import cz.adamec.timotej.snag.structures.fe.app.api.GetStructureUseCase
 import kotlinx.collections.immutable.toPersistentList
@@ -40,6 +41,7 @@ internal class StructureFloorPlanViewModel(
     private val getStructureUseCase: GetStructureUseCase,
     private val deleteStructureUseCase: DeleteStructureUseCase,
     private val getFindingsUseCase: GetFindingsUseCase,
+    private val isProjectClosedUseCase: IsProjectClosedUseCase,
 ) : ViewModel() {
     private val _state: MutableStateFlow<StructureDetailsUiState> =
         MutableStateFlow(StructureDetailsUiState())
@@ -52,6 +54,10 @@ internal class StructureFloorPlanViewModel(
                 val newStructureId = new.feStructure?.structure?.id ?: return@scan new
                 if (prev.feStructure?.structure?.id != newStructureId) {
                     collectFindings(newStructureId)
+                }
+                val newProjectId = new.feStructure?.structure?.projectId
+                if (newProjectId != null && prev.feStructure?.structure?.projectId != newProjectId) {
+                    collectProjectClosed(newProjectId)
                 }
                 new
             }.stateIn(
@@ -70,6 +76,7 @@ internal class StructureFloorPlanViewModel(
     val deletedSuccessfullyEventFlow = deletedSuccessfullyEventChannel.receiveAsFlow()
 
     private var collectFindingsJob: Job? = null
+    private var collectProjectClosedJob: Job? = null
 
     init {
         collectStructure()
@@ -125,6 +132,16 @@ internal class StructureFloorPlanViewModel(
                             }
                         }
                     }
+            }
+    }
+
+    private fun collectProjectClosed(projectId: Uuid) {
+        if (collectProjectClosedJob?.isActive == true) collectProjectClosedJob?.cancel()
+        collectProjectClosedJob =
+            viewModelScope.launch {
+                isProjectClosedUseCase(projectId).collect { isClosed ->
+                    _state.update { it.copy(isProjectClosed = isClosed) }
+                }
             }
     }
 

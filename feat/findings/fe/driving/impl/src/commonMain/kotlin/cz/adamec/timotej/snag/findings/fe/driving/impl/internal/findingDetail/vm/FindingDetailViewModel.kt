@@ -19,9 +19,12 @@ import cz.adamec.timotej.snag.findings.fe.app.api.GetFindingUseCase
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError.Unknown
+import cz.adamec.timotej.snag.projects.fe.app.api.IsProjectClosedUseCase
+import cz.adamec.timotej.snag.structures.fe.app.api.GetStructureUseCase
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -32,6 +35,8 @@ internal class FindingDetailViewModel(
     @InjectedParam private val findingId: Uuid,
     private val getFindingUseCase: GetFindingUseCase,
     private val deleteFindingUseCase: DeleteFindingUseCase,
+    private val getStructureUseCase: GetStructureUseCase,
+    private val isProjectClosedUseCase: IsProjectClosedUseCase,
 ) : ViewModel() {
     private val _state: MutableStateFlow<FindingDetailUiState> =
         MutableStateFlow(FindingDetailUiState())
@@ -43,8 +48,27 @@ internal class FindingDetailViewModel(
     private val deletedSuccessfullyEventChannel = Channel<Unit>()
     val deletedSuccessfullyEventFlow = deletedSuccessfullyEventChannel.receiveAsFlow()
 
+    private var projectClosedCollected = false
+
     init {
         collectFinding()
+    }
+
+    private fun collectProjectClosed(structureId: Uuid) {
+        if (projectClosedCollected) return
+        projectClosedCollected = true
+        viewModelScope.launch {
+            val structureResult = getStructureUseCase(structureId).first()
+            (structureResult as? OfflineFirstDataResult.Success)
+                ?.data
+                ?.structure
+                ?.projectId
+                ?.let { projectId ->
+                    isProjectClosedUseCase(projectId).collect { isClosed ->
+                        _state.update { it.copy(isProjectClosed = isClosed) }
+                    }
+                }
+        }
     }
 
     fun onDelete() =
@@ -83,7 +107,8 @@ internal class FindingDetailViewModel(
                     }
 
                     is OfflineFirstDataResult.Success -> {
-                        if (result.data == null) {
+                        val finding = result.data
+                        if (finding == null) {
                             if (_state.value.status != FindingDetailUiStatus.DELETED) {
                                 _state.update {
                                     it.copy(status = FindingDetailUiStatus.NOT_FOUND)
@@ -93,9 +118,10 @@ internal class FindingDetailViewModel(
                             _state.update {
                                 it.copy(
                                     status = FindingDetailUiStatus.LOADED,
-                                    finding = result.data,
+                                    finding = finding,
                                 )
                             }
+                            collectProjectClosed(finding.finding.structureId)
                         }
                     }
                 }

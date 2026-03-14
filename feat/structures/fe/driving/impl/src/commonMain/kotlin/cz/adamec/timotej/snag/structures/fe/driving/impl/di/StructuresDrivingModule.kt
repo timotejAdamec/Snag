@@ -166,6 +166,7 @@ val structuresDrivingImplModule =
                 getStructureUseCase = get(),
                 deleteStructureUseCase = get(),
                 getFindingsUseCase = get(),
+                isProjectClosedUseCase = get(),
             )
         }
         viewModel { (projectId: Uuid, structureId: Uuid?) ->
@@ -177,6 +178,7 @@ val structuresDrivingImplModule =
                 uploadFloorPlanImageUseCase = get(),
                 deleteFloorPlanImageUseCase = get(),
                 canModifyFloorPlanImageUseCase = get(),
+                isProjectClosedUseCase = get(),
             )
         }
     }

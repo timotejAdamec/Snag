@@ -20,6 +20,7 @@ import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.lib.storage.fe.test.FakeFileApi
+import cz.adamec.timotej.snag.projects.fe.app.api.IsProjectClosedUseCase
 import cz.adamec.timotej.snag.structures.fe.app.api.CanModifyFloorPlanImageUseCase
 import cz.adamec.timotej.snag.structures.fe.app.api.DeleteFloorPlanImageUseCase
 import cz.adamec.timotej.snag.structures.fe.app.api.GetStructureUseCase
@@ -34,7 +35,6 @@ import kotlinx.coroutines.test.runTest
 import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
 import kotlin.test.assertIs
 import kotlin.test.assertNotNull
@@ -52,10 +52,11 @@ class StructureDetailsEditViewModelTest : FrontendKoinInitializedTest() {
     private val uploadFloorPlanImageUseCase: UploadFloorPlanImageUseCase by inject()
     private val deleteFloorPlanImageUseCase: DeleteFloorPlanImageUseCase by inject()
     private val canModifyFloorPlanImageUseCase: CanModifyFloorPlanImageUseCase by inject()
+    private val isProjectClosedUseCase: IsProjectClosedUseCase by inject()
 
     private fun createViewModel(
         structureId: Uuid? = null,
-        projectId: Uuid? = null,
+        projectId: Uuid = UuidProvider.getUuid(),
     ) = StructureDetailsEditViewModel(
         structureId = structureId,
         projectId = projectId,
@@ -64,6 +65,7 @@ class StructureDetailsEditViewModelTest : FrontendKoinInitializedTest() {
         uploadFloorPlanImageUseCase = uploadFloorPlanImageUseCase,
         deleteFloorPlanImageUseCase = deleteFloorPlanImageUseCase,
         canModifyFloorPlanImageUseCase = canModifyFloorPlanImageUseCase,
+        isProjectClosedUseCase = isProjectClosedUseCase,
     )
 
     @Test
@@ -93,7 +95,7 @@ class StructureDetailsEditViewModelTest : FrontendKoinInitializedTest() {
                 )
             fakeStructuresDb.setStructures(listOf(structure))
 
-            val viewModel = createViewModel(structureId = structureId, projectId = null)
+            val viewModel = createViewModel(structureId = structureId)
 
             advanceUntilIdle()
 
@@ -210,13 +212,6 @@ class StructureDetailsEditViewModelTest : FrontendKoinInitializedTest() {
             val error = viewModel.errorsFlow.first()
             assertIs<UiError.Unknown>(error)
         }
-
-    @Test
-    fun `constructor requires either structureId or projectId`() {
-        assertFailsWith<IllegalArgumentException> {
-            createViewModel(structureId = null, projectId = null)
-        }
-    }
 
     // region Image upload tests
 

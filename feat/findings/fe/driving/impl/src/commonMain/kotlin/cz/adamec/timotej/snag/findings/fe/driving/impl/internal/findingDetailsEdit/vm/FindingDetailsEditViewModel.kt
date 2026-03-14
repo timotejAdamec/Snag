@@ -29,10 +29,13 @@ import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstUpdateDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError.Unknown
+import cz.adamec.timotej.snag.projects.fe.app.api.IsProjectClosedUseCase
+import cz.adamec.timotej.snag.structures.fe.app.api.GetStructureUseCase
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -49,6 +52,8 @@ internal class FindingDetailsEditViewModel(
     private val getFindingUseCase: GetFindingUseCase,
     private val saveNewFindingUseCase: SaveNewFindingUseCase,
     private val saveFindingDetailsUseCase: SaveFindingDetailsUseCase,
+    private val getStructureUseCase: GetStructureUseCase,
+    private val isProjectClosedUseCase: IsProjectClosedUseCase,
 ) : ViewModel() {
     private val _state: MutableStateFlow<FindingDetailsEditUiState> =
         MutableStateFlow(
@@ -69,7 +74,22 @@ internal class FindingDetailsEditViewModel(
             "Either findingId or structureId must be provided"
         }
         findingId?.let { collectFinding(it) }
+        structureId?.let { collectProjectClosed(it) }
     }
+
+    private fun collectProjectClosed(structureId: Uuid) =
+        viewModelScope.launch {
+            val structureResult = getStructureUseCase(structureId).first()
+            (structureResult as? OfflineFirstDataResult.Success)
+                ?.data
+                ?.structure
+                ?.projectId
+                ?.let { projectId ->
+                    isProjectClosedUseCase(projectId).collect { isClosed ->
+                        _state.update { it.copy(isProjectClosed = isClosed) }
+                    }
+                }
+        }
 
     private fun collectFinding(findingId: Uuid) =
         viewModelScope.launch {
@@ -86,6 +106,9 @@ internal class FindingDetailsEditViewModel(
                                     findingDescription = data.finding.description.orEmpty(),
                                     findingType = data.finding.type,
                                 )
+                            }
+                            if (structureId == null) {
+                                collectProjectClosed(data.finding.structureId)
                             }
                             cancel()
                         }

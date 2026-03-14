@@ -242,7 +242,10 @@ internal fun InspectionEditContent(
                     }
                 },
                 actions = {
-                    Button(onClick = onSaveClick) {
+                    Button(
+                        onClick = onSaveClick,
+                        enabled = state.canSave,
+                    ) {
                         Text(text = stringResource(DesignRes.string.save))
                     }
                 },

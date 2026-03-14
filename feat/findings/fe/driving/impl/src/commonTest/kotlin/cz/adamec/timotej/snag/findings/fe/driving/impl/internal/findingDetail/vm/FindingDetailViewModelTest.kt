@@ -16,12 +16,17 @@ import app.cash.turbine.test
 import cz.adamec.timotej.snag.feat.findings.business.Finding
 import cz.adamec.timotej.snag.feat.findings.business.FindingType
 import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
+import cz.adamec.timotej.snag.feat.structures.business.Structure
+import cz.adamec.timotej.snag.feat.structures.fe.model.FrontendStructure
 import cz.adamec.timotej.snag.findings.fe.app.api.DeleteFindingUseCase
 import cz.adamec.timotej.snag.findings.fe.app.api.GetFindingUseCase
 import cz.adamec.timotej.snag.findings.fe.driven.test.FakeFindingsDb
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
+import cz.adamec.timotej.snag.projects.fe.app.api.IsProjectClosedUseCase
+import cz.adamec.timotej.snag.structures.fe.app.api.GetStructureUseCase
+import cz.adamec.timotej.snag.structures.fe.driven.test.FakeStructuresDb
 import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
@@ -38,23 +43,42 @@ import kotlin.uuid.Uuid
 @OptIn(ExperimentalCoroutinesApi::class)
 class FindingDetailViewModelTest : FrontendKoinInitializedTest() {
     private val fakeFindingsDb: FakeFindingsDb by inject()
+    private val fakeStructuresDb: FakeStructuresDb by inject()
 
     private val getFindingUseCase: GetFindingUseCase by inject()
     private val deleteFindingUseCase: DeleteFindingUseCase by inject()
+    private val getStructureUseCase: GetStructureUseCase by inject()
+    private val isProjectClosedUseCase: IsProjectClosedUseCase by inject()
 
+    private val projectId = Uuid.parse("00000000-0000-0000-0000-000000000002")
     private val structureId = Uuid.parse("00000000-0000-0000-0000-000000000001")
     private val findingId = Uuid.parse("00000000-0000-0000-0001-000000000001")
+    private val structure =
+        FrontendStructure(
+            structure =
+                Structure(
+                    id = structureId,
+                    projectId = projectId,
+                    name = "Test Structure",
+                    floorPlanUrl = null,
+                    updatedAt = Timestamp(0L),
+                ),
+        )
     private val finding =
         FrontendFinding(
             finding = Finding(findingId, structureId, "Crack in wall", "A large crack", FindingType.Classic(), emptyList(), Timestamp(10L)),
         )
 
-    private fun createViewModel() =
-        FindingDetailViewModel(
+    private fun createViewModel(): FindingDetailViewModel {
+        fakeStructuresDb.setStructure(structure)
+        return FindingDetailViewModel(
             findingId = findingId,
             getFindingUseCase = getFindingUseCase,
             deleteFindingUseCase = deleteFindingUseCase,
+            getStructureUseCase = getStructureUseCase,
+            isProjectClosedUseCase = isProjectClosedUseCase,
         )
+    }
 
     @Test
     fun `initial state is loading`() =

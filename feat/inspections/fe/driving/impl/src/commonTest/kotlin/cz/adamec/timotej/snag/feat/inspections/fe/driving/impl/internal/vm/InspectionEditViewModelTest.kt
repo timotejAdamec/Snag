@@ -21,6 +21,7 @@ import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.common.UuidProvider
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
+import cz.adamec.timotej.snag.projects.fe.app.api.IsProjectClosedUseCase
 import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
@@ -40,6 +41,7 @@ class InspectionEditViewModelTest : FrontendKoinInitializedTest() {
 
     private val getInspectionUseCase: GetInspectionUseCase by inject()
     private val saveInspectionUseCase: SaveInspectionUseCase by inject()
+    private val isProjectClosedUseCase: IsProjectClosedUseCase by inject()
 
     private fun createViewModel(
         inspectionId: Uuid? = null,
@@ -49,6 +51,7 @@ class InspectionEditViewModelTest : FrontendKoinInitializedTest() {
         projectId = projectId,
         getInspectionUseCase = getInspectionUseCase,
         saveInspectionUseCase = saveInspectionUseCase,
+        isProjectClosedUseCase = isProjectClosedUseCase,
     )
 
     @Test

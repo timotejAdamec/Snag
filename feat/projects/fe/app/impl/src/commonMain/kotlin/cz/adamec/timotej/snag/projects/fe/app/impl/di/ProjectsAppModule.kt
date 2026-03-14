@@ -17,12 +17,14 @@ import cz.adamec.timotej.snag.projects.business.CanEditProjectEntitiesRule
 import cz.adamec.timotej.snag.projects.fe.app.api.DeleteProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.GetProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.GetProjectsUseCase
+import cz.adamec.timotej.snag.projects.fe.app.api.IsProjectClosedUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.PullProjectChangesUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.SaveProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.SetProjectClosedUseCase
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.DeleteProjectUseCaseImpl
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.GetProjectUseCaseImpl
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.GetProjectsUseCaseImpl
+import cz.adamec.timotej.snag.projects.fe.app.impl.internal.IsProjectClosedUseCaseImpl
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.PullProjectChangesUseCaseImpl
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.SaveProjectUseCaseImpl
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.SetProjectClosedUseCaseImpl
@@ -39,6 +41,7 @@ val projectsAppModule =
         factoryOf(::DeleteProjectUseCaseImpl) bind DeleteProjectUseCase::class
         factoryOf(::PullProjectChangesUseCaseImpl) bind PullProjectChangesUseCase::class
         factoryOf(::SetProjectClosedUseCaseImpl) bind SetProjectClosedUseCase::class
+        factoryOf(::IsProjectClosedUseCaseImpl) bind IsProjectClosedUseCase::class
         factoryOf(::CanEditProjectEntitiesRule)
         factoryOf(::ProjectSyncHandler) bind SyncOperationHandler::class
     }

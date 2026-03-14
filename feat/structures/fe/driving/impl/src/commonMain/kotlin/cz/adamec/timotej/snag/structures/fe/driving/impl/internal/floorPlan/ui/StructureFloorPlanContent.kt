@@ -111,7 +111,7 @@ internal fun StructureFloorPlanContent(
     }
 }
 
-@Suppress("LongMethod")
+@Suppress("LongMethod", "CognitiveComplexMethod")
 @Composable
 private fun LoadedStructureDetailsContent(
     state: StructureDetailsUiState,
@@ -189,7 +189,9 @@ private fun LoadedStructureDetailsContent(
                     contentPadding = floorPlanContentPadding,
                     onFindingClick = onFindingClick,
                     onEmptySpaceTap = { coordinate ->
-                        pendingCreationCoordinate = coordinate
+                        if (state.canCreateFinding) {
+                            pendingCreationCoordinate = coordinate
+                        }
                     },
                 )
             } else {
@@ -238,6 +240,7 @@ private fun LoadedStructureDetailsContent(
                     expanded = true,
                 ) {
                     IconButton(
+                        enabled = state.canEdit,
                         onClick = onEditClick,
                     ) {
                         Icon(
