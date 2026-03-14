@@ -32,8 +32,9 @@ internal class CascadeRestoreLocalStructuresByProjectIdUseCaseImpl(
                     cascadeRestoreLocalFindingsByStructureIdUseCase(it.structure.id)
                 }
             }
-            is OnlineDataResult.Failure ->
+            is OnlineDataResult.Failure -> {
                 LH.logger.w { "Failed to restore structures for project $projectId: $result" }
+            }
         }
     }
 }

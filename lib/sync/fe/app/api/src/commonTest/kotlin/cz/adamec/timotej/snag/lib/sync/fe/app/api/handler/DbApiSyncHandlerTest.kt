@@ -53,6 +53,7 @@ class DbApiSyncHandlerTest {
 
         var lastSavedToApi: TestEntity? = null
         var lastDeletedFromApiId: Uuid? = null
+        var lastDeleteRejectedEntityId: Uuid? = null
 
         override fun getEntityFlow(entityId: Uuid): Flow<OfflineFirstDataResult<TestEntity?>> =
             flowOf(OfflineFirstDataResult.Success(db[entityId]))
@@ -78,8 +79,6 @@ class DbApiSyncHandlerTest {
             db[entity.id] = entity
             return OfflineFirstDataResult.Success(Unit)
         }
-
-        var lastDeleteRejectedEntityId: Uuid? = null
 
         override suspend fun onDeleteRejected(entityId: Uuid) {
             lastDeleteRejectedEntityId = entityId

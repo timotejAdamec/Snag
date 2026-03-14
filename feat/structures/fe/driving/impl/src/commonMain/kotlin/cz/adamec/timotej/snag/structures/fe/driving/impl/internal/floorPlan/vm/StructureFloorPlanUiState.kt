@@ -26,8 +26,13 @@ internal data class StructureDetailsUiState(
     val feStructure: FrontendStructure? = null,
     val findings: ImmutableList<FrontendFinding> = persistentListOf(),
     val selectedFindingId: Uuid? = null,
+    val isProjectClosed: Boolean = false,
 ) {
-    val canInvokeDeletion = status == StructureDetailsUiStatus.LOADED && !isBeingDeleted
+    val canInvokeDeletion = status == StructureDetailsUiStatus.LOADED && !isBeingDeleted && !isProjectClosed
+
+    val canEdit = status == StructureDetailsUiStatus.LOADED && !isProjectClosed
+
+    val canCreateFinding = status == StructureDetailsUiStatus.LOADED && !isProjectClosed
 }
 
 internal enum class StructureDetailsUiStatus {

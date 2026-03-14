@@ -19,6 +19,7 @@ import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError.Unknown
 import cz.adamec.timotej.snag.lib.design.fe.state.DEFAULT_NO_STATE_SUBSCRIBER_TIMEOUT
+import cz.adamec.timotej.snag.projects.fe.app.api.IsProjectClosedUseCase
 import cz.adamec.timotej.snag.structures.fe.app.api.DeleteStructureUseCase
 import cz.adamec.timotej.snag.structures.fe.app.api.GetStructureUseCase
 import kotlinx.collections.immutable.toPersistentList
@@ -37,9 +38,11 @@ import kotlin.uuid.Uuid
 
 internal class StructureFloorPlanViewModel(
     @InjectedParam private val structureId: Uuid,
+    @InjectedParam private val projectId: Uuid,
     private val getStructureUseCase: GetStructureUseCase,
     private val deleteStructureUseCase: DeleteStructureUseCase,
     private val getFindingsUseCase: GetFindingsUseCase,
+    private val isProjectClosedUseCase: IsProjectClosedUseCase,
 ) : ViewModel() {
     private val _state: MutableStateFlow<StructureDetailsUiState> =
         MutableStateFlow(StructureDetailsUiState())
@@ -73,6 +76,7 @@ internal class StructureFloorPlanViewModel(
 
     init {
         collectStructure()
+        collectProjectClosed()
     }
 
     private fun collectStructure() =
@@ -127,6 +131,13 @@ internal class StructureFloorPlanViewModel(
                     }
             }
     }
+
+    private fun collectProjectClosed() =
+        viewModelScope.launch {
+            isProjectClosedUseCase(projectId).collect { isClosed ->
+                _state.update { it.copy(isProjectClosed = isClosed) }
+            }
+        }
 
     fun onFindingSelected(findingId: Uuid?) {
         _state.update { it.copy(selectedFindingId = findingId) }

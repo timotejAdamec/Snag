@@ -81,6 +81,7 @@ val inspectionsDrivingImplModule =
                 projectId = projectId,
                 getInspectionUseCase = get(),
                 saveInspectionUseCase = get(),
+                isProjectClosedUseCase = get(),
             )
         }
     }

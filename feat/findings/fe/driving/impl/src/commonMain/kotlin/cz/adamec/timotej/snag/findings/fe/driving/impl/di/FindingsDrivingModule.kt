@@ -79,6 +79,7 @@ internal inline fun <reified T : FindingDetailRoute> Module.findingDetailScreenN
         val findingEditRouteFactory = koinInject<FindingEditRouteFactory>()
         FindingDetailScreen(
             findingId = route.findingId,
+            projectId = route.projectId,
             onBack = {
                 val backStack = get<StructureDetailBackStack>()
                 backStack.removeLastSafely()
@@ -87,6 +88,7 @@ internal inline fun <reified T : FindingDetailRoute> Module.findingDetailScreenN
                 val rootBackStack = get<SnagBackStack>()
                 rootBackStack.value.add(
                     findingEditRouteFactory.create(
+                        projectId = route.projectId,
                         structureId = route.structureId,
                         findingId = route.findingId,
                     ),
@@ -101,6 +103,7 @@ internal inline fun <reified T : FindingEditRoute> Module.findingEditScreenNav()
     ) { route ->
         FindingEditScreenSetup(
             findingId = route.findingId,
+            projectId = route.projectId,
             onSaveFinding = { _ ->
                 val backStack = get<SnagBackStack>()
                 backStack.removeLastSafely()
@@ -113,6 +116,7 @@ internal inline fun <reified T : FindingCreationRoute> Module.findingCreationScr
         metadata = DialogSceneStrategy.dialog(fullscreenDialogProperties()),
     ) { route ->
         FindingEditScreenSetup(
+            projectId = route.projectId,
             structureId = route.structureId,
             findingTypeKey = route.findingTypeKey,
             coordinate = route.coordinate,
@@ -126,6 +130,7 @@ internal inline fun <reified T : FindingCreationRoute> Module.findingCreationScr
 @Composable
 private fun Scope.FindingEditScreenSetup(
     onSaveFinding: (savedFindingId: Uuid) -> Unit,
+    projectId: Uuid,
     findingId: Uuid? = null,
     structureId: Uuid? = null,
     findingTypeKey: FindingTypeKey? = null,
@@ -133,6 +138,7 @@ private fun Scope.FindingEditScreenSetup(
 ) {
     FindingDetailsEditScreen(
         findingId = findingId,
+        projectId = projectId,
         structureId = structureId,
         findingTypeKey = findingTypeKey,
         coordinate = coordinate,
@@ -155,16 +161,19 @@ val findingsDrivingImplModule =
                 getFindingsUseCase = get(),
             )
         }
-        viewModel { (findingId: Uuid) ->
+        viewModel { (findingId: Uuid, projectId: Uuid) ->
             FindingDetailViewModel(
                 findingId = findingId,
+                projectId = projectId,
                 getFindingUseCase = get(),
                 deleteFindingUseCase = get(),
+                isProjectClosedUseCase = get(),
             )
         }
         @Suppress("DestructuringDeclarationWithTooManyEntries")
         viewModel {
             (
+                projectId: Uuid,
                 findingId: Uuid?,
                 structureId: Uuid?,
                 findingTypeKey: FindingTypeKey?,
@@ -172,6 +181,7 @@ val findingsDrivingImplModule =
             ),
             ->
             FindingDetailsEditViewModel(
+                projectId = projectId,
                 findingId = findingId,
                 structureId = structureId,
                 findingTypeKey = findingTypeKey,
@@ -179,6 +189,7 @@ val findingsDrivingImplModule =
                 getFindingUseCase = get(),
                 saveNewFindingUseCase = get(),
                 saveFindingDetailsUseCase = get(),
+                isProjectClosedUseCase = get(),
             )
         }
     }

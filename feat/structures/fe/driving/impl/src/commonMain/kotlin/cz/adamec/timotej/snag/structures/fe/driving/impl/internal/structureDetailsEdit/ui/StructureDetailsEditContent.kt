@@ -127,7 +127,7 @@ internal fun StructureDetailsEditContent(
             FloorPlanEditSection(
                 floorPlanUrl = state.floorPlanUrl,
                 isUploading = state.isUploadingImage,
-                canModifyImage = state.canModifyFloorPlanImage,
+                canModifyImage = state.canModifyFloorPlanImage && !state.isProjectClosed,
                 onImagePick = onImagePick,
                 onRemoveImage = onRemoveImage,
             )
@@ -141,7 +141,7 @@ internal fun StructureDetailsEditContent(
                     Text(
                         text =
                             state.structureNameError?.let { stringResource(it) }
-                                ?: (stringResource(Res.string.required) + "*"),
+                                ?: stringResource(Res.string.required) + "*",
                     )
                 },
                 value = state.structureName,

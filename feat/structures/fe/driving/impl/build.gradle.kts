@@ -7,6 +7,7 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(project(":feat:structures:fe:app:api"))
+                implementation(project(":feat:projects:fe:app:api"))
                 implementation(project(":feat:projects:fe:driving:api"))
                 implementation(project(":feat:findings:fe:model"))
                 implementation(project(":feat:findings:fe:driving:api"))
@@ -19,6 +20,8 @@ kotlin {
                 implementation(project(":feat:structures:fe:driven:test"))
                 implementation(project(":feat:findings:fe:app:impl"))
                 implementation(project(":feat:findings:fe:driven:test"))
+                implementation(project(":feat:projects:fe:app:impl"))
+                implementation(project(":feat:projects:fe:driven:test"))
                 implementation(project(":lib:storage:fe:api"))
                 implementation(project(":lib:storage:fe:test"))
                 implementation(project(":lib:sync:fe:driven:test"))

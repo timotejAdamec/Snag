@@ -19,6 +19,7 @@ import cz.adamec.timotej.snag.findings.fe.app.api.GetFindingUseCase
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError.Unknown
+import cz.adamec.timotej.snag.projects.fe.app.api.IsProjectClosedUseCase
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -30,8 +31,10 @@ import kotlin.uuid.Uuid
 
 internal class FindingDetailViewModel(
     @InjectedParam private val findingId: Uuid,
+    @InjectedParam private val projectId: Uuid,
     private val getFindingUseCase: GetFindingUseCase,
     private val deleteFindingUseCase: DeleteFindingUseCase,
+    private val isProjectClosedUseCase: IsProjectClosedUseCase,
 ) : ViewModel() {
     private val _state: MutableStateFlow<FindingDetailUiState> =
         MutableStateFlow(FindingDetailUiState())
@@ -45,7 +48,15 @@ internal class FindingDetailViewModel(
 
     init {
         collectFinding()
+        collectProjectClosed()
     }
+
+    private fun collectProjectClosed() =
+        viewModelScope.launch {
+            isProjectClosedUseCase(projectId).collect { isClosed ->
+                _state.update { it.copy(isProjectClosed = isClosed) }
+            }
+        }
 
     fun onDelete() =
         viewModelScope.launch {
@@ -83,7 +94,8 @@ internal class FindingDetailViewModel(
                     }
 
                     is OfflineFirstDataResult.Success -> {
-                        if (result.data == null) {
+                        val finding = result.data
+                        if (finding == null) {
                             if (_state.value.status != FindingDetailUiStatus.DELETED) {
                                 _state.update {
                                     it.copy(status = FindingDetailUiStatus.NOT_FOUND)
@@ -93,7 +105,7 @@ internal class FindingDetailViewModel(
                             _state.update {
                                 it.copy(
                                     status = FindingDetailUiStatus.LOADED,
-                                    finding = result.data,
+                                    finding = finding,
                                 )
                             }
                         }

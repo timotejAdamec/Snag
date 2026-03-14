@@ -28,6 +28,7 @@ import kotlin.uuid.Uuid
 @Composable
 internal fun StructureFloorPlanScreen(
     structureId: Uuid,
+    projectId: Uuid,
     selectedFindingId: Uuid?,
     onBack: () -> Unit,
     onEditClick: () -> Unit,
@@ -35,7 +36,7 @@ internal fun StructureFloorPlanScreen(
     onCreateFinding: (coordinate: RelativeCoordinate, findingTypeKey: FindingTypeKey) -> Unit,
     viewModel: StructureFloorPlanViewModel =
         koinViewModel {
-            parametersOf(structureId)
+            parametersOf(structureId, projectId)
         },
 ) {
     LaunchedEffect(selectedFindingId) {

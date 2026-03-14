@@ -25,9 +25,10 @@ import kotlin.uuid.Uuid
 @Composable
 internal fun FindingDetailScreen(
     findingId: Uuid,
+    projectId: Uuid,
     onBack: () -> Unit,
     onEditClick: () -> Unit,
-    viewModel: FindingDetailViewModel = koinViewModel { parametersOf(findingId) },
+    viewModel: FindingDetailViewModel = koinViewModel { parametersOf(findingId, projectId) },
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 

@@ -324,10 +324,12 @@ private fun LoadedProjectDetailsContent(
                                             .height(minWidth + 30.dp)
                                             .weight(1f),
                                     feStructure = structure,
-                                    onClick = { onStructureClick(
-                                        structure.structure.projectId,
-                                        structure.structure.id
-                                    ) },
+                                    onClick = {
+                                        onStructureClick(
+                                            structure.structure.projectId,
+                                            structure.structure.id,
+                                        )
+                                    },
                                 )
                             }
                         }

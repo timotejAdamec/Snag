@@ -19,6 +19,7 @@ import cz.adamec.timotej.snag.findings.fe.app.api.GetFindingsUseCase
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
+import cz.adamec.timotej.snag.projects.fe.app.api.IsProjectClosedUseCase
 import cz.adamec.timotej.snag.structures.fe.app.api.DeleteStructureUseCase
 import cz.adamec.timotej.snag.structures.fe.app.api.GetStructureUseCase
 import cz.adamec.timotej.snag.structures.fe.driven.test.FakeStructuresDb
@@ -43,6 +44,7 @@ class StructureDetailsViewModelTest : FrontendKoinInitializedTest() {
     private val getStructureUseCase: GetStructureUseCase by inject()
     private val deleteStructureUseCase: DeleteStructureUseCase by inject()
     private val getFindingsUseCase: GetFindingsUseCase by inject()
+    private val isProjectClosedUseCase: IsProjectClosedUseCase by inject()
 
     private val projectId = Uuid.parse("00000000-0000-0000-0000-000000000001")
     private val structureId = Uuid.parse("00000000-0000-0000-0001-000000000001")
@@ -61,9 +63,11 @@ class StructureDetailsViewModelTest : FrontendKoinInitializedTest() {
     private fun createViewModel() =
         StructureFloorPlanViewModel(
             structureId = structureId,
+            projectId = projectId,
             getStructureUseCase = getStructureUseCase,
             deleteStructureUseCase = deleteStructureUseCase,
             getFindingsUseCase = getFindingsUseCase,
+            isProjectClosedUseCase = isProjectClosedUseCase,
         )
 
     @Test

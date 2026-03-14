@@ -22,6 +22,7 @@ import cz.adamec.timotej.snag.findings.fe.driven.test.FakeFindingsDb
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
+import cz.adamec.timotej.snag.projects.fe.app.api.IsProjectClosedUseCase
 import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
@@ -41,7 +42,9 @@ class FindingDetailViewModelTest : FrontendKoinInitializedTest() {
 
     private val getFindingUseCase: GetFindingUseCase by inject()
     private val deleteFindingUseCase: DeleteFindingUseCase by inject()
+    private val isProjectClosedUseCase: IsProjectClosedUseCase by inject()
 
+    private val projectId = Uuid.parse("00000000-0000-0000-0000-000000000002")
     private val structureId = Uuid.parse("00000000-0000-0000-0000-000000000001")
     private val findingId = Uuid.parse("00000000-0000-0000-0001-000000000001")
     private val finding =
@@ -49,11 +52,13 @@ class FindingDetailViewModelTest : FrontendKoinInitializedTest() {
             finding = Finding(findingId, structureId, "Crack in wall", "A large crack", FindingType.Classic(), emptyList(), Timestamp(10L)),
         )
 
-    private fun createViewModel() =
+    private fun createViewModel(): FindingDetailViewModel =
         FindingDetailViewModel(
             findingId = findingId,
+            projectId = projectId,
             getFindingUseCase = getFindingUseCase,
             deleteFindingUseCase = deleteFindingUseCase,
+            isProjectClosedUseCase = isProjectClosedUseCase,
         )
 
     @Test

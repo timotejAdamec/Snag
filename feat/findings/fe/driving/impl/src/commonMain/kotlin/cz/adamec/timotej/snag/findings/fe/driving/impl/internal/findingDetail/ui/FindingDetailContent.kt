@@ -246,6 +246,7 @@ internal fun FindingDetailContent(
                         colors = FloatingToolbarDefaults.vibrantFloatingToolbarColors(),
                     ) {
                         IconButton(
+                            enabled = state.canEdit,
                             onClick = onEditClick,
                         ) {
                             Icon(

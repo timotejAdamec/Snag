@@ -19,6 +19,7 @@ import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError.Unknown
+import cz.adamec.timotej.snag.projects.fe.app.api.IsProjectClosedUseCase
 import cz.adamec.timotej.snag.structures.fe.app.api.CanModifyFloorPlanImageUseCase
 import cz.adamec.timotej.snag.structures.fe.app.api.DeleteFloorPlanImageUseCase
 import cz.adamec.timotej.snag.structures.fe.app.api.GetStructureUseCase
@@ -47,11 +48,15 @@ internal class StructureDetailsEditViewModel(
     private val uploadFloorPlanImageUseCase: UploadFloorPlanImageUseCase,
     private val deleteFloorPlanImageUseCase: DeleteFloorPlanImageUseCase,
     private val canModifyFloorPlanImageUseCase: CanModifyFloorPlanImageUseCase,
+    private val isProjectClosedUseCase: IsProjectClosedUseCase,
 ) : ViewModel() {
     private val _state: MutableStateFlow<StructureDetailsEditUiState> =
-        MutableStateFlow(StructureDetailsEditUiState(
-            isCreatingNew = structureId == null,
-        ))
+        MutableStateFlow(
+            StructureDetailsEditUiState(
+                isCreatingNew = structureId == null,
+                projectId = projectId,
+            ),
+        )
     val state: StateFlow<StructureDetailsEditUiState> = _state
 
     private val errorEventsChannel = Channel<UiError>()
@@ -65,6 +70,7 @@ internal class StructureDetailsEditViewModel(
     init {
         structureId?.let { collectStructure(it) }
         collectCanModifyFloorPlanImage()
+        collectProjectClosed()
     }
 
     private fun collectStructure(structureId: Uuid) =
@@ -80,6 +86,7 @@ internal class StructureDetailsEditViewModel(
                                 it.copy(
                                     structureName = data.structure.name,
                                     floorPlanUrl = data.structure.floorPlanUrl,
+                                    projectId = data.structure.projectId,
                                 )
                             }
                             cancel()
@@ -97,6 +104,13 @@ internal class StructureDetailsEditViewModel(
                         canModifyFloorPlanImage = canModify,
                     )
                 }
+            }
+        }
+
+    private fun collectProjectClosed() =
+        viewModelScope.launch {
+            isProjectClosedUseCase(projectId).collect { isClosed ->
+                _state.update { it.copy(isProjectClosed = isClosed) }
             }
         }
 

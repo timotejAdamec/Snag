@@ -19,12 +19,15 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(project(":feat:inspections:fe:app:api"))
+                implementation(project(":feat:projects:fe:app:api"))
                 implementation(libs.kotlinx.datetime)
             }
         }
         commonTest {
             dependencies {
                 implementation(project(":feat:inspections:fe:driven:test"))
+                implementation(project(":feat:projects:fe:app:impl"))
+                implementation(project(":feat:projects:fe:driven:test"))
                 implementation(project(":lib:sync:fe:driven:test"))
             }
         }

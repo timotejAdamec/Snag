@@ -29,6 +29,7 @@ import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstUpdateDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError.Unknown
+import cz.adamec.timotej.snag.projects.fe.app.api.IsProjectClosedUseCase
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -42,6 +43,7 @@ import snag.lib.design.fe.generated.resources.error_field_required
 import kotlin.uuid.Uuid
 
 internal class FindingDetailsEditViewModel(
+    @InjectedParam private val projectId: Uuid,
     @InjectedParam private val findingId: Uuid?,
     @InjectedParam private val structureId: Uuid?,
     @InjectedParam private val findingTypeKey: FindingTypeKey?,
@@ -49,6 +51,7 @@ internal class FindingDetailsEditViewModel(
     private val getFindingUseCase: GetFindingUseCase,
     private val saveNewFindingUseCase: SaveNewFindingUseCase,
     private val saveFindingDetailsUseCase: SaveFindingDetailsUseCase,
+    private val isProjectClosedUseCase: IsProjectClosedUseCase,
 ) : ViewModel() {
     private val _state: MutableStateFlow<FindingDetailsEditUiState> =
         MutableStateFlow(
@@ -69,7 +72,15 @@ internal class FindingDetailsEditViewModel(
             "Either findingId or structureId must be provided"
         }
         findingId?.let { collectFinding(it) }
+        collectProjectClosed()
     }
+
+    private fun collectProjectClosed() =
+        viewModelScope.launch {
+            isProjectClosedUseCase(projectId).collect { isClosed ->
+                _state.update { it.copy(isProjectClosed = isClosed) }
+            }
+        }
 
     private fun collectFinding(findingId: Uuid) =
         viewModelScope.launch {

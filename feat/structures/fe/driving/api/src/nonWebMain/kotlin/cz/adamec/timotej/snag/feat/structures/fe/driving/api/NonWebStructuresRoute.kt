@@ -38,28 +38,29 @@ data class NonWebStructureFloorPlanRoute(
 ) : StructureFloorPlanRoute
 
 class NonWebStructureCreationRouteFactory : StructureCreationRouteFactory {
-    override fun create(projectId: Uuid): StructureCreationRoute =
-        NonWebStructureCreationRoute(projectId)
+    override fun create(projectId: Uuid): StructureCreationRoute = NonWebStructureCreationRoute(projectId)
 }
 
 class NonWebStructureEditRouteFactory : StructureEditRouteFactory {
     override fun create(
         projectId: Uuid,
         structureId: Uuid,
-    ): StructureEditRoute = NonWebStructureEditRoute(
-        projectId = projectId,
-        structureId = structureId,
-    )
+    ): StructureEditRoute =
+        NonWebStructureEditRoute(
+            projectId = projectId,
+            structureId = structureId,
+        )
 }
 
 class NonWebStructureFloorPlanRouteFactory : StructureFloorPlanRouteFactory {
     override fun create(
         projectId: Uuid,
         structureId: Uuid,
-    ): StructureFloorPlanRoute = NonWebStructureFloorPlanRoute(
-        projectId = projectId,
-        structureId = structureId,
-    )
+    ): StructureFloorPlanRoute =
+        NonWebStructureFloorPlanRoute(
+            projectId = projectId,
+            structureId = structureId,
+        )
 }
 
 @Serializable
@@ -73,8 +74,9 @@ class NonWebStructureDetailRouteFactory : StructureDetailRouteFactory {
     override fun create(
         projectId: Uuid,
         structureId: Uuid,
-    ): SnagNavRoute = NonWebStructureDetailNavRoute(
-        projectId = projectId,
-        structureId = structureId,
-    )
+    ): SnagNavRoute =
+        NonWebStructureDetailNavRoute(
+            projectId = projectId,
+            structureId = structureId,
+        )
 }

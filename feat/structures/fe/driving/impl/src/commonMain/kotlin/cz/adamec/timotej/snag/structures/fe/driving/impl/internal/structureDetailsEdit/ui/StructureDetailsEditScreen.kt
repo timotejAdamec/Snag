@@ -41,8 +41,8 @@ import kotlin.uuid.Uuid
 internal fun StructureDetailsEditScreen(
     onSaveStructure: (projectId: Uuid, structureId: Uuid) -> Unit,
     onCancelClick: () -> Unit,
-    structureId: Uuid? = null,
     projectId: Uuid,
+    structureId: Uuid? = null,
     viewModel: StructureDetailsEditViewModel =
         koinViewModel(
             viewModelStoreOwner =

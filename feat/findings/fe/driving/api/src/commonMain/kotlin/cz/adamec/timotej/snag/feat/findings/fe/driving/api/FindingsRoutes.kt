@@ -28,6 +28,7 @@ interface FindingDetailRoute : StructureDetailNavRoute {
 
 interface FindingEditRoute : SnagNavRoute {
     val findingId: Uuid
+    val projectId: Uuid
 }
 
 interface FindingsListRouteFactory {
@@ -47,12 +48,14 @@ interface FindingDetailRouteFactory {
 
 interface FindingEditRouteFactory {
     fun create(
+        projectId: Uuid,
         structureId: Uuid,
         findingId: Uuid,
     ): FindingEditRoute
 }
 
 interface FindingCreationRoute : SnagNavRoute {
+    val projectId: Uuid
     val structureId: Uuid
     val coordinate: RelativeCoordinate
     val findingTypeKey: FindingTypeKey
@@ -60,6 +63,7 @@ interface FindingCreationRoute : SnagNavRoute {
 
 interface FindingCreationRouteFactory {
     fun create(
+        projectId: Uuid,
         structureId: Uuid,
         coordinate: RelativeCoordinate,
         findingTypeKey: FindingTypeKey,
