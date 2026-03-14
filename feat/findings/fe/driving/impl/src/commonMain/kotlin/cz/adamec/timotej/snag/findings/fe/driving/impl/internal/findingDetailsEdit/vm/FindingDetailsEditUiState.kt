@@ -22,6 +22,5 @@ internal data class FindingDetailsEditUiState(
     val findingNameError: StringResource? = null,
     val isProjectClosed: Boolean = false,
 ) {
-    val canSave: Boolean
-        get() = !isProjectClosed
+    val canSave = !isProjectClosed
 }

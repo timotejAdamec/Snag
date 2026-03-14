@@ -24,6 +24,5 @@ internal data class InspectionEditUiState(
     val note: String = "",
     val isProjectClosed: Boolean = false,
 ) {
-    val canSave: Boolean
-        get() = !isProjectClosed
+    val canSave = !isProjectClosed
 }
