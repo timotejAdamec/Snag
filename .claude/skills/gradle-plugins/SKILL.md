@@ -37,6 +37,7 @@ feat/<feature>/
     │   ├── impl/            → snagBackendModule
     │   └── test/            → snagBackendModule
     ├── driving/
+    │   ├── api/             → snagBackendModule
     │   ├── contract/        → snagContractDrivingBackendMultiplatformModule
     │   └── impl/            → snagImplDrivingBackendModule
     └── driven/
