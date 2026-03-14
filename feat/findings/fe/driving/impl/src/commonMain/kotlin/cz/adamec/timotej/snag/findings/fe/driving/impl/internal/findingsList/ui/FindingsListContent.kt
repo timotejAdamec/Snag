@@ -122,7 +122,7 @@ private fun FindingsList(
             key = { it.finding.id },
         ) { finding ->
             val isSelected = finding.finding.id == selectedFindingId
-            val shape = if (isSelected) MaterialTheme.shapes.medium else MaterialTheme.shapes.extraSmall
+            val shape = if (isSelected) MaterialTheme.shapes.medium else MaterialTheme.shapes.small
             ListItem(
                 modifier =
                     Modifier
