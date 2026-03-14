@@ -33,9 +33,13 @@ value class StructureDetailBackStack(
  * Nav route for the structure detail nested navigation graph.
  */
 interface StructureDetailNavRoute : SnagNavRoute {
+    val projectId: Uuid
     val structureId: Uuid
 }
 
 interface StructureDetailRouteFactory {
-    fun create(structureId: Uuid): SnagNavRoute
+    fun create(
+        projectId: Uuid,
+        structureId: Uuid,
+    ): SnagNavRoute
 }

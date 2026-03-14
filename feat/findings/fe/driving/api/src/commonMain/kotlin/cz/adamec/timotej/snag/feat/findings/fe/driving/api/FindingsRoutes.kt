@@ -31,11 +31,15 @@ interface FindingEditRoute : SnagNavRoute {
 }
 
 interface FindingsListRouteFactory {
-    fun create(structureId: Uuid): FindingsListRoute
+    fun create(
+        projectId: Uuid,
+        structureId: Uuid,
+    ): FindingsListRoute
 }
 
 interface FindingDetailRouteFactory {
     fun create(
+        projectId: Uuid,
         structureId: Uuid,
         findingId: Uuid,
     ): FindingDetailRoute

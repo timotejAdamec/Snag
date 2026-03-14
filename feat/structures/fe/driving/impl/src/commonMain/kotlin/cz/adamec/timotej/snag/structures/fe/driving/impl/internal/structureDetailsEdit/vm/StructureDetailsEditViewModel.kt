@@ -40,8 +40,8 @@ import snag.lib.design.fe.generated.resources.error_field_required
 import kotlin.uuid.Uuid
 
 internal class StructureDetailsEditViewModel(
+    @InjectedParam private val projectId: Uuid,
     @InjectedParam private val structureId: Uuid?,
-    @InjectedParam private val projectId: Uuid?,
     private val getStructureUseCase: GetStructureUseCase,
     private val saveStructureUseCase: SaveStructureUseCase,
     private val uploadFloorPlanImageUseCase: UploadFloorPlanImageUseCase,
@@ -49,7 +49,9 @@ internal class StructureDetailsEditViewModel(
     private val canModifyFloorPlanImageUseCase: CanModifyFloorPlanImageUseCase,
 ) : ViewModel() {
     private val _state: MutableStateFlow<StructureDetailsEditUiState> =
-        MutableStateFlow(StructureDetailsEditUiState(projectId = projectId))
+        MutableStateFlow(StructureDetailsEditUiState(
+            isCreatingNew = structureId == null,
+        ))
     val state: StateFlow<StructureDetailsEditUiState> = _state
 
     private val errorEventsChannel = Channel<UiError>()
@@ -61,9 +63,6 @@ internal class StructureDetailsEditViewModel(
     private val resolvedStructureId: Uuid = structureId ?: UuidProvider.getUuid()
 
     init {
-        require(structureId != null || projectId != null) {
-            "Either structureId or projectId must be provided"
-        }
         structureId?.let { collectStructure(it) }
         collectCanModifyFloorPlanImage()
     }
@@ -80,7 +79,6 @@ internal class StructureDetailsEditViewModel(
                             _state.update {
                                 it.copy(
                                     structureName = data.structure.name,
-                                    projectId = data.structure.projectId,
                                     floorPlanUrl = data.structure.floorPlanUrl,
                                 )
                             }
@@ -111,11 +109,10 @@ internal class StructureDetailsEditViewModel(
         fileName: String,
     ) = viewModelScope.launch {
         _state.update { it.copy(isUploadingImage = true) }
-        val resolvedProjectId = _state.value.projectId ?: projectId!!
         when (
             val result =
                 uploadFloorPlanImageUseCase(
-                    projectId = resolvedProjectId,
+                    projectId = projectId,
                     structureId = resolvedStructureId,
                     bytes = bytes,
                     fileName = fileName,
@@ -169,7 +166,7 @@ internal class StructureDetailsEditViewModel(
                 request =
                     SaveStructureRequest(
                         id = resolvedStructureId,
-                        projectId = state.value.projectId ?: projectId!!,
+                        projectId = projectId,
                         name = state.value.structureName,
                         floorPlanUrl = state.value.floorPlanUrl,
                     ),

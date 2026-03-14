@@ -30,6 +30,7 @@ data class WebStructureCreationRoute(
 @Serializable
 @Immutable
 data class WebStructureEditRoute(
+    override val projectId: Uuid,
     override val structureId: Uuid,
 ) : StructureEditRoute {
     companion object {
@@ -40,24 +41,39 @@ data class WebStructureEditRoute(
 @Serializable
 @Immutable
 data class WebStructureFloorPlanRoute(
+    override val projectId: Uuid,
     override val structureId: Uuid,
 ) : StructureFloorPlanRoute
 
 class WebStructureCreationRouteFactory : StructureCreationRouteFactory {
-    override fun create(projectId: Uuid): StructureCreationRoute = WebStructureCreationRoute(projectId)
+    override fun create(projectId: Uuid): StructureCreationRoute =
+        WebStructureCreationRoute(projectId)
 }
 
 class WebStructureEditRouteFactory : StructureEditRouteFactory {
-    override fun create(structureId: Uuid): StructureEditRoute = WebStructureEditRoute(structureId)
+    override fun create(
+        projectId: Uuid,
+        structureId: Uuid,
+    ): StructureEditRoute = WebStructureEditRoute(
+        projectId = projectId,
+        structureId = structureId,
+    )
 }
 
 class WebStructureFloorPlanRouteFactory : StructureFloorPlanRouteFactory {
-    override fun create(structureId: Uuid): StructureFloorPlanRoute = WebStructureFloorPlanRoute(structureId)
+    override fun create(
+        projectId: Uuid,
+        structureId: Uuid,
+    ): StructureFloorPlanRoute = WebStructureFloorPlanRoute(
+        projectId = projectId,
+        structureId = structureId,
+    )
 }
 
 @Serializable
 @Immutable
 data class WebStructureDetailNavRoute(
+    override val projectId: Uuid,
     override val structureId: Uuid,
 ) : StructureDetailNavRoute {
     companion object {
@@ -66,5 +82,11 @@ data class WebStructureDetailNavRoute(
 }
 
 class WebStructureDetailRouteFactory : StructureDetailRouteFactory {
-    override fun create(structureId: Uuid): SnagNavRoute = WebStructureDetailNavRoute(structureId)
+    override fun create(
+        projectId: Uuid,
+        structureId: Uuid,
+    ): SnagNavRoute = WebStructureDetailNavRoute(
+        projectId = projectId,
+        structureId = structureId,
+    )
 }

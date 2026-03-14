@@ -32,6 +32,7 @@ import kotlin.uuid.Uuid
 
 @Composable
 internal fun StructureDetailNestedNav(
+    projectId: Uuid,
     structureId: Uuid,
     onExit: () -> Unit,
 ) {
@@ -53,8 +54,14 @@ internal fun StructureDetailNestedNav(
         backStack.value.clear()
         backStack.value.addAll(
             listOf(
-                structureFloorPlanRouteFactory.create(structureId),
-                findingsListRouteFactory.create(structureId),
+                structureFloorPlanRouteFactory.create(
+                    projectId = projectId,
+                    structureId = structureId,
+                ),
+                findingsListRouteFactory.create(
+                    projectId = projectId,
+                    structureId = structureId,
+                ),
             ),
         )
     }
@@ -63,8 +70,14 @@ internal fun StructureDetailNestedNav(
         backStack.value.clear()
         backStack.value.addAll(
             listOf(
-                structureFloorPlanRouteFactory.create(structureId),
-                findingsListRouteFactory.create(structureId),
+                structureFloorPlanRouteFactory.create(
+                    projectId = projectId,
+                    structureId = structureId,
+                ),
+                findingsListRouteFactory.create(
+                    projectId = projectId,
+                    structureId = structureId,
+                ),
             ),
         )
     }

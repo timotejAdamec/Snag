@@ -20,10 +20,12 @@ interface StructureCreationRoute : SnagNavRoute {
 }
 
 interface StructureEditRoute : SnagNavRoute {
+    val projectId: Uuid
     val structureId: Uuid
 }
 
 interface StructureFloorPlanRoute : StructureDetailNavRoute {
+    override val projectId: Uuid
     override val structureId: Uuid
 }
 
@@ -32,9 +34,15 @@ interface StructureCreationRouteFactory {
 }
 
 interface StructureEditRouteFactory {
-    fun create(structureId: Uuid): StructureEditRoute
+    fun create(
+        projectId: Uuid,
+        structureId: Uuid,
+    ): StructureEditRoute
 }
 
 interface StructureFloorPlanRouteFactory {
-    fun create(structureId: Uuid): StructureFloorPlanRoute
+    fun create(
+        projectId: Uuid,
+        structureId: Uuid,
+    ): StructureFloorPlanRoute
 }

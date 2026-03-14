@@ -17,13 +17,12 @@ import kotlin.uuid.Uuid
 
 internal data class StructureDetailsEditUiState(
     val structureName: String = "",
-    val projectId: Uuid? = null,
+    val isCreatingNew: Boolean = false,
     val structureNameError: StringResource? = null,
     val floorPlanUrl: String? = null,
     val pendingUploadUrl: String? = null,
     val isUploadingImage: Boolean = false,
     val canModifyFloorPlanImage: Boolean = true,
 ) {
-    val isEditMode = projectId != null
     val canSave = !isUploadingImage
 }

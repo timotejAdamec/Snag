@@ -98,7 +98,7 @@ import snag.lib.design.fe.generated.resources.Res as DesignRes
 internal fun ProjectDetailsContent(
     state: ProjectDetailsUiState,
     onNewStructureClick: () -> Unit,
-    onStructureClick: (structureId: Uuid) -> Unit,
+    onStructureClick: (projectId: Uuid, structureId: Uuid) -> Unit,
     onNewInspectionClick: () -> Unit,
     onInspectionClick: (inspectionId: Uuid) -> Unit,
     onStartInspection: (Uuid) -> Unit,
@@ -158,7 +158,7 @@ internal fun ProjectDetailsContent(
 private fun LoadedProjectDetailsContent(
     state: ProjectDetailsUiState,
     onNewStructureClick: () -> Unit,
-    onStructureClick: (structureId: Uuid) -> Unit,
+    onStructureClick: (projectId: Uuid, structureId: Uuid) -> Unit,
     onNewInspectionClick: () -> Unit,
     onInspectionClick: (inspectionId: Uuid) -> Unit,
     onStartInspection: (Uuid) -> Unit,
@@ -324,7 +324,10 @@ private fun LoadedProjectDetailsContent(
                                             .height(minWidth + 30.dp)
                                             .weight(1f),
                                     feStructure = structure,
-                                    onClick = { onStructureClick(structure.structure.id) },
+                                    onClick = { onStructureClick(
+                                        structure.structure.projectId,
+                                        structure.structure.id
+                                    ) },
                                 )
                             }
                         }
@@ -489,7 +492,7 @@ private fun LoadedProjectDetailsContentPreview() {
                         ),
                 ),
             onNewStructureClick = {},
-            onStructureClick = {},
+            onStructureClick = { _, _ -> },
             onNewInspectionClick = {},
             onInspectionClick = {},
             onStartInspection = {},

@@ -21,6 +21,7 @@ import kotlin.uuid.Uuid
 @Serializable
 @Immutable
 data class WebFindingsListRoute(
+    override val projectId: Uuid,
     override val structureId: Uuid,
 ) : FindingsListRoute {
     companion object {
@@ -31,6 +32,7 @@ data class WebFindingsListRoute(
 @Serializable
 @Immutable
 data class WebFindingDetailRoute(
+    override val projectId: Uuid,
     override val structureId: Uuid,
     override val findingId: Uuid,
 ) : FindingDetailRoute {
@@ -40,15 +42,23 @@ data class WebFindingDetailRoute(
 }
 
 class WebFindingsListRouteFactory : FindingsListRouteFactory {
-    override fun create(structureId: Uuid): FindingsListRoute = WebFindingsListRoute(structureId)
+    override fun create(
+        projectId: Uuid,
+        structureId: Uuid,
+    ): FindingsListRoute = WebFindingsListRoute(
+        projectId = projectId,
+        structureId = structureId,
+    )
 }
 
 class WebFindingDetailRouteFactory : FindingDetailRouteFactory {
     override fun create(
+        projectId: Uuid,
         structureId: Uuid,
         findingId: Uuid,
     ): FindingDetailRoute =
         WebFindingDetailRoute(
+            projectId = projectId,
             structureId = structureId,
             findingId = findingId,
         )

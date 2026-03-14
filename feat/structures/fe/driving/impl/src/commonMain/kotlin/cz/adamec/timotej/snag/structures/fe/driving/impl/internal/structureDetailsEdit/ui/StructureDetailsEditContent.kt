@@ -70,7 +70,7 @@ internal fun StructureDetailsEditContent(
                         .fillMaxWidth(),
                 title = {
                     val text =
-                        if (!state.isEditMode && state.structureName.isBlank()) {
+                        if (state.isCreatingNew && state.structureName.isBlank()) {
                             stringResource(Res.string.new_structure)
                         } else {
                             state.structureName
@@ -141,7 +141,7 @@ internal fun StructureDetailsEditContent(
                     Text(
                         text =
                             state.structureNameError?.let { stringResource(it) }
-                                ?: stringResource(Res.string.required) + "*",
+                                ?: (stringResource(Res.string.required) + "*"),
                     )
                 },
                 value = state.structureName,

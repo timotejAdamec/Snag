@@ -63,6 +63,7 @@ internal inline fun <reified T : FindingsListRoute> Module.findingsListScreenNav
                 }
                 backStack.value.add(
                     factory.create(
+                        projectId = route.projectId,
                         structureId = route.structureId,
                         findingId = findingId,
                     ),

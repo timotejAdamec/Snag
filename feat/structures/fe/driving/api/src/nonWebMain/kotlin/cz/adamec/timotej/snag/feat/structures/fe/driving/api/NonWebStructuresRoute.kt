@@ -26,33 +26,55 @@ data class NonWebStructureCreationRoute(
 @Serializable
 @Immutable
 data class NonWebStructureEditRoute(
+    override val projectId: Uuid,
     override val structureId: Uuid,
 ) : StructureEditRoute
 
 @Serializable
 @Immutable
 data class NonWebStructureFloorPlanRoute(
+    override val projectId: Uuid,
     override val structureId: Uuid,
 ) : StructureFloorPlanRoute
 
 class NonWebStructureCreationRouteFactory : StructureCreationRouteFactory {
-    override fun create(projectId: Uuid): StructureCreationRoute = NonWebStructureCreationRoute(projectId)
+    override fun create(projectId: Uuid): StructureCreationRoute =
+        NonWebStructureCreationRoute(projectId)
 }
 
 class NonWebStructureEditRouteFactory : StructureEditRouteFactory {
-    override fun create(structureId: Uuid): StructureEditRoute = NonWebStructureEditRoute(structureId)
+    override fun create(
+        projectId: Uuid,
+        structureId: Uuid,
+    ): StructureEditRoute = NonWebStructureEditRoute(
+        projectId = projectId,
+        structureId = structureId,
+    )
 }
 
 class NonWebStructureFloorPlanRouteFactory : StructureFloorPlanRouteFactory {
-    override fun create(structureId: Uuid): StructureFloorPlanRoute = NonWebStructureFloorPlanRoute(structureId)
+    override fun create(
+        projectId: Uuid,
+        structureId: Uuid,
+    ): StructureFloorPlanRoute = NonWebStructureFloorPlanRoute(
+        projectId = projectId,
+        structureId = structureId,
+    )
 }
 
 @Serializable
 @Immutable
 data class NonWebStructureDetailNavRoute(
+    override val projectId: Uuid,
     override val structureId: Uuid,
 ) : StructureDetailNavRoute
 
 class NonWebStructureDetailRouteFactory : StructureDetailRouteFactory {
-    override fun create(structureId: Uuid): SnagNavRoute = NonWebStructureDetailNavRoute(structureId)
+    override fun create(
+        projectId: Uuid,
+        structureId: Uuid,
+    ): SnagNavRoute = NonWebStructureDetailNavRoute(
+        projectId = projectId,
+        structureId = structureId,
+    )
 }

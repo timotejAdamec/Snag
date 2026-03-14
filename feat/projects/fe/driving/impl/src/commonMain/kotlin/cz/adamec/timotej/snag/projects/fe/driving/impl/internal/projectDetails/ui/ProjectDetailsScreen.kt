@@ -26,7 +26,7 @@ import kotlin.uuid.Uuid
 internal fun ProjectDetailsScreen(
     projectId: Uuid,
     onNewStructureClick: () -> Unit,
-    onStructureClick: (structureId: Uuid) -> Unit,
+    onStructureClick: (projectId: Uuid, structureId: Uuid) -> Unit,
     onNewInspectionClick: () -> Unit,
     onInspectionClick: (inspectionId: Uuid) -> Unit,
     onBack: () -> Unit,

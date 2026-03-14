@@ -21,26 +21,36 @@ import kotlin.uuid.Uuid
 @Serializable
 @Immutable
 data class NonWebFindingsListRoute(
+    override val projectId: Uuid,
     override val structureId: Uuid,
 ) : FindingsListRoute
 
 @Serializable
 @Immutable
 data class NonWebFindingDetailRoute(
+    override val projectId: Uuid,
     override val structureId: Uuid,
     override val findingId: Uuid,
 ) : FindingDetailRoute
 
 class NonWebFindingsListRouteFactory : FindingsListRouteFactory {
-    override fun create(structureId: Uuid): FindingsListRoute = NonWebFindingsListRoute(structureId)
+    override fun create(
+        projectId: Uuid,
+        structureId: Uuid
+    ): FindingsListRoute = NonWebFindingsListRoute(
+        projectId = projectId,
+        structureId = structureId,
+    )
 }
 
 class NonWebFindingDetailRouteFactory : FindingDetailRouteFactory {
     override fun create(
+        projectId: Uuid,
         structureId: Uuid,
         findingId: Uuid,
     ): FindingDetailRoute =
         NonWebFindingDetailRoute(
+            projectId = projectId,
             structureId = structureId,
             findingId = findingId,
         )

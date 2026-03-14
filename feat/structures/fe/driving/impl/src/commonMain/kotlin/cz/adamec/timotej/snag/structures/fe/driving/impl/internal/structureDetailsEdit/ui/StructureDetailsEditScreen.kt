@@ -39,16 +39,16 @@ import kotlin.uuid.Uuid
 
 @Composable
 internal fun StructureDetailsEditScreen(
-    onSaveStructure: (structureId: Uuid, projectId: Uuid) -> Unit,
+    onSaveStructure: (projectId: Uuid, structureId: Uuid) -> Unit,
     onCancelClick: () -> Unit,
     structureId: Uuid? = null,
-    projectId: Uuid? = null,
+    projectId: Uuid,
     viewModel: StructureDetailsEditViewModel =
         koinViewModel(
             viewModelStoreOwner =
                 LocalViewModelStoreOwner.current
                     ?: error("No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"),
-        ) { parametersOf(structureId, projectId) },
+        ) { parametersOf(projectId, structureId) },
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -60,7 +60,7 @@ internal fun StructureDetailsEditScreen(
     ObserveAsEvents(
         eventsFlow = viewModel.saveEventFlow,
         onEvent = { savedStructureId ->
-            onSaveStructure(savedStructureId, state.projectId ?: projectId!!)
+            onSaveStructure(projectId, savedStructureId)
         },
     )
 

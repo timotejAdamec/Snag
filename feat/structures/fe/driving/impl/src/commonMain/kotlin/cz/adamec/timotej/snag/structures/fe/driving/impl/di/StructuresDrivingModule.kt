@@ -62,6 +62,7 @@ internal inline fun <reified T : StructureEditRoute> Module.structureEditScreenN
         metadata = DialogSceneStrategy.dialog(fullscreenDialogProperties()),
     ) { route ->
         StructureEditScreenSetup(
+            projectId = route.projectId,
             structureId = route.structureId,
             onSaveStructure = { _ ->
                 val backStack = get<SnagBackStack>()
@@ -93,7 +94,10 @@ internal inline fun <reified T : StructureFloorPlanRoute> Module.structureFloorP
             },
             onEditClick = {
                 val rootBackStack = get<SnagBackStack>()
-                rootBackStack.value.add(structureEditRouteFactory.create(route.structureId))
+                rootBackStack.value.add(structureEditRouteFactory.create(
+                    projectId = route.projectId,
+                    structureId = route.structureId,
+                ))
             },
             onFindingClick = { findingId ->
                 val factory = get<FindingDetailRouteFactory>()
@@ -102,6 +106,7 @@ internal inline fun <reified T : StructureFloorPlanRoute> Module.structureFloorP
                 }
                 structureDetailBackStack.value.add(
                     factory.create(
+                        projectId = route.projectId,
                         structureId = route.structureId,
                         findingId = findingId,
                     ),
@@ -123,6 +128,7 @@ internal inline fun <reified T : StructureFloorPlanRoute> Module.structureFloorP
 internal inline fun <reified T : StructureDetailNavRoute> Module.structureDetailScreenNav() =
     navigation<T> { route ->
         StructureDetailNestedNav(
+            projectId = route.projectId,
             structureId = route.structureId,
             onExit = {
                 val backStack = get<SnagBackStack>()
@@ -134,8 +140,8 @@ internal inline fun <reified T : StructureDetailNavRoute> Module.structureDetail
 @Composable
 private fun Scope.StructureEditScreenSetup(
     onSaveStructure: (savedStructureId: Uuid) -> Unit,
+    projectId: Uuid,
     structureId: Uuid? = null,
-    projectId: Uuid? = null,
 ) {
     StructureDetailsEditScreen(
         structureId = structureId,
@@ -162,10 +168,10 @@ val structuresDrivingImplModule =
                 getFindingsUseCase = get(),
             )
         }
-        viewModel { (structureId: Uuid?, projectId: Uuid?) ->
+        viewModel { (projectId: Uuid, structureId: Uuid?) ->
             StructureDetailsEditViewModel(
-                structureId = structureId,
                 projectId = projectId,
+                structureId = structureId,
                 getStructureUseCase = get(),
                 saveStructureUseCase = get(),
                 uploadFloorPlanImageUseCase = get(),
