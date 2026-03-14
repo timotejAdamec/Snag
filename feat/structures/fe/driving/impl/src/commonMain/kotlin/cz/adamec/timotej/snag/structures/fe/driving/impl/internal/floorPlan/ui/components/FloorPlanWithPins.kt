@@ -116,6 +116,7 @@ internal fun FloorPlanWithPins(
     }
 }
 
+@Suppress("CognitiveComplexMethod", "CyclomaticComplexMethod", "MagicNumber", "LabeledExpression")
 @Composable
 private fun FindingsPinsOverlay(
     zoomableState: CoilZoomState,
