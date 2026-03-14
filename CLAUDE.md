@@ -24,6 +24,12 @@ features/libs and if there are any oddities, tell the developer working with you
 
 Do not worry about migrations, this is not in production yet.
 
+## Available skills
+
+- `/project-structure` — KMP & JVM module structure with Clean Architecture + Hexagonal layers
+- `/gradle-plugins` — Custom Gradle convention plugins reference
+- `/thesis-reminder` — Reminds to update the master's thesis when major changes are made
+
 ## Keeping thesis up to date
 
 Whenever there are some key changes, decide whether the thesis at ~/Ctu/dp-thesis-timotej-adamec/
