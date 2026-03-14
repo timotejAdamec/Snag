@@ -178,7 +178,7 @@ class StructureDetailsEditViewModelTest : FrontendKoinInitializedTest() {
                 )
             fakeStructuresDb.setStructures(listOf(structure))
 
-            val viewModel = createViewModel(structureId = structureId)
+            val viewModel = createViewModel(structureId = structureId, projectId = projectId)
 
             advanceUntilIdle()
 
