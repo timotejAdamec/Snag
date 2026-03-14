@@ -18,7 +18,9 @@ import org.jetbrains.exposed.v1.core.Table
 val allTables: Array<Table> =
     arrayOf(
         ClientsTable,
+        UsersTable,
         ProjectsTable,
+        ProjectAssignmentsTable,
         StructuresTable,
         FindingsTable,
         FindingCoordinatesTable,

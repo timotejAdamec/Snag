@@ -5,6 +5,10 @@ plugins {
 dependencies {
     implementation(project(":feat:projects:be:driving:contract"))
     implementation(project(":feat:projects:be:app:api"))
+    implementation(project(":feat:users:be:driving:api"))
+    implementation(project(":feat:users:be:driving:contract"))
+    implementation(project(":feat:users:be:model"))
     testImplementation(project(":lib:configuration:be:api"))
     testImplementation(project(":feat:projects:be:ports"))
+    testImplementation(project(":feat:users:be:ports"))
 }

@@ -44,6 +44,10 @@ import cz.adamec.timotej.snag.shared.rules.business.impl.di.sharedRulesModule
 import cz.adamec.timotej.snag.structures.fe.app.impl.di.structuresAppModule
 import cz.adamec.timotej.snag.structures.fe.driven.di.structuresDrivenModule
 import cz.adamec.timotej.snag.structures.fe.driving.impl.di.structuresDrivingImplModule
+import cz.adamec.timotej.snag.users.fe.app.impl.di.usersAppModule
+import cz.adamec.timotej.snag.users.fe.driven.di.usersDrivenModule
+import cz.adamec.timotej.snag.users.fe.driving.api.di.usersDrivingApiModule
+import cz.adamec.timotej.snag.users.fe.driving.impl.di.usersDrivingImplModule
 import org.koin.dsl.module
 
 val frontendModulesAggregate =
@@ -81,5 +85,9 @@ val frontendModulesAggregate =
             inspectionsDrivenModule,
             reportsAppModule,
             reportsDrivenModule,
+            usersAppModule,
+            usersDrivingApiModule,
+            usersDrivingImplModule,
+            usersDrivenModule,
         )
     }

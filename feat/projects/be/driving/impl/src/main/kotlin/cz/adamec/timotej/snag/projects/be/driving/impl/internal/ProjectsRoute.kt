@@ -13,10 +13,13 @@
 package cz.adamec.timotej.snag.projects.be.driving.impl.internal
 
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
+import cz.adamec.timotej.snag.projects.be.app.api.AssignUserToProjectUseCase
 import cz.adamec.timotej.snag.projects.be.app.api.DeleteProjectUseCase
+import cz.adamec.timotej.snag.projects.be.app.api.GetProjectAssignmentsUseCase
 import cz.adamec.timotej.snag.projects.be.app.api.GetProjectUseCase
 import cz.adamec.timotej.snag.projects.be.app.api.GetProjectsModifiedSinceUseCase
 import cz.adamec.timotej.snag.projects.be.app.api.GetProjectsUseCase
+import cz.adamec.timotej.snag.projects.be.app.api.RemoveUserFromProjectUseCase
 import cz.adamec.timotej.snag.projects.be.app.api.SaveProjectUseCase
 import cz.adamec.timotej.snag.projects.be.app.api.model.DeleteProjectRequest
 import cz.adamec.timotej.snag.projects.be.driving.contract.DeleteProjectApiDto
@@ -24,9 +27,11 @@ import cz.adamec.timotej.snag.projects.be.driving.contract.PutProjectApiDto
 import cz.adamec.timotej.snag.routing.be.AppRoute
 import cz.adamec.timotej.snag.routing.be.getDtoFromBody
 import cz.adamec.timotej.snag.routing.be.getIdFromParameters
+import cz.adamec.timotej.snag.users.be.driving.api.toDto
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
+import io.ktor.server.routing.delete
 import io.ktor.server.routing.get
 import io.ktor.server.routing.patch
 import io.ktor.server.routing.put
@@ -39,6 +44,9 @@ internal class ProjectsRoute(
     private val getProjectUseCase: GetProjectUseCase,
     private val saveProjectUseCase: SaveProjectUseCase,
     private val deleteProjectUseCase: DeleteProjectUseCase,
+    private val getProjectAssignmentsUseCase: GetProjectAssignmentsUseCase,
+    private val assignUserToProjectUseCase: AssignUserToProjectUseCase,
+    private val removeUserFromProjectUseCase: RemoveUserFromProjectUseCase,
 ) : AppRoute {
     override fun Route.setup() {
         route("/projects") {
@@ -94,6 +102,32 @@ internal class ProjectsRoute(
                 newerProject?.let {
                     call.respond(it.toDto())
                 } ?: call.respond(HttpStatusCode.NoContent)
+            }
+        }
+
+        setupAssignmentsRoute()
+    }
+
+    private fun Route.setupAssignmentsRoute() {
+        route("/projects/{projectId}/assignments") {
+            get {
+                val projectId = getIdFromParameters("projectId")
+                val dtoUsers = getProjectAssignmentsUseCase(projectId).map { it.toDto() }
+                call.respond(dtoUsers)
+            }
+
+            put("/{userId}") {
+                val projectId = getIdFromParameters("projectId")
+                val userId = getIdFromParameters("userId")
+                assignUserToProjectUseCase(userId, projectId)
+                call.respond(HttpStatusCode.NoContent)
+            }
+
+            delete("/{userId}") {
+                val projectId = getIdFromParameters("projectId")
+                val userId = getIdFromParameters("userId")
+                removeUserFromProjectUseCase(userId, projectId)
+                call.respond(HttpStatusCode.NoContent)
             }
         }
     }
