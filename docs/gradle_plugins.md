@@ -165,6 +165,7 @@ feat/<feature>/
     │   ├── api/             → snagBackendModule
     │   └── impl/            → snagBackendModule
     ├── driving/
+    │   ├── api/             → snagBackendModule
     │   ├── contract/        → snagContractDrivingBackendMultiplatformModule
     │   └── impl/            → snagImplDrivingBackendModule
     └── driven/

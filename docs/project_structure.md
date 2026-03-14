@@ -36,19 +36,13 @@ integrates with technologies. This code depends on the `app` module for applicat
 
 #### Feature module splits
 Each feature module/directory can be split into submodules if there is a need for it:
-- `api`/`contract`
-  - `contract` is a special api code that is used as a contract between the frontend and backend but
-    is in the `driving` adapter layer, not in the core `business` layer.
-- `impl` - contains production implementations for use in production.
-  - Depends on `api`/`contract`.
-- `test` - contains in-memory and other non-production unit-test-friendly implementations for use
-  instead of `impl`.
-    - Depends on `api`/`contract`.
-
-The `api` and `impl` split is typical for frontend `driving` code and for `app` layer.
-The `test` and `impl` split is typical for driven code so that tests in `driving` and `app` layers
-can run with non-production unit-test-friendly adapter `ports`.
-The `contract` and `impl` split is typical for backend driving code.
+- `api` — Public interfaces or cross-feature-accessible code. Can appear in any layer.
+  - `contract` is a special variant of `api` used as a shared FE/BE contract in the `driving`
+    adapter layer (not in the core `business` layer).
+- `impl` — Production implementations. Depends on `api`/`contract`.
+- `test` — In-memory and other non-production unit-test-friendly implementations for use instead
+  of `impl`. Depends on `api`/`contract`. Typical for the `driven` layer so that tests in
+  `driving` and `app` layers can run with non-production unit-test-friendly adapter `ports`.
 
 ### Shared modules (`feat/shared/`)
 

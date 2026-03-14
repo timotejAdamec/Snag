@@ -30,9 +30,10 @@ Each feature follows hexagonal architecture with these layers:
 
 ### Module splits
 
-- `api/` or `contract/` — Public interfaces (typical for `app/` and `driving/`)
+- `api/` or `contract/` — Public interfaces or cross-feature-accessible code. Can appear in any layer.
+  `contract/` is a special variant for shared FE/BE DTOs (driving layer).
 - `impl/` — Production implementations
-- `test/` — Fake/in-memory implementations for unit tests
+- `test/` — Fake/in-memory implementations for unit tests (typical for `driven/` layer)
 
 ### Shared modules (`feat/shared/`)
 
