@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetail.ui
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,10 +22,13 @@ import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ContainedLoadingIndicator
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.FloatingToolbarDefaults
 import androidx.compose.material3.HorizontalFloatingToolbar
 import androidx.compose.material3.Icon
@@ -41,6 +45,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
@@ -174,28 +179,40 @@ internal fun FindingDetailContent(
                             ).consumeWindowInsets(paddingValues)
                             .padding(16.dp),
                 ) {
-                    Column {
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(16.dp),
+                    ) {
                         val type = finding.finding.type
                         val visuals = type.visuals()
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            horizontalArrangement = Arrangement.spacedBy(12.dp),
                         ) {
-                            Icon(
-                                painter = painterResource(visuals.icon),
-                                contentDescription = null,
-                                modifier = Modifier.size(20.dp),
-                                tint = visuals.pinColor,
-                            )
+                            Box(
+                                modifier =
+                                    Modifier
+                                        .size(40.dp)
+                                        .clip(MaterialTheme.shapes.medium)
+                                        .background(
+                                            visuals.pinColor.copy(alpha = 0.12f),
+                                        ),
+                                contentAlignment = Alignment.Center,
+                            ) {
+                                Icon(
+                                    painter = painterResource(visuals.icon),
+                                    contentDescription = null,
+                                    modifier = Modifier.size(24.dp),
+                                    tint = visuals.pinColor,
+                                )
+                            }
                             Text(
                                 text = stringResource(visuals.label),
-                                style = MaterialTheme.typography.labelMedium,
+                                style = MaterialTheme.typography.titleMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
                         }
                         if (type is FindingType.Classic) {
                             Row(
-                                modifier = Modifier.padding(top = 8.dp),
                                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                             ) {
                                 ImportanceLabel(
@@ -207,22 +224,32 @@ internal fun FindingDetailContent(
                             }
                         }
                         finding.finding.description?.let { description ->
-                            Text(
-                                modifier = Modifier.padding(top = 8.dp),
-                                text = description,
-                                style = MaterialTheme.typography.bodyMedium,
-                            )
+                            ElevatedCard(
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = MaterialTheme.shapes.large,
+                                colors =
+                                    CardDefaults.elevatedCardColors(
+                                        containerColor =
+                                            MaterialTheme.colorScheme.surfaceContainerLow,
+                                    ),
+                            ) {
+                                Text(
+                                    modifier =
+                                        Modifier.padding(16.dp),
+                                    text = description,
+                                    style = MaterialTheme.typography.bodyLarge,
+                                )
+                            }
                         }
                         val coordinateCount = finding.finding.coordinates.size
                         Text(
-                            modifier = Modifier.padding(top = 16.dp),
                             text =
                                 pluralStringResource(
                                     Res.plurals.coordinate_count,
                                     coordinateCount,
                                     coordinateCount,
                                 ),
-                            style = MaterialTheme.typography.bodySmall,
+                            style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     }

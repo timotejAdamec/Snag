@@ -13,7 +13,6 @@
 package cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetail.ui.components
 
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Surface
@@ -40,14 +39,14 @@ internal fun ImportanceLabel(
 ) {
     val importanceColor =
         when (importance) {
-            Importance.HIGH -> MaterialTheme.colorScheme.error
-            Importance.MEDIUM -> MaterialTheme.colorScheme.tertiary
-            Importance.LOW -> MaterialTheme.colorScheme.surfaceVariant
+            Importance.HIGH -> MaterialTheme.colorScheme.errorContainer
+            Importance.MEDIUM -> MaterialTheme.colorScheme.tertiaryContainer
+            Importance.LOW -> MaterialTheme.colorScheme.surfaceContainerHigh
         }
     val importanceTextColor =
         when (importance) {
-            Importance.HIGH -> MaterialTheme.colorScheme.onError
-            Importance.MEDIUM -> MaterialTheme.colorScheme.onTertiary
+            Importance.HIGH -> MaterialTheme.colorScheme.onErrorContainer
+            Importance.MEDIUM -> MaterialTheme.colorScheme.onTertiaryContainer
             Importance.LOW -> MaterialTheme.colorScheme.onSurfaceVariant
         }
     val importanceText =
@@ -74,12 +73,12 @@ internal fun ImportanceLabel(
     ) {
         Surface(
             color = importanceColor,
-            shape = RoundedCornerShape(4.dp),
+            shape = MaterialTheme.shapes.small,
         ) {
             Text(
-                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
                 text = importanceText,
-                style = MaterialTheme.typography.labelSmall,
+                style = MaterialTheme.typography.labelMedium,
                 color = importanceTextColor,
             )
         }

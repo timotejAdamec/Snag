@@ -13,7 +13,6 @@
 package cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetail.ui.components
 
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Surface
@@ -63,12 +62,12 @@ internal fun TermLabel(
     ) {
         Surface(
             color = MaterialTheme.colorScheme.secondaryContainer,
-            shape = RoundedCornerShape(4.dp),
+            shape = MaterialTheme.shapes.small,
         ) {
             Text(
-                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
                 text = termText,
-                style = MaterialTheme.typography.labelSmall,
+                style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.onSecondaryContainer,
             )
         }
