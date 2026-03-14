@@ -12,6 +12,11 @@
 
 package cz.adamec.timotej.snag.structures.fe.driving.impl.internal.floorPlan.ui
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.calculateStartPadding
@@ -217,34 +222,40 @@ private fun LoadedStructureDetailsContent(
                     },
                 )
             }
-            HorizontalFloatingToolbar(
-                modifier =
-                    Modifier
-                        .align(Alignment.BottomCenter)
-                        .padding(bottom = toolbarBottomPadding)
-                        .onGloballyPositioned {
-                            toolbarTopPx = it.positionInParent().y.toInt()
-                        },
-                expanded = true,
+            AnimatedVisibility(
+                modifier = Modifier.align(Alignment.BottomCenter),
+                visible = state.selectedFindingId == null,
+                enter = fadeIn() + slideInVertically { it },
+                exit = fadeOut() + slideOutVertically { it },
             ) {
-                IconButton(
-                    onClick = onEditClick,
+                HorizontalFloatingToolbar(
+                    modifier =
+                        Modifier
+                            .padding(bottom = toolbarBottomPadding)
+                            .onGloballyPositioned {
+                                toolbarTopPx = it.positionInParent().y.toInt()
+                            },
+                    expanded = true,
                 ) {
-                    Icon(
-                        painter = painterResource(DesignRes.drawable.ic_edit),
-                        contentDescription = stringResource(DesignRes.string.edit),
-                    )
-                }
-                IconButton(
-                    enabled = state.canInvokeDeletion,
-                    onClick = {
-                        isShowingDeleteConfirmation = true
-                    },
-                ) {
-                    Icon(
-                        painter = painterResource(DesignRes.drawable.ic_delete),
-                        contentDescription = stringResource(DesignRes.string.delete),
-                    )
+                    IconButton(
+                        onClick = onEditClick,
+                    ) {
+                        Icon(
+                            painter = painterResource(DesignRes.drawable.ic_edit),
+                            contentDescription = stringResource(DesignRes.string.edit),
+                        )
+                    }
+                    IconButton(
+                        enabled = state.canInvokeDeletion,
+                        onClick = {
+                            isShowingDeleteConfirmation = true
+                        },
+                    ) {
+                        Icon(
+                            painter = painterResource(DesignRes.drawable.ic_delete),
+                            contentDescription = stringResource(DesignRes.string.delete),
+                        )
+                    }
                 }
             }
         }
