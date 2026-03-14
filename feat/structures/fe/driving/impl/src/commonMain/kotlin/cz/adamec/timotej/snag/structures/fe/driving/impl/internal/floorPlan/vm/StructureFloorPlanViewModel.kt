@@ -38,6 +38,7 @@ import kotlin.uuid.Uuid
 
 internal class StructureFloorPlanViewModel(
     @InjectedParam private val structureId: Uuid,
+    @InjectedParam private val projectId: Uuid,
     private val getStructureUseCase: GetStructureUseCase,
     private val deleteStructureUseCase: DeleteStructureUseCase,
     private val getFindingsUseCase: GetFindingsUseCase,
@@ -54,10 +55,6 @@ internal class StructureFloorPlanViewModel(
                 val newStructureId = new.feStructure?.structure?.id ?: return@scan new
                 if (prev.feStructure?.structure?.id != newStructureId) {
                     collectFindings(newStructureId)
-                }
-                val newProjectId = new.feStructure?.structure?.projectId
-                if (newProjectId != null && prev.feStructure?.structure?.projectId != newProjectId) {
-                    collectProjectClosed(newProjectId)
                 }
                 new
             }.stateIn(
@@ -76,10 +73,10 @@ internal class StructureFloorPlanViewModel(
     val deletedSuccessfullyEventFlow = deletedSuccessfullyEventChannel.receiveAsFlow()
 
     private var collectFindingsJob: Job? = null
-    private var collectProjectClosedJob: Job? = null
 
     init {
         collectStructure()
+        collectProjectClosed()
     }
 
     private fun collectStructure() =
@@ -135,15 +132,12 @@ internal class StructureFloorPlanViewModel(
             }
     }
 
-    private fun collectProjectClosed(projectId: Uuid) {
-        if (collectProjectClosedJob?.isActive == true) collectProjectClosedJob?.cancel()
-        collectProjectClosedJob =
-            viewModelScope.launch {
-                isProjectClosedUseCase(projectId).collect { isClosed ->
-                    _state.update { it.copy(isProjectClosed = isClosed) }
-                }
+    private fun collectProjectClosed() =
+        viewModelScope.launch {
+            isProjectClosedUseCase(projectId).collect { isClosed ->
+                _state.update { it.copy(isProjectClosed = isClosed) }
             }
-    }
+        }
 
     fun onFindingSelected(findingId: Uuid?) {
         _state.update { it.copy(selectedFindingId = findingId) }

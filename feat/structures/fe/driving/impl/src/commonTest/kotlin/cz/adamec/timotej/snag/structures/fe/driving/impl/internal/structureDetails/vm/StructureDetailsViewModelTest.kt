@@ -63,6 +63,7 @@ class StructureDetailsViewModelTest : FrontendKoinInitializedTest() {
     private fun createViewModel() =
         StructureFloorPlanViewModel(
             structureId = structureId,
+            projectId = projectId,
             getStructureUseCase = getStructureUseCase,
             deleteStructureUseCase = deleteStructureUseCase,
             getFindingsUseCase = getFindingsUseCase,

@@ -131,10 +131,12 @@ internal inline fun <reified T : ProjectDetailRoute> Module.projectDetailsScreen
             },
             onStructureClick = { projectId, structureId ->
                 val backStack = get<SnagBackStack>()
-                backStack.value.add(structureDetailRouteFactory.create(
-                    projectId = projectId,
-                    structureId = structureId,
-                ))
+                backStack.value.add(
+                    structureDetailRouteFactory.create(
+                        projectId = projectId,
+                        structureId = structureId,
+                    ),
+                )
             },
             onNewInspectionClick = {
                 val backStack = get<SnagBackStack>()

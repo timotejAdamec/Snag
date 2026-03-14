@@ -87,6 +87,7 @@ internal inline fun <reified T : StructureFloorPlanRoute> Module.structureFloorP
         }
         StructureFloorPlanScreen(
             structureId = route.structureId,
+            projectId = route.projectId,
             selectedFindingId = selectedFindingId,
             onBack = {
                 val rootBackStack = get<SnagBackStack>()
@@ -94,10 +95,12 @@ internal inline fun <reified T : StructureFloorPlanRoute> Module.structureFloorP
             },
             onEditClick = {
                 val rootBackStack = get<SnagBackStack>()
-                rootBackStack.value.add(structureEditRouteFactory.create(
-                    projectId = route.projectId,
-                    structureId = route.structureId,
-                ))
+                rootBackStack.value.add(
+                    structureEditRouteFactory.create(
+                        projectId = route.projectId,
+                        structureId = route.structureId,
+                    ),
+                )
             },
             onFindingClick = { findingId ->
                 val factory = get<FindingDetailRouteFactory>()
@@ -116,6 +119,7 @@ internal inline fun <reified T : StructureFloorPlanRoute> Module.structureFloorP
                 val rootBackStack = get<SnagBackStack>()
                 rootBackStack.value.add(
                     findingCreationRouteFactory.create(
+                        projectId = route.projectId,
                         structureId = route.structureId,
                         coordinate = coordinate,
                         findingTypeKey = findingTypeKey,
@@ -160,9 +164,10 @@ val structuresDrivingImplModule =
     module {
         includes(platformModule)
         single { StructureDetailBackStack(mutableStateListOf()) }
-        viewModel { (structureId: Uuid) ->
+        viewModel { (structureId: Uuid, projectId: Uuid) ->
             StructureFloorPlanViewModel(
                 structureId = structureId,
+                projectId = projectId,
                 getStructureUseCase = get(),
                 deleteStructureUseCase = get(),
                 getFindingsUseCase = get(),

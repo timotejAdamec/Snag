@@ -43,6 +43,7 @@ import kotlin.uuid.Uuid
 internal fun FindingDetailsEditScreen(
     onSaveFinding: (findingId: Uuid) -> Unit,
     onCancelClick: () -> Unit,
+    projectId: Uuid,
     findingId: Uuid? = null,
     structureId: Uuid? = null,
     findingTypeKey: FindingTypeKey? = null,
@@ -52,7 +53,7 @@ internal fun FindingDetailsEditScreen(
             viewModelStoreOwner =
                 LocalViewModelStoreOwner.current
                     ?: error("No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"),
-        ) { parametersOf(findingId, structureId, findingTypeKey, coordinate) },
+        ) { parametersOf(findingId, structureId, findingTypeKey, coordinate, projectId) },
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 

@@ -45,10 +45,11 @@ class WebFindingsListRouteFactory : FindingsListRouteFactory {
     override fun create(
         projectId: Uuid,
         structureId: Uuid,
-    ): FindingsListRoute = WebFindingsListRoute(
-        projectId = projectId,
-        structureId = structureId,
-    )
+    ): FindingsListRoute =
+        WebFindingsListRoute(
+            projectId = projectId,
+            structureId = structureId,
+        )
 }
 
 class WebFindingDetailRouteFactory : FindingDetailRouteFactory {
@@ -67,6 +68,7 @@ class WebFindingDetailRouteFactory : FindingDetailRouteFactory {
 @Serializable
 @Immutable
 data class WebFindingEditRoute(
+    override val projectId: Uuid,
     override val findingId: Uuid,
 ) : FindingEditRoute {
     companion object {
@@ -76,14 +78,20 @@ data class WebFindingEditRoute(
 
 class WebFindingEditRouteFactory : FindingEditRouteFactory {
     override fun create(
+        projectId: Uuid,
         structureId: Uuid,
         findingId: Uuid,
-    ): FindingEditRoute = WebFindingEditRoute(findingId = findingId)
+    ): FindingEditRoute =
+        WebFindingEditRoute(
+            projectId = projectId,
+            findingId = findingId,
+        )
 }
 
 @Serializable
 @Immutable
 data class WebFindingCreationRoute(
+    override val projectId: Uuid,
     override val structureId: Uuid,
     val coordinateX: Float,
     val coordinateY: Float,
@@ -99,11 +107,13 @@ data class WebFindingCreationRoute(
 
 class WebFindingCreationRouteFactory : FindingCreationRouteFactory {
     override fun create(
+        projectId: Uuid,
         structureId: Uuid,
         coordinate: RelativeCoordinate,
         findingTypeKey: FindingTypeKey,
     ): FindingCreationRoute =
         WebFindingCreationRoute(
+            projectId = projectId,
             structureId = structureId,
             coordinateX = coordinate.x,
             coordinateY = coordinate.y,

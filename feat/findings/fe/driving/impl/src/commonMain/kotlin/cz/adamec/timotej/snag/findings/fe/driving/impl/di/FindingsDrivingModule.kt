@@ -79,6 +79,7 @@ internal inline fun <reified T : FindingDetailRoute> Module.findingDetailScreenN
         val findingEditRouteFactory = koinInject<FindingEditRouteFactory>()
         FindingDetailScreen(
             findingId = route.findingId,
+            projectId = route.projectId,
             onBack = {
                 val backStack = get<StructureDetailBackStack>()
                 backStack.removeLastSafely()
@@ -87,6 +88,7 @@ internal inline fun <reified T : FindingDetailRoute> Module.findingDetailScreenN
                 val rootBackStack = get<SnagBackStack>()
                 rootBackStack.value.add(
                     findingEditRouteFactory.create(
+                        projectId = route.projectId,
                         structureId = route.structureId,
                         findingId = route.findingId,
                     ),
@@ -101,6 +103,7 @@ internal inline fun <reified T : FindingEditRoute> Module.findingEditScreenNav()
     ) { route ->
         FindingEditScreenSetup(
             findingId = route.findingId,
+            projectId = route.projectId,
             onSaveFinding = { _ ->
                 val backStack = get<SnagBackStack>()
                 backStack.removeLastSafely()
@@ -113,6 +116,7 @@ internal inline fun <reified T : FindingCreationRoute> Module.findingCreationScr
         metadata = DialogSceneStrategy.dialog(fullscreenDialogProperties()),
     ) { route ->
         FindingEditScreenSetup(
+            projectId = route.projectId,
             structureId = route.structureId,
             findingTypeKey = route.findingTypeKey,
             coordinate = route.coordinate,
@@ -126,6 +130,7 @@ internal inline fun <reified T : FindingCreationRoute> Module.findingCreationScr
 @Composable
 private fun Scope.FindingEditScreenSetup(
     onSaveFinding: (savedFindingId: Uuid) -> Unit,
+    projectId: Uuid,
     findingId: Uuid? = null,
     structureId: Uuid? = null,
     findingTypeKey: FindingTypeKey? = null,
@@ -133,6 +138,7 @@ private fun Scope.FindingEditScreenSetup(
 ) {
     FindingDetailsEditScreen(
         findingId = findingId,
+        projectId = projectId,
         structureId = structureId,
         findingTypeKey = findingTypeKey,
         coordinate = coordinate,
@@ -155,12 +161,12 @@ val findingsDrivingImplModule =
                 getFindingsUseCase = get(),
             )
         }
-        viewModel { (findingId: Uuid) ->
+        viewModel { (findingId: Uuid, projectId: Uuid) ->
             FindingDetailViewModel(
                 findingId = findingId,
+                projectId = projectId,
                 getFindingUseCase = get(),
                 deleteFindingUseCase = get(),
-                getStructureUseCase = get(),
                 isProjectClosedUseCase = get(),
             )
         }
@@ -171,6 +177,7 @@ val findingsDrivingImplModule =
                 structureId: Uuid?,
                 findingTypeKey: FindingTypeKey?,
                 coordinate: RelativeCoordinate?,
+                projectId: Uuid,
             ),
             ->
             FindingDetailsEditViewModel(
@@ -178,10 +185,10 @@ val findingsDrivingImplModule =
                 structureId = structureId,
                 findingTypeKey = findingTypeKey,
                 coordinate = coordinate,
+                projectId = projectId,
                 getFindingUseCase = get(),
                 saveNewFindingUseCase = get(),
                 saveFindingDetailsUseCase = get(),
-                getStructureUseCase = get(),
                 isProjectClosedUseCase = get(),
             )
         }

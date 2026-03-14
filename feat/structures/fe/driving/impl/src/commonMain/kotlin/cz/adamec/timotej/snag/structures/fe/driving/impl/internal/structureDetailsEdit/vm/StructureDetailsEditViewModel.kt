@@ -51,10 +51,12 @@ internal class StructureDetailsEditViewModel(
     private val isProjectClosedUseCase: IsProjectClosedUseCase,
 ) : ViewModel() {
     private val _state: MutableStateFlow<StructureDetailsEditUiState> =
-        MutableStateFlow(StructureDetailsEditUiState(
-            isCreatingNew = structureId == null,
-            projectId = projectId,
-        ))
+        MutableStateFlow(
+            StructureDetailsEditUiState(
+                isCreatingNew = structureId == null,
+                projectId = projectId,
+            ),
+        )
     val state: StateFlow<StructureDetailsEditUiState> = _state
 
     private val errorEventsChannel = Channel<UiError>()
@@ -68,8 +70,7 @@ internal class StructureDetailsEditViewModel(
     init {
         structureId?.let { collectStructure(it) }
         collectCanModifyFloorPlanImage()
-        val resolvedProjectId = structureId?.let { null } ?: projectId
-        resolvedProjectId?.let { collectProjectClosed(it) }
+        collectProjectClosed()
     }
 
     private fun collectStructure(structureId: Uuid) =
@@ -88,7 +89,6 @@ internal class StructureDetailsEditViewModel(
                                     projectId = data.structure.projectId,
                                 )
                             }
-                            collectProjectClosed(data.structure.projectId)
                             cancel()
                         }
                     }
@@ -107,7 +107,7 @@ internal class StructureDetailsEditViewModel(
             }
         }
 
-    private fun collectProjectClosed(projectId: Uuid) =
+    private fun collectProjectClosed() =
         viewModelScope.launch {
             isProjectClosedUseCase(projectId).collect { isClosed ->
                 _state.update { it.copy(isProjectClosed = isClosed) }

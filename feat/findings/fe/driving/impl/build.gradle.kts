@@ -8,7 +8,6 @@ kotlin {
             dependencies {
                 implementation(project(":feat:findings:fe:app:api"))
                 implementation(project(":feat:projects:fe:app:api"))
-                implementation(project(":feat:structures:fe:app:api"))
                 implementation(project(":feat:structures:fe:driving:api"))
             }
         }
