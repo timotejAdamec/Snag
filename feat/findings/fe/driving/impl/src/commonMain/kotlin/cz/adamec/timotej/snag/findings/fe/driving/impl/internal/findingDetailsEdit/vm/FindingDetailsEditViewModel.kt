@@ -43,11 +43,11 @@ import snag.lib.design.fe.generated.resources.error_field_required
 import kotlin.uuid.Uuid
 
 internal class FindingDetailsEditViewModel(
+    @InjectedParam private val projectId: Uuid,
     @InjectedParam private val findingId: Uuid?,
     @InjectedParam private val structureId: Uuid?,
     @InjectedParam private val findingTypeKey: FindingTypeKey?,
     @InjectedParam private val coordinate: RelativeCoordinate?,
-    @InjectedParam private val projectId: Uuid,
     private val getFindingUseCase: GetFindingUseCase,
     private val saveNewFindingUseCase: SaveNewFindingUseCase,
     private val saveFindingDetailsUseCase: SaveFindingDetailsUseCase,

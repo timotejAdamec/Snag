@@ -173,19 +173,19 @@ val findingsDrivingImplModule =
         @Suppress("DestructuringDeclarationWithTooManyEntries")
         viewModel {
             (
+                projectId: Uuid,
                 findingId: Uuid?,
                 structureId: Uuid?,
                 findingTypeKey: FindingTypeKey?,
                 coordinate: RelativeCoordinate?,
-                projectId: Uuid,
             ),
             ->
             FindingDetailsEditViewModel(
+                projectId = projectId,
                 findingId = findingId,
                 structureId = structureId,
                 findingTypeKey = findingTypeKey,
                 coordinate = coordinate,
-                projectId = projectId,
                 getFindingUseCase = get(),
                 saveNewFindingUseCase = get(),
                 saveFindingDetailsUseCase = get(),

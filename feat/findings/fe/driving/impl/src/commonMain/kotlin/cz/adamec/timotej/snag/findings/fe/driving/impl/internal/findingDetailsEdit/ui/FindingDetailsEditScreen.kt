@@ -53,7 +53,7 @@ internal fun FindingDetailsEditScreen(
             viewModelStoreOwner =
                 LocalViewModelStoreOwner.current
                     ?: error("No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"),
-        ) { parametersOf(findingId, structureId, findingTypeKey, coordinate, projectId) },
+        ) { parametersOf(projectId, findingId, structureId, findingTypeKey, coordinate) },
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
