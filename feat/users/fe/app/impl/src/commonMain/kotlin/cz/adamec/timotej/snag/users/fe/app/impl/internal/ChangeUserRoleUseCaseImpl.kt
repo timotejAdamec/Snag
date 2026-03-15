@@ -27,16 +27,23 @@ class ChangeUserRoleUseCaseImpl(
 ) : ChangeUserRoleUseCase {
     override suspend fun invoke(request: ChangeUserRoleRequest): OnlineDataResult<FrontendUser> {
         val userResult = usersDb.getUserFlow(request.userId).first()
-        val user =
-            when (userResult) {
-                is OfflineFirstDataResult.Success ->
-                    userResult.data
-                        ?: return OnlineDataResult.Failure.ProgrammerError(
-                            IllegalStateException("User ${request.userId} not found in DB"),
-                        )
-                is OfflineFirstDataResult.ProgrammerError ->
-                    return OnlineDataResult.Failure.ProgrammerError(userResult.throwable)
-            }
+        return when (userResult) {
+            is OfflineFirstDataResult.ProgrammerError ->
+                OnlineDataResult.Failure.ProgrammerError(userResult.throwable)
+            is OfflineFirstDataResult.Success ->
+                updateUser(request, userResult.data)
+        }
+    }
+
+    private suspend fun updateUser(
+        request: ChangeUserRoleRequest,
+        user: FrontendUser?,
+    ): OnlineDataResult<FrontendUser> {
+        if (user == null) {
+            return OnlineDataResult.Failure.ProgrammerError(
+                IllegalStateException("User ${request.userId} not found in DB"),
+            )
+        }
         val updatedUser =
             FrontendUser(
                 user = user.user.copy(role = request.newRole),
