@@ -19,6 +19,7 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(project(":feat:inspections:fe:model"))
+                api(project(":feat:projects:fe:driving:api"))
                 implementation(libs.kotlinx.datetime)
             }
         }

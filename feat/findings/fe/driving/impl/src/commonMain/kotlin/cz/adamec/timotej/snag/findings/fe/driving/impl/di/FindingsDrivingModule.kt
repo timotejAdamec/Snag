@@ -33,7 +33,7 @@ import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingsList.ui.
 import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingsList.vm.FindingsListViewModel
 import cz.adamec.timotej.snag.lib.design.fe.dialog.fullscreenDialogProperties
 import cz.adamec.timotej.snag.lib.design.fe.scenes.MapListDetailSceneMetadata
-import cz.adamec.timotej.snag.lib.navigation.fe.SnagBackStack
+import cz.adamec.timotej.snag.lib.navigation.fe.ProjectsBackStack
 import org.koin.compose.koinInject
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.viewModel
@@ -85,7 +85,7 @@ internal inline fun <reified T : FindingDetailRoute> Module.findingDetailScreenN
                 backStack.removeLastSafely()
             },
             onEditClick = {
-                val rootBackStack = get<SnagBackStack>()
+                val rootBackStack = get<ProjectsBackStack>()
                 rootBackStack.value.add(
                     findingEditRouteFactory.create(
                         projectId = route.projectId,
@@ -105,7 +105,7 @@ internal inline fun <reified T : FindingEditRoute> Module.findingEditScreenNav()
             findingId = route.findingId,
             projectId = route.projectId,
             onSaveFinding = { _ ->
-                val backStack = get<SnagBackStack>()
+                val backStack = get<ProjectsBackStack>()
                 backStack.removeLastSafely()
             },
         )
@@ -121,7 +121,7 @@ internal inline fun <reified T : FindingCreationRoute> Module.findingCreationScr
             findingTypeKey = route.findingTypeKey,
             coordinate = route.coordinate,
             onSaveFinding = { _ ->
-                val backStack = get<SnagBackStack>()
+                val backStack = get<ProjectsBackStack>()
                 backStack.removeLastSafely()
             },
         )
@@ -146,7 +146,7 @@ private fun Scope.FindingEditScreenSetup(
             onSaveFinding(savedFindingId)
         },
         onCancelClick = {
-            val backStack = get<SnagBackStack>()
+            val backStack = get<ProjectsBackStack>()
             backStack.removeLastSafely()
         },
     )

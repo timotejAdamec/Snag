@@ -13,15 +13,22 @@
 package cz.adamec.timotej.snag.ui.navigation
 
 import androidx.compose.runtime.mutableStateListOf
-import cz.adamec.timotej.snag.lib.navigation.fe.SnagBackStack
+import cz.adamec.timotej.snag.lib.navigation.fe.ProjectsBackStack
+import cz.adamec.timotej.snag.lib.navigation.fe.UsersBackStack
 import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectsRoute
+import cz.adamec.timotej.snag.users.fe.driving.api.UsersRoute
 import org.koin.dsl.module
 
 internal val navigationModule =
     module {
         single {
-            SnagBackStack(
+            ProjectsBackStack(
                 value = mutableStateListOf(get<ProjectsRoute>()),
+            )
+        }
+        single {
+            UsersBackStack(
+                value = mutableStateListOf(get<UsersRoute>()),
             )
         }
     }

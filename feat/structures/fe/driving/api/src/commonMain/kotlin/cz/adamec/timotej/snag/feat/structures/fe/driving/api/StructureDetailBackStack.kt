@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.feat.structures.fe.driving.api
 
-import cz.adamec.timotej.snag.lib.navigation.fe.SnagNavRoute
+import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectsNavRoute
 import org.koin.core.annotation.Provided
 import kotlin.jvm.JvmInline
 import kotlin.uuid.Uuid
@@ -32,7 +32,7 @@ value class StructureDetailBackStack(
 /**
  * Nav route for the structure detail nested navigation graph.
  */
-interface StructureDetailNavRoute : SnagNavRoute {
+interface StructureDetailNavRoute : ProjectsNavRoute {
     val projectId: Uuid
     val structureId: Uuid
 }
@@ -41,5 +41,5 @@ interface StructureDetailRouteFactory {
     fun create(
         projectId: Uuid,
         structureId: Uuid,
-    ): SnagNavRoute
+    ): ProjectsNavRoute
 }

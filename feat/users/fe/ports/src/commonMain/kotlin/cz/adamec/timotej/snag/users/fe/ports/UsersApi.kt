@@ -29,4 +29,6 @@ interface UsersApi {
     suspend fun getUser(id: Uuid): OnlineDataResult<FrontendUser>
 
     suspend fun getUsersModifiedSince(since: Timestamp): OnlineDataResult<List<UserSyncResult>>
+
+    suspend fun updateUser(user: FrontendUser): OnlineDataResult<FrontendUser>
 }

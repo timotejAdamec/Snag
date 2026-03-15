@@ -17,11 +17,11 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.remember
 import com.github.terrakok.navigation3.browser.HierarchicalBrowserNavigation
 import cz.adamec.timotej.snag.lib.navigation.fe.BrowserHistoryFragmentBuilder
-import cz.adamec.timotej.snag.lib.navigation.fe.SnagBackStack
+import cz.adamec.timotej.snag.lib.navigation.fe.ProjectsBackStack
 import org.koin.compose.getKoin
 
 @Composable
-internal actual fun SnagNavigationPreparation(backStack: SnagBackStack) {
+internal actual fun ProjectsNavigationPreparation(backStack: ProjectsBackStack) {
     val builders = getKoin().getAll<BrowserHistoryFragmentBuilder>()
 
     HierarchicalBrowserNavigation(
