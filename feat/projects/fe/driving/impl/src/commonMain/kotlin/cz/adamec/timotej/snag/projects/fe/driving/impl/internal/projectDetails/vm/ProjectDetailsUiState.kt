@@ -20,8 +20,8 @@ import kotlinx.collections.immutable.persistentListOf
 
 internal data class ProjectDetailsUiState(
     val projectStatus: ProjectDetailsUiStatus = ProjectDetailsUiStatus.LOADING,
-    val structureStatus: StructuresUiStatus = StructuresUiStatus.LOADING,
-    val inspectionStatus: InspectionsUiStatus = InspectionsUiStatus.LOADING,
+    val structureStatus: StructuresUiStatus = StructuresUiStatus.LOADED,
+    val inspectionStatus: InspectionsUiStatus = InspectionsUiStatus.LOADED,
     val isBeingDeleted: Boolean = false,
     val isDownloadingReport: Boolean = false,
     val isClosingOrReopening: Boolean = false,
@@ -46,12 +46,10 @@ internal enum class ProjectDetailsUiStatus {
 
 internal enum class StructuresUiStatus {
     ERROR,
-    LOADING,
     LOADED,
 }
 
 internal enum class InspectionsUiStatus {
     ERROR,
-    LOADING,
     LOADED,
 }

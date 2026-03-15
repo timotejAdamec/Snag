@@ -21,6 +21,7 @@ import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.common.TimestampProvider
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
 import cz.adamec.timotej.snag.lib.sync.fe.app.api.GetLastPullSyncedAtTimestampUseCase
+import cz.adamec.timotej.snag.lib.sync.fe.app.api.PullSyncTracker
 import cz.adamec.timotej.snag.lib.sync.fe.app.api.SetLastPullSyncedAtTimestampUseCase
 import cz.adamec.timotej.snag.lib.sync.fe.app.api.SyncCoordinator
 
@@ -31,45 +32,47 @@ internal class PullClientChangesUseCaseImpl(
     private val setLastPullSyncedAtTimestampUseCase: SetLastPullSyncedAtTimestampUseCase,
     private val syncCoordinator: SyncCoordinator,
     private val timestampProvider: TimestampProvider,
+    private val pullSyncTracker: PullSyncTracker,
 ) : PullClientChangesUseCase {
     @Suppress("LabeledExpression")
-    override suspend operator fun invoke() {
-        LH.logger.d { "Starting pull sync for clients." }
-        syncCoordinator.withFlushedQueue { wasFlushingSuccessful ->
-            if (!wasFlushingSuccessful) {
-                LH.logger.w { "Flushing sync queue was not successful, skipping pull sync for clients." }
-                return@withFlushedQueue
-            }
-            val since = getLastPullSyncedAtTimestampUseCase(CLIENT_SYNC_ENTITY_TYPE) ?: Timestamp(0)
-            val now = timestampProvider.getNowTimestamp()
-            LH.logger.d { "Pulling client changes since=$since, now=$now." }
-
-            when (val result = clientsApi.getClientsModifiedSince(since)) {
-                is OnlineDataResult.Failure -> {
-                    LH.logger.w { "Error pulling client changes." }
+    override suspend operator fun invoke() =
+        pullSyncTracker.track {
+            LH.logger.d { "Starting pull sync for clients." }
+            syncCoordinator.withFlushedQueue { wasFlushingSuccessful ->
+                if (!wasFlushingSuccessful) {
+                    LH.logger.w { "Flushing sync queue was not successful, skipping pull sync for clients." }
+                    return@withFlushedQueue
                 }
-                is OnlineDataResult.Success -> {
-                    val changes = result.data
-                    LH.logger.d { "Received ${changes.size} client change(s)." }
-                    changes.forEach { syncResult ->
-                        when (syncResult) {
-                            is ClientSyncResult.Deleted -> {
-                                LH.logger.d { "Processing deleted client ${syncResult.id}." }
-                                clientsDb.deleteClient(syncResult.id)
-                            }
-                            is ClientSyncResult.Updated -> {
-                                LH.logger.d { "Processing updated client ${syncResult.client.client.id}." }
-                                clientsDb.saveClient(syncResult.client)
+                val since = getLastPullSyncedAtTimestampUseCase(CLIENT_SYNC_ENTITY_TYPE) ?: Timestamp(0)
+                val now = timestampProvider.getNowTimestamp()
+                LH.logger.d { "Pulling client changes since=$since, now=$now." }
+
+                when (val result = clientsApi.getClientsModifiedSince(since)) {
+                    is OnlineDataResult.Failure -> {
+                        LH.logger.w { "Error pulling client changes." }
+                    }
+                    is OnlineDataResult.Success -> {
+                        val changes = result.data
+                        LH.logger.d { "Received ${changes.size} client change(s)." }
+                        changes.forEach { syncResult ->
+                            when (syncResult) {
+                                is ClientSyncResult.Deleted -> {
+                                    LH.logger.d { "Processing deleted client ${syncResult.id}." }
+                                    clientsDb.deleteClient(syncResult.id)
+                                }
+                                is ClientSyncResult.Updated -> {
+                                    LH.logger.d { "Processing updated client ${syncResult.client.client.id}." }
+                                    clientsDb.saveClient(syncResult.client)
+                                }
                             }
                         }
+                        setLastPullSyncedAtTimestampUseCase(
+                            entityType = CLIENT_SYNC_ENTITY_TYPE,
+                            timestamp = now,
+                        )
+                        LH.logger.d { "Pull sync for clients completed, updated lastSyncedAt=$now." }
                     }
-                    setLastPullSyncedAtTimestampUseCase(
-                        entityType = CLIENT_SYNC_ENTITY_TYPE,
-                        timestamp = now,
-                    )
-                    LH.logger.d { "Pull sync for clients completed, updated lastSyncedAt=$now." }
                 }
             }
         }
-    }
 }

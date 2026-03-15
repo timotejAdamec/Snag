@@ -17,6 +17,7 @@ import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.common.TimestampProvider
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
 import cz.adamec.timotej.snag.lib.sync.fe.app.api.GetLastPullSyncedAtTimestampUseCase
+import cz.adamec.timotej.snag.lib.sync.fe.app.api.PullSyncTracker
 import cz.adamec.timotej.snag.lib.sync.fe.app.api.SetLastPullSyncedAtTimestampUseCase
 import cz.adamec.timotej.snag.lib.sync.fe.app.api.SyncCoordinator
 import cz.adamec.timotej.snag.projects.fe.app.api.PullProjectChangesUseCase
@@ -35,47 +36,49 @@ internal class PullProjectChangesUseCaseImpl(
     private val setLastPullSyncedAtTimestampUseCase: SetLastPullSyncedAtTimestampUseCase,
     private val syncCoordinator: SyncCoordinator,
     private val timestampProvider: TimestampProvider,
+    private val pullSyncTracker: PullSyncTracker,
 ) : PullProjectChangesUseCase {
     @Suppress("LabeledExpression")
-    override suspend operator fun invoke() {
-        LH.logger.d { "Starting pull sync for projects." }
-        syncCoordinator.withFlushedQueue { wasFlushingSuccessful ->
-            if (!wasFlushingSuccessful) {
-                LH.logger.w("Flushing sync queue was not successful, skipping pull sync for projects.")
-                return@withFlushedQueue
-            }
-            val since = getLastPullSyncedAtTimestampUseCase(PROJECT_SYNC_ENTITY_TYPE) ?: Timestamp(0)
-            val now = timestampProvider.getNowTimestamp()
-            LH.logger.d { "Pulling project changes since=$since, now=$now." }
-
-            when (val result = projectsApi.getProjectsModifiedSince(since)) {
-                is OnlineDataResult.Failure -> {
-                    LH.logger.w { "Error pulling project changes." }
+    override suspend operator fun invoke() =
+        pullSyncTracker.track {
+            LH.logger.d { "Starting pull sync for projects." }
+            syncCoordinator.withFlushedQueue { wasFlushingSuccessful ->
+                if (!wasFlushingSuccessful) {
+                    LH.logger.w("Flushing sync queue was not successful, skipping pull sync for projects.")
+                    return@withFlushedQueue
                 }
-                is OnlineDataResult.Success -> {
-                    val changes = result.data
-                    LH.logger.d { "Received ${changes.size} project change(s)." }
-                    changes.forEach { syncResult ->
-                        when (syncResult) {
-                            is ProjectSyncResult.Deleted -> {
-                                LH.logger.d { "Processing deleted project ${syncResult.id}." }
-                                cascadeDeleteLocalStructuresByProjectIdUseCase(syncResult.id)
-                                cascadeDeleteLocalInspectionsByProjectIdUseCase(syncResult.id)
-                                projectsDb.deleteProject(syncResult.id)
-                            }
-                            is ProjectSyncResult.Updated -> {
-                                LH.logger.d { "Processing updated project ${syncResult.project.project.id}." }
-                                projectsDb.saveProject(syncResult.project)
+                val since = getLastPullSyncedAtTimestampUseCase(PROJECT_SYNC_ENTITY_TYPE) ?: Timestamp(0)
+                val now = timestampProvider.getNowTimestamp()
+                LH.logger.d { "Pulling project changes since=$since, now=$now." }
+
+                when (val result = projectsApi.getProjectsModifiedSince(since)) {
+                    is OnlineDataResult.Failure -> {
+                        LH.logger.w { "Error pulling project changes." }
+                    }
+                    is OnlineDataResult.Success -> {
+                        val changes = result.data
+                        LH.logger.d { "Received ${changes.size} project change(s)." }
+                        changes.forEach { syncResult ->
+                            when (syncResult) {
+                                is ProjectSyncResult.Deleted -> {
+                                    LH.logger.d { "Processing deleted project ${syncResult.id}." }
+                                    cascadeDeleteLocalStructuresByProjectIdUseCase(syncResult.id)
+                                    cascadeDeleteLocalInspectionsByProjectIdUseCase(syncResult.id)
+                                    projectsDb.deleteProject(syncResult.id)
+                                }
+                                is ProjectSyncResult.Updated -> {
+                                    LH.logger.d { "Processing updated project ${syncResult.project.project.id}." }
+                                    projectsDb.saveProject(syncResult.project)
+                                }
                             }
                         }
+                        setLastPullSyncedAtTimestampUseCase(
+                            entityType = PROJECT_SYNC_ENTITY_TYPE,
+                            timestamp = now,
+                        )
+                        LH.logger.d { "Pull sync for projects completed, updated lastSyncedAt=$now." }
                     }
-                    setLastPullSyncedAtTimestampUseCase(
-                        entityType = PROJECT_SYNC_ENTITY_TYPE,
-                        timestamp = now,
-                    )
-                    LH.logger.d { "Pull sync for projects completed, updated lastSyncedAt=$now." }
                 }
             }
         }
-    }
 }

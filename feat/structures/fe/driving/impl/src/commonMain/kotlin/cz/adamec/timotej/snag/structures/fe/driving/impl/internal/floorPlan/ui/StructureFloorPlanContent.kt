@@ -22,7 +22,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.ContainedLoadingIndicator
 import androidx.compose.material3.HorizontalFloatingToolbar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -85,11 +84,7 @@ internal fun StructureFloorPlanContent(
                 )
             }
 
-            StructureDetailsUiStatus.LOADING -> {
-                ContainedLoadingIndicator(
-                    modifier = Modifier.align(Alignment.Center),
-                )
-            }
+            StructureDetailsUiStatus.LOADING -> {}
 
             StructureDetailsUiStatus.LOADED,
             StructureDetailsUiStatus.DELETED,

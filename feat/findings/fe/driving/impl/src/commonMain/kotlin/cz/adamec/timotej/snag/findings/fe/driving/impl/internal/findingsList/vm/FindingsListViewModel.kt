@@ -54,7 +54,6 @@ internal class FindingsListViewModel(
                     is OfflineFirstDataResult.Success -> {
                         _state.update {
                             it.copy(
-                                status = FindingsListUiStatus.LOADED,
                                 findings = result.data,
                             )
                         }

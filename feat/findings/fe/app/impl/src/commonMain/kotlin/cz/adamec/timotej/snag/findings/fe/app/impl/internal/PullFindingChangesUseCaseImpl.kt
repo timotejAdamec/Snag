@@ -21,6 +21,7 @@ import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.common.TimestampProvider
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
 import cz.adamec.timotej.snag.lib.sync.fe.app.api.GetLastPullSyncedAtTimestampUseCase
+import cz.adamec.timotej.snag.lib.sync.fe.app.api.PullSyncTracker
 import cz.adamec.timotej.snag.lib.sync.fe.app.api.SetLastPullSyncedAtTimestampUseCase
 import cz.adamec.timotej.snag.lib.sync.fe.app.api.SyncCoordinator
 import kotlin.uuid.Uuid
@@ -32,52 +33,54 @@ internal class PullFindingChangesUseCaseImpl(
     private val setLastPullSyncedAtTimestampUseCase: SetLastPullSyncedAtTimestampUseCase,
     private val syncCoordinator: SyncCoordinator,
     private val timestampProvider: TimestampProvider,
+    private val pullSyncTracker: PullSyncTracker,
 ) : PullFindingChangesUseCase {
     @Suppress("LabeledExpression")
-    override suspend operator fun invoke(structureId: Uuid) {
-        LH.logger.d { "Starting pull sync for findings in structure $structureId." }
-        syncCoordinator.withFlushedQueue { wasFlushingSuccessful ->
-            if (!wasFlushingSuccessful) {
-                LH.logger.w {
-                    "Flushing sync queue was not successful, skipping pull sync for findings in structure $structureId."
+    override suspend operator fun invoke(structureId: Uuid) =
+        pullSyncTracker.track {
+            LH.logger.d { "Starting pull sync for findings in structure $structureId." }
+            syncCoordinator.withFlushedQueue { wasFlushingSuccessful ->
+                if (!wasFlushingSuccessful) {
+                    LH.logger.w {
+                        "Flushing sync queue was not successful, skipping pull sync for findings in structure $structureId."
+                    }
+                    return@withFlushedQueue
                 }
-                return@withFlushedQueue
-            }
-            val since =
-                getLastPullSyncedAtTimestampUseCase(
-                    entityType = FINDING_SYNC_ENTITY_TYPE,
-                    scopeId = structureId.toString(),
-                ) ?: Timestamp(0)
-            val now = timestampProvider.getNowTimestamp()
-            LH.logger.d { "Pulling finding changes for structure $structureId since=$since, now=$now." }
+                val since =
+                    getLastPullSyncedAtTimestampUseCase(
+                        entityType = FINDING_SYNC_ENTITY_TYPE,
+                        scopeId = structureId.toString(),
+                    ) ?: Timestamp(0)
+                val now = timestampProvider.getNowTimestamp()
+                LH.logger.d { "Pulling finding changes for structure $structureId since=$since, now=$now." }
 
-            when (val result = findingsApi.getFindingsModifiedSince(structureId, since)) {
-                is OnlineDataResult.Failure -> {
-                    LH.logger.w { "Error pulling finding changes for structure $structureId." }
-                }
-                is OnlineDataResult.Success -> {
-                    val changes = result.data
-                    LH.logger.d { "Received ${changes.size} finding change(s) for structure $structureId." }
-                    changes.forEach { syncResult ->
-                        when (syncResult) {
-                            is FindingSyncResult.Deleted -> {
-                                LH.logger.d { "Processing deleted finding ${syncResult.id}." }
-                                findingsDb.deleteFinding(syncResult.id)
-                            }
-                            is FindingSyncResult.Updated -> {
-                                LH.logger.d { "Processing updated finding ${syncResult.finding.finding.id}." }
-                                findingsDb.saveFinding(syncResult.finding)
+                when (val result = findingsApi.getFindingsModifiedSince(structureId, since)) {
+                    is OnlineDataResult.Failure -> {
+                        LH.logger.w { "Error pulling finding changes for structure $structureId." }
+                    }
+                    is OnlineDataResult.Success -> {
+                        val changes = result.data
+                        LH.logger.d { "Received ${changes.size} finding change(s) for structure $structureId." }
+                        changes.forEach { syncResult ->
+                            when (syncResult) {
+                                is FindingSyncResult.Deleted -> {
+                                    LH.logger.d { "Processing deleted finding ${syncResult.id}." }
+                                    findingsDb.deleteFinding(syncResult.id)
+                                }
+                                is FindingSyncResult.Updated -> {
+                                    LH.logger.d { "Processing updated finding ${syncResult.finding.finding.id}." }
+                                    findingsDb.saveFinding(syncResult.finding)
+                                }
                             }
                         }
+                        setLastPullSyncedAtTimestampUseCase(
+                            entityType = FINDING_SYNC_ENTITY_TYPE,
+                            timestamp = now,
+                            scopeId = structureId.toString(),
+                        )
+                        LH.logger.d { "Pull sync for findings in structure $structureId completed, updated lastSyncedAt=$now." }
                     }
-                    setLastPullSyncedAtTimestampUseCase(
-                        entityType = FINDING_SYNC_ENTITY_TYPE,
-                        timestamp = now,
-                        scopeId = structureId.toString(),
-                    )
-                    LH.logger.d { "Pull sync for findings in structure $structureId completed, updated lastSyncedAt=$now." }
                 }
             }
         }
-    }
 }

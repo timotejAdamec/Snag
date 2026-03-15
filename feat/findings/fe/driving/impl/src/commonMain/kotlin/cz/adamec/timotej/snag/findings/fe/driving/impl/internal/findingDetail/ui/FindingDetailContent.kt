@@ -25,7 +25,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.ContainedLoadingIndicator
 import androidx.compose.material3.FloatingToolbarDefaults
 import androidx.compose.material3.HorizontalFloatingToolbar
 import androidx.compose.material3.Icon
@@ -87,14 +86,7 @@ internal fun FindingDetailContent(
     modifier: Modifier = Modifier,
 ) {
     when (state.status) {
-        FindingDetailUiStatus.LOADING -> {
-            Box(
-                modifier = modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center,
-            ) {
-                ContainedLoadingIndicator()
-            }
-        }
+        FindingDetailUiStatus.LOADING -> {}
 
         FindingDetailUiStatus.NOT_FOUND -> {
             Box(

@@ -17,6 +17,7 @@ import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.common.TimestampProvider
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
 import cz.adamec.timotej.snag.lib.sync.fe.app.api.GetLastPullSyncedAtTimestampUseCase
+import cz.adamec.timotej.snag.lib.sync.fe.app.api.PullSyncTracker
 import cz.adamec.timotej.snag.lib.sync.fe.app.api.SetLastPullSyncedAtTimestampUseCase
 import cz.adamec.timotej.snag.lib.sync.fe.app.api.SyncCoordinator
 import cz.adamec.timotej.snag.structures.fe.app.api.PullStructureChangesUseCase
@@ -34,55 +35,57 @@ internal class PullStructureChangesUseCaseImpl(
     private val setLastPullSyncedAtTimestampUseCase: SetLastPullSyncedAtTimestampUseCase,
     private val syncCoordinator: SyncCoordinator,
     private val timestampProvider: TimestampProvider,
+    private val pullSyncTracker: PullSyncTracker,
 ) : PullStructureChangesUseCase {
     @Suppress("LabeledExpression")
-    override suspend operator fun invoke(projectId: Uuid) {
-        LH.logger.d { "Starting pull sync for structures in project $projectId." }
-        syncCoordinator.withFlushedQueue { wasFlushingSuccessful ->
-            if (!wasFlushingSuccessful) {
-                LH.logger.w {
-                    "Flushing sync queue was not successful, skipping pull sync for structures in project $projectId."
+    override suspend operator fun invoke(projectId: Uuid) =
+        pullSyncTracker.track {
+            LH.logger.d { "Starting pull sync for structures in project $projectId." }
+            syncCoordinator.withFlushedQueue { wasFlushingSuccessful ->
+                if (!wasFlushingSuccessful) {
+                    LH.logger.w {
+                        "Flushing sync queue was not successful, skipping pull sync for structures in project $projectId."
+                    }
+                    return@withFlushedQueue
                 }
-                return@withFlushedQueue
-            }
-            val since =
-                getLastPullSyncedAtTimestampUseCase(
-                    entityType = STRUCTURE_SYNC_ENTITY_TYPE,
-                    scopeId = projectId.toString(),
-                ) ?: Timestamp(0)
-            val now = timestampProvider.getNowTimestamp()
-            LH.logger.d { "Pulling structure changes for project $projectId since=$since, now=$now." }
+                val since =
+                    getLastPullSyncedAtTimestampUseCase(
+                        entityType = STRUCTURE_SYNC_ENTITY_TYPE,
+                        scopeId = projectId.toString(),
+                    ) ?: Timestamp(0)
+                val now = timestampProvider.getNowTimestamp()
+                LH.logger.d { "Pulling structure changes for project $projectId since=$since, now=$now." }
 
-            when (val result = structuresApi.getStructuresModifiedSince(projectId, since)) {
-                is OnlineDataResult.Failure -> {
-                    LH.logger.w { "Error pulling structure changes for project $projectId." }
-                }
+                when (val result = structuresApi.getStructuresModifiedSince(projectId, since)) {
+                    is OnlineDataResult.Failure -> {
+                        LH.logger.w { "Error pulling structure changes for project $projectId." }
+                    }
 
-                is OnlineDataResult.Success -> {
-                    val changes = result.data
-                    LH.logger.d { "Received ${changes.size} structure change(s) for project $projectId." }
-                    changes.forEach { syncResult ->
-                        when (syncResult) {
-                            is StructureSyncResult.Deleted -> {
-                                LH.logger.d { "Processing deleted structure ${syncResult.id}." }
-                                cascadeDeleteLocalFindingsByStructureIdUseCase(syncResult.id)
-                                structuresDb.deleteStructure(syncResult.id)
-                            }
+                    is OnlineDataResult.Success -> {
+                        val changes = result.data
+                        LH.logger.d { "Received ${changes.size} structure change(s) for project $projectId." }
+                        changes.forEach { syncResult ->
+                            when (syncResult) {
+                                is StructureSyncResult.Deleted -> {
+                                    LH.logger.d { "Processing deleted structure ${syncResult.id}." }
+                                    cascadeDeleteLocalFindingsByStructureIdUseCase(syncResult.id)
+                                    structuresDb.deleteStructure(syncResult.id)
+                                }
 
-                            is StructureSyncResult.Updated -> {
-                                LH.logger.d { "Processing updated structure ${syncResult.structure.structure.id}." }
-                                structuresDb.saveStructure(syncResult.structure)
+                                is StructureSyncResult.Updated -> {
+                                    LH.logger.d { "Processing updated structure ${syncResult.structure.structure.id}." }
+                                    structuresDb.saveStructure(syncResult.structure)
+                                }
                             }
                         }
+                        setLastPullSyncedAtTimestampUseCase(
+                            entityType = STRUCTURE_SYNC_ENTITY_TYPE,
+                            timestamp = now,
+                            scopeId = projectId.toString(),
+                        )
+                        LH.logger.d { "Pull sync for structures in project $projectId completed, updated lastSyncedAt=$now." }
                     }
-                    setLastPullSyncedAtTimestampUseCase(
-                        entityType = STRUCTURE_SYNC_ENTITY_TYPE,
-                        timestamp = now,
-                        scopeId = projectId.toString(),
-                    )
-                    LH.logger.d { "Pull sync for structures in project $projectId completed, updated lastSyncedAt=$now." }
                 }
             }
         }
-    }
 }

@@ -12,8 +12,6 @@
 
 package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.ui
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -35,7 +33,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.ContainedLoadingIndicator
 import androidx.compose.material3.HorizontalFloatingToolbar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -63,10 +60,8 @@ import cz.adamec.timotej.snag.lib.design.fe.scaffold.BackNavigationIcon
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.CollapsableTopAppBarScaffold
 import cz.adamec.timotej.snag.lib.design.fe.theme.SnagPreview
 import cz.adamec.timotej.snag.projects.business.Project
-import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.vm.InspectionsUiStatus
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.vm.ProjectDetailsUiState
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.vm.ProjectDetailsUiStatus
-import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.vm.StructuresUiStatus
 import cz.adamec.timotej.snag.projects.fe.model.FrontendProject
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -121,12 +116,7 @@ internal fun ProjectDetailsContent(
                 )
             }
 
-            ProjectDetailsUiStatus.LOADING -> {
-                ContainedLoadingIndicator(
-                    modifier = Modifier.align(Alignment.Center),
-                )
-            }
-
+            ProjectDetailsUiStatus.LOADING,
             ProjectDetailsUiStatus.LOADED,
             ProjectDetailsUiStatus.DELETED,
             -> {
@@ -255,18 +245,6 @@ private fun LoadedProjectDetailsContent(
                                 },
                             )
                         }
-                        item {
-                            AnimatedVisibility(
-                                visible = state.inspectionStatus == InspectionsUiStatus.LOADING,
-                                exit = fadeOut(),
-                            ) {
-                                Box(
-                                    contentAlignment = Alignment.Center,
-                                ) {
-                                    LoadingIndicator()
-                                }
-                            }
-                        }
                     }
                 }
                 item {
@@ -332,18 +310,6 @@ private fun LoadedProjectDetailsContent(
                                     },
                                 )
                             }
-                        }
-                    }
-                }
-                item {
-                    AnimatedVisibility(
-                        visible = state.structureStatus == StructuresUiStatus.LOADING,
-                        exit = fadeOut(),
-                    ) {
-                        Box(
-                            contentAlignment = Alignment.Center,
-                        ) {
-                            LoadingIndicator()
                         }
                     }
                 }

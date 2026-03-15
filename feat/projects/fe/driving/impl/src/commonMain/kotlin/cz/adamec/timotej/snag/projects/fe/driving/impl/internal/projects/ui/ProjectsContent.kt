@@ -12,19 +12,14 @@
 
 package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projects.ui
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.material3.LoadingIndicator
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import cz.adamec.timotej.snag.lib.design.fe.button.AdaptiveTonalButton
@@ -81,18 +76,6 @@ internal fun ProjectsContent(
                     onClick = { onProjectClick(project.project.id) },
                     project = project,
                 )
-            }
-            item {
-                AnimatedVisibility(
-                    visible = state.isLoading,
-                    exit = fadeOut(),
-                ) {
-                    Box(
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        LoadingIndicator()
-                    }
-                }
             }
         }
     }

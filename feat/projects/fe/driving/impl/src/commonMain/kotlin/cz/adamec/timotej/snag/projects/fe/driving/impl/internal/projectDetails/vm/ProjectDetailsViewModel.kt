@@ -117,7 +117,6 @@ internal class ProjectDetailsViewModel(
                     is OfflineFirstDataResult.Success -> {
                         _state.update {
                             it.copy(
-                                structureStatus = StructuresUiStatus.LOADED,
                                 structures = result.data.toImmutableList(),
                             )
                         }
@@ -141,7 +140,6 @@ internal class ProjectDetailsViewModel(
                     is OfflineFirstDataResult.Success -> {
                         _state.update {
                             it.copy(
-                                inspectionStatus = InspectionsUiStatus.LOADED,
                                 inspections = result.data.toImmutableList(),
                             )
                         }

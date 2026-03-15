@@ -44,11 +44,6 @@ internal class ProjectsViewModel(
             .map { projectsDataResult ->
                 when (projectsDataResult) {
                     is OfflineFirstDataResult.ProgrammerError -> {
-                        _state.update {
-                            it.copy(
-                                isLoading = false,
-                            )
-                        }
                         errorEventsChannel.send(UiError.Unknown)
                     }
 
@@ -56,7 +51,6 @@ internal class ProjectsViewModel(
                         _state.update {
                             it.copy(
                                 projects = projectsDataResult.data.toPersistentList(),
-                                isLoading = false,
                             )
                         }
                     }

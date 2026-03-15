@@ -44,11 +44,6 @@ internal class ClientsViewModel(
             .map { clientsDataResult ->
                 when (clientsDataResult) {
                     is OfflineFirstDataResult.ProgrammerError -> {
-                        _state.update {
-                            it.copy(
-                                isLoading = false,
-                            )
-                        }
                         errorEventsChannel.send(UiError.Unknown)
                     }
 
@@ -56,7 +51,6 @@ internal class ClientsViewModel(
                         _state.update {
                             it.copy(
                                 clients = clientsDataResult.data.toPersistentList(),
-                                isLoading = false,
                             )
                         }
                     }
