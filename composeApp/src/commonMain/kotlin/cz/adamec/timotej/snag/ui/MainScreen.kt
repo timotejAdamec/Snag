@@ -17,8 +17,8 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteItem
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
-import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScope
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -34,6 +34,7 @@ import cz.adamec.timotej.snag.lib.design.fe.theme.SnagTheme
 import cz.adamec.timotej.snag.lib.navigation.fe.TabNavRoute
 import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectsNavigation
 import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectsRoute
+import cz.adamec.timotej.snag.ui.components.TabItem
 import cz.adamec.timotej.snag.users.fe.driving.api.UsersNavigation
 import cz.adamec.timotej.snag.users.fe.driving.api.UsersRoute
 import cz.adamec.timotej.snag.vm.MainViewModel
@@ -99,13 +100,21 @@ private fun MainScreenContent(
 
         NavigationSuiteScaffold(
             modifier = navigationModifier,
-            navigationSuiteItems = {
-                tabItem(projectsRoute, currentDestination == TopLevelDestination.PROJECTS) {
-                    currentDestination = TopLevelDestination.PROJECTS
-                }
-                tabItem(usersRoute, currentDestination == TopLevelDestination.USERS) {
-                    currentDestination = TopLevelDestination.USERS
-                }
+            navigationItems = {
+                TabItem(
+                    route = projectsRoute,
+                    selected = currentDestination == TopLevelDestination.PROJECTS,
+                    onClick = {
+                        currentDestination = TopLevelDestination.PROJECTS
+                    },
+                )
+                TabItem(
+                    route = usersRoute,
+                    selected = currentDestination == TopLevelDestination.USERS,
+                    onClick = {
+                        currentDestination = TopLevelDestination.USERS
+                    },
+                )
             },
         ) {
             when (currentDestination) {
@@ -114,30 +123,4 @@ private fun MainScreenContent(
             }
         }
     }
-}
-
-private fun NavigationSuiteScope.tabItem(
-    route: TabNavRoute,
-    selected: Boolean,
-    onClick: () -> Unit,
-) {
-    item(
-        selected = selected,
-        onClick = onClick,
-        icon = {
-            val painterResource =
-                if (selected) {
-                    route.tabIconSelected
-                } else {
-                    route.tabIcon
-                }
-            Icon(
-                painter = painterResource(painterResource),
-                contentDescription = stringResource(route.tabLabel),
-            )
-        },
-        label = {
-            Text(stringResource(route.tabLabel))
-        },
-    )
 }
