@@ -15,8 +15,8 @@
 package cz.adamec.timotej.snag.lib.design.fe.scenes
 
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
@@ -41,6 +41,8 @@ import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.scene.Scene
 import androidx.navigation3.scene.SceneStrategy
 import androidx.navigation3.scene.SceneStrategyScope
+import cz.adamec.timotej.snag.lib.design.fe.adaptive.ContentPane
+import cz.adamec.timotej.snag.lib.design.fe.adaptive.ContentPaneSpacing
 import cz.adamec.timotej.snag.lib.design.fe.adaptive.isScreenExtraWide
 import cz.adamec.timotej.snag.lib.design.fe.adaptive.isScreenWide
 
@@ -103,25 +105,31 @@ private class AdaptiveMapListDetailScene<T : Any>(
 
         when {
             isScreenExtraWide() && listEntry != null && detailEntry != null -> {
-                Row(modifier = Modifier.fillMaxSize()) {
-                    Column(modifier = Modifier.weight(HALF_WEIGHT)) {
+                Row(
+                    modifier = Modifier.fillMaxSize().padding(ContentPaneSpacing),
+                    horizontalArrangement = Arrangement.spacedBy(ContentPaneSpacing),
+                ) {
+                    ContentPane(modifier = Modifier.weight(HALF_WEIGHT)) {
                         hostPane(hostEntry)
                     }
-                    Column(modifier = Modifier.weight(QUARTER_WEIGHT)) {
+                    ContentPane(modifier = Modifier.weight(QUARTER_WEIGHT)) {
                         listEntry.Content()
                     }
-                    Column(modifier = Modifier.weight(QUARTER_WEIGHT)) {
+                    ContentPane(modifier = Modifier.weight(QUARTER_WEIGHT)) {
                         detailEntry.Content()
                     }
                 }
             }
 
             isScreenWide() -> {
-                Row(modifier = Modifier.fillMaxSize()) {
-                    Column(modifier = Modifier.weight(HALF_WEIGHT)) {
+                Row(
+                    modifier = Modifier.fillMaxSize().padding(ContentPaneSpacing),
+                    horizontalArrangement = Arrangement.spacedBy(ContentPaneSpacing),
+                ) {
+                    ContentPane(modifier = Modifier.weight(HALF_WEIGHT)) {
                         hostPane(hostEntry)
                     }
-                    Column(modifier = Modifier.weight(HALF_WEIGHT)) {
+                    ContentPane(modifier = Modifier.weight(HALF_WEIGHT)) {
                         if (detailEntry != null) {
                             detailEntry.Content()
                         } else {
