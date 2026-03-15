@@ -12,8 +12,12 @@
 
 package cz.adamec.timotej.snag.users.fe.driving.api.di
 
+import org.koin.core.module.Module
 import org.koin.dsl.module
 
 val usersDrivingApiModule =
     module {
+        includes(platformModule)
     }
+
+internal expect val platformModule: Module

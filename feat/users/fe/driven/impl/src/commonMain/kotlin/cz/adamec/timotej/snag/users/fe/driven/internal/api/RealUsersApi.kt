@@ -22,6 +22,9 @@ import cz.adamec.timotej.snag.users.fe.model.FrontendUser
 import cz.adamec.timotej.snag.users.fe.ports.UserSyncResult
 import cz.adamec.timotej.snag.users.fe.ports.UsersApi
 import io.ktor.client.call.body
+import io.ktor.client.request.setBody
+import io.ktor.http.ContentType
+import io.ktor.http.contentType
 import kotlin.uuid.Uuid
 
 internal class RealUsersApi(
@@ -50,5 +53,18 @@ internal class RealUsersApi(
                 UserSyncResult.Updated(it.toModel())
             }
         }.also { if (it is OnlineDataResult.Success) LH.logger.d { "Fetched ${it.data.size} modified users." } }
+    }
+
+    override suspend fun updateUser(user: FrontendUser): OnlineDataResult<FrontendUser> {
+        val userId = user.user.id
+        LH.logger.d { "Updating user $userId..." }
+        return safeApiCall(logger = LH.logger, errorContext = "Error updating user $userId.") {
+            httpClient
+                .put("/users/$userId") {
+                    contentType(ContentType.Application.Json)
+                    setBody(user.toApiDto())
+                }.body<UserApiDto>()
+                .toModel()
+        }.also { if (it is OnlineDataResult.Success) LH.logger.d { "Updated user $userId." } }
     }
 }

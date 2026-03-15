@@ -19,19 +19,16 @@ import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDe
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.scene.DialogSceneStrategy
 import androidx.navigation3.ui.NavDisplay
-import cz.adamec.timotej.snag.lib.navigation.fe.SnagBackStack
 import cz.adamec.timotej.snag.lib.navigation.fe.SnagNavRoute
+import cz.adamec.timotej.snag.lib.navigation.fe.UsersBackStack
 import org.koin.compose.koinInject
 import org.koin.compose.navigation3.koinEntryProvider
 
 @Composable
-internal fun SnagNavigation(
+internal fun UsersNavigation(
     modifier: Modifier = Modifier,
-    backStack: SnagBackStack = koinInject(),
+    backStack: UsersBackStack = koinInject(),
 ) {
-    SnagNavigationPreparation(
-        backStack = backStack,
-    )
     val entryProvider = koinEntryProvider<SnagNavRoute>()
     val sceneStrategy = remember { DialogSceneStrategy<SnagNavRoute>() }
     NavDisplay(
@@ -46,6 +43,3 @@ internal fun SnagNavigation(
             ),
     )
 }
-
-@Composable
-internal expect fun SnagNavigationPreparation(backStack: SnagBackStack)

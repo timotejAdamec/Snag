@@ -49,6 +49,7 @@ kotlin {
             implementation(projects.lib.design.fe)
             implementation(projects.lib.sync.fe.app.api)
             implementation(projects.feat.projects.fe.driving.api)
+            implementation(projects.feat.users.fe.driving.api)
         }
         commonTest.dependencies {
             implementation(projects.feat.findings.fe.ports)

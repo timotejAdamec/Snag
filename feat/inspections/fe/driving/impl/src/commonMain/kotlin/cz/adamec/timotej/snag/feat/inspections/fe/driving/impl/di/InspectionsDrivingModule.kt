@@ -19,7 +19,7 @@ import cz.adamec.timotej.snag.feat.inspections.fe.driving.api.InspectionEditRout
 import cz.adamec.timotej.snag.feat.inspections.fe.driving.impl.internal.ui.InspectionEditScreen
 import cz.adamec.timotej.snag.feat.inspections.fe.driving.impl.internal.vm.InspectionEditViewModel
 import cz.adamec.timotej.snag.lib.design.fe.dialog.fullscreenDialogProperties
-import cz.adamec.timotej.snag.lib.navigation.fe.SnagBackStack
+import cz.adamec.timotej.snag.lib.navigation.fe.ProjectsBackStack
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.viewModel
 import org.koin.core.scope.Scope
@@ -34,7 +34,7 @@ internal inline fun <reified T : InspectionCreationRoute> Module.inspectionCreat
         InspectionEditScreenSetup(
             projectId = route.projectId,
             onSaveInspection = { _ ->
-                val backStack = get<SnagBackStack>()
+                val backStack = get<ProjectsBackStack>()
                 backStack.removeLastSafely()
             },
         )
@@ -47,7 +47,7 @@ internal inline fun <reified T : InspectionEditRoute> Module.inspectionEditScree
         InspectionEditScreenSetup(
             inspectionId = route.inspectionId,
             onSaveInspection = { _ ->
-                val backStack = get<SnagBackStack>()
+                val backStack = get<ProjectsBackStack>()
                 backStack.removeLastSafely()
             },
         )
@@ -66,7 +66,7 @@ private fun Scope.InspectionEditScreenSetup(
             onSaveInspection(savedInspectionId)
         },
         onCancelClick = {
-            val backStack = get<SnagBackStack>()
+            val backStack = get<ProjectsBackStack>()
             backStack.removeLastSafely()
         },
     )

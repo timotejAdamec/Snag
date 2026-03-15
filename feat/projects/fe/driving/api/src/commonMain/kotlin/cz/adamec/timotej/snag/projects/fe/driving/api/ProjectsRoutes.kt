@@ -12,18 +12,17 @@
 
 package cz.adamec.timotej.snag.projects.fe.driving.api
 
-import cz.adamec.timotej.snag.lib.navigation.fe.SnagNavRoute
 import kotlin.uuid.Uuid
 
-interface ProjectsRoute : SnagNavRoute
+interface ProjectsRoute : ProjectsNavRoute
 
-interface ProjectCreationRoute : SnagNavRoute
+interface ProjectCreationRoute : ProjectsNavRoute
 
-interface ProjectEditRoute : SnagNavRoute {
+interface ProjectEditRoute : ProjectsNavRoute {
     val projectId: Uuid
 }
 
-interface ProjectDetailRoute : SnagNavRoute {
+interface ProjectDetailRoute : ProjectsNavRoute {
     val projectId: Uuid
 }
 
