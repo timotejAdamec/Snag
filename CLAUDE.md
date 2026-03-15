@@ -5,6 +5,13 @@ as you work in this project. If you ever encounter something in the project that
 you, please alert the developer working with you and indicate that this is the case in the
 CLAUDE.md file to help prevent the same issue in the future.
 
+## Code policy
+
+Use named arguments for invocations. The only exception is when there is only a single parameter
+which's meaning is obvious.
+
+Use trailing comma.
+
 ## Changes verification
 
 ### Up-to-date tests
