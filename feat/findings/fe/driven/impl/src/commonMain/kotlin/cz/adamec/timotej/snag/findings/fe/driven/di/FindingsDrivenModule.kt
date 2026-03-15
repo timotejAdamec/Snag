@@ -26,6 +26,7 @@ val findingsDrivenModule =
         factory {
             RealFindingsDb(
                 findingEntityQueries = get(),
+                findingCoordinateEntityQueries = get(),
                 classicFindingEntityQueries = get(),
                 ioDispatcher = getIoDispatcher(),
             )

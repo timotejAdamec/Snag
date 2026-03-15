@@ -17,5 +17,5 @@ import kotlin.uuid.Uuid
 
 data class SaveFindingCoordinatesRequest(
     val findingId: Uuid,
-    val coordinates: List<RelativeCoordinate>,
+    val coordinates: Set<RelativeCoordinate>,
 )

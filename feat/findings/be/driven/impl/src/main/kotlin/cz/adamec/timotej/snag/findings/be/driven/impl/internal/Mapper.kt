@@ -69,9 +69,10 @@ internal fun FindingEntity.toModel(): BackendFinding {
                 description = description,
                 type = findingType,
                 coordinates =
-                    coordinates.map {
-                        RelativeCoordinate(x = it.x, y = it.y)
-                    },
+                    coordinates
+                        .map {
+                            RelativeCoordinate(x = it.x, y = it.y)
+                        }.toSet(),
                 updatedAt = Timestamp(updatedAt),
             ),
         deletedAt = deletedAt?.let { Timestamp(it) },

@@ -85,12 +85,11 @@ internal class RealFindingsDb(
                     saveClassicFindingDetails(finding)
 
                     val findingEntity = FindingEntity[finding.finding.id]
-                    finding.finding.coordinates.forEachIndexed { index, coordinate ->
+                    finding.finding.coordinates.forEach { coordinate ->
                         FindingCoordinateEntity.new {
                             this.finding = findingEntity
                             x = coordinate.x
                             y = coordinate.y
-                            orderIndex = index
                         }
                     }
                     null

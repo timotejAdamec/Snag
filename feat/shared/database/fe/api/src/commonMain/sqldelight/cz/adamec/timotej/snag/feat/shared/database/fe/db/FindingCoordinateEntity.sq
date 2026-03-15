@@ -1,0 +1,15 @@
+CREATE TABLE IF NOT EXISTS FindingCoordinateEntity (
+    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    findingId TEXT NOT NULL REFERENCES FindingEntity(id) ON DELETE CASCADE,
+    x REAL NOT NULL,
+    y REAL NOT NULL
+);
+
+selectByFindingId:
+SELECT * FROM FindingCoordinateEntity WHERE findingId = :findingId;
+
+deleteByFindingId:
+DELETE FROM FindingCoordinateEntity WHERE findingId = :findingId;
+
+insert:
+INSERT INTO FindingCoordinateEntity(findingId, x, y) VALUES (?, ?, ?);

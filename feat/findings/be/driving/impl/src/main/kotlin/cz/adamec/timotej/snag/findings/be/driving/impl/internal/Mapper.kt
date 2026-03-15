@@ -41,7 +41,7 @@ internal fun BackendFinding.toDto(): FindingApiDto {
         description = finding.description,
         importance = classic?.importance?.name,
         term = classic?.term?.name,
-        coordinates = finding.coordinates.map { it.toDto() },
+        coordinates = finding.coordinates.map { it.toDto() }.toSet(),
         updatedAt = finding.updatedAt,
         deletedAt = deletedAt,
     )
@@ -87,7 +87,7 @@ internal fun PutFindingApiDto.toModel(id: Uuid): BackendFinding {
                 name = name,
                 description = description,
                 type = findingType,
-                coordinates = coordinates.map { it.toBusiness() },
+                coordinates = coordinates.map { it.toBusiness() }.toSet(),
                 updatedAt = updatedAt,
             ),
     )

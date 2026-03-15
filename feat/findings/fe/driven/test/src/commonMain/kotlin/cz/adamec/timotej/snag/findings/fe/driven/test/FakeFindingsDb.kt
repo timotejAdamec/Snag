@@ -76,7 +76,7 @@ class FakeFindingsDb : FindingsDb {
 
     override suspend fun updateFindingCoordinates(
         id: Uuid,
-        coordinates: List<RelativeCoordinate>,
+        coordinates: Set<RelativeCoordinate>,
         updatedAt: Timestamp,
     ): OfflineFirstUpdateDataResult {
         val failure = ops.forcedFailure

@@ -51,7 +51,7 @@ class SaveFindingDetailsUseCaseImplTest : FrontendKoinInitializedTest() {
                     name = "Old name",
                     description = "Old description",
                     type = FindingType.Classic(),
-                    coordinates = emptyList(),
+                    coordinates = emptySet(),
                     updatedAt = Timestamp(10L),
                 ),
         )

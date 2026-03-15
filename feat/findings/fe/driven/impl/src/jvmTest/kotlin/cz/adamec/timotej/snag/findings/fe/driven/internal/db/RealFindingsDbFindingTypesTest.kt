@@ -15,6 +15,7 @@ package cz.adamec.timotej.snag.findings.fe.driven.internal.db
 import cz.adamec.timotej.snag.feat.findings.business.Finding
 import cz.adamec.timotej.snag.feat.findings.business.FindingType
 import cz.adamec.timotej.snag.feat.findings.business.Importance
+import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
 import cz.adamec.timotej.snag.feat.findings.business.Term
 import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
 import cz.adamec.timotej.snag.findings.fe.ports.FindingsDb
@@ -49,7 +50,7 @@ class RealFindingsDbFindingTypesTest : FrontendKoinInitializedTest() {
                     name = "Finding",
                     description = null,
                     type = FindingType.Classic(importance = importance, term = term),
-                    coordinates = emptyList(),
+                    coordinates = emptySet(),
                     updatedAt = Timestamp(updatedAt),
                 ),
         )
@@ -66,7 +67,7 @@ class RealFindingsDbFindingTypesTest : FrontendKoinInitializedTest() {
                     name = "Finding",
                     description = null,
                     type = FindingType.Unvisited,
-                    coordinates = emptyList(),
+                    coordinates = emptySet(),
                     updatedAt = Timestamp(updatedAt),
                 ),
         )
@@ -83,7 +84,7 @@ class RealFindingsDbFindingTypesTest : FrontendKoinInitializedTest() {
                     name = "Finding",
                     description = null,
                     type = FindingType.Note,
-                    coordinates = emptyList(),
+                    coordinates = emptySet(),
                     updatedAt = Timestamp(updatedAt),
                 ),
         )
@@ -286,6 +287,62 @@ class RealFindingsDbFindingTypesTest : FrontendKoinInitializedTest() {
 
             val result = getFindings().single()
             assertEquals(FindingType.Classic(Importance.MEDIUM, Term.T2), result.finding.type)
+        }
+
+    // endregion
+
+    // region Group 6: Coordinate round-trip
+
+    @Test
+    fun `save finding with coordinates and retrieve preserves coordinates`() =
+        runTest(testDispatcher) {
+            val coordinates =
+                setOf(
+                    RelativeCoordinate(0.1f, 0.2f),
+                    RelativeCoordinate(0.3f, 0.4f),
+                )
+            val finding =
+                FrontendFinding(
+                    finding =
+                        Finding(
+                            id = FINDING_ID_1,
+                            structureId = STRUCTURE_ID,
+                            name = "Finding",
+                            description = null,
+                            type = FindingType.Classic(),
+                            coordinates = coordinates,
+                            updatedAt = Timestamp(100L),
+                        ),
+                )
+
+            findingsDb.saveFinding(finding)
+
+            val result = getFindings().single()
+            assertEquals(coordinates, result.finding.coordinates)
+        }
+
+    @Test
+    fun `updateFindingCoordinates updates coordinates`() =
+        runTest(testDispatcher) {
+            findingsDb.saveFinding(
+                classicFinding(updatedAt = 100L),
+            )
+
+            val newCoordinates =
+                setOf(
+                    RelativeCoordinate(0.5f, 0.6f),
+                    RelativeCoordinate(0.7f, 0.8f),
+                )
+            val updateResult =
+                findingsDb.updateFindingCoordinates(
+                    id = FINDING_ID_1,
+                    coordinates = newCoordinates,
+                    updatedAt = Timestamp(200L),
+                )
+            assertIs<OfflineFirstUpdateDataResult.Success>(updateResult)
+
+            val result = getFindings().single()
+            assertEquals(newCoordinates, result.finding.coordinates)
         }
 
     // endregion

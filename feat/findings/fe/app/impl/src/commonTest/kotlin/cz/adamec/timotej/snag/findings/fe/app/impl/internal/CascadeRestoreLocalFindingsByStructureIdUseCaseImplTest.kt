@@ -49,7 +49,7 @@ class CascadeRestoreLocalFindingsByStructureIdUseCaseImplTest : FrontendKoinInit
                 name = "Finding",
                 description = null,
                 type = FindingType.Classic(),
-                coordinates = emptyList(),
+                coordinates = emptySet(),
                 updatedAt = Timestamp(1L),
             ),
     )

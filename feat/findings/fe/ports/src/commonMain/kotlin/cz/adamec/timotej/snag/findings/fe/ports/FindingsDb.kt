@@ -42,7 +42,7 @@ interface FindingsDb {
 
     suspend fun updateFindingCoordinates(
         id: Uuid,
-        coordinates: List<RelativeCoordinate>,
+        coordinates: Set<RelativeCoordinate>,
         updatedAt: Timestamp,
     ): OfflineFirstUpdateDataResult
 

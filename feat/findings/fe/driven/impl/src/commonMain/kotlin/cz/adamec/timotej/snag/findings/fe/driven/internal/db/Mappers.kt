@@ -25,17 +25,9 @@ import cz.adamec.timotej.snag.feat.shared.database.fe.db.SelectById
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.SelectByStructureId
 import cz.adamec.timotej.snag.findings.fe.driven.internal.LH
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.Json
 import kotlin.uuid.Uuid
 
-@Serializable
-internal data class RelativeCoordinateJson(
-    val x: Float,
-    val y: Float,
-)
-
-internal fun SelectByStructureId.toModel() =
+internal fun SelectByStructureId.toModel(coordinates: Set<RelativeCoordinate>) =
     FrontendFinding(
         finding =
             Finding(
@@ -44,12 +36,12 @@ internal fun SelectByStructureId.toModel() =
                 name = name,
                 description = description,
                 type = toFindingType(type, importance, term),
-                coordinates = parseCoordinates(coordinates),
+                coordinates = coordinates,
                 updatedAt = Timestamp(updatedAt),
             ),
     )
 
-internal fun SelectById.toModel() =
+internal fun SelectById.toModel(coordinates: Set<RelativeCoordinate>) =
     FrontendFinding(
         finding =
             Finding(
@@ -58,7 +50,7 @@ internal fun SelectById.toModel() =
                 name = name,
                 description = description,
                 type = toFindingType(type, importance, term),
-                coordinates = parseCoordinates(coordinates),
+                coordinates = coordinates,
                 updatedAt = Timestamp(updatedAt),
             ),
     )
@@ -94,18 +86,7 @@ internal fun FrontendFinding.toEntity() =
         type = finding.type.toEntityKey().name,
         name = finding.name,
         description = finding.description,
-        coordinates = serializeCoordinates(finding.coordinates),
         updatedAt = finding.updatedAt.value,
-    )
-
-private fun parseCoordinates(json: String): List<RelativeCoordinate> =
-    Json.decodeFromString<List<RelativeCoordinateJson>>(json).map {
-        RelativeCoordinate(x = it.x, y = it.y)
-    }
-
-internal fun serializeCoordinates(coordinates: List<RelativeCoordinate>): String =
-    Json.encodeToString(
-        coordinates.map { RelativeCoordinateJson(x = it.x, y = it.y) },
     )
 
 internal fun FindingType.toEntityKey(): FindingTypeEntityKey =

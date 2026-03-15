@@ -54,7 +54,7 @@ class PullFindingChangesUseCaseImplTest : FrontendKoinInitializedTest() {
                     name = "Test Finding",
                     description = null,
                     type = FindingType.Classic(),
-                    coordinates = emptyList(),
+                    coordinates = emptySet(),
                     updatedAt = Timestamp(100L),
                 ),
         )

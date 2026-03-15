@@ -16,6 +16,7 @@ import cz.adamec.timotej.snag.feat.findings.be.model.BackendFinding
 import cz.adamec.timotej.snag.feat.findings.business.Finding
 import cz.adamec.timotej.snag.feat.findings.business.FindingType
 import cz.adamec.timotej.snag.feat.findings.business.Importance
+import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
 import cz.adamec.timotej.snag.feat.findings.business.Term
 import cz.adamec.timotej.snag.feat.structures.be.model.BackendStructure
 import cz.adamec.timotej.snag.feat.structures.business.Structure
@@ -78,7 +79,7 @@ class RealFindingsDbFindingTypesTest : BackendKoinInitializedTest() {
                     name = "Finding",
                     description = null,
                     type = FindingType.Classic(importance = importance, term = term),
-                    coordinates = emptyList(),
+                    coordinates = emptySet(),
                     updatedAt = Timestamp(updatedAt),
                 ),
         )
@@ -95,7 +96,7 @@ class RealFindingsDbFindingTypesTest : BackendKoinInitializedTest() {
                     name = "Finding",
                     description = null,
                     type = FindingType.Unvisited,
-                    coordinates = emptyList(),
+                    coordinates = emptySet(),
                     updatedAt = Timestamp(updatedAt),
                 ),
         )
@@ -112,7 +113,7 @@ class RealFindingsDbFindingTypesTest : BackendKoinInitializedTest() {
                     name = "Finding",
                     description = null,
                     type = FindingType.Note,
-                    coordinates = emptyList(),
+                    coordinates = emptySet(),
                     updatedAt = Timestamp(updatedAt),
                 ),
         )
@@ -291,6 +292,35 @@ class RealFindingsDbFindingTypesTest : BackendKoinInitializedTest() {
             val byId = results.associateBy { it.finding.id }
             assertEquals(FindingType.Classic(Importance.HIGH, Term.T1), byId[FINDING_ID_1]!!.finding.type)
             assertIs<FindingType.Note>(byId[FINDING_ID_2]!!.finding.type)
+        }
+
+    @Test
+    fun `save finding with coordinates and retrieve preserves coordinates`() =
+        runTest(testDispatcher) {
+            seedParentEntities()
+            val coordinates =
+                setOf(
+                    RelativeCoordinate(0.1f, 0.2f),
+                    RelativeCoordinate(0.3f, 0.4f),
+                )
+            val finding =
+                BackendFinding(
+                    finding =
+                        Finding(
+                            id = FINDING_ID_1,
+                            structureId = STRUCTURE_ID,
+                            name = "Finding",
+                            description = null,
+                            type = FindingType.Classic(),
+                            coordinates = coordinates,
+                            updatedAt = Timestamp(100L),
+                        ),
+                )
+
+            findingsDb.saveFinding(finding)
+
+            val result = findingsDb.getFindings(STRUCTURE_ID).single()
+            assertEquals(coordinates, result.finding.coordinates)
         }
 
     companion object {

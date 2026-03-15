@@ -49,7 +49,7 @@ class FindingDetailViewModelTest : FrontendKoinInitializedTest() {
     private val findingId = Uuid.parse("00000000-0000-0000-0001-000000000001")
     private val finding =
         FrontendFinding(
-            finding = Finding(findingId, structureId, "Crack in wall", "A large crack", FindingType.Classic(), emptyList(), Timestamp(10L)),
+            finding = Finding(findingId, structureId, "Crack in wall", "A large crack", FindingType.Classic(), emptySet(), Timestamp(10L)),
         )
 
     private fun createViewModel(): FindingDetailViewModel =

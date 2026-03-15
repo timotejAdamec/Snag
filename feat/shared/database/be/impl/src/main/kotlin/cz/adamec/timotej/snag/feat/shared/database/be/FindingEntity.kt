@@ -29,8 +29,7 @@ class FindingEntity(
     var updatedAt by FindingsTable.updatedAt
     var deletedAt by FindingsTable.deletedAt
     val coordinates by FindingCoordinateEntity referrersOn
-        FindingCoordinatesTable.finding orderBy
-        FindingCoordinatesTable.orderIndex
+        FindingCoordinatesTable.finding
 
     companion object : UuidEntityClass<FindingEntity>(FindingsTable)
 }
@@ -50,7 +49,6 @@ class FindingCoordinateEntity(
     var finding by FindingEntity referencedOn FindingCoordinatesTable.finding
     var x by FindingCoordinatesTable.x
     var y by FindingCoordinatesTable.y
-    var orderIndex by FindingCoordinatesTable.orderIndex
 
     companion object : IntEntityClass<FindingCoordinateEntity>(FindingCoordinatesTable)
 }

@@ -44,5 +44,4 @@ object FindingCoordinatesTable : IntIdTable("finding_coordinates") {
     val finding = reference("finding_id", FindingsTable)
     val x = float("x")
     val y = float("y")
-    val orderIndex = integer("order_index")
 }
