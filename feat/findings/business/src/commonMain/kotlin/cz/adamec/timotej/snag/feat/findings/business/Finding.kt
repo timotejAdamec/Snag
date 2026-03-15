@@ -21,6 +21,6 @@ data class Finding(
     val name: String,
     val description: String?,
     val type: FindingType,
-    val coordinates: List<RelativeCoordinate>,
+    val coordinates: Set<RelativeCoordinate>,
     val updatedAt: Timestamp,
 )

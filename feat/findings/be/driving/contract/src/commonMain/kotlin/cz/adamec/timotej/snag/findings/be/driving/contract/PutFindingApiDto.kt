@@ -24,6 +24,6 @@ data class PutFindingApiDto(
     val description: String?,
     val importance: String? = null,
     val term: String? = null,
-    val coordinates: List<RelativeCoordinateApiDto>,
+    val coordinates: Set<RelativeCoordinateApiDto>,
     val updatedAt: Timestamp,
 )

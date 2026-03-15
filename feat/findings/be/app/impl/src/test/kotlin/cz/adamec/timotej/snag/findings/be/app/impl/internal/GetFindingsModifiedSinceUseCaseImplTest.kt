@@ -101,7 +101,7 @@ class GetFindingsModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
                             name = "Crack in wall",
                             description = null,
                             type = FindingType.Classic(),
-                            coordinates = emptyList(),
+                            coordinates = emptySet(),
                             updatedAt = Timestamp(200L),
                         ),
                 )
@@ -125,7 +125,7 @@ class GetFindingsModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
                             name = "Other finding",
                             description = null,
                             type = FindingType.Classic(),
-                            coordinates = emptyList(),
+                            coordinates = emptySet(),
                             updatedAt = Timestamp(200L),
                         ),
                 )
@@ -149,7 +149,7 @@ class GetFindingsModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
                             name = "Crack in wall",
                             description = null,
                             type = FindingType.Classic(),
-                            coordinates = emptyList(),
+                            coordinates = emptySet(),
                             updatedAt = Timestamp(50L),
                         ),
                     deletedAt = Timestamp(200L),
@@ -174,7 +174,7 @@ class GetFindingsModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
                             name = "Crack in wall",
                             description = null,
                             type = FindingType.Classic(),
-                            coordinates = emptyList(),
+                            coordinates = emptySet(),
                             updatedAt = Timestamp(50L),
                         ),
                 )

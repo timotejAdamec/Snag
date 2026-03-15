@@ -295,7 +295,7 @@ private fun FindingDetailContentLoadedPreview() {
                                             term = Term.T2,
                                         ),
                                     coordinates =
-                                        listOf(
+                                        setOf(
                                             RelativeCoordinate(0.5f, 0.3f),
                                             RelativeCoordinate(0.7f, 0.6f),
                                         ),
@@ -327,7 +327,7 @@ private fun FindingDetailContentNotePreview() {
                                     name = "Check ventilation",
                                     description = null,
                                     type = FindingType.Note,
-                                    coordinates = emptyList(),
+                                    coordinates = emptySet(),
                                     updatedAt = Timestamp(0L),
                                 ),
                         ),

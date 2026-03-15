@@ -51,7 +51,7 @@ class SaveFindingUseCaseImplTest : BackendKoinInitializedTest() {
                     name = "Crack in wall",
                     description = null,
                     type = FindingType.Classic(),
-                    coordinates = emptyList(),
+                    coordinates = emptySet(),
                     updatedAt = Timestamp(10L),
                 ),
         )

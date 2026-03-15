@@ -51,7 +51,7 @@ internal fun FindingApiDto.toModel(): FrontendFinding {
                 name = name,
                 description = description,
                 type = findingType,
-                coordinates = coordinates.map { it.toBusiness() },
+                coordinates = coordinates.map { it.toBusiness() }.toSet(),
                 updatedAt = updatedAt,
             ),
     )
@@ -80,7 +80,7 @@ internal fun FrontendFinding.toPutApiDto(): PutFindingApiDto {
         description = finding.description,
         importance = classic?.importance?.name,
         term = classic?.term?.name,
-        coordinates = finding.coordinates.map { RelativeCoordinateApiDto(x = it.x, y = it.y) },
+        coordinates = finding.coordinates.map { RelativeCoordinateApiDto(x = it.x, y = it.y) }.toSet(),
         updatedAt = finding.updatedAt,
     )
 }

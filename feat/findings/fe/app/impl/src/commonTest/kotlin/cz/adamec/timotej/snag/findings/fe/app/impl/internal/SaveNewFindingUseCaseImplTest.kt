@@ -73,13 +73,13 @@ class SaveNewFindingUseCaseImplTest : FrontendKoinInitializedTest() {
 
             assertIs<OfflineFirstDataResult.Success<Uuid>>(result)
             val savedFinding = getSavedFinding(result.data)
-            assertEquals(emptyList(), savedFinding.finding.coordinates)
+            assertEquals(emptySet(), savedFinding.finding.coordinates)
         }
 
     @Test
     fun `uses provided coordinates`() =
         runTest(testDispatcher) {
-            val coordinates = listOf(RelativeCoordinate(0.1f, 0.2f), RelativeCoordinate(0.3f, 0.4f))
+            val coordinates = setOf(RelativeCoordinate(0.1f, 0.2f), RelativeCoordinate(0.3f, 0.4f))
             val request =
                 SaveNewFindingRequest(
                     structureId = structureId,

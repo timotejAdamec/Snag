@@ -52,7 +52,7 @@ class SaveFindingCoordinatesUseCaseImplTest : FrontendKoinInitializedTest() {
                     name = "Finding",
                     description = null,
                     type = FindingType.Classic(),
-                    coordinates = listOf(RelativeCoordinate(0.1f, 0.2f)),
+                    coordinates = setOf(RelativeCoordinate(0.1f, 0.2f)),
                     updatedAt = Timestamp(10L),
                 ),
         )
@@ -62,7 +62,7 @@ class SaveFindingCoordinatesUseCaseImplTest : FrontendKoinInitializedTest() {
         runTest(testDispatcher) {
             fakeFindingsDb.setFinding(existingFinding)
 
-            val newCoordinates = listOf(RelativeCoordinate(0.5f, 0.6f), RelativeCoordinate(0.7f, 0.8f))
+            val newCoordinates = setOf(RelativeCoordinate(0.5f, 0.6f), RelativeCoordinate(0.7f, 0.8f))
             val request =
                 SaveFindingCoordinatesRequest(
                     findingId = findingId,
@@ -82,7 +82,7 @@ class SaveFindingCoordinatesUseCaseImplTest : FrontendKoinInitializedTest() {
             val request =
                 SaveFindingCoordinatesRequest(
                     findingId = findingId,
-                    coordinates = listOf(RelativeCoordinate(0.5f, 0.6f)),
+                    coordinates = setOf(RelativeCoordinate(0.5f, 0.6f)),
                 )
 
             useCase(request)
@@ -100,7 +100,7 @@ class SaveFindingCoordinatesUseCaseImplTest : FrontendKoinInitializedTest() {
             val request =
                 SaveFindingCoordinatesRequest(
                     findingId = findingId,
-                    coordinates = listOf(RelativeCoordinate(0.5f, 0.6f)),
+                    coordinates = setOf(RelativeCoordinate(0.5f, 0.6f)),
                 )
 
             val result = useCase(request)
@@ -114,7 +114,7 @@ class SaveFindingCoordinatesUseCaseImplTest : FrontendKoinInitializedTest() {
             val request =
                 SaveFindingCoordinatesRequest(
                     findingId = findingId,
-                    coordinates = listOf(RelativeCoordinate(0.5f, 0.6f)),
+                    coordinates = setOf(RelativeCoordinate(0.5f, 0.6f)),
                 )
 
             useCase(request)
@@ -130,7 +130,7 @@ class SaveFindingCoordinatesUseCaseImplTest : FrontendKoinInitializedTest() {
             val request =
                 SaveFindingCoordinatesRequest(
                     findingId = findingId,
-                    coordinates = listOf(RelativeCoordinate(0.5f, 0.6f)),
+                    coordinates = setOf(RelativeCoordinate(0.5f, 0.6f)),
                 )
 
             val result = useCase(request)
@@ -146,7 +146,7 @@ class SaveFindingCoordinatesUseCaseImplTest : FrontendKoinInitializedTest() {
             val request =
                 SaveFindingCoordinatesRequest(
                     findingId = findingId,
-                    coordinates = listOf(RelativeCoordinate(0.5f, 0.6f)),
+                    coordinates = setOf(RelativeCoordinate(0.5f, 0.6f)),
                 )
 
             useCase(request)

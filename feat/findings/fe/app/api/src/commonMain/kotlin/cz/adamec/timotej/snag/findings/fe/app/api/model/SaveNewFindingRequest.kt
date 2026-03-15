@@ -21,5 +21,5 @@ data class SaveNewFindingRequest(
     val name: String,
     val description: String?,
     val findingType: FindingType = FindingType.Classic(),
-    val coordinates: List<RelativeCoordinate> = emptyList(),
+    val coordinates: Set<RelativeCoordinate> = emptySet(),
 )

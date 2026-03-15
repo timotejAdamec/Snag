@@ -158,7 +158,7 @@ internal class FindingDetailsEditViewModel(
                         name = state.value.findingName,
                         description = state.value.findingDescription.ifBlank { null },
                         findingType = state.value.findingType,
-                        coordinates = listOfNotNull(coordinate),
+                        coordinates = setOfNotNull(coordinate),
                     ),
             )
         when (result) {
