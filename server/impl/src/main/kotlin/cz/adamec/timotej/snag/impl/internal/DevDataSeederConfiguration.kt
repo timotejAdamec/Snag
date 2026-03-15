@@ -16,6 +16,10 @@ import cz.adamec.timotej.snag.clients.be.model.BackendClient
 import cz.adamec.timotej.snag.clients.be.ports.ClientsDb
 import cz.adamec.timotej.snag.clients.business.Client
 import cz.adamec.timotej.snag.configuration.be.AppConfiguration
+import cz.adamec.timotej.snag.users.be.model.BackendUser
+import cz.adamec.timotej.snag.users.be.ports.UsersDb
+import cz.adamec.timotej.snag.users.business.User
+import cz.adamec.timotej.snag.users.business.UserRole
 import cz.adamec.timotej.snag.feat.findings.be.model.BackendFinding
 import cz.adamec.timotej.snag.feat.findings.business.Finding
 import cz.adamec.timotej.snag.feat.findings.business.FindingType
@@ -44,16 +48,84 @@ internal class DevDataSeederConfiguration(
     private val structuresDb: StructuresDb,
     private val findingsDb: FindingsDb,
     private val inspectionsDb: InspectionsDb,
+    private val usersDb: UsersDb,
     private val timestampProvider: TimestampProvider,
 ) : AppConfiguration {
     override fun Application.setup() {
         runBlocking {
+            seedUsers()
             seedClients()
             seedProjects()
             seedStructures()
             seedFindings()
             seedInspections()
         }
+    }
+
+    private suspend fun seedUsers() {
+        val now = timestampProvider.getNowTimestamp()
+        listOf(
+            BackendUser(
+                user =
+                    User(
+                        id = Uuid.parse(USER_1),
+                        entraId = "entra-admin-001",
+                        email = "jan.novak@snag.cz",
+                        role = UserRole.ADMINISTRATOR,
+                        updatedAt = now,
+                    ),
+            ),
+            BackendUser(
+                user =
+                    User(
+                        id = Uuid.parse(USER_2),
+                        entraId = "entra-lead-001",
+                        email = "petr.svoboda@snag.cz",
+                        role = UserRole.PASSPORT_LEAD,
+                        updatedAt = now,
+                    ),
+            ),
+            BackendUser(
+                user =
+                    User(
+                        id = Uuid.parse(USER_3),
+                        entraId = "entra-tech-001",
+                        email = "marie.kralova@snag.cz",
+                        role = UserRole.PASSPORT_TECHNICIAN,
+                        updatedAt = now,
+                    ),
+            ),
+            BackendUser(
+                user =
+                    User(
+                        id = Uuid.parse(USER_4),
+                        entraId = "entra-slead-001",
+                        email = "tomas.benes@snag.cz",
+                        role = UserRole.SERVICE_LEAD,
+                        updatedAt = now,
+                    ),
+            ),
+            BackendUser(
+                user =
+                    User(
+                        id = Uuid.parse(USER_5),
+                        entraId = "entra-worker-001",
+                        email = "eva.dvorakova@snag.cz",
+                        role = UserRole.SERVICE_WORKER,
+                        updatedAt = now,
+                    ),
+            ),
+            BackendUser(
+                user =
+                    User(
+                        id = Uuid.parse(USER_6),
+                        entraId = "entra-norole-001",
+                        email = "lukas.horak@snag.cz",
+                        role = null,
+                        updatedAt = now,
+                    ),
+            ),
+        ).forEach { usersDb.saveUser(it) }
     }
 
     private suspend fun seedClients() {
@@ -329,6 +401,12 @@ internal class DevDataSeederConfiguration(
     }
 
     private companion object {
+        private const val USER_1 = "00000000-0000-0000-0005-000000000001"
+        private const val USER_2 = "00000000-0000-0000-0005-000000000002"
+        private const val USER_3 = "00000000-0000-0000-0005-000000000003"
+        private const val USER_4 = "00000000-0000-0000-0005-000000000004"
+        private const val USER_5 = "00000000-0000-0000-0005-000000000005"
+        private const val USER_6 = "00000000-0000-0000-0005-000000000006"
         private const val CLIENT_1 = "00000000-0000-0000-0003-000000000001"
         private const val CLIENT_2 = "00000000-0000-0000-0003-000000000002"
         private const val PROJECT_1 = "00000000-0000-0000-0000-000000000001"
