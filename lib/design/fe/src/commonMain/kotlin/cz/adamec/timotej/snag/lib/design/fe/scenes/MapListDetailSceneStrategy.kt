@@ -112,7 +112,7 @@ private class AdaptiveMapListDetailScene<T : Any>(
                         Modifier
                             .fillMaxSize()
                             .windowInsetsPadding(WindowInsets.systemBars)
-                            .padding(ContentPaneSpacing),
+                            .padding(end = ContentPaneSpacing),
                     horizontalArrangement = Arrangement.spacedBy(ContentPaneSpacing),
                 ) {
                     ContentPane(modifier = Modifier.weight(HALF_WEIGHT)) {
@@ -133,7 +133,7 @@ private class AdaptiveMapListDetailScene<T : Any>(
                         Modifier
                             .fillMaxSize()
                             .windowInsetsPadding(WindowInsets.systemBars)
-                            .padding(ContentPaneSpacing),
+                            .padding(end = ContentPaneSpacing),
                     horizontalArrangement = Arrangement.spacedBy(ContentPaneSpacing),
                 ) {
                     ContentPane(modifier = Modifier.weight(HALF_WEIGHT)) {

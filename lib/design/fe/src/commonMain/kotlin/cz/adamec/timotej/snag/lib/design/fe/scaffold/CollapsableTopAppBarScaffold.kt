@@ -100,7 +100,7 @@ fun CollapsableTopAppBarScaffold(
             modifier =
                 modifier
                     .windowInsetsPadding(WindowInsets.systemBars)
-                    .padding(ContentPaneSpacing),
+                    .padding(end = ContentPaneSpacing),
         ) {
             scaffoldContent(Modifier, Color.Transparent)
         }
