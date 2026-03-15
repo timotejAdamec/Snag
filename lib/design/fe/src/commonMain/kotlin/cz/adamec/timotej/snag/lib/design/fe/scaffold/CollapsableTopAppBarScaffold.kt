@@ -19,7 +19,6 @@ import androidx.compose.material3.FabPosition
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumFlexibleTopAppBar
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
@@ -92,11 +91,7 @@ fun CollapsableTopAppBarScaffold(
     }
 
     if (isScreenWide()) {
-        Surface(
-            modifier = modifier.padding(12.dp),
-            shape = MaterialTheme.shapes.extraLarge,
-            color = MaterialTheme.colorScheme.surface,
-        ) {
+        ContentPane(modifier = modifier.padding(ContentPaneSpacing)) {
             scaffoldContent(Modifier, Color.Transparent)
         }
     } else {

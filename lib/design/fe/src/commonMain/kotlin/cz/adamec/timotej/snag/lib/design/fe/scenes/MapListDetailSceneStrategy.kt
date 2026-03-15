@@ -25,9 +25,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.BottomSheetScaffold
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SheetValue
-import androidx.compose.material3.Surface
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
@@ -45,6 +43,8 @@ import androidx.navigation3.scene.SceneStrategy
 import androidx.navigation3.scene.SceneStrategyScope
 import cz.adamec.timotej.snag.lib.design.fe.adaptive.isScreenExtraWide
 import cz.adamec.timotej.snag.lib.design.fe.adaptive.isScreenWide
+import cz.adamec.timotej.snag.lib.design.fe.scaffold.ContentPane
+import cz.adamec.timotej.snag.lib.design.fe.scaffold.ContentPaneSpacing
 
 class MapListDetailSceneStrategy<T : Any> : SceneStrategy<T> {
     @Suppress("ReturnCount")
@@ -106,28 +106,16 @@ private class AdaptiveMapListDetailScene<T : Any>(
         when {
             isScreenExtraWide() && listEntry != null && detailEntry != null -> {
                 Row(
-                    modifier = Modifier.fillMaxSize().padding(12.dp),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    modifier = Modifier.fillMaxSize().padding(ContentPaneSpacing),
+                    horizontalArrangement = Arrangement.spacedBy(ContentPaneSpacing),
                 ) {
-                    Surface(
-                        modifier = Modifier.weight(HALF_WEIGHT),
-                        shape = MaterialTheme.shapes.extraLarge,
-                        color = MaterialTheme.colorScheme.surface,
-                    ) {
+                    ContentPane(modifier = Modifier.weight(HALF_WEIGHT)) {
                         hostPane(hostEntry)
                     }
-                    Surface(
-                        modifier = Modifier.weight(QUARTER_WEIGHT),
-                        shape = MaterialTheme.shapes.extraLarge,
-                        color = MaterialTheme.colorScheme.surface,
-                    ) {
+                    ContentPane(modifier = Modifier.weight(QUARTER_WEIGHT)) {
                         listEntry.Content()
                     }
-                    Surface(
-                        modifier = Modifier.weight(QUARTER_WEIGHT),
-                        shape = MaterialTheme.shapes.extraLarge,
-                        color = MaterialTheme.colorScheme.surface,
-                    ) {
+                    ContentPane(modifier = Modifier.weight(QUARTER_WEIGHT)) {
                         detailEntry.Content()
                     }
                 }
@@ -135,21 +123,13 @@ private class AdaptiveMapListDetailScene<T : Any>(
 
             isScreenWide() -> {
                 Row(
-                    modifier = Modifier.fillMaxSize().padding(12.dp),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    modifier = Modifier.fillMaxSize().padding(ContentPaneSpacing),
+                    horizontalArrangement = Arrangement.spacedBy(ContentPaneSpacing),
                 ) {
-                    Surface(
-                        modifier = Modifier.weight(HALF_WEIGHT),
-                        shape = MaterialTheme.shapes.extraLarge,
-                        color = MaterialTheme.colorScheme.surface,
-                    ) {
+                    ContentPane(modifier = Modifier.weight(HALF_WEIGHT)) {
                         hostPane(hostEntry)
                     }
-                    Surface(
-                        modifier = Modifier.weight(HALF_WEIGHT),
-                        shape = MaterialTheme.shapes.extraLarge,
-                        color = MaterialTheme.colorScheme.surface,
-                    ) {
+                    ContentPane(modifier = Modifier.weight(HALF_WEIGHT)) {
                         if (detailEntry != null) {
                             detailEntry.Content()
                         } else {
