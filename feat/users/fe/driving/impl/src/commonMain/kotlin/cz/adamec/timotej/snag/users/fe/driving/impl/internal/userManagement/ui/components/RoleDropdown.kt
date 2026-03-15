@@ -28,15 +28,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import cz.adamec.timotej.snag.users.business.UserRole
+import cz.adamec.timotej.snag.users.fe.driving.impl.internal.userManagement.ui.toDisplayName
 import org.jetbrains.compose.resources.stringResource
 import snag.feat.users.fe.driving.impl.generated.resources.Res
 import snag.feat.users.fe.driving.impl.generated.resources.no_role
-import snag.feat.users.fe.driving.impl.generated.resources.role_administrator
 import snag.feat.users.fe.driving.impl.generated.resources.role_label
-import snag.feat.users.fe.driving.impl.generated.resources.role_passport_lead
-import snag.feat.users.fe.driving.impl.generated.resources.role_passport_technician
-import snag.feat.users.fe.driving.impl.generated.resources.role_service_lead
-import snag.feat.users.fe.driving.impl.generated.resources.role_service_worker
 
 @Composable
 internal fun RoleDropdown(
@@ -87,13 +83,3 @@ internal fun RoleDropdown(
         }
     }
 }
-
-@Composable
-private fun UserRole.toDisplayName(): String =
-    when (this) {
-        UserRole.ADMINISTRATOR -> stringResource(Res.string.role_administrator)
-        UserRole.PASSPORT_LEAD -> stringResource(Res.string.role_passport_lead)
-        UserRole.PASSPORT_TECHNICIAN -> stringResource(Res.string.role_passport_technician)
-        UserRole.SERVICE_LEAD -> stringResource(Res.string.role_service_lead)
-        UserRole.SERVICE_WORKER -> stringResource(Res.string.role_service_worker)
-    }
