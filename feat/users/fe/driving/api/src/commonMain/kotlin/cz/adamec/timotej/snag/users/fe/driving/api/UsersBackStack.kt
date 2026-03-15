@@ -12,13 +12,12 @@
 
 package cz.adamec.timotej.snag.users.fe.driving.api
 
-import cz.adamec.timotej.snag.lib.navigation.fe.SnagNavRoute
 import org.koin.core.annotation.Provided
 import kotlin.jvm.JvmInline
 
 @JvmInline
 value class UsersBackStack(
-    @Provided val value: MutableList<SnagNavRoute>,
+    @Provided val value: MutableList<UsersNavRoute>,
 ) {
     fun removeLastSafely() {
         if (value.size > 1) value.removeLastOrNull()

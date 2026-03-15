@@ -19,7 +19,6 @@ import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDe
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.scene.DialogSceneStrategy
 import androidx.navigation3.ui.NavDisplay
-import cz.adamec.timotej.snag.lib.navigation.fe.SnagNavRoute
 import org.koin.compose.koinInject
 import org.koin.compose.navigation3.koinEntryProvider
 
@@ -31,8 +30,8 @@ fun ProjectsNavigation(
     ProjectsNavigationPreparation(
         backStack = backStack,
     )
-    val entryProvider = koinEntryProvider<SnagNavRoute>()
-    val sceneStrategy = remember { DialogSceneStrategy<SnagNavRoute>() }
+    val entryProvider = koinEntryProvider<ProjectsNavRoute>()
+    val sceneStrategy = remember { DialogSceneStrategy<ProjectsNavRoute>() }
     NavDisplay(
         modifier = modifier,
         backStack = backStack.value,
