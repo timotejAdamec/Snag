@@ -12,11 +12,13 @@
 
 package cz.adamec.timotej.snag.users.fe.driving.impl.internal.userManagement.ui.components
 
-import androidx.compose.material3.ListItem
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import cz.adamec.timotej.snag.users.business.UserRole
 import cz.adamec.timotej.snag.users.fe.driving.impl.internal.userManagement.vm.UserItem
 
@@ -26,20 +28,23 @@ internal fun UserListItem(
     onRoleSelect: (UserRole?) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    ListItem(
-        modifier = modifier,
-        headlineContent = {
-            Text(
-                text = userItem.email,
-                style = MaterialTheme.typography.bodyLarge,
-            )
-        },
-        trailingContent = {
-            RoleDropdown(
-                selectedRole = userItem.role,
-                onRoleSelect = onRoleSelect,
-                enabled = !userItem.isUpdatingRole,
-            )
-        },
-    )
+    Column(
+        modifier =
+            modifier
+                .padding(
+                    horizontal = 16.dp,
+                    vertical = 12.dp,
+                ),
+    ) {
+        Text(
+            text = userItem.email,
+            style = MaterialTheme.typography.titleMedium,
+        )
+        RoleDropdown(
+            modifier = Modifier.padding(top = 2.dp),
+            selectedRole = userItem.role,
+            onRoleSelect = onRoleSelect,
+            enabled = !userItem.isUpdatingRole,
+        )
+    }
 }
