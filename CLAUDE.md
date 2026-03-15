@@ -5,6 +5,15 @@ as you work in this project. If you ever encounter something in the project that
 you, please alert the developer working with you and indicate that this is the case in the
 CLAUDE.md file to help prevent the same issue in the future.
 
+## UI guidelines
+
+Follow Material 3 Expressive (adaptive). For any component (https://m3.material.io/components) to be
+used, see the 4 subsections:
+- https://m3.material.io/components/{component}/overview
+- https://m3.material.io/components/{component}/specs
+- https://m3.material.io/components/{component}/guidelines
+- https://m3.material.io/components/{component}/accessibility
+
 ## Code policy
 
 Use named arguments for invocations. The only exception is when there is only a single parameter
