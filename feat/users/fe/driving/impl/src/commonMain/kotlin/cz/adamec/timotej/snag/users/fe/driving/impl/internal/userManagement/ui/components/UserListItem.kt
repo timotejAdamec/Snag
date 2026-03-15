@@ -12,7 +12,6 @@
 
 package cz.adamec.timotej.snag.users.fe.driving.impl.internal.userManagement.ui.components
 
-import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -20,9 +19,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import cz.adamec.timotej.snag.users.business.UserRole
 import cz.adamec.timotej.snag.users.fe.driving.impl.internal.userManagement.vm.UserItem
-import org.jetbrains.compose.resources.painterResource
-import snag.lib.design.fe.generated.resources.ic_person
-import snag.lib.design.fe.generated.resources.Res as DesignRes
 
 @Composable
 internal fun UserListItem(
@@ -32,12 +28,6 @@ internal fun UserListItem(
 ) {
     ListItem(
         modifier = modifier,
-        leadingContent = {
-            Icon(
-                painter = painterResource(DesignRes.drawable.ic_person),
-                contentDescription = null,
-            )
-        },
         headlineContent = {
             Text(
                 text = userItem.email,
