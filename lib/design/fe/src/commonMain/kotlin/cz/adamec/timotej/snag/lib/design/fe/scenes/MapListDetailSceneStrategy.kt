@@ -20,9 +20,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.SheetValue
@@ -106,7 +108,11 @@ private class AdaptiveMapListDetailScene<T : Any>(
         when {
             isScreenExtraWide() && listEntry != null && detailEntry != null -> {
                 Row(
-                    modifier = Modifier.fillMaxSize().padding(ContentPaneSpacing),
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .padding(ContentPaneSpacing)
+                            .consumeWindowInsets(WindowInsets.systemBars),
                     horizontalArrangement = Arrangement.spacedBy(ContentPaneSpacing),
                 ) {
                     ContentPane(modifier = Modifier.weight(HALF_WEIGHT)) {
@@ -123,7 +129,11 @@ private class AdaptiveMapListDetailScene<T : Any>(
 
             isScreenWide() -> {
                 Row(
-                    modifier = Modifier.fillMaxSize().padding(ContentPaneSpacing),
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .padding(ContentPaneSpacing)
+                            .consumeWindowInsets(WindowInsets.systemBars),
                     horizontalArrangement = Arrangement.spacedBy(ContentPaneSpacing),
                 ) {
                     ContentPane(modifier = Modifier.weight(HALF_WEIGHT)) {

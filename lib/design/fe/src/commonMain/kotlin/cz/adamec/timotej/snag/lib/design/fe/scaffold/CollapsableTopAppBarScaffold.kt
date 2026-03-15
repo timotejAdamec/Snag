@@ -14,7 +14,10 @@ package cz.adamec.timotej.snag.lib.design.fe.scaffold
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumFlexibleTopAppBar
@@ -93,7 +96,12 @@ fun CollapsableTopAppBarScaffold(
     }
 
     if (isScreenWide()) {
-        ContentPane(modifier = modifier.padding(ContentPaneSpacing)) {
+        ContentPane(
+            modifier =
+                modifier
+                    .padding(ContentPaneSpacing)
+                    .consumeWindowInsets(WindowInsets.systemBars),
+        ) {
             scaffoldContent(Modifier, Color.Transparent)
         }
     } else {
