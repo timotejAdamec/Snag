@@ -1,8 +1,0 @@
-CREATE TABLE FindingCoordinateEntity (
-    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    findingId TEXT NOT NULL REFERENCES FindingEntity(id) ON DELETE CASCADE,
-    x REAL NOT NULL,
-    y REAL NOT NULL
-);
-
-ALTER TABLE FindingEntity DROP COLUMN coordinates;
