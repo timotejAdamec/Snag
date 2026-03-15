@@ -19,12 +19,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import cz.adamec.timotej.snag.users.business.UserRole
-import cz.adamec.timotej.snag.users.fe.driving.impl.internal.userManagement.ui.toDisplayName
 import cz.adamec.timotej.snag.users.fe.driving.impl.internal.userManagement.vm.UserItem
 import org.jetbrains.compose.resources.painterResource
-import org.jetbrains.compose.resources.stringResource
-import snag.feat.users.fe.driving.impl.generated.resources.Res
-import snag.feat.users.fe.driving.impl.generated.resources.no_role
 import snag.lib.design.fe.generated.resources.ic_person
 import snag.lib.design.fe.generated.resources.Res as DesignRes
 
@@ -45,12 +41,6 @@ internal fun UserListItem(
         headlineContent = {
             Text(
                 text = userItem.email,
-                style = MaterialTheme.typography.titleLargeEmphasized,
-            )
-        },
-        supportingContent = {
-            Text(
-                text = userItem.role?.toDisplayName() ?: stringResource(Res.string.no_role),
                 style = MaterialTheme.typography.bodyLarge,
             )
         },
