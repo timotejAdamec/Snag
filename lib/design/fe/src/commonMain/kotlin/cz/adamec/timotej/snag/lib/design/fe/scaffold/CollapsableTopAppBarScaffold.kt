@@ -16,16 +16,20 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.FabPosition
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumFlexibleTopAppBar
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import cz.adamec.timotej.snag.lib.design.fe.adaptive.isScreenWide
 
 @Composable
 fun CollapsableTopAppBarScaffold(
@@ -44,42 +48,58 @@ fun CollapsableTopAppBarScaffold(
             state = rememberTopAppBarState(),
         )
 
-    Scaffold(
-        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        topBar = {
-            MediumFlexibleTopAppBar(
-                title = {
-                    Text(
-                        modifier =
-                            Modifier.padding(
-                                end = 4.dp,
-                            ),
-                        text = title,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                },
-                subtitle = {
-                    subtitle?.let {
+    val scaffoldContent: @Composable (Modifier, Color) -> Unit = { scaffoldModifier, containerColor ->
+        Scaffold(
+            modifier = scaffoldModifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+            containerColor = containerColor,
+            topBar = {
+                MediumFlexibleTopAppBar(
+                    title = {
                         Text(
-                            text = subtitle,
+                            modifier =
+                                Modifier.padding(
+                                    end = 4.dp,
+                                ),
+                            text = title,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                         )
-                    }
-                },
-                scrollBehavior = scrollBehavior,
-                navigationIcon = topAppBarNavigationIcon,
-                actions = topAppBarActions,
-                colors = TopAppBarDefaults.topAppBarColors(
-                    scrolledContainerColor = TopAppBarDefaults.topAppBarColors().containerColor,
+                    },
+                    subtitle = {
+                        subtitle?.let {
+                            Text(
+                                text = subtitle,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                            )
+                        }
+                    },
+                    scrollBehavior = scrollBehavior,
+                    navigationIcon = topAppBarNavigationIcon,
+                    actions = topAppBarActions,
+                    colors =
+                        TopAppBarDefaults.topAppBarColors(
+                            scrolledContainerColor = TopAppBarDefaults.topAppBarColors().containerColor,
+                        ),
                 )
-            )
-        },
-        bottomBar = bottomBar,
-        floatingActionButton = floatingActionButton,
-        floatingActionButtonPosition = floatingActionButtonPosition,
-    ) { paddingValues ->
-        content(paddingValues)
+            },
+            bottomBar = bottomBar,
+            floatingActionButton = floatingActionButton,
+            floatingActionButtonPosition = floatingActionButtonPosition,
+        ) { paddingValues ->
+            content(paddingValues)
+        }
+    }
+
+    if (isScreenWide()) {
+        Surface(
+            modifier = modifier.padding(12.dp),
+            shape = MaterialTheme.shapes.extraLarge,
+            color = MaterialTheme.colorScheme.surface,
+        ) {
+            scaffoldContent(Modifier, Color.Transparent)
+        }
+    } else {
+        scaffoldContent(modifier, MaterialTheme.colorScheme.surface)
     }
 }

@@ -15,8 +15,8 @@
 package cz.adamec.timotej.snag.lib.design.fe.scenes
 
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
@@ -25,7 +25,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.BottomSheetScaffold
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SheetValue
+import androidx.compose.material3.Surface
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
@@ -103,25 +105,51 @@ private class AdaptiveMapListDetailScene<T : Any>(
 
         when {
             isScreenExtraWide() && listEntry != null && detailEntry != null -> {
-                Row(modifier = Modifier.fillMaxSize()) {
-                    Column(modifier = Modifier.weight(HALF_WEIGHT)) {
+                Row(
+                    modifier = Modifier.fillMaxSize().padding(12.dp),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                ) {
+                    Surface(
+                        modifier = Modifier.weight(HALF_WEIGHT),
+                        shape = MaterialTheme.shapes.extraLarge,
+                        color = MaterialTheme.colorScheme.surface,
+                    ) {
                         hostPane(hostEntry)
                     }
-                    Column(modifier = Modifier.weight(QUARTER_WEIGHT)) {
+                    Surface(
+                        modifier = Modifier.weight(QUARTER_WEIGHT),
+                        shape = MaterialTheme.shapes.extraLarge,
+                        color = MaterialTheme.colorScheme.surface,
+                    ) {
                         listEntry.Content()
                     }
-                    Column(modifier = Modifier.weight(QUARTER_WEIGHT)) {
+                    Surface(
+                        modifier = Modifier.weight(QUARTER_WEIGHT),
+                        shape = MaterialTheme.shapes.extraLarge,
+                        color = MaterialTheme.colorScheme.surface,
+                    ) {
                         detailEntry.Content()
                     }
                 }
             }
 
             isScreenWide() -> {
-                Row(modifier = Modifier.fillMaxSize()) {
-                    Column(modifier = Modifier.weight(HALF_WEIGHT)) {
+                Row(
+                    modifier = Modifier.fillMaxSize().padding(12.dp),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                ) {
+                    Surface(
+                        modifier = Modifier.weight(HALF_WEIGHT),
+                        shape = MaterialTheme.shapes.extraLarge,
+                        color = MaterialTheme.colorScheme.surface,
+                    ) {
                         hostPane(hostEntry)
                     }
-                    Column(modifier = Modifier.weight(HALF_WEIGHT)) {
+                    Surface(
+                        modifier = Modifier.weight(HALF_WEIGHT),
+                        shape = MaterialTheme.shapes.extraLarge,
+                        color = MaterialTheme.colorScheme.surface,
+                    ) {
                         if (detailEntry != null) {
                             detailEntry.Content()
                         } else {

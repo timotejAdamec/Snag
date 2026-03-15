@@ -15,6 +15,7 @@ package cz.adamec.timotej.snag.ui
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -47,7 +48,9 @@ internal fun MainScreen(
 ) {
     val syncStatus by mainViewModel.syncStatus.collectAsStateWithLifecycle()
     SnagTheme {
-        AppScaffold { paddingValues ->
+        AppScaffold(
+            containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+        ) { paddingValues ->
             MainScreenContent(
                 paddingValues = paddingValues,
                 syncBarState = syncStatus.toBarState(),
@@ -94,6 +97,7 @@ private fun MainScreenContent(
 
         NavigationSuiteScaffold(
             modifier = navigationModifier,
+            containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
             navigationItems = {
                 TabItem(
                     route = projectsRoute,
