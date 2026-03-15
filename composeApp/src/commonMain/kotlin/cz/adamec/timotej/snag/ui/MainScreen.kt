@@ -16,6 +16,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.WideNavigationRailDefaults
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteDefaults
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -95,9 +97,17 @@ private fun MainScreenContent(
             mutableStateOf(TopLevelDestination.PROJECTS)
         }
 
+        val tintedBackground = MaterialTheme.colorScheme.surfaceContainerLow
         NavigationSuiteScaffold(
             modifier = navigationModifier,
-            containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+            containerColor = tintedBackground,
+            navigationSuiteColors =
+                NavigationSuiteDefaults.colors(
+                    wideNavigationRailColors =
+                        WideNavigationRailDefaults.colors(
+                            containerColor = tintedBackground,
+                        ),
+                ),
             navigationItems = {
                 TabItem(
                     route = projectsRoute,
