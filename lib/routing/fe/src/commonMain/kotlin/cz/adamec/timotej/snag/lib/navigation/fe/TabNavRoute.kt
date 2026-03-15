@@ -17,5 +17,6 @@ import org.jetbrains.compose.resources.StringResource
 
 interface TabNavRoute : SnagNavRoute {
     val tabIcon: DrawableResource
+    val tabIconSelected: DrawableResource
     val tabLabel: StringResource
 }

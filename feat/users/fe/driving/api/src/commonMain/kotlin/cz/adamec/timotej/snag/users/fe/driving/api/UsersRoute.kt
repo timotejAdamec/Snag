@@ -18,10 +18,12 @@ import org.jetbrains.compose.resources.StringResource
 import snag.feat.users.fe.driving.api.generated.resources.Res
 import snag.feat.users.fe.driving.api.generated.resources.users_tab_title
 import snag.lib.design.fe.generated.resources.ic_person
+import snag.lib.design.fe.generated.resources.ic_person_filled
 import snag.lib.design.fe.generated.resources.Res as DesignRes
 
 interface UsersNavRoute : TabNavRoute {
     override val tabIcon: DrawableResource get() = DesignRes.drawable.ic_person
+    override val tabIconSelected: DrawableResource get() = DesignRes.drawable.ic_person_filled
     override val tabLabel: StringResource get() = Res.string.users_tab_title
 }
 

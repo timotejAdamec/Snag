@@ -125,8 +125,14 @@ private fun NavigationSuiteScope.tabItem(
         selected = selected,
         onClick = onClick,
         icon = {
+            val painterResource =
+                if (selected) {
+                    route.tabIconSelected
+                } else {
+                    route.tabIcon
+                }
             Icon(
-                painter = painterResource(route.tabIcon),
+                painter = painterResource(painterResource),
                 contentDescription = stringResource(route.tabLabel),
             )
         },
