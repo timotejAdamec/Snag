@@ -22,7 +22,7 @@ import cz.adamec.timotej.snag.feat.inspections.fe.driving.api.InspectionEditRout
 import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureCreationRouteFactory
 import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureDetailRouteFactory
 import cz.adamec.timotej.snag.lib.design.fe.dialog.fullscreenDialogProperties
-import cz.adamec.timotej.snag.lib.navigation.fe.SnagBackStack
+import cz.adamec.timotej.snag.lib.navigation.fe.ProjectsBackStack
 import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectCreationRoute
 import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectDetailRoute
 import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectDetailRouteFactory
@@ -52,12 +52,12 @@ internal inline fun <reified T : ProjectsRoute> Module.projectsScreenNavigation(
             modifier = Modifier.fillMaxSize(),
             viewModel = koinViewModel(),
             onNewProjectClick = {
-                val backStack = get<SnagBackStack>()
+                val backStack = get<ProjectsBackStack>()
                 val projectCreationRoute = get<ProjectCreationRoute>()
                 backStack.value.add(projectCreationRoute)
             },
             onProjectClick = {
-                val backStack = get<SnagBackStack>()
+                val backStack = get<ProjectsBackStack>()
                 val projectDetailRoute = projectDetailRouteFactory.create(it)
                 backStack.value.add(projectDetailRoute)
             },
@@ -72,7 +72,7 @@ internal inline fun <reified T : ProjectCreationRoute> Module.projectCreationScr
         val projectDetailRouteFactory = koinInject<ProjectDetailRouteFactory>()
         ProjectDetailsEditScreenInjection(
             onSaveProject = { savedProjectId ->
-                val backStack = get<SnagBackStack>()
+                val backStack = get<ProjectsBackStack>()
                 val destinationRoute = projectDetailRouteFactory.create(savedProjectId)
                 backStack.removeLastSafely()
                 backStack.value.add(destinationRoute)
@@ -87,7 +87,7 @@ internal inline fun <reified T : ProjectEditRoute> Module.projectEditScreenNavig
         ProjectDetailsEditScreenInjection(
             projectId = route.projectId,
             onSaveProject = { _ ->
-                val backStack = get<SnagBackStack>()
+                val backStack = get<ProjectsBackStack>()
                 backStack.removeLastSafely()
             },
         )
@@ -106,11 +106,11 @@ private fun Scope.ProjectDetailsEditScreenInjection(
             onSaveProject(savedProjectId)
         },
         onCancelClick = {
-            val backStack = get<SnagBackStack>()
+            val backStack = get<ProjectsBackStack>()
             backStack.removeLastSafely()
         },
         onNavigateToClientCreation = { onCreated ->
-            val backStack = get<SnagBackStack>()
+            val backStack = get<ProjectsBackStack>()
             backStack.value.add(clientCreationRouteFactory.create(onCreated))
         },
     )
@@ -126,11 +126,11 @@ internal inline fun <reified T : ProjectDetailRoute> Module.projectDetailsScreen
         ProjectDetailsScreen(
             projectId = route.projectId,
             onNewStructureClick = {
-                val backStack = get<SnagBackStack>()
+                val backStack = get<ProjectsBackStack>()
                 backStack.value.add(newStructureRouteFactory.create(route.projectId))
             },
             onStructureClick = { projectId, structureId ->
-                val backStack = get<SnagBackStack>()
+                val backStack = get<ProjectsBackStack>()
                 backStack.value.add(
                     structureDetailRouteFactory.create(
                         projectId = projectId,
@@ -139,19 +139,19 @@ internal inline fun <reified T : ProjectDetailRoute> Module.projectDetailsScreen
                 )
             },
             onNewInspectionClick = {
-                val backStack = get<SnagBackStack>()
+                val backStack = get<ProjectsBackStack>()
                 backStack.value.add(newInspectionRouteFactory.create(route.projectId))
             },
             onInspectionClick = { inspectionId ->
-                val backStack = get<SnagBackStack>()
+                val backStack = get<ProjectsBackStack>()
                 backStack.value.add(inspectionEditRouteFactory.create(inspectionId))
             },
             onBack = {
-                val backStack = get<SnagBackStack>()
+                val backStack = get<ProjectsBackStack>()
                 backStack.removeLastSafely()
             },
             onEditClick = {
-                val backStack = get<SnagBackStack>()
+                val backStack = get<ProjectsBackStack>()
                 backStack.value.add(projectEditRouteFactory.create(route.projectId))
             },
         )

@@ -10,16 +10,13 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.lib.navigation.fe
+package cz.adamec.timotej.snag.users.fe.driving.api
 
-import org.koin.core.annotation.Provided
-import kotlin.jvm.JvmInline
+import androidx.compose.runtime.Immutable
+import kotlinx.serialization.Serializable
 
-@JvmInline
-value class SnagBackStack(
-    @Provided val value: MutableList<SnagNavRoute>,
-) {
-    fun removeLastSafely() {
-        if (value.size > 1) value.removeLastOrNull()
-    }
+@Serializable
+@Immutable
+data object WebUsersRoute : UsersRoute {
+    const val URL_NAME = "users"
 }

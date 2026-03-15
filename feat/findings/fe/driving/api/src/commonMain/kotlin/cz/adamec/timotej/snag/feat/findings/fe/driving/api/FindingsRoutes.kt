@@ -15,7 +15,7 @@ package cz.adamec.timotej.snag.feat.findings.fe.driving.api
 import cz.adamec.timotej.snag.feat.findings.business.FindingTypeKey
 import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
 import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureDetailNavRoute
-import cz.adamec.timotej.snag.lib.navigation.fe.SnagNavRoute
+import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectsNavRoute
 import kotlin.uuid.Uuid
 
 interface FindingsListRoute : StructureDetailNavRoute {
@@ -26,7 +26,7 @@ interface FindingDetailRoute : StructureDetailNavRoute {
     val findingId: Uuid
 }
 
-interface FindingEditRoute : SnagNavRoute {
+interface FindingEditRoute : ProjectsNavRoute {
     val findingId: Uuid
     val projectId: Uuid
 }
@@ -54,7 +54,7 @@ interface FindingEditRouteFactory {
     ): FindingEditRoute
 }
 
-interface FindingCreationRoute : SnagNavRoute {
+interface FindingCreationRoute : ProjectsNavRoute {
     val projectId: Uuid
     val structureId: Uuid
     val coordinate: RelativeCoordinate

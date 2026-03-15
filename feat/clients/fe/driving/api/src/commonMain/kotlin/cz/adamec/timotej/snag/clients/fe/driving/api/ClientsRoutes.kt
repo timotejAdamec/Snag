@@ -12,12 +12,12 @@
 
 package cz.adamec.timotej.snag.clients.fe.driving.api
 
-import cz.adamec.timotej.snag.lib.navigation.fe.SnagNavRoute
+import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectsNavRoute
 import kotlin.uuid.Uuid
 
-interface ClientsRoute : SnagNavRoute
+interface ClientsRoute : ProjectsNavRoute
 
-interface ClientCreationRoute : SnagNavRoute {
+interface ClientCreationRoute : ProjectsNavRoute {
     val onCreated: (newClientId: Uuid) -> Unit
 }
 
@@ -25,7 +25,7 @@ interface ClientCreationRouteFactory {
     fun create(onCreated: (newClientId: Uuid) -> Unit): ClientCreationRoute
 }
 
-interface ClientEditRoute : SnagNavRoute {
+interface ClientEditRoute : ProjectsNavRoute {
     val clientId: Uuid
 }
 

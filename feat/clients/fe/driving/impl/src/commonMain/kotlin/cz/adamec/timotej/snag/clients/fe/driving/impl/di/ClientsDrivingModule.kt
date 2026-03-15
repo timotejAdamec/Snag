@@ -26,7 +26,7 @@ import cz.adamec.timotej.snag.clients.fe.driving.impl.internal.clientDetailsEdit
 import cz.adamec.timotej.snag.clients.fe.driving.impl.internal.clients.ui.ClientsScreen
 import cz.adamec.timotej.snag.clients.fe.driving.impl.internal.clients.vm.ClientsViewModel
 import cz.adamec.timotej.snag.lib.design.fe.dialog.fullscreenDialogProperties
-import cz.adamec.timotej.snag.lib.navigation.fe.SnagBackStack
+import cz.adamec.timotej.snag.lib.navigation.fe.ProjectsBackStack
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.viewModel
@@ -42,12 +42,12 @@ internal inline fun <reified T : ClientsRoute> Module.clientsScreenNavigation() 
             modifier = Modifier.fillMaxSize(),
             viewModel = koinViewModel(),
             onNewClientClick = {
-                val backStack = get<SnagBackStack>()
+                val backStack = get<ProjectsBackStack>()
                 val factory = get<ClientCreationRouteFactory>()
                 backStack.value.add(factory.create { })
             },
             onClientClick = { clientId ->
-                val backStack = get<SnagBackStack>()
+                val backStack = get<ProjectsBackStack>()
                 val clientEditRoute = get<ClientEditRouteFactory>().create(clientId)
                 backStack.value.add(clientEditRoute)
             },
@@ -62,7 +62,7 @@ internal inline fun <reified T : ClientCreationRoute> Module.clientCreationScree
         ClientDetailsEditScreenInjection(
             onSaveClient = { savedClientId ->
                 route.onCreated(savedClientId)
-                val backStack = get<SnagBackStack>()
+                val backStack = get<ProjectsBackStack>()
                 backStack.removeLastSafely()
             },
         )
@@ -75,7 +75,7 @@ internal inline fun <reified T : ClientEditRoute> Module.clientEditScreenNavigat
         ClientDetailsEditScreenInjection(
             clientId = route.clientId,
             onSaveClient = { _ ->
-                val backStack = get<SnagBackStack>()
+                val backStack = get<ProjectsBackStack>()
                 backStack.removeLastSafely()
             },
         )
@@ -93,7 +93,7 @@ private fun Scope.ClientDetailsEditScreenInjection(
             onSaveClient(savedClientId)
         },
         onCancelClick = {
-            val backStack = get<SnagBackStack>()
+            val backStack = get<ProjectsBackStack>()
             backStack.removeLastSafely()
         },
     )
