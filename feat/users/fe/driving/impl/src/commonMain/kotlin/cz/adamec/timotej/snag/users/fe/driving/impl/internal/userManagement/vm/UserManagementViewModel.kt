@@ -17,6 +17,7 @@ import androidx.lifecycle.viewModelScope
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
+import cz.adamec.timotej.snag.lib.design.fe.error.toUiError
 import cz.adamec.timotej.snag.users.business.UserRole
 import cz.adamec.timotej.snag.users.fe.app.api.ChangeUserRoleUseCase
 import cz.adamec.timotej.snag.users.fe.app.api.GetUsersUseCase
@@ -75,10 +76,29 @@ internal class UserManagementViewModel(
     ) {
         val user = currentUsers.find { it.user.id == userId } ?: return
         viewModelScope.launch {
-            when (changeUserRoleUseCase(user, newRole)) {
+            updateUserItem(userId) { it.copy(isUpdatingRole = true) }
+            when (val result = changeUserRoleUseCase(user, newRole)) {
                 is OnlineDataResult.Success -> {}
-                is OnlineDataResult.Failure -> errorEventsChannel.send(UiError.Unknown)
+                is OnlineDataResult.Failure -> {
+                    updateUserItem(userId) { it.copy(isUpdatingRole = false) }
+                    errorEventsChannel.send(result.toUiError())
+                }
             }
+        }
+    }
+
+    private fun updateUserItem(
+        userId: Uuid,
+        transform: (UserItem) -> UserItem,
+    ) {
+        _state.update { state ->
+            state.copy(
+                users =
+                    state.users
+                        .map { item ->
+                            if (item.id == userId) transform(item) else item
+                        }.toPersistentList(),
+            )
         }
     }
 }

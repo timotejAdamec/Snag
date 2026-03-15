@@ -43,12 +43,13 @@ internal fun RoleDropdown(
     selectedRole: UserRole?,
     onRoleSelect: (UserRole?) -> Unit,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
 ) {
     var expanded by remember { mutableStateOf(false) }
     ExposedDropdownMenuBox(
         modifier = modifier.widthIn(max = 220.dp),
         expanded = expanded,
-        onExpandedChange = { expanded = it },
+        onExpandedChange = { if (enabled) expanded = it },
     ) {
         OutlinedTextField(
             modifier =
@@ -59,6 +60,7 @@ internal fun RoleDropdown(
             onValueChange = {},
             readOnly = true,
             singleLine = true,
+            enabled = enabled,
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
         )
         ExposedDropdownMenu(

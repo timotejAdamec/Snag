@@ -87,6 +87,7 @@ internal fun UserManagementContent(
                             onRoleSelect = { newRole ->
                                 onRoleChange(userItem.id, newRole)
                             },
+                            enabled = !userItem.isUpdatingRole,
                         )
                     }
                     HorizontalDivider()

@@ -99,7 +99,7 @@ class UserManagementViewModelTest : FrontendKoinInitializedTest() {
             advanceUntilIdle()
 
             val error = viewModel.errorsFlow.first()
-            assertIs<UiError.Unknown>(error)
+            assertIs<UiError.NetworkUnavailable>(error)
         }
 
     @Test

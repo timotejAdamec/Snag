@@ -29,4 +29,5 @@ data class UserItem(
     val id: Uuid,
     val email: String,
     val role: UserRole?,
+    val isUpdatingRole: Boolean = false,
 )
