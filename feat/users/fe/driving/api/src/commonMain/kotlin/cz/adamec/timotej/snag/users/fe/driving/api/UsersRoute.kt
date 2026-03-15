@@ -12,6 +12,17 @@
 
 package cz.adamec.timotej.snag.users.fe.driving.api
 
-import cz.adamec.timotej.snag.lib.navigation.fe.SnagNavRoute
+import cz.adamec.timotej.snag.lib.navigation.fe.TabNavRoute
+import org.jetbrains.compose.resources.DrawableResource
+import org.jetbrains.compose.resources.StringResource
+import snag.feat.users.fe.driving.api.generated.resources.Res
+import snag.feat.users.fe.driving.api.generated.resources.users_tab_title
+import snag.lib.design.fe.generated.resources.ic_person
+import snag.lib.design.fe.generated.resources.Res as DesignRes
 
-interface UsersRoute : SnagNavRoute
+interface UsersNavRoute : TabNavRoute {
+    override val tabIcon: DrawableResource get() = DesignRes.drawable.ic_person
+    override val tabLabel: StringResource get() = Res.string.users_tab_title
+}
+
+interface UsersRoute : UsersNavRoute

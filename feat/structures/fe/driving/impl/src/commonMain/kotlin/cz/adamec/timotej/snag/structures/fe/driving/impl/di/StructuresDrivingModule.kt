@@ -30,7 +30,7 @@ import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureEditRouteF
 import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureFloorPlanRoute
 import cz.adamec.timotej.snag.lib.design.fe.dialog.fullscreenDialogProperties
 import cz.adamec.timotej.snag.lib.design.fe.scenes.MapListDetailSceneMetadata
-import cz.adamec.timotej.snag.lib.navigation.fe.SnagBackStack
+import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectsBackStack
 import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.floorPlan.ui.StructureFloorPlanScreen
 import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.floorPlan.vm.StructureFloorPlanViewModel
 import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.structureDetails.ui.StructureDetailNestedNav
@@ -51,7 +51,7 @@ internal inline fun <reified T : StructureCreationRoute> Module.structureCreateS
         StructureEditScreenSetup(
             projectId = route.projectId,
             onSaveStructure = { _ ->
-                val backStack = get<SnagBackStack>()
+                val backStack = get<ProjectsBackStack>()
                 backStack.removeLastSafely()
             },
         )
@@ -65,7 +65,7 @@ internal inline fun <reified T : StructureEditRoute> Module.structureEditScreenN
             projectId = route.projectId,
             structureId = route.structureId,
             onSaveStructure = { _ ->
-                val backStack = get<SnagBackStack>()
+                val backStack = get<ProjectsBackStack>()
                 backStack.removeLastSafely()
             },
         )
@@ -90,11 +90,11 @@ internal inline fun <reified T : StructureFloorPlanRoute> Module.structureFloorP
             projectId = route.projectId,
             selectedFindingId = selectedFindingId,
             onBack = {
-                val rootBackStack = get<SnagBackStack>()
+                val rootBackStack = get<ProjectsBackStack>()
                 rootBackStack.removeLastSafely()
             },
             onEditClick = {
-                val rootBackStack = get<SnagBackStack>()
+                val rootBackStack = get<ProjectsBackStack>()
                 rootBackStack.value.add(
                     structureEditRouteFactory.create(
                         projectId = route.projectId,
@@ -116,7 +116,7 @@ internal inline fun <reified T : StructureFloorPlanRoute> Module.structureFloorP
                 )
             },
             onCreateFinding = { coordinate: RelativeCoordinate, findingTypeKey: FindingTypeKey ->
-                val rootBackStack = get<SnagBackStack>()
+                val rootBackStack = get<ProjectsBackStack>()
                 rootBackStack.value.add(
                     findingCreationRouteFactory.create(
                         projectId = route.projectId,
@@ -135,7 +135,7 @@ internal inline fun <reified T : StructureDetailNavRoute> Module.structureDetail
             projectId = route.projectId,
             structureId = route.structureId,
             onExit = {
-                val backStack = get<SnagBackStack>()
+                val backStack = get<ProjectsBackStack>()
                 backStack.removeLastSafely()
             },
         )
@@ -154,7 +154,7 @@ private fun Scope.StructureEditScreenSetup(
             onSaveStructure(savedStructureId)
         },
         onCancelClick = {
-            val backStack = get<SnagBackStack>()
+            val backStack = get<ProjectsBackStack>()
             backStack.removeLastSafely()
         },
     )

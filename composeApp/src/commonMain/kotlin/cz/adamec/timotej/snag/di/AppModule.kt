@@ -14,7 +14,6 @@ package cz.adamec.timotej.snag.di
 
 import cz.adamec.timotej.snag.di.aggregate.fe.frontendModulesAggregate
 import cz.adamec.timotej.snag.logging.loggerModule
-import cz.adamec.timotej.snag.ui.navigation.navigationModule
 import org.koin.dsl.module
 
 val appModule =
@@ -22,7 +21,6 @@ val appModule =
         includes(
             frontendModulesAggregate,
             loggerModule,
-            navigationModule,
             mainModule,
         )
     }

@@ -41,5 +41,11 @@ class FakeUsersApi : UsersApi {
 
     override suspend fun getUsersModifiedSince(since: Timestamp): OnlineDataResult<List<UserSyncResult>> = ops.getModifiedSinceItems()
 
+    override suspend fun updateUser(user: FrontendUser): OnlineDataResult<FrontendUser> {
+        forcedFailure?.let { return it }
+        ops.setItem(user)
+        return OnlineDataResult.Success(user)
+    }
+
     fun setUser(user: FrontendUser) = ops.setItem(user)
 }

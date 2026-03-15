@@ -13,7 +13,6 @@
 package cz.adamec.timotej.snag.feat.structures.fe.driving.api
 
 import androidx.compose.runtime.Immutable
-import cz.adamec.timotej.snag.lib.navigation.fe.SnagNavRoute
 import kotlinx.serialization.Serializable
 import kotlin.uuid.Uuid
 
@@ -74,7 +73,7 @@ class NonWebStructureDetailRouteFactory : StructureDetailRouteFactory {
     override fun create(
         projectId: Uuid,
         structureId: Uuid,
-    ): SnagNavRoute =
+    ): NonWebStructureDetailNavRoute =
         NonWebStructureDetailNavRoute(
             projectId = projectId,
             structureId = structureId,
