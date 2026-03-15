@@ -28,6 +28,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import cz.adamec.timotej.snag.lib.design.fe.adaptive.ContentPane
+import cz.adamec.timotej.snag.lib.design.fe.adaptive.ContentPaneSpacing
 import cz.adamec.timotej.snag.lib.design.fe.adaptive.isScreenWide
 
 @Composable

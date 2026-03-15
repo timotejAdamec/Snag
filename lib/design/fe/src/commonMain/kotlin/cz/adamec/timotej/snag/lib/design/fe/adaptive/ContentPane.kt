@@ -10,7 +10,7 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.lib.design.fe.scaffold
+package cz.adamec.timotej.snag.lib.design.fe.adaptive
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
