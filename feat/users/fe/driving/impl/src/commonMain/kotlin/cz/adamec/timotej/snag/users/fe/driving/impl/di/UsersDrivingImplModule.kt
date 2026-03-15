@@ -13,7 +13,9 @@
 package cz.adamec.timotej.snag.users.fe.driving.impl.di
 
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.ui.Modifier
+import cz.adamec.timotej.snag.users.fe.driving.api.UsersBackStack
 import cz.adamec.timotej.snag.users.fe.driving.api.UsersRoute
 import cz.adamec.timotej.snag.users.fe.driving.impl.internal.userManagement.ui.UserManagementScreen
 import cz.adamec.timotej.snag.users.fe.driving.impl.internal.userManagement.vm.UserManagementViewModel
@@ -34,6 +36,11 @@ internal inline fun <reified T : UsersRoute> Module.usersScreenNavigation() =
 val usersDrivingImplModule =
     module {
         includes(platformModule)
+        single {
+            UsersBackStack(
+                value = mutableStateListOf(get<UsersRoute>()),
+            )
+        }
         viewModelOf(::UserManagementViewModel)
     }
 

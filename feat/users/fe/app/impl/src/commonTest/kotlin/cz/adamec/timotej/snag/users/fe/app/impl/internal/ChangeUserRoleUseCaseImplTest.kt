@@ -19,6 +19,7 @@ import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
 import cz.adamec.timotej.snag.users.business.User
 import cz.adamec.timotej.snag.users.business.UserRole
 import cz.adamec.timotej.snag.users.fe.app.api.ChangeUserRoleUseCase
+import cz.adamec.timotej.snag.users.fe.app.api.model.ChangeUserRoleRequest
 import cz.adamec.timotej.snag.users.fe.driven.test.FakeUsersApi
 import cz.adamec.timotej.snag.users.fe.driven.test.FakeUsersDb
 import cz.adamec.timotej.snag.users.fe.model.FrontendUser
@@ -53,7 +54,7 @@ class ChangeUserRoleUseCaseImplTest : FrontendKoinInitializedTest() {
             fakeUsersApi.setUser(testUser)
             fakeUsersDb.setUser(testUser)
 
-            val result = useCase(testUser, UserRole.ADMINISTRATOR)
+            val result = useCase(ChangeUserRoleRequest(testUser.user.id, UserRole.ADMINISTRATOR))
 
             assertIs<OnlineDataResult.Success<FrontendUser>>(result)
             assertEquals(UserRole.ADMINISTRATOR, result.data.user.role)
@@ -70,7 +71,7 @@ class ChangeUserRoleUseCaseImplTest : FrontendKoinInitializedTest() {
             fakeUsersApi.setUser(userWithRole)
             fakeUsersDb.setUser(userWithRole)
 
-            val result = useCase(userWithRole, null)
+            val result = useCase(ChangeUserRoleRequest(userWithRole.user.id, null))
 
             assertIs<OnlineDataResult.Success<FrontendUser>>(result)
             assertEquals(null, result.data.user.role)
@@ -82,7 +83,7 @@ class ChangeUserRoleUseCaseImplTest : FrontendKoinInitializedTest() {
             fakeUsersDb.setUser(testUser)
             fakeUsersApi.forcedFailure = OnlineDataResult.Failure.NetworkUnavailable
 
-            val result = useCase(testUser, UserRole.PASSPORT_LEAD)
+            val result = useCase(ChangeUserRoleRequest(testUser.user.id, UserRole.PASSPORT_LEAD))
 
             assertIs<OnlineDataResult.Failure>(result)
         }

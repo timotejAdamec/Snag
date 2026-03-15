@@ -10,14 +10,13 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.ui.navigation
+package cz.adamec.timotej.snag.projects.fe.driving.api
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.remember
 import com.github.terrakok.navigation3.browser.HierarchicalBrowserNavigation
 import cz.adamec.timotej.snag.lib.navigation.fe.BrowserHistoryFragmentBuilder
-import cz.adamec.timotej.snag.lib.navigation.fe.ProjectsBackStack
 import org.koin.compose.getKoin
 
 @Composable

@@ -33,7 +33,7 @@ import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingsList.ui.
 import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingsList.vm.FindingsListViewModel
 import cz.adamec.timotej.snag.lib.design.fe.dialog.fullscreenDialogProperties
 import cz.adamec.timotej.snag.lib.design.fe.scenes.MapListDetailSceneMetadata
-import cz.adamec.timotej.snag.lib.navigation.fe.ProjectsBackStack
+import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectsBackStack
 import org.koin.compose.koinInject
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.viewModel

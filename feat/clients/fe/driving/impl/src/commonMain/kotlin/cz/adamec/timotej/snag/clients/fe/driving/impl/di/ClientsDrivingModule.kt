@@ -26,7 +26,7 @@ import cz.adamec.timotej.snag.clients.fe.driving.impl.internal.clientDetailsEdit
 import cz.adamec.timotej.snag.clients.fe.driving.impl.internal.clients.ui.ClientsScreen
 import cz.adamec.timotej.snag.clients.fe.driving.impl.internal.clients.vm.ClientsViewModel
 import cz.adamec.timotej.snag.lib.design.fe.dialog.fullscreenDialogProperties
-import cz.adamec.timotej.snag.lib.navigation.fe.ProjectsBackStack
+import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectsBackStack
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.viewModel

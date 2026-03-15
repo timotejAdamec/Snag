@@ -10,7 +10,7 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.ui.navigation
+package cz.adamec.timotej.snag.projects.fe.driving.api
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -19,13 +19,12 @@ import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDe
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.scene.DialogSceneStrategy
 import androidx.navigation3.ui.NavDisplay
-import cz.adamec.timotej.snag.lib.navigation.fe.ProjectsBackStack
 import cz.adamec.timotej.snag.lib.navigation.fe.SnagNavRoute
 import org.koin.compose.koinInject
 import org.koin.compose.navigation3.koinEntryProvider
 
 @Composable
-internal fun ProjectsNavigation(
+fun ProjectsNavigation(
     modifier: Modifier = Modifier,
     backStack: ProjectsBackStack = koinInject(),
 ) {

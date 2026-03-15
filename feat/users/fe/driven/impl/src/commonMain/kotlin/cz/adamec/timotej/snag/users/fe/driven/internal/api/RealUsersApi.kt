@@ -57,14 +57,14 @@ internal class RealUsersApi(
 
     override suspend fun updateUser(user: FrontendUser): OnlineDataResult<FrontendUser> {
         val userId = user.user.id
-        LH.logger.d { "Updating user $userId..." }
-        return safeApiCall(logger = LH.logger, errorContext = "Error updating user $userId.") {
+        LH.logger.d { "Updating user $userId to API..." }
+        return safeApiCall(logger = LH.logger, errorContext = "Error updating user $userId to API.") {
             httpClient
                 .put("/users/$userId") {
                     contentType(ContentType.Application.Json)
                     setBody(user.toApiDto())
                 }.body<UserApiDto>()
                 .toModel()
-        }.also { if (it is OnlineDataResult.Success) LH.logger.d { "Updated user $userId." } }
+        }.also { if (it is OnlineDataResult.Success) LH.logger.d { "Updated user $userId to API." } }
     }
 }

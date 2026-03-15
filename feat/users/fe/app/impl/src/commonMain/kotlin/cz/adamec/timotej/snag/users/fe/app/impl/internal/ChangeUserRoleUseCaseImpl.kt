@@ -12,24 +12,34 @@
 
 package cz.adamec.timotej.snag.users.fe.app.impl.internal
 
+import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
-import cz.adamec.timotej.snag.users.business.UserRole
 import cz.adamec.timotej.snag.users.fe.app.api.ChangeUserRoleUseCase
+import cz.adamec.timotej.snag.users.fe.app.api.model.ChangeUserRoleRequest
 import cz.adamec.timotej.snag.users.fe.model.FrontendUser
 import cz.adamec.timotej.snag.users.fe.ports.UsersApi
 import cz.adamec.timotej.snag.users.fe.ports.UsersDb
+import kotlinx.coroutines.flow.first
 
 class ChangeUserRoleUseCaseImpl(
     private val usersApi: UsersApi,
     private val usersDb: UsersDb,
 ) : ChangeUserRoleUseCase {
-    override suspend fun invoke(
-        user: FrontendUser,
-        newRole: UserRole?,
-    ): OnlineDataResult<FrontendUser> {
+    override suspend fun invoke(request: ChangeUserRoleRequest): OnlineDataResult<FrontendUser> {
+        val userResult = usersDb.getUserFlow(request.userId).first()
+        val user =
+            when (userResult) {
+                is OfflineFirstDataResult.Success ->
+                    userResult.data
+                        ?: return OnlineDataResult.Failure.ProgrammerError(
+                            IllegalStateException("User ${request.userId} not found in DB"),
+                        )
+                is OfflineFirstDataResult.ProgrammerError ->
+                    return OnlineDataResult.Failure.ProgrammerError(userResult.throwable)
+            }
         val updatedUser =
             FrontendUser(
-                user = user.user.copy(role = newRole),
+                user = user.user.copy(role = request.newRole),
             )
         return when (val result = usersApi.updateUser(updatedUser)) {
             is OnlineDataResult.Success -> {

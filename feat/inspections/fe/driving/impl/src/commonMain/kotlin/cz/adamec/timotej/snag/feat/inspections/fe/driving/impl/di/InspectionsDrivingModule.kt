@@ -19,7 +19,7 @@ import cz.adamec.timotej.snag.feat.inspections.fe.driving.api.InspectionEditRout
 import cz.adamec.timotej.snag.feat.inspections.fe.driving.impl.internal.ui.InspectionEditScreen
 import cz.adamec.timotej.snag.feat.inspections.fe.driving.impl.internal.vm.InspectionEditViewModel
 import cz.adamec.timotej.snag.lib.design.fe.dialog.fullscreenDialogProperties
-import cz.adamec.timotej.snag.lib.navigation.fe.ProjectsBackStack
+import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectsBackStack
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.viewModel
 import org.koin.core.scope.Scope

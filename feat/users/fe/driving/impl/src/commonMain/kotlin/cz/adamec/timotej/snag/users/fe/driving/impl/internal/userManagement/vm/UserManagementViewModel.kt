@@ -21,7 +21,8 @@ import cz.adamec.timotej.snag.lib.design.fe.error.toUiError
 import cz.adamec.timotej.snag.users.business.UserRole
 import cz.adamec.timotej.snag.users.fe.app.api.ChangeUserRoleUseCase
 import cz.adamec.timotej.snag.users.fe.app.api.GetUsersUseCase
-import cz.adamec.timotej.snag.users.fe.model.FrontendUser
+import cz.adamec.timotej.snag.users.fe.app.api.model.ChangeUserRoleRequest
+import cz.adamec.timotej.snag.users.fe.driving.impl.internal.userManagement.toUserItem
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -44,8 +45,6 @@ internal class UserManagementViewModel(
     private val errorEventsChannel = Channel<UiError>()
     val errorsFlow = errorEventsChannel.receiveAsFlow()
 
-    private var currentUsers: List<FrontendUser> = emptyList()
-
     init {
         collectUsers()
     }
@@ -59,7 +58,6 @@ internal class UserManagementViewModel(
                         errorEventsChannel.send(UiError.Unknown)
                     }
                     is OfflineFirstDataResult.Success -> {
-                        currentUsers = usersDataResult.data
                         _state.update {
                             it.copy(
                                 users = usersDataResult.data.map { user -> user.toUserItem() }.toPersistentList(),
@@ -74,10 +72,9 @@ internal class UserManagementViewModel(
         userId: Uuid,
         newRole: UserRole?,
     ) {
-        val user = currentUsers.find { it.user.id == userId } ?: return
         viewModelScope.launch {
             updateUserItem(userId) { it.copy(isUpdatingRole = true) }
-            when (val result = changeUserRoleUseCase(user, newRole)) {
+            when (val result = changeUserRoleUseCase(ChangeUserRoleRequest(userId, newRole))) {
                 is OnlineDataResult.Success -> {}
                 is OnlineDataResult.Failure -> {
                     updateUserItem(userId) { it.copy(isUpdatingRole = false) }
@@ -102,10 +99,3 @@ internal class UserManagementViewModel(
         }
     }
 }
-
-private fun FrontendUser.toUserItem() =
-    UserItem(
-        id = user.id,
-        email = user.email,
-        role = user.role,
-    )

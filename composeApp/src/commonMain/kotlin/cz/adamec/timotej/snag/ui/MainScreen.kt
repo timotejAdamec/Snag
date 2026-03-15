@@ -12,12 +12,9 @@
 
 package cz.adamec.timotej.snag.ui
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.consumeWindowInsets
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
@@ -29,16 +26,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.AppScaffold
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.SyncStatusBar
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.SyncStatusBarState
 import cz.adamec.timotej.snag.lib.design.fe.theme.SnagTheme
 import cz.adamec.timotej.snag.lib.navigation.fe.TabNavRoute
+import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectsNavigation
 import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectsRoute
-import cz.adamec.timotej.snag.ui.navigation.ProjectsNavigation
-import cz.adamec.timotej.snag.ui.navigation.UsersNavigation
+import cz.adamec.timotej.snag.users.fe.driving.api.UsersNavigation
 import cz.adamec.timotej.snag.users.fe.driving.api.UsersRoute
 import cz.adamec.timotej.snag.vm.MainViewModel
 import kotlinx.coroutines.FlowPreview
@@ -46,11 +42,6 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
-
-private enum class TopLevelDestination {
-    PROJECTS,
-    USERS,
-}
 
 @OptIn(FlowPreview::class)
 @Composable
@@ -117,17 +108,13 @@ private fun MainScreenContent(
                 }
             },
         ) {
-            Box(modifier = tabModifier(currentDestination == TopLevelDestination.PROJECTS)) {
-                ProjectsNavigation()
-            }
-            Box(modifier = tabModifier(currentDestination == TopLevelDestination.USERS)) {
-                UsersNavigation()
+            when (currentDestination) {
+                TopLevelDestination.PROJECTS -> ProjectsNavigation()
+                TopLevelDestination.USERS -> UsersNavigation()
             }
         }
     }
 }
-
-private fun tabModifier(isSelected: Boolean): Modifier = if (isSelected) Modifier.fillMaxSize() else Modifier.size(0.dp)
 
 private fun NavigationSuiteScope.tabItem(
     route: TabNavRoute,
@@ -140,7 +127,7 @@ private fun NavigationSuiteScope.tabItem(
         icon = {
             Icon(
                 painter = painterResource(route.tabIcon),
-                contentDescription = null,
+                contentDescription = stringResource(route.tabLabel),
             )
         },
         label = {

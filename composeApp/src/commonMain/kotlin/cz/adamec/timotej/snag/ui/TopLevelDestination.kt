@@ -10,10 +10,9 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.ui.navigation
+package cz.adamec.timotej.snag.ui
 
-import androidx.compose.runtime.Composable
-import cz.adamec.timotej.snag.lib.navigation.fe.ProjectsBackStack
-
-@Composable
-internal actual fun ProjectsNavigationPreparation(backStack: ProjectsBackStack) {}
+internal enum class TopLevelDestination {
+    PROJECTS,
+    USERS,
+}

@@ -10,12 +10,14 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.users.fe.app.api
+package cz.adamec.timotej.snag.users.fe.driving.impl.internal.userManagement
 
-import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
-import cz.adamec.timotej.snag.users.fe.app.api.model.ChangeUserRoleRequest
+import cz.adamec.timotej.snag.users.fe.driving.impl.internal.userManagement.vm.UserItem
 import cz.adamec.timotej.snag.users.fe.model.FrontendUser
 
-interface ChangeUserRoleUseCase {
-    suspend operator fun invoke(request: ChangeUserRoleRequest): OnlineDataResult<FrontendUser>
-}
+internal fun FrontendUser.toUserItem() =
+    UserItem(
+        id = user.id,
+        email = user.email,
+        role = user.role,
+    )
