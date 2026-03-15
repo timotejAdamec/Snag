@@ -16,6 +16,7 @@ import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.common.TimestampProvider
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
 import cz.adamec.timotej.snag.lib.sync.fe.app.api.GetLastPullSyncedAtTimestampUseCase
+import cz.adamec.timotej.snag.lib.sync.fe.app.api.PullSyncTracker
 import cz.adamec.timotej.snag.lib.sync.fe.app.api.SetLastPullSyncedAtTimestampUseCase
 import cz.adamec.timotej.snag.lib.sync.fe.app.api.SyncCoordinator
 import cz.adamec.timotej.snag.users.fe.app.api.PullUserChangesUseCase
@@ -31,41 +32,43 @@ internal class PullUserChangesUseCaseImpl(
     private val setLastPullSyncedAtTimestampUseCase: SetLastPullSyncedAtTimestampUseCase,
     private val syncCoordinator: SyncCoordinator,
     private val timestampProvider: TimestampProvider,
+    private val pullSyncTracker: PullSyncTracker,
 ) : PullUserChangesUseCase {
     @Suppress("LabeledExpression")
-    override suspend operator fun invoke() {
-        LH.logger.d { "Starting pull sync for users." }
-        syncCoordinator.withFlushedQueue { wasFlushingSuccessful ->
-            if (!wasFlushingSuccessful) {
-                LH.logger.w("Flushing sync queue was not successful, skipping pull sync for users.")
-                return@withFlushedQueue
-            }
-            val since = getLastPullSyncedAtTimestampUseCase(USER_SYNC_ENTITY_TYPE) ?: Timestamp(0)
-            val now = timestampProvider.getNowTimestamp()
-            LH.logger.d { "Pulling user changes since=$since, now=$now." }
-
-            when (val result = usersApi.getUsersModifiedSince(since)) {
-                is OnlineDataResult.Failure -> {
-                    LH.logger.w { "Error pulling user changes." }
+    override suspend operator fun invoke() =
+        pullSyncTracker.track {
+            LH.logger.d { "Starting pull sync for users." }
+            syncCoordinator.withFlushedQueue { wasFlushingSuccessful ->
+                if (!wasFlushingSuccessful) {
+                    LH.logger.w("Flushing sync queue was not successful, skipping pull sync for users.")
+                    return@withFlushedQueue
                 }
-                is OnlineDataResult.Success -> {
-                    val changes = result.data
-                    LH.logger.d { "Received ${changes.size} user change(s)." }
-                    changes.forEach { syncResult ->
-                        when (syncResult) {
-                            is UserSyncResult.Updated -> {
-                                LH.logger.d { "Processing updated user ${syncResult.user.user.id}." }
-                                usersDb.saveUser(syncResult.user)
+                val since = getLastPullSyncedAtTimestampUseCase(USER_SYNC_ENTITY_TYPE) ?: Timestamp(0)
+                val now = timestampProvider.getNowTimestamp()
+                LH.logger.d { "Pulling user changes since=$since, now=$now." }
+
+                when (val result = usersApi.getUsersModifiedSince(since)) {
+                    is OnlineDataResult.Failure -> {
+                        LH.logger.w { "Error pulling user changes." }
+                    }
+                    is OnlineDataResult.Success -> {
+                        val changes = result.data
+                        LH.logger.d { "Received ${changes.size} user change(s)." }
+                        changes.forEach { syncResult ->
+                            when (syncResult) {
+                                is UserSyncResult.Updated -> {
+                                    LH.logger.d { "Processing updated user ${syncResult.user.user.id}." }
+                                    usersDb.saveUser(syncResult.user)
+                                }
                             }
                         }
+                        setLastPullSyncedAtTimestampUseCase(
+                            entityType = USER_SYNC_ENTITY_TYPE,
+                            timestamp = now,
+                        )
+                        LH.logger.d { "Pull sync for users completed, updated lastSyncedAt=$now." }
                     }
-                    setLastPullSyncedAtTimestampUseCase(
-                        entityType = USER_SYNC_ENTITY_TYPE,
-                        timestamp = now,
-                    )
-                    LH.logger.d { "Pull sync for users completed, updated lastSyncedAt=$now." }
                 }
             }
         }
-    }
 }

@@ -20,5 +20,4 @@ import kotlinx.collections.immutable.persistentListOf
 @Immutable
 data class ClientsUiState(
     val clients: ImmutableList<FrontendClient> = persistentListOf(),
-    val isLoading: Boolean = false,
 )

@@ -23,7 +23,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.ContainedLoadingIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
@@ -53,15 +52,6 @@ internal fun FindingsListContent(
     modifier: Modifier = Modifier,
 ) {
     when (state.status) {
-        FindingsListUiStatus.LOADING -> {
-            Box(
-                modifier = modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center,
-            ) {
-                ContainedLoadingIndicator()
-            }
-        }
-
         FindingsListUiStatus.ERROR -> {
             Box(
                 modifier = modifier.fillMaxSize(),

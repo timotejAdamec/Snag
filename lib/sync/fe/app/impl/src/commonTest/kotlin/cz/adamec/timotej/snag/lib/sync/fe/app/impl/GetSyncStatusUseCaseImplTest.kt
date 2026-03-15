@@ -17,6 +17,7 @@ import cz.adamec.timotej.snag.lib.core.common.ApplicationScope
 import cz.adamec.timotej.snag.lib.sync.fe.app.api.handler.SyncOperationHandler
 import cz.adamec.timotej.snag.lib.sync.fe.app.api.handler.SyncOperationResult
 import cz.adamec.timotej.snag.lib.sync.fe.app.impl.internal.GetSyncStatusUseCaseImpl
+import cz.adamec.timotej.snag.lib.sync.fe.app.impl.internal.PullSyncTrackerImpl
 import cz.adamec.timotej.snag.lib.sync.fe.app.impl.internal.SyncEngine
 import cz.adamec.timotej.snag.lib.sync.fe.driven.test.FakeSyncQueue
 import cz.adamec.timotej.snag.lib.sync.fe.model.SyncOperationType
@@ -25,6 +26,7 @@ import cz.adamec.timotej.snag.network.fe.test.FakeInternetConnectionStatusListen
 import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.koin.test.inject
@@ -37,6 +39,7 @@ class GetSyncStatusUseCaseImplTest : FrontendKoinInitializedTest() {
     private val fakeSyncQueue: FakeSyncQueue by inject()
     private val applicationScope: ApplicationScope by inject()
     private val fakeConnectionListener = FakeInternetConnectionStatusListener()
+    private val pullSyncTracker = PullSyncTrackerImpl()
 
     private fun createEngine(handlers: List<SyncOperationHandler> = emptyList()) =
         SyncEngine(
@@ -49,6 +52,7 @@ class GetSyncStatusUseCaseImplTest : FrontendKoinInitializedTest() {
         GetSyncStatusUseCaseImpl(
             syncEngine = engine,
             connectionStatusListener = fakeConnectionListener,
+            pullSyncTracker = pullSyncTracker,
         )
 
     @Test
@@ -145,6 +149,52 @@ class GetSyncStatusUseCaseImplTest : FrontendKoinInitializedTest() {
             useCase().test {
                 assertEquals(SyncStatus.Offline, awaitItem())
             }
+        }
+
+    @Test
+    fun `connected and pulling yields Syncing`() =
+        runTest(testDispatcher) {
+            val engine = createEngine()
+            val useCase = createUseCase(engine)
+            fakeConnectionListener.emit(true)
+
+            val deferred = CompletableDeferred<Unit>()
+            val job =
+                launch {
+                    pullSyncTracker.track { deferred.await() }
+                }
+            advanceUntilIdle()
+
+            useCase().test {
+                assertEquals(SyncStatus.Syncing, awaitItem())
+            }
+
+            deferred.complete(Unit)
+            advanceUntilIdle()
+            job.join()
+        }
+
+    @Test
+    fun `disconnected and pulling yields Offline`() =
+        runTest(testDispatcher) {
+            val engine = createEngine()
+            val useCase = createUseCase(engine)
+            fakeConnectionListener.emit(false)
+
+            val deferred = CompletableDeferred<Unit>()
+            val job =
+                launch {
+                    pullSyncTracker.track { deferred.await() }
+                }
+            advanceUntilIdle()
+
+            useCase().test {
+                assertEquals(SyncStatus.Offline, awaitItem())
+            }
+
+            deferred.complete(Unit)
+            advanceUntilIdle()
+            job.join()
         }
 
     private class FixedResultHandler(
