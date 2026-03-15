@@ -30,6 +30,7 @@ import kotlinx.coroutines.test.runTest
 import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertIs
 import kotlin.uuid.Uuid
 
@@ -116,5 +117,39 @@ class UserManagementViewModelTest : FrontendKoinInitializedTest() {
 
             val state = viewModel.state.value
             assertEquals(UserRole.SERVICE_WORKER, state.users[0].role)
+        }
+
+    @Test
+    fun `isUpdatingRole is false after successful role change`() =
+        runTest(testDispatcher) {
+            fakeUsersDb.setUser(testUser)
+            fakeUsersApi.setUser(testUser)
+
+            val viewModel = createViewModel()
+            advanceUntilIdle()
+
+            viewModel.onRoleChanged(testUser.user.id, UserRole.SERVICE_LEAD)
+            advanceUntilIdle()
+
+            val userItem = viewModel.state.value.users[0]
+            assertFalse(userItem.isUpdatingRole)
+        }
+
+    @Test
+    fun `isUpdatingRole is false after failed role change`() =
+        runTest(testDispatcher) {
+            fakeUsersDb.setUser(testUser)
+            fakeUsersApi.setUser(testUser)
+
+            val viewModel = createViewModel()
+            advanceUntilIdle()
+
+            fakeUsersApi.forcedFailure = OnlineDataResult.Failure.NetworkUnavailable
+
+            viewModel.onRoleChanged(testUser.user.id, UserRole.PASSPORT_LEAD)
+            advanceUntilIdle()
+
+            val userItem = viewModel.state.value.users[0]
+            assertFalse(userItem.isUpdatingRole)
         }
 }

@@ -58,9 +58,16 @@ internal class UserManagementViewModel(
                         errorEventsChannel.send(UiError.Unknown)
                     }
                     is OfflineFirstDataResult.Success -> {
-                        _state.update {
-                            it.copy(
-                                users = usersDataResult.data.map { user -> user.toUserItem() }.toPersistentList(),
+                        _state.update { currentState ->
+                            currentState.copy(
+                                users =
+                                    usersDataResult.data
+                                        .map { user ->
+                                            val existing = currentState.users.find { it.id == user.user.id }
+                                            user.toUserItem().copy(
+                                                isUpdatingRole = existing?.isUpdatingRole ?: false,
+                                            )
+                                        }.toPersistentList(),
                                 isLoading = false,
                             )
                         }
@@ -75,7 +82,9 @@ internal class UserManagementViewModel(
         viewModelScope.launch {
             updateUserItem(userId) { it.copy(isUpdatingRole = true) }
             when (val result = changeUserRoleUseCase(ChangeUserRoleRequest(userId, newRole))) {
-                is OnlineDataResult.Success -> {}
+                is OnlineDataResult.Success -> {
+                    updateUserItem(userId) { it.copy(isUpdatingRole = false) }
+                }
                 is OnlineDataResult.Failure -> {
                     updateUserItem(userId) { it.copy(isUpdatingRole = false) }
                     errorEventsChannel.send(result.toUiError())
