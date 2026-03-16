@@ -29,6 +29,8 @@ object ContentPaneDefaults {
     val containerColor: Color
         @Composable get() = MaterialTheme.colorScheme.surfaceContainerLow
 
+    // Change this will not override color for everything, will need changes
+    // so that this color is used where it needs to be used.
     val paneColor: Color
         @Composable get() = MaterialTheme.colorScheme.surface
 }

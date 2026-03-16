@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -44,6 +45,9 @@ fun StructureCard(
 ) {
     ElevatedCard(
         modifier = modifier,
+        colors = CardDefaults.elevatedCardColors().copy(
+            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+        ),
         onClick = onClick,
     ) {
         if (feStructure.structure.floorPlanUrl != null) {
