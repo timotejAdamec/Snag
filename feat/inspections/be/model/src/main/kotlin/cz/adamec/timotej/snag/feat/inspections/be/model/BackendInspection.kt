@@ -17,7 +17,9 @@ import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.sync.be.model.SoftDeletable
 import kotlin.uuid.Uuid
 
-interface BackendInspection : AppInspection, SoftDeletable
+interface BackendInspection :
+    AppInspection,
+    SoftDeletable
 
 data class BackendInspectionData(
     override val id: Uuid,

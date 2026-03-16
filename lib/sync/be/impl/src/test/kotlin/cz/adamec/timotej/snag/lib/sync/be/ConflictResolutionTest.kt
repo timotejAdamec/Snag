@@ -160,4 +160,5 @@ class ConflictResolutionTest {
 private data class TestSyncable(
     override val updatedAt: Timestamp,
     override val deletedAt: Timestamp?,
-) : Versioned, SoftDeletable
+) : Versioned,
+    SoftDeletable

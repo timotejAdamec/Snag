@@ -17,7 +17,9 @@ import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.sync.be.model.SoftDeletable
 import kotlin.uuid.Uuid
 
-interface BackendClient : AppClient, SoftDeletable
+interface BackendClient :
+    AppClient,
+    SoftDeletable
 
 data class BackendClientData(
     override val id: Uuid,

@@ -17,9 +17,9 @@ import app.cash.sqldelight.async.coroutines.awaitAsOne
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import app.cash.sqldelight.coroutines.mapToOneOrNull
+import cz.adamec.timotej.snag.feat.findings.app.model.AppFinding
 import cz.adamec.timotej.snag.feat.findings.business.model.FindingType
 import cz.adamec.timotej.snag.feat.findings.business.model.RelativeCoordinate
-import cz.adamec.timotej.snag.feat.findings.app.model.AppFinding
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.ClassicFindingEntityQueries
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.FindingCoordinateEntityQueries
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.FindingEntityQueries

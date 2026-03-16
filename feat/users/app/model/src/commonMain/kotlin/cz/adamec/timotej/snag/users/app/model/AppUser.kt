@@ -15,4 +15,6 @@ package cz.adamec.timotej.snag.users.app.model
 import cz.adamec.timotej.snag.lib.sync.model.Versioned
 import cz.adamec.timotej.snag.users.business.model.User
 
-interface AppUser : User, Versioned
+interface AppUser :
+    User,
+    Versioned

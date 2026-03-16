@@ -15,4 +15,6 @@ package cz.adamec.timotej.snag.feat.findings.app.model
 import cz.adamec.timotej.snag.feat.findings.business.model.Finding
 import cz.adamec.timotej.snag.lib.sync.model.Versioned
 
-interface AppFinding : Finding, Versioned
+interface AppFinding :
+    Finding,
+    Versioned

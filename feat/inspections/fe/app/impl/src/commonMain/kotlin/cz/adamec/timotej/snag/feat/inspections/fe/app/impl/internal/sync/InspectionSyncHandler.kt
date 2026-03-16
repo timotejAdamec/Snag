@@ -12,8 +12,8 @@
 
 package cz.adamec.timotej.snag.feat.inspections.fe.app.impl.internal.sync
 
-import cz.adamec.timotej.snag.feat.inspections.fe.app.impl.internal.LH
 import cz.adamec.timotej.snag.feat.inspections.app.model.AppInspection
+import cz.adamec.timotej.snag.feat.inspections.fe.app.impl.internal.LH
 import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionsApi
 import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionsDb
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
@@ -32,11 +32,9 @@ internal class InspectionSyncHandler(
     override val entityTypeId: String = INSPECTION_SYNC_ENTITY_TYPE
     override val entityName: String = "inspection"
 
-    override fun getEntityFlow(entityId: Uuid): Flow<OfflineFirstDataResult<AppInspection?>> =
-        inspectionsDb.getInspectionFlow(entityId)
+    override fun getEntityFlow(entityId: Uuid): Flow<OfflineFirstDataResult<AppInspection?>> = inspectionsDb.getInspectionFlow(entityId)
 
-    override suspend fun saveEntityToApi(entity: AppInspection): OnlineDataResult<AppInspection?> =
-        inspectionsApi.saveInspection(entity)
+    override suspend fun saveEntityToApi(entity: AppInspection): OnlineDataResult<AppInspection?> = inspectionsApi.saveInspection(entity)
 
     override suspend fun deleteEntityFromApi(
         entityId: Uuid,

@@ -14,12 +14,12 @@
 
 package cz.adamec.timotej.snag.findings.fe.driven.internal.db
 
+import cz.adamec.timotej.snag.feat.findings.app.model.AppFinding
+import cz.adamec.timotej.snag.feat.findings.app.model.AppFindingData
 import cz.adamec.timotej.snag.feat.findings.business.model.FindingType
 import cz.adamec.timotej.snag.feat.findings.business.model.Importance
 import cz.adamec.timotej.snag.feat.findings.business.model.RelativeCoordinate
 import cz.adamec.timotej.snag.feat.findings.business.model.Term
-import cz.adamec.timotej.snag.feat.findings.app.model.AppFinding
-import cz.adamec.timotej.snag.feat.findings.app.model.AppFindingData
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.FindingEntity
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.SelectById
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.SelectByStructureId

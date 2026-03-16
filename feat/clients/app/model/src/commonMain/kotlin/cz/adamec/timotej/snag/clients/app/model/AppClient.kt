@@ -15,4 +15,6 @@ package cz.adamec.timotej.snag.clients.app.model
 import cz.adamec.timotej.snag.clients.business.model.Client
 import cz.adamec.timotej.snag.lib.sync.model.Versioned
 
-interface AppClient : Client, Versioned
+interface AppClient :
+    Client,
+    Versioned

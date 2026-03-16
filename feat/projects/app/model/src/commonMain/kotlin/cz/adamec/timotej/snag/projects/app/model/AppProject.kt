@@ -15,4 +15,6 @@ package cz.adamec.timotej.snag.projects.app.model
 import cz.adamec.timotej.snag.lib.sync.model.Versioned
 import cz.adamec.timotej.snag.projects.business.model.Project
 
-interface AppProject : Project, Versioned
+interface AppProject :
+    Project,
+    Versioned

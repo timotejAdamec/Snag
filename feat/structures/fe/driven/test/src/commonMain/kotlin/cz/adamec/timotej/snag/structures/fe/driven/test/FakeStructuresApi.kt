@@ -45,8 +45,7 @@ class FakeStructuresApi : StructuresApi {
     override suspend fun getStructures(projectId: Uuid): OnlineDataResult<List<AppStructure>> =
         ops.getAllItems { it.projectId == projectId }
 
-    override suspend fun saveStructure(appStructure: AppStructure): OnlineDataResult<AppStructure?> =
-        ops.saveItem(appStructure)
+    override suspend fun saveStructure(appStructure: AppStructure): OnlineDataResult<AppStructure?> = ops.saveItem(appStructure)
 
     override suspend fun deleteStructure(
         id: Uuid,

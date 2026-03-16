@@ -17,7 +17,9 @@ import cz.adamec.timotej.snag.lib.sync.be.model.SoftDeletable
 import cz.adamec.timotej.snag.projects.app.model.AppProject
 import kotlin.uuid.Uuid
 
-interface BackendProject : AppProject, SoftDeletable
+interface BackendProject :
+    AppProject,
+    SoftDeletable
 
 data class BackendProjectData(
     override val id: Uuid,

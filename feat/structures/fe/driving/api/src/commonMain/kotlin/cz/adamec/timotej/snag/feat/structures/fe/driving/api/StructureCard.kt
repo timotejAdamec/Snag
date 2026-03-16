@@ -45,9 +45,10 @@ fun StructureCard(
 ) {
     ElevatedCard(
         modifier = modifier,
-        colors = CardDefaults.elevatedCardColors().copy(
-            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-        ),
+        colors =
+            CardDefaults.elevatedCardColors().copy(
+                containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+            ),
         onClick = onClick,
     ) {
         if (structure.floorPlanUrl != null) {

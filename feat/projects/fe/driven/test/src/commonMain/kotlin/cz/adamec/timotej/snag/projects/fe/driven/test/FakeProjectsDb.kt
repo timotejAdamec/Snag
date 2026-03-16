@@ -32,8 +32,7 @@ class FakeProjectsDb : ProjectsDb {
 
     override fun getProjectFlow(id: Uuid): Flow<OfflineFirstDataResult<AppProject?>> = ops.itemByIdFlow(id)
 
-    override suspend fun getProject(id: Uuid): OfflineFirstDataResult<AppProject?> =
-        OfflineFirstDataResult.Success(ops.items.value[id])
+    override suspend fun getProject(id: Uuid): OfflineFirstDataResult<AppProject?> = OfflineFirstDataResult.Success(ops.items.value[id])
 
     override suspend fun saveProject(project: AppProject): OfflineFirstDataResult<Unit> = ops.saveOneItem(project)
 

@@ -12,7 +12,6 @@
 
 package cz.adamec.timotej.snag.findings.be.app.impl.internal
 
-import cz.adamec.timotej.snag.feat.findings.be.model.BackendFinding
 import cz.adamec.timotej.snag.feat.findings.be.model.BackendFindingData
 import cz.adamec.timotej.snag.feat.findings.business.model.FindingType
 import cz.adamec.timotej.snag.feat.structures.be.model.BackendStructureData

@@ -36,8 +36,7 @@ internal class StructureSyncHandler(
 
     override fun getEntityFlow(entityId: Uuid): Flow<OfflineFirstDataResult<AppStructure?>> = structuresDb.getStructureFlow(entityId)
 
-    override suspend fun saveEntityToApi(entity: AppStructure): OnlineDataResult<AppStructure?> =
-        structuresApi.saveStructure(entity)
+    override suspend fun saveEntityToApi(entity: AppStructure): OnlineDataResult<AppStructure?> = structuresApi.saveStructure(entity)
 
     override suspend fun deleteEntityFromApi(
         entityId: Uuid,

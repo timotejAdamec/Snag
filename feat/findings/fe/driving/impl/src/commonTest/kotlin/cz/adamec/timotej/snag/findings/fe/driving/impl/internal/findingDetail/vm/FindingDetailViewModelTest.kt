@@ -13,9 +13,8 @@
 package cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetail.vm
 
 import app.cash.turbine.test
-import cz.adamec.timotej.snag.feat.findings.business.model.FindingType
-import cz.adamec.timotej.snag.feat.findings.app.model.AppFinding
 import cz.adamec.timotej.snag.feat.findings.app.model.AppFindingData
+import cz.adamec.timotej.snag.feat.findings.business.model.FindingType
 import cz.adamec.timotej.snag.findings.fe.app.api.DeleteFindingUseCase
 import cz.adamec.timotej.snag.findings.fe.app.api.GetFindingUseCase
 import cz.adamec.timotej.snag.findings.fe.driven.test.FakeFindingsDb

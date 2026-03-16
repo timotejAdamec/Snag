@@ -15,4 +15,6 @@ package cz.adamec.timotej.snag.feat.structures.app.model
 import cz.adamec.timotej.snag.feat.structures.business.model.Structure
 import cz.adamec.timotej.snag.lib.sync.model.Versioned
 
-interface AppStructure : Structure, Versioned
+interface AppStructure :
+    Structure,
+    Versioned

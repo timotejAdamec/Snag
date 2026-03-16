@@ -15,4 +15,6 @@ package cz.adamec.timotej.snag.feat.inspections.app.model
 import cz.adamec.timotej.snag.feat.inspections.business.model.Inspection
 import cz.adamec.timotej.snag.lib.sync.model.Versioned
 
-interface AppInspection : Inspection, Versioned
+interface AppInspection :
+    Inspection,
+    Versioned

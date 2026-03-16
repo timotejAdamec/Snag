@@ -17,7 +17,9 @@ import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.sync.be.model.SoftDeletable
 import kotlin.uuid.Uuid
 
-interface BackendStructure : AppStructure, SoftDeletable
+interface BackendStructure :
+    AppStructure,
+    SoftDeletable
 
 data class BackendStructureData(
     override val id: Uuid,
