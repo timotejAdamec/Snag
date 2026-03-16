@@ -14,8 +14,10 @@ package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projects.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -48,6 +50,9 @@ internal fun ProjectsContent(
                 onClick = onNewProjectClick,
                 icon = DesignRes.drawable.ic_add,
                 label = stringResource(Res.string.new_project),
+            )
+            Spacer(
+                modifier = Modifier.size(16.dp),
             )
         },
     ) { paddingValues ->

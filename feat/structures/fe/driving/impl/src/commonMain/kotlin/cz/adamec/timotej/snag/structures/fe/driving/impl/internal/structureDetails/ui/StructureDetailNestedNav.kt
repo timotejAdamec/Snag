@@ -25,6 +25,7 @@ import cz.adamec.timotej.snag.feat.findings.fe.driving.api.FindingsListRouteFact
 import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureDetailBackStack
 import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureDetailNavRoute
 import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureFloorPlanRouteFactory
+import cz.adamec.timotej.snag.lib.design.fe.scenes.ContentPaneSceneStrategy
 import cz.adamec.timotej.snag.lib.design.fe.scenes.MapListDetailSceneStrategy
 import org.koin.compose.koinInject
 import org.koin.compose.navigation3.koinEntryProvider
@@ -84,7 +85,8 @@ internal fun StructureDetailNestedNav(
 
     val sceneStrategy =
         remember {
-            MapListDetailSceneStrategy<StructureDetailNavRoute>()
+            MapListDetailSceneStrategy<StructureDetailNavRoute>() then
+                ContentPaneSceneStrategy()
         }
 
     NavDisplay(

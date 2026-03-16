@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.scene.DialogSceneStrategy
+import cz.adamec.timotej.snag.lib.design.fe.scenes.ContentPaneSceneStrategy
 import androidx.navigation3.ui.NavDisplay
 import org.koin.compose.koinInject
 import org.koin.compose.navigation3.koinEntryProvider
@@ -31,7 +32,11 @@ fun ProjectsNavigation(
         backStack = backStack,
     )
     val entryProvider = koinEntryProvider<ProjectsNavRoute>()
-    val sceneStrategy = remember { DialogSceneStrategy<ProjectsNavRoute>() }
+    val sceneStrategy =
+        remember {
+            DialogSceneStrategy<ProjectsNavRoute>() then
+                ContentPaneSceneStrategy()
+        }
     NavDisplay(
         modifier = modifier,
         backStack = backStack.value,

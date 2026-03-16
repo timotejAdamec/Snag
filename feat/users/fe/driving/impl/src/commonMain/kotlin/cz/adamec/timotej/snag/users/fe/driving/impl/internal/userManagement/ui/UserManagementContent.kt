@@ -52,7 +52,7 @@ internal fun UserManagementContent(
                     .consumeWindowInsets(paddingValues),
         ) {
             LazyVerticalGrid(
-                columns = GridCells.Adaptive(minSize = 360.dp),
+                columns = GridCells.Adaptive(minSize = 240.dp),
                 contentPadding =
                     PaddingValues(
                         start = 8.dp,
