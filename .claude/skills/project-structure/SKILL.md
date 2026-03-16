@@ -26,7 +26,7 @@ Each feature follows hexagonal architecture with these layers:
 
 - **`business/model/`** — Platform-agnostic domain model interfaces. Innermost core. Only depends on `:lib:core`.
 - **`app/model/`** — Shared application models extending `business/model` with `Versioned` (`updatedAt`). Used by both FE and BE.
-- **`be/`** — Backend: `model/` (extends `app/model` with `SoftDeletable`) > `app/` (use cases) > `ports/` (interfaces) > `driven/` (DB implementations) + `driving/` (HTTP routes)
+- **`be/`** — Backend: `app/model/` (extends shared `app/model` with `SoftDeletable`) > `app/` (use cases) > `ports/` (interfaces) > `driven/` (DB implementations) + `driving/` (HTTP routes)
 - **`fe/`** — Frontend: `app/` (use cases) > `ports/` (interfaces) > `driven/` (HTTP/SQLite implementations) + `driving/` (Compose screens)
 
 ### Module splits
@@ -60,7 +60,7 @@ Most dependencies are auto-wired via convention plugins. When creating a new mod
 
 `driving` -> `app` -> `ports` -> `app/model` -> `business/model`
 `driven` -> `ports` -> `app/model` -> `business/model`
-`be/model` -> `app/model` -> `business/model`
+`be/app/model` -> `app/model` -> `business/model`
 
 #### Cross feature/lib dependencies
 

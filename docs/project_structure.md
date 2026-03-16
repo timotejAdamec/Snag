@@ -28,9 +28,9 @@ Each feature contains is structured by platforms and by layers:
 The `be` and `fe` directories are platform-specific. They are broken down into layer directories/modules:
 - `app` for application domain code. This is a core layer that sits around the platform-agnostic
 `business` module.
-- `model` (under `be/`) allows extending the models in the `app/model` module with BE-specific
-data (e.g., `SoftDeletable` for soft-delete support). Used as a dependency for all the other
-BE-specific layers.
+- `app/model` (under `be/`) allows extending the models in the shared `app/model` module with
+BE-specific data (e.g., `SoftDeletable` for soft-delete support). Used as a dependency for all
+the other BE-specific layers.
 - `ports` as in the ports and adapters pattern. These ports are used by `app` modules.
 - `driven` as in the driven ports pattern. This is the most outer layer. These ports are
 implementations of the `ports`. They implement different technologies to satisfy the `ports` API.

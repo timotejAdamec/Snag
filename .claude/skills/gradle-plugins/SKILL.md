@@ -32,9 +32,9 @@ feat/<feature>/
 │       ├── impl/            → snagDrivenFrontendMultiplatformModule
 │       └── test/            → snagDrivenFrontendMultiplatformModule
 └── be/
-    ├── model/               → snagBackendModule
     ├── ports/               → snagBackendModule
     ├── app/
+    │   ├── model/           → snagBackendModule
     │   ├── api/             → snagBackendModule
     │   ├── impl/            → snagBackendModule
     │   └── test/            → snagBackendModule

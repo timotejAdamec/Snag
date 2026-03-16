@@ -165,6 +165,7 @@ feat/<feature>/
 └── be/
     ├── ports/               → snagBackendModule
     ├── app/
+    │   ├── model/           → snagBackendModule
     │   ├── api/             → snagBackendModule
     │   └── impl/            → snagBackendModule
     ├── driving/

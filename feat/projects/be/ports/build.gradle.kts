@@ -3,5 +3,5 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":feat:users:be:model"))
+    implementation(project(":feat:users:be:app:model"))
 }

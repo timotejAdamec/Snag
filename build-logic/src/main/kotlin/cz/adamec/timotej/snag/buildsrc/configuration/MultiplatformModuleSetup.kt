@@ -118,9 +118,22 @@ internal fun Project.configureKotlinMultiplatformModule() {
                 val modulePreDirectoryPath = moduleDirectoryPath.substringBeforeLast(":")
                 if (this@configureKotlinMultiplatformModule.name == "model") {
                     if ((path.contains(":fe:") || path.contains(":be:")) &&
-                        hasFolderInPath("$modulePreDirectoryPath:app", "model")
+                        hasFolderInPath("$modulePreDirectoryPath:app", "model") &&
+                        "$modulePreDirectoryPath:app:model" != path
                     ) {
                         api(project("$modulePreDirectoryPath:app:model"))
+                    } else if ((path.contains(":fe:") || path.contains(":be:")) &&
+                        path.contains(":app:")
+                    ) {
+                        // be/app/model or fe/app/model → shared app/model at feature root
+                        val featureRootPath = modulePreDirectoryPath.substringBeforeLast(":")
+                        if (hasFolderInPath("$featureRootPath:app", "model")) {
+                            api(project("$featureRootPath:app:model"))
+                        } else if (hasFolderInPath("$featureRootPath:business", "model")) {
+                            api(project("$featureRootPath:business:model"))
+                        } else if (hasFolderInPath(featureRootPath, "business")) {
+                            api(project("$featureRootPath:business"))
+                        }
                     } else if (path.contains(":app:") &&
                         hasFolderInPath("$modulePreDirectoryPath:business", "model")
                     ) {
@@ -138,6 +151,8 @@ internal fun Project.configureKotlinMultiplatformModule() {
                 } else if (this@configureKotlinMultiplatformModule.name == "ports") {
                     if (hasFolderInPath(moduleDirectoryPath, "model")) {
                         api(project("$moduleDirectoryPath:model"))
+                    } else if (hasFolderInPath("$moduleDirectoryPath:app", "model")) {
+                        api(project("$moduleDirectoryPath:app:model"))
                     } else if (hasFolderInPath("$modulePreDirectoryPath:app", "model")) {
                         api(project("$modulePreDirectoryPath:app:model"))
                     } else if (hasFolderInPath("$modulePreDirectoryPath:business", "model")) {
@@ -154,6 +169,8 @@ internal fun Project.configureKotlinMultiplatformModule() {
                     val businessDirectoryPath = feOrBeDirectoryPath.substringBeforeLast(":")
                     if (hasFolderInPath(feOrBeDirectoryPath, "model")) {
                         api(project("$feOrBeDirectoryPath:model"))
+                    } else if (hasFolderInPath("$feOrBeDirectoryPath:app", "model")) {
+                        api(project("$feOrBeDirectoryPath:app:model"))
                     } else if (hasFolderInPath("$businessDirectoryPath:app", "model")) {
                         api(project("$businessDirectoryPath:app:model"))
                     } else if (hasFolderInPath("$businessDirectoryPath:business", "model")) {
