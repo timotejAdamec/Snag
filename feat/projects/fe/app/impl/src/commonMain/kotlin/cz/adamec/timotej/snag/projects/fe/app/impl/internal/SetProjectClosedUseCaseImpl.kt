@@ -16,6 +16,7 @@ import cz.adamec.timotej.snag.lib.core.common.TimestampProvider
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
 import cz.adamec.timotej.snag.projects.fe.app.api.SetProjectClosedUseCase
+import cz.adamec.timotej.snag.projects.fe.app.api.model.SetProjectClosedRequest
 import cz.adamec.timotej.snag.projects.fe.model.FrontendProject
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsApi
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsDb
@@ -26,12 +27,9 @@ class SetProjectClosedUseCaseImpl(
     private val projectsDb: ProjectsDb,
     private val timestampProvider: TimestampProvider,
 ) : SetProjectClosedUseCase {
-    override suspend fun invoke(
-        projectId: Uuid,
-        isClosed: Boolean,
-    ): OnlineDataResult<Unit> {
+    override suspend fun invoke(request: SetProjectClosedRequest): OnlineDataResult<Unit> {
         val localProject =
-            when (val r = getLocalProjectOrFailure(projectId)) {
+            when (val r = getLocalProjectOrFailure(request.projectId)) {
                 is OnlineDataResult.Success -> r.data
                 is OnlineDataResult.Failure -> return r
             }
@@ -39,7 +37,7 @@ class SetProjectClosedUseCaseImpl(
             FrontendProject(
                 project =
                     localProject.project.copy(
-                        isClosed = isClosed,
+                        isClosed = request.isClosed,
                         updatedAt = timestampProvider.getNowTimestamp(),
                     ),
             )

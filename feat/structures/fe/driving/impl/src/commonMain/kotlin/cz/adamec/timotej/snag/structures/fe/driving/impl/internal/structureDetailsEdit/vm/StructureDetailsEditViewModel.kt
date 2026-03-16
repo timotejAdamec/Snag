@@ -26,6 +26,7 @@ import cz.adamec.timotej.snag.structures.fe.app.api.GetStructureUseCase
 import cz.adamec.timotej.snag.structures.fe.app.api.SaveStructureUseCase
 import cz.adamec.timotej.snag.structures.fe.app.api.UploadFloorPlanImageUseCase
 import cz.adamec.timotej.snag.structures.fe.app.api.model.SaveStructureRequest
+import cz.adamec.timotej.snag.structures.fe.app.api.model.UploadFloorPlanImageRequest
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
@@ -126,10 +127,12 @@ internal class StructureDetailsEditViewModel(
         when (
             val result =
                 uploadFloorPlanImageUseCase(
-                    projectId = projectId,
-                    structureId = resolvedStructureId,
-                    bytes = bytes,
-                    fileName = fileName,
+                    UploadFloorPlanImageRequest(
+                        projectId = projectId,
+                        structureId = resolvedStructureId,
+                        bytes = bytes,
+                        fileName = fileName,
+                    ),
                 )
         ) {
             is OnlineDataResult.Success -> {

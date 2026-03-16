@@ -21,6 +21,8 @@ import cz.adamec.timotej.snag.lib.sync.be.DeleteConflictResult
 import cz.adamec.timotej.snag.lib.sync.be.ResolveConflictForDeleteUseCase
 import cz.adamec.timotej.snag.lib.sync.be.ResolveConflictForSaveUseCase
 import cz.adamec.timotej.snag.lib.sync.be.SaveConflictResult
+import cz.adamec.timotej.snag.lib.sync.be.model.ResolveConflictForDeleteRequest
+import cz.adamec.timotej.snag.lib.sync.be.model.ResolveConflictForSaveRequest
 import org.jetbrains.exposed.v1.core.greater
 import org.jetbrains.exposed.v1.core.or
 import org.jetbrains.exposed.v1.jdbc.Database
@@ -45,7 +47,15 @@ internal class RealClientsDb(
     override suspend fun saveClient(client: BackendClient): BackendClient? =
         transaction(database) {
             val existing = ClientEntity.findById(client.client.id)
-            when (val result = resolveConflictForSave(existing?.toModel(), client)) {
+            when (
+                val result =
+                    resolveConflictForSave(
+                        ResolveConflictForSaveRequest(
+                            existing = existing?.toModel(),
+                            incoming = client,
+                        ),
+                    )
+            ) {
                 is SaveConflictResult.Proceed -> {
                     if (existing != null) {
                         existing.name = client.client.name
@@ -78,7 +88,15 @@ internal class RealClientsDb(
     ): BackendClient? =
         transaction(database) {
             val existing = ClientEntity.findById(id)
-            when (val result = resolveConflictForDelete(existing?.toModel(), deletedAt)) {
+            when (
+                val result =
+                    resolveConflictForDelete(
+                        ResolveConflictForDeleteRequest(
+                            existing = existing?.toModel(),
+                            deletedAt = deletedAt,
+                        ),
+                    )
+            ) {
                 is DeleteConflictResult.Proceed -> {
                     existing!!.deletedAt = deletedAt.value
                     null

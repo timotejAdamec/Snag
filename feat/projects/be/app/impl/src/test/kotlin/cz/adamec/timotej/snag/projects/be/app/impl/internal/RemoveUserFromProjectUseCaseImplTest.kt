@@ -14,6 +14,7 @@ package cz.adamec.timotej.snag.projects.be.app.impl.internal
 
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.projects.be.app.api.RemoveUserFromProjectUseCase
+import cz.adamec.timotej.snag.projects.be.app.api.model.RemoveUserFromProjectRequest
 import cz.adamec.timotej.snag.projects.be.model.BackendProject
 import cz.adamec.timotej.snag.projects.be.ports.ProjectAssignmentsDb
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
@@ -64,7 +65,7 @@ class RemoveUserFromProjectUseCaseImplTest : BackendKoinInitializedTest() {
             usersDb.saveUser(user)
             assignmentsDb.assignUser(userId, projectId)
 
-            useCase(userId, projectId)
+            useCase(RemoveUserFromProjectRequest(userId = userId, projectId = projectId))
 
             val assigned = assignmentsDb.getAssignedUsers(projectId)
             assertEquals(emptyList(), assigned)

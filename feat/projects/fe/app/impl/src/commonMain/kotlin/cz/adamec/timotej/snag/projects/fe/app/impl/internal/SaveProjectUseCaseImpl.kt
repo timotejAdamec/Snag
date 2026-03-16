@@ -18,6 +18,7 @@ import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.core.fe.log
 import cz.adamec.timotej.snag.lib.core.fe.map
 import cz.adamec.timotej.snag.lib.sync.fe.app.api.EnqueueSyncSaveUseCase
+import cz.adamec.timotej.snag.lib.sync.fe.app.api.model.EnqueueSyncSaveRequest
 import cz.adamec.timotej.snag.projects.business.Project
 import cz.adamec.timotej.snag.projects.fe.app.api.SaveProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.model.SaveProjectRequest
@@ -55,8 +56,10 @@ class SaveProjectUseCaseImpl(
                 )
                 if (it is OfflineFirstDataResult.Success) {
                     enqueueSyncSaveUseCase(
-                        entityTypeId = PROJECT_SYNC_ENTITY_TYPE,
-                        entityId = project.project.id,
+                        EnqueueSyncSaveRequest(
+                            entityTypeId = PROJECT_SYNC_ENTITY_TYPE,
+                            entityId = project.project.id,
+                        ),
                     )
                 }
             }.map {

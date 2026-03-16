@@ -10,10 +10,11 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.projects.be.app.api
+package cz.adamec.timotej.snag.lib.sync.be.model
 
-import cz.adamec.timotej.snag.projects.be.app.api.model.AssignUserToProjectRequest
+import cz.adamec.timotej.snag.lib.core.common.Timestamp
 
-interface AssignUserToProjectUseCase {
-    suspend operator fun invoke(request: AssignUserToProjectRequest)
-}
+data class ResolveConflictForDeleteRequest<T : Syncable>(
+    val existing: T?,
+    val deletedAt: Timestamp,
+)

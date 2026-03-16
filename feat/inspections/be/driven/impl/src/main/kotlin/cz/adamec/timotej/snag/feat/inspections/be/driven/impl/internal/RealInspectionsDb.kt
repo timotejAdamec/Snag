@@ -22,6 +22,8 @@ import cz.adamec.timotej.snag.lib.sync.be.DeleteConflictResult
 import cz.adamec.timotej.snag.lib.sync.be.ResolveConflictForDeleteUseCase
 import cz.adamec.timotej.snag.lib.sync.be.ResolveConflictForSaveUseCase
 import cz.adamec.timotej.snag.lib.sync.be.SaveConflictResult
+import cz.adamec.timotej.snag.lib.sync.be.model.ResolveConflictForDeleteRequest
+import cz.adamec.timotej.snag.lib.sync.be.model.ResolveConflictForSaveRequest
 import org.jetbrains.exposed.v1.core.and
 import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.core.greater
@@ -51,7 +53,15 @@ internal class RealInspectionsDb(
     override suspend fun saveInspection(backendInspection: BackendInspection): BackendInspection? =
         transaction(database) {
             val existing = InspectionEntity.findById(backendInspection.inspection.id)
-            when (val result = resolveConflictForSave(existing?.toModel(), backendInspection)) {
+            when (
+                val result =
+                    resolveConflictForSave(
+                        ResolveConflictForSaveRequest(
+                            existing = existing?.toModel(),
+                            incoming = backendInspection,
+                        ),
+                    )
+            ) {
                 is SaveConflictResult.Proceed -> {
                     if (existing != null) {
                         existing.project = ProjectEntity[backendInspection.inspection.projectId]
@@ -88,7 +98,15 @@ internal class RealInspectionsDb(
     ): BackendInspection? =
         transaction(database) {
             val existing = InspectionEntity.findById(id)
-            when (val result = resolveConflictForDelete(existing?.toModel(), deletedAt)) {
+            when (
+                val result =
+                    resolveConflictForDelete(
+                        ResolveConflictForDeleteRequest(
+                            existing = existing?.toModel(),
+                            deletedAt = deletedAt,
+                        ),
+                    )
+            ) {
                 is DeleteConflictResult.Proceed -> {
                     existing!!.deletedAt = deletedAt.value
                     null

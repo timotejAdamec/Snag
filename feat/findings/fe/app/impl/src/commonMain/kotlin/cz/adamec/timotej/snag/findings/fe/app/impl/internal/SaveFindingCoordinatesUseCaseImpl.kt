@@ -21,6 +21,7 @@ import cz.adamec.timotej.snag.lib.core.common.TimestampProvider
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstUpdateDataResult
 import cz.adamec.timotej.snag.lib.core.fe.log
 import cz.adamec.timotej.snag.lib.sync.fe.app.api.EnqueueSyncSaveUseCase
+import cz.adamec.timotej.snag.lib.sync.fe.app.api.model.EnqueueSyncSaveRequest
 
 class SaveFindingCoordinatesUseCaseImpl(
     private val findingsDb: FindingsDb,
@@ -40,8 +41,10 @@ class SaveFindingCoordinatesUseCaseImpl(
                 )
                 if (it is OfflineFirstUpdateDataResult.Success) {
                     enqueueSyncSaveUseCase(
-                        entityTypeId = FINDING_SYNC_ENTITY_TYPE,
-                        entityId = request.findingId,
+                        EnqueueSyncSaveRequest(
+                            entityTypeId = FINDING_SYNC_ENTITY_TYPE,
+                            entityId = request.findingId,
+                        ),
                     )
                 }
             }

@@ -27,6 +27,7 @@ import cz.adamec.timotej.snag.lib.design.fe.error.toUiError
 import cz.adamec.timotej.snag.projects.fe.app.api.DeleteProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.GetProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.SetProjectClosedUseCase
+import cz.adamec.timotej.snag.projects.fe.app.api.model.SetProjectClosedRequest
 import cz.adamec.timotej.snag.structures.fe.app.api.GetStructuresUseCase
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.channels.Channel
@@ -218,7 +219,13 @@ internal class ProjectDetailsViewModel(
     fun onToggleClose() =
         viewModelScope.launch {
             _state.update { it.copy(isClosingOrReopening = true) }
-            val result = setProjectClosedUseCase(projectId, isClosed = !state.value.isClosed)
+            val result =
+                setProjectClosedUseCase(
+                    SetProjectClosedRequest(
+                        projectId = projectId,
+                        isClosed = !state.value.isClosed,
+                    ),
+                )
             if (result is OnlineDataResult.Failure) {
                 errorEventsChannel.send(result.toUiError())
             }

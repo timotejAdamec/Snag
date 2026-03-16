@@ -25,6 +25,7 @@ import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.core.fe.log
 import cz.adamec.timotej.snag.lib.core.fe.map
 import cz.adamec.timotej.snag.lib.sync.fe.app.api.EnqueueSyncSaveUseCase
+import cz.adamec.timotej.snag.lib.sync.fe.app.api.model.EnqueueSyncSaveRequest
 import kotlin.uuid.Uuid
 
 class SaveNewFindingUseCaseImpl(
@@ -56,8 +57,10 @@ class SaveNewFindingUseCaseImpl(
                 )
                 if (it is OfflineFirstDataResult.Success) {
                     enqueueSyncSaveUseCase(
-                        entityTypeId = FINDING_SYNC_ENTITY_TYPE,
-                        entityId = finding.id,
+                        EnqueueSyncSaveRequest(
+                            entityTypeId = FINDING_SYNC_ENTITY_TYPE,
+                            entityId = finding.id,
+                        ),
                     )
                 }
             }.map {

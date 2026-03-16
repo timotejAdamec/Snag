@@ -18,6 +18,7 @@ import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
 import cz.adamec.timotej.snag.projects.business.Project
 import cz.adamec.timotej.snag.projects.fe.app.api.SetProjectClosedUseCase
+import cz.adamec.timotej.snag.projects.fe.app.api.model.SetProjectClosedRequest
 import cz.adamec.timotej.snag.projects.fe.driven.test.FakeProjectsApi
 import cz.adamec.timotej.snag.projects.fe.driven.test.FakeProjectsDb
 import cz.adamec.timotej.snag.projects.fe.model.FrontendProject
@@ -70,7 +71,7 @@ class SetProjectClosedUseCaseImplTest : FrontendKoinInitializedTest() {
         runTest(testDispatcher) {
             seedOpenProject()
 
-            val result = useCase(projectId, isClosed = true)
+            val result = useCase(SetProjectClosedRequest(projectId = projectId, isClosed = true))
 
             assertIs<OnlineDataResult.Success<Unit>>(result)
             val dbResult = fakeProjectsDb.getProject(projectId)
@@ -83,7 +84,7 @@ class SetProjectClosedUseCaseImplTest : FrontendKoinInitializedTest() {
         runTest(testDispatcher) {
             seedClosedProject()
 
-            val result = useCase(projectId, isClosed = false)
+            val result = useCase(SetProjectClosedRequest(projectId = projectId, isClosed = false))
 
             assertIs<OnlineDataResult.Success<Unit>>(result)
             val dbResult = fakeProjectsDb.getProject(projectId)
@@ -97,7 +98,7 @@ class SetProjectClosedUseCaseImplTest : FrontendKoinInitializedTest() {
             seedOpenProject()
             fakeProjectsApi.forcedFailure = OnlineDataResult.Failure.NetworkUnavailable
 
-            val result = useCase(projectId, isClosed = true)
+            val result = useCase(SetProjectClosedRequest(projectId = projectId, isClosed = true))
 
             assertIs<OnlineDataResult.Failure.NetworkUnavailable>(result)
             val dbResult = fakeProjectsDb.getProject(projectId)
@@ -108,7 +109,7 @@ class SetProjectClosedUseCaseImplTest : FrontendKoinInitializedTest() {
     @Test
     fun `returns ProgrammerError when project not found`() =
         runTest(testDispatcher) {
-            val result = useCase(projectId, isClosed = true)
+            val result = useCase(SetProjectClosedRequest(projectId = projectId, isClosed = true))
 
             assertIs<OnlineDataResult.Failure.ProgrammerError>(result)
         }

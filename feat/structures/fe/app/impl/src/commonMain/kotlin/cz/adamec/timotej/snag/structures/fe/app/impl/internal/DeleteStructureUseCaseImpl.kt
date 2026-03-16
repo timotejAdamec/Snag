@@ -16,6 +16,7 @@ import cz.adamec.timotej.snag.findings.fe.app.api.CascadeDeleteLocalFindingsBySt
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.core.fe.log
 import cz.adamec.timotej.snag.lib.sync.fe.app.api.EnqueueSyncDeleteUseCase
+import cz.adamec.timotej.snag.lib.sync.fe.app.api.model.EnqueueSyncDeleteRequest
 import cz.adamec.timotej.snag.structures.fe.app.api.DeleteStructureUseCase
 import cz.adamec.timotej.snag.structures.fe.app.impl.internal.LH.logger
 import cz.adamec.timotej.snag.structures.fe.app.impl.internal.sync.STRUCTURE_SYNC_ENTITY_TYPE
@@ -38,8 +39,10 @@ class DeleteStructureUseCaseImpl(
                 )
                 if (it is OfflineFirstDataResult.Success) {
                     enqueueSyncDeleteUseCase(
-                        entityTypeId = STRUCTURE_SYNC_ENTITY_TYPE,
-                        entityId = structureId,
+                        EnqueueSyncDeleteRequest(
+                            entityTypeId = STRUCTURE_SYNC_ENTITY_TYPE,
+                            entityId = structureId,
+                        ),
                     )
                 }
             }

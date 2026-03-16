@@ -13,22 +13,27 @@
 package cz.adamec.timotej.snag.structures.be.app.impl.internal
 
 import cz.adamec.timotej.snag.feat.structures.be.model.BackendStructure
-import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.structures.be.app.api.GetStructuresModifiedSinceUseCase
+import cz.adamec.timotej.snag.structures.be.app.api.model.GetStructuresModifiedSinceRequest
 import cz.adamec.timotej.snag.structures.be.app.impl.internal.LH.logger
 import cz.adamec.timotej.snag.structures.be.ports.StructuresDb
-import kotlin.uuid.Uuid
 
 internal class GetStructuresModifiedSinceUseCaseImpl(
     private val structuresDb: StructuresDb,
 ) : GetStructuresModifiedSinceUseCase {
-    override suspend operator fun invoke(
-        projectId: Uuid,
-        since: Timestamp,
-    ): List<BackendStructure> {
-        logger.debug("Getting structures modified since {} for project {} from local storage.", since, projectId)
-        return structuresDb.getStructuresModifiedSince(projectId, since).also {
-            logger.debug("Got {} structures modified since {} for project {} from local storage.", it.size, since, projectId)
+    override suspend operator fun invoke(request: GetStructuresModifiedSinceRequest): List<BackendStructure> {
+        logger.debug(
+            "Getting structures modified since {} for project {} from local storage.",
+            request.since,
+            request.projectId,
+        )
+        return structuresDb.getStructuresModifiedSince(request.projectId, request.since).also {
+            logger.debug(
+                "Got {} structures modified since {} for project {} from local storage.",
+                it.size,
+                request.since,
+                request.projectId,
+            )
         }
     }
 }

@@ -10,10 +10,11 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.projects.be.app.api
+package cz.adamec.timotej.snag.projects.be.app.api.model
 
-import cz.adamec.timotej.snag.projects.be.app.api.model.AssignUserToProjectRequest
+import kotlin.uuid.Uuid
 
-interface AssignUserToProjectUseCase {
-    suspend operator fun invoke(request: AssignUserToProjectRequest)
-}
+data class RemoveUserFromProjectRequest(
+    val userId: Uuid,
+    val projectId: Uuid,
+)

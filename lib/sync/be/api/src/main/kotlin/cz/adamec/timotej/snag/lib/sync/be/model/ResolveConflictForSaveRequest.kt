@@ -10,10 +10,9 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.projects.be.app.api
+package cz.adamec.timotej.snag.lib.sync.be.model
 
-import cz.adamec.timotej.snag.projects.be.app.api.model.AssignUserToProjectRequest
-
-interface AssignUserToProjectUseCase {
-    suspend operator fun invoke(request: AssignUserToProjectRequest)
-}
+data class ResolveConflictForSaveRequest<T : Syncable>(
+    val existing: T?,
+    val incoming: T,
+)

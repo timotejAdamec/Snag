@@ -10,10 +10,12 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.projects.be.app.api
+package cz.adamec.timotej.snag.feat.inspections.be.app.api.model
 
-import cz.adamec.timotej.snag.projects.be.app.api.model.AssignUserToProjectRequest
+import cz.adamec.timotej.snag.lib.core.common.Timestamp
+import kotlin.uuid.Uuid
 
-interface AssignUserToProjectUseCase {
-    suspend operator fun invoke(request: AssignUserToProjectRequest)
-}
+data class GetInspectionsModifiedSinceRequest(
+    val projectId: Uuid,
+    val since: Timestamp,
+)

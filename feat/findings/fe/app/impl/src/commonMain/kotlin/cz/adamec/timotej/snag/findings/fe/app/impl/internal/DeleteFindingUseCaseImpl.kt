@@ -19,6 +19,7 @@ import cz.adamec.timotej.snag.findings.fe.ports.FindingsDb
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.core.fe.log
 import cz.adamec.timotej.snag.lib.sync.fe.app.api.EnqueueSyncDeleteUseCase
+import cz.adamec.timotej.snag.lib.sync.fe.app.api.model.EnqueueSyncDeleteRequest
 import kotlin.uuid.Uuid
 
 class DeleteFindingUseCaseImpl(
@@ -35,8 +36,10 @@ class DeleteFindingUseCaseImpl(
                 )
                 if (it is OfflineFirstDataResult.Success) {
                     enqueueSyncDeleteUseCase(
-                        entityTypeId = FINDING_SYNC_ENTITY_TYPE,
-                        entityId = findingId,
+                        EnqueueSyncDeleteRequest(
+                            entityTypeId = FINDING_SYNC_ENTITY_TYPE,
+                            entityId = findingId,
+                        ),
                     )
                 }
             }

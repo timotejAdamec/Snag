@@ -13,12 +13,8 @@
 package cz.adamec.timotej.snag.findings.be.app.api
 
 import cz.adamec.timotej.snag.feat.findings.be.model.BackendFinding
-import cz.adamec.timotej.snag.lib.core.common.Timestamp
-import kotlin.uuid.Uuid
+import cz.adamec.timotej.snag.findings.be.app.api.model.GetFindingsModifiedSinceRequest
 
 interface GetFindingsModifiedSinceUseCase {
-    suspend operator fun invoke(
-        structureId: Uuid,
-        since: Timestamp,
-    ): List<BackendFinding>
+    suspend operator fun invoke(request: GetFindingsModifiedSinceRequest): List<BackendFinding>
 }

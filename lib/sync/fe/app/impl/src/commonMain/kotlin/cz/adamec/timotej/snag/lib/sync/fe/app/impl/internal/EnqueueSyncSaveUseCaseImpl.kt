@@ -13,16 +13,13 @@
 package cz.adamec.timotej.snag.lib.sync.fe.app.impl.internal
 
 import cz.adamec.timotej.snag.lib.sync.fe.app.api.EnqueueSyncSaveUseCase
+import cz.adamec.timotej.snag.lib.sync.fe.app.api.model.EnqueueSyncSaveRequest
 import cz.adamec.timotej.snag.lib.sync.fe.model.SyncOperationType
-import kotlin.uuid.Uuid
 
 internal class EnqueueSyncSaveUseCaseImpl(
     private val enqueueSyncOperationUseCase: EnqueueSyncOperationUseCase,
 ) : EnqueueSyncSaveUseCase {
-    override suspend fun invoke(
-        entityTypeId: String,
-        entityId: Uuid,
-    ) {
-        enqueueSyncOperationUseCase(entityTypeId, entityId, SyncOperationType.UPSERT)
+    override suspend fun invoke(request: EnqueueSyncSaveRequest) {
+        enqueueSyncOperationUseCase(request.entityTypeId, request.entityId, SyncOperationType.UPSERT)
     }
 }

@@ -19,6 +19,7 @@ import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionsDb
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.core.fe.log
 import cz.adamec.timotej.snag.lib.sync.fe.app.api.EnqueueSyncDeleteUseCase
+import cz.adamec.timotej.snag.lib.sync.fe.app.api.model.EnqueueSyncDeleteRequest
 import kotlin.uuid.Uuid
 
 class DeleteInspectionUseCaseImpl(
@@ -35,8 +36,10 @@ class DeleteInspectionUseCaseImpl(
                 )
                 if (it is OfflineFirstDataResult.Success) {
                     enqueueSyncDeleteUseCase(
-                        entityTypeId = INSPECTION_SYNC_ENTITY_TYPE,
-                        entityId = inspectionId,
+                        EnqueueSyncDeleteRequest(
+                            entityTypeId = INSPECTION_SYNC_ENTITY_TYPE,
+                            entityId = inspectionId,
+                        ),
                     )
                 }
             }

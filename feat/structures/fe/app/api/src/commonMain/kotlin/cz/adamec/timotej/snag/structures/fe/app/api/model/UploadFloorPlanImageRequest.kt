@@ -10,10 +10,13 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.projects.be.app.api
+package cz.adamec.timotej.snag.structures.fe.app.api.model
 
-import cz.adamec.timotej.snag.projects.be.app.api.model.AssignUserToProjectRequest
+import kotlin.uuid.Uuid
 
-interface AssignUserToProjectUseCase {
-    suspend operator fun invoke(request: AssignUserToProjectRequest)
-}
+data class UploadFloorPlanImageRequest(
+    val projectId: Uuid,
+    val structureId: Uuid,
+    val bytes: ByteArray,
+    val fileName: String,
+)

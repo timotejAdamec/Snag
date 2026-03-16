@@ -20,6 +20,7 @@ import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.core.fe.log
 import cz.adamec.timotej.snag.lib.core.fe.map
 import cz.adamec.timotej.snag.lib.sync.fe.app.api.EnqueueSyncSaveUseCase
+import cz.adamec.timotej.snag.lib.sync.fe.app.api.model.EnqueueSyncSaveRequest
 import cz.adamec.timotej.snag.structures.fe.app.api.SaveStructureUseCase
 import cz.adamec.timotej.snag.structures.fe.app.api.model.SaveStructureRequest
 import cz.adamec.timotej.snag.structures.fe.app.impl.internal.LH.logger
@@ -55,8 +56,10 @@ class SaveStructureUseCaseImpl(
                 )
                 if (it is OfflineFirstDataResult.Success) {
                     enqueueSyncSaveUseCase(
-                        entityTypeId = STRUCTURE_SYNC_ENTITY_TYPE,
-                        entityId = feStructure.structure.id,
+                        EnqueueSyncSaveRequest(
+                            entityTypeId = STRUCTURE_SYNC_ENTITY_TYPE,
+                            entityId = feStructure.structure.id,
+                        ),
                     )
                 }
             }.map {

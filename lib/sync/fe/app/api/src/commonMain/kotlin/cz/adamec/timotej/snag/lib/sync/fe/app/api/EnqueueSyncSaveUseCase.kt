@@ -12,21 +12,18 @@
 
 package cz.adamec.timotej.snag.lib.sync.fe.app.api
 
-import kotlin.uuid.Uuid
+import cz.adamec.timotej.snag.lib.sync.fe.app.api.model.EnqueueSyncSaveRequest
 
 /**
  * Enqueues a save (upsert) sync operation for the given entity.
  *
  * Make sure a [cz.adamec.timotej.snag.lib.sync.fe.app.api.handler.SyncOperationHandler] is registered
- * for the given [entityTypeId].
+ * for the given [EnqueueSyncSaveRequest.entityTypeId].
  */
 interface EnqueueSyncSaveUseCase {
     /**
      * @throws IllegalArgumentException if [cz.adamec.timotej.snag.lib.sync.fe.app.api.handler.SyncOperationHandler]
-     * is not registered for given [entityTypeId].
+     * is not registered for given [EnqueueSyncSaveRequest.entityTypeId].
      */
-    suspend operator fun invoke(
-        entityTypeId: String,
-        entityId: Uuid,
-    )
+    suspend operator fun invoke(request: EnqueueSyncSaveRequest)
 }
