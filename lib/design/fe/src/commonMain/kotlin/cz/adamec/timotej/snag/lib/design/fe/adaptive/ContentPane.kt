@@ -16,9 +16,18 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 val ContentPaneSpacing = 12.dp
+
+object ContentPaneDefaults {
+    val containerColor: Color
+        @Composable get() = MaterialTheme.colorScheme.surfaceContainerLow
+
+    val paneColor: Color
+        @Composable get() = MaterialTheme.colorScheme.surface
+}
 
 @Composable
 fun ContentPane(
@@ -28,7 +37,7 @@ fun ContentPane(
     Surface(
         modifier = modifier,
         shape = MaterialTheme.shapes.extraLarge,
-        color = MaterialTheme.colorScheme.surface,
+        color = ContentPaneDefaults.paneColor,
     ) {
         content()
     }

@@ -15,7 +15,6 @@ package cz.adamec.timotej.snag.ui
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.consumeWindowInsets
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.WideNavigationRailDefaults
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteDefaults
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
@@ -27,6 +26,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import cz.adamec.timotej.snag.lib.design.fe.adaptive.ContentPaneDefaults
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.AppScaffold
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.SyncStatusBar
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.SyncStatusBarState
@@ -51,7 +51,7 @@ internal fun MainScreen(
     val syncStatus by mainViewModel.syncStatus.collectAsStateWithLifecycle()
     SnagTheme {
         AppScaffold(
-            containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+            containerColor = ContentPaneDefaults.containerColor,
         ) { paddingValues ->
             MainScreenContent(
                 paddingValues = paddingValues,
@@ -97,7 +97,7 @@ private fun MainScreenContent(
             mutableStateOf(TopLevelDestination.PROJECTS)
         }
 
-        val tintedBackground = MaterialTheme.colorScheme.surfaceContainerLow
+        val tintedBackground = ContentPaneDefaults.containerColor
         NavigationSuiteScaffold(
             modifier = navigationModifier,
             containerColor = tintedBackground,
