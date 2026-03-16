@@ -53,7 +53,9 @@ private class ContentPaneScene<T : Any>(
             ContentPane(
                 modifier =
                     Modifier.systemBarsPaddingCoerceAtLeast(
+                        top = ContentPaneSpacing,
                         end = ContentPaneSpacing,
+                        bottom = ContentPaneSpacing,
                     ),
             ) {
                 entry.Content()

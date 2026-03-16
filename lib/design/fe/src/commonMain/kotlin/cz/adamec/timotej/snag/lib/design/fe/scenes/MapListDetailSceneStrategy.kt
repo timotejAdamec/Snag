@@ -111,7 +111,9 @@ private class AdaptiveMapListDetailScene<T : Any>(
                         Modifier
                             .fillMaxSize()
                             .systemBarsPaddingCoerceAtLeast(
+                                top = ContentPaneSpacing,
                                 end = ContentPaneSpacing,
+                                bottom = ContentPaneSpacing,
                             ),
                     horizontalArrangement = Arrangement.spacedBy(ContentPaneSpacing),
                 ) {
@@ -133,7 +135,9 @@ private class AdaptiveMapListDetailScene<T : Any>(
                         Modifier
                             .fillMaxSize()
                             .systemBarsPaddingCoerceAtLeast(
+                                top = ContentPaneSpacing,
                                 end = ContentPaneSpacing,
+                                bottom = ContentPaneSpacing,
                             ),
                     horizontalArrangement = Arrangement.spacedBy(ContentPaneSpacing),
                 ) {

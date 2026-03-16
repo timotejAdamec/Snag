@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -35,22 +34,22 @@ fun Modifier.systemBarsPaddingCoerceAtLeast(
     end: Dp = 0.dp,
     bottom: Dp = 0.dp,
 ): Modifier {
-    val statusBarsPadding = WindowInsets.statusBars.asPaddingValues()
+    val systemBarsPadding = WindowInsets.systemBars.asPaddingValues()
     val padding = PaddingValues(
         start =
-            statusBarsPadding
+            systemBarsPadding
                 .calculateStartPadding(LayoutDirection.Ltr)
                 .coerceAtLeast(start),
         top =
-            statusBarsPadding
+            systemBarsPadding
                 .calculateTopPadding()
                 .coerceAtLeast(top),
         end =
-            statusBarsPadding
+            systemBarsPadding
                 .calculateEndPadding(LayoutDirection.Ltr)
                 .coerceAtLeast(end),
         bottom =
-            statusBarsPadding
+            systemBarsPadding
                 .calculateBottomPadding()
                 .coerceAtLeast(bottom),
     )
