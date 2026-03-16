@@ -13,7 +13,6 @@
 package cz.adamec.timotej.snag.clients.fe.driving.impl.internal.clientDetailsEdit.ui
 
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
@@ -28,6 +27,7 @@ import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.window.core.layout.WindowSizeClass
 import cz.adamec.timotej.snag.clients.fe.driving.impl.internal.clientDetailsEdit.vm.ClientDetailsEditViewModel
 import cz.adamec.timotej.snag.lib.design.fe.adaptive.isScreenLarge
+import cz.adamec.timotej.snag.lib.design.fe.dialog.dialogPadding
 import cz.adamec.timotej.snag.lib.design.fe.error.ShowSnackbarOnError
 import cz.adamec.timotej.snag.lib.design.fe.events.ObserveAsEvents
 import org.koin.compose.viewmodel.koinViewModel
@@ -63,7 +63,7 @@ internal fun ClientDetailsEditScreen(
     val modifier =
         if (isScreenLarge()) {
             Modifier
-                .padding(vertical = 32.dp)
+                .dialogPadding()
                 .clip(shape = MaterialTheme.shapes.large)
                 .widthIn(max = WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND.dp)
         } else {

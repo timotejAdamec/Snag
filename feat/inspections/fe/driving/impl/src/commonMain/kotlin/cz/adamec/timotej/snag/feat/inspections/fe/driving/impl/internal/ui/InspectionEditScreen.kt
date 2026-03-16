@@ -12,11 +12,7 @@
 
 package cz.adamec.timotej.snag.feat.inspections.fe.driving.impl.internal.ui
 
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
@@ -31,6 +27,7 @@ import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.window.core.layout.WindowSizeClass
 import cz.adamec.timotej.snag.feat.inspections.fe.driving.impl.internal.vm.InspectionEditViewModel
 import cz.adamec.timotej.snag.lib.design.fe.adaptive.isScreenLarge
+import cz.adamec.timotej.snag.lib.design.fe.dialog.dialogPadding
 import cz.adamec.timotej.snag.lib.design.fe.error.ShowSnackbarOnError
 import cz.adamec.timotej.snag.lib.design.fe.events.ObserveAsEvents
 import org.koin.compose.viewmodel.koinViewModel
@@ -67,8 +64,7 @@ internal fun InspectionEditScreen(
     val modifier =
         if (isScreenLarge()) {
             Modifier
-                .padding(vertical = 32.dp)
-                .consumeWindowInsets(WindowInsets.systemBars)
+                .dialogPadding()
                 .clip(shape = MaterialTheme.shapes.large)
                 .widthIn(max = WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND.dp)
         } else {

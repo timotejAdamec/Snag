@@ -27,7 +27,6 @@ import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.window.core.layout.WindowSizeClass
 import cz.adamec.timotej.snag.lib.design.fe.adaptive.isScreenLarge
 import cz.adamec.timotej.snag.lib.design.fe.dialog.dialogPadding
-import cz.adamec.timotej.snag.lib.design.fe.layout.systemBarsPaddingCoerceAtLeast
 import cz.adamec.timotej.snag.lib.design.fe.error.ShowSnackbarOnError
 import cz.adamec.timotej.snag.lib.design.fe.events.ObserveAsEvents
 import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.structureDetailsEdit.vm.StructureDetailsEditViewModel

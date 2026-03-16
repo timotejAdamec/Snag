@@ -12,11 +12,7 @@
 
 package cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetailsEdit.ui
 
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
@@ -33,6 +29,7 @@ import cz.adamec.timotej.snag.feat.findings.business.FindingTypeKey
 import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
 import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetailsEdit.vm.FindingDetailsEditViewModel
 import cz.adamec.timotej.snag.lib.design.fe.adaptive.isScreenLarge
+import cz.adamec.timotej.snag.lib.design.fe.dialog.dialogPadding
 import cz.adamec.timotej.snag.lib.design.fe.error.ShowSnackbarOnError
 import cz.adamec.timotej.snag.lib.design.fe.events.ObserveAsEvents
 import org.koin.compose.viewmodel.koinViewModel
@@ -72,8 +69,7 @@ internal fun FindingDetailsEditScreen(
     val modifier =
         if (isScreenLarge()) {
             Modifier
-                .padding(vertical = 32.dp)
-                .consumeWindowInsets(WindowInsets.systemBars)
+                .dialogPadding()
                 .clip(shape = MaterialTheme.shapes.large)
                 .widthIn(max = WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND.dp)
         } else {

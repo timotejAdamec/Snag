@@ -12,11 +12,7 @@
 
 package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetailsEdit.ui
 
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
@@ -30,6 +26,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.window.core.layout.WindowSizeClass
 import cz.adamec.timotej.snag.lib.design.fe.adaptive.isScreenLarge
+import cz.adamec.timotej.snag.lib.design.fe.dialog.dialogPadding
 import cz.adamec.timotej.snag.lib.design.fe.error.ShowSnackbarOnError
 import cz.adamec.timotej.snag.lib.design.fe.events.ObserveAsEvents
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetailsEdit.vm.ProjectDetailsEditViewModel
@@ -67,8 +64,7 @@ internal fun ProjectDetailsEditScreen(
     val modifier =
         if (isScreenLarge()) {
             Modifier
-                .padding(vertical = 32.dp)
-                .consumeWindowInsets(WindowInsets.systemBars)
+                .dialogPadding()
                 .clip(shape = MaterialTheme.shapes.large)
                 .widthIn(max = WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND.dp)
         } else {
