@@ -16,10 +16,6 @@ import cz.adamec.timotej.snag.clients.be.model.BackendClient
 import cz.adamec.timotej.snag.clients.be.ports.ClientsDb
 import cz.adamec.timotej.snag.clients.business.Client
 import cz.adamec.timotej.snag.configuration.be.AppConfiguration
-import cz.adamec.timotej.snag.users.be.model.BackendUser
-import cz.adamec.timotej.snag.users.be.ports.UsersDb
-import cz.adamec.timotej.snag.users.business.User
-import cz.adamec.timotej.snag.users.business.UserRole
 import cz.adamec.timotej.snag.feat.findings.be.model.BackendFinding
 import cz.adamec.timotej.snag.feat.findings.business.Finding
 import cz.adamec.timotej.snag.feat.findings.business.FindingType
@@ -38,6 +34,10 @@ import cz.adamec.timotej.snag.projects.be.model.BackendProject
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
 import cz.adamec.timotej.snag.projects.business.Project
 import cz.adamec.timotej.snag.structures.be.ports.StructuresDb
+import cz.adamec.timotej.snag.users.be.model.BackendUser
+import cz.adamec.timotej.snag.users.be.ports.UsersDb
+import cz.adamec.timotej.snag.users.business.User
+import cz.adamec.timotej.snag.users.business.UserRole
 import io.ktor.server.application.Application
 import kotlinx.coroutines.runBlocking
 import kotlin.uuid.Uuid
@@ -62,6 +62,7 @@ internal class DevDataSeederConfiguration(
         }
     }
 
+    @Suppress("LongMethod")
     private suspend fun seedUsers() {
         val now = timestampProvider.getNowTimestamp()
         listOf(

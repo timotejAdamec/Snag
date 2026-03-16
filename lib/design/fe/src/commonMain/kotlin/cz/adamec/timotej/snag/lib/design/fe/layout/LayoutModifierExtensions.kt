@@ -35,30 +35,35 @@ fun Modifier.systemBarsPaddingCoerceAtLeast(
     bottom: Dp = 0.dp,
 ): Modifier {
     val systemBarsPadding = WindowInsets.systemBars.asPaddingValues()
-    val padding = PaddingValues(
-        start =
-            systemBarsPadding
-                .calculateStartPadding(LayoutDirection.Ltr)
-                .coerceAtLeast(start),
-        top =
-            systemBarsPadding
-                .calculateTopPadding()
-                .coerceAtLeast(top),
-        end =
-            systemBarsPadding
-                .calculateEndPadding(LayoutDirection.Ltr)
-                .coerceAtLeast(end),
-        bottom =
-            systemBarsPadding
-                .calculateBottomPadding()
-                .coerceAtLeast(bottom),
-    )
+    val padding =
+        PaddingValues(
+            start =
+                systemBarsPadding
+                    .calculateStartPadding(LayoutDirection.Ltr)
+                    .coerceAtLeast(start),
+            top =
+                systemBarsPadding
+                    .calculateTopPadding()
+                    .coerceAtLeast(top),
+            end =
+                systemBarsPadding
+                    .calculateEndPadding(LayoutDirection.Ltr)
+                    .coerceAtLeast(end),
+            bottom =
+                systemBarsPadding
+                    .calculateBottomPadding()
+                    .coerceAtLeast(bottom),
+        )
     return this
         .padding(padding)
         .consumeWindowInsets(WindowInsets.systemBars)
 }
 
 @Composable
-fun Modifier.systemBarsPaddingCoerceAtLeast(
-    all: Dp,
-): Modifier = systemBarsPaddingCoerceAtLeast(all, all, all, all)
+fun Modifier.systemBarsPaddingCoerceAtLeast(all: Dp): Modifier =
+    systemBarsPaddingCoerceAtLeast(
+        start = all,
+        top = all,
+        end = all,
+        bottom = all,
+    )
