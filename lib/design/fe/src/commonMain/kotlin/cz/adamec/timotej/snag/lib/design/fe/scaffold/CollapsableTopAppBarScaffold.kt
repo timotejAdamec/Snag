@@ -46,8 +46,20 @@ fun CollapsableTopAppBarScaffold(
             state = rememberTopAppBarState(),
         )
 
+    val isInContentPane = LocalIsInContentPane.current
     val scaffoldContainerColor =
-        if (LocalIsInContentPane.current) Color.Transparent else Color.Unspecified
+        if (isInContentPane) Color.Transparent else Color.Unspecified
+    val topAppBarColors =
+        if (isInContentPane) {
+            TopAppBarDefaults.topAppBarColors(
+                containerColor = Color.Transparent,
+                scrolledContainerColor = Color.Transparent,
+            )
+        } else {
+            TopAppBarDefaults.topAppBarColors(
+                scrolledContainerColor = TopAppBarDefaults.topAppBarColors().containerColor,
+            )
+        }
 
     Scaffold(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -77,10 +89,7 @@ fun CollapsableTopAppBarScaffold(
                 scrollBehavior = scrollBehavior,
                 navigationIcon = topAppBarNavigationIcon,
                 actions = topAppBarActions,
-                colors =
-                    TopAppBarDefaults.topAppBarColors(
-                        scrolledContainerColor = TopAppBarDefaults.topAppBarColors().containerColor,
-                    ),
+                colors = topAppBarColors,
             )
         },
         bottomBar = bottomBar,
