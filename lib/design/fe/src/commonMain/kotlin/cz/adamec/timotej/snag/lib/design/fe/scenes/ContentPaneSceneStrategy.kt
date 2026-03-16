@@ -29,6 +29,7 @@ import cz.adamec.timotej.snag.lib.design.fe.adaptive.isScreenWide
 class ContentPaneSceneStrategy<T : Any> : SceneStrategy<T> {
     override fun SceneStrategyScope<T>.calculateScene(entries: List<NavEntry<T>>): Scene<T>? {
         val lastEntry = entries.lastOrNull() ?: return null
+        if (lastEntry.metadata.containsKey(ContentPaneSceneMetadata.SKIP_KEY)) return null
         return ContentPaneScene(
             key = lastEntry.contentKey,
             entries = listOf(lastEntry),
@@ -36,6 +37,12 @@ class ContentPaneSceneStrategy<T : Any> : SceneStrategy<T> {
             entry = lastEntry,
         )
     }
+}
+
+object ContentPaneSceneMetadata {
+    const val SKIP_KEY = "ContentPane-Skip"
+
+    fun skip(): Map<String, Any> = mapOf(SKIP_KEY to true)
 }
 
 private class ContentPaneScene<T : Any>(
