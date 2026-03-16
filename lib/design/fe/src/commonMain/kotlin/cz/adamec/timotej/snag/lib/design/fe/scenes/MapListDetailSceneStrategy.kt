@@ -23,8 +23,6 @@ import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.systemBars
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.SheetValue
@@ -47,6 +45,7 @@ import cz.adamec.timotej.snag.lib.design.fe.adaptive.ContentPane
 import cz.adamec.timotej.snag.lib.design.fe.adaptive.ContentPaneSpacing
 import cz.adamec.timotej.snag.lib.design.fe.adaptive.isScreenExtraWide
 import cz.adamec.timotej.snag.lib.design.fe.adaptive.isScreenWide
+import cz.adamec.timotej.snag.lib.design.fe.layout.systemBarsPaddingCoerceAtLeast
 
 class MapListDetailSceneStrategy<T : Any> : SceneStrategy<T> {
     @Suppress("ReturnCount")
@@ -111,8 +110,9 @@ private class AdaptiveMapListDetailScene<T : Any>(
                     modifier =
                         Modifier
                             .fillMaxSize()
-                            .windowInsetsPadding(WindowInsets.systemBars)
-                            .padding(end = ContentPaneSpacing),
+                            .systemBarsPaddingCoerceAtLeast(
+                                end = ContentPaneSpacing,
+                            ),
                     horizontalArrangement = Arrangement.spacedBy(ContentPaneSpacing),
                 ) {
                     ContentPane(modifier = Modifier.weight(HALF_WEIGHT)) {
@@ -132,8 +132,9 @@ private class AdaptiveMapListDetailScene<T : Any>(
                     modifier =
                         Modifier
                             .fillMaxSize()
-                            .windowInsetsPadding(WindowInsets.systemBars)
-                            .padding(end = ContentPaneSpacing),
+                            .systemBarsPaddingCoerceAtLeast(
+                                end = ContentPaneSpacing,
+                            ),
                     horizontalArrangement = Arrangement.spacedBy(ContentPaneSpacing),
                 ) {
                     ContentPane(modifier = Modifier.weight(HALF_WEIGHT)) {

@@ -12,10 +12,6 @@
 
 package cz.adamec.timotej.snag.lib.design.fe.scenes
 
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBars
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation3.runtime.NavEntry
@@ -25,6 +21,7 @@ import androidx.navigation3.scene.SceneStrategyScope
 import cz.adamec.timotej.snag.lib.design.fe.adaptive.ContentPane
 import cz.adamec.timotej.snag.lib.design.fe.adaptive.ContentPaneSpacing
 import cz.adamec.timotej.snag.lib.design.fe.adaptive.isScreenWide
+import cz.adamec.timotej.snag.lib.design.fe.layout.systemBarsPaddingCoerceAtLeast
 
 class ContentPaneSceneStrategy<T : Any> : SceneStrategy<T> {
     override fun SceneStrategyScope<T>.calculateScene(entries: List<NavEntry<T>>): Scene<T>? {
@@ -55,9 +52,9 @@ private class ContentPaneScene<T : Any>(
         if (isScreenWide()) {
             ContentPane(
                 modifier =
-                    Modifier
-                        .windowInsetsPadding(WindowInsets.systemBars)
-                        .padding(end = ContentPaneSpacing),
+                    Modifier.systemBarsPaddingCoerceAtLeast(
+                        end = ContentPaneSpacing,
+                    ),
             ) {
                 entry.Content()
             }
