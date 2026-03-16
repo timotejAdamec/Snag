@@ -25,8 +25,11 @@ import cz.adamec.timotej.snag.lib.design.fe.layout.systemBarsPaddingCoerceAtLeas
 
 class ContentPaneSceneStrategy<T : Any> : SceneStrategy<T> {
     override fun SceneStrategyScope<T>.calculateScene(entries: List<NavEntry<T>>): Scene<T>? {
-        val lastEntry = entries.lastOrNull() ?: return null
-        if (lastEntry.metadata.containsKey(ContentPaneSceneMetadata.SKIP_KEY)) return null
+        val lastEntry =
+            entries
+                .lastOrNull()
+                ?.takeUnless { it.metadata.containsKey(ContentPaneSceneMetadata.SKIP_KEY) }
+                ?: return null
         return ContentPaneScene(
             key = lastEntry.contentKey,
             entries = listOf(lastEntry),
@@ -48,6 +51,7 @@ private class ContentPaneScene<T : Any>(
     override val previousEntries: List<NavEntry<T>>,
     private val entry: NavEntry<T>,
 ) : Scene<T> {
+    @Suppress("UnnecessaryFullyQualifiedName")
     override val content: @Composable () -> Unit = {
         if (isScreenWide()) {
             ContentPane(

@@ -1,6 +1,6 @@
 [*.{kt,kts}]
 ktlint_function_naming_ignore_when_annotated_with=Composable
-compose_allowed_composition_locals=LocalAppScaffoldState,LocalIsInSheet,LocalSheetPeekHeight
+compose_allowed_composition_locals=LocalAppScaffoldState,LocalIsInContentPane,LocalIsInSheet,LocalSheetPeekHeight
 
 [**/build/generated/**]
 ktlint=disabled
