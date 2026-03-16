@@ -18,7 +18,7 @@ import cz.adamec.timotej.snag.feat.inspections.be.app.impl.internal.LH.logger
 import cz.adamec.timotej.snag.feat.inspections.be.model.BackendInspection
 import cz.adamec.timotej.snag.feat.inspections.be.ports.InspectionsDb
 import cz.adamec.timotej.snag.projects.be.app.api.GetProjectUseCase
-import cz.adamec.timotej.snag.projects.business.CanEditProjectEntitiesRule
+import cz.adamec.timotej.snag.projects.business.model.CanEditProjectEntitiesRule
 
 internal class DeleteInspectionUseCaseImpl(
     private val inspectionsDb: InspectionsDb,
@@ -28,8 +28,8 @@ internal class DeleteInspectionUseCaseImpl(
     override suspend operator fun invoke(request: DeleteInspectionRequest): BackendInspection? {
         val inspection = inspectionsDb.getInspection(request.inspectionId)
         if (inspection != null) {
-            val project = getProjectUseCase(inspection.inspection.projectId)
-            if (project != null && !canEditProjectEntitiesRule(project.project)) {
+            val project = getProjectUseCase(inspection.projectId)
+            if (project != null && !canEditProjectEntitiesRule(project)) {
                 return inspection
             }
         }

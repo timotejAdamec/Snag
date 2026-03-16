@@ -12,11 +12,11 @@
 
 package cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingsList.vm
 
-import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
+import cz.adamec.timotej.snag.feat.findings.app.model.AppFinding
 
 internal data class FindingsListUiState(
     val status: FindingsListUiStatus = FindingsListUiStatus.LOADED,
-    val findings: List<FrontendFinding> = emptyList(),
+    val findings: List<AppFinding> = emptyList(),
 )
 
 internal enum class FindingsListUiStatus {

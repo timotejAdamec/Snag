@@ -13,8 +13,7 @@
 package cz.adamec.timotej.snag.structures.fe.driving.impl.internal.structureDetails.vm
 
 import app.cash.turbine.test
-import cz.adamec.timotej.snag.feat.structures.business.Structure
-import cz.adamec.timotej.snag.feat.structures.fe.model.FrontendStructure
+import cz.adamec.timotej.snag.feat.structures.app.model.AppStructureData
 import cz.adamec.timotej.snag.findings.fe.app.api.GetFindingsUseCase
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
@@ -49,15 +48,12 @@ class StructureDetailsViewModelTest : FrontendKoinInitializedTest() {
     private val projectId = Uuid.parse("00000000-0000-0000-0000-000000000001")
     private val structureId = Uuid.parse("00000000-0000-0000-0001-000000000001")
     private val structure =
-        FrontendStructure(
-            structure =
-                Structure(
-                    id = structureId,
-                    projectId = projectId,
-                    name = "Ground Floor",
-                    floorPlanUrl = null,
-                    updatedAt = Timestamp(10L),
-                ),
+        AppStructureData(
+            id = structureId,
+            projectId = projectId,
+            name = "Ground Floor",
+            floorPlanUrl = null,
+            updatedAt = Timestamp(10L),
         )
 
     private fun createViewModel() =
@@ -92,7 +88,7 @@ class StructureDetailsViewModelTest : FrontendKoinInitializedTest() {
                 val loadedState = awaitItem()
                 assertEquals(StructureDetailsUiStatus.LOADED, loadedState.status)
                 assertNotNull(loadedState.feStructure)
-                assertEquals("Ground Floor", loadedState.feStructure?.structure?.name)
+                assertEquals("Ground Floor", loadedState.feStructure?.name)
 
                 cancelAndIgnoreRemainingEvents()
             }

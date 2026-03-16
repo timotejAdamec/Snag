@@ -31,8 +31,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import cz.adamec.timotej.snag.feat.findings.business.FindingTypeKey
-import cz.adamec.timotej.snag.feat.findings.business.toDefaultFindingType
+import cz.adamec.timotej.snag.feat.findings.business.model.FindingTypeKey
+import cz.adamec.timotej.snag.feat.findings.business.model.toDefaultFindingType
 import cz.adamec.timotej.snag.lib.design.fe.dialog.DividedContentDialog
 import cz.adamec.timotej.snag.lib.design.fe.theme.SnagPreview
 import org.jetbrains.compose.resources.painterResource

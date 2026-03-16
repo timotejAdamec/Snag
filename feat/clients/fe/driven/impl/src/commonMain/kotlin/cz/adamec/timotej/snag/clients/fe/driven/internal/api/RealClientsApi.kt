@@ -12,10 +12,10 @@
 
 package cz.adamec.timotej.snag.clients.fe.driven.internal.api
 
+import cz.adamec.timotej.snag.clients.app.model.AppClient
 import cz.adamec.timotej.snag.clients.be.driving.contract.ClientApiDto
 import cz.adamec.timotej.snag.clients.be.driving.contract.DeleteClientApiDto
 import cz.adamec.timotej.snag.clients.fe.driven.internal.LH
-import cz.adamec.timotej.snag.clients.fe.model.FrontendClient
 import cz.adamec.timotej.snag.clients.fe.ports.ClientSyncResult
 import cz.adamec.timotej.snag.clients.fe.ports.ClientsApi
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
@@ -30,7 +30,7 @@ import kotlin.uuid.Uuid
 internal class RealClientsApi(
     private val httpClient: SnagNetworkHttpClient,
 ) : ClientsApi {
-    override suspend fun getClients(): OnlineDataResult<List<FrontendClient>> {
+    override suspend fun getClients(): OnlineDataResult<List<AppClient>> {
         LH.logger.d { "Fetching clients..." }
         return safeApiCall(logger = LH.logger, errorContext = "Error fetching clients.") {
             httpClient.get("/clients").body<List<ClientApiDto>>().map {
@@ -39,19 +39,19 @@ internal class RealClientsApi(
         }.also { if (it is OnlineDataResult.Success) LH.logger.d { "Fetched ${it.data.size} clients." } }
     }
 
-    override suspend fun getClient(id: Uuid): OnlineDataResult<FrontendClient> {
+    override suspend fun getClient(id: Uuid): OnlineDataResult<AppClient> {
         LH.logger.d { "Fetching client $id..." }
         return safeApiCall(logger = LH.logger, errorContext = "Error fetching client $id.") {
             httpClient.get("/clients/$id").body<ClientApiDto>().toModel()
         }.also { if (it is OnlineDataResult.Success) LH.logger.d { "Fetched client $id." } }
     }
 
-    override suspend fun saveClient(client: FrontendClient): OnlineDataResult<FrontendClient?> {
-        LH.logger.d { "Saving client ${client.client.id} to API..." }
-        return safeApiCall(logger = LH.logger, errorContext = "Error saving client ${client.client.id} to API.") {
+    override suspend fun saveClient(client: AppClient): OnlineDataResult<AppClient?> {
+        LH.logger.d { "Saving client ${client.id} to API..." }
+        return safeApiCall(logger = LH.logger, errorContext = "Error saving client ${client.id} to API.") {
             val clientDto = client.toPutApiDto()
             val response =
-                httpClient.put("/clients/${client.client.id}") {
+                httpClient.put("/clients/${client.id}") {
                     setBody(clientDto)
                 }
             if (response.status != HttpStatusCode.NoContent) {
@@ -59,13 +59,13 @@ internal class RealClientsApi(
             } else {
                 null
             }
-        }.also { if (it is OnlineDataResult.Success) LH.logger.d { "Saved client ${client.client.id} to API." } }
+        }.also { if (it is OnlineDataResult.Success) LH.logger.d { "Saved client ${client.id} to API." } }
     }
 
     override suspend fun deleteClient(
         id: Uuid,
         deletedAt: Timestamp,
-    ): OnlineDataResult<FrontendClient?> {
+    ): OnlineDataResult<AppClient?> {
         LH.logger.d { "Deleting client $id from API..." }
         return safeApiCall(logger = LH.logger, errorContext = "Error deleting client $id from API.") {
             val response =

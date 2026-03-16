@@ -14,7 +14,7 @@ package cz.adamec.timotej.snag.feat.inspections.fe.app.impl.internal
 
 import cz.adamec.timotej.snag.feat.inspections.fe.app.api.GetInspectionsUseCase
 import cz.adamec.timotej.snag.feat.inspections.fe.app.api.PullInspectionChangesUseCase
-import cz.adamec.timotej.snag.feat.inspections.fe.model.FrontendInspection
+import cz.adamec.timotej.snag.feat.inspections.app.model.AppInspection
 import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionsDb
 import cz.adamec.timotej.snag.lib.core.common.ApplicationScope
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
@@ -30,7 +30,7 @@ internal class GetInspectionsUseCaseImpl(
     private val inspectionsDb: InspectionsDb,
     private val applicationScope: ApplicationScope,
 ) : GetInspectionsUseCase {
-    override operator fun invoke(projectId: Uuid): Flow<OfflineFirstDataResult<List<FrontendInspection>>> {
+    override operator fun invoke(projectId: Uuid): Flow<OfflineFirstDataResult<List<AppInspection>>> {
         applicationScope.launch {
             pullInspectionChangesUseCase(projectId)
         }

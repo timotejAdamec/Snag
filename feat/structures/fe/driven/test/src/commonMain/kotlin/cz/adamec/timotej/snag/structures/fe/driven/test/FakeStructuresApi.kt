@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.structures.fe.driven.test
 
-import cz.adamec.timotej.snag.feat.structures.fe.model.FrontendStructure
+import cz.adamec.timotej.snag.feat.structures.app.model.AppStructure
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
 import cz.adamec.timotej.snag.network.fe.test.FakeApiOps
@@ -22,7 +22,7 @@ import kotlin.uuid.Uuid
 
 class FakeStructuresApi : StructuresApi {
     private val ops =
-        FakeApiOps<FrontendStructure, StructureSyncResult>(getId = { it.structure.id })
+        FakeApiOps<AppStructure, StructureSyncResult>(getId = { it.id })
 
     var forcedFailure
         get() = ops.forcedFailure
@@ -42,23 +42,23 @@ class FakeStructuresApi : StructuresApi {
             ops.modifiedSinceResults = value
         }
 
-    override suspend fun getStructures(projectId: Uuid): OnlineDataResult<List<FrontendStructure>> =
-        ops.getAllItems { it.structure.projectId == projectId }
+    override suspend fun getStructures(projectId: Uuid): OnlineDataResult<List<AppStructure>> =
+        ops.getAllItems { it.projectId == projectId }
 
-    override suspend fun saveStructure(frontendStructure: FrontendStructure): OnlineDataResult<FrontendStructure?> =
-        ops.saveItem(frontendStructure)
+    override suspend fun saveStructure(appStructure: AppStructure): OnlineDataResult<AppStructure?> =
+        ops.saveItem(appStructure)
 
     override suspend fun deleteStructure(
         id: Uuid,
         deletedAt: Timestamp,
-    ): OnlineDataResult<FrontendStructure?> = ops.deleteItemById(id)
+    ): OnlineDataResult<AppStructure?> = ops.deleteItemById(id)
 
     override suspend fun getStructuresModifiedSince(
         projectId: Uuid,
         since: Timestamp,
     ): OnlineDataResult<List<StructureSyncResult>> = ops.getModifiedSinceItems()
 
-    fun setStructure(structure: FrontendStructure) = ops.setItem(structure)
+    fun setStructure(structure: AppStructure) = ops.setItem(structure)
 
-    fun setStructures(structures: List<FrontendStructure>) = ops.setItems(structures)
+    fun setStructures(structures: List<AppStructure>) = ops.setItems(structures)
 }

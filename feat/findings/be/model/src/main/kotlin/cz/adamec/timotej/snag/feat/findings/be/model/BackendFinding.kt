@@ -12,13 +12,22 @@
 
 package cz.adamec.timotej.snag.feat.findings.be.model
 
-import cz.adamec.timotej.snag.feat.findings.business.Finding
+import cz.adamec.timotej.snag.feat.findings.app.model.AppFinding
+import cz.adamec.timotej.snag.feat.findings.business.model.FindingType
+import cz.adamec.timotej.snag.feat.findings.business.model.RelativeCoordinate
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
-import cz.adamec.timotej.snag.lib.sync.be.model.Syncable
+import cz.adamec.timotej.snag.lib.sync.be.model.SoftDeletable
+import kotlin.uuid.Uuid
 
-data class BackendFinding(
-    val finding: Finding,
+interface BackendFinding : AppFinding, SoftDeletable
+
+data class BackendFindingData(
+    override val id: Uuid,
+    override val structureId: Uuid,
+    override val name: String,
+    override val description: String? = null,
+    override val type: FindingType,
+    override val coordinates: Set<RelativeCoordinate> = emptySet(),
+    override val updatedAt: Timestamp,
     override val deletedAt: Timestamp? = null,
-) : Syncable {
-    override val updatedAt: Timestamp get() = finding.updatedAt
-}
+) : BackendFinding

@@ -66,11 +66,11 @@ internal class ProjectDetailsEditViewModel(
                         result.data?.let { data ->
                             _state.update {
                                 it.copy(
-                                    projectName = data.project.name,
-                                    projectAddress = data.project.address,
-                                    selectedClientId = data.project.clientId,
+                                    projectName = data.name,
+                                    projectAddress = data.address,
+                                    selectedClientId = data.clientId,
                                     selectedClientName =
-                                        data.project.clientId?.let { clientId ->
+                                        data.clientId?.let { clientId ->
                                             resolveClientName(clientId)
                                         } ?: "",
                                 )
@@ -95,8 +95,8 @@ internal class ProjectDetailsEditViewModel(
                             val resolvedName =
                                 if (current.selectedClientId != null && current.selectedClientName.isEmpty()) {
                                     val matchingClient =
-                                        clients.firstOrNull { it.client.id == current.selectedClientId }
-                                    matchingClient?.client?.name ?: ""
+                                        clients.firstOrNull { it.id == current.selectedClientId }
+                                    matchingClient?.name ?: ""
                                 } else {
                                     current.selectedClientName
                                 }
@@ -112,8 +112,8 @@ internal class ProjectDetailsEditViewModel(
 
     private fun resolveClientName(clientId: Uuid): String {
         val matchingClient =
-            _state.value.availableClients.firstOrNull { it.client.id == clientId }
-        return matchingClient?.client?.name ?: ""
+            _state.value.availableClients.firstOrNull { it.id == clientId }
+        return matchingClient?.name ?: ""
     }
 
     fun onClientSelected(

@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.structures.fe.app.impl.internal
 
-import cz.adamec.timotej.snag.feat.structures.fe.model.FrontendStructure
+import cz.adamec.timotej.snag.feat.structures.app.model.AppStructure
 import cz.adamec.timotej.snag.lib.core.common.ApplicationScope
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.core.fe.log
@@ -30,7 +30,7 @@ internal class GetStructuresUseCaseImpl(
     private val structuresDb: StructuresDb,
     private val applicationScope: ApplicationScope,
 ) : GetStructuresUseCase {
-    override operator fun invoke(projectId: Uuid): Flow<OfflineFirstDataResult<List<FrontendStructure>>> {
+    override operator fun invoke(projectId: Uuid): Flow<OfflineFirstDataResult<List<AppStructure>>> {
         applicationScope.launch {
             pullStructureChangesUseCase(projectId)
         }

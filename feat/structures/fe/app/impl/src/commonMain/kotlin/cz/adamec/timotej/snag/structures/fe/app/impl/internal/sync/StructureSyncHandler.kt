@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.structures.fe.app.impl.internal.sync
 
-import cz.adamec.timotej.snag.feat.structures.fe.model.FrontendStructure
+import cz.adamec.timotej.snag.feat.structures.app.model.AppStructure
 import cz.adamec.timotej.snag.findings.fe.app.api.CascadeRestoreLocalFindingsByStructureIdUseCase
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.common.TimestampProvider
@@ -30,21 +30,21 @@ internal class StructureSyncHandler(
     private val structuresDb: StructuresDb,
     private val cascadeRestoreLocalFindingsByStructureIdUseCase: CascadeRestoreLocalFindingsByStructureIdUseCase,
     timestampProvider: TimestampProvider,
-) : DbApiSyncHandler<FrontendStructure>(LH.logger, timestampProvider) {
+) : DbApiSyncHandler<AppStructure>(LH.logger, timestampProvider) {
     override val entityTypeId: String = STRUCTURE_SYNC_ENTITY_TYPE
     override val entityName: String = "structure"
 
-    override fun getEntityFlow(entityId: Uuid): Flow<OfflineFirstDataResult<FrontendStructure?>> = structuresDb.getStructureFlow(entityId)
+    override fun getEntityFlow(entityId: Uuid): Flow<OfflineFirstDataResult<AppStructure?>> = structuresDb.getStructureFlow(entityId)
 
-    override suspend fun saveEntityToApi(entity: FrontendStructure): OnlineDataResult<FrontendStructure?> =
+    override suspend fun saveEntityToApi(entity: AppStructure): OnlineDataResult<AppStructure?> =
         structuresApi.saveStructure(entity)
 
     override suspend fun deleteEntityFromApi(
         entityId: Uuid,
         deletedAt: Timestamp,
-    ): OnlineDataResult<FrontendStructure?> = structuresApi.deleteStructure(entityId, deletedAt)
+    ): OnlineDataResult<AppStructure?> = structuresApi.deleteStructure(entityId, deletedAt)
 
-    override suspend fun saveEntityToDb(entity: FrontendStructure): OfflineFirstDataResult<Unit> = structuresDb.saveStructure(entity)
+    override suspend fun saveEntityToDb(entity: AppStructure): OfflineFirstDataResult<Unit> = structuresDb.saveStructure(entity)
 
     override suspend fun onDeleteRejected(entityId: Uuid) {
         cascadeRestoreLocalFindingsByStructureIdUseCase(entityId)

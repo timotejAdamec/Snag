@@ -12,10 +12,11 @@
 
 package cz.adamec.timotej.snag.findings.fe.app.impl.internal
 
-import cz.adamec.timotej.snag.feat.findings.business.Finding
-import cz.adamec.timotej.snag.feat.findings.business.FindingType
-import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
-import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
+import cz.adamec.timotej.snag.feat.findings.business.model.Finding
+import cz.adamec.timotej.snag.feat.findings.business.model.FindingType
+import cz.adamec.timotej.snag.feat.findings.business.model.RelativeCoordinate
+import cz.adamec.timotej.snag.feat.findings.app.model.AppFinding
+import cz.adamec.timotej.snag.feat.findings.app.model.AppFindingData
 import cz.adamec.timotej.snag.findings.fe.app.api.SaveFindingCoordinatesUseCase
 import cz.adamec.timotej.snag.findings.fe.app.api.model.SaveFindingCoordinatesRequest
 import cz.adamec.timotej.snag.findings.fe.app.impl.internal.sync.FINDING_SYNC_ENTITY_TYPE
@@ -44,17 +45,14 @@ class SaveFindingCoordinatesUseCaseImplTest : FrontendKoinInitializedTest() {
     private val findingId = Uuid.parse("00000000-0000-0000-0001-000000000001")
 
     private val existingFinding =
-        FrontendFinding(
-            finding =
-                Finding(
-                    id = findingId,
-                    structureId = structureId,
-                    name = "Finding",
-                    description = null,
-                    type = FindingType.Classic(),
-                    coordinates = setOf(RelativeCoordinate(0.1f, 0.2f)),
-                    updatedAt = Timestamp(10L),
-                ),
+        AppFindingData(
+            id = findingId,
+            structureId = structureId,
+            name = "Finding",
+            description = null,
+            type = FindingType.Classic(),
+            coordinates = setOf(RelativeCoordinate(0.1f, 0.2f)),
+            updatedAt = Timestamp(10L),
         )
 
     @Test

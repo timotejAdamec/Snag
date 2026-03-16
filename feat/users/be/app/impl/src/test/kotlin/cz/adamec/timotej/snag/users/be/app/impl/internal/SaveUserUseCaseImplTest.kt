@@ -15,10 +15,9 @@ package cz.adamec.timotej.snag.users.be.app.impl.internal
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
 import cz.adamec.timotej.snag.users.be.app.api.SaveUserUseCase
-import cz.adamec.timotej.snag.users.be.model.BackendUser
+import cz.adamec.timotej.snag.users.be.model.BackendUserData
 import cz.adamec.timotej.snag.users.be.ports.UsersDb
-import cz.adamec.timotej.snag.users.business.User
-import cz.adamec.timotej.snag.users.business.UserRole
+import cz.adamec.timotej.snag.users.business.model.UserRole
 import kotlinx.coroutines.test.runTest
 import org.koin.test.inject
 import kotlin.test.Test
@@ -35,15 +34,12 @@ class SaveUserUseCaseImplTest : BackendKoinInitializedTest() {
     fun `saves new user`() =
         runTest(testDispatcher) {
             val user =
-                BackendUser(
-                    user =
-                        User(
-                            id = userId,
-                            entraId = "entra-1",
-                            email = "user@example.com",
-                            role = UserRole.ADMINISTRATOR,
-                            updatedAt = Timestamp(100L),
-                        ),
+                BackendUserData(
+                    id = userId,
+                    entraId = "entra-1",
+                    email = "user@example.com",
+                    role = UserRole.ADMINISTRATOR,
+                    updatedAt = Timestamp(100L),
                 )
 
             useCase(user)
@@ -56,28 +52,22 @@ class SaveUserUseCaseImplTest : BackendKoinInitializedTest() {
     fun `updates existing user`() =
         runTest(testDispatcher) {
             val user =
-                BackendUser(
-                    user =
-                        User(
-                            id = userId,
-                            entraId = "entra-1",
-                            email = "user@example.com",
-                            role = UserRole.ADMINISTRATOR,
-                            updatedAt = Timestamp(100L),
-                        ),
+                BackendUserData(
+                    id = userId,
+                    entraId = "entra-1",
+                    email = "user@example.com",
+                    role = UserRole.ADMINISTRATOR,
+                    updatedAt = Timestamp(100L),
                 )
             dataSource.saveUser(user)
 
             val updatedUser =
-                BackendUser(
-                    user =
-                        User(
-                            id = userId,
-                            entraId = "entra-1",
-                            email = "updated@example.com",
-                            role = UserRole.PASSPORT_LEAD,
-                            updatedAt = Timestamp(200L),
-                        ),
+                BackendUserData(
+                    id = userId,
+                    entraId = "entra-1",
+                    email = "updated@example.com",
+                    role = UserRole.PASSPORT_LEAD,
+                    updatedAt = Timestamp(200L),
                 )
 
             useCase(updatedUser)
@@ -90,15 +80,12 @@ class SaveUserUseCaseImplTest : BackendKoinInitializedTest() {
     fun `saves user with null role`() =
         runTest(testDispatcher) {
             val user =
-                BackendUser(
-                    user =
-                        User(
-                            id = userId,
-                            entraId = "entra-1",
-                            email = "user@example.com",
-                            role = null,
-                            updatedAt = Timestamp(100L),
-                        ),
+                BackendUserData(
+                    id = userId,
+                    entraId = "entra-1",
+                    email = "user@example.com",
+                    role = null,
+                    updatedAt = Timestamp(100L),
                 )
 
             useCase(user)
@@ -111,15 +98,12 @@ class SaveUserUseCaseImplTest : BackendKoinInitializedTest() {
     fun `returns saved user`() =
         runTest(testDispatcher) {
             val user =
-                BackendUser(
-                    user =
-                        User(
-                            id = userId,
-                            entraId = "entra-1",
-                            email = "user@example.com",
-                            role = UserRole.SERVICE_WORKER,
-                            updatedAt = Timestamp(100L),
-                        ),
+                BackendUserData(
+                    id = userId,
+                    entraId = "entra-1",
+                    email = "user@example.com",
+                    role = UserRole.SERVICE_WORKER,
+                    updatedAt = Timestamp(100L),
                 )
 
             val result = useCase(user)

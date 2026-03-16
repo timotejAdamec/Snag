@@ -13,7 +13,7 @@
 package cz.adamec.timotej.snag.users.fe.driving.impl.internal.userManagement.ui
 
 import androidx.compose.runtime.Composable
-import cz.adamec.timotej.snag.users.business.UserRole
+import cz.adamec.timotej.snag.users.business.model.UserRole
 import org.jetbrains.compose.resources.stringResource
 import snag.feat.users.fe.driving.impl.generated.resources.Res
 import snag.feat.users.fe.driving.impl.generated.resources.role_administrator

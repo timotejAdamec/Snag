@@ -14,13 +14,13 @@ package cz.adamec.timotej.snag.users.fe.driven.test
 
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.database.fe.test.FakeDbOps
-import cz.adamec.timotej.snag.users.fe.model.FrontendUser
+import cz.adamec.timotej.snag.users.app.model.AppUser
 import cz.adamec.timotej.snag.users.fe.ports.UsersDb
 import kotlinx.coroutines.flow.Flow
 import kotlin.uuid.Uuid
 
 class FakeUsersDb : UsersDb {
-    private val ops = FakeDbOps<FrontendUser>(getId = { it.user.id })
+    private val ops = FakeDbOps<AppUser>(getId = { it.id })
 
     var forcedFailure
         get() = ops.forcedFailure
@@ -28,13 +28,13 @@ class FakeUsersDb : UsersDb {
             ops.forcedFailure = value
         }
 
-    override fun getAllUsersFlow(): Flow<OfflineFirstDataResult<List<FrontendUser>>> = ops.allItemsFlow()
+    override fun getAllUsersFlow(): Flow<OfflineFirstDataResult<List<AppUser>>> = ops.allItemsFlow()
 
-    override fun getUserFlow(id: Uuid): Flow<OfflineFirstDataResult<FrontendUser?>> = ops.itemByIdFlow(id)
+    override fun getUserFlow(id: Uuid): Flow<OfflineFirstDataResult<AppUser?>> = ops.itemByIdFlow(id)
 
-    override suspend fun saveUser(user: FrontendUser): OfflineFirstDataResult<Unit> = ops.saveOneItem(user)
+    override suspend fun saveUser(user: AppUser): OfflineFirstDataResult<Unit> = ops.saveOneItem(user)
 
-    override suspend fun saveUsers(users: List<FrontendUser>): OfflineFirstDataResult<Unit> = ops.saveManyItems(users)
+    override suspend fun saveUsers(users: List<AppUser>): OfflineFirstDataResult<Unit> = ops.saveManyItems(users)
 
-    fun setUser(user: FrontendUser) = ops.setItem(user)
+    fun setUser(user: AppUser) = ops.setItem(user)
 }

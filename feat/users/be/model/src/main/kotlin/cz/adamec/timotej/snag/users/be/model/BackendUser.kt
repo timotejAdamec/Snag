@@ -12,8 +12,17 @@
 
 package cz.adamec.timotej.snag.users.be.model
 
-import cz.adamec.timotej.snag.users.business.User
+import cz.adamec.timotej.snag.lib.core.common.Timestamp
+import cz.adamec.timotej.snag.users.app.model.AppUser
+import cz.adamec.timotej.snag.users.business.model.UserRole
+import kotlin.uuid.Uuid
 
-data class BackendUser(
-    val user: User,
-)
+interface BackendUser : AppUser
+
+data class BackendUserData(
+    override val id: Uuid,
+    override val entraId: String,
+    override val email: String,
+    override val role: UserRole? = null,
+    override val updatedAt: Timestamp,
+) : BackendUser

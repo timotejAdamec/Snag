@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.findings.fe.driven.test
 
-import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
+import cz.adamec.timotej.snag.feat.findings.app.model.AppFinding
 import cz.adamec.timotej.snag.findings.fe.ports.FindingSyncResult
 import cz.adamec.timotej.snag.findings.fe.ports.FindingsApi
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
@@ -22,7 +22,7 @@ import kotlin.uuid.Uuid
 
 class FakeFindingsApi : FindingsApi {
     private val ops =
-        FakeApiOps<FrontendFinding, FindingSyncResult>(getId = { it.finding.id })
+        FakeApiOps<AppFinding, FindingSyncResult>(getId = { it.id })
 
     var forcedFailure
         get() = ops.forcedFailure
@@ -42,22 +42,22 @@ class FakeFindingsApi : FindingsApi {
             ops.modifiedSinceResults = value
         }
 
-    override suspend fun getFindings(structureId: Uuid): OnlineDataResult<List<FrontendFinding>> =
-        ops.getAllItems { it.finding.structureId == structureId }
+    override suspend fun getFindings(structureId: Uuid): OnlineDataResult<List<AppFinding>> =
+        ops.getAllItems { it.structureId == structureId }
 
-    override suspend fun saveFinding(finding: FrontendFinding): OnlineDataResult<FrontendFinding?> = ops.saveItem(finding)
+    override suspend fun saveFinding(finding: AppFinding): OnlineDataResult<AppFinding?> = ops.saveItem(finding)
 
     override suspend fun deleteFinding(
         id: Uuid,
         deletedAt: Timestamp,
-    ): OnlineDataResult<FrontendFinding?> = ops.deleteItemById(id)
+    ): OnlineDataResult<AppFinding?> = ops.deleteItemById(id)
 
     override suspend fun getFindingsModifiedSince(
         structureId: Uuid,
         since: Timestamp,
     ): OnlineDataResult<List<FindingSyncResult>> = ops.getModifiedSinceItems()
 
-    fun setFinding(finding: FrontendFinding) = ops.setItem(finding)
+    fun setFinding(finding: AppFinding) = ops.setItem(finding)
 
-    fun setFindings(findings: List<FrontendFinding>) = ops.setItems(findings)
+    fun setFindings(findings: List<AppFinding>) = ops.setItems(findings)
 }

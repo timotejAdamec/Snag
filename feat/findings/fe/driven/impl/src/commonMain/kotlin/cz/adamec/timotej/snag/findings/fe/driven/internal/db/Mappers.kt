@@ -14,12 +14,12 @@
 
 package cz.adamec.timotej.snag.findings.fe.driven.internal.db
 
-import cz.adamec.timotej.snag.feat.findings.business.Finding
-import cz.adamec.timotej.snag.feat.findings.business.FindingType
-import cz.adamec.timotej.snag.feat.findings.business.Importance
-import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
-import cz.adamec.timotej.snag.feat.findings.business.Term
-import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
+import cz.adamec.timotej.snag.feat.findings.business.model.FindingType
+import cz.adamec.timotej.snag.feat.findings.business.model.Importance
+import cz.adamec.timotej.snag.feat.findings.business.model.RelativeCoordinate
+import cz.adamec.timotej.snag.feat.findings.business.model.Term
+import cz.adamec.timotej.snag.feat.findings.app.model.AppFinding
+import cz.adamec.timotej.snag.feat.findings.app.model.AppFindingData
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.FindingEntity
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.SelectById
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.SelectByStructureId
@@ -28,31 +28,25 @@ import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import kotlin.uuid.Uuid
 
 internal fun SelectByStructureId.toModel(coordinates: Set<RelativeCoordinate>) =
-    FrontendFinding(
-        finding =
-            Finding(
-                id = Uuid.parse(id),
-                structureId = Uuid.parse(structureId),
-                name = name,
-                description = description,
-                type = toFindingType(type, importance, term),
-                coordinates = coordinates,
-                updatedAt = Timestamp(updatedAt),
-            ),
+    AppFindingData(
+        id = Uuid.parse(id),
+        structureId = Uuid.parse(structureId),
+        name = name,
+        description = description,
+        type = toFindingType(type, importance, term),
+        coordinates = coordinates,
+        updatedAt = Timestamp(updatedAt),
     )
 
 internal fun SelectById.toModel(coordinates: Set<RelativeCoordinate>) =
-    FrontendFinding(
-        finding =
-            Finding(
-                id = Uuid.parse(id),
-                structureId = Uuid.parse(structureId),
-                name = name,
-                description = description,
-                type = toFindingType(type, importance, term),
-                coordinates = coordinates,
-                updatedAt = Timestamp(updatedAt),
-            ),
+    AppFindingData(
+        id = Uuid.parse(id),
+        structureId = Uuid.parse(structureId),
+        name = name,
+        description = description,
+        type = toFindingType(type, importance, term),
+        coordinates = coordinates,
+        updatedAt = Timestamp(updatedAt),
     )
 
 private fun toFindingType(
@@ -79,14 +73,14 @@ private fun toFindingType(
     }
 }
 
-internal fun FrontendFinding.toEntity() =
+internal fun AppFinding.toEntity() =
     FindingEntity(
-        id = finding.id.toString(),
-        structureId = finding.structureId.toString(),
-        type = finding.type.toEntityKey().name,
-        name = finding.name,
-        description = finding.description,
-        updatedAt = finding.updatedAt.value,
+        id = id.toString(),
+        structureId = structureId.toString(),
+        type = type.toEntityKey().name,
+        name = name,
+        description = description,
+        updatedAt = updatedAt.value,
     )
 
 internal fun FindingType.toEntityKey(): FindingTypeEntityKey =

@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.findings.fe.driven.internal.db
 
-import cz.adamec.timotej.snag.feat.findings.business.FindingType
+import cz.adamec.timotej.snag.feat.findings.business.model.FindingType
 
 internal enum class DbFindingTypeKey {
     CLASSIC,

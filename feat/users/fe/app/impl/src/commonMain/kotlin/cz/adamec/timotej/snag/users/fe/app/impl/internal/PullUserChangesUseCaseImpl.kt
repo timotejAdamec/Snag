@@ -57,7 +57,7 @@ internal class PullUserChangesUseCaseImpl(
                         changes.forEach { syncResult ->
                             when (syncResult) {
                                 is UserSyncResult.Updated -> {
-                                    LH.logger.d { "Processing updated user ${syncResult.user.user.id}." }
+                                    LH.logger.d { "Processing updated user ${syncResult.user.id}." }
                                     usersDb.saveUser(syncResult.user)
                                 }
                             }

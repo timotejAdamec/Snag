@@ -13,11 +13,11 @@
 package cz.adamec.timotej.snag.findings.be.driven.impl.internal
 
 import cz.adamec.timotej.snag.feat.findings.be.model.BackendFinding
-import cz.adamec.timotej.snag.feat.findings.business.Finding
-import cz.adamec.timotej.snag.feat.findings.business.FindingType
-import cz.adamec.timotej.snag.feat.findings.business.Importance
-import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
-import cz.adamec.timotej.snag.feat.findings.business.Term
+import cz.adamec.timotej.snag.feat.findings.be.model.BackendFindingData
+import cz.adamec.timotej.snag.feat.findings.business.model.FindingType
+import cz.adamec.timotej.snag.feat.findings.business.model.Importance
+import cz.adamec.timotej.snag.feat.findings.business.model.RelativeCoordinate
+import cz.adamec.timotej.snag.feat.findings.business.model.Term
 import cz.adamec.timotej.snag.feat.shared.database.be.ClassicFindingEntity
 import cz.adamec.timotej.snag.feat.shared.database.be.FindingEntity
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
@@ -60,21 +60,18 @@ internal fun FindingEntity.toModel(): BackendFinding {
                 FindingType.Classic()
             }
         }
-    return BackendFinding(
-        finding =
-            Finding(
-                id = id.value,
-                structureId = structure.id.value,
-                name = name,
-                description = description,
-                type = findingType,
-                coordinates =
-                    coordinates
-                        .map {
-                            RelativeCoordinate(x = it.x, y = it.y)
-                        }.toSet(),
-                updatedAt = Timestamp(updatedAt),
-            ),
+    return BackendFindingData(
+        id = id.value,
+        structureId = structure.id.value,
+        name = name,
+        description = description,
+        type = findingType,
+        coordinates =
+            coordinates
+                .map {
+                    RelativeCoordinate(x = it.x, y = it.y)
+                }.toSet(),
+        updatedAt = Timestamp(updatedAt),
         deletedAt = deletedAt?.let { Timestamp(it) },
     )
 }

@@ -12,13 +12,21 @@
 
 package cz.adamec.timotej.snag.feat.inspections.be.model
 
-import cz.adamec.timotej.snag.feat.inspections.business.Inspection
+import cz.adamec.timotej.snag.feat.inspections.app.model.AppInspection
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
-import cz.adamec.timotej.snag.lib.sync.be.model.Syncable
+import cz.adamec.timotej.snag.lib.sync.be.model.SoftDeletable
+import kotlin.uuid.Uuid
 
-data class BackendInspection(
-    val inspection: Inspection,
+interface BackendInspection : AppInspection, SoftDeletable
+
+data class BackendInspectionData(
+    override val id: Uuid,
+    override val projectId: Uuid,
+    override val startedAt: Timestamp? = null,
+    override val endedAt: Timestamp? = null,
+    override val participants: String? = null,
+    override val climate: String? = null,
+    override val note: String? = null,
+    override val updatedAt: Timestamp,
     override val deletedAt: Timestamp? = null,
-) : Syncable {
-    override val updatedAt: Timestamp get() = inspection.updatedAt
-}
+) : BackendInspection

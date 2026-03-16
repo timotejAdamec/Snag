@@ -12,13 +12,18 @@
 
 package cz.adamec.timotej.snag.feat.structures.be.model
 
-import cz.adamec.timotej.snag.feat.structures.business.Structure
+import cz.adamec.timotej.snag.feat.structures.app.model.AppStructure
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
-import cz.adamec.timotej.snag.lib.sync.be.model.Syncable
+import cz.adamec.timotej.snag.lib.sync.be.model.SoftDeletable
+import kotlin.uuid.Uuid
 
-data class BackendStructure(
-    val structure: Structure,
+interface BackendStructure : AppStructure, SoftDeletable
+
+data class BackendStructureData(
+    override val id: Uuid,
+    override val projectId: Uuid,
+    override val name: String,
+    override val floorPlanUrl: String? = null,
+    override val updatedAt: Timestamp,
     override val deletedAt: Timestamp? = null,
-) : Syncable {
-    override val updatedAt: Timestamp get() = structure.updatedAt
-}
+) : BackendStructure

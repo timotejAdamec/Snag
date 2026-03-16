@@ -15,8 +15,8 @@ package cz.adamec.timotej.snag.feat.inspections.fe.app.impl.internal
 import cz.adamec.timotej.snag.feat.inspections.fe.app.api.SaveInspectionUseCase
 import cz.adamec.timotej.snag.feat.inspections.fe.app.api.model.SaveInspectionRequest
 import cz.adamec.timotej.snag.feat.inspections.fe.app.impl.internal.sync.INSPECTION_SYNC_ENTITY_TYPE
+import cz.adamec.timotej.snag.feat.inspections.app.model.AppInspection
 import cz.adamec.timotej.snag.feat.inspections.fe.driven.test.FakeInspectionsDb
-import cz.adamec.timotej.snag.feat.inspections.fe.model.FrontendInspection
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.sync.fe.driven.test.FakeSyncQueue
@@ -82,12 +82,12 @@ class SaveInspectionUseCaseImplTest : FrontendKoinInitializedTest() {
 
             assertIs<OfflineFirstDataResult.Success<Uuid>>(result)
             val saved = getSavedInspection(result.data)
-            assertEquals(projectId, saved.inspection.projectId)
-            assertEquals(Timestamp(100L), saved.inspection.startedAt)
-            assertEquals(Timestamp(200L), saved.inspection.endedAt)
-            assertEquals("Jane Doe", saved.inspection.participants)
-            assertEquals("Rainy", saved.inspection.climate)
-            assertEquals("Test note", saved.inspection.note)
+            assertEquals(projectId, saved.projectId)
+            assertEquals(Timestamp(100L), saved.startedAt)
+            assertEquals(Timestamp(200L), saved.endedAt)
+            assertEquals("Jane Doe", saved.participants)
+            assertEquals("Rainy", saved.climate)
+            assertEquals("Test note", saved.note)
         }
 
     @Test
@@ -175,7 +175,7 @@ class SaveInspectionUseCaseImplTest : FrontendKoinInitializedTest() {
             assertTrue(fakeSyncQueue.getAllPending().isEmpty())
         }
 
-    private suspend fun getSavedInspection(id: Uuid): FrontendInspection {
+    private suspend fun getSavedInspection(id: Uuid): AppInspection {
         fakeInspectionsDb.forcedFailure = null
         val result = fakeInspectionsDb.getInspectionFlow(id).first()
         return (result as OfflineFirstDataResult.Success).data!!

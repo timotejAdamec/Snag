@@ -15,9 +15,11 @@ When creating a new module at `feat/<feature>/<path>`, use this mapping:
 
 ```
 feat/<feature>/
-├── business/                → snagMultiplatformModule
+├── business/
+│   └── model/               → snagMultiplatformModule
+├── app/
+│   └── model/               → snagMultiplatformModule
 ├── fe/
-    ├── model/               → snagFrontendMultiplatformModule
 │   ├── ports/               → snagFrontendMultiplatformModule
 │   ├── app/
 │   │   ├── api/             → snagFrontendMultiplatformModule

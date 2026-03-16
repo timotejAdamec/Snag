@@ -28,7 +28,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import cz.adamec.timotej.snag.users.business.UserRole
+import cz.adamec.timotej.snag.users.business.model.UserRole
 import cz.adamec.timotej.snag.users.fe.driving.impl.internal.userManagement.ui.toDisplayName
 import org.jetbrains.compose.resources.stringResource
 import snag.feat.users.fe.driving.impl.generated.resources.Res

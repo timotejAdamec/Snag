@@ -14,12 +14,12 @@ package cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetailsE
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import cz.adamec.timotej.snag.feat.findings.business.FindingType
-import cz.adamec.timotej.snag.feat.findings.business.FindingTypeKey
-import cz.adamec.timotej.snag.feat.findings.business.Importance
-import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
-import cz.adamec.timotej.snag.feat.findings.business.Term
-import cz.adamec.timotej.snag.feat.findings.business.toDefaultFindingType
+import cz.adamec.timotej.snag.feat.findings.business.model.FindingType
+import cz.adamec.timotej.snag.feat.findings.business.model.FindingTypeKey
+import cz.adamec.timotej.snag.feat.findings.business.model.Importance
+import cz.adamec.timotej.snag.feat.findings.business.model.RelativeCoordinate
+import cz.adamec.timotej.snag.feat.findings.business.model.Term
+import cz.adamec.timotej.snag.feat.findings.business.model.toDefaultFindingType
 import cz.adamec.timotej.snag.findings.fe.app.api.GetFindingUseCase
 import cz.adamec.timotej.snag.findings.fe.app.api.SaveFindingDetailsUseCase
 import cz.adamec.timotej.snag.findings.fe.app.api.SaveNewFindingUseCase
@@ -93,9 +93,9 @@ internal class FindingDetailsEditViewModel(
                         result.data?.let { data ->
                             _state.update {
                                 it.copy(
-                                    findingName = data.finding.name,
-                                    findingDescription = data.finding.description.orEmpty(),
-                                    findingType = data.finding.type,
+                                    findingName = data.name,
+                                    findingDescription = data.description.orEmpty(),
+                                    findingType = data.type,
                                 )
                             }
                             cancel()

@@ -28,7 +28,7 @@ import cz.adamec.timotej.snag.projects.be.app.impl.internal.GetProjectsModifiedS
 import cz.adamec.timotej.snag.projects.be.app.impl.internal.GetProjectsUseCaseImpl
 import cz.adamec.timotej.snag.projects.be.app.impl.internal.RemoveUserFromProjectUseCaseImpl
 import cz.adamec.timotej.snag.projects.be.app.impl.internal.SaveProjectUseCaseImpl
-import cz.adamec.timotej.snag.projects.business.CanEditProjectEntitiesRule
+import cz.adamec.timotej.snag.projects.business.model.CanEditProjectEntitiesRule
 import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.bind
 import org.koin.dsl.module

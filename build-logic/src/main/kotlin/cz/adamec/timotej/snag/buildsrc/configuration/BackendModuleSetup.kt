@@ -37,12 +37,31 @@ internal fun Project.configureBackendModule() {
         val moduleDirectoryPath = path.substringBeforeLast(":")
         val modulePreDirectoryPath = moduleDirectoryPath.substringBeforeLast(":")
         if (name == "model") {
-            if (hasFolderInPath(modulePreDirectoryPath, "business")) {
+            if ((path.contains(":fe:") || path.contains(":be:")) &&
+                hasFolderInPath("$modulePreDirectoryPath:app", "model")
+            ) {
+                api(project("$modulePreDirectoryPath:app:model"))
+            } else if (path.contains(":app:") &&
+                hasFolderInPath("$modulePreDirectoryPath:business", "model")
+            ) {
+                api(project("$modulePreDirectoryPath:business:model"))
+            } else if (!path.contains(":business:") &&
+                hasFolderInPath("$modulePreDirectoryPath:business", "model")
+            ) {
+                api(project("$modulePreDirectoryPath:business:model"))
+            } else if (!path.contains(":business:") &&
+                hasFolderInPath(modulePreDirectoryPath, "business")
+            ) {
                 api(project("$modulePreDirectoryPath:business"))
             }
+            // business/model itself → no model dependency (it's the base)
         } else if (name == "ports") {
             if (hasFolderInPath(moduleDirectoryPath, "model")) {
                 api(project("$moduleDirectoryPath:model"))
+            } else if (hasFolderInPath("$modulePreDirectoryPath:app", "model")) {
+                api(project("$modulePreDirectoryPath:app:model"))
+            } else if (hasFolderInPath("$modulePreDirectoryPath:business", "model")) {
+                api(project("$modulePreDirectoryPath:business:model"))
             } else {
                 api(project("$modulePreDirectoryPath:business"))
             }
@@ -53,6 +72,10 @@ internal fun Project.configureBackendModule() {
             val businessDirectoryPath = feOrBeDirectoryPath.substringBeforeLast(":")
             if (hasFolderInPath(feOrBeDirectoryPath, "model")) {
                 api(project("$feOrBeDirectoryPath:model"))
+            } else if (hasFolderInPath("$businessDirectoryPath:app", "model")) {
+                api(project("$businessDirectoryPath:app:model"))
+            } else if (hasFolderInPath("$businessDirectoryPath:business", "model")) {
+                api(project("$businessDirectoryPath:business:model"))
             } else {
                 api(project("$businessDirectoryPath:business"))
             }

@@ -147,7 +147,10 @@ For feature modules at `feat/<feature>/`, the path determines the plugin:
 
 ```
 feat/<feature>/
-├── business/                → snagMultiplatformModule
+├── business/
+│   └── model/               → snagMultiplatformModule
+├── app/
+│   └── model/               → snagMultiplatformModule
 ├── fe/
 │   ├── ports/               → snagFrontendMultiplatformModule
 │   ├── app/

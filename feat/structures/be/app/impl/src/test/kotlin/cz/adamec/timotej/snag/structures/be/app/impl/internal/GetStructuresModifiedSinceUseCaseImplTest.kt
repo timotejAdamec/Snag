@@ -12,12 +12,10 @@
 
 package cz.adamec.timotej.snag.structures.be.app.impl.internal
 
-import cz.adamec.timotej.snag.feat.structures.be.model.BackendStructure
-import cz.adamec.timotej.snag.feat.structures.business.Structure
+import cz.adamec.timotej.snag.feat.structures.be.model.BackendStructureData
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
-import cz.adamec.timotej.snag.projects.be.model.BackendProject
+import cz.adamec.timotej.snag.projects.be.model.BackendProjectData
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
-import cz.adamec.timotej.snag.projects.business.Project
 import cz.adamec.timotej.snag.structures.be.app.api.GetStructuresModifiedSinceUseCase
 import cz.adamec.timotej.snag.structures.be.ports.StructuresDb
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
@@ -48,26 +46,20 @@ class GetStructuresModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
     fun `returns structures with updatedAt after since`() =
         runTest(testDispatcher) {
             projectsDb.saveProject(
-                BackendProject(
-                    project =
-                        Project(
-                            id = projectId,
-                            name = "Test Project",
-                            address = "Test Address",
-                            updatedAt = Timestamp(1L),
-                        ),
+                BackendProjectData(
+                    id = projectId,
+                    name = "Test Project",
+                    address = "Test Address",
+                    updatedAt = Timestamp(1L),
                 ),
             )
             val structure =
-                BackendStructure(
-                    structure =
-                        Structure(
-                            id = Uuid.parse("00000000-0000-0000-0001-000000000001"),
-                            projectId = projectId,
-                            name = "Ground Floor",
-                            floorPlanUrl = null,
-                            updatedAt = Timestamp(200L),
-                        ),
+                BackendStructureData(
+                    id = Uuid.parse("00000000-0000-0000-0001-000000000001"),
+                    projectId = projectId,
+                    name = "Ground Floor",
+                    floorPlanUrl = null,
+                    updatedAt = Timestamp(200L),
                 )
             dataSource.saveStructure(structure)
 
@@ -80,26 +72,20 @@ class GetStructuresModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
     fun `excludes structures from different project`() =
         runTest(testDispatcher) {
             projectsDb.saveProject(
-                BackendProject(
-                    project =
-                        Project(
-                            id = otherProjectId,
-                            name = "Other Project",
-                            address = "Other Address",
-                            updatedAt = Timestamp(1L),
-                        ),
+                BackendProjectData(
+                    id = otherProjectId,
+                    name = "Other Project",
+                    address = "Other Address",
+                    updatedAt = Timestamp(1L),
                 ),
             )
             val structure =
-                BackendStructure(
-                    structure =
-                        Structure(
-                            id = Uuid.parse("00000000-0000-0000-0001-000000000001"),
-                            projectId = otherProjectId,
-                            name = "Other Building",
-                            floorPlanUrl = null,
-                            updatedAt = Timestamp(200L),
-                        ),
+                BackendStructureData(
+                    id = Uuid.parse("00000000-0000-0000-0001-000000000001"),
+                    projectId = otherProjectId,
+                    name = "Other Building",
+                    floorPlanUrl = null,
+                    updatedAt = Timestamp(200L),
                 )
             dataSource.saveStructure(structure)
 
@@ -112,26 +98,20 @@ class GetStructuresModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
     fun `returns deleted structures when deletedAt is after since`() =
         runTest(testDispatcher) {
             projectsDb.saveProject(
-                BackendProject(
-                    project =
-                        Project(
-                            id = projectId,
-                            name = "Test Project",
-                            address = "Test Address",
-                            updatedAt = Timestamp(1L),
-                        ),
+                BackendProjectData(
+                    id = projectId,
+                    name = "Test Project",
+                    address = "Test Address",
+                    updatedAt = Timestamp(1L),
                 ),
             )
             val structure =
-                BackendStructure(
-                    structure =
-                        Structure(
-                            id = Uuid.parse("00000000-0000-0000-0001-000000000001"),
-                            projectId = projectId,
-                            name = "Ground Floor",
-                            floorPlanUrl = null,
-                            updatedAt = Timestamp(50L),
-                        ),
+                BackendStructureData(
+                    id = Uuid.parse("00000000-0000-0000-0001-000000000001"),
+                    projectId = projectId,
+                    name = "Ground Floor",
+                    floorPlanUrl = null,
+                    updatedAt = Timestamp(50L),
                     deletedAt = Timestamp(200L),
                 )
             dataSource.saveStructure(structure)
@@ -145,26 +125,20 @@ class GetStructuresModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
     fun `excludes unchanged structures`() =
         runTest(testDispatcher) {
             projectsDb.saveProject(
-                BackendProject(
-                    project =
-                        Project(
-                            id = projectId,
-                            name = "Test Project",
-                            address = "Test Address",
-                            updatedAt = Timestamp(1L),
-                        ),
+                BackendProjectData(
+                    id = projectId,
+                    name = "Test Project",
+                    address = "Test Address",
+                    updatedAt = Timestamp(1L),
                 ),
             )
             val structure =
-                BackendStructure(
-                    structure =
-                        Structure(
-                            id = Uuid.parse("00000000-0000-0000-0001-000000000001"),
-                            projectId = projectId,
-                            name = "Ground Floor",
-                            floorPlanUrl = null,
-                            updatedAt = Timestamp(50L),
-                        ),
+                BackendStructureData(
+                    id = Uuid.parse("00000000-0000-0000-0001-000000000001"),
+                    projectId = projectId,
+                    name = "Ground Floor",
+                    floorPlanUrl = null,
+                    updatedAt = Timestamp(50L),
                 )
             dataSource.saveStructure(structure)
 

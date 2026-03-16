@@ -178,8 +178,7 @@ internal class ProjectDetailsViewModel(
     fun onStartInspection(inspectionId: Uuid) =
         viewModelScope.launch {
             state.value.inspections
-                .find { it.inspection.id == inspectionId }
-                ?.inspection
+                .find { it.id == inspectionId }
                 ?.let { insp ->
                     saveInspectionUseCase(
                         SaveInspectionRequest(
@@ -198,8 +197,7 @@ internal class ProjectDetailsViewModel(
     fun onEndInspection(inspectionId: Uuid) =
         viewModelScope.launch {
             state.value.inspections
-                .find { it.inspection.id == inspectionId }
-                ?.inspection
+                .find { it.id == inspectionId }
                 ?.let { insp ->
                     saveInspectionUseCase(
                         SaveInspectionRequest(

@@ -12,18 +12,18 @@
 
 package cz.adamec.timotej.snag.projects.fe.app.impl.internal
 
-import cz.adamec.timotej.snag.feat.structures.business.Structure
-import cz.adamec.timotej.snag.feat.structures.fe.model.FrontendStructure
+import cz.adamec.timotej.snag.feat.structures.app.model.AppStructure
+import cz.adamec.timotej.snag.feat.structures.app.model.AppStructureData
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
 import cz.adamec.timotej.snag.lib.sync.fe.driven.test.FakePullSyncTimestampDb
-import cz.adamec.timotej.snag.projects.business.Project
+import cz.adamec.timotej.snag.projects.app.model.AppProject
+import cz.adamec.timotej.snag.projects.app.model.AppProjectData
 import cz.adamec.timotej.snag.projects.fe.app.api.PullProjectChangesUseCase
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.sync.PROJECT_SYNC_ENTITY_TYPE
 import cz.adamec.timotej.snag.projects.fe.driven.test.FakeProjectsApi
 import cz.adamec.timotej.snag.projects.fe.driven.test.FakeProjectsDb
-import cz.adamec.timotej.snag.projects.fe.model.FrontendProject
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectSyncResult
 import cz.adamec.timotej.snag.structures.fe.driven.test.FakeStructuresDb
 import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
@@ -50,28 +50,22 @@ class PullProjectChangesUseCaseImplTest : FrontendKoinInitializedTest() {
     private val structureId = Uuid.parse("00000000-0000-0000-0001-000000000001")
 
     private fun createProject(id: Uuid) =
-        FrontendProject(
-            project =
-                Project(
-                    id = id,
-                    name = "Test Project",
-                    address = "Test Address",
-                    updatedAt = Timestamp(100L),
-                ),
+        AppProjectData(
+            id = id,
+            name = "Test Project",
+            address = "Test Address",
+            updatedAt = Timestamp(100L),
         )
 
     private fun createStructure(
         id: Uuid,
         projectId: Uuid,
-    ) = FrontendStructure(
-        structure =
-            Structure(
-                id = id,
-                projectId = projectId,
-                name = "Structure",
-                floorPlanUrl = null,
-                updatedAt = Timestamp(1L),
-            ),
+    ) = AppStructureData(
+        id = id,
+        projectId = projectId,
+        name = "Structure",
+        floorPlanUrl = null,
+        updatedAt = Timestamp(1L),
     )
 
     @Test
@@ -86,9 +80,9 @@ class PullProjectChangesUseCaseImplTest : FrontendKoinInitializedTest() {
             useCase()
 
             val result = fakeProjectsDb.getProjectFlow(projectId).first()
-            assertIs<OfflineFirstDataResult.Success<FrontendProject?>>(result)
+            assertIs<OfflineFirstDataResult.Success<AppProject?>>(result)
             assertNotNull(result.data)
-            assertEquals(projectId, result.data!!.project.id)
+            assertEquals(projectId, result.data!!.id)
         }
 
     @Test
@@ -108,11 +102,11 @@ class PullProjectChangesUseCaseImplTest : FrontendKoinInitializedTest() {
             useCase()
 
             val structuresResult = fakeStructuresDb.getStructuresFlow(projectId).first()
-            assertIs<OfflineFirstDataResult.Success<List<FrontendStructure>>>(structuresResult)
+            assertIs<OfflineFirstDataResult.Success<List<AppStructure>>>(structuresResult)
             assertTrue(structuresResult.data.isEmpty())
 
             val result = fakeProjectsDb.getProjectFlow(projectId).first()
-            assertIs<OfflineFirstDataResult.Success<FrontendProject?>>(result)
+            assertIs<OfflineFirstDataResult.Success<AppProject?>>(result)
             assertNull(result.data)
         }
 

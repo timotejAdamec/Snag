@@ -16,8 +16,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import cz.adamec.timotej.snag.feat.findings.business.FindingTypeKey
-import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
+import cz.adamec.timotej.snag.feat.findings.business.model.FindingTypeKey
+import cz.adamec.timotej.snag.feat.findings.business.model.RelativeCoordinate
 import cz.adamec.timotej.snag.lib.design.fe.error.ShowSnackbarOnError
 import cz.adamec.timotej.snag.lib.design.fe.events.ObserveAsEvents
 import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.floorPlan.vm.StructureFloorPlanViewModel

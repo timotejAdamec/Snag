@@ -59,10 +59,9 @@ import cz.adamec.timotej.snag.lib.design.fe.button.AdaptiveTonalButton
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.BackNavigationIcon
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.CollapsableTopAppBarScaffold
 import cz.adamec.timotej.snag.lib.design.fe.theme.SnagPreview
-import cz.adamec.timotej.snag.projects.business.Project
+import cz.adamec.timotej.snag.projects.app.model.AppProjectData
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.vm.ProjectDetailsUiState
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.vm.ProjectDetailsUiStatus
-import cz.adamec.timotej.snag.projects.fe.model.FrontendProject
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import snag.feat.projects.fe.driving.impl.generated.resources.Res
@@ -160,9 +159,8 @@ private fun LoadedProjectDetailsContent(
     onToggleClose: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val project = state.project?.project
-    val projectName = project?.name.orEmpty()
-    val projectAddress = project?.address.orEmpty()
+    val projectName = state.project?.name.orEmpty()
+    val projectAddress = state.project?.address.orEmpty()
     CollapsableTopAppBarScaffold(
         modifier = modifier,
         title = projectName,
@@ -229,19 +227,19 @@ private fun LoadedProjectDetailsContent(
                     ) {
                         items(
                             items = state.inspections,
-                            key = { it.inspection.id },
+                            key = { it.id },
                         ) { inspection ->
                             InspectionCard(
                                 modifier = Modifier.width(200.dp),
                                 feInspection = inspection,
                                 onClick = {
-                                    onInspectionClick(inspection.inspection.id)
+                                    onInspectionClick(inspection.id)
                                 },
                                 onStartClick = {
-                                    onStartInspection(inspection.inspection.id)
+                                    onStartInspection(inspection.id)
                                 },
                                 onEndClick = {
-                                    onEndInspection(inspection.inspection.id)
+                                    onEndInspection(inspection.id)
                                 },
                             )
                         }
@@ -301,11 +299,11 @@ private fun LoadedProjectDetailsContent(
                                             .widthIn(min = minWidth)
                                             .height(minWidth + 30.dp)
                                             .weight(1f),
-                                    feStructure = structure,
+                                    structure = structure,
                                     onClick = {
                                         onStructureClick(
-                                            structure.structure.projectId,
-                                            structure.structure.id,
+                                            structure.projectId,
+                                            structure.id,
                                         )
                                     },
                                 )
@@ -449,14 +447,11 @@ private fun LoadedProjectDetailsContentPreview() {
                 ProjectDetailsUiState(
                     projectStatus = ProjectDetailsUiStatus.LOADED,
                     project =
-                        FrontendProject(
-                            project =
-                                Project(
-                                    id = UuidProvider.getUuid(),
-                                    name = "Example project name",
-                                    address = "Example project address",
-                                    updatedAt = Timestamp(0L),
-                                ),
+                        AppProjectData(
+                            id = UuidProvider.getUuid(),
+                            name = "Example project name",
+                            address = "Example project address",
+                            updatedAt = Timestamp(0L),
                         ),
                 ),
             onNewStructureClick = {},

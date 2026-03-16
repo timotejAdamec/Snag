@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.structures.fe.driven.test
 
-import cz.adamec.timotej.snag.feat.structures.fe.model.FrontendStructure
+import cz.adamec.timotej.snag.feat.structures.app.model.AppStructure
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.database.fe.test.FakeDbOps
 import cz.adamec.timotej.snag.structures.fe.ports.StructuresDb
@@ -20,7 +20,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlin.uuid.Uuid
 
 class FakeStructuresDb : StructuresDb {
-    private val ops = FakeDbOps<FrontendStructure>(getId = { it.structure.id })
+    private val ops = FakeDbOps<AppStructure>(getId = { it.id })
 
     var forcedFailure
         get() = ops.forcedFailure
@@ -28,26 +28,26 @@ class FakeStructuresDb : StructuresDb {
             ops.forcedFailure = value
         }
 
-    override fun getStructuresFlow(projectId: Uuid): Flow<OfflineFirstDataResult<List<FrontendStructure>>> =
-        ops.allItemsFlow { it.structure.projectId == projectId }
+    override fun getStructuresFlow(projectId: Uuid): Flow<OfflineFirstDataResult<List<AppStructure>>> =
+        ops.allItemsFlow { it.projectId == projectId }
 
-    override fun getStructureFlow(id: Uuid): Flow<OfflineFirstDataResult<FrontendStructure?>> = ops.itemByIdFlow(id)
+    override fun getStructureFlow(id: Uuid): Flow<OfflineFirstDataResult<AppStructure?>> = ops.itemByIdFlow(id)
 
-    override suspend fun saveStructure(structure: FrontendStructure): OfflineFirstDataResult<Unit> = ops.saveOneItem(structure)
+    override suspend fun saveStructure(structure: AppStructure): OfflineFirstDataResult<Unit> = ops.saveOneItem(structure)
 
-    override suspend fun saveStructures(structures: List<FrontendStructure>): OfflineFirstDataResult<Unit> = ops.saveManyItems(structures)
+    override suspend fun saveStructures(structures: List<AppStructure>): OfflineFirstDataResult<Unit> = ops.saveManyItems(structures)
 
     override suspend fun deleteStructure(id: Uuid): OfflineFirstDataResult<Unit> = ops.deleteItem(id)
 
     override suspend fun getStructureIdsByProjectId(projectId: Uuid): List<Uuid> =
         ops.items.value.values
-            .filter { it.structure.projectId == projectId }
-            .map { it.structure.id }
+            .filter { it.projectId == projectId }
+            .map { it.id }
 
     override suspend fun deleteStructuresByProjectId(projectId: Uuid): OfflineFirstDataResult<Unit> =
-        ops.deleteItemsWhere { it.structure.projectId != projectId }
+        ops.deleteItemsWhere { it.projectId != projectId }
 
-    fun setStructure(structure: FrontendStructure) = ops.setItem(structure)
+    fun setStructure(structure: AppStructure) = ops.setItem(structure)
 
-    fun setStructures(structures: List<FrontendStructure>) = ops.setItems(structures)
+    fun setStructures(structures: List<AppStructure>) = ops.setItems(structures)
 }

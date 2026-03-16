@@ -14,13 +14,13 @@ package cz.adamec.timotej.snag.projects.fe.driven.test
 
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.database.fe.test.FakeDbOps
-import cz.adamec.timotej.snag.projects.fe.model.FrontendProject
+import cz.adamec.timotej.snag.projects.app.model.AppProject
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsDb
 import kotlinx.coroutines.flow.Flow
 import kotlin.uuid.Uuid
 
 class FakeProjectsDb : ProjectsDb {
-    private val ops = FakeDbOps<FrontendProject>(getId = { it.project.id })
+    private val ops = FakeDbOps<AppProject>(getId = { it.id })
 
     var forcedFailure
         get() = ops.forcedFailure
@@ -28,18 +28,18 @@ class FakeProjectsDb : ProjectsDb {
             ops.forcedFailure = value
         }
 
-    override fun getAllProjectsFlow(): Flow<OfflineFirstDataResult<List<FrontendProject>>> = ops.allItemsFlow()
+    override fun getAllProjectsFlow(): Flow<OfflineFirstDataResult<List<AppProject>>> = ops.allItemsFlow()
 
-    override fun getProjectFlow(id: Uuid): Flow<OfflineFirstDataResult<FrontendProject?>> = ops.itemByIdFlow(id)
+    override fun getProjectFlow(id: Uuid): Flow<OfflineFirstDataResult<AppProject?>> = ops.itemByIdFlow(id)
 
-    override suspend fun getProject(id: Uuid): OfflineFirstDataResult<FrontendProject?> =
+    override suspend fun getProject(id: Uuid): OfflineFirstDataResult<AppProject?> =
         OfflineFirstDataResult.Success(ops.items.value[id])
 
-    override suspend fun saveProject(project: FrontendProject): OfflineFirstDataResult<Unit> = ops.saveOneItem(project)
+    override suspend fun saveProject(project: AppProject): OfflineFirstDataResult<Unit> = ops.saveOneItem(project)
 
-    override suspend fun saveProjects(projects: List<FrontendProject>): OfflineFirstDataResult<Unit> = ops.saveManyItems(projects)
+    override suspend fun saveProjects(projects: List<AppProject>): OfflineFirstDataResult<Unit> = ops.saveManyItems(projects)
 
     override suspend fun deleteProject(id: Uuid): OfflineFirstDataResult<Unit> = ops.deleteItem(id)
 
-    fun setProject(project: FrontendProject) = ops.setItem(project)
+    fun setProject(project: AppProject) = ops.setItem(project)
 }

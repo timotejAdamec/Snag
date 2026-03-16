@@ -46,13 +46,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import cz.adamec.timotej.snag.feat.findings.business.Finding
-import cz.adamec.timotej.snag.feat.findings.business.FindingType
-import cz.adamec.timotej.snag.feat.findings.business.Importance
-import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
-import cz.adamec.timotej.snag.feat.findings.business.Term
+import cz.adamec.timotej.snag.feat.findings.business.model.FindingType
+import cz.adamec.timotej.snag.feat.findings.business.model.Importance
+import cz.adamec.timotej.snag.feat.findings.business.model.RelativeCoordinate
+import cz.adamec.timotej.snag.feat.findings.business.model.Term
 import cz.adamec.timotej.snag.feat.findings.fe.driving.api.visuals
-import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
+import cz.adamec.timotej.snag.feat.findings.app.model.AppFinding
+import cz.adamec.timotej.snag.feat.findings.app.model.AppFindingData
 import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetail.ui.components.FindingDeletionAlertDialog
 import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetail.ui.components.ImportanceLabel
 import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetail.ui.components.TermLabel
@@ -134,7 +134,7 @@ internal fun FindingDetailContent(
                 topBar = {
                     TopAppBar(
                         title = {
-                            Text(text = finding.finding.name)
+                            Text(text = finding.name)
                         },
                         navigationIcon = {
                             IconButton(onClick = onBack) {
@@ -177,7 +177,7 @@ internal fun FindingDetailContent(
                     Column(
                         verticalArrangement = Arrangement.spacedBy(16.dp),
                     ) {
-                        val type = finding.finding.type
+                        val type = finding.type
                         val visuals = type.visuals()
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
@@ -218,13 +218,13 @@ internal fun FindingDetailContent(
                                 )
                             }
                         }
-                        finding.finding.description?.let { description ->
+                        finding.description?.let { description ->
                             Text(
                                 text = description,
                                 style = MaterialTheme.typography.bodyLarge,
                             )
                         }
-                        val coordinateCount = finding.finding.coordinates.size
+                        val coordinateCount = finding.coordinates.size
                         Text(
                             text =
                                 pluralStringResource(
@@ -280,25 +280,22 @@ private fun FindingDetailContentLoadedPreview() {
                 FindingDetailUiState(
                     status = FindingDetailUiStatus.LOADED,
                     finding =
-                        FrontendFinding(
-                            finding =
-                                Finding(
-                                    id = Uuid.random(),
-                                    structureId = Uuid.random(),
-                                    name = "Cracked wall",
-                                    description = "Large crack running along the north-facing wall near the window.",
-                                    type =
-                                        FindingType.Classic(
-                                            importance = Importance.HIGH,
-                                            term = Term.T2,
-                                        ),
-                                    coordinates =
-                                        setOf(
-                                            RelativeCoordinate(0.5f, 0.3f),
-                                            RelativeCoordinate(0.7f, 0.6f),
-                                        ),
-                                    updatedAt = Timestamp(0L),
+                        AppFindingData(
+                            id = Uuid.random(),
+                            structureId = Uuid.random(),
+                            name = "Cracked wall",
+                            description = "Large crack running along the north-facing wall near the window.",
+                            type =
+                                FindingType.Classic(
+                                    importance = Importance.HIGH,
+                                    term = Term.T2,
                                 ),
+                            coordinates =
+                                setOf(
+                                    RelativeCoordinate(0.5f, 0.3f),
+                                    RelativeCoordinate(0.7f, 0.6f),
+                                ),
+                            updatedAt = Timestamp(0L),
                         ),
                 ),
             onBack = {},
@@ -317,17 +314,14 @@ private fun FindingDetailContentNotePreview() {
                 FindingDetailUiState(
                     status = FindingDetailUiStatus.LOADED,
                     finding =
-                        FrontendFinding(
-                            finding =
-                                Finding(
-                                    id = Uuid.random(),
-                                    structureId = Uuid.random(),
-                                    name = "Check ventilation",
-                                    description = null,
-                                    type = FindingType.Note,
-                                    coordinates = emptySet(),
-                                    updatedAt = Timestamp(0L),
-                                ),
+                        AppFindingData(
+                            id = Uuid.random(),
+                            structureId = Uuid.random(),
+                            name = "Check ventilation",
+                            description = null,
+                            type = FindingType.Note,
+                            coordinates = emptySet(),
+                            updatedAt = Timestamp(0L),
                         ),
                 ),
             onBack = {},

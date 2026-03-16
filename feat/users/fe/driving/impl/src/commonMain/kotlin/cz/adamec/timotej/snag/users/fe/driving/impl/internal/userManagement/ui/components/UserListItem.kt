@@ -19,7 +19,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import cz.adamec.timotej.snag.users.business.UserRole
+import cz.adamec.timotej.snag.users.business.model.UserRole
 import cz.adamec.timotej.snag.users.fe.driving.impl.internal.userManagement.vm.UserItem
 
 @Composable

@@ -18,7 +18,7 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation(project(":feat:inspections:fe:model"))
+                implementation(project(":feat:inspections:app:model"))
                 api(project(":feat:projects:fe:driving:api"))
                 implementation(libs.kotlinx.datetime)
             }

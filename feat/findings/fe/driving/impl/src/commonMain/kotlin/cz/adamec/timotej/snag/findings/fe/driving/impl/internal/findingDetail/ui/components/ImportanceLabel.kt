@@ -24,7 +24,7 @@ import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import cz.adamec.timotej.snag.feat.findings.business.Importance
+import cz.adamec.timotej.snag.feat.findings.business.model.Importance
 import org.jetbrains.compose.resources.stringResource
 import snag.feat.findings.fe.driving.impl.generated.resources.Res
 import snag.feat.findings.fe.driving.impl.generated.resources.importance_high

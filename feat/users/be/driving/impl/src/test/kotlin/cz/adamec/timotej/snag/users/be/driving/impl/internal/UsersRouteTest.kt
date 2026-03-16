@@ -18,10 +18,9 @@ import cz.adamec.timotej.snag.network.be.test.jsonClient
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
 import cz.adamec.timotej.snag.users.be.driving.contract.PutUserApiDto
 import cz.adamec.timotej.snag.users.be.driving.contract.UserApiDto
-import cz.adamec.timotej.snag.users.be.model.BackendUser
+import cz.adamec.timotej.snag.users.be.model.BackendUserData
 import cz.adamec.timotej.snag.users.be.ports.UsersDb
-import cz.adamec.timotej.snag.users.business.User
-import cz.adamec.timotej.snag.users.business.UserRole
+import cz.adamec.timotej.snag.users.business.model.UserRole
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.request.put
@@ -66,26 +65,20 @@ class UsersRouteTest : BackendKoinInitializedTest() {
         testApplication {
             configureApp()
             usersDb.saveUser(
-                BackendUser(
-                    user =
-                        User(
-                            id = TEST_USER_1,
-                            entraId = "entra-1",
-                            email = "user1@example.com",
-                            role = UserRole.ADMINISTRATOR,
-                            updatedAt = Timestamp(100L),
-                        ),
+                BackendUserData(
+                    id = TEST_USER_1,
+                    entraId = "entra-1",
+                    email = "user1@example.com",
+                    role = UserRole.ADMINISTRATOR,
+                    updatedAt = Timestamp(100L),
                 ),
             )
             usersDb.saveUser(
-                BackendUser(
-                    user =
-                        User(
-                            id = TEST_USER_2,
-                            entraId = "entra-2",
-                            email = "user2@example.com",
-                            updatedAt = Timestamp(100L),
-                        ),
+                BackendUserData(
+                    id = TEST_USER_2,
+                    entraId = "entra-2",
+                    email = "user2@example.com",
+                    updatedAt = Timestamp(100L),
                 ),
             )
             val client = jsonClient()
@@ -102,25 +95,19 @@ class UsersRouteTest : BackendKoinInitializedTest() {
         testApplication {
             configureApp()
             usersDb.saveUser(
-                BackendUser(
-                    user =
-                        User(
-                            id = TEST_USER_1,
-                            entraId = "entra-1",
-                            email = "user1@example.com",
-                            updatedAt = Timestamp(100L),
-                        ),
+                BackendUserData(
+                    id = TEST_USER_1,
+                    entraId = "entra-1",
+                    email = "user1@example.com",
+                    updatedAt = Timestamp(100L),
                 ),
             )
             usersDb.saveUser(
-                BackendUser(
-                    user =
-                        User(
-                            id = TEST_USER_2,
-                            entraId = "entra-2",
-                            email = "user2@example.com",
-                            updatedAt = Timestamp(300L),
-                        ),
+                BackendUserData(
+                    id = TEST_USER_2,
+                    entraId = "entra-2",
+                    email = "user2@example.com",
+                    updatedAt = Timestamp(300L),
                 ),
             )
             val client = jsonClient()
@@ -138,14 +125,11 @@ class UsersRouteTest : BackendKoinInitializedTest() {
         testApplication {
             configureApp()
             usersDb.saveUser(
-                BackendUser(
-                    user =
-                        User(
-                            id = TEST_USER_1,
-                            entraId = "entra-1",
-                            email = "user1@example.com",
-                            updatedAt = Timestamp(100L),
-                        ),
+                BackendUserData(
+                    id = TEST_USER_1,
+                    entraId = "entra-1",
+                    email = "user1@example.com",
+                    updatedAt = Timestamp(100L),
                 ),
             )
             val client = jsonClient()
@@ -161,15 +145,12 @@ class UsersRouteTest : BackendKoinInitializedTest() {
         testApplication {
             configureApp()
             usersDb.saveUser(
-                BackendUser(
-                    user =
-                        User(
-                            id = TEST_USER_1,
-                            entraId = "entra-1",
-                            email = "user@example.com",
-                            role = UserRole.PASSPORT_LEAD,
-                            updatedAt = Timestamp(100L),
-                        ),
+                BackendUserData(
+                    id = TEST_USER_1,
+                    entraId = "entra-1",
+                    email = "user@example.com",
+                    role = UserRole.PASSPORT_LEAD,
+                    updatedAt = Timestamp(100L),
                 ),
             )
             val client = jsonClient()
@@ -260,14 +241,11 @@ class UsersRouteTest : BackendKoinInitializedTest() {
         testApplication {
             configureApp()
             usersDb.saveUser(
-                BackendUser(
-                    user =
-                        User(
-                            id = TEST_USER_1,
-                            entraId = "entra-1",
-                            email = "old@example.com",
-                            updatedAt = Timestamp(100L),
-                        ),
+                BackendUserData(
+                    id = TEST_USER_1,
+                    entraId = "entra-1",
+                    email = "old@example.com",
+                    updatedAt = Timestamp(100L),
                 ),
             )
             val client = jsonClient()

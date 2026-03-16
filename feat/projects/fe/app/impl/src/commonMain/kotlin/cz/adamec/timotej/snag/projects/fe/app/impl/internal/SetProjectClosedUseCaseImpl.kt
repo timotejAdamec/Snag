@@ -15,8 +15,9 @@ package cz.adamec.timotej.snag.projects.fe.app.impl.internal
 import cz.adamec.timotej.snag.lib.core.common.TimestampProvider
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
+import cz.adamec.timotej.snag.projects.app.model.AppProject
+import cz.adamec.timotej.snag.projects.app.model.AppProjectData
 import cz.adamec.timotej.snag.projects.fe.app.api.SetProjectClosedUseCase
-import cz.adamec.timotej.snag.projects.fe.model.FrontendProject
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsApi
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsDb
 import kotlin.uuid.Uuid
@@ -36,12 +37,13 @@ class SetProjectClosedUseCaseImpl(
                 is OnlineDataResult.Failure -> return r
             }
         val updatedProject =
-            FrontendProject(
-                project =
-                    localProject.project.copy(
-                        isClosed = isClosed,
-                        updatedAt = timestampProvider.getNowTimestamp(),
-                    ),
+            AppProjectData(
+                id = localProject.id,
+                name = localProject.name,
+                address = localProject.address,
+                clientId = localProject.clientId,
+                isClosed = isClosed,
+                updatedAt = timestampProvider.getNowTimestamp(),
             )
         return when (val result = projectsApi.saveProject(updatedProject)) {
             is OnlineDataResult.Success -> {
@@ -55,7 +57,7 @@ class SetProjectClosedUseCaseImpl(
         }
     }
 
-    private suspend fun getLocalProjectOrFailure(projectId: Uuid): OnlineDataResult<FrontendProject> =
+    private suspend fun getLocalProjectOrFailure(projectId: Uuid): OnlineDataResult<AppProject> =
         when (val dbResult = projectsDb.getProject(projectId)) {
             is OfflineFirstDataResult.Success ->
                 dbResult.data?.let { OnlineDataResult.Success(it) }

@@ -13,7 +13,7 @@
 package cz.adamec.timotej.snag.users.fe.driving.impl.internal.userManagement.vm
 
 import androidx.compose.runtime.Immutable
-import cz.adamec.timotej.snag.users.business.UserRole
+import cz.adamec.timotej.snag.users.business.model.UserRole
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlin.uuid.Uuid

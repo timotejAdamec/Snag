@@ -12,8 +12,7 @@
 
 package cz.adamec.timotej.snag.findings.fe.app.impl.internal
 
-import cz.adamec.timotej.snag.feat.findings.business.Finding
-import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
+import cz.adamec.timotej.snag.feat.findings.app.model.AppFindingData
 import cz.adamec.timotej.snag.findings.fe.app.api.SaveNewFindingUseCase
 import cz.adamec.timotej.snag.findings.fe.app.api.model.SaveNewFindingRequest
 import cz.adamec.timotej.snag.findings.fe.app.impl.internal.LH.logger
@@ -35,7 +34,7 @@ class SaveNewFindingUseCaseImpl(
 ) : SaveNewFindingUseCase {
     override suspend operator fun invoke(request: SaveNewFindingRequest): OfflineFirstDataResult<Uuid> {
         val finding =
-            Finding(
+            AppFindingData(
                 id = uuidProvider.getUuid(),
                 structureId = request.structureId,
                 name = request.name,
@@ -45,14 +44,12 @@ class SaveNewFindingUseCaseImpl(
                 updatedAt = timestampProvider.getNowTimestamp(),
             )
 
-        val frontendFinding = FrontendFinding(finding = finding)
-
         return findingsDb
-            .saveFinding(frontendFinding)
+            .saveFinding(finding)
             .also {
                 logger.log(
                     offlineFirstDataResult = it,
-                    additionalInfo = "SaveNewFindingUseCase, findingsDb.saveFinding($frontendFinding)",
+                    additionalInfo = "SaveNewFindingUseCase, findingsDb.saveFinding($finding)",
                 )
                 if (it is OfflineFirstDataResult.Success) {
                     enqueueSyncSaveUseCase(

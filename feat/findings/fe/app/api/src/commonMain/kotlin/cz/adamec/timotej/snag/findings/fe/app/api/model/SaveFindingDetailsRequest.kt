@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.findings.fe.app.api.model
 
-import cz.adamec.timotej.snag.feat.findings.business.FindingType
+import cz.adamec.timotej.snag.feat.findings.business.model.FindingType
 import kotlin.uuid.Uuid
 
 data class SaveFindingDetailsRequest(

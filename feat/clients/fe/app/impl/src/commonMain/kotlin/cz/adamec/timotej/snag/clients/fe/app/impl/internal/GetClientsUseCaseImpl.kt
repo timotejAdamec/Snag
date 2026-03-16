@@ -12,9 +12,9 @@
 
 package cz.adamec.timotej.snag.clients.fe.app.impl.internal
 
+import cz.adamec.timotej.snag.clients.app.model.AppClient
 import cz.adamec.timotej.snag.clients.fe.app.api.GetClientsUseCase
 import cz.adamec.timotej.snag.clients.fe.app.api.PullClientChangesUseCase
-import cz.adamec.timotej.snag.clients.fe.model.FrontendClient
 import cz.adamec.timotej.snag.clients.fe.ports.ClientsDb
 import cz.adamec.timotej.snag.lib.core.common.ApplicationScope
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
@@ -29,7 +29,7 @@ internal class GetClientsUseCaseImpl(
     private val clientsDb: ClientsDb,
     private val applicationScope: ApplicationScope,
 ) : GetClientsUseCase {
-    override operator fun invoke(): Flow<OfflineFirstDataResult<List<FrontendClient>>> {
+    override operator fun invoke(): Flow<OfflineFirstDataResult<List<AppClient>>> {
         applicationScope.launch {
             pullClientChangesUseCase()
         }

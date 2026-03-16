@@ -12,11 +12,12 @@
 
 package cz.adamec.timotej.snag.structures.fe.app.impl.internal
 
-import cz.adamec.timotej.snag.feat.findings.business.Finding
-import cz.adamec.timotej.snag.feat.findings.business.FindingType
-import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
-import cz.adamec.timotej.snag.feat.structures.business.Structure
-import cz.adamec.timotej.snag.feat.structures.fe.model.FrontendStructure
+import cz.adamec.timotej.snag.feat.findings.business.model.Finding
+import cz.adamec.timotej.snag.feat.findings.business.model.FindingType
+import cz.adamec.timotej.snag.feat.findings.app.model.AppFinding
+import cz.adamec.timotej.snag.feat.findings.app.model.AppFindingData
+import cz.adamec.timotej.snag.feat.structures.app.model.AppStructure
+import cz.adamec.timotej.snag.feat.structures.app.model.AppStructureData
 import cz.adamec.timotej.snag.findings.fe.driven.test.FakeFindingsDb
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
@@ -52,31 +53,25 @@ class PullStructureChangesUseCaseImplTest : FrontendKoinInitializedTest() {
     private val findingId = Uuid.parse("00000000-0000-0000-0002-000000000001")
 
     private fun createStructure(id: Uuid) =
-        FrontendStructure(
-            structure =
-                Structure(
-                    id = id,
-                    projectId = projectId,
-                    name = "Test Structure",
-                    floorPlanUrl = null,
-                    updatedAt = Timestamp(100L),
-                ),
+        AppStructureData(
+            id = id,
+            projectId = projectId,
+            name = "Test Structure",
+            floorPlanUrl = null,
+            updatedAt = Timestamp(100L),
         )
 
     private fun createFinding(
         id: Uuid,
         structureId: Uuid,
-    ) = FrontendFinding(
-        finding =
-            Finding(
-                id = id,
-                structureId = structureId,
-                name = "Finding",
-                description = null,
-                type = FindingType.Classic(),
-                coordinates = emptySet(),
-                updatedAt = Timestamp(1L),
-            ),
+    ) = AppFindingData(
+        id = id,
+        structureId = structureId,
+        name = "Finding",
+        description = null,
+        type = FindingType.Classic(),
+        coordinates = emptySet(),
+        updatedAt = Timestamp(1L),
     )
 
     @Test
@@ -91,9 +86,9 @@ class PullStructureChangesUseCaseImplTest : FrontendKoinInitializedTest() {
             useCase(projectId)
 
             val result = fakeStructuresDb.getStructureFlow(structureId).first()
-            assertIs<OfflineFirstDataResult.Success<FrontendStructure?>>(result)
+            assertIs<OfflineFirstDataResult.Success<AppStructure?>>(result)
             assertNotNull(result.data)
-            assertEquals(structureId, result.data!!.structure.id)
+            assertEquals(structureId, result.data!!.id)
         }
 
     @Test
@@ -113,11 +108,11 @@ class PullStructureChangesUseCaseImplTest : FrontendKoinInitializedTest() {
             useCase(projectId)
 
             val findingsResult = fakeFindingsDb.getFindingsFlow(structureId).first()
-            assertIs<OfflineFirstDataResult.Success<List<FrontendFinding>>>(findingsResult)
+            assertIs<OfflineFirstDataResult.Success<List<AppFinding>>>(findingsResult)
             assertTrue(findingsResult.data.isEmpty())
 
             val result = fakeStructuresDb.getStructureFlow(structureId).first()
-            assertIs<OfflineFirstDataResult.Success<FrontendStructure?>>(result)
+            assertIs<OfflineFirstDataResult.Success<AppStructure?>>(result)
             assertNull(result.data)
         }
 

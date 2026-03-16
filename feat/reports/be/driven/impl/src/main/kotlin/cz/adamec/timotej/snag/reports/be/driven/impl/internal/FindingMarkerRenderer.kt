@@ -13,8 +13,8 @@
 package cz.adamec.timotej.snag.reports.be.driven.impl.internal
 
 import cz.adamec.timotej.snag.feat.findings.be.model.BackendFinding
-import cz.adamec.timotej.snag.feat.findings.business.FindingType
-import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
+import cz.adamec.timotej.snag.feat.findings.business.model.FindingType
+import cz.adamec.timotej.snag.feat.findings.business.model.RelativeCoordinate
 import java.awt.BasicStroke
 import java.awt.Color
 import java.awt.Graphics2D
@@ -67,8 +67,8 @@ internal object FindingMarkerRenderer {
 
         findings.forEachIndexed { index, backendFinding ->
             val label = "${index + 1}"
-            val color = findingTypeColor(backendFinding.finding.type)
-            backendFinding.finding.coordinates.forEach { coord ->
+            val color = findingTypeColor(backendFinding.type)
+            backendFinding.coordinates.forEach { coord ->
                 drawMarker(g, coord, canvas.width, canvas.height, markerRadius, label, color)
             }
         }

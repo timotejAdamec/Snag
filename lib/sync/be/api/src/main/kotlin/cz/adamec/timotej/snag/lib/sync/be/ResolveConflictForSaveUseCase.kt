@@ -12,19 +12,20 @@
 
 package cz.adamec.timotej.snag.lib.sync.be
 
-import cz.adamec.timotej.snag.lib.sync.be.model.Syncable
+import cz.adamec.timotej.snag.lib.sync.be.model.SoftDeletable
+import cz.adamec.timotej.snag.lib.sync.model.Versioned
 
-sealed interface SaveConflictResult<out T : Syncable> {
+sealed interface SaveConflictResult<out T> where T : Versioned, T : SoftDeletable {
     data object Proceed : SaveConflictResult<Nothing>
 
-    data class Rejected<T : Syncable>(
+    data class Rejected<T>(
         val serverVersion: T,
-    ) : SaveConflictResult<T>
+    ) : SaveConflictResult<T> where T : Versioned, T : SoftDeletable
 }
 
 interface ResolveConflictForSaveUseCase {
-    operator fun <T : Syncable> invoke(
+    operator fun <T> invoke(
         existing: T?,
         incoming: T,
-    ): SaveConflictResult<T>
+    ): SaveConflictResult<T> where T : Versioned, T : SoftDeletable
 }

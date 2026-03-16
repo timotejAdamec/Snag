@@ -13,7 +13,7 @@
 package cz.adamec.timotej.snag.feat.inspections.fe.driven.internal.db
 
 import cz.adamec.timotej.snag.feat.inspections.fe.driven.internal.LH
-import cz.adamec.timotej.snag.feat.inspections.fe.model.FrontendInspection
+import cz.adamec.timotej.snag.feat.inspections.app.model.AppInspection
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.InspectionEntity
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.InspectionEntityQueries
 import cz.adamec.timotej.snag.lib.database.fe.SqlDelightDbOps
@@ -24,7 +24,7 @@ import kotlin.uuid.Uuid
 internal class InspectionsSqlDelightDbOps(
     private val queries: InspectionEntityQueries,
     private val ioDispatcher: CoroutineDispatcher,
-) : SqlDelightDbOps<InspectionEntity, FrontendInspection>(
+) : SqlDelightDbOps<InspectionEntity, AppInspection>(
         ioDispatcher = ioDispatcher,
         logger = LH.logger,
         entityName = "inspection",

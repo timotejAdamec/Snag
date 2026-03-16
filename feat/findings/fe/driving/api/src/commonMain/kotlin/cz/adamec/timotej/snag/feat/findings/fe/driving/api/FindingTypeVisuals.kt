@@ -15,7 +15,7 @@ package cz.adamec.timotej.snag.feat.findings.fe.driving.api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import cz.adamec.timotej.snag.feat.findings.business.FindingType
+import cz.adamec.timotej.snag.feat.findings.business.model.FindingType
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.StringResource
 import snag.lib.design.fe.generated.resources.Res

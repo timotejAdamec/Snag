@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.feat.inspections.fe.driven.internal.db
 
-import cz.adamec.timotej.snag.feat.inspections.fe.model.FrontendInspection
+import cz.adamec.timotej.snag.feat.inspections.app.model.AppInspection
 import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionsDb
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import kotlinx.coroutines.flow.Flow
@@ -21,14 +21,14 @@ import kotlin.uuid.Uuid
 internal class RealInspectionsDb(
     private val ops: InspectionsSqlDelightDbOps,
 ) : InspectionsDb {
-    override fun getInspectionsFlow(projectId: Uuid): Flow<OfflineFirstDataResult<List<FrontendInspection>>> =
+    override fun getInspectionsFlow(projectId: Uuid): Flow<OfflineFirstDataResult<List<AppInspection>>> =
         ops.inspectionsByProjectIdFlow(projectId)
 
-    override suspend fun saveInspection(inspection: FrontendInspection): OfflineFirstDataResult<Unit> = ops.saveOne(inspection)
+    override suspend fun saveInspection(inspection: AppInspection): OfflineFirstDataResult<Unit> = ops.saveOne(inspection)
 
     override suspend fun deleteInspection(id: Uuid): OfflineFirstDataResult<Unit> = ops.deleteById(id)
 
-    override fun getInspectionFlow(id: Uuid): Flow<OfflineFirstDataResult<FrontendInspection?>> = ops.entityByIdFlow(id)
+    override fun getInspectionFlow(id: Uuid): Flow<OfflineFirstDataResult<AppInspection?>> = ops.entityByIdFlow(id)
 
     override suspend fun getInspectionIdsByProjectId(projectId: Uuid): List<Uuid> = ops.getInspectionIdsByProjectId(projectId)
 

@@ -12,19 +12,19 @@
 
 package cz.adamec.timotej.snag.structures.fe.ports
 
-import cz.adamec.timotej.snag.feat.structures.fe.model.FrontendStructure
+import cz.adamec.timotej.snag.feat.structures.app.model.AppStructure
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import kotlinx.coroutines.flow.Flow
 import kotlin.uuid.Uuid
 
 interface StructuresDb {
-    fun getStructuresFlow(projectId: Uuid): Flow<OfflineFirstDataResult<List<FrontendStructure>>>
+    fun getStructuresFlow(projectId: Uuid): Flow<OfflineFirstDataResult<List<AppStructure>>>
 
-    suspend fun saveStructures(structures: List<FrontendStructure>): OfflineFirstDataResult<Unit>
+    suspend fun saveStructures(structures: List<AppStructure>): OfflineFirstDataResult<Unit>
 
-    suspend fun saveStructure(structure: FrontendStructure): OfflineFirstDataResult<Unit>
+    suspend fun saveStructure(structure: AppStructure): OfflineFirstDataResult<Unit>
 
-    fun getStructureFlow(id: Uuid): Flow<OfflineFirstDataResult<FrontendStructure?>>
+    fun getStructureFlow(id: Uuid): Flow<OfflineFirstDataResult<AppStructure?>>
 
     suspend fun deleteStructure(id: Uuid): OfflineFirstDataResult<Unit>
 

@@ -73,7 +73,7 @@ internal class PullStructureChangesUseCaseImpl(
                                 }
 
                                 is StructureSyncResult.Updated -> {
-                                    LH.logger.d { "Processing updated structure ${syncResult.structure.structure.id}." }
+                                    LH.logger.d { "Processing updated structure ${syncResult.structure.id}." }
                                     structuresDb.saveStructure(syncResult.structure)
                                 }
                             }

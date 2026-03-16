@@ -12,12 +12,10 @@
 
 package cz.adamec.timotej.snag.structures.be.app.impl.internal
 
-import cz.adamec.timotej.snag.feat.structures.be.model.BackendStructure
-import cz.adamec.timotej.snag.feat.structures.business.Structure
+import cz.adamec.timotej.snag.feat.structures.be.model.BackendStructureData
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
-import cz.adamec.timotej.snag.projects.be.model.BackendProject
+import cz.adamec.timotej.snag.projects.be.model.BackendProjectData
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
-import cz.adamec.timotej.snag.projects.business.Project
 import cz.adamec.timotej.snag.structures.be.app.api.DeleteStructureUseCase
 import cz.adamec.timotej.snag.structures.be.app.api.model.DeleteStructureRequest
 import cz.adamec.timotej.snag.structures.be.ports.StructuresDb
@@ -38,28 +36,22 @@ class DeleteStructureUseCaseImplTest : BackendKoinInitializedTest() {
     private val projectId = Uuid.parse("00000000-0000-0000-0000-000000000001")
     private val structureId = Uuid.parse("00000000-0000-0000-0001-000000000001")
     private val structure =
-        BackendStructure(
-            structure =
-                Structure(
-                    id = structureId,
-                    projectId = projectId,
-                    name = "Ground Floor",
-                    floorPlanUrl = null,
-                    updatedAt = Timestamp(value = 10L),
-                ),
+        BackendStructureData(
+            id = structureId,
+            projectId = projectId,
+            name = "Ground Floor",
+            floorPlanUrl = null,
+            updatedAt = Timestamp(value = 10L),
         )
 
     private fun createProject() =
         runTest(testDispatcher) {
             projectsDb.saveProject(
-                BackendProject(
-                    project =
-                        Project(
-                            id = projectId,
-                            name = "Test Project",
-                            address = "Test Address",
-                            updatedAt = Timestamp(1L),
-                        ),
+                BackendProjectData(
+                    id = projectId,
+                    name = "Test Project",
+                    address = "Test Address",
+                    updatedAt = Timestamp(1L),
                 ),
             )
         }
@@ -78,7 +70,7 @@ class DeleteStructureUseCaseImplTest : BackendKoinInitializedTest() {
             )
 
             val deletedStructure =
-                dataSource.getStructures(projectId).find { it.structure.id == structureId }
+                dataSource.getStructures(projectId).find { it.id == structureId }
             assertNotNull(deletedStructure)
             assertEquals(Timestamp(20L), deletedStructure.deletedAt)
         }
@@ -97,7 +89,7 @@ class DeleteStructureUseCaseImplTest : BackendKoinInitializedTest() {
             )
 
             assertNotNull(
-                dataSource.getStructures(projectId).find { it.structure.id == structureId },
+                dataSource.getStructures(projectId).find { it.id == structureId },
             )
         }
 
@@ -136,15 +128,12 @@ class DeleteStructureUseCaseImplTest : BackendKoinInitializedTest() {
     private fun createClosedProject() =
         runTest(testDispatcher) {
             projectsDb.saveProject(
-                BackendProject(
-                    project =
-                        Project(
-                            id = projectId,
-                            name = "Test Project",
-                            address = "Test Address",
-                            isClosed = true,
-                            updatedAt = Timestamp(1L),
-                        ),
+                BackendProjectData(
+                    id = projectId,
+                    name = "Test Project",
+                    address = "Test Address",
+                    isClosed = true,
+                    updatedAt = Timestamp(1L),
                 ),
             )
         }
@@ -165,7 +154,7 @@ class DeleteStructureUseCaseImplTest : BackendKoinInitializedTest() {
 
             assertEquals(structure, result)
             val stored =
-                dataSource.getStructures(projectId).find { it.structure.id == structureId }
+                dataSource.getStructures(projectId).find { it.id == structureId }
             assertNull(stored?.deletedAt)
         }
 }

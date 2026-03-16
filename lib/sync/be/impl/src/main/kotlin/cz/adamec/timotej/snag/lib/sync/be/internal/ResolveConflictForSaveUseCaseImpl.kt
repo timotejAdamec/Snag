@@ -15,13 +15,14 @@ package cz.adamec.timotej.snag.lib.sync.be.internal
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.sync.be.ResolveConflictForSaveUseCase
 import cz.adamec.timotej.snag.lib.sync.be.SaveConflictResult
-import cz.adamec.timotej.snag.lib.sync.be.model.Syncable
+import cz.adamec.timotej.snag.lib.sync.be.model.SoftDeletable
+import cz.adamec.timotej.snag.lib.sync.model.Versioned
 
 internal class ResolveConflictForSaveUseCaseImpl : ResolveConflictForSaveUseCase {
-    override operator fun <T : Syncable> invoke(
+    override operator fun <T> invoke(
         existing: T?,
         incoming: T,
-    ): SaveConflictResult<T> {
+    ): SaveConflictResult<T> where T : Versioned, T : SoftDeletable {
         if (existing == null) return SaveConflictResult.Proceed
         val serverTimestamp =
             maxOf(

@@ -12,8 +12,8 @@
 
 package cz.adamec.timotej.snag.structures.fe.driving.impl.internal.structureDetailsEdit.vm
 
-import cz.adamec.timotej.snag.feat.structures.business.Structure
-import cz.adamec.timotej.snag.feat.structures.fe.model.FrontendStructure
+import cz.adamec.timotej.snag.feat.structures.app.model.AppStructure
+import cz.adamec.timotej.snag.feat.structures.app.model.AppStructureData
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.common.UuidProvider
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
@@ -84,14 +84,12 @@ class StructureDetailsEditViewModelTest : FrontendKoinInitializedTest() {
             val projectId = UuidProvider.getUuid()
             val structureId = UuidProvider.getUuid()
             val structure =
-                FrontendStructure(
-                    Structure(
-                        id = structureId,
-                        projectId = projectId,
-                        name = "Test Structure",
-                        floorPlanUrl = null,
-                        updatedAt = Timestamp(10L),
-                    ),
+                AppStructureData(
+                    id = structureId,
+                    projectId = projectId,
+                    name = "Test Structure",
+                    floorPlanUrl = null,
+                    updatedAt = Timestamp(10L),
                 )
             fakeStructuresDb.setStructures(listOf(structure))
 
@@ -153,11 +151,11 @@ class StructureDetailsEditViewModelTest : FrontendKoinInitializedTest() {
 
             // Verify structure is saved in DB
             val savedStructureResult = fakeStructuresDb.getStructureFlow(savedId).first()
-            assertIs<OfflineFirstDataResult.Success<FrontendStructure?>>(savedStructureResult)
+            assertIs<OfflineFirstDataResult.Success<AppStructure?>>(savedStructureResult)
             val savedStructure = savedStructureResult.data
             assertNotNull(savedStructure)
-            assertEquals("Name", savedStructure.structure.name)
-            assertEquals(projectId, savedStructure.structure.projectId)
+            assertEquals("Name", savedStructure.name)
+            assertEquals(projectId, savedStructure.projectId)
         }
 
     @Test
@@ -166,15 +164,12 @@ class StructureDetailsEditViewModelTest : FrontendKoinInitializedTest() {
             val projectId = UuidProvider.getUuid()
             val structureId = UuidProvider.getUuid()
             val structure =
-                FrontendStructure(
-                    structure =
-                        Structure(
-                            id = structureId,
-                            projectId = projectId,
-                            name = "Original Name",
-                            floorPlanUrl = null,
-                            updatedAt = Timestamp(10L),
-                        ),
+                AppStructureData(
+                    id = structureId,
+                    projectId = projectId,
+                    name = "Original Name",
+                    floorPlanUrl = null,
+                    updatedAt = Timestamp(10L),
                 )
             fakeStructuresDb.setStructures(listOf(structure))
 
@@ -190,11 +185,11 @@ class StructureDetailsEditViewModelTest : FrontendKoinInitializedTest() {
 
             // Verify structure is updated in DB
             val savedStructureResult = fakeStructuresDb.getStructureFlow(structureId).first()
-            assertIs<OfflineFirstDataResult.Success<FrontendStructure?>>(savedStructureResult)
+            assertIs<OfflineFirstDataResult.Success<AppStructure?>>(savedStructureResult)
             val savedStructure = savedStructureResult.data
             assertNotNull(savedStructure)
-            assertEquals("Updated Name", savedStructure.structure.name)
-            assertEquals(projectId, savedStructure.structure.projectId)
+            assertEquals("Updated Name", savedStructure.name)
+            assertEquals(projectId, savedStructure.projectId)
         }
 
     @Test
@@ -290,10 +285,10 @@ class StructureDetailsEditViewModelTest : FrontendKoinInitializedTest() {
             val savedId = viewModel.saveEventFlow.first()
 
             val savedStructureResult = fakeStructuresDb.getStructureFlow(savedId).first()
-            assertIs<OfflineFirstDataResult.Success<FrontendStructure?>>(savedStructureResult)
+            assertIs<OfflineFirstDataResult.Success<AppStructure?>>(savedStructureResult)
             val savedStructure = savedStructureResult.data
             assertNotNull(savedStructure)
-            assertEquals(uploadedUrl, savedStructure.structure.floorPlanUrl)
+            assertEquals(uploadedUrl, savedStructure.floorPlanUrl)
         }
 
     @Test
@@ -321,14 +316,12 @@ class StructureDetailsEditViewModelTest : FrontendKoinInitializedTest() {
             val structureId = UuidProvider.getUuid()
             val floorPlanUrl = "https://storage.test/existing-plan.png"
             val structure =
-                FrontendStructure(
-                    Structure(
-                        id = structureId,
-                        projectId = projectId,
-                        name = "Structure With Plan",
-                        floorPlanUrl = floorPlanUrl,
-                        updatedAt = Timestamp(10L),
-                    ),
+                AppStructureData(
+                    id = structureId,
+                    projectId = projectId,
+                    name = "Structure With Plan",
+                    floorPlanUrl = floorPlanUrl,
+                    updatedAt = Timestamp(10L),
                 )
             fakeStructuresDb.setStructures(listOf(structure))
 

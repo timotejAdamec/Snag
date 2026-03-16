@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.feat.inspections.fe.ports
 
-import cz.adamec.timotej.snag.feat.inspections.fe.model.FrontendInspection
+import cz.adamec.timotej.snag.feat.inspections.app.model.AppInspection
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
 import kotlin.uuid.Uuid
@@ -23,19 +23,19 @@ sealed interface InspectionSyncResult {
     ) : InspectionSyncResult
 
     data class Updated(
-        val inspection: FrontendInspection,
+        val inspection: AppInspection,
     ) : InspectionSyncResult
 }
 
 interface InspectionsApi {
-    suspend fun getInspections(projectId: Uuid): OnlineDataResult<List<FrontendInspection>>
+    suspend fun getInspections(projectId: Uuid): OnlineDataResult<List<AppInspection>>
 
-    suspend fun saveInspection(frontendInspection: FrontendInspection): OnlineDataResult<FrontendInspection?>
+    suspend fun saveInspection(frontendInspection: AppInspection): OnlineDataResult<AppInspection?>
 
     suspend fun deleteInspection(
         id: Uuid,
         deletedAt: Timestamp,
-    ): OnlineDataResult<FrontendInspection?>
+    ): OnlineDataResult<AppInspection?>
 
     suspend fun getInspectionsModifiedSince(
         projectId: Uuid,

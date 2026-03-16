@@ -12,18 +12,17 @@
 
 package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetailsEdit.vm
 
-import cz.adamec.timotej.snag.clients.business.Client
+import cz.adamec.timotej.snag.clients.app.model.AppClientData
 import cz.adamec.timotej.snag.clients.fe.app.api.GetClientsUseCase
 import cz.adamec.timotej.snag.clients.fe.driven.test.FakeClientsDb
-import cz.adamec.timotej.snag.clients.fe.model.FrontendClient
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
-import cz.adamec.timotej.snag.projects.business.Project
+import cz.adamec.timotej.snag.projects.app.model.AppProject
+import cz.adamec.timotej.snag.projects.app.model.AppProjectData
 import cz.adamec.timotej.snag.projects.fe.app.api.GetProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.SaveProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.driven.test.FakeProjectsDb
-import cz.adamec.timotej.snag.projects.fe.model.FrontendProject
 import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
@@ -70,14 +69,11 @@ class ProjectDetailsEditViewModelTest : FrontendKoinInitializedTest() {
         runTest(testDispatcher) {
             val projectId = Uuid.random()
             val project =
-                FrontendProject(
-                    project =
-                        Project(
-                            id = projectId,
-                            name = "Test Project",
-                            address = "Test Address",
-                            updatedAt = Timestamp(10L),
-                        ),
+                AppProjectData(
+                    id = projectId,
+                    name = "Test Project",
+                    address = "Test Address",
+                    updatedAt = Timestamp(10L),
                 )
             fakeProjectsDb.setProject(project)
 
@@ -165,10 +161,10 @@ class ProjectDetailsEditViewModelTest : FrontendKoinInitializedTest() {
 
             // Verify project is saved in DB
             val savedProjectResult = fakeProjectsDb.getProjectFlow(savedId).first()
-            assertIs<OfflineFirstDataResult.Success<FrontendProject?>>(savedProjectResult)
+            assertIs<OfflineFirstDataResult.Success<AppProject?>>(savedProjectResult)
             val savedProject = savedProjectResult.data
-            assertEquals("Name", savedProject?.project?.name)
-            assertEquals("Address", savedProject?.project?.address)
+            assertEquals("Name", savedProject?.name)
+            assertEquals("Address", savedProject?.address)
         }
 
     @Test
@@ -191,16 +187,13 @@ class ProjectDetailsEditViewModelTest : FrontendKoinInitializedTest() {
         runTest(testDispatcher) {
             val clientId = Uuid.random()
             fakeClientsDb.setClient(
-                FrontendClient(
-                    client =
-                        Client(
-                            id = clientId,
-                            name = "ACME Corp",
-                            address = null,
-                            phoneNumber = null,
-                            email = null,
-                            updatedAt = Timestamp(10L),
-                        ),
+                AppClientData(
+                    id = clientId,
+                    name = "ACME Corp",
+                    address = null,
+                    phoneNumber = null,
+                    email = null,
+                    updatedAt = Timestamp(10L),
                 ),
             )
 
@@ -209,7 +202,7 @@ class ProjectDetailsEditViewModelTest : FrontendKoinInitializedTest() {
 
             val clients = viewModel.state.value.availableClients
             assertEquals(1, clients.size)
-            assertEquals("ACME Corp", clients[0].client.name)
+            assertEquals("ACME Corp", clients[0].name)
         }
 
     @Test
@@ -250,8 +243,8 @@ class ProjectDetailsEditViewModelTest : FrontendKoinInitializedTest() {
 
             val savedId = viewModel.saveEventFlow.first()
             val savedProjectResult = fakeProjectsDb.getProjectFlow(savedId).first()
-            assertIs<OfflineFirstDataResult.Success<FrontendProject?>>(savedProjectResult)
-            assertEquals(clientId, savedProjectResult.data?.project?.clientId)
+            assertIs<OfflineFirstDataResult.Success<AppProject?>>(savedProjectResult)
+            assertEquals(clientId, savedProjectResult.data?.clientId)
         }
 
     @Test
@@ -260,28 +253,22 @@ class ProjectDetailsEditViewModelTest : FrontendKoinInitializedTest() {
             val projectId = Uuid.random()
             val clientId = Uuid.random()
             fakeClientsDb.setClient(
-                FrontendClient(
-                    client =
-                        Client(
-                            id = clientId,
-                            name = "ACME Corp",
-                            address = null,
-                            phoneNumber = null,
-                            email = null,
-                            updatedAt = Timestamp(10L),
-                        ),
+                AppClientData(
+                    id = clientId,
+                    name = "ACME Corp",
+                    address = null,
+                    phoneNumber = null,
+                    email = null,
+                    updatedAt = Timestamp(10L),
                 ),
             )
             fakeProjectsDb.setProject(
-                FrontendProject(
-                    project =
-                        Project(
-                            id = projectId,
-                            name = "Test Project",
-                            address = "Test Address",
-                            clientId = clientId,
-                            updatedAt = Timestamp(10L),
-                        ),
+                AppProjectData(
+                    id = projectId,
+                    name = "Test Project",
+                    address = "Test Address",
+                    clientId = clientId,
+                    updatedAt = Timestamp(10L),
                 ),
             )
 
@@ -297,16 +284,13 @@ class ProjectDetailsEditViewModelTest : FrontendKoinInitializedTest() {
         runTest(testDispatcher) {
             val clientId = Uuid.random()
             fakeClientsDb.setClient(
-                FrontendClient(
-                    client =
-                        Client(
-                            id = clientId,
-                            name = "New Client",
-                            address = null,
-                            phoneNumber = null,
-                            email = null,
-                            updatedAt = Timestamp(10L),
-                        ),
+                AppClientData(
+                    id = clientId,
+                    name = "New Client",
+                    address = null,
+                    phoneNumber = null,
+                    email = null,
+                    updatedAt = Timestamp(10L),
                 ),
             )
 

@@ -12,8 +12,8 @@
 
 package cz.adamec.timotej.snag.feat.findings.fe.driving.api
 
-import cz.adamec.timotej.snag.feat.findings.business.FindingTypeKey
-import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
+import cz.adamec.timotej.snag.feat.findings.business.model.FindingTypeKey
+import cz.adamec.timotej.snag.feat.findings.business.model.RelativeCoordinate
 import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureDetailNavRoute
 import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectsNavRoute
 import kotlin.uuid.Uuid

@@ -16,11 +16,11 @@ import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.common.UuidProvider
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
-import cz.adamec.timotej.snag.projects.business.Project
+import cz.adamec.timotej.snag.projects.app.model.AppProject
+import cz.adamec.timotej.snag.projects.app.model.AppProjectData
 import cz.adamec.timotej.snag.projects.fe.app.api.SetProjectClosedUseCase
 import cz.adamec.timotej.snag.projects.fe.driven.test.FakeProjectsApi
 import cz.adamec.timotej.snag.projects.fe.driven.test.FakeProjectsDb
-import cz.adamec.timotej.snag.projects.fe.model.FrontendProject
 import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
 import kotlinx.coroutines.test.runTest
 import org.koin.test.inject
@@ -38,29 +38,23 @@ class SetProjectClosedUseCaseImplTest : FrontendKoinInitializedTest() {
 
     private fun seedOpenProject() {
         fakeProjectsDb.setProject(
-            FrontendProject(
-                project =
-                    Project(
-                        id = projectId,
-                        name = "Test Project",
-                        address = "Test Address",
-                        updatedAt = Timestamp(100L),
-                    ),
+            AppProjectData(
+                id = projectId,
+                name = "Test Project",
+                address = "Test Address",
+                updatedAt = Timestamp(100L),
             ),
         )
     }
 
     private fun seedClosedProject() {
         fakeProjectsDb.setProject(
-            FrontendProject(
-                project =
-                    Project(
-                        id = projectId,
-                        name = "Test Project",
-                        address = "Test Address",
-                        isClosed = true,
-                        updatedAt = Timestamp(100L),
-                    ),
+            AppProjectData(
+                id = projectId,
+                name = "Test Project",
+                address = "Test Address",
+                isClosed = true,
+                updatedAt = Timestamp(100L),
             ),
         )
     }
@@ -74,8 +68,8 @@ class SetProjectClosedUseCaseImplTest : FrontendKoinInitializedTest() {
 
             assertIs<OnlineDataResult.Success<Unit>>(result)
             val dbResult = fakeProjectsDb.getProject(projectId)
-            assertIs<OfflineFirstDataResult.Success<FrontendProject?>>(dbResult)
-            assertTrue(dbResult.data!!.project.isClosed)
+            assertIs<OfflineFirstDataResult.Success<AppProject?>>(dbResult)
+            assertTrue(dbResult.data!!.isClosed)
         }
 
     @Test
@@ -87,8 +81,8 @@ class SetProjectClosedUseCaseImplTest : FrontendKoinInitializedTest() {
 
             assertIs<OnlineDataResult.Success<Unit>>(result)
             val dbResult = fakeProjectsDb.getProject(projectId)
-            assertIs<OfflineFirstDataResult.Success<FrontendProject?>>(dbResult)
-            assertFalse(dbResult.data!!.project.isClosed)
+            assertIs<OfflineFirstDataResult.Success<AppProject?>>(dbResult)
+            assertFalse(dbResult.data!!.isClosed)
         }
 
     @Test
@@ -101,8 +95,8 @@ class SetProjectClosedUseCaseImplTest : FrontendKoinInitializedTest() {
 
             assertIs<OnlineDataResult.Failure.NetworkUnavailable>(result)
             val dbResult = fakeProjectsDb.getProject(projectId)
-            assertIs<OfflineFirstDataResult.Success<FrontendProject?>>(dbResult)
-            assertFalse(dbResult.data!!.project.isClosed)
+            assertIs<OfflineFirstDataResult.Success<AppProject?>>(dbResult)
+            assertFalse(dbResult.data!!.isClosed)
         }
 
     @Test

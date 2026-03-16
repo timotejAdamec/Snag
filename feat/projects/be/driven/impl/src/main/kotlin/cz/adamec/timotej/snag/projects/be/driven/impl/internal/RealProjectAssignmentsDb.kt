@@ -18,8 +18,8 @@ import cz.adamec.timotej.snag.feat.shared.database.be.UsersTable
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.projects.be.ports.ProjectAssignmentsDb
 import cz.adamec.timotej.snag.users.be.model.BackendUser
-import cz.adamec.timotej.snag.users.business.User
-import cz.adamec.timotej.snag.users.business.UserRole
+import cz.adamec.timotej.snag.users.be.model.BackendUserData
+import cz.adamec.timotej.snag.users.business.model.UserRole
 import org.jetbrains.exposed.v1.core.and
 import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.core.inList
@@ -80,13 +80,10 @@ internal class RealProjectAssignmentsDb(
 }
 
 private fun UserEntity.toBackendUser() =
-    BackendUser(
-        user =
-            User(
-                id = id.value,
-                entraId = entraId,
-                email = email,
-                role = role?.let { UserRole.valueOf(it) },
-                updatedAt = Timestamp(updatedAt),
-            ),
+    BackendUserData(
+        id = id.value,
+        entraId = entraId,
+        email = email,
+        role = role?.let { UserRole.valueOf(it) },
+        updatedAt = Timestamp(updatedAt),
     )

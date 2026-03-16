@@ -12,17 +12,17 @@
 
 package cz.adamec.timotej.snag.projects.fe.app.impl.internal
 
-import cz.adamec.timotej.snag.feat.structures.business.Structure
-import cz.adamec.timotej.snag.feat.structures.fe.model.FrontendStructure
+import cz.adamec.timotej.snag.feat.structures.app.model.AppStructure
+import cz.adamec.timotej.snag.feat.structures.app.model.AppStructureData
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.sync.fe.driven.test.FakeSyncQueue
 import cz.adamec.timotej.snag.lib.sync.fe.model.SyncOperationType
-import cz.adamec.timotej.snag.projects.business.Project
+import cz.adamec.timotej.snag.projects.app.model.AppProject
+import cz.adamec.timotej.snag.projects.app.model.AppProjectData
 import cz.adamec.timotej.snag.projects.fe.app.api.DeleteProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.sync.PROJECT_SYNC_ENTITY_TYPE
 import cz.adamec.timotej.snag.projects.fe.driven.test.FakeProjectsDb
-import cz.adamec.timotej.snag.projects.fe.model.FrontendProject
 import cz.adamec.timotej.snag.structures.fe.driven.test.FakeStructuresDb
 import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
 import kotlinx.coroutines.flow.first
@@ -46,28 +46,22 @@ class DeleteProjectUseCaseImplTest : FrontendKoinInitializedTest() {
     private val structureId = Uuid.parse("00000000-0000-0000-0001-000000000001")
 
     private fun createProject(id: Uuid) =
-        FrontendProject(
-            project =
-                Project(
-                    id = id,
-                    name = "Test Project",
-                    address = "Test Address",
-                    updatedAt = Timestamp(100L),
-                ),
+        AppProjectData(
+            id = id,
+            name = "Test Project",
+            address = "Test Address",
+            updatedAt = Timestamp(100L),
         )
 
     private fun createStructure(
         id: Uuid,
         projectId: Uuid,
-    ) = FrontendStructure(
-        structure =
-            Structure(
-                id = id,
-                projectId = projectId,
-                name = "Structure",
-                floorPlanUrl = null,
-                updatedAt = Timestamp(1L),
-            ),
+    ) = AppStructureData(
+        id = id,
+        projectId = projectId,
+        name = "Structure",
+        floorPlanUrl = null,
+        updatedAt = Timestamp(1L),
     )
 
     @Test
@@ -82,11 +76,11 @@ class DeleteProjectUseCaseImplTest : FrontendKoinInitializedTest() {
             useCase(projectId)
 
             val projectResult = fakeProjectsDb.getProjectFlow(projectId).first()
-            assertIs<OfflineFirstDataResult.Success<FrontendProject?>>(projectResult)
+            assertIs<OfflineFirstDataResult.Success<AppProject?>>(projectResult)
             assertNull(projectResult.data)
 
             val structuresResult = fakeStructuresDb.getStructuresFlow(projectId).first()
-            assertIs<OfflineFirstDataResult.Success<List<FrontendStructure>>>(structuresResult)
+            assertIs<OfflineFirstDataResult.Success<List<AppStructure>>>(structuresResult)
             assertTrue(structuresResult.data.isEmpty())
         }
 

@@ -13,7 +13,7 @@
 package cz.adamec.timotej.snag.projects.fe.app.impl.di
 
 import cz.adamec.timotej.snag.lib.sync.fe.app.api.handler.SyncOperationHandler
-import cz.adamec.timotej.snag.projects.business.CanEditProjectEntitiesRule
+import cz.adamec.timotej.snag.projects.business.model.CanEditProjectEntitiesRule
 import cz.adamec.timotej.snag.projects.fe.app.api.DeleteProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.GetProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.GetProjectsUseCase

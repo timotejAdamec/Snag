@@ -19,14 +19,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import cz.adamec.timotej.snag.clients.fe.model.FrontendClient
+import cz.adamec.timotej.snag.clients.app.model.AppClient
 import org.jetbrains.compose.resources.painterResource
 import snag.lib.design.fe.generated.resources.ic_chevron_right
 import snag.lib.design.fe.generated.resources.Res as DesignRes
 
 @Composable
 internal fun ClientListItem(
-    client: FrontendClient,
+    client: AppClient,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -36,15 +36,15 @@ internal fun ClientListItem(
                 .clickable(onClick = onClick),
         headlineContent = {
             Text(
-                text = client.client.name,
+                text = client.name,
                 style = MaterialTheme.typography.titleLargeEmphasized,
             )
         },
         supportingContent = {
             val subtitle =
                 buildString {
-                    client.client.email?.let { append(it) }
-                    client.client.phoneNumber?.let {
+                    client.email?.let { append(it) }
+                    client.phoneNumber?.let {
                         if (isNotEmpty()) append(" \u2022 ")
                         append(it)
                     }

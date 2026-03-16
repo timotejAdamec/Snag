@@ -15,10 +15,9 @@ package cz.adamec.timotej.snag.users.be.app.impl.internal
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
 import cz.adamec.timotej.snag.users.be.app.api.GetUsersUseCase
-import cz.adamec.timotej.snag.users.be.model.BackendUser
+import cz.adamec.timotej.snag.users.be.model.BackendUserData
 import cz.adamec.timotej.snag.users.be.ports.UsersDb
-import cz.adamec.timotej.snag.users.business.User
-import cz.adamec.timotej.snag.users.business.UserRole
+import cz.adamec.timotej.snag.users.business.model.UserRole
 import kotlinx.coroutines.test.runTest
 import org.koin.test.inject
 import kotlin.test.Test
@@ -41,25 +40,19 @@ class GetUsersUseCaseImplTest : BackendKoinInitializedTest() {
     fun `returns all users`() =
         runTest(testDispatcher) {
             val user1 =
-                BackendUser(
-                    user =
-                        User(
-                            id = Uuid.parse("00000000-0000-0000-0000-000000000001"),
-                            entraId = "entra-1",
-                            email = "user1@example.com",
-                            role = UserRole.ADMINISTRATOR,
-                            updatedAt = Timestamp(100L),
-                        ),
+                BackendUserData(
+                    id = Uuid.parse("00000000-0000-0000-0000-000000000001"),
+                    entraId = "entra-1",
+                    email = "user1@example.com",
+                    role = UserRole.ADMINISTRATOR,
+                    updatedAt = Timestamp(100L),
                 )
             val user2 =
-                BackendUser(
-                    user =
-                        User(
-                            id = Uuid.parse("00000000-0000-0000-0000-000000000002"),
-                            entraId = "entra-2",
-                            email = "user2@example.com",
-                            updatedAt = Timestamp(100L),
-                        ),
+                BackendUserData(
+                    id = Uuid.parse("00000000-0000-0000-0000-000000000002"),
+                    entraId = "entra-2",
+                    email = "user2@example.com",
+                    updatedAt = Timestamp(100L),
                 )
             dataSource.saveUser(user1)
             dataSource.saveUser(user2)
@@ -67,7 +60,7 @@ class GetUsersUseCaseImplTest : BackendKoinInitializedTest() {
             val result = useCase()
 
             assertEquals(2, result.size)
-            assertEquals(user1, result.find { it.user.id == user1.user.id })
-            assertEquals(user2, result.find { it.user.id == user2.user.id })
+            assertEquals(user1, result.find { it.id == user1.id })
+            assertEquals(user2, result.find { it.id == user2.id })
         }
 }

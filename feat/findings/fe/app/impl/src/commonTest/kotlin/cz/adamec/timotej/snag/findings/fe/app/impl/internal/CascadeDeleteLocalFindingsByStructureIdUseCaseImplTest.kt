@@ -12,9 +12,9 @@
 
 package cz.adamec.timotej.snag.findings.fe.app.impl.internal
 
-import cz.adamec.timotej.snag.feat.findings.business.Finding
-import cz.adamec.timotej.snag.feat.findings.business.FindingType
-import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
+import cz.adamec.timotej.snag.feat.findings.app.model.AppFinding
+import cz.adamec.timotej.snag.feat.findings.app.model.AppFindingData
+import cz.adamec.timotej.snag.feat.findings.business.model.FindingType
 import cz.adamec.timotej.snag.findings.fe.app.api.CascadeDeleteLocalFindingsByStructureIdUseCase
 import cz.adamec.timotej.snag.findings.fe.driven.test.FakeFindingsDb
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
@@ -39,17 +39,14 @@ class CascadeDeleteLocalFindingsByStructureIdUseCaseImplTest : FrontendKoinIniti
     private fun createFinding(
         id: Uuid,
         structureId: Uuid,
-    ) = FrontendFinding(
-        finding =
-            Finding(
-                id = id,
-                structureId = structureId,
-                name = "Finding",
-                description = null,
-                type = FindingType.Classic(),
-                coordinates = emptySet(),
-                updatedAt = Timestamp(1L),
-            ),
+    ) = AppFindingData(
+        id = id,
+        structureId = structureId,
+        name = "Finding",
+        description = null,
+        type = FindingType.Classic(),
+        coordinates = emptySet(),
+        updatedAt = Timestamp(1L),
     )
 
     @Test
@@ -70,7 +67,7 @@ class CascadeDeleteLocalFindingsByStructureIdUseCaseImplTest : FrontendKoinIniti
             useCase(structureId1)
 
             val result = fakeFindingsDb.getFindingsFlow(structureId1).first()
-            assertIs<OfflineFirstDataResult.Success<List<FrontendFinding>>>(result)
+            assertIs<OfflineFirstDataResult.Success<List<AppFinding>>>(result)
             assertTrue(result.data.isEmpty())
         }
 
@@ -92,7 +89,7 @@ class CascadeDeleteLocalFindingsByStructureIdUseCaseImplTest : FrontendKoinIniti
             useCase(structureId1)
 
             val result = fakeFindingsDb.getFindingsFlow(structureId2).first()
-            assertIs<OfflineFirstDataResult.Success<List<FrontendFinding>>>(result)
+            assertIs<OfflineFirstDataResult.Success<List<AppFinding>>>(result)
             assertTrue(result.data.size == 1)
         }
 }

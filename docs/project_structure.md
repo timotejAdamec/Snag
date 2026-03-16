@@ -15,18 +15,22 @@ between the features. If no layer is specified, the module is considered to be i
 
 ### Feature directory structure
 Each feature contains is structured by platforms and by layers:
-- `business` for code that is shared by all platforms including the server.
+- `business/model` for domain model interfaces that are shared by all platforms including the server.
   - This code is in this sense platform-agnostic.
   - This module is the core from clean architecture perspective.
+  - Business entities are interfaces (pure domain contracts, no sync/versioning metadata).
   - This module has no dependencies on other modules except the `:lib:core`.
+- `app/model` for shared application model interfaces and data classes extending `business/model`
+  with `Versioned` (adds `updatedAt` timestamp). Used by both `fe` and `be` code.
 - `be` for backend code.
 - `fe` for frontend code.
 
 The `be` and `fe` directories are platform-specific. They are broken down into layer directories/modules:
 - `app` for application domain code. This is a core layer that sits around the platform-agnostic
 `business` module.
-- `model` allows extending the models in the `business` module with platform-specific data. Used as
-a dependency for all the other platform-specific layers.
+- `model` (under `be/`) allows extending the models in the `app/model` module with BE-specific
+data (e.g., `SoftDeletable` for soft-delete support). Used as a dependency for all the other
+BE-specific layers.
 - `ports` as in the ports and adapters pattern. These ports are used by `app` modules.
 - `driven` as in the driven ports pattern. This is the most outer layer. These ports are
 implementations of the `ports`. They implement different technologies to satisfy the `ports` API.

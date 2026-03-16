@@ -12,11 +12,11 @@
 
 package cz.adamec.timotej.snag.structures.fe.app.api
 
-import cz.adamec.timotej.snag.feat.structures.fe.model.FrontendStructure
+import cz.adamec.timotej.snag.feat.structures.app.model.AppStructure
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import kotlinx.coroutines.flow.Flow
 import kotlin.uuid.Uuid
 
 interface GetStructuresUseCase {
-    operator fun invoke(projectId: Uuid): Flow<OfflineFirstDataResult<List<FrontendStructure>>>
+    operator fun invoke(projectId: Uuid): Flow<OfflineFirstDataResult<List<AppStructure>>>
 }

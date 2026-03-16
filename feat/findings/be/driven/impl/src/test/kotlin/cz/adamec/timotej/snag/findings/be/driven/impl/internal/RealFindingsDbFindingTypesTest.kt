@@ -13,18 +13,16 @@
 package cz.adamec.timotej.snag.findings.be.driven.impl.internal
 
 import cz.adamec.timotej.snag.feat.findings.be.model.BackendFinding
-import cz.adamec.timotej.snag.feat.findings.business.Finding
-import cz.adamec.timotej.snag.feat.findings.business.FindingType
-import cz.adamec.timotej.snag.feat.findings.business.Importance
-import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
-import cz.adamec.timotej.snag.feat.findings.business.Term
-import cz.adamec.timotej.snag.feat.structures.be.model.BackendStructure
-import cz.adamec.timotej.snag.feat.structures.business.Structure
+import cz.adamec.timotej.snag.feat.findings.be.model.BackendFindingData
+import cz.adamec.timotej.snag.feat.findings.business.model.FindingType
+import cz.adamec.timotej.snag.feat.findings.business.model.Importance
+import cz.adamec.timotej.snag.feat.findings.business.model.RelativeCoordinate
+import cz.adamec.timotej.snag.feat.findings.business.model.Term
+import cz.adamec.timotej.snag.feat.structures.be.model.BackendStructureData
 import cz.adamec.timotej.snag.findings.be.ports.FindingsDb
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
-import cz.adamec.timotej.snag.projects.be.model.BackendProject
+import cz.adamec.timotej.snag.projects.be.model.BackendProjectData
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
-import cz.adamec.timotej.snag.projects.business.Project
 import cz.adamec.timotej.snag.structures.be.ports.StructuresDb
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
 import kotlinx.coroutines.test.runTest
@@ -41,26 +39,20 @@ class RealFindingsDbFindingTypesTest : BackendKoinInitializedTest() {
 
     private suspend fun seedParentEntities() {
         projectsDb.saveProject(
-            BackendProject(
-                project =
-                    Project(
-                        id = PROJECT_ID,
-                        name = "Test Project",
-                        address = "Test Address",
-                        updatedAt = Timestamp(1L),
-                    ),
+            BackendProjectData(
+                id = PROJECT_ID,
+                name = "Test Project",
+                address = "Test Address",
+                updatedAt = Timestamp(1L),
             ),
         )
         structuresDb.saveStructure(
-            BackendStructure(
-                structure =
-                    Structure(
-                        id = STRUCTURE_ID,
-                        projectId = PROJECT_ID,
-                        name = "Test Structure",
-                        floorPlanUrl = null,
-                        updatedAt = Timestamp(1L),
-                    ),
+            BackendStructureData(
+                id = STRUCTURE_ID,
+                projectId = PROJECT_ID,
+                name = "Test Structure",
+                floorPlanUrl = null,
+                updatedAt = Timestamp(1L),
             ),
         )
     }
@@ -71,51 +63,42 @@ class RealFindingsDbFindingTypesTest : BackendKoinInitializedTest() {
         term: Term = Term.T1,
         updatedAt: Long = 100L,
     ): BackendFinding =
-        BackendFinding(
-            finding =
-                Finding(
-                    id = id,
-                    structureId = STRUCTURE_ID,
-                    name = "Finding",
-                    description = null,
-                    type = FindingType.Classic(importance = importance, term = term),
-                    coordinates = emptySet(),
-                    updatedAt = Timestamp(updatedAt),
-                ),
+        BackendFindingData(
+            id = id,
+            structureId = STRUCTURE_ID,
+            name = "Finding",
+            description = null,
+            type = FindingType.Classic(importance = importance, term = term),
+            coordinates = emptySet(),
+            updatedAt = Timestamp(updatedAt),
         )
 
     private fun unvisitedFinding(
         id: Uuid = FINDING_ID_1,
         updatedAt: Long = 100L,
     ): BackendFinding =
-        BackendFinding(
-            finding =
-                Finding(
-                    id = id,
-                    structureId = STRUCTURE_ID,
-                    name = "Finding",
-                    description = null,
-                    type = FindingType.Unvisited,
-                    coordinates = emptySet(),
-                    updatedAt = Timestamp(updatedAt),
-                ),
+        BackendFindingData(
+            id = id,
+            structureId = STRUCTURE_ID,
+            name = "Finding",
+            description = null,
+            type = FindingType.Unvisited,
+            coordinates = emptySet(),
+            updatedAt = Timestamp(updatedAt),
         )
 
     private fun noteFinding(
         id: Uuid = FINDING_ID_1,
         updatedAt: Long = 100L,
     ): BackendFinding =
-        BackendFinding(
-            finding =
-                Finding(
-                    id = id,
-                    structureId = STRUCTURE_ID,
-                    name = "Finding",
-                    description = null,
-                    type = FindingType.Note,
-                    coordinates = emptySet(),
-                    updatedAt = Timestamp(updatedAt),
-                ),
+        BackendFindingData(
+            id = id,
+            structureId = STRUCTURE_ID,
+            name = "Finding",
+            description = null,
+            type = FindingType.Note,
+            coordinates = emptySet(),
+            updatedAt = Timestamp(updatedAt),
         )
 
     // Group 1: Save & Retrieve Each Type
@@ -129,7 +112,7 @@ class RealFindingsDbFindingTypesTest : BackendKoinInitializedTest() {
             findingsDb.saveFinding(finding)
 
             val result = findingsDb.getFindings(STRUCTURE_ID).single()
-            assertEquals(FindingType.Classic(Importance.HIGH, Term.T2), result.finding.type)
+            assertEquals(FindingType.Classic(Importance.HIGH, Term.T2), result.type)
         }
 
     @Test
@@ -141,7 +124,7 @@ class RealFindingsDbFindingTypesTest : BackendKoinInitializedTest() {
             findingsDb.saveFinding(finding)
 
             val result = findingsDb.getFindings(STRUCTURE_ID).single()
-            assertIs<FindingType.Unvisited>(result.finding.type)
+            assertIs<FindingType.Unvisited>(result.type)
         }
 
     @Test
@@ -153,7 +136,7 @@ class RealFindingsDbFindingTypesTest : BackendKoinInitializedTest() {
             findingsDb.saveFinding(finding)
 
             val result = findingsDb.getFindings(STRUCTURE_ID).single()
-            assertIs<FindingType.Note>(result.finding.type)
+            assertIs<FindingType.Note>(result.type)
         }
 
     // Group 2: Type Change — Classic → Non-Classic
@@ -167,7 +150,7 @@ class RealFindingsDbFindingTypesTest : BackendKoinInitializedTest() {
             findingsDb.saveFinding(unvisitedFinding(updatedAt = 200L))
 
             val result = findingsDb.getFindings(STRUCTURE_ID).single()
-            assertIs<FindingType.Unvisited>(result.finding.type)
+            assertIs<FindingType.Unvisited>(result.type)
         }
 
     @Test
@@ -179,7 +162,7 @@ class RealFindingsDbFindingTypesTest : BackendKoinInitializedTest() {
             findingsDb.saveFinding(noteFinding(updatedAt = 200L))
 
             val result = findingsDb.getFindings(STRUCTURE_ID).single()
-            assertIs<FindingType.Note>(result.finding.type)
+            assertIs<FindingType.Note>(result.type)
         }
 
     // Group 3: Type Change — Non-Classic → Classic
@@ -193,7 +176,7 @@ class RealFindingsDbFindingTypesTest : BackendKoinInitializedTest() {
             findingsDb.saveFinding(classicFinding(importance = Importance.LOW, term = Term.T3, updatedAt = 200L))
 
             val result = findingsDb.getFindings(STRUCTURE_ID).single()
-            assertEquals(FindingType.Classic(Importance.LOW, Term.T3), result.finding.type)
+            assertEquals(FindingType.Classic(Importance.LOW, Term.T3), result.type)
         }
 
     @Test
@@ -205,7 +188,7 @@ class RealFindingsDbFindingTypesTest : BackendKoinInitializedTest() {
             findingsDb.saveFinding(classicFinding(importance = Importance.MEDIUM, term = Term.CON, updatedAt = 200L))
 
             val result = findingsDb.getFindings(STRUCTURE_ID).single()
-            assertEquals(FindingType.Classic(Importance.MEDIUM, Term.CON), result.finding.type)
+            assertEquals(FindingType.Classic(Importance.MEDIUM, Term.CON), result.type)
         }
 
     // Group 4: Update & Delete
@@ -219,7 +202,7 @@ class RealFindingsDbFindingTypesTest : BackendKoinInitializedTest() {
             findingsDb.saveFinding(classicFinding(importance = Importance.MEDIUM, term = Term.T2, updatedAt = 200L))
 
             val result = findingsDb.getFindings(STRUCTURE_ID).single()
-            assertEquals(FindingType.Classic(Importance.MEDIUM, Term.T2), result.finding.type)
+            assertEquals(FindingType.Classic(Importance.MEDIUM, Term.T2), result.type)
         }
 
     @Test
@@ -233,7 +216,7 @@ class RealFindingsDbFindingTypesTest : BackendKoinInitializedTest() {
             findingsDb.saveFinding(unvisitedFinding(updatedAt = 300L))
 
             val result = findingsDb.getFindings(STRUCTURE_ID).single()
-            assertIs<FindingType.Unvisited>(result.finding.type)
+            assertIs<FindingType.Unvisited>(result.type)
         }
 
     @Test
@@ -247,10 +230,10 @@ class RealFindingsDbFindingTypesTest : BackendKoinInitializedTest() {
             val results = findingsDb.getFindings(STRUCTURE_ID)
 
             assertEquals(3, results.size)
-            val byId = results.associateBy { it.finding.id }
-            assertEquals(FindingType.Classic(Importance.HIGH, Term.T1), byId[FINDING_ID_1]!!.finding.type)
-            assertIs<FindingType.Unvisited>(byId[FINDING_ID_2]!!.finding.type)
-            assertIs<FindingType.Note>(byId[FINDING_ID_3]!!.finding.type)
+            val byId = results.associateBy { it.id }
+            assertEquals(FindingType.Classic(Importance.HIGH, Term.T1), byId[FINDING_ID_1]!!.type)
+            assertIs<FindingType.Unvisited>(byId[FINDING_ID_2]!!.type)
+            assertIs<FindingType.Note>(byId[FINDING_ID_3]!!.type)
         }
 
     // Group 5: Save Overwrites Type
@@ -264,7 +247,7 @@ class RealFindingsDbFindingTypesTest : BackendKoinInitializedTest() {
             findingsDb.saveFinding(unvisitedFinding(updatedAt = 200L))
 
             val result = findingsDb.getFindings(STRUCTURE_ID).single()
-            assertIs<FindingType.Unvisited>(result.finding.type)
+            assertIs<FindingType.Unvisited>(result.type)
         }
 
     @Test
@@ -276,7 +259,7 @@ class RealFindingsDbFindingTypesTest : BackendKoinInitializedTest() {
             findingsDb.saveFinding(classicFinding(updatedAt = 200L))
 
             val result = findingsDb.getFindings(STRUCTURE_ID).single()
-            assertIs<FindingType.Classic>(result.finding.type)
+            assertIs<FindingType.Classic>(result.type)
         }
 
     @Test
@@ -289,9 +272,9 @@ class RealFindingsDbFindingTypesTest : BackendKoinInitializedTest() {
             val results = findingsDb.getFindingsModifiedSince(STRUCTURE_ID, since = Timestamp(150L))
 
             assertEquals(2, results.size)
-            val byId = results.associateBy { it.finding.id }
-            assertEquals(FindingType.Classic(Importance.HIGH, Term.T1), byId[FINDING_ID_1]!!.finding.type)
-            assertIs<FindingType.Note>(byId[FINDING_ID_2]!!.finding.type)
+            val byId = results.associateBy { it.id }
+            assertEquals(FindingType.Classic(Importance.HIGH, Term.T1), byId[FINDING_ID_1]!!.type)
+            assertIs<FindingType.Note>(byId[FINDING_ID_2]!!.type)
         }
 
     @Test
@@ -304,23 +287,20 @@ class RealFindingsDbFindingTypesTest : BackendKoinInitializedTest() {
                     RelativeCoordinate(0.3f, 0.4f),
                 )
             val finding =
-                BackendFinding(
-                    finding =
-                        Finding(
-                            id = FINDING_ID_1,
-                            structureId = STRUCTURE_ID,
-                            name = "Finding",
-                            description = null,
-                            type = FindingType.Classic(),
-                            coordinates = coordinates,
-                            updatedAt = Timestamp(100L),
-                        ),
+                BackendFindingData(
+                    id = FINDING_ID_1,
+                    structureId = STRUCTURE_ID,
+                    name = "Finding",
+                    description = null,
+                    type = FindingType.Classic(),
+                    coordinates = coordinates,
+                    updatedAt = Timestamp(100L),
                 )
 
             findingsDb.saveFinding(finding)
 
             val result = findingsDb.getFindings(STRUCTURE_ID).single()
-            assertEquals(coordinates, result.finding.coordinates)
+            assertEquals(coordinates, result.coordinates)
         }
 
     companion object {

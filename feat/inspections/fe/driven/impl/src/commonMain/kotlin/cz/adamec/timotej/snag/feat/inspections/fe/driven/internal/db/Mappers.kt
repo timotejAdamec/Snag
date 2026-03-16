@@ -12,35 +12,32 @@
 
 package cz.adamec.timotej.snag.feat.inspections.fe.driven.internal.db
 
-import cz.adamec.timotej.snag.feat.inspections.business.Inspection
-import cz.adamec.timotej.snag.feat.inspections.fe.model.FrontendInspection
+import cz.adamec.timotej.snag.feat.inspections.app.model.AppInspection
+import cz.adamec.timotej.snag.feat.inspections.app.model.AppInspectionData
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.InspectionEntity
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import kotlin.uuid.Uuid
 
-internal fun FrontendInspection.toEntity() =
+internal fun AppInspection.toEntity() =
     InspectionEntity(
-        id = inspection.id.toString(),
-        projectId = inspection.projectId.toString(),
-        startedAt = inspection.startedAt?.value,
-        endedAt = inspection.endedAt?.value,
-        participants = inspection.participants,
-        climate = inspection.climate,
-        note = inspection.note,
-        updatedAt = inspection.updatedAt.value,
+        id = id.toString(),
+        projectId = projectId.toString(),
+        startedAt = startedAt?.value,
+        endedAt = endedAt?.value,
+        participants = participants,
+        climate = climate,
+        note = note,
+        updatedAt = updatedAt.value,
     )
 
 internal fun InspectionEntity.toModel() =
-    FrontendInspection(
-        inspection =
-            Inspection(
-                id = Uuid.parse(id),
-                projectId = Uuid.parse(projectId),
-                startedAt = startedAt?.let { Timestamp(it) },
-                endedAt = endedAt?.let { Timestamp(it) },
-                participants = participants,
-                climate = climate,
-                note = note,
-                updatedAt = Timestamp(updatedAt),
-            ),
+    AppInspectionData(
+        id = Uuid.parse(id),
+        projectId = Uuid.parse(projectId),
+        startedAt = startedAt?.let { Timestamp(it) },
+        endedAt = endedAt?.let { Timestamp(it) },
+        participants = participants,
+        climate = climate,
+        note = note,
+        updatedAt = Timestamp(updatedAt),
     )

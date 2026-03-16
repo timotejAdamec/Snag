@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.structures.fe.driven.internal.api
 
-import cz.adamec.timotej.snag.feat.structures.fe.model.FrontendStructure
+import cz.adamec.timotej.snag.feat.structures.app.model.AppStructure
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
 import cz.adamec.timotej.snag.network.fe.SnagNetworkHttpClient
@@ -30,7 +30,7 @@ import kotlin.uuid.Uuid
 internal class RealStructuresApi(
     private val httpClient: SnagNetworkHttpClient,
 ) : StructuresApi {
-    override suspend fun getStructures(projectId: Uuid): OnlineDataResult<List<FrontendStructure>> {
+    override suspend fun getStructures(projectId: Uuid): OnlineDataResult<List<AppStructure>> {
         LH.logger.d { "Fetching structures for project $projectId..." }
         return safeApiCall(logger = LH.logger, errorContext = "Error fetching structures for project $projectId.") {
             httpClient.get("/projects/$projectId/structures").body<List<StructureApiDto>>().map {
@@ -42,7 +42,7 @@ internal class RealStructuresApi(
     override suspend fun deleteStructure(
         id: Uuid,
         deletedAt: Timestamp,
-    ): OnlineDataResult<FrontendStructure?> {
+    ): OnlineDataResult<AppStructure?> {
         LH.logger.d { "Deleting structure $id from API..." }
         return safeApiCall(logger = LH.logger, errorContext = "Error deleting structure $id from API.") {
             val response =
@@ -57,12 +57,12 @@ internal class RealStructuresApi(
         }.also { if (it is OnlineDataResult.Success) LH.logger.d { "Deleted structure $id from API." } }
     }
 
-    override suspend fun saveStructure(frontendStructure: FrontendStructure): OnlineDataResult<FrontendStructure?> {
-        LH.logger.d { "Saving structure ${frontendStructure.structure.id} to API..." }
-        return safeApiCall(logger = LH.logger, errorContext = "Error saving structure ${frontendStructure.structure.id} to API.") {
-            val structureDto = frontendStructure.toPutApiDto()
+    override suspend fun saveStructure(appStructure: AppStructure): OnlineDataResult<AppStructure?> {
+        LH.logger.d { "Saving structure ${appStructure.id} to API..." }
+        return safeApiCall(logger = LH.logger, errorContext = "Error saving structure ${appStructure.id} to API.") {
+            val structureDto = appStructure.toPutApiDto()
             val response =
-                httpClient.put("/projects/${frontendStructure.structure.projectId}/structures/${frontendStructure.structure.id}") {
+                httpClient.put("/projects/${appStructure.projectId}/structures/${appStructure.id}") {
                     setBody(structureDto)
                 }
             if (response.status != HttpStatusCode.NoContent) {
@@ -70,7 +70,7 @@ internal class RealStructuresApi(
             } else {
                 null
             }
-        }.also { if (it is OnlineDataResult.Success) LH.logger.d { "Saved structure ${frontendStructure.structure.id} to API." } }
+        }.also { if (it is OnlineDataResult.Success) LH.logger.d { "Saved structure ${appStructure.id} to API." } }
     }
 
     override suspend fun getStructuresModifiedSince(

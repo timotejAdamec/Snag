@@ -43,8 +43,8 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import cz.adamec.timotej.snag.feat.findings.business.FindingTypeKey
-import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
+import cz.adamec.timotej.snag.feat.findings.business.model.FindingTypeKey
+import cz.adamec.timotej.snag.feat.findings.business.model.RelativeCoordinate
 import cz.adamec.timotej.snag.feat.findings.fe.driving.api.FindingTypePickerDialog
 import cz.adamec.timotej.snag.lib.design.fe.adaptive.LocalIsInContentPane
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.BackNavigationIcon
@@ -133,7 +133,6 @@ private fun LoadedStructureDetailsContent(
                             ),
                         text =
                             state.feStructure
-                                ?.structure
                                 ?.name
                                 .orEmpty(),
                         maxLines = 1,
@@ -177,12 +176,12 @@ private fun LoadedStructureDetailsContent(
                     bottom = bottomFromToolbar,
                 )
 
-            val floorPlanUrl = state.feStructure?.structure?.floorPlanUrl
+            val floorPlanUrl = state.feStructure?.floorPlanUrl
             if (floorPlanUrl != null) {
                 FloorPlanWithPins(
                     modifier = Modifier.fillMaxSize(),
                     floorPlanUrl = floorPlanUrl,
-                    contentDescription = state.feStructure.structure.name,
+                    contentDescription = state.feStructure.name,
                     findings = state.findings,
                     selectedFindingId = state.selectedFindingId,
                     contentPadding = floorPlanContentPadding,

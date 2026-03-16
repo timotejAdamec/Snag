@@ -67,7 +67,7 @@ internal class PullProjectChangesUseCaseImpl(
                                     projectsDb.deleteProject(syncResult.id)
                                 }
                                 is ProjectSyncResult.Updated -> {
-                                    LH.logger.d { "Processing updated project ${syncResult.project.project.id}." }
+                                    LH.logger.d { "Processing updated project ${syncResult.project.id}." }
                                     projectsDb.saveProject(syncResult.project)
                                 }
                             }

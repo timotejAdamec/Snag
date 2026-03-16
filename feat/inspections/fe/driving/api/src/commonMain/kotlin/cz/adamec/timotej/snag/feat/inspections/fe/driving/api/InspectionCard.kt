@@ -35,8 +35,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import cz.adamec.timotej.snag.feat.inspections.business.Inspection
-import cz.adamec.timotej.snag.feat.inspections.fe.model.FrontendInspection
+import cz.adamec.timotej.snag.feat.inspections.app.model.AppInspection
+import cz.adamec.timotej.snag.feat.inspections.app.model.AppInspectionData
+import cz.adamec.timotej.snag.feat.inspections.business.model.Inspection
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.common.TimestampProvider
 import cz.adamec.timotej.snag.lib.core.common.toLocalDateTime
@@ -73,7 +74,7 @@ private enum class CardStatus {
 
 @Composable
 fun InspectionCard(
-    feInspection: FrontendInspection,
+    feInspection: AppInspection,
     onClick: () -> Unit,
     onStartClick: () -> Unit,
     onEndClick: () -> Unit,
@@ -81,17 +82,16 @@ fun InspectionCard(
 ) {
     val timestampProvider = koinInject<TimestampProvider>()
     val now = timestampProvider.getNowTimestamp()
-    val inspection = feInspection.inspection
 
     val cardState =
         resolveCardStatus(
-            startedAt = inspection.startedAt,
-            endedAt = inspection.endedAt,
+            startedAt = feInspection.startedAt,
+            endedAt = feInspection.endedAt,
             now = now,
         )
 
     InspectionCardContent(
-        inspection = inspection,
+        inspection = feInspection,
         cardState = cardState,
         onClick = onClick,
         onStartClick = onStartClick,
@@ -300,7 +300,7 @@ private fun previewInspection(
     startedAt: Timestamp? = null,
     endedAt: Timestamp? = null,
     participants: String? = "Alice, Bob",
-) = Inspection(
+) = AppInspectionData(
     id = Uuid.random(),
     projectId = Uuid.random(),
     startedAt = startedAt,

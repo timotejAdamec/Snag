@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.findings.fe.app.api.model
 
-import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
+import cz.adamec.timotej.snag.feat.findings.business.model.RelativeCoordinate
 import kotlin.uuid.Uuid
 
 data class SaveFindingCoordinatesRequest(

@@ -15,13 +15,13 @@ package cz.adamec.timotej.snag.projects.fe.driven.test
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
 import cz.adamec.timotej.snag.network.fe.test.FakeApiOps
-import cz.adamec.timotej.snag.projects.fe.model.FrontendProject
+import cz.adamec.timotej.snag.projects.app.model.AppProject
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectSyncResult
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsApi
 import kotlin.uuid.Uuid
 
 class FakeProjectsApi : ProjectsApi {
-    private val ops = FakeApiOps<FrontendProject, ProjectSyncResult>(getId = { it.project.id })
+    private val ops = FakeApiOps<AppProject, ProjectSyncResult>(getId = { it.id })
 
     var forcedFailure
         get() = ops.forcedFailure
@@ -41,18 +41,18 @@ class FakeProjectsApi : ProjectsApi {
             ops.modifiedSinceResults = value
         }
 
-    override suspend fun getProjects(): OnlineDataResult<List<FrontendProject>> = ops.getAllItems()
+    override suspend fun getProjects(): OnlineDataResult<List<AppProject>> = ops.getAllItems()
 
-    override suspend fun getProject(id: Uuid): OnlineDataResult<FrontendProject> = ops.getItemById(id)
+    override suspend fun getProject(id: Uuid): OnlineDataResult<AppProject> = ops.getItemById(id)
 
-    override suspend fun saveProject(project: FrontendProject): OnlineDataResult<FrontendProject?> = ops.saveItem(project)
+    override suspend fun saveProject(project: AppProject): OnlineDataResult<AppProject?> = ops.saveItem(project)
 
     override suspend fun deleteProject(
         id: Uuid,
         deletedAt: Timestamp,
-    ): OnlineDataResult<FrontendProject?> = ops.deleteItemById(id)
+    ): OnlineDataResult<AppProject?> = ops.deleteItemById(id)
 
     override suspend fun getProjectsModifiedSince(since: Timestamp): OnlineDataResult<List<ProjectSyncResult>> = ops.getModifiedSinceItems()
 
-    fun setProject(project: FrontendProject) = ops.setItem(project)
+    fun setProject(project: AppProject) = ops.setItem(project)
 }

@@ -12,12 +12,10 @@
 
 package cz.adamec.timotej.snag.reports.be.app.impl.internal
 
-import cz.adamec.timotej.snag.feat.structures.be.model.BackendStructure
-import cz.adamec.timotej.snag.feat.structures.business.Structure
+import cz.adamec.timotej.snag.feat.structures.be.model.BackendStructureData
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
-import cz.adamec.timotej.snag.projects.be.model.BackendProject
+import cz.adamec.timotej.snag.projects.be.model.BackendProjectData
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
-import cz.adamec.timotej.snag.projects.business.Project
 import cz.adamec.timotej.snag.reports.be.app.api.GenerateProjectReportUseCase
 import cz.adamec.timotej.snag.reports.be.driven.test.FakePdfReportGenerator
 import cz.adamec.timotej.snag.structures.be.ports.StructuresDb
@@ -48,14 +46,11 @@ class GenerateProjectReportUseCaseImplTest : BackendKoinInitializedTest() {
     fun `generates report for existing project`() =
         runTest(testDispatcher) {
             projectsDb.saveProject(
-                BackendProject(
-                    project =
-                        Project(
-                            id = PROJECT_ID,
-                            name = "Test Project",
-                            address = "Test Address",
-                            updatedAt = Timestamp(1L),
-                        ),
+                BackendProjectData(
+                    id = PROJECT_ID,
+                    name = "Test Project",
+                    address = "Test Address",
+                    updatedAt = Timestamp(1L),
                 ),
             )
 
@@ -66,45 +61,36 @@ class GenerateProjectReportUseCaseImplTest : BackendKoinInitializedTest() {
             assertContentEquals(FakePdfReportGenerator.FAKE_PDF_BYTES, result.report.bytes)
             val lastData = fakeGenerator.lastData
             assertNotNull(lastData)
-            assertEquals("Test Project", lastData.project.project.name)
+            assertEquals("Test Project", lastData.project.name)
         }
 
     @Test
     fun `filters soft-deleted structures`() =
         runTest(testDispatcher) {
             projectsDb.saveProject(
-                BackendProject(
-                    project =
-                        Project(
-                            id = PROJECT_ID,
-                            name = "Test Project",
-                            address = "Test Address",
-                            updatedAt = Timestamp(1L),
-                        ),
+                BackendProjectData(
+                    id = PROJECT_ID,
+                    name = "Test Project",
+                    address = "Test Address",
+                    updatedAt = Timestamp(1L),
                 ),
             )
             structuresDb.saveStructure(
-                BackendStructure(
-                    structure =
-                        Structure(
-                            id = STRUCTURE_ID_1,
-                            projectId = PROJECT_ID,
-                            name = "Active Structure",
-                            floorPlanUrl = null,
-                            updatedAt = Timestamp(1L),
-                        ),
+                BackendStructureData(
+                    id = STRUCTURE_ID_1,
+                    projectId = PROJECT_ID,
+                    name = "Active Structure",
+                    floorPlanUrl = null,
+                    updatedAt = Timestamp(1L),
                 ),
             )
             structuresDb.saveStructure(
-                BackendStructure(
-                    structure =
-                        Structure(
-                            id = STRUCTURE_ID_2,
-                            projectId = PROJECT_ID,
-                            name = "Deleted Structure",
-                            floorPlanUrl = null,
-                            updatedAt = Timestamp(1L),
-                        ),
+                BackendStructureData(
+                    id = STRUCTURE_ID_2,
+                    projectId = PROJECT_ID,
+                    name = "Deleted Structure",
+                    floorPlanUrl = null,
+                    updatedAt = Timestamp(1L),
                     deletedAt = Timestamp(2L),
                 ),
             )
@@ -114,7 +100,7 @@ class GenerateProjectReportUseCaseImplTest : BackendKoinInitializedTest() {
             val lastData = fakeGenerator.lastData
             assertNotNull(lastData)
             assertEquals(1, lastData.structures.size)
-            assertEquals("Active Structure", lastData.structures[0].structure.name)
+            assertEquals("Active Structure", lastData.structures[0].name)
         }
 
     companion object {

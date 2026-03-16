@@ -15,7 +15,8 @@ package cz.adamec.timotej.snag.lib.sync.be
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.sync.be.internal.ResolveConflictForDeleteUseCaseImpl
 import cz.adamec.timotej.snag.lib.sync.be.internal.ResolveConflictForSaveUseCaseImpl
-import cz.adamec.timotej.snag.lib.sync.be.model.Syncable
+import cz.adamec.timotej.snag.lib.sync.be.model.SoftDeletable
+import cz.adamec.timotej.snag.lib.sync.model.Versioned
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
@@ -159,4 +160,4 @@ class ConflictResolutionTest {
 private data class TestSyncable(
     override val updatedAt: Timestamp,
     override val deletedAt: Timestamp?,
-) : Syncable
+) : Versioned, SoftDeletable

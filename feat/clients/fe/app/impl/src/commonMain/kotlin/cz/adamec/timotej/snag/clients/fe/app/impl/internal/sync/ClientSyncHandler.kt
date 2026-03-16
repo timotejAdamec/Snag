@@ -12,8 +12,8 @@
 
 package cz.adamec.timotej.snag.clients.fe.app.impl.internal.sync
 
+import cz.adamec.timotej.snag.clients.app.model.AppClient
 import cz.adamec.timotej.snag.clients.fe.app.impl.internal.LH
-import cz.adamec.timotej.snag.clients.fe.model.FrontendClient
 import cz.adamec.timotej.snag.clients.fe.ports.ClientsApi
 import cz.adamec.timotej.snag.clients.fe.ports.ClientsDb
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
@@ -25,18 +25,18 @@ internal class ClientSyncHandler(
     private val clientsApi: ClientsApi,
     private val clientsDb: ClientsDb,
     timestampProvider: TimestampProvider,
-) : DbApiSyncHandler<FrontendClient>(LH.logger, timestampProvider) {
+) : DbApiSyncHandler<AppClient>(LH.logger, timestampProvider) {
     override val entityTypeId: String = CLIENT_SYNC_ENTITY_TYPE
     override val entityName: String = "client"
 
     override fun getEntityFlow(entityId: Uuid) = clientsDb.getClientFlow(entityId)
 
-    override suspend fun saveEntityToApi(entity: FrontendClient) = clientsApi.saveClient(entity)
+    override suspend fun saveEntityToApi(entity: AppClient) = clientsApi.saveClient(entity)
 
     override suspend fun deleteEntityFromApi(
         entityId: Uuid,
         deletedAt: Timestamp,
     ) = clientsApi.deleteClient(entityId, deletedAt)
 
-    override suspend fun saveEntityToDb(entity: FrontendClient) = clientsDb.saveClient(entity)
+    override suspend fun saveEntityToDb(entity: AppClient) = clientsDb.saveClient(entity)
 }

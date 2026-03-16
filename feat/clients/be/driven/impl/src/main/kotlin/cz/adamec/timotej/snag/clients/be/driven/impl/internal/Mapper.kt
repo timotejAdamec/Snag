@@ -12,21 +12,17 @@
 
 package cz.adamec.timotej.snag.clients.be.driven.impl.internal
 
-import cz.adamec.timotej.snag.clients.be.model.BackendClient
-import cz.adamec.timotej.snag.clients.business.Client
+import cz.adamec.timotej.snag.clients.be.model.BackendClientData
 import cz.adamec.timotej.snag.feat.shared.database.be.ClientEntity
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 
 internal fun ClientEntity.toModel() =
-    BackendClient(
-        client =
-            Client(
-                id = id.value,
-                name = name,
-                address = address,
-                phoneNumber = phoneNumber,
-                email = email,
-                updatedAt = Timestamp(updatedAt),
-            ),
+    BackendClientData(
+        id = id.value,
+        name = name,
+        address = address,
+        phoneNumber = phoneNumber,
+        email = email,
+        updatedAt = Timestamp(updatedAt),
         deletedAt = deletedAt?.let { Timestamp(it) },
     )

@@ -17,12 +17,12 @@ import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
 import cz.adamec.timotej.snag.lib.sync.fe.driven.test.FakePullSyncTimestampDb
 import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
-import cz.adamec.timotej.snag.users.business.User
+import cz.adamec.timotej.snag.users.app.model.AppUser
+import cz.adamec.timotej.snag.users.app.model.AppUserData
 import cz.adamec.timotej.snag.users.fe.app.api.PullUserChangesUseCase
 import cz.adamec.timotej.snag.users.fe.app.impl.internal.sync.USER_SYNC_ENTITY_TYPE
 import cz.adamec.timotej.snag.users.fe.driven.test.FakeUsersApi
 import cz.adamec.timotej.snag.users.fe.driven.test.FakeUsersDb
-import cz.adamec.timotej.snag.users.fe.model.FrontendUser
 import cz.adamec.timotej.snag.users.fe.ports.UserSyncResult
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
@@ -44,14 +44,11 @@ class PullUserChangesUseCaseImplTest : FrontendKoinInitializedTest() {
     private val userId = Uuid.parse("00000000-0000-0000-0000-000000000001")
 
     private fun createUser(id: Uuid) =
-        FrontendUser(
-            user =
-                User(
-                    id = id,
-                    entraId = "entra-1",
-                    email = "user@example.com",
-                    updatedAt = Timestamp(100L),
-                ),
+        AppUserData(
+            id = id,
+            entraId = "entra-1",
+            email = "user@example.com",
+            updatedAt = Timestamp(100L),
         )
 
     @Test
@@ -66,9 +63,9 @@ class PullUserChangesUseCaseImplTest : FrontendKoinInitializedTest() {
             useCase()
 
             val result = fakeUsersDb.getUserFlow(userId).first()
-            assertIs<OfflineFirstDataResult.Success<FrontendUser?>>(result)
+            assertIs<OfflineFirstDataResult.Success<AppUser?>>(result)
             assertNotNull(result.data)
-            assertEquals(userId, result.data!!.user.id)
+            assertEquals(userId, result.data!!.id)
         }
 
     @Test

@@ -12,12 +12,12 @@
 
 package cz.adamec.timotej.snag.clients.fe.app.impl.internal
 
-import cz.adamec.timotej.snag.clients.business.Client
+import cz.adamec.timotej.snag.clients.app.model.AppClient
+import cz.adamec.timotej.snag.clients.app.model.AppClientData
 import cz.adamec.timotej.snag.clients.fe.app.api.PullClientChangesUseCase
 import cz.adamec.timotej.snag.clients.fe.app.impl.internal.sync.CLIENT_SYNC_ENTITY_TYPE
 import cz.adamec.timotej.snag.clients.fe.driven.test.FakeClientsApi
 import cz.adamec.timotej.snag.clients.fe.driven.test.FakeClientsDb
-import cz.adamec.timotej.snag.clients.fe.model.FrontendClient
 import cz.adamec.timotej.snag.clients.fe.ports.ClientSyncResult
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
@@ -44,16 +44,13 @@ class PullClientChangesUseCaseImplTest : FrontendKoinInitializedTest() {
     private val clientId = Uuid.parse("00000000-0000-0000-0000-000000000001")
 
     private fun createClient(id: Uuid) =
-        FrontendClient(
-            client =
-                Client(
-                    id = id,
-                    name = "Test Client",
-                    address = "Test Address",
-                    phoneNumber = "+420123456789",
-                    email = "test@example.com",
-                    updatedAt = Timestamp(100L),
-                ),
+        AppClientData(
+            id = id,
+            name = "Test Client",
+            address = "Test Address",
+            phoneNumber = "+420123456789",
+            email = "test@example.com",
+            updatedAt = Timestamp(100L),
         )
 
     @Test
@@ -68,9 +65,9 @@ class PullClientChangesUseCaseImplTest : FrontendKoinInitializedTest() {
             useCase()
 
             val result = fakeClientsDb.getClientFlow(clientId).first()
-            assertIs<OfflineFirstDataResult.Success<FrontendClient?>>(result)
+            assertIs<OfflineFirstDataResult.Success<AppClient?>>(result)
             assertNotNull(result.data)
-            assertEquals(clientId, result.data!!.client.id)
+            assertEquals(clientId, result.data!!.id)
         }
 
     @Test
@@ -87,7 +84,7 @@ class PullClientChangesUseCaseImplTest : FrontendKoinInitializedTest() {
             useCase()
 
             val result = fakeClientsDb.getClientFlow(clientId).first()
-            assertIs<OfflineFirstDataResult.Success<FrontendClient?>>(result)
+            assertIs<OfflineFirstDataResult.Success<AppClient?>>(result)
             assertNull(result.data)
         }
 

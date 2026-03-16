@@ -24,8 +24,9 @@ Read [docs/project_structure.md](../../../docs/project_structure.md) for the ful
 
 Each feature follows hexagonal architecture with these layers:
 
-- **`business/`** — Platform-agnostic domain models. Innermost core. Only depends on `:lib:core`.
-- **`be/`** — Backend: `app/` (use cases) > `ports/` (interfaces) > `driven/` (DB implementations) + `driving/` (HTTP routes)
+- **`business/model/`** — Platform-agnostic domain model interfaces. Innermost core. Only depends on `:lib:core`.
+- **`app/model/`** — Shared application models extending `business/model` with `Versioned` (`updatedAt`). Used by both FE and BE.
+- **`be/`** — Backend: `model/` (extends `app/model` with `SoftDeletable`) > `app/` (use cases) > `ports/` (interfaces) > `driven/` (DB implementations) + `driving/` (HTTP routes)
 - **`fe/`** — Frontend: `app/` (use cases) > `ports/` (interfaces) > `driven/` (HTTP/SQLite implementations) + `driving/` (Compose screens)
 
 ### Module splits
@@ -57,8 +58,9 @@ Most dependencies are auto-wired via convention plugins. When creating a new mod
 
 #### Dependency direction
 
-`driving` -> `app` -> `ports` -> `model` -> `business`
-`driven` -> `app` -> `model` -> `business`
+`driving` -> `app` -> `ports` -> `app/model` -> `business/model`
+`driven` -> `ports` -> `app/model` -> `business/model`
+`be/model` -> `app/model` -> `business/model`
 
 #### Cross feature/lib dependencies
 

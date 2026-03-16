@@ -18,12 +18,11 @@ import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.core.fe.log
 import cz.adamec.timotej.snag.lib.core.fe.map
 import cz.adamec.timotej.snag.lib.sync.fe.app.api.EnqueueSyncSaveUseCase
-import cz.adamec.timotej.snag.projects.business.Project
+import cz.adamec.timotej.snag.projects.app.model.AppProjectData
 import cz.adamec.timotej.snag.projects.fe.app.api.SaveProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.model.SaveProjectRequest
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.LH.logger
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.sync.PROJECT_SYNC_ENTITY_TYPE
-import cz.adamec.timotej.snag.projects.fe.model.FrontendProject
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsDb
 import kotlin.uuid.Uuid
 
@@ -35,15 +34,12 @@ class SaveProjectUseCaseImpl(
 ) : SaveProjectUseCase {
     override suspend operator fun invoke(request: SaveProjectRequest): OfflineFirstDataResult<Uuid> {
         val project =
-            FrontendProject(
-                project =
-                    Project(
-                        id = request.id ?: uuidProvider.getUuid(),
-                        name = request.name,
-                        address = request.address,
-                        clientId = request.clientId,
-                        updatedAt = timestampProvider.getNowTimestamp(),
-                    ),
+            AppProjectData(
+                id = request.id ?: uuidProvider.getUuid(),
+                name = request.name,
+                address = request.address,
+                clientId = request.clientId,
+                updatedAt = timestampProvider.getNowTimestamp(),
             )
 
         return projectsDb
@@ -56,11 +52,11 @@ class SaveProjectUseCaseImpl(
                 if (it is OfflineFirstDataResult.Success) {
                     enqueueSyncSaveUseCase(
                         entityTypeId = PROJECT_SYNC_ENTITY_TYPE,
-                        entityId = project.project.id,
+                        entityId = project.id,
                     )
                 }
             }.map {
-                project.project.id
+                project.id
             }
     }
 }

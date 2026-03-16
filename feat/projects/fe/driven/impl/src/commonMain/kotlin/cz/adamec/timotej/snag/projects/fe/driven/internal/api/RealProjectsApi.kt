@@ -16,10 +16,10 @@ import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
 import cz.adamec.timotej.snag.network.fe.SnagNetworkHttpClient
 import cz.adamec.timotej.snag.network.fe.safeApiCall
+import cz.adamec.timotej.snag.projects.app.model.AppProject
 import cz.adamec.timotej.snag.projects.be.driving.contract.DeleteProjectApiDto
 import cz.adamec.timotej.snag.projects.be.driving.contract.ProjectApiDto
 import cz.adamec.timotej.snag.projects.fe.driven.internal.LH
-import cz.adamec.timotej.snag.projects.fe.model.FrontendProject
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectSyncResult
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsApi
 import io.ktor.client.call.body
@@ -30,7 +30,7 @@ import kotlin.uuid.Uuid
 internal class RealProjectsApi(
     private val httpClient: SnagNetworkHttpClient,
 ) : ProjectsApi {
-    override suspend fun getProjects(): OnlineDataResult<List<FrontendProject>> {
+    override suspend fun getProjects(): OnlineDataResult<List<AppProject>> {
         LH.logger.d { "Fetching projects..." }
         return safeApiCall(logger = LH.logger, errorContext = "Error fetching projects.") {
             httpClient.get("/projects").body<List<ProjectApiDto>>().map {
@@ -39,19 +39,19 @@ internal class RealProjectsApi(
         }.also { if (it is OnlineDataResult.Success) LH.logger.d { "Fetched ${it.data.size} projects." } }
     }
 
-    override suspend fun getProject(id: Uuid): OnlineDataResult<FrontendProject> {
+    override suspend fun getProject(id: Uuid): OnlineDataResult<AppProject> {
         LH.logger.d { "Fetching project $id..." }
         return safeApiCall(logger = LH.logger, errorContext = "Error fetching project $id.") {
             httpClient.get("/projects/$id").body<ProjectApiDto>().toModel()
         }.also { if (it is OnlineDataResult.Success) LH.logger.d { "Fetched project $id." } }
     }
 
-    override suspend fun saveProject(project: FrontendProject): OnlineDataResult<FrontendProject?> {
-        LH.logger.d { "Saving project ${project.project.id} to API..." }
-        return safeApiCall(logger = LH.logger, errorContext = "Error saving project ${project.project.id} to API.") {
+    override suspend fun saveProject(project: AppProject): OnlineDataResult<AppProject?> {
+        LH.logger.d { "Saving project ${project.id} to API..." }
+        return safeApiCall(logger = LH.logger, errorContext = "Error saving project ${project.id} to API.") {
             val projectDto = project.toPutApiDto()
             val response =
-                httpClient.put("/projects/${project.project.id}") {
+                httpClient.put("/projects/${project.id}") {
                     setBody(projectDto)
                 }
             if (response.status != HttpStatusCode.NoContent) {
@@ -59,13 +59,13 @@ internal class RealProjectsApi(
             } else {
                 null
             }
-        }.also { if (it is OnlineDataResult.Success) LH.logger.d { "Saved project ${project.project.id} to API." } }
+        }.also { if (it is OnlineDataResult.Success) LH.logger.d { "Saved project ${project.id} to API." } }
     }
 
     override suspend fun deleteProject(
         id: Uuid,
         deletedAt: Timestamp,
-    ): OnlineDataResult<FrontendProject?> {
+    ): OnlineDataResult<AppProject?> {
         LH.logger.d { "Deleting project $id from API..." }
         return safeApiCall(logger = LH.logger, errorContext = "Error deleting project $id from API.") {
             val response =

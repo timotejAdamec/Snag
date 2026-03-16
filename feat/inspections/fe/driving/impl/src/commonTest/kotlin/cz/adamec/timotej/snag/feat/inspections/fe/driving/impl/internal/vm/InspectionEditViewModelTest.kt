@@ -12,11 +12,11 @@
 
 package cz.adamec.timotej.snag.feat.inspections.fe.driving.impl.internal.vm
 
-import cz.adamec.timotej.snag.feat.inspections.business.Inspection
+import cz.adamec.timotej.snag.feat.inspections.app.model.AppInspection
+import cz.adamec.timotej.snag.feat.inspections.app.model.AppInspectionData
 import cz.adamec.timotej.snag.feat.inspections.fe.app.api.GetInspectionUseCase
 import cz.adamec.timotej.snag.feat.inspections.fe.app.api.SaveInspectionUseCase
 import cz.adamec.timotej.snag.feat.inspections.fe.driven.test.FakeInspectionsDb
-import cz.adamec.timotej.snag.feat.inspections.fe.model.FrontendInspection
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.common.UuidProvider
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
@@ -74,17 +74,15 @@ class InspectionEditViewModelTest : FrontendKoinInitializedTest() {
             val projectId = UuidProvider.getUuid()
             val inspectionId = UuidProvider.getUuid()
             val inspection =
-                FrontendInspection(
-                    Inspection(
-                        id = inspectionId,
-                        projectId = projectId,
-                        startedAt = Timestamp(100L),
-                        endedAt = Timestamp(200L),
-                        participants = "John Doe",
-                        climate = "Sunny",
-                        note = "Test note",
-                        updatedAt = Timestamp(10L),
-                    ),
+                AppInspectionData(
+                    id = inspectionId,
+                    projectId = projectId,
+                    startedAt = Timestamp(100L),
+                    endedAt = Timestamp(200L),
+                    participants = "John Doe",
+                    climate = "Sunny",
+                    note = "Test note",
+                    updatedAt = Timestamp(10L),
                 )
             fakeInspectionsDb.setInspection(inspection)
 
@@ -168,12 +166,12 @@ class InspectionEditViewModelTest : FrontendKoinInitializedTest() {
             val savedId = viewModel.saveEventFlow.first()
 
             val savedResult = fakeInspectionsDb.getInspectionFlow(savedId).first()
-            assertIs<OfflineFirstDataResult.Success<FrontendInspection?>>(savedResult)
+            assertIs<OfflineFirstDataResult.Success<AppInspection?>>(savedResult)
             val saved = savedResult.data
             assertNotNull(saved)
-            assertEquals("John Doe", saved.inspection.participants)
-            assertEquals("Sunny", saved.inspection.climate)
-            assertEquals(projectId, saved.inspection.projectId)
+            assertEquals("John Doe", saved.participants)
+            assertEquals("Sunny", saved.climate)
+            assertEquals(projectId, saved.projectId)
         }
 
     @Test
@@ -182,18 +180,15 @@ class InspectionEditViewModelTest : FrontendKoinInitializedTest() {
             val projectId = UuidProvider.getUuid()
             val inspectionId = UuidProvider.getUuid()
             val inspection =
-                FrontendInspection(
-                    inspection =
-                        Inspection(
-                            id = inspectionId,
-                            projectId = projectId,
-                            startedAt = null,
-                            endedAt = null,
-                            participants = "Original",
-                            climate = null,
-                            note = null,
-                            updatedAt = Timestamp(10L),
-                        ),
+                AppInspectionData(
+                    id = inspectionId,
+                    projectId = projectId,
+                    startedAt = null,
+                    endedAt = null,
+                    participants = "Original",
+                    climate = null,
+                    note = null,
+                    updatedAt = Timestamp(10L),
                 )
             fakeInspectionsDb.setInspection(inspection)
 
@@ -208,11 +203,11 @@ class InspectionEditViewModelTest : FrontendKoinInitializedTest() {
             assertEquals(inspectionId, savedId)
 
             val savedResult = fakeInspectionsDb.getInspectionFlow(inspectionId).first()
-            assertIs<OfflineFirstDataResult.Success<FrontendInspection?>>(savedResult)
+            assertIs<OfflineFirstDataResult.Success<AppInspection?>>(savedResult)
             val saved = savedResult.data
             assertNotNull(saved)
-            assertEquals("Updated", saved.inspection.participants)
-            assertEquals(projectId, saved.inspection.projectId)
+            assertEquals("Updated", saved.participants)
+            assertEquals(projectId, saved.projectId)
         }
 
     @Test

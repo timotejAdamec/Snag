@@ -12,12 +12,12 @@
 
 package cz.adamec.timotej.snag.feat.inspections.fe.app.impl.internal
 
-import cz.adamec.timotej.snag.feat.inspections.business.Inspection
+import cz.adamec.timotej.snag.feat.inspections.app.model.AppInspection
+import cz.adamec.timotej.snag.feat.inspections.app.model.AppInspectionData
 import cz.adamec.timotej.snag.feat.inspections.fe.app.api.PullInspectionChangesUseCase
 import cz.adamec.timotej.snag.feat.inspections.fe.app.impl.internal.sync.INSPECTION_SYNC_ENTITY_TYPE
 import cz.adamec.timotej.snag.feat.inspections.fe.driven.test.FakeInspectionsApi
 import cz.adamec.timotej.snag.feat.inspections.fe.driven.test.FakeInspectionsDb
-import cz.adamec.timotej.snag.feat.inspections.fe.model.FrontendInspection
 import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionSyncResult
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
@@ -45,18 +45,15 @@ class PullInspectionChangesUseCaseImplTest : FrontendKoinInitializedTest() {
     private val inspectionId = Uuid.parse("00000000-0000-0000-0001-000000000001")
 
     private fun createInspection(id: Uuid) =
-        FrontendInspection(
-            inspection =
-                Inspection(
-                    id = id,
-                    projectId = projectId,
-                    startedAt = Timestamp(100L),
-                    endedAt = null,
-                    participants = "John Doe",
-                    climate = "Sunny",
-                    note = null,
-                    updatedAt = Timestamp(100L),
-                ),
+        AppInspectionData(
+            id = id,
+            projectId = projectId,
+            startedAt = Timestamp(100L),
+            endedAt = null,
+            participants = "John Doe",
+            climate = "Sunny",
+            note = null,
+            updatedAt = Timestamp(100L),
         )
 
     @Test
@@ -71,9 +68,9 @@ class PullInspectionChangesUseCaseImplTest : FrontendKoinInitializedTest() {
             useCase(projectId)
 
             val result = fakeInspectionsDb.getInspectionFlow(inspectionId).first()
-            assertIs<OfflineFirstDataResult.Success<FrontendInspection?>>(result)
+            assertIs<OfflineFirstDataResult.Success<AppInspection?>>(result)
             assertNotNull(result.data)
-            assertEquals(inspectionId, result.data!!.inspection.id)
+            assertEquals(inspectionId, result.data!!.id)
         }
 
     @Test
@@ -90,7 +87,7 @@ class PullInspectionChangesUseCaseImplTest : FrontendKoinInitializedTest() {
             useCase(projectId)
 
             val result = fakeInspectionsDb.getInspectionFlow(inspectionId).first()
-            assertIs<OfflineFirstDataResult.Success<FrontendInspection?>>(result)
+            assertIs<OfflineFirstDataResult.Success<AppInspection?>>(result)
             assertNull(result.data)
         }
 

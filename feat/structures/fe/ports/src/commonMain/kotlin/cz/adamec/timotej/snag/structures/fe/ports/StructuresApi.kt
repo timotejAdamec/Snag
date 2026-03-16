@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.structures.fe.ports
 
-import cz.adamec.timotej.snag.feat.structures.fe.model.FrontendStructure
+import cz.adamec.timotej.snag.feat.structures.app.model.AppStructure
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
 import kotlin.uuid.Uuid
@@ -23,19 +23,19 @@ sealed interface StructureSyncResult {
     ) : StructureSyncResult
 
     data class Updated(
-        val structure: FrontendStructure,
+        val structure: AppStructure,
     ) : StructureSyncResult
 }
 
 interface StructuresApi {
-    suspend fun getStructures(projectId: Uuid): OnlineDataResult<List<FrontendStructure>>
+    suspend fun getStructures(projectId: Uuid): OnlineDataResult<List<AppStructure>>
 
-    suspend fun saveStructure(frontendStructure: FrontendStructure): OnlineDataResult<FrontendStructure?>
+    suspend fun saveStructure(appStructure: AppStructure): OnlineDataResult<AppStructure?>
 
     suspend fun deleteStructure(
         id: Uuid,
         deletedAt: Timestamp,
-    ): OnlineDataResult<FrontendStructure?>
+    ): OnlineDataResult<AppStructure?>
 
     suspend fun getStructuresModifiedSince(
         projectId: Uuid,

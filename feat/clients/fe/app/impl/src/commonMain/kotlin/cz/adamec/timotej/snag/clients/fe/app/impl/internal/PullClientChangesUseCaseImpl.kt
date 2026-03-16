@@ -61,7 +61,7 @@ internal class PullClientChangesUseCaseImpl(
                                     clientsDb.deleteClient(syncResult.id)
                                 }
                                 is ClientSyncResult.Updated -> {
-                                    LH.logger.d { "Processing updated client ${syncResult.client.client.id}." }
+                                    LH.logger.d { "Processing updated client ${syncResult.client.id}." }
                                     clientsDb.saveClient(syncResult.client)
                                 }
                             }

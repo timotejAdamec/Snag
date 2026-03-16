@@ -68,10 +68,10 @@ internal class ClientDetailsEditViewModel(
                         result.data?.let { data ->
                             _state.update {
                                 it.copy(
-                                    clientName = data.client.name,
-                                    clientAddress = data.client.address.orEmpty(),
-                                    clientPhoneNumber = data.client.phoneNumber.orEmpty(),
-                                    clientEmail = data.client.email.orEmpty(),
+                                    clientName = data.name,
+                                    clientAddress = data.address.orEmpty(),
+                                    clientPhoneNumber = data.phoneNumber.orEmpty(),
+                                    clientEmail = data.email.orEmpty(),
                                 )
                             }
                             cancel()

@@ -68,7 +68,7 @@ internal class PullFindingChangesUseCaseImpl(
                                     findingsDb.deleteFinding(syncResult.id)
                                 }
                                 is FindingSyncResult.Updated -> {
-                                    LH.logger.d { "Processing updated finding ${syncResult.finding.finding.id}." }
+                                    LH.logger.d { "Processing updated finding ${syncResult.finding.id}." }
                                     findingsDb.saveFinding(syncResult.finding)
                                 }
                             }

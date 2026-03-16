@@ -15,9 +15,9 @@ package cz.adamec.timotej.snag.users.fe.app.impl.internal
 import cz.adamec.timotej.snag.lib.core.common.ApplicationScope
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.core.fe.log
+import cz.adamec.timotej.snag.users.app.model.AppUser
 import cz.adamec.timotej.snag.users.fe.app.api.GetUsersUseCase
 import cz.adamec.timotej.snag.users.fe.app.api.PullUserChangesUseCase
-import cz.adamec.timotej.snag.users.fe.model.FrontendUser
 import cz.adamec.timotej.snag.users.fe.ports.UsersDb
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -29,7 +29,7 @@ class GetUsersUseCaseImpl(
     private val usersDb: UsersDb,
     private val applicationScope: ApplicationScope,
 ) : GetUsersUseCase {
-    override operator fun invoke(): Flow<OfflineFirstDataResult<List<FrontendUser>>> {
+    override operator fun invoke(): Flow<OfflineFirstDataResult<List<AppUser>>> {
         applicationScope.launch {
             pullUserChangesUseCase()
         }

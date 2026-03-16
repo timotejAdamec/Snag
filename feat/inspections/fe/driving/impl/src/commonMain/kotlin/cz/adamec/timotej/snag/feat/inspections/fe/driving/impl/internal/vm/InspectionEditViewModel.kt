@@ -74,17 +74,17 @@ internal class InspectionEditViewModel(
                         result.data?.let { data ->
                             _state.update {
                                 it.copy(
-                                    projectId = data.inspection.projectId,
-                                    startedAt = data.inspection.startedAt,
-                                    endedAt = data.inspection.endedAt,
+                                    projectId = data.projectId,
+                                    startedAt = data.startedAt,
+                                    endedAt = data.endedAt,
                                     participants =
-                                        data.inspection.participants.orEmpty(),
-                                    climate = data.inspection.climate.orEmpty(),
-                                    note = data.inspection.note.orEmpty(),
+                                        data.participants.orEmpty(),
+                                    climate = data.climate.orEmpty(),
+                                    note = data.note.orEmpty(),
                                 )
                             }
                             if (projectId == null) {
-                                collectProjectClosed(data.inspection.projectId)
+                                collectProjectClosed(data.projectId)
                             }
                             cancel()
                         }

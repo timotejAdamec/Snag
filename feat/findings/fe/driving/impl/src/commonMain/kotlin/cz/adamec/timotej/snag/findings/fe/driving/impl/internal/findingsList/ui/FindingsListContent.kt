@@ -31,7 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import cz.adamec.timotej.snag.feat.findings.fe.driving.api.visuals
-import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
+import cz.adamec.timotej.snag.feat.findings.app.model.AppFinding
 import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingsList.vm.FindingsListUiState
 import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingsList.vm.FindingsListUiStatus
 import org.jetbrains.compose.resources.painterResource
@@ -87,7 +87,7 @@ internal fun FindingsListContent(
 
 @Composable
 private fun FindingsList(
-    findings: List<FrontendFinding>,
+    findings: List<AppFinding>,
     selectedFindingId: Uuid?,
     onFindingClick: (findingId: Uuid) -> Unit,
     modifier: Modifier = Modifier,
@@ -98,16 +98,16 @@ private fun FindingsList(
     ) {
         items(
             items = findings,
-            key = { it.finding.id },
+            key = { it.id },
         ) { finding ->
-            val isSelected = finding.finding.id == selectedFindingId
+            val isSelected = finding.id == selectedFindingId
             val shape = if (isSelected) MaterialTheme.shapes.medium else MaterialTheme.shapes.small
             ListItem(
                 modifier =
                     Modifier
                         .padding(horizontal = 8.dp, vertical = 2.dp)
                         .clip(shape)
-                        .clickable { onFindingClick(finding.finding.id) },
+                        .clickable { onFindingClick(finding.id) },
                 colors =
                     if (isSelected) {
                         ListItemDefaults.colors(
@@ -117,7 +117,7 @@ private fun FindingsList(
                         ListItemDefaults.colors()
                     },
                 leadingContent = {
-                    val visuals = finding.finding.type.visuals()
+                    val visuals = finding.type.visuals()
                     Icon(
                         painter = painterResource(visuals.icon),
                         contentDescription = stringResource(visuals.label),
@@ -125,7 +125,7 @@ private fun FindingsList(
                     )
                 },
                 headlineContent = {
-                    Text(text = finding.finding.name)
+                    Text(text = finding.name)
                 },
             )
         }

@@ -14,21 +14,21 @@ package cz.adamec.timotej.snag.users.fe.ports
 
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
-import cz.adamec.timotej.snag.users.fe.model.FrontendUser
+import cz.adamec.timotej.snag.users.app.model.AppUser
 import kotlin.uuid.Uuid
 
 sealed interface UserSyncResult {
     data class Updated(
-        val user: FrontendUser,
+        val user: AppUser,
     ) : UserSyncResult
 }
 
 interface UsersApi {
-    suspend fun getUsers(): OnlineDataResult<List<FrontendUser>>
+    suspend fun getUsers(): OnlineDataResult<List<AppUser>>
 
-    suspend fun getUser(id: Uuid): OnlineDataResult<FrontendUser>
+    suspend fun getUser(id: Uuid): OnlineDataResult<AppUser>
 
     suspend fun getUsersModifiedSince(since: Timestamp): OnlineDataResult<List<UserSyncResult>>
 
-    suspend fun updateUser(user: FrontendUser): OnlineDataResult<FrontendUser>
+    suspend fun updateUser(user: AppUser): OnlineDataResult<AppUser>
 }

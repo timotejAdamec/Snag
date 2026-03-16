@@ -13,8 +13,8 @@
 package cz.adamec.timotej.snag.feat.findings.fe.driving.api
 
 import androidx.compose.runtime.Immutable
-import cz.adamec.timotej.snag.feat.findings.business.FindingTypeKey
-import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
+import cz.adamec.timotej.snag.feat.findings.business.model.FindingTypeKey
+import cz.adamec.timotej.snag.feat.findings.business.model.RelativeCoordinate
 import kotlinx.serialization.Serializable
 import kotlin.uuid.Uuid
 

@@ -68,7 +68,7 @@ internal class PullInspectionChangesUseCaseImpl(
                                     inspectionsDb.deleteInspection(syncResult.id)
                                 }
                                 is InspectionSyncResult.Updated -> {
-                                    LH.logger.d { "Processing updated inspection ${syncResult.inspection.inspection.id}." }
+                                    LH.logger.d { "Processing updated inspection ${syncResult.inspection.id}." }
                                     inspectionsDb.saveInspection(syncResult.inspection)
                                 }
                             }

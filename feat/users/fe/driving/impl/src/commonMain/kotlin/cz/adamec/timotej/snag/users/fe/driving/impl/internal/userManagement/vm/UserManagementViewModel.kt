@@ -18,7 +18,7 @@ import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.lib.design.fe.error.toUiError
-import cz.adamec.timotej.snag.users.business.UserRole
+import cz.adamec.timotej.snag.users.business.model.UserRole
 import cz.adamec.timotej.snag.users.fe.app.api.ChangeUserRoleUseCase
 import cz.adamec.timotej.snag.users.fe.app.api.GetUsersUseCase
 import cz.adamec.timotej.snag.users.fe.app.api.model.ChangeUserRoleRequest
@@ -63,7 +63,7 @@ internal class UserManagementViewModel(
                                 users =
                                     usersDataResult.data
                                         .map { user ->
-                                            val existing = currentState.users.find { it.id == user.user.id }
+                                            val existing = currentState.users.find { it.id == user.id }
                                             user.toUserItem().copy(
                                                 isUpdatingRole = existing?.isUpdatingRole ?: false,
                                             )

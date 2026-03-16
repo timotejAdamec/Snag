@@ -15,9 +15,9 @@ package cz.adamec.timotej.snag.projects.fe.app.impl.internal
 import cz.adamec.timotej.snag.lib.core.common.ApplicationScope
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.core.fe.log
+import cz.adamec.timotej.snag.projects.app.model.AppProject
 import cz.adamec.timotej.snag.projects.fe.app.api.GetProjectsUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.PullProjectChangesUseCase
-import cz.adamec.timotej.snag.projects.fe.model.FrontendProject
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsDb
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -29,7 +29,7 @@ class GetProjectsUseCaseImpl(
     private val projectsDb: ProjectsDb,
     private val applicationScope: ApplicationScope,
 ) : GetProjectsUseCase {
-    override operator fun invoke(): Flow<OfflineFirstDataResult<List<FrontendProject>>> {
+    override operator fun invoke(): Flow<OfflineFirstDataResult<List<AppProject>>> {
         applicationScope.launch {
             pullProjectChangesUseCase()
         }

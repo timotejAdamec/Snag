@@ -12,12 +12,13 @@
 
 package cz.adamec.timotej.snag.findings.fe.driven.internal.db
 
-import cz.adamec.timotej.snag.feat.findings.business.Finding
-import cz.adamec.timotej.snag.feat.findings.business.FindingType
-import cz.adamec.timotej.snag.feat.findings.business.Importance
-import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
-import cz.adamec.timotej.snag.feat.findings.business.Term
-import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
+import cz.adamec.timotej.snag.feat.findings.business.model.Finding
+import cz.adamec.timotej.snag.feat.findings.business.model.FindingType
+import cz.adamec.timotej.snag.feat.findings.business.model.Importance
+import cz.adamec.timotej.snag.feat.findings.business.model.RelativeCoordinate
+import cz.adamec.timotej.snag.feat.findings.business.model.Term
+import cz.adamec.timotej.snag.feat.findings.app.model.AppFinding
+import cz.adamec.timotej.snag.feat.findings.app.model.AppFindingData
 import cz.adamec.timotej.snag.findings.fe.ports.FindingsDb
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
@@ -41,61 +42,52 @@ class RealFindingsDbFindingTypesTest : FrontendKoinInitializedTest() {
         importance: Importance = Importance.HIGH,
         term: Term = Term.T1,
         updatedAt: Long = 100L,
-    ): FrontendFinding =
-        FrontendFinding(
-            finding =
-                Finding(
-                    id = id,
-                    structureId = STRUCTURE_ID,
-                    name = "Finding",
-                    description = null,
-                    type = FindingType.Classic(importance = importance, term = term),
-                    coordinates = emptySet(),
-                    updatedAt = Timestamp(updatedAt),
-                ),
+    ): AppFinding =
+        AppFindingData(
+            id = id,
+            structureId = STRUCTURE_ID,
+            name = "Finding",
+            description = null,
+            type = FindingType.Classic(importance = importance, term = term),
+            coordinates = emptySet(),
+            updatedAt = Timestamp(updatedAt),
         )
 
     private fun unvisitedFinding(
         id: Uuid = FINDING_ID_1,
         updatedAt: Long = 100L,
-    ): FrontendFinding =
-        FrontendFinding(
-            finding =
-                Finding(
-                    id = id,
-                    structureId = STRUCTURE_ID,
-                    name = "Finding",
-                    description = null,
-                    type = FindingType.Unvisited,
-                    coordinates = emptySet(),
-                    updatedAt = Timestamp(updatedAt),
-                ),
+    ): AppFinding =
+        AppFindingData(
+            id = id,
+            structureId = STRUCTURE_ID,
+            name = "Finding",
+            description = null,
+            type = FindingType.Unvisited,
+            coordinates = emptySet(),
+            updatedAt = Timestamp(updatedAt),
         )
 
     private fun noteFinding(
         id: Uuid = FINDING_ID_1,
         updatedAt: Long = 100L,
-    ): FrontendFinding =
-        FrontendFinding(
-            finding =
-                Finding(
-                    id = id,
-                    structureId = STRUCTURE_ID,
-                    name = "Finding",
-                    description = null,
-                    type = FindingType.Note,
-                    coordinates = emptySet(),
-                    updatedAt = Timestamp(updatedAt),
-                ),
+    ): AppFinding =
+        AppFindingData(
+            id = id,
+            structureId = STRUCTURE_ID,
+            name = "Finding",
+            description = null,
+            type = FindingType.Note,
+            coordinates = emptySet(),
+            updatedAt = Timestamp(updatedAt),
         )
 
     // endregion
 
     // region Read helper
 
-    private suspend fun getFindings(structureId: Uuid = STRUCTURE_ID): List<FrontendFinding> {
+    private suspend fun getFindings(structureId: Uuid = STRUCTURE_ID): List<AppFinding> {
         val result = findingsDb.getFindingsFlow(structureId).first()
-        assertIs<OfflineFirstDataResult.Success<List<FrontendFinding>>>(result)
+        assertIs<OfflineFirstDataResult.Success<List<AppFinding>>>(result)
         return result.data
     }
 
@@ -111,7 +103,7 @@ class RealFindingsDbFindingTypesTest : FrontendKoinInitializedTest() {
             findingsDb.saveFinding(finding)
 
             val result = getFindings().single()
-            assertEquals(FindingType.Classic(Importance.HIGH, Term.T2), result.finding.type)
+            assertEquals(FindingType.Classic(Importance.HIGH, Term.T2), result.type)
         }
 
     @Test
@@ -120,7 +112,7 @@ class RealFindingsDbFindingTypesTest : FrontendKoinInitializedTest() {
             findingsDb.saveFinding(unvisitedFinding())
 
             val result = getFindings().single()
-            assertIs<FindingType.Unvisited>(result.finding.type)
+            assertIs<FindingType.Unvisited>(result.type)
         }
 
     @Test
@@ -129,7 +121,7 @@ class RealFindingsDbFindingTypesTest : FrontendKoinInitializedTest() {
             findingsDb.saveFinding(noteFinding())
 
             val result = getFindings().single()
-            assertIs<FindingType.Note>(result.finding.type)
+            assertIs<FindingType.Note>(result.type)
         }
 
     // endregion
@@ -144,7 +136,7 @@ class RealFindingsDbFindingTypesTest : FrontendKoinInitializedTest() {
             findingsDb.saveFinding(unvisitedFinding(updatedAt = 200L))
 
             val result = getFindings().single()
-            assertIs<FindingType.Unvisited>(result.finding.type)
+            assertIs<FindingType.Unvisited>(result.type)
         }
 
     @Test
@@ -155,7 +147,7 @@ class RealFindingsDbFindingTypesTest : FrontendKoinInitializedTest() {
             findingsDb.saveFinding(noteFinding(updatedAt = 200L))
 
             val result = getFindings().single()
-            assertIs<FindingType.Note>(result.finding.type)
+            assertIs<FindingType.Note>(result.type)
         }
 
     // endregion
@@ -170,7 +162,7 @@ class RealFindingsDbFindingTypesTest : FrontendKoinInitializedTest() {
             findingsDb.saveFinding(classicFinding(importance = Importance.LOW, term = Term.T3, updatedAt = 200L))
 
             val result = getFindings().single()
-            assertEquals(FindingType.Classic(Importance.LOW, Term.T3), result.finding.type)
+            assertEquals(FindingType.Classic(Importance.LOW, Term.T3), result.type)
         }
 
     @Test
@@ -181,7 +173,7 @@ class RealFindingsDbFindingTypesTest : FrontendKoinInitializedTest() {
             findingsDb.saveFinding(classicFinding(importance = Importance.MEDIUM, term = Term.CON, updatedAt = 200L))
 
             val result = getFindings().single()
-            assertEquals(FindingType.Classic(Importance.MEDIUM, Term.CON), result.finding.type)
+            assertEquals(FindingType.Classic(Importance.MEDIUM, Term.CON), result.type)
         }
 
     // endregion
@@ -196,7 +188,7 @@ class RealFindingsDbFindingTypesTest : FrontendKoinInitializedTest() {
             findingsDb.saveFinding(classicFinding(importance = Importance.MEDIUM, term = Term.T2, updatedAt = 200L))
 
             val result = getFindings().single()
-            assertEquals(FindingType.Classic(Importance.MEDIUM, Term.T2), result.finding.type)
+            assertEquals(FindingType.Classic(Importance.MEDIUM, Term.T2), result.type)
         }
 
     @Test
@@ -209,7 +201,7 @@ class RealFindingsDbFindingTypesTest : FrontendKoinInitializedTest() {
             findingsDb.saveFinding(unvisitedFinding(updatedAt = 300L))
 
             val result = getFindings().single()
-            assertIs<FindingType.Unvisited>(result.finding.type)
+            assertIs<FindingType.Unvisited>(result.type)
         }
 
     @Test
@@ -222,10 +214,10 @@ class RealFindingsDbFindingTypesTest : FrontendKoinInitializedTest() {
             val results = getFindings()
 
             assertEquals(3, results.size)
-            val byId = results.associateBy { it.finding.id }
-            assertEquals(FindingType.Classic(Importance.HIGH, Term.T1), byId[FINDING_ID_1]!!.finding.type)
-            assertIs<FindingType.Unvisited>(byId[FINDING_ID_2]!!.finding.type)
-            assertIs<FindingType.Note>(byId[FINDING_ID_3]!!.finding.type)
+            val byId = results.associateBy { it.id }
+            assertEquals(FindingType.Classic(Importance.HIGH, Term.T1), byId[FINDING_ID_1]!!.type)
+            assertIs<FindingType.Unvisited>(byId[FINDING_ID_2]!!.type)
+            assertIs<FindingType.Note>(byId[FINDING_ID_3]!!.type)
         }
 
     // endregion
@@ -248,7 +240,7 @@ class RealFindingsDbFindingTypesTest : FrontendKoinInitializedTest() {
             assertIs<OfflineFirstUpdateDataResult.Success>(updateResult)
 
             val result = getFindings().single()
-            assertIs<FindingType.Unvisited>(result.finding.type)
+            assertIs<FindingType.Unvisited>(result.type)
         }
 
     @Test
@@ -267,7 +259,7 @@ class RealFindingsDbFindingTypesTest : FrontendKoinInitializedTest() {
             assertIs<OfflineFirstUpdateDataResult.Success>(updateResult)
 
             val result = getFindings().single()
-            assertEquals(FindingType.Classic(Importance.HIGH, Term.T2), result.finding.type)
+            assertEquals(FindingType.Classic(Importance.HIGH, Term.T2), result.type)
         }
 
     @Test
@@ -286,7 +278,7 @@ class RealFindingsDbFindingTypesTest : FrontendKoinInitializedTest() {
             assertIs<OfflineFirstUpdateDataResult.Success>(updateResult)
 
             val result = getFindings().single()
-            assertEquals(FindingType.Classic(Importance.MEDIUM, Term.T2), result.finding.type)
+            assertEquals(FindingType.Classic(Importance.MEDIUM, Term.T2), result.type)
         }
 
     // endregion
@@ -302,23 +294,20 @@ class RealFindingsDbFindingTypesTest : FrontendKoinInitializedTest() {
                     RelativeCoordinate(0.3f, 0.4f),
                 )
             val finding =
-                FrontendFinding(
-                    finding =
-                        Finding(
-                            id = FINDING_ID_1,
-                            structureId = STRUCTURE_ID,
-                            name = "Finding",
-                            description = null,
-                            type = FindingType.Classic(),
-                            coordinates = coordinates,
-                            updatedAt = Timestamp(100L),
-                        ),
+                AppFindingData(
+                    id = FINDING_ID_1,
+                    structureId = STRUCTURE_ID,
+                    name = "Finding",
+                    description = null,
+                    type = FindingType.Classic(),
+                    coordinates = coordinates,
+                    updatedAt = Timestamp(100L),
                 )
 
             findingsDb.saveFinding(finding)
 
             val result = getFindings().single()
-            assertEquals(coordinates, result.finding.coordinates)
+            assertEquals(coordinates, result.coordinates)
         }
 
     @Test
@@ -342,7 +331,7 @@ class RealFindingsDbFindingTypesTest : FrontendKoinInitializedTest() {
             assertIs<OfflineFirstUpdateDataResult.Success>(updateResult)
 
             val result = getFindings().single()
-            assertEquals(newCoordinates, result.finding.coordinates)
+            assertEquals(newCoordinates, result.coordinates)
         }
 
     // endregion

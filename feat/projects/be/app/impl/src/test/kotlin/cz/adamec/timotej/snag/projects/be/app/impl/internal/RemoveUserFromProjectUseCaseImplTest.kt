@@ -14,14 +14,12 @@ package cz.adamec.timotej.snag.projects.be.app.impl.internal
 
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.projects.be.app.api.RemoveUserFromProjectUseCase
-import cz.adamec.timotej.snag.projects.be.model.BackendProject
+import cz.adamec.timotej.snag.projects.be.model.BackendProjectData
 import cz.adamec.timotej.snag.projects.be.ports.ProjectAssignmentsDb
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
-import cz.adamec.timotej.snag.projects.business.Project
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
-import cz.adamec.timotej.snag.users.be.model.BackendUser
+import cz.adamec.timotej.snag.users.be.model.BackendUserData
 import cz.adamec.timotej.snag.users.be.ports.UsersDb
-import cz.adamec.timotej.snag.users.business.User
 import kotlinx.coroutines.test.runTest
 import org.koin.test.inject
 import kotlin.test.Test
@@ -41,25 +39,19 @@ class RemoveUserFromProjectUseCaseImplTest : BackendKoinInitializedTest() {
     fun `removes user from project`() =
         runTest(testDispatcher) {
             projectsDb.saveProject(
-                BackendProject(
-                    project =
-                        Project(
-                            id = projectId,
-                            name = "Test Project",
-                            address = "Test Address",
-                            updatedAt = Timestamp(10L),
-                        ),
+                BackendProjectData(
+                    id = projectId,
+                    name = "Test Project",
+                    address = "Test Address",
+                    updatedAt = Timestamp(10L),
                 ),
             )
             val user =
-                BackendUser(
-                    user =
-                        User(
-                            id = userId,
-                            entraId = "entra-1",
-                            email = "user@example.com",
-                            updatedAt = Timestamp(100L),
-                        ),
+                BackendUserData(
+                    id = userId,
+                    entraId = "entra-1",
+                    email = "user@example.com",
+                    updatedAt = Timestamp(100L),
                 )
             usersDb.saveUser(user)
             assignmentsDb.assignUser(userId, projectId)

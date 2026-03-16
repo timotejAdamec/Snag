@@ -12,11 +12,12 @@
 
 package cz.adamec.timotej.snag.structures.fe.app.impl.internal
 
-import cz.adamec.timotej.snag.feat.findings.business.Finding
-import cz.adamec.timotej.snag.feat.findings.business.FindingType
-import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
-import cz.adamec.timotej.snag.feat.structures.business.Structure
-import cz.adamec.timotej.snag.feat.structures.fe.model.FrontendStructure
+import cz.adamec.timotej.snag.feat.findings.business.model.Finding
+import cz.adamec.timotej.snag.feat.findings.business.model.FindingType
+import cz.adamec.timotej.snag.feat.findings.app.model.AppFinding
+import cz.adamec.timotej.snag.feat.findings.app.model.AppFindingData
+import cz.adamec.timotej.snag.feat.structures.app.model.AppStructure
+import cz.adamec.timotej.snag.feat.structures.app.model.AppStructureData
 import cz.adamec.timotej.snag.findings.fe.driven.test.FakeFindingsDb
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
@@ -50,31 +51,25 @@ class DeleteStructureUseCaseImplTest : FrontendKoinInitializedTest() {
     private fun createStructure(
         id: Uuid,
         projectId: Uuid,
-    ) = FrontendStructure(
-        structure =
-            Structure(
-                id = id,
-                projectId = projectId,
-                name = "Structure",
-                floorPlanUrl = null,
-                updatedAt = Timestamp(1L),
-            ),
+    ) = AppStructureData(
+        id = id,
+        projectId = projectId,
+        name = "Structure",
+        floorPlanUrl = null,
+        updatedAt = Timestamp(1L),
     )
 
     private fun createFinding(
         id: Uuid,
         structureId: Uuid,
-    ) = FrontendFinding(
-        finding =
-            Finding(
-                id = id,
-                structureId = structureId,
-                name = "Finding",
-                description = null,
-                type = FindingType.Classic(),
-                coordinates = emptySet(),
-                updatedAt = Timestamp(1L),
-            ),
+    ) = AppFindingData(
+        id = id,
+        structureId = structureId,
+        name = "Finding",
+        description = null,
+        type = FindingType.Classic(),
+        coordinates = emptySet(),
+        updatedAt = Timestamp(1L),
     )
 
     @Test
@@ -89,11 +84,11 @@ class DeleteStructureUseCaseImplTest : FrontendKoinInitializedTest() {
             useCase(structureId)
 
             val structureResult = fakeStructuresDb.getStructureFlow(structureId).first()
-            assertIs<OfflineFirstDataResult.Success<FrontendStructure?>>(structureResult)
+            assertIs<OfflineFirstDataResult.Success<AppStructure?>>(structureResult)
             assertNull(structureResult.data)
 
             val findingsResult = fakeFindingsDb.getFindingsFlow(structureId).first()
-            assertIs<OfflineFirstDataResult.Success<List<FrontendFinding>>>(findingsResult)
+            assertIs<OfflineFirstDataResult.Success<List<AppFinding>>>(findingsResult)
             assertTrue(findingsResult.data.isEmpty())
         }
 

@@ -13,11 +13,11 @@
 package cz.adamec.timotej.snag.clients.fe.driving.impl.internal.clients.vm
 
 import androidx.compose.runtime.Immutable
-import cz.adamec.timotej.snag.clients.fe.model.FrontendClient
+import cz.adamec.timotej.snag.clients.app.model.AppClient
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
 @Immutable
 data class ClientsUiState(
-    val clients: ImmutableList<FrontendClient> = persistentListOf(),
+    val clients: ImmutableList<AppClient> = persistentListOf(),
 )

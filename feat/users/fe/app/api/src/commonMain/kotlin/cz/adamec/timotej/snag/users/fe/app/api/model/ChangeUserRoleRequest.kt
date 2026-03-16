@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.users.fe.app.api.model
 
-import cz.adamec.timotej.snag.users.business.UserRole
+import cz.adamec.timotej.snag.users.business.model.UserRole
 import kotlin.uuid.Uuid
 
 data class ChangeUserRoleRequest(

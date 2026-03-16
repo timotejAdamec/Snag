@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetailsEdit.vm
 
-import cz.adamec.timotej.snag.feat.findings.business.FindingType
+import cz.adamec.timotej.snag.feat.findings.business.model.FindingType
 import org.jetbrains.compose.resources.StringResource
 
 internal data class FindingDetailsEditUiState(

@@ -12,9 +12,10 @@
 
 package cz.adamec.timotej.snag.findings.fe.app.impl.internal
 
-import cz.adamec.timotej.snag.feat.findings.business.Finding
-import cz.adamec.timotej.snag.feat.findings.business.FindingType
-import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
+import cz.adamec.timotej.snag.feat.findings.business.model.Finding
+import cz.adamec.timotej.snag.feat.findings.business.model.FindingType
+import cz.adamec.timotej.snag.feat.findings.app.model.AppFinding
+import cz.adamec.timotej.snag.feat.findings.app.model.AppFindingData
 import cz.adamec.timotej.snag.findings.fe.app.api.PullFindingChangesUseCase
 import cz.adamec.timotej.snag.findings.fe.app.impl.internal.sync.FINDING_SYNC_ENTITY_TYPE
 import cz.adamec.timotej.snag.findings.fe.driven.test.FakeFindingsApi
@@ -46,17 +47,14 @@ class PullFindingChangesUseCaseImplTest : FrontendKoinInitializedTest() {
     private val findingId = Uuid.parse("00000000-0000-0000-0001-000000000001")
 
     private fun createFinding(id: Uuid) =
-        FrontendFinding(
-            finding =
-                Finding(
-                    id = id,
-                    structureId = structureId,
-                    name = "Test Finding",
-                    description = null,
-                    type = FindingType.Classic(),
-                    coordinates = emptySet(),
-                    updatedAt = Timestamp(100L),
-                ),
+        AppFindingData(
+            id = id,
+            structureId = structureId,
+            name = "Test Finding",
+            description = null,
+            type = FindingType.Classic(),
+            coordinates = emptySet(),
+            updatedAt = Timestamp(100L),
         )
 
     @Test
@@ -71,9 +69,9 @@ class PullFindingChangesUseCaseImplTest : FrontendKoinInitializedTest() {
             useCase(structureId)
 
             val result = fakeFindingsDb.getFindingFlow(findingId).first()
-            assertIs<OfflineFirstDataResult.Success<FrontendFinding?>>(result)
+            assertIs<OfflineFirstDataResult.Success<AppFinding?>>(result)
             assertNotNull(result.data)
-            assertEquals(findingId, result.data!!.finding.id)
+            assertEquals(findingId, result.data!!.id)
         }
 
     @Test
@@ -90,7 +88,7 @@ class PullFindingChangesUseCaseImplTest : FrontendKoinInitializedTest() {
             useCase(structureId)
 
             val result = fakeFindingsDb.getFindingFlow(findingId).first()
-            assertIs<OfflineFirstDataResult.Success<FrontendFinding?>>(result)
+            assertIs<OfflineFirstDataResult.Success<AppFinding?>>(result)
             assertNull(result.data)
         }
 

@@ -12,12 +12,11 @@
 
 package cz.adamec.timotej.snag.feat.inspections.fe.app.impl.internal
 
-import cz.adamec.timotej.snag.feat.inspections.business.Inspection
+import cz.adamec.timotej.snag.feat.inspections.app.model.AppInspectionData
 import cz.adamec.timotej.snag.feat.inspections.fe.app.api.SaveInspectionUseCase
 import cz.adamec.timotej.snag.feat.inspections.fe.app.api.model.SaveInspectionRequest
 import cz.adamec.timotej.snag.feat.inspections.fe.app.impl.internal.LH.logger
 import cz.adamec.timotej.snag.feat.inspections.fe.app.impl.internal.sync.INSPECTION_SYNC_ENTITY_TYPE
-import cz.adamec.timotej.snag.feat.inspections.fe.model.FrontendInspection
 import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionsDb
 import cz.adamec.timotej.snag.lib.core.common.TimestampProvider
 import cz.adamec.timotej.snag.lib.core.common.UuidProvider
@@ -35,18 +34,15 @@ class SaveInspectionUseCaseImpl(
 ) : SaveInspectionUseCase {
     override suspend operator fun invoke(request: SaveInspectionRequest): OfflineFirstDataResult<Uuid> {
         val feInspection =
-            FrontendInspection(
-                inspection =
-                    Inspection(
-                        id = request.id ?: uuidProvider.getUuid(),
-                        projectId = request.projectId,
-                        startedAt = request.startedAt,
-                        endedAt = request.endedAt,
-                        participants = request.participants,
-                        climate = request.climate,
-                        note = request.note,
-                        updatedAt = timestampProvider.getNowTimestamp(),
-                    ),
+            AppInspectionData(
+                id = request.id ?: uuidProvider.getUuid(),
+                projectId = request.projectId,
+                startedAt = request.startedAt,
+                endedAt = request.endedAt,
+                participants = request.participants,
+                climate = request.climate,
+                note = request.note,
+                updatedAt = timestampProvider.getNowTimestamp(),
             )
 
         val result = inspectionsDb.saveInspection(feInspection)
@@ -57,11 +53,11 @@ class SaveInspectionUseCaseImpl(
         if (result is OfflineFirstDataResult.Success) {
             enqueueSyncSaveUseCase(
                 entityTypeId = INSPECTION_SYNC_ENTITY_TYPE,
-                entityId = feInspection.inspection.id,
+                entityId = feInspection.id,
             )
         }
         return result.map {
-            feInspection.inspection.id
+            feInspection.id
         }
     }
 }

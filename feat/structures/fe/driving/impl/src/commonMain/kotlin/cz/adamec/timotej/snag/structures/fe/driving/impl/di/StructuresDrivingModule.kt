@@ -17,8 +17,8 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.navigation3.scene.DialogSceneStrategy
-import cz.adamec.timotej.snag.feat.findings.business.FindingTypeKey
-import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
+import cz.adamec.timotej.snag.feat.findings.business.model.FindingTypeKey
+import cz.adamec.timotej.snag.feat.findings.business.model.RelativeCoordinate
 import cz.adamec.timotej.snag.feat.findings.fe.driving.api.FindingCreationRouteFactory
 import cz.adamec.timotej.snag.feat.findings.fe.driving.api.FindingDetailRoute
 import cz.adamec.timotej.snag.feat.findings.fe.driving.api.FindingDetailRouteFactory

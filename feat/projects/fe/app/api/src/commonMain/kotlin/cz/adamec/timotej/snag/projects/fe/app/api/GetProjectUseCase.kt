@@ -13,10 +13,10 @@
 package cz.adamec.timotej.snag.projects.fe.app.api
 
 import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
-import cz.adamec.timotej.snag.projects.fe.model.FrontendProject
+import cz.adamec.timotej.snag.projects.app.model.AppProject
 import kotlinx.coroutines.flow.Flow
 import kotlin.uuid.Uuid
 
 interface GetProjectUseCase {
-    operator fun invoke(projectId: Uuid): Flow<OfflineFirstDataResult<FrontendProject?>>
+    operator fun invoke(projectId: Uuid): Flow<OfflineFirstDataResult<AppProject?>>
 }

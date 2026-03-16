@@ -13,12 +13,18 @@
 package cz.adamec.timotej.snag.projects.be.model
 
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
-import cz.adamec.timotej.snag.lib.sync.be.model.Syncable
-import cz.adamec.timotej.snag.projects.business.Project
+import cz.adamec.timotej.snag.lib.sync.be.model.SoftDeletable
+import cz.adamec.timotej.snag.projects.app.model.AppProject
+import kotlin.uuid.Uuid
 
-data class BackendProject(
-    val project: Project,
+interface BackendProject : AppProject, SoftDeletable
+
+data class BackendProjectData(
+    override val id: Uuid,
+    override val name: String,
+    override val address: String,
+    override val clientId: Uuid? = null,
+    override val isClosed: Boolean = false,
+    override val updatedAt: Timestamp,
     override val deletedAt: Timestamp? = null,
-) : Syncable {
-    override val updatedAt: Timestamp get() = project.updatedAt
-}
+) : BackendProject

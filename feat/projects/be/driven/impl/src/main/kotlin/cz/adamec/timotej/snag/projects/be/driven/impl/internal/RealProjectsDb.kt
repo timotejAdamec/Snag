@@ -45,23 +45,23 @@ internal class RealProjectsDb(
 
     override suspend fun saveProject(project: BackendProject): BackendProject? =
         transaction(database) {
-            val existing = ProjectEntity.findById(project.project.id)
+            val existing = ProjectEntity.findById(project.id)
             when (val result = resolveConflictForSave(existing?.toModel(), project)) {
                 is SaveConflictResult.Proceed -> {
                     if (existing != null) {
-                        existing.name = project.project.name
-                        existing.address = project.project.address
-                        existing.client = project.project.clientId?.let { ClientEntity.findById(it) }
-                        existing.isClosed = project.project.isClosed
-                        existing.updatedAt = project.project.updatedAt.value
+                        existing.name = project.name
+                        existing.address = project.address
+                        existing.client = project.clientId?.let { ClientEntity.findById(it) }
+                        existing.isClosed = project.isClosed
+                        existing.updatedAt = project.updatedAt.value
                         existing.deletedAt = project.deletedAt?.value
                     } else {
-                        ProjectEntity.new(project.project.id) {
-                            name = project.project.name
-                            address = project.project.address
-                            client = project.project.clientId?.let { ClientEntity.findById(it) }
-                            isClosed = project.project.isClosed
-                            updatedAt = project.project.updatedAt.value
+                        ProjectEntity.new(project.id) {
+                            name = project.name
+                            address = project.address
+                            client = project.clientId?.let { ClientEntity.findById(it) }
+                            isClosed = project.isClosed
+                            updatedAt = project.updatedAt.value
                             deletedAt = project.deletedAt?.value
                         }
                     }

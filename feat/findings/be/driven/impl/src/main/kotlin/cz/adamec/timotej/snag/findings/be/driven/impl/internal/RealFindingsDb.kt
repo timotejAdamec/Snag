@@ -13,7 +13,7 @@
 package cz.adamec.timotej.snag.findings.be.driven.impl.internal
 
 import cz.adamec.timotej.snag.feat.findings.be.model.BackendFinding
-import cz.adamec.timotej.snag.feat.findings.business.FindingType
+import cz.adamec.timotej.snag.feat.findings.business.model.FindingType
 import cz.adamec.timotej.snag.feat.shared.database.be.ClassicFindingEntity
 import cz.adamec.timotej.snag.feat.shared.database.be.FindingCoordinateEntity
 import cz.adamec.timotej.snag.feat.shared.database.be.FindingEntity
@@ -55,37 +55,37 @@ internal class RealFindingsDb(
 
     override suspend fun saveFinding(finding: BackendFinding): BackendFinding? =
         transaction(database) {
-            val existing = FindingEntity.findById(finding.finding.id)
+            val existing = FindingEntity.findById(finding.id)
             when (val result = resolveConflictForSave(existing?.toModel(), finding)) {
                 is SaveConflictResult.Proceed -> {
                     if (existing != null) {
-                        existing.structure = StructureEntity[finding.finding.structureId]
+                        existing.structure = StructureEntity[finding.structureId]
                         existing.type =
-                            finding.finding.type
+                            finding.type
                                 .toEntityKey()
                                 .name
-                        existing.name = finding.finding.name
-                        existing.description = finding.finding.description
-                        existing.updatedAt = finding.finding.updatedAt.value
+                        existing.name = finding.name
+                        existing.description = finding.description
+                        existing.updatedAt = finding.updatedAt.value
                         existing.deletedAt = finding.deletedAt?.value
                         existing.coordinates.forEach { it.delete() }
                     } else {
-                        FindingEntity.new(finding.finding.id) {
-                            structure = StructureEntity[finding.finding.structureId]
+                        FindingEntity.new(finding.id) {
+                            structure = StructureEntity[finding.structureId]
                             type =
-                                finding.finding.type
+                                finding.type
                                     .toEntityKey()
                                     .name
-                            name = finding.finding.name
-                            description = finding.finding.description
-                            updatedAt = finding.finding.updatedAt.value
+                            name = finding.name
+                            description = finding.description
+                            updatedAt = finding.updatedAt.value
                             deletedAt = finding.deletedAt?.value
                         }
                     }
                     saveClassicFindingDetails(finding)
 
-                    val findingEntity = FindingEntity[finding.finding.id]
-                    finding.finding.coordinates.forEach { coordinate ->
+                    val findingEntity = FindingEntity[finding.id]
+                    finding.coordinates.forEach { coordinate ->
                         FindingCoordinateEntity.new {
                             this.finding = findingEntity
                             x = coordinate.x
@@ -141,20 +141,20 @@ internal class RealFindingsDb(
         }
 
     private fun saveClassicFindingDetails(finding: BackendFinding) {
-        val type = finding.finding.type
+        val type = finding.type
         if (type is FindingType.Classic) {
-            val existing = ClassicFindingEntity.findById(finding.finding.id)
+            val existing = ClassicFindingEntity.findById(finding.id)
             if (existing != null) {
                 existing.importance = type.importance.name
                 existing.term = type.term.name
             } else {
-                ClassicFindingEntity.new(finding.finding.id) {
+                ClassicFindingEntity.new(finding.id) {
                     importance = type.importance.name
                     term = type.term.name
                 }
             }
         } else {
-            ClassicFindingEntity.findById(finding.finding.id)?.delete()
+            ClassicFindingEntity.findById(finding.id)?.delete()
         }
     }
 }
