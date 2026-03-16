@@ -59,6 +59,7 @@ import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetail.ui
 import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetail.vm.FindingDetailUiState
 import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetail.vm.FindingDetailUiStatus
 import cz.adamec.timotej.snag.lib.core.common.Timestamp
+import cz.adamec.timotej.snag.lib.design.fe.adaptive.LocalIsInContentPane
 import cz.adamec.timotej.snag.lib.design.fe.scenes.LocalIsInSheet
 import cz.adamec.timotej.snag.lib.design.fe.theme.SnagPreview
 import org.jetbrains.compose.resources.painterResource
@@ -120,11 +121,16 @@ internal fun FindingDetailContent(
                 )
             }
             val isInSheet = LocalIsInSheet.current
+            val isInContentPane = LocalIsInContentPane.current
             val zeroInsets = WindowInsets(0, 0, 0, 0)
             Scaffold(
                 modifier = modifier,
                 containerColor =
-                    if (isInSheet) Color.Transparent else MaterialTheme.colorScheme.background,
+                    if (isInSheet || isInContentPane) {
+                        Color.Transparent
+                    } else {
+                        MaterialTheme.colorScheme.background
+                    },
                 topBar = {
                     TopAppBar(
                         title = {

@@ -15,11 +15,15 @@ package cz.adamec.timotej.snag.lib.design.fe.adaptive
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 val ContentPaneSpacing = 12.dp
+
+val LocalIsInContentPane = compositionLocalOf { false }
 
 object ContentPaneDefaults {
     val containerColor: Color
@@ -39,6 +43,8 @@ fun ContentPane(
         shape = MaterialTheme.shapes.extraLarge,
         color = ContentPaneDefaults.paneColor,
     ) {
-        content()
+        CompositionLocalProvider(LocalIsInContentPane provides true) {
+            content()
+        }
     }
 }
