@@ -23,11 +23,17 @@ import androidx.navigation3.scene.SceneStrategy
 import androidx.navigation3.scene.SceneStrategyScope
 
 // TODO: Remove once Compose Multiplatform fixes the Dialog composition tree crash.
-//  Replace usages with DialogSceneStrategy and remove LocalDialogPortal from MainScreen.
-//  Track: https://github.com/JetBrains/compose-multiplatform/issues — CMP's Dialog creates
-//  a separate ComposeSceneLayer with its own composition tree, causing movableContentOf to
-//  move LayoutNodes across trees (IllegalStateException). DialogSceneStrategy from Navigation3
-//  uses platform Dialog, so it triggers this crash on all non-Android CMP targets.
+//  CMP's Dialog creates a separate ComposeSceneLayer with its own composition tree,
+//  causing movableContentOf to move LayoutNodes across trees (IllegalStateException).
+//  DialogSceneStrategy from Navigation3 uses platform Dialog, triggering this crash.
+//  Test on JVM desktop before removing. When fixed:
+//  1. Delete this file (InlineDialogSceneStrategy.kt)
+//  2. Delete DialogPortal.kt (LocalDialogPortal)
+//  3. In MainScreen.kt: remove dialogContent state, CompositionLocalProvider for
+//     LocalDialogPortal, the wrapping Box, and MainScreenScaffold — inline its body
+//     back into MainScreenContent
+//  4. In ProjectsNavigation.kt and UsersNavigation.kt: replace
+//     InlineDialogSceneStrategy with DialogSceneStrategy
 /**
  * Renders dialog entries as inline composable overlays instead of
  * platform `Dialog` windows.
