@@ -10,12 +10,13 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.sync.fe.app.api.handler
+package cz.adamec.timotej.snag.sync.fe.app.api
 
-sealed interface SyncOperationResult {
-    data object Success : SyncOperationResult
+import kotlin.uuid.Uuid
 
-    data object EntityNotFound : SyncOperationResult
-
-    data object Failure : SyncOperationResult
+interface ExecutePullSyncUseCase {
+    suspend operator fun invoke(
+        entityTypeId: String,
+        scopeId: Uuid? = null,
+    )
 }

@@ -17,7 +17,6 @@ import cz.adamec.timotej.snag.findings.fe.app.api.CascadeRestoreLocalFindingsByS
 import cz.adamec.timotej.snag.findings.fe.app.api.DeleteFindingUseCase
 import cz.adamec.timotej.snag.findings.fe.app.api.GetFindingUseCase
 import cz.adamec.timotej.snag.findings.fe.app.api.GetFindingsUseCase
-import cz.adamec.timotej.snag.findings.fe.app.api.PullFindingChangesUseCase
 import cz.adamec.timotej.snag.findings.fe.app.api.SaveFindingCoordinatesUseCase
 import cz.adamec.timotej.snag.findings.fe.app.api.SaveFindingDetailsUseCase
 import cz.adamec.timotej.snag.findings.fe.app.api.SaveNewFindingUseCase
@@ -26,12 +25,13 @@ import cz.adamec.timotej.snag.findings.fe.app.impl.internal.CascadeRestoreLocalF
 import cz.adamec.timotej.snag.findings.fe.app.impl.internal.DeleteFindingUseCaseImpl
 import cz.adamec.timotej.snag.findings.fe.app.impl.internal.GetFindingUseCaseImpl
 import cz.adamec.timotej.snag.findings.fe.app.impl.internal.GetFindingsUseCaseImpl
-import cz.adamec.timotej.snag.findings.fe.app.impl.internal.PullFindingChangesUseCaseImpl
 import cz.adamec.timotej.snag.findings.fe.app.impl.internal.SaveFindingCoordinatesUseCaseImpl
 import cz.adamec.timotej.snag.findings.fe.app.impl.internal.SaveFindingDetailsUseCaseImpl
 import cz.adamec.timotej.snag.findings.fe.app.impl.internal.SaveNewFindingUseCaseImpl
+import cz.adamec.timotej.snag.findings.fe.app.impl.internal.sync.FindingPullSyncHandler
 import cz.adamec.timotej.snag.findings.fe.app.impl.internal.sync.FindingSyncHandler
-import cz.adamec.timotej.snag.sync.fe.app.api.handler.SyncOperationHandler
+import cz.adamec.timotej.snag.sync.fe.app.api.handler.PullSyncOperationHandler
+import cz.adamec.timotej.snag.sync.fe.app.api.handler.PushSyncOperationHandler
 import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
@@ -43,9 +43,9 @@ val findingsAppModule =
         factoryOf(::CascadeRestoreLocalFindingsByStructureIdUseCaseImpl) bind CascadeRestoreLocalFindingsByStructureIdUseCase::class
         factoryOf(::GetFindingUseCaseImpl) bind GetFindingUseCase::class
         factoryOf(::GetFindingsUseCaseImpl) bind GetFindingsUseCase::class
-        factoryOf(::PullFindingChangesUseCaseImpl) bind PullFindingChangesUseCase::class
         factoryOf(::SaveNewFindingUseCaseImpl) bind SaveNewFindingUseCase::class
         factoryOf(::SaveFindingDetailsUseCaseImpl) bind SaveFindingDetailsUseCase::class
         factoryOf(::SaveFindingCoordinatesUseCaseImpl) bind SaveFindingCoordinatesUseCase::class
-        factoryOf(::FindingSyncHandler) bind SyncOperationHandler::class
+        factoryOf(::FindingSyncHandler) bind PushSyncOperationHandler::class
+        factoryOf(::FindingPullSyncHandler) bind PullSyncOperationHandler::class
     }

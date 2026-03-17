@@ -19,7 +19,6 @@ import cz.adamec.timotej.snag.structures.fe.app.api.DeleteFloorPlanImageUseCase
 import cz.adamec.timotej.snag.structures.fe.app.api.DeleteStructureUseCase
 import cz.adamec.timotej.snag.structures.fe.app.api.GetStructureUseCase
 import cz.adamec.timotej.snag.structures.fe.app.api.GetStructuresUseCase
-import cz.adamec.timotej.snag.structures.fe.app.api.PullStructureChangesUseCase
 import cz.adamec.timotej.snag.structures.fe.app.api.SaveStructureUseCase
 import cz.adamec.timotej.snag.structures.fe.app.api.UploadFloorPlanImageUseCase
 import cz.adamec.timotej.snag.structures.fe.app.impl.internal.CanModifyFloorPlanImageUseCaseImpl
@@ -29,11 +28,12 @@ import cz.adamec.timotej.snag.structures.fe.app.impl.internal.DeleteFloorPlanIma
 import cz.adamec.timotej.snag.structures.fe.app.impl.internal.DeleteStructureUseCaseImpl
 import cz.adamec.timotej.snag.structures.fe.app.impl.internal.GetStructureUseCaseImpl
 import cz.adamec.timotej.snag.structures.fe.app.impl.internal.GetStructuresUseCaseImpl
-import cz.adamec.timotej.snag.structures.fe.app.impl.internal.PullStructureChangesUseCaseImpl
 import cz.adamec.timotej.snag.structures.fe.app.impl.internal.SaveStructureUseCaseImpl
 import cz.adamec.timotej.snag.structures.fe.app.impl.internal.UploadFloorPlanImageUseCaseImpl
+import cz.adamec.timotej.snag.structures.fe.app.impl.internal.sync.StructurePullSyncHandler
 import cz.adamec.timotej.snag.structures.fe.app.impl.internal.sync.StructureSyncHandler
-import cz.adamec.timotej.snag.sync.fe.app.api.handler.SyncOperationHandler
+import cz.adamec.timotej.snag.sync.fe.app.api.handler.PullSyncOperationHandler
+import cz.adamec.timotej.snag.sync.fe.app.api.handler.PushSyncOperationHandler
 import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
@@ -46,9 +46,9 @@ val structuresAppModule =
         factoryOf(::SaveStructureUseCaseImpl) bind SaveStructureUseCase::class
         factoryOf(::CascadeDeleteLocalStructuresByProjectIdUseCaseImpl) bind CascadeDeleteLocalStructuresByProjectIdUseCase::class
         factoryOf(::CascadeRestoreLocalStructuresByProjectIdUseCaseImpl) bind CascadeRestoreLocalStructuresByProjectIdUseCase::class
-        factoryOf(::PullStructureChangesUseCaseImpl) bind PullStructureChangesUseCase::class
         factoryOf(::UploadFloorPlanImageUseCaseImpl) bind UploadFloorPlanImageUseCase::class
         factoryOf(::DeleteFloorPlanImageUseCaseImpl) bind DeleteFloorPlanImageUseCase::class
         factoryOf(::CanModifyFloorPlanImageUseCaseImpl) bind CanModifyFloorPlanImageUseCase::class
-        factoryOf(::StructureSyncHandler) bind SyncOperationHandler::class
+        factoryOf(::StructureSyncHandler) bind PushSyncOperationHandler::class
+        factoryOf(::StructurePullSyncHandler) bind PullSyncOperationHandler::class
     }

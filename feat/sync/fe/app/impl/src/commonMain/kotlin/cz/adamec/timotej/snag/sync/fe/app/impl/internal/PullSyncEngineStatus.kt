@@ -10,12 +10,12 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.sync.fe.app.api
+package cz.adamec.timotej.snag.sync.fe.app.impl.internal
 
-import kotlinx.coroutines.flow.StateFlow
+internal sealed interface PullSyncEngineStatus {
+    data object Idle : PullSyncEngineStatus
 
-interface PullSyncTracker {
-    val isPulling: StateFlow<Boolean>
+    data object Pulling : PullSyncEngineStatus
 
-    suspend fun <T> track(block: suspend () -> T): T
+    data object Failed : PullSyncEngineStatus
 }

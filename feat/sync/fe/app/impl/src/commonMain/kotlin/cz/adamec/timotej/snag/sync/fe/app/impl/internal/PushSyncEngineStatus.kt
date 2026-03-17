@@ -10,10 +10,12 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.findings.fe.app.api
+package cz.adamec.timotej.snag.sync.fe.app.impl.internal
 
-import kotlin.uuid.Uuid
+internal sealed interface PushSyncEngineStatus {
+    data object Idle : PushSyncEngineStatus
 
-interface PullFindingChangesUseCase {
-    suspend operator fun invoke(structureId: Uuid)
+    data object Pushing : PushSyncEngineStatus
+
+    data object Failed : PushSyncEngineStatus
 }

@@ -15,15 +15,15 @@ package cz.adamec.timotej.snag.clients.fe.app.impl.di
 import cz.adamec.timotej.snag.clients.fe.app.api.DeleteClientUseCase
 import cz.adamec.timotej.snag.clients.fe.app.api.GetClientUseCase
 import cz.adamec.timotej.snag.clients.fe.app.api.GetClientsUseCase
-import cz.adamec.timotej.snag.clients.fe.app.api.PullClientChangesUseCase
 import cz.adamec.timotej.snag.clients.fe.app.api.SaveClientUseCase
 import cz.adamec.timotej.snag.clients.fe.app.impl.internal.DeleteClientUseCaseImpl
 import cz.adamec.timotej.snag.clients.fe.app.impl.internal.GetClientUseCaseImpl
 import cz.adamec.timotej.snag.clients.fe.app.impl.internal.GetClientsUseCaseImpl
-import cz.adamec.timotej.snag.clients.fe.app.impl.internal.PullClientChangesUseCaseImpl
 import cz.adamec.timotej.snag.clients.fe.app.impl.internal.SaveClientUseCaseImpl
+import cz.adamec.timotej.snag.clients.fe.app.impl.internal.sync.ClientPullSyncHandler
 import cz.adamec.timotej.snag.clients.fe.app.impl.internal.sync.ClientSyncHandler
-import cz.adamec.timotej.snag.sync.fe.app.api.handler.SyncOperationHandler
+import cz.adamec.timotej.snag.sync.fe.app.api.handler.PullSyncOperationHandler
+import cz.adamec.timotej.snag.sync.fe.app.api.handler.PushSyncOperationHandler
 import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
@@ -34,6 +34,6 @@ val clientsAppModule =
         factoryOf(::GetClientUseCaseImpl) bind GetClientUseCase::class
         factoryOf(::SaveClientUseCaseImpl) bind SaveClientUseCase::class
         factoryOf(::DeleteClientUseCaseImpl) bind DeleteClientUseCase::class
-        factoryOf(::PullClientChangesUseCaseImpl) bind PullClientChangesUseCase::class
-        factoryOf(::ClientSyncHandler) bind SyncOperationHandler::class
+        factoryOf(::ClientSyncHandler) bind PushSyncOperationHandler::class
+        factoryOf(::ClientPullSyncHandler) bind PullSyncOperationHandler::class
     }

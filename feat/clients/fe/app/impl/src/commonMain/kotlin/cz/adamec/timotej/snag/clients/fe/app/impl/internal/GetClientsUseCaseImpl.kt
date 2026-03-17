@@ -13,25 +13,26 @@
 package cz.adamec.timotej.snag.clients.fe.app.impl.internal
 
 import cz.adamec.timotej.snag.clients.fe.app.api.GetClientsUseCase
-import cz.adamec.timotej.snag.clients.fe.app.api.PullClientChangesUseCase
+import cz.adamec.timotej.snag.clients.fe.app.impl.internal.sync.CLIENT_SYNC_ENTITY_TYPE
 import cz.adamec.timotej.snag.clients.fe.model.FrontendClient
 import cz.adamec.timotej.snag.clients.fe.ports.ClientsDb
 import cz.adamec.timotej.snag.core.foundation.common.ApplicationScope
 import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.core.network.fe.log
+import cz.adamec.timotej.snag.sync.fe.app.api.ExecutePullSyncUseCase
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 internal class GetClientsUseCaseImpl(
-    private val pullClientChangesUseCase: PullClientChangesUseCase,
+    private val executePullSyncUseCase: ExecutePullSyncUseCase,
     private val clientsDb: ClientsDb,
     private val applicationScope: ApplicationScope,
 ) : GetClientsUseCase {
     override operator fun invoke(): Flow<OfflineFirstDataResult<List<FrontendClient>>> {
         applicationScope.launch {
-            pullClientChangesUseCase()
+            executePullSyncUseCase(entityTypeId = CLIENT_SYNC_ENTITY_TYPE)
         }
 
         return clientsDb

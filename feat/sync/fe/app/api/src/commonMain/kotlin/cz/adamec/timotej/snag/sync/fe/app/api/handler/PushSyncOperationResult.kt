@@ -10,8 +10,12 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.clients.fe.app.api
+package cz.adamec.timotej.snag.sync.fe.app.api.handler
 
-interface PullClientChangesUseCase {
-    suspend operator fun invoke()
+sealed interface PushSyncOperationResult {
+    data object Success : PushSyncOperationResult
+
+    data object EntityNotFound : PushSyncOperationResult
+
+    data object Failure : PushSyncOperationResult
 }

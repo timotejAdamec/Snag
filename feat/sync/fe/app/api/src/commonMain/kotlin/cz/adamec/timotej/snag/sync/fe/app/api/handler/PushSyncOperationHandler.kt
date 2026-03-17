@@ -10,10 +10,16 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.structures.fe.app.api
+package cz.adamec.timotej.snag.sync.fe.app.api.handler
 
+import cz.adamec.timotej.snag.sync.fe.model.SyncOperationType
 import kotlin.uuid.Uuid
 
-interface PullStructureChangesUseCase {
-    suspend operator fun invoke(projectId: Uuid)
+interface PushSyncOperationHandler {
+    val entityTypeId: String
+
+    suspend fun execute(
+        entityId: Uuid,
+        operationType: SyncOperationType,
+    ): PushSyncOperationResult
 }

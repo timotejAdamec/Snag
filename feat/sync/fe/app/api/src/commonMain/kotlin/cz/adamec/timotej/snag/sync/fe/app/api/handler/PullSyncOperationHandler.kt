@@ -10,8 +10,12 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.projects.fe.app.api
+package cz.adamec.timotej.snag.sync.fe.app.api.handler
 
-interface PullProjectChangesUseCase {
-    suspend operator fun invoke()
+import kotlin.uuid.Uuid
+
+interface PullSyncOperationHandler {
+    val entityTypeId: String
+
+    suspend fun execute(scopeId: Uuid? = null): PullSyncOperationResult
 }
