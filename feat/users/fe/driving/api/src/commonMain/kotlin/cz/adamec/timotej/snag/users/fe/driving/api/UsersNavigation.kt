@@ -16,8 +16,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
-import androidx.navigation3.scene.DialogSceneStrategy
 import androidx.navigation3.ui.NavDisplay
+import cz.adamec.timotej.snag.lib.design.fe.scenes.InlineDialogSceneStrategy
 import org.koin.compose.koinInject
 import org.koin.compose.navigation3.koinEntryProvider
 
@@ -31,7 +31,7 @@ fun UsersNavigation(
         modifier = modifier,
         backStack = backStack.value,
         entryProvider = entryProvider,
-        sceneStrategies = listOf(DialogSceneStrategy()),
+        sceneStrategies = listOf(InlineDialogSceneStrategy()),
         entryDecorators =
             listOf(
                 rememberSaveableStateHolderNavEntryDecorator(),
