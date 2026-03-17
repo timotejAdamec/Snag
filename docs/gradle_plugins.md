@@ -1,172 +1,43 @@
 # Gradle Convention Plugins
 
 Custom convention plugins are defined in `build-logic/` and registered in `gradle/libs.versions.toml`.
-They enforce consistent configuration across modules — dependencies, targets, lint, and inter-module wiring.
+They enforce consistent configuration across modules — targets, dependencies, lint, and inter-module
+wiring.
 
-## Plugin overview
+## Plugin hierarchy
 
-| Alias                                           | Plugin ID                                                         | Platform | Purpose                          | Extends       |
-|-------------------------------------------------|-------------------------------------------------------------------|----------|----------------------------------|---------------|
-| `snagMultiplatformModule`                       | `libs.plugins.snag.multiplatform.module`                          | All      | Base KMP module                  | —             |
-| `snagFrontendMultiplatformModule`               | `libs.plugins.snag.frontend.multiplatform.module`                 | Frontend | Frontend KMP module with logging | Multiplatform |
-| `snagDrivingFrontendMultiplatformModule`        | `libs.plugins.snag.driving.frontend.multiplatform.module`         | Frontend | Compose UI screens               | Frontend      |
-| `snagNetworkFrontendMultiplatformModule`        | `libs.plugins.snag.network.frontend.multiplatform.module`         | Frontend | HTTP client (Ktor)               | Frontend      |
-| `snagDrivenFrontendMultiplatformModule`         | `libs.plugins.snag.driven.frontend.multiplatform.module`          | Frontend | Data/adapter implementations     | Network       |
-| `snagBackendModule`                             | `libs.plugins.snag.backend.module`                                | Backend  | JVM-only backend module          | —             |
-| `snagDrivenBackendModule`                       | `libs.plugins.snag.driven.backend.module`                         | Backend  | DB adapter implementations       | Backend       |
-| `snagImplDrivingBackendModule`                  | `libs.plugins.snag.impl.driving.backend.module`                   | Backend  | Ktor HTTP routes                 | Backend       |
-| `snagContractDrivingBackendMultiplatformModule` | `libs.plugins.snag.contract.driving.backend.multiplatform.module` | Shared   | FE/BE API contracts              | Multiplatform |
-
-## Plugin inheritance
+There are two independent plugin trees — one for KMP modules and one for JVM-only backend modules.
+Each child plugin extends its parent with additional capabilities.
 
 ```
-snagMultiplatformModule
-├── snagFrontendMultiplatformModule
-│   ├── snagDrivingFrontendMultiplatformModule    (+ Compose, Navigation, Coil)
-│   └── snagNetworkFrontendMultiplatformModule    (+ Ktor client)
-│       └── snagDrivenFrontendMultiplatformModule (+ Serialization, DB)
-└── snagContractDrivingBackendMultiplatformModule (+ Serialization)
+snagMultiplatformModule                            Base KMP module
+├── snagFrontendMultiplatformModule                + frontend core deps
+│   ├── snagDrivingFrontendMultiplatformModule     + Compose UI, navigation, image loading
+│   └── snagNetworkFrontendMultiplatformModule     + HTTP client
+│       └── snagDrivenFrontendMultiplatformModule  + serialization, database
+└── snagContractDrivingBackendMultiplatformModule  + serialization (shared FE/BE contracts)
 
-snagBackendModule
-├── snagDrivenBackendModule                        (+ Exposed, DB)
-└── snagImplDrivingBackendModule                  (+ Ktor server, Serialization)
+snagBackendModule                                  Base JVM backend module
+├── snagDrivenBackendModule                        + database ORM
+└── snagImplDrivingBackendModule                   + HTTP server, serialization
 ```
 
-## Plugin details
+## Module path → plugin mapping
 
-### snagMultiplatformModule
-
-**Source:** `plugins/MultiplatformModulePlugin.kt` + `configuration/MultiplatformModuleSetup.kt`
-
-Applies: Kotlin Multiplatform, Android KMP Library, KSP.
-
-Configures:
-- Targets: Android, iOS (arm64 + simulator), JVM, JS, WasmJS
-- Custom `nonWebMain` source set grouping Android, iOS, JVM
-- Common dependencies: coroutines, Koin, immutable collections
-- Koin KSP compiler on all KSP configurations
-- Automatic inter-module dependency wiring (ports → business, app → ports, etc.)
-- Lint: detekt + ktlint (via `LintSetup.kt`)
-- Android namespace: `cz.adamec.timotej.snag.<module-path>`
-
-### snagFrontendMultiplatformModule
-
-**Source:** `plugins/FrontendMultiplatformModulePlugin.kt` + `configuration/FrontendMultiplatformModuleSetup.kt`
-
-Adds on top of Multiplatform:
-- Kermit logging + Koin integration
-- `:core:foundation:fe` and `:core:network:fe` dependencies
-
-### snagDrivingFrontendMultiplatformModule
-
-**Source:** `plugins/DrivingFrontendMultiplatformModulePlugin.kt` + `configuration/ComposeMultiplatformModuleSetup.kt`
-
-Applies: Compose Multiplatform, Compose Compiler, Compose Hot Reload, Kotlin Serialization.
-
-Adds on top of Frontend:
-- Compose runtime, foundation, Material3, UI, layouts
-- Lifecycle + Navigation integrations (Navigation3, adaptive)
-- Koin Compose + ViewModel integration
-- Coil image loading with Ktor
-- Platform-specific: Activity Compose (Android), Swing coroutines (JVM), browser navigation (Web)
-- Experimental Material3 APIs enabled
-
-### snagNetworkFrontendMultiplatformModule
-
-**Source:** `plugins/NetworkFrontendMultiplatformModulePlugin.kt` + `configuration/NetworkMultiplatformModuleSetup.kt`
-
-Adds on top of Frontend:
-- Ktor client core, content negotiation, logging
-- Kotlin serialization JSON
-- Platform engines: OkHttp (Android/JVM), Darwin (iOS), CIO (WasmJS), JS (JS)
-- `:lib:network:fe:api` dependency (for non-network modules)
-- `:lib:network:fe:test` dependency (for `driven:test` modules)
-
-### snagDrivenFrontendMultiplatformModule
-
-**Source:** `plugins/DrivenFrontendMultiplatformModulePlugin.kt` + `configuration/StoreMultiplatformModuleSetup.kt`
-
-Applies: Kotlin Serialization.
-
-Adds on top of Network:
-- `:feat:shared:database:fe` dependency
-
-### snagBackendModule
-
-**Source:** `plugins/BackendModulePlugin.kt` + `configuration/BackendModuleSetup.kt`
-
-Applies: Kotlin JVM.
-
-Configures:
-- `:core:foundation:be` dependency
-- Coroutines, Koin core, SLF4J logging
-- Test: JUnit, coroutines test
-- Automatic inter-module dependency wiring (same rules as Multiplatform)
-- Lint: detekt + ktlint
-
-### snagDrivenBackendModule
-
-**Source:** `plugins/DrivenBackendModulePlugin.kt` + `configuration/DatabaseBackendModuleSetup.kt`
-
-Adds on top of Backend:
-- Exposed core, DAO, JDBC
-- `:lib:database:be` dependency
-
-### snagImplDrivingBackendModule
-
-**Source:** `plugins/ImplDrivingBackendModulePlugin.kt` + `configuration/KtorBackendModuleSetup.kt`
-
-Applies: Ktor plugin, Kotlin Serialization.
-
-Adds on top of Backend:
-- Ktor server core, Koin Ktor integration
-- Kotlin serialization JSON
-- Ktor server test host (test)
-- `:lib:routing:be` dependency
-
-### snagContractDrivingBackendMultiplatformModule
-
-**Source:** `plugins/ContractDrivingBackendMultiplatformModulePlugin.kt` + `configuration/ContractModuleSetup.kt`
-
-Applies: Kotlin Serialization.
-
-Adds on top of Multiplatform:
-- `:core:foundation:common` dependency
-- Kotlin serialization core
-- Ktor serialization JSON
-
-## Auto-wiring
-
-Convention plugins automatically wire most inter-module dependencies (e.g., `ports` → `business`,
-`app` → `ports`, `core:foundation:be` for all backend modules). When creating a new module, start with
-only the convention plugin applied and no explicit dependencies in `build.gradle.kts` — add manual
-dependencies only for what the build actually requires beyond what the plugin provides.
-
-## Module path → plugin
-
-For feature modules at `feat/<feature>/`, the path determines the plugin:
+The module's location in the project tree determines which plugin to apply:
 
 ```
 feat/<feature>/
 ├── business/                → snagMultiplatformModule
 ├── fe/
 │   ├── ports/               → snagFrontendMultiplatformModule
-│   ├── app/
-│   │   ├── api/             → snagFrontendMultiplatformModule
-│   │   └── impl/            → snagFrontendMultiplatformModule
-│   ├── driving/
-│   │   ├── api/             → snagDrivingFrontendMultiplatformModule
-│   │   └── impl/            → snagDrivingFrontendMultiplatformModule
-│   └── driven/
-│       ├── impl/            → snagDrivenFrontendMultiplatformModule
-│       └── test/            → snagDrivenFrontendMultiplatformModule
+│   ├── app/                 → snagFrontendMultiplatformModule
+│   ├── driving/             → snagDrivingFrontendMultiplatformModule
+│   └── driven/              → snagDrivenFrontendMultiplatformModule
 └── be/
     ├── ports/               → snagBackendModule
-    ├── app/
-    │   ├── api/             → snagBackendModule
-    │   └── impl/            → snagBackendModule
+    ├── app/                 → snagBackendModule
     ├── driving/
-    │   ├── api/             → snagBackendModule
     │   ├── contract/        → snagContractDrivingBackendMultiplatformModule
     │   └── impl/            → snagImplDrivingBackendModule
     └── driven/
@@ -174,7 +45,16 @@ feat/<feature>/
         └── test/            → snagBackendModule
 ```
 
-Library modules (`lib/`) follow the same convention based on their layer and platform
-(`fe/`, `be/`, or top-level for shared). Core modules (`core/`) use the base
-`snagMultiplatformModule`, `snagFrontendMultiplatformModule`, or `snagBackendModule`
-since other plugins depend on them.
+`lib/` modules follow the same convention based on their layer and platform. `core/` modules use the
+base plugins (`snagMultiplatformModule`, `snagFrontendMultiplatformModule`, or `snagBackendModule`)
+since the specialized plugins depend on them.
+
+## Auto-wiring
+
+Convention plugins automatically wire most inter-module dependencies. They detect the module's
+position in the project tree (via folder-path checks) and add the appropriate sibling/parent module
+dependencies.
+
+When creating a new module, start with only the convention plugin applied and no explicit dependencies
+in `build.gradle.kts`. Add manual dependencies only for what the build actually requires beyond what
+the plugin provides.
