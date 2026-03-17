@@ -17,7 +17,7 @@ import kotlin.uuid.Uuid
 /**
  * Enqueues a delete sync operation for the given entity.
  *
- * Make sure a [cz.adamec.timotej.snag.sync.fe.app.api.handler.SyncOperationHandler] is registered
+ * Make sure a [cz.adamec.timotej.snag.sync.fe.app.api.handler.PushSyncOperationHandler] is registered
  * for the given [entityTypeId].
  */
 interface EnqueueSyncDeleteUseCase {

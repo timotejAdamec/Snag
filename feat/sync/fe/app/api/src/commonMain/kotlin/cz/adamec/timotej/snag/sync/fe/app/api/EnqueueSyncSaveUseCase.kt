@@ -17,12 +17,12 @@ import kotlin.uuid.Uuid
 /**
  * Enqueues a save (upsert) sync operation for the given entity.
  *
- * Make sure a [cz.adamec.timotej.snag.sync.fe.app.api.handler.SyncOperationHandler] is registered
+ * Make sure a [cz.adamec.timotej.snag.sync.fe.app.api.handler.PushSyncOperationHandler] is registered
  * for the given [entityTypeId].
  */
 interface EnqueueSyncSaveUseCase {
     /**
-     * @throws IllegalArgumentException if [cz.adamec.timotej.snag.sync.fe.app.api.handler.SyncOperationHandler]
+     * @throws IllegalArgumentException if [cz.adamec.timotej.snag.sync.fe.app.api.handler.PushSyncOperationHandler]
      * is not registered for given [entityTypeId].
      */
     suspend operator fun invoke(
