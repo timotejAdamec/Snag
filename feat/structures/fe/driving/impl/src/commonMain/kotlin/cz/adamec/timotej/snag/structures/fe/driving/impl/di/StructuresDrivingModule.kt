@@ -29,7 +29,6 @@ import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureEditRoute
 import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureEditRouteFactory
 import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureFloorPlanRoute
 import cz.adamec.timotej.snag.lib.design.fe.dialog.fullscreenDialogProperties
-import cz.adamec.timotej.snag.lib.design.fe.scenes.ContentPaneSceneMetadata
 import cz.adamec.timotej.snag.lib.design.fe.scenes.MapListDetailSceneMetadata
 import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectsBackStack
 import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.floorPlan.ui.StructureFloorPlanScreen
@@ -131,9 +130,7 @@ internal inline fun <reified T : StructureFloorPlanRoute> Module.structureFloorP
     }
 
 internal inline fun <reified T : StructureDetailNavRoute> Module.structureDetailScreenNav() =
-    navigation<T>(
-        metadata = ContentPaneSceneMetadata.skip(),
-    ) { route ->
+    navigation<T> { route ->
         StructureDetailNestedNav(
             projectId = route.projectId,
             structureId = route.structureId,

@@ -16,6 +16,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.material3.WideNavigationRailDefaults
+import cz.adamec.timotej.snag.lib.design.fe.adaptive.ContentPane
+import cz.adamec.timotej.snag.lib.design.fe.adaptive.ContentPaneSpacing
+import cz.adamec.timotej.snag.lib.design.fe.adaptive.isScreenWide
+import cz.adamec.timotej.snag.lib.design.fe.layout.systemBarsPaddingCoerceAtLeast
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteDefaults
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
 import androidx.compose.runtime.Composable
@@ -125,9 +129,25 @@ private fun MainScreenContent(
                 )
             },
         ) {
-            when (currentDestination) {
-                TopLevelDestination.PROJECTS -> ProjectsNavigation()
-                TopLevelDestination.USERS -> UsersNavigation()
+            val content: @Composable () -> Unit = {
+                when (currentDestination) {
+                    TopLevelDestination.PROJECTS -> ProjectsNavigation()
+                    TopLevelDestination.USERS -> UsersNavigation()
+                }
+            }
+            if (isScreenWide()) {
+                ContentPane(
+                    modifier =
+                        Modifier.systemBarsPaddingCoerceAtLeast(
+                            top = ContentPaneSpacing,
+                            end = ContentPaneSpacing,
+                            bottom = ContentPaneSpacing,
+                        ),
+                ) {
+                    content()
+                }
+            } else {
+                content()
             }
         }
     }
