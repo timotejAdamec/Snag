@@ -31,7 +31,7 @@ import cz.adamec.timotej.snag.findings.fe.app.impl.internal.SaveFindingCoordinat
 import cz.adamec.timotej.snag.findings.fe.app.impl.internal.SaveFindingDetailsUseCaseImpl
 import cz.adamec.timotej.snag.findings.fe.app.impl.internal.SaveNewFindingUseCaseImpl
 import cz.adamec.timotej.snag.findings.fe.app.impl.internal.sync.FindingSyncHandler
-import cz.adamec.timotej.snag.lib.sync.fe.app.api.handler.SyncOperationHandler
+import cz.adamec.timotej.snag.sync.fe.app.api.handler.SyncOperationHandler
 import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.bind
 import org.koin.dsl.module

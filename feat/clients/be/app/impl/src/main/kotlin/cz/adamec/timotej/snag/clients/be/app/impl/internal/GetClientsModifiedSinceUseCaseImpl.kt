@@ -16,7 +16,7 @@ import cz.adamec.timotej.snag.clients.be.app.api.GetClientsModifiedSinceUseCase
 import cz.adamec.timotej.snag.clients.be.app.impl.internal.LH.logger
 import cz.adamec.timotej.snag.clients.be.model.BackendClient
 import cz.adamec.timotej.snag.clients.be.ports.ClientsDb
-import cz.adamec.timotej.snag.lib.core.common.Timestamp
+import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 
 internal class GetClientsModifiedSinceUseCaseImpl(
     private val clientsDb: ClientsDb,

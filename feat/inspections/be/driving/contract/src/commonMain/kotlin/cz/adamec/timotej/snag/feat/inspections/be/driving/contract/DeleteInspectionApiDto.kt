@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.feat.inspections.be.driving.contract
 
-import cz.adamec.timotej.snag.lib.core.common.Timestamp
+import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import kotlinx.serialization.Serializable
 
 @Serializable

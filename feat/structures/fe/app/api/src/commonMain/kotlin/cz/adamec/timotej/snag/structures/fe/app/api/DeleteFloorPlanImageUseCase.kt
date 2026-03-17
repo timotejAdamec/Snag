@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.structures.fe.app.api
 
-import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
+import cz.adamec.timotej.snag.core.network.fe.OnlineDataResult
 
 interface DeleteFloorPlanImageUseCase {
     suspend operator fun invoke(url: String): OnlineDataResult<Unit>

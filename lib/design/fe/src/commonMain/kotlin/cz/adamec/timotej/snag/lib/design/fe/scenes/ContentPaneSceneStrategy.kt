@@ -10,6 +10,8 @@
  * Department of Software Engineering
  */
 
+@file:Suppress("UnnecessaryFullyQualifiedName")
+
 package cz.adamec.timotej.snag.lib.design.fe.scenes
 
 import androidx.compose.runtime.Composable
@@ -24,6 +26,7 @@ import cz.adamec.timotej.snag.lib.design.fe.adaptive.isScreenWide
 import cz.adamec.timotej.snag.lib.design.fe.layout.systemBarsPaddingCoerceAtLeast
 
 class ContentPaneSceneStrategy<T : Any> : SceneStrategy<T> {
+    @Suppress("ReturnCount")
     override fun SceneStrategyScope<T>.calculateScene(entries: List<NavEntry<T>>): Scene<T>? {
         val lastEntry = entries.lastOrNull() ?: return null
         if (lastEntry.metadata.containsKey(ContentPaneSceneMetadata.SKIP_KEY)) return null
@@ -49,6 +52,7 @@ private class ContentPaneScene<T : Any>(
     private val entry: NavEntry<T>,
 ) : Scene<T> {
     override val content: @Composable () -> Unit = {
+        val entryContent: @Composable () -> Unit = { entry.Content() }
         if (isScreenWide()) {
             ContentPane(
                 modifier =
@@ -58,10 +62,10 @@ private class ContentPaneScene<T : Any>(
                         bottom = ContentPaneSpacing,
                     ),
             ) {
-                entry.Content()
+                entryContent()
             }
         } else {
-            entry.Content()
+            entryContent()
         }
     }
 }

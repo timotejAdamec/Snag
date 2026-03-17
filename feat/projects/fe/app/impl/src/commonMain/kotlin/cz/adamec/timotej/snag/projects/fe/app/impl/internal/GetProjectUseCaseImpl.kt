@@ -12,10 +12,10 @@
 
 package cz.adamec.timotej.snag.projects.fe.app.impl.internal
 
-import cz.adamec.timotej.snag.lib.core.common.ApplicationScope
-import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
-import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
-import cz.adamec.timotej.snag.lib.core.fe.log
+import cz.adamec.timotej.snag.core.foundation.common.ApplicationScope
+import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
+import cz.adamec.timotej.snag.core.network.fe.OnlineDataResult
+import cz.adamec.timotej.snag.core.network.fe.log
 import cz.adamec.timotej.snag.projects.fe.app.api.GetProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.LH.logger
 import cz.adamec.timotej.snag.projects.fe.model.FrontendProject

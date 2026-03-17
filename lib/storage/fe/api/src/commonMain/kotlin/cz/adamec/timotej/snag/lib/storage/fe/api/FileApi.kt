@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.lib.storage.fe.api
 
-import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
+import cz.adamec.timotej.snag.core.network.fe.OnlineDataResult
 
 interface FileApi {
     suspend fun uploadFile(

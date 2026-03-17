@@ -29,7 +29,7 @@ kotlin {
                 implementation(project(":feat:inspections:fe:driven:test"))
                 implementation(project(":feat:projects:fe:app:impl"))
                 implementation(project(":feat:projects:fe:driven:test"))
-                implementation(project(":lib:sync:fe:driven:test"))
+                implementation(project(":feat:sync:fe:driven:test"))
             }
         }
     }

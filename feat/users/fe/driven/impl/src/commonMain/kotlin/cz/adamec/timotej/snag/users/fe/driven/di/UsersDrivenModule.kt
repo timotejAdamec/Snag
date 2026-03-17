@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.users.fe.driven.di
 
-import cz.adamec.timotej.snag.lib.core.common.di.getIoDispatcher
+import cz.adamec.timotej.snag.core.foundation.common.di.getIoDispatcher
 import cz.adamec.timotej.snag.users.fe.driven.internal.api.RealUsersApi
 import cz.adamec.timotej.snag.users.fe.driven.internal.db.RealUsersDb
 import cz.adamec.timotej.snag.users.fe.driven.internal.db.UsersSqlDelightDbOps

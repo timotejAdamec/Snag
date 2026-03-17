@@ -12,11 +12,11 @@
 
 package cz.adamec.timotej.snag.feat.inspections.be.app.impl.internal
 
+import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.feat.inspections.be.app.api.GetInspectionsModifiedSinceUseCase
 import cz.adamec.timotej.snag.feat.inspections.be.app.impl.internal.LH.logger
 import cz.adamec.timotej.snag.feat.inspections.be.model.BackendInspection
 import cz.adamec.timotej.snag.feat.inspections.be.ports.InspectionsDb
-import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import kotlin.uuid.Uuid
 
 internal class GetInspectionsModifiedSinceUseCaseImpl(

@@ -23,7 +23,7 @@ import cz.adamec.timotej.snag.clients.fe.app.impl.internal.GetClientsUseCaseImpl
 import cz.adamec.timotej.snag.clients.fe.app.impl.internal.PullClientChangesUseCaseImpl
 import cz.adamec.timotej.snag.clients.fe.app.impl.internal.SaveClientUseCaseImpl
 import cz.adamec.timotej.snag.clients.fe.app.impl.internal.sync.ClientSyncHandler
-import cz.adamec.timotej.snag.lib.sync.fe.app.api.handler.SyncOperationHandler
+import cz.adamec.timotej.snag.sync.fe.app.api.handler.SyncOperationHandler
 import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.bind
 import org.koin.dsl.module

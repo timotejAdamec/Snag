@@ -12,8 +12,8 @@
 
 package cz.adamec.timotej.snag.feat.inspections.be.app.api
 
+import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.feat.inspections.be.model.BackendInspection
-import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import kotlin.uuid.Uuid
 
 interface GetInspectionsModifiedSinceUseCase {

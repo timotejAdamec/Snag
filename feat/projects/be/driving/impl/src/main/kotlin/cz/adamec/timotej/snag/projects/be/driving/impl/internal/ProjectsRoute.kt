@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.projects.be.driving.impl.internal
 
-import cz.adamec.timotej.snag.lib.core.common.Timestamp
+import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.projects.be.app.api.AssignUserToProjectUseCase
 import cz.adamec.timotej.snag.projects.be.app.api.DeleteProjectUseCase
 import cz.adamec.timotej.snag.projects.be.app.api.GetProjectAssignmentsUseCase

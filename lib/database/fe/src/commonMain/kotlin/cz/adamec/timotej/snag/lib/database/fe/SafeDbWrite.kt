@@ -13,7 +13,7 @@
 package cz.adamec.timotej.snag.lib.database.fe
 
 import co.touchlab.kermit.Logger
-import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
+import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 

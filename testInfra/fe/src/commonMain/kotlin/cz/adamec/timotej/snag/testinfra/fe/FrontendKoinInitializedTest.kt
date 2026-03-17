@@ -19,10 +19,10 @@ import cz.adamec.timotej.snag.feat.reports.fe.driven.test.reportsFeDrivenTestMod
 import cz.adamec.timotej.snag.feat.shared.database.fe.test.sharedDatabaseFeTestModule
 import cz.adamec.timotej.snag.findings.fe.driven.test.findingsFeDrivenTestModule
 import cz.adamec.timotej.snag.lib.storage.fe.test.storageFeTestModule
-import cz.adamec.timotej.snag.lib.sync.fe.driven.test.syncFeDrivenTestModule
 import cz.adamec.timotej.snag.network.fe.test.networkFeDrivenTestModule
 import cz.adamec.timotej.snag.projects.fe.driven.test.projectsFeDrivenTestModule
 import cz.adamec.timotej.snag.structures.fe.driven.test.structuresFeDrivenTestModule
+import cz.adamec.timotej.snag.sync.fe.driven.test.syncFeDrivenTestModule
 import cz.adamec.timotej.snag.testinfra.KoinInitializedTest
 import cz.adamec.timotej.snag.users.fe.driven.test.usersFeDrivenTestModule
 import org.koin.core.module.Module

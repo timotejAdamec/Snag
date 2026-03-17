@@ -24,7 +24,7 @@ Read [docs/project_structure.md](../../../docs/project_structure.md) for the ful
 
 Each feature follows hexagonal architecture with these layers:
 
-- **`business/`** — Platform-agnostic domain models. Innermost core. Only depends on `:lib:core`.
+- **`business/`** — Platform-agnostic domain models. Innermost core. Only depends on `:core:foundation`.
 - **`be/`** — Backend: `app/` (use cases) > `ports/` (interfaces) > `driven/` (DB implementations) + `driving/` (HTTP routes)
 - **`fe/`** — Frontend: `app/` (use cases) > `ports/` (interfaces) > `driven/` (HTTP/SQLite implementations) + `driving/` (Compose screens)
 
@@ -40,16 +40,18 @@ Each feature follows hexagonal architecture with these layers:
 - **`shared/database/`** — Shared database infrastructure
 - **`shared/rules/business/`** — Cross-cutting business rules (`api/` + `impl/`). Auto-wired to all feature modules.
 
+### Core modules (`core/`)
+
+Infrastructure-free, feature-agnostic domain types and utilities shared across all modules:
+- **`foundation/`** — App-wide primitives (`Timestamp`, `UuidProvider`, `ApplicationScope`, `Initializer`). Submodules: `common/`, `fe/`, `be/`.
+- **`network/fe`** — Network data lifecycle domain types (`OnlineDataResult`, `SafeApiCall`, `NetworkException`, `ConnectionStatusProvider`). No Ktor dependency.
+
 ### Library modules (`lib/`)
 
-Feature-agnostic reusable code (not tied to a specific domain area). Two kinds:
-- **Infrastructural** (e.g., network, database, design, routing) — purely adapter/connector role.
-  Can be a single top-level module or an api/impl/test split. Implicitly living in the adapters layer
-  (to be used by `driven` and `driving` feature modules or other such `lib` modules).
-- **Cross-cutting domain logic** (e.g., sync) — structured the same as `feat` modules
-  (app/api, app/impl, ports, driven, etc.).
-
-`core` modules can be used anywhere.
+Feature-agnostic **infrastructure integrations** — external framework wrappers and connectors:
+network (Ktor HTTP client), database (SQLDelight), storage (GCS), design (Compose UI), routing
+(navigation), configuration (build/server config). Purely adapter/connector role, implicitly in
+the adapters layer.
 
 ### Dependency management
 

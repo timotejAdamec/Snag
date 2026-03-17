@@ -12,8 +12,8 @@
 
 package cz.adamec.timotej.snag.projects.business
 
-import cz.adamec.timotej.snag.lib.core.common.Timestamp
-import cz.adamec.timotej.snag.lib.core.common.UuidProvider
+import cz.adamec.timotej.snag.core.foundation.common.Timestamp
+import cz.adamec.timotej.snag.core.foundation.common.UuidProvider
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue

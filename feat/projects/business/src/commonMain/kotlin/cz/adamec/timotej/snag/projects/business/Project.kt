@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.projects.business
 
-import cz.adamec.timotej.snag.lib.core.common.Timestamp
+import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import kotlin.uuid.Uuid
 
 data class Project(

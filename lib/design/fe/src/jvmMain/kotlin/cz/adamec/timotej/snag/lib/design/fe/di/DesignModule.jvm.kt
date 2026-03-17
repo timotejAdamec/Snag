@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.lib.design.fe.di
 
-import cz.adamec.timotej.snag.lib.core.fe.Initializer
+import cz.adamec.timotej.snag.core.foundation.fe.Initializer
 import cz.adamec.timotej.snag.lib.design.fe.initializers.JvmDesignInitializer
 import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.bind

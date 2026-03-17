@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.network.fe.driven.impl.internal
 
-import cz.adamec.timotej.snag.network.fe.ports.ConnectionStatusProvider
+import cz.adamec.timotej.snag.core.network.fe.ConnectionStatusProvider
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow

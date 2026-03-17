@@ -123,7 +123,7 @@ internal fun Project.configureKotlinMultiplatformModule() {
                 } else if (this@configureKotlinMultiplatformModule.name == "ports") {
                     if (hasFolderInPath(moduleDirectoryPath, "model")) {
                         api(project("$moduleDirectoryPath:model"))
-                    } else {
+                    } else if (hasFolderInPath(modulePreDirectoryPath, "business")) {
                         api(project("$modulePreDirectoryPath:business"))
                     }
                 } else if (this@configureKotlinMultiplatformModule.name == "app") {
@@ -135,7 +135,7 @@ internal fun Project.configureKotlinMultiplatformModule() {
                     val businessDirectoryPath = feOrBeDirectoryPath.substringBeforeLast(":")
                     if (hasFolderInPath(feOrBeDirectoryPath, "model")) {
                         api(project("$feOrBeDirectoryPath:model"))
-                    } else {
+                    } else if (hasFolderInPath(businessDirectoryPath, "business")) {
                         api(project("$businessDirectoryPath:business"))
                     }
                 } else if (this@configureKotlinMultiplatformModule.name == "impl" &&
@@ -162,7 +162,7 @@ internal fun Project.configureKotlinMultiplatformModule() {
                 }
 
                 if (!path.contains("core")) {
-                    implementation(project(":lib:core:common"))
+                    implementation(project(":core:foundation:common"))
                 }
                 if (!path.contains("configuration") && !path.contains("core")) {
                     implementation(project(":lib:configuration:common:api"))

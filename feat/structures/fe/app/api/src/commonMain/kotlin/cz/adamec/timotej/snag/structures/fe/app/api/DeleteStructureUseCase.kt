@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.structures.fe.app.api
 
-import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
+import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
 import kotlin.uuid.Uuid
 
 interface DeleteStructureUseCase {

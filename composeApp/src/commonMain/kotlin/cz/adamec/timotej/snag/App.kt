@@ -21,8 +21,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import co.touchlab.kermit.Logger
 import co.touchlab.kermit.koin.KermitKoinLogger
+import cz.adamec.timotej.snag.core.foundation.fe.Initializer
 import cz.adamec.timotej.snag.di.appModule
-import cz.adamec.timotej.snag.lib.core.fe.Initializer
 import cz.adamec.timotej.snag.ui.MainScreen
 import org.koin.compose.KoinApplication
 import org.koin.compose.getKoin

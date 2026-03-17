@@ -24,7 +24,7 @@ kotlin {
                 implementation(project(":feat:projects:fe:driven:test"))
                 implementation(project(":lib:storage:fe:api"))
                 implementation(project(":lib:storage:fe:test"))
-                implementation(project(":lib:sync:fe:driven:test"))
+                implementation(project(":feat:sync:fe:driven:test"))
             }
         }
     }

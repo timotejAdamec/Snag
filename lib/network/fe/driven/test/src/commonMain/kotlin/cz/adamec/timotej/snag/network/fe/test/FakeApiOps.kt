@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.network.fe.test
 
-import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
+import cz.adamec.timotej.snag.core.network.fe.OnlineDataResult
 import kotlin.uuid.Uuid
 
 class FakeApiOps<T, SyncResultType>(

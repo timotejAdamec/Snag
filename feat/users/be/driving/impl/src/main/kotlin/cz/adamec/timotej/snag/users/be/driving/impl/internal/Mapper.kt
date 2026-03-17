@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.users.be.driving.impl.internal
 
-import cz.adamec.timotej.snag.lib.core.common.Timestamp
+import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.users.be.driving.contract.PutUserApiDto
 import cz.adamec.timotej.snag.users.be.model.BackendUser
 import cz.adamec.timotej.snag.users.business.User

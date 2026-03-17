@@ -15,8 +15,8 @@ package cz.adamec.timotej.snag.lib.database.fe
 import app.cash.sqldelight.db.QueryResult
 import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.db.SqlSchema
-import cz.adamec.timotej.snag.lib.core.common.di.getDefaultDispatcher
-import cz.adamec.timotej.snag.lib.core.fe.Initializer
+import cz.adamec.timotej.snag.core.foundation.common.di.getDefaultDispatcher
+import cz.adamec.timotej.snag.core.foundation.fe.Initializer
 import org.koin.core.qualifier.Qualifier
 import org.koin.dsl.bind
 import org.koin.dsl.module

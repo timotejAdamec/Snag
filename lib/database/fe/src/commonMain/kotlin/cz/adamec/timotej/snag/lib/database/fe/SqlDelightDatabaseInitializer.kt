@@ -16,7 +16,7 @@ import app.cash.sqldelight.async.coroutines.awaitCreate
 import app.cash.sqldelight.db.QueryResult
 import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.db.SqlSchema
-import cz.adamec.timotej.snag.lib.core.fe.Initializer
+import cz.adamec.timotej.snag.core.foundation.fe.Initializer
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 

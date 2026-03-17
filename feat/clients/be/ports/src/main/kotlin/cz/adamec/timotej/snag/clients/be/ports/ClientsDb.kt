@@ -13,7 +13,7 @@
 package cz.adamec.timotej.snag.clients.be.ports
 
 import cz.adamec.timotej.snag.clients.be.model.BackendClient
-import cz.adamec.timotej.snag.lib.core.common.Timestamp
+import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import kotlin.uuid.Uuid
 
 interface ClientsDb {

@@ -12,8 +12,8 @@
 
 package cz.adamec.timotej.snag.findings.be.app.api
 
+import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.feat.findings.be.model.BackendFinding
-import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import kotlin.uuid.Uuid
 
 interface GetFindingsModifiedSinceUseCase {

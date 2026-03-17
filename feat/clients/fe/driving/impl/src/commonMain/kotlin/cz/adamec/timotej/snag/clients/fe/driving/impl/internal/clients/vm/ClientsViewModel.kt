@@ -15,7 +15,7 @@ package cz.adamec.timotej.snag.clients.fe.driving.impl.internal.clients.vm
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cz.adamec.timotej.snag.clients.fe.app.api.GetClientsUseCase
-import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
+import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.channels.Channel

@@ -12,15 +12,15 @@
 
 package cz.adamec.timotej.snag.findings.fe.app.impl.internal
 
+import cz.adamec.timotej.snag.core.foundation.common.TimestampProvider
+import cz.adamec.timotej.snag.core.network.fe.OfflineFirstUpdateDataResult
+import cz.adamec.timotej.snag.core.network.fe.log
 import cz.adamec.timotej.snag.findings.fe.app.api.SaveFindingDetailsUseCase
 import cz.adamec.timotej.snag.findings.fe.app.api.model.SaveFindingDetailsRequest
 import cz.adamec.timotej.snag.findings.fe.app.impl.internal.LH.logger
 import cz.adamec.timotej.snag.findings.fe.app.impl.internal.sync.FINDING_SYNC_ENTITY_TYPE
 import cz.adamec.timotej.snag.findings.fe.ports.FindingsDb
-import cz.adamec.timotej.snag.lib.core.common.TimestampProvider
-import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstUpdateDataResult
-import cz.adamec.timotej.snag.lib.core.fe.log
-import cz.adamec.timotej.snag.lib.sync.fe.app.api.EnqueueSyncSaveUseCase
+import cz.adamec.timotej.snag.sync.fe.app.api.EnqueueSyncSaveUseCase
 
 class SaveFindingDetailsUseCaseImpl(
     private val findingsDb: FindingsDb,

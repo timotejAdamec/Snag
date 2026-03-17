@@ -20,5 +20,4 @@ import cz.adamec.timotej.snag.lib.design.fe.layout.systemBarsPaddingCoerceAtLeas
 private val DialogPaddingMinimum = 32.dp
 
 @Composable
-fun Modifier.dialogPadding(): Modifier =
-    systemBarsPaddingCoerceAtLeast(DialogPaddingMinimum)
+fun Modifier.dialogPadding(): Modifier = systemBarsPaddingCoerceAtLeast(DialogPaddingMinimum)

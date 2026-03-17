@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.projects.be.app.impl.internal
 
-import cz.adamec.timotej.snag.lib.core.common.Timestamp
+import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.projects.be.app.api.GetProjectsModifiedSinceUseCase
 import cz.adamec.timotej.snag.projects.be.model.BackendProject
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb

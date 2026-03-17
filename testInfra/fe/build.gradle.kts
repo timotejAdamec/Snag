@@ -29,7 +29,7 @@ kotlin {
             implementation(projects.feat.users.fe.driven.test)
             implementation(projects.lib.network.fe.driven.test)
             implementation(projects.lib.storage.fe.test)
-            implementation(projects.lib.sync.fe.driven.test)
+            implementation(projects.feat.sync.fe.driven.test)
         }
     }
 }

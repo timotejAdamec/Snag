@@ -16,7 +16,7 @@ import com.google.cloud.storage.BlobId
 import com.google.cloud.storage.BlobInfo
 import com.google.cloud.storage.Storage
 import com.google.cloud.storage.StorageOptions
-import cz.adamec.timotej.snag.lib.core.common.UuidProvider
+import cz.adamec.timotej.snag.core.foundation.common.UuidProvider
 import cz.adamec.timotej.snag.lib.storage.be.api.StorageConfig
 import cz.adamec.timotej.snag.lib.storage.be.api.StorageService
 import cz.adamec.timotej.snag.lib.storage.be.impl.internal.LH.logger

@@ -12,9 +12,9 @@
 
 package cz.adamec.timotej.snag.feat.reports.fe.driven.test
 
+import cz.adamec.timotej.snag.core.network.fe.OnlineDataResult
 import cz.adamec.timotej.snag.feat.reports.fe.model.FrontendReport
 import cz.adamec.timotej.snag.feat.reports.fe.ports.ReportsApi
-import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
 import cz.adamec.timotej.snag.reports.business.Report
 import kotlinx.coroutines.CompletableDeferred
 import kotlin.uuid.Uuid

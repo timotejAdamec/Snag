@@ -12,9 +12,9 @@
 
 package cz.adamec.timotej.snag.network.fe.driven.impl.di
 
+import cz.adamec.timotej.snag.core.network.fe.ConnectionStatusProvider
 import cz.adamec.timotej.snag.network.fe.driven.impl.internal.WebConnectionStatusProvider
 import cz.adamec.timotej.snag.network.fe.driven.impl.internal.WebNetworkErrorClassifier
-import cz.adamec.timotej.snag.network.fe.ports.ConnectionStatusProvider
 import cz.adamec.timotej.snag.network.fe.ports.NetworkErrorClassifier
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.singleOf

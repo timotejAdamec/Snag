@@ -20,7 +20,7 @@ import cz.adamec.timotej.snag.clients.be.app.api.SaveClientUseCase
 import cz.adamec.timotej.snag.clients.be.app.api.model.DeleteClientRequest
 import cz.adamec.timotej.snag.clients.be.driving.contract.DeleteClientApiDto
 import cz.adamec.timotej.snag.clients.be.driving.contract.PutClientApiDto
-import cz.adamec.timotej.snag.lib.core.common.Timestamp
+import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.routing.be.AppRoute
 import cz.adamec.timotej.snag.routing.be.getDtoFromBody
 import cz.adamec.timotej.snag.routing.be.getIdFromParameters

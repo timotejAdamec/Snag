@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.users.fe.app.api
 
-import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
+import cz.adamec.timotej.snag.core.network.fe.OnlineDataResult
 import cz.adamec.timotej.snag.users.fe.app.api.model.ChangeUserRoleRequest
 import cz.adamec.timotej.snag.users.fe.model.FrontendUser
 

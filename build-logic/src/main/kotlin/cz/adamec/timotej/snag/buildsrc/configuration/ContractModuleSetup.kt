@@ -21,7 +21,7 @@ internal fun Project.configureContractModule() {
     extensions.findByType(KotlinMultiplatformExtension::class.java)?.apply {
         sourceSets {
             commonMain.dependencies {
-                implementation(project(":lib:core:common"))
+                implementation(project(":core:foundation:common"))
                 implementation(library("kotlinx-serialization-core"))
                 implementation(library("ktor-serialization-kotlinx-json"))
             }

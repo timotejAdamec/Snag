@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.testinfra
 
-import cz.adamec.timotej.snag.lib.core.common.di.DispatcherDiQualifiers
+import cz.adamec.timotej.snag.core.foundation.common.di.DispatcherDiQualifiers
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.test.TestDispatcher
 import org.koin.core.module.Module

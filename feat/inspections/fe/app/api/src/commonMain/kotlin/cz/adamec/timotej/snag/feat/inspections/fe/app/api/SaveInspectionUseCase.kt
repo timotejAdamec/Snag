@@ -12,8 +12,8 @@
 
 package cz.adamec.timotej.snag.feat.inspections.fe.app.api
 
+import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.feat.inspections.fe.app.api.model.SaveInspectionRequest
-import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import kotlin.uuid.Uuid
 
 interface SaveInspectionUseCase {

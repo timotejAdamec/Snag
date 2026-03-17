@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.structures.fe.driven.internal.storage
 
-import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
+import cz.adamec.timotej.snag.core.network.fe.OnlineDataResult
 import cz.adamec.timotej.snag.lib.storage.fe.api.FileApi
 import cz.adamec.timotej.snag.structures.fe.ports.StructuresFileStorage
 

@@ -55,7 +55,7 @@ Configures:
 
 Adds on top of Multiplatform:
 - Kermit logging + Koin integration
-- `:lib:core:fe` dependency
+- `:core:foundation:fe` and `:core:network:fe` dependencies
 
 ### snagDrivingFrontendMultiplatformModule
 
@@ -97,7 +97,7 @@ Adds on top of Network:
 Applies: Kotlin JVM.
 
 Configures:
-- `:lib:core:be` dependency
+- `:core:foundation:be` dependency
 - Coroutines, Koin core, SLF4J logging
 - Test: JUnit, coroutines test
 - Automatic inter-module dependency wiring (same rules as Multiplatform)
@@ -130,14 +130,14 @@ Adds on top of Backend:
 Applies: Kotlin Serialization.
 
 Adds on top of Multiplatform:
-- `:lib:core:common` dependency
+- `:core:foundation:common` dependency
 - Kotlin serialization core
 - Ktor serialization JSON
 
 ## Auto-wiring
 
 Convention plugins automatically wire most inter-module dependencies (e.g., `ports` → `business`,
-`app` → `ports`, `lib:core:be` for all backend modules). When creating a new module, start with
+`app` → `ports`, `core:foundation:be` for all backend modules). When creating a new module, start with
 only the convention plugin applied and no explicit dependencies in `build.gradle.kts` — add manual
 dependencies only for what the build actually requires beyond what the plugin provides.
 
@@ -174,5 +174,6 @@ feat/<feature>/
 ```
 
 Library modules (`lib/`) follow the same convention based on their layer and platform
-(`fe/`, `be/`, or top-level for shared). `core` modules are an exception — they use the
-base `snagMultiplatformModule` or `snagBackendModule` since other plugins depend on them.
+(`fe/`, `be/`, or top-level for shared). Core modules (`core/`) use the base
+`snagMultiplatformModule`, `snagFrontendMultiplatformModule`, or `snagBackendModule`
+since other plugins depend on them.

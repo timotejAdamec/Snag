@@ -17,7 +17,7 @@ plugins {
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            api(project(":lib:core:common"))
+            api(project(":core:foundation:common"))
             api(libs.koin.test)
             api(libs.kotlin.test)
             api(libs.kotlinx.coroutines.test)

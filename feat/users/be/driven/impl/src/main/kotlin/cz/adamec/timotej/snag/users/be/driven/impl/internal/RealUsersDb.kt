@@ -12,9 +12,9 @@
 
 package cz.adamec.timotej.snag.users.be.driven.impl.internal
 
+import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.feat.shared.database.be.UserEntity
 import cz.adamec.timotej.snag.feat.shared.database.be.UsersTable
-import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.users.be.model.BackendUser
 import cz.adamec.timotej.snag.users.be.ports.UsersDb
 import org.jetbrains.exposed.v1.core.eq

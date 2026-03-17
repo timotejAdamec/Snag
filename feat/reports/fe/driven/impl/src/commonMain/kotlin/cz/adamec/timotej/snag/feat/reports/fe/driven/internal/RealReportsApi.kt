@@ -12,11 +12,11 @@
 
 package cz.adamec.timotej.snag.feat.reports.fe.driven.internal
 
+import cz.adamec.timotej.snag.core.network.fe.OnlineDataResult
+import cz.adamec.timotej.snag.core.network.fe.safeApiCall
 import cz.adamec.timotej.snag.feat.reports.fe.model.FrontendReport
 import cz.adamec.timotej.snag.feat.reports.fe.ports.ReportsApi
-import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
 import cz.adamec.timotej.snag.network.fe.SnagNetworkHttpClient
-import cz.adamec.timotej.snag.network.fe.safeApiCall
 import cz.adamec.timotej.snag.reports.business.Report
 import io.ktor.client.call.body
 import io.ktor.http.ContentDisposition

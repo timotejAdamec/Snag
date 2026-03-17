@@ -12,12 +12,8 @@
 
 package cz.adamec.timotej.snag.network.fe.test
 
-import cz.adamec.timotej.snag.network.fe.InternetConnectionStatusListener
-import org.koin.core.module.dsl.singleOf
-import org.koin.dsl.bind
 import org.koin.dsl.module
 
 val networkFeDrivenTestModule =
     module {
-        singleOf(::FakeInternetConnectionStatusListener) bind InternetConnectionStatusListener::class
     }

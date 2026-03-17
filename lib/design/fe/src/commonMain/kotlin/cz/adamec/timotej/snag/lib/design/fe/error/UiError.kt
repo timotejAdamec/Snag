@@ -13,7 +13,7 @@
 package cz.adamec.timotej.snag.lib.design.fe.error
 
 import androidx.compose.runtime.Immutable
-import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
+import cz.adamec.timotej.snag.core.network.fe.OnlineDataResult
 import org.jetbrains.compose.resources.getString
 import snag.lib.design.fe.generated.resources.Res
 import snag.lib.design.fe.generated.resources.error_network

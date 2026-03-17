@@ -12,11 +12,11 @@
 
 package cz.adamec.timotej.snag.feat.reports.fe.app.impl.internal
 
+import cz.adamec.timotej.snag.core.network.fe.OnlineDataResult
+import cz.adamec.timotej.snag.core.network.fe.log
 import cz.adamec.timotej.snag.feat.reports.fe.app.api.DownloadReportUseCase
 import cz.adamec.timotej.snag.feat.reports.fe.model.FrontendReport
 import cz.adamec.timotej.snag.feat.reports.fe.ports.ReportsApi
-import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
-import cz.adamec.timotej.snag.lib.core.fe.log
 import kotlin.uuid.Uuid
 
 internal class DownloadReportUseCaseImpl(

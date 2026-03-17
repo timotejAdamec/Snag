@@ -12,7 +12,6 @@
 
 package cz.adamec.timotej.snag.projects.fe.app.impl.di
 
-import cz.adamec.timotej.snag.lib.sync.fe.app.api.handler.SyncOperationHandler
 import cz.adamec.timotej.snag.projects.business.CanEditProjectEntitiesRule
 import cz.adamec.timotej.snag.projects.fe.app.api.DeleteProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.GetProjectUseCase
@@ -29,6 +28,7 @@ import cz.adamec.timotej.snag.projects.fe.app.impl.internal.PullProjectChangesUs
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.SaveProjectUseCaseImpl
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.SetProjectClosedUseCaseImpl
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.sync.ProjectSyncHandler
+import cz.adamec.timotej.snag.sync.fe.app.api.handler.SyncOperationHandler
 import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.bind
 import org.koin.dsl.module

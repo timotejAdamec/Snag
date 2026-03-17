@@ -25,10 +25,10 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinJvmExtension
 internal fun Project.configureBackendModule() {
     dependencies {
         if (!path.contains("core")) {
-            implementation(project(":lib:core:be"))
+            implementation(project(":core:foundation:be"))
         }
-        if (!path.contains("core") && !path.startsWith(":lib:sync")) {
-            implementation(project(":lib:sync:be:api"))
+        if (!path.contains("core") && !path.startsWith(":feat:sync")) {
+            implementation(project(":feat:sync:be:api"))
         }
         if (!path.contains("configuration") && !path.contains("core")) {
             implementation(project(":lib:configuration:common:api"))
@@ -43,7 +43,7 @@ internal fun Project.configureBackendModule() {
         } else if (name == "ports") {
             if (hasFolderInPath(moduleDirectoryPath, "model")) {
                 api(project("$moduleDirectoryPath:model"))
-            } else {
+            } else if (hasFolderInPath(modulePreDirectoryPath, "business")) {
                 api(project("$modulePreDirectoryPath:business"))
             }
         } else if (name == "app") {
@@ -53,7 +53,7 @@ internal fun Project.configureBackendModule() {
             val businessDirectoryPath = feOrBeDirectoryPath.substringBeforeLast(":")
             if (hasFolderInPath(feOrBeDirectoryPath, "model")) {
                 api(project("$feOrBeDirectoryPath:model"))
-            } else {
+            } else if (hasFolderInPath(businessDirectoryPath, "business")) {
                 api(project("$businessDirectoryPath:business"))
             }
         } else if (name == "impl" && hasFolderInPath(moduleDirectoryPath, "api")) {
