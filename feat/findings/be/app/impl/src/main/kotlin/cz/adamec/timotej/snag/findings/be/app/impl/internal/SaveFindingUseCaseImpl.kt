@@ -27,11 +27,11 @@ internal class SaveFindingUseCaseImpl(
     private val canEditProjectEntitiesRule: CanEditProjectEntitiesRule,
 ) : SaveFindingUseCase {
     override suspend operator fun invoke(finding: BackendFinding): BackendFinding? {
-        val structure = structuresDb.getStructure(finding.finding.structureId)
+        val structure = structuresDb.getStructure(finding.structureId)
         if (structure != null) {
-            val project = getProjectUseCase(structure.structure.projectId)
-            if (project != null && !canEditProjectEntitiesRule(project.project)) {
-                return findingsDb.getFinding(finding.finding.id)
+            val project = getProjectUseCase(structure.projectId)
+            if (project != null && !canEditProjectEntitiesRule(project)) {
+                return findingsDb.getFinding(finding.id)
             }
         }
         logger.debug("Saving finding {} to local storage.", finding)

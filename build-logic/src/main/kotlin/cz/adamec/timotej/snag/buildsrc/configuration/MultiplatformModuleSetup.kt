@@ -117,12 +117,61 @@ internal fun Project.configureKotlinMultiplatformModule() {
                 val moduleDirectoryPath = this@configureKotlinMultiplatformModule.path.substringBeforeLast(":")
                 val modulePreDirectoryPath = moduleDirectoryPath.substringBeforeLast(":")
                 if (this@configureKotlinMultiplatformModule.name == "model") {
-                    if (hasFolderInPath(modulePreDirectoryPath, "business")) {
-                        api(project("$modulePreDirectoryPath:business"))
+                    if ((this@configureKotlinMultiplatformModule.path.contains(":fe:") ||
+                                this@configureKotlinMultiplatformModule.path.contains(":be:")) &&
+                        this@configureKotlinMultiplatformModule.path.contains(":app:")
+                    ) {
+                        // be/app/model or fe/app/model → shared app/model
+                        val featureRootPath = moduleDirectoryPath
+                            .substringBeforeLast(":app").substringBeforeLast(":")
+                        if (hasFolderInPath("$featureRootPath:app", "model")) {
+                            api(project("$featureRootPath:app:model"))
+                        } else if (hasFolderInPath("$featureRootPath:business", "model")) {
+                            api(project("$featureRootPath:business:model"))
+                        } else if (hasFolderInPath(featureRootPath, "business")) {
+                            api(project("$featureRootPath:business"))
+                        }
+                    } else if (this@configureKotlinMultiplatformModule.path.contains(":fe:") ||
+                        this@configureKotlinMultiplatformModule.path.contains(":be:")
+                    ) {
+                        // fe/model or be/model (legacy) → app/model, then business/model, then business
+                        if (hasFolderInPath("$modulePreDirectoryPath:app", "model")) {
+                            api(project("$modulePreDirectoryPath:app:model"))
+                        } else if (hasFolderInPath("$modulePreDirectoryPath:business", "model")) {
+                            api(project("$modulePreDirectoryPath:business:model"))
+                        } else if (hasFolderInPath(modulePreDirectoryPath, "business")) {
+                            api(project("$modulePreDirectoryPath:business"))
+                        }
+                    } else if (this@configureKotlinMultiplatformModule.path.contains(":app:")) {
+                        // app/model → business/model, then business
+                        val featureRootPath = moduleDirectoryPath.substringBeforeLast(":app")
+                        if (hasFolderInPath("$featureRootPath:business", "model")) {
+                            api(project("$featureRootPath:business:model"))
+                        } else if (hasFolderInPath(featureRootPath, "business")) {
+                            api(project("$featureRootPath:business"))
+                        }
+                    }
+                    // business/model → no model dependency (it's the base)
+                } else if (this@configureKotlinMultiplatformModule.name == "rules" &&
+                    this@configureKotlinMultiplatformModule.path.contains(":business:")
+                ) {
+                    // business/rules → business/model
+                    val businessPath = this@configureKotlinMultiplatformModule.path.substringBeforeLast(":rules")
+                    if (hasFolderInPath(businessPath, "model")) {
+                        api(project("$businessPath:model"))
                     }
                 } else if (this@configureKotlinMultiplatformModule.name == "ports") {
-                    if (hasFolderInPath(moduleDirectoryPath, "model")) {
+                    if (hasFolderInPath("$moduleDirectoryPath:app", "model")) {
+                        // be:ports → be:app:model, fe:ports → fe:app:model
+                        api(project("$moduleDirectoryPath:app:model"))
+                    } else if (hasFolderInPath(moduleDirectoryPath, "model")) {
+                        // local model (e.g., sync:fe:model)
                         api(project("$moduleDirectoryPath:model"))
+                    } else if (hasFolderInPath("$modulePreDirectoryPath:app", "model")) {
+                        // fallback to shared app:model
+                        api(project("$modulePreDirectoryPath:app:model"))
+                    } else if (hasFolderInPath("$modulePreDirectoryPath:business", "model")) {
+                        api(project("$modulePreDirectoryPath:business:model"))
                     } else if (hasFolderInPath(modulePreDirectoryPath, "business")) {
                         api(project("$modulePreDirectoryPath:business"))
                     }
@@ -133,8 +182,17 @@ internal fun Project.configureKotlinMultiplatformModule() {
                 ) {
                     val feOrBeDirectoryPath = moduleDirectoryPath.substringBeforeLast(":app")
                     val businessDirectoryPath = feOrBeDirectoryPath.substringBeforeLast(":")
-                    if (hasFolderInPath(feOrBeDirectoryPath, "model")) {
+                    if (hasFolderInPath("$feOrBeDirectoryPath:app", "model")) {
+                        // be:app:api → be:app:model, fe:app:api → fe:app:model
+                        api(project("$feOrBeDirectoryPath:app:model"))
+                    } else if (hasFolderInPath(feOrBeDirectoryPath, "model")) {
+                        // local model (e.g., sync:fe:model)
                         api(project("$feOrBeDirectoryPath:model"))
+                    } else if (hasFolderInPath("$businessDirectoryPath:app", "model")) {
+                        // fallback to shared app:model
+                        api(project("$businessDirectoryPath:app:model"))
+                    } else if (hasFolderInPath("$businessDirectoryPath:business", "model")) {
+                        api(project("$businessDirectoryPath:business:model"))
                     } else if (hasFolderInPath(businessDirectoryPath, "business")) {
                         api(project("$businessDirectoryPath:business"))
                     }

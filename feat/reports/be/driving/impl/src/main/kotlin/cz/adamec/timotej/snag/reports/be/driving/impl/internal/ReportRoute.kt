@@ -40,13 +40,13 @@ internal class ReportRoute(
                     val disposition =
                         ContentDisposition.Attachment.withParameter(
                             ContentDisposition.Parameters.FileName,
-                            report.report.fileName,
+                            report.fileName,
                         )
                     call.response.header(
                         HttpHeaders.ContentDisposition,
                         disposition.toString(),
                     )
-                    call.respondBytes(report.report.bytes, ContentType.Application.Pdf)
+                    call.respondBytes(report.bytes, ContentType.Application.Pdf)
                 } else {
                     call.respond(HttpStatusCode.NotFound)
                 }

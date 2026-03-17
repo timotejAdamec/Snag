@@ -12,10 +12,10 @@
 
 package cz.adamec.timotej.snag.clients.fe.app.api
 
-import cz.adamec.timotej.snag.clients.fe.model.FrontendClient
+import cz.adamec.timotej.snag.clients.app.model.AppClient
 import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
 import kotlinx.coroutines.flow.Flow
 
 interface GetClientsUseCase {
-    operator fun invoke(): Flow<OfflineFirstDataResult<List<FrontendClient>>>
+    operator fun invoke(): Flow<OfflineFirstDataResult<List<AppClient>>>
 }

@@ -21,7 +21,7 @@ internal class SaveClientUseCaseImpl(
     private val clientsDb: ClientsDb,
 ) : SaveClientUseCase {
     override suspend operator fun invoke(client: BackendClient): BackendClient? {
-        logger.debug("Saving client {} to local storage.", client.client.id)
+        logger.debug("Saving client {} to local storage.", client.id)
         val isRejected = clientsDb.saveClient(client)
         if (isRejected != null) {
             logger.debug(

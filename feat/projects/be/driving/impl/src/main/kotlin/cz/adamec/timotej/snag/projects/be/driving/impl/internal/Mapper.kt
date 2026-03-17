@@ -15,31 +15,26 @@ package cz.adamec.timotej.snag.projects.be.driving.impl.internal
 import cz.adamec.timotej.snag.projects.be.driving.contract.ProjectApiDto
 import cz.adamec.timotej.snag.projects.be.driving.contract.PutProjectApiDto
 import cz.adamec.timotej.snag.projects.be.model.BackendProject
-import cz.adamec.timotej.snag.projects.business.Project
+import cz.adamec.timotej.snag.projects.be.model.BackendProjectData
 import kotlin.uuid.Uuid
 
 internal fun BackendProject.toDto() =
-    with(project) {
-        ProjectApiDto(
-            id = id,
-            name = name,
-            address = address,
-            clientId = clientId,
-            isClosed = isClosed,
-            updatedAt = updatedAt,
-            deletedAt = this@toDto.deletedAt,
-        )
-    }
+    ProjectApiDto(
+        id = id,
+        name = name,
+        address = address,
+        clientId = clientId,
+        isClosed = isClosed,
+        updatedAt = updatedAt,
+        deletedAt = deletedAt,
+    )
 
-internal fun PutProjectApiDto.toModel(id: Uuid) =
-    BackendProject(
-        project =
-            Project(
-                id = id,
-                name = name,
-                address = address,
-                clientId = clientId,
-                isClosed = isClosed,
-                updatedAt = updatedAt,
-            ),
+internal fun PutProjectApiDto.toModel(id: Uuid): BackendProject =
+    BackendProjectData(
+        id = id,
+        name = name,
+        address = address,
+        clientId = clientId,
+        isClosed = isClosed,
+        updatedAt = updatedAt,
     )

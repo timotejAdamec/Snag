@@ -13,14 +13,14 @@
 package cz.adamec.timotej.snag.feat.inspections.fe.driven.test
 
 import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
-import cz.adamec.timotej.snag.feat.inspections.fe.model.FrontendInspection
+import cz.adamec.timotej.snag.feat.inspections.app.model.AppInspection
 import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionsDb
 import cz.adamec.timotej.snag.lib.database.fe.test.FakeDbOps
 import kotlinx.coroutines.flow.Flow
 import kotlin.uuid.Uuid
 
 class FakeInspectionsDb : InspectionsDb {
-    private val ops = FakeDbOps<FrontendInspection>(getId = { it.inspection.id })
+    private val ops = FakeDbOps<AppInspection>(getId = { it.id })
 
     var forcedFailure
         get() = ops.forcedFailure
@@ -28,24 +28,24 @@ class FakeInspectionsDb : InspectionsDb {
             ops.forcedFailure = value
         }
 
-    override fun getInspectionsFlow(projectId: Uuid): Flow<OfflineFirstDataResult<List<FrontendInspection>>> =
-        ops.allItemsFlow { it.inspection.projectId == projectId }
+    override fun getInspectionsFlow(projectId: Uuid): Flow<OfflineFirstDataResult<List<AppInspection>>> =
+        ops.allItemsFlow { it.projectId == projectId }
 
-    override suspend fun saveInspection(inspection: FrontendInspection): OfflineFirstDataResult<Unit> = ops.saveOneItem(inspection)
+    override suspend fun saveInspection(inspection: AppInspection): OfflineFirstDataResult<Unit> = ops.saveOneItem(inspection)
 
     override suspend fun deleteInspection(id: Uuid): OfflineFirstDataResult<Unit> = ops.deleteItem(id)
 
-    override fun getInspectionFlow(id: Uuid): Flow<OfflineFirstDataResult<FrontendInspection?>> = ops.itemByIdFlow(id)
+    override fun getInspectionFlow(id: Uuid): Flow<OfflineFirstDataResult<AppInspection?>> = ops.itemByIdFlow(id)
 
     override suspend fun getInspectionIdsByProjectId(projectId: Uuid): List<Uuid> =
         ops.items.value.values
-            .filter { it.inspection.projectId == projectId }
-            .map { it.inspection.id }
+            .filter { it.projectId == projectId }
+            .map { it.id }
 
     override suspend fun deleteInspectionsByProjectId(projectId: Uuid): OfflineFirstDataResult<Unit> =
-        ops.deleteItemsWhere { it.inspection.projectId != projectId }
+        ops.deleteItemsWhere { it.projectId != projectId }
 
-    fun setInspection(inspection: FrontendInspection) = ops.setItem(inspection)
+    fun setInspection(inspection: AppInspection) = ops.setItem(inspection)
 
-    fun setInspections(inspections: List<FrontendInspection>) = ops.setItems(inspections)
+    fun setInspections(inspections: List<AppInspection>) = ops.setItems(inspections)
 }

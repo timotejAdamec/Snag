@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.clients.fe.ports
 
-import cz.adamec.timotej.snag.clients.fe.model.FrontendClient
+import cz.adamec.timotej.snag.clients.app.model.AppClient
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.core.network.fe.OnlineDataResult
 import kotlin.uuid.Uuid
@@ -23,21 +23,21 @@ sealed interface ClientSyncResult {
     ) : ClientSyncResult
 
     data class Updated(
-        val client: FrontendClient,
+        val client: AppClient,
     ) : ClientSyncResult
 }
 
 interface ClientsApi {
-    suspend fun getClients(): OnlineDataResult<List<FrontendClient>>
+    suspend fun getClients(): OnlineDataResult<List<AppClient>>
 
-    suspend fun getClient(id: Uuid): OnlineDataResult<FrontendClient>
+    suspend fun getClient(id: Uuid): OnlineDataResult<AppClient>
 
-    suspend fun saveClient(client: FrontendClient): OnlineDataResult<FrontendClient?>
+    suspend fun saveClient(client: AppClient): OnlineDataResult<AppClient?>
 
     suspend fun deleteClient(
         id: Uuid,
         deletedAt: Timestamp,
-    ): OnlineDataResult<FrontendClient?>
+    ): OnlineDataResult<AppClient?>
 
     suspend fun getClientsModifiedSince(since: Timestamp): OnlineDataResult<List<ClientSyncResult>>
 }

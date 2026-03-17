@@ -43,20 +43,20 @@ internal class RealUsersDb(
 
     override suspend fun saveUser(user: BackendUser): BackendUser =
         transaction(database) {
-            val existing = UserEntity.findById(user.user.id)
+            val existing = UserEntity.findById(user.id)
             if (existing != null) {
-                existing.entraId = user.user.entraId
-                existing.email = user.user.email
-                existing.role = user.user.role?.name
-                existing.updatedAt = user.user.updatedAt.value
+                existing.entraId = user.entraId
+                existing.email = user.email
+                existing.role = user.role?.name
+                existing.updatedAt = user.updatedAt.value
                 existing.toModel()
             } else {
                 UserEntity
-                    .new(user.user.id) {
-                        entraId = user.user.entraId
-                        email = user.user.email
-                        role = user.user.role?.name
-                        updatedAt = user.user.updatedAt.value
+                    .new(user.id) {
+                        entraId = user.entraId
+                        email = user.email
+                        role = user.role?.name
+                        updatedAt = user.updatedAt.value
                     }.toModel()
             }
         }

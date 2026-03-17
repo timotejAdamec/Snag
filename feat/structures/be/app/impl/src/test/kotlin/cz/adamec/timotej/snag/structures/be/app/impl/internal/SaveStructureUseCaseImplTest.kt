@@ -13,11 +13,9 @@
 package cz.adamec.timotej.snag.structures.be.app.impl.internal
 
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
-import cz.adamec.timotej.snag.feat.structures.be.model.BackendStructure
-import cz.adamec.timotej.snag.feat.structures.business.Structure
-import cz.adamec.timotej.snag.projects.be.model.BackendProject
+import cz.adamec.timotej.snag.feat.structures.be.model.BackendStructureData
+import cz.adamec.timotej.snag.projects.be.model.BackendProjectData
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
-import cz.adamec.timotej.snag.projects.business.Project
 import cz.adamec.timotej.snag.structures.be.app.api.SaveStructureUseCase
 import cz.adamec.timotej.snag.structures.be.ports.StructuresDb
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
@@ -35,28 +33,22 @@ class SaveStructureUseCaseImplTest : BackendKoinInitializedTest() {
 
     private val projectId = Uuid.parse("00000000-0000-0000-0000-000000000001")
     private val backendStructure =
-        BackendStructure(
-            structure =
-                Structure(
-                    id = Uuid.parse("00000000-0000-0000-0001-000000000001"),
-                    projectId = projectId,
-                    name = "Ground Floor",
-                    floorPlanUrl = null,
-                    updatedAt = Timestamp(value = 10L),
-                ),
+        BackendStructureData(
+            id = Uuid.parse("00000000-0000-0000-0001-000000000001"),
+            projectId = projectId,
+            name = "Ground Floor",
+            floorPlanUrl = null,
+            updatedAt = Timestamp(value = 10L),
         )
 
     private fun createProject() =
         runTest(testDispatcher) {
             projectsDb.saveProject(
-                BackendProject(
-                    project =
-                        Project(
-                            id = projectId,
-                            name = "Test Project",
-                            address = "Test Address",
-                            updatedAt = Timestamp(1L),
-                        ),
+                BackendProjectData(
+                    id = projectId,
+                    name = "Test Project",
+                    address = "Test Address",
+                    updatedAt = Timestamp(1L),
                 ),
             )
         }
@@ -76,10 +68,7 @@ class SaveStructureUseCaseImplTest : BackendKoinInitializedTest() {
             createProject()
             val savedStructure =
                 backendStructure.copy(
-                    structure =
-                        backendStructure.structure.copy(
-                            updatedAt = Timestamp(value = 20L),
-                        ),
+                    updatedAt = Timestamp(value = 20L),
                 )
             dataSource.saveStructure(savedStructure)
 
@@ -103,10 +92,7 @@ class SaveStructureUseCaseImplTest : BackendKoinInitializedTest() {
             createProject()
             val savedStructure =
                 backendStructure.copy(
-                    structure =
-                        backendStructure.structure.copy(
-                            updatedAt = Timestamp(value = 20L),
-                        ),
+                    updatedAt = Timestamp(value = 20L),
                 )
             dataSource.saveStructure(savedStructure)
 
@@ -123,11 +109,8 @@ class SaveStructureUseCaseImplTest : BackendKoinInitializedTest() {
 
             val newerStructure =
                 backendStructure.copy(
-                    structure =
-                        backendStructure.structure.copy(
-                            name = "New name",
-                            updatedAt = Timestamp(value = 20L),
-                        ),
+                    name = "New name",
+                    updatedAt = Timestamp(value = 20L),
                 )
 
             val result = useCase(newerStructure)
@@ -138,15 +121,12 @@ class SaveStructureUseCaseImplTest : BackendKoinInitializedTest() {
     private fun createClosedProject() =
         runTest(testDispatcher) {
             projectsDb.saveProject(
-                BackendProject(
-                    project =
-                        Project(
-                            id = projectId,
-                            name = "Test Project",
-                            address = "Test Address",
-                            isClosed = true,
-                            updatedAt = Timestamp(1L),
-                        ),
+                BackendProjectData(
+                    id = projectId,
+                    name = "Test Project",
+                    address = "Test Address",
+                    isClosed = true,
+                    updatedAt = Timestamp(1L),
                 ),
             )
         }
@@ -159,11 +139,8 @@ class SaveStructureUseCaseImplTest : BackendKoinInitializedTest() {
 
             val newStructure =
                 backendStructure.copy(
-                    structure =
-                        backendStructure.structure.copy(
-                            name = "Updated name",
-                            updatedAt = Timestamp(value = 20L),
-                        ),
+                    name = "Updated name",
+                    updatedAt = Timestamp(value = 20L),
                 )
 
             val result = useCase(newStructure)

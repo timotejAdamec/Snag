@@ -30,10 +30,10 @@ internal class DeleteFindingUseCaseImpl(
     override suspend operator fun invoke(request: DeleteFindingRequest): BackendFinding? {
         val finding = findingsDb.getFinding(request.findingId)
         if (finding != null) {
-            val structure = structuresDb.getStructure(finding.finding.structureId)
+            val structure = structuresDb.getStructure(finding.structureId)
             if (structure != null) {
-                val project = getProjectUseCase(structure.structure.projectId)
-                if (project != null && !canEditProjectEntitiesRule(project.project)) {
+                val project = getProjectUseCase(structure.projectId)
+                if (project != null && !canEditProjectEntitiesRule(project)) {
                     return finding
                 }
             }

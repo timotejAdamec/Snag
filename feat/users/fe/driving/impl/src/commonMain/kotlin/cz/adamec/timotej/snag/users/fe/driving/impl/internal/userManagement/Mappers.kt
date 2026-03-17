@@ -12,12 +12,12 @@
 
 package cz.adamec.timotej.snag.users.fe.driving.impl.internal.userManagement
 
+import cz.adamec.timotej.snag.users.app.model.AppUser
 import cz.adamec.timotej.snag.users.fe.driving.impl.internal.userManagement.vm.UserItem
-import cz.adamec.timotej.snag.users.fe.model.FrontendUser
 
-internal fun FrontendUser.toUserItem() =
+internal fun AppUser.toUserItem() =
     UserItem(
-        id = user.id,
-        email = user.email,
-        role = user.role,
+        id = id,
+        email = email,
+        role = role,
     )

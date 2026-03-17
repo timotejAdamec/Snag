@@ -50,21 +50,21 @@ internal class RealStructuresDb(
 
     override suspend fun saveStructure(backendStructure: BackendStructure): BackendStructure? =
         transaction(database) {
-            val existing = StructureEntity.findById(backendStructure.structure.id)
+            val existing = StructureEntity.findById(backendStructure.id)
             when (val result = resolveConflictForSave(existing?.toModel(), backendStructure)) {
                 is SaveConflictResult.Proceed -> {
                     if (existing != null) {
-                        existing.project = ProjectEntity[backendStructure.structure.projectId]
-                        existing.name = backendStructure.structure.name
-                        existing.floorPlanUrl = backendStructure.structure.floorPlanUrl
-                        existing.updatedAt = backendStructure.structure.updatedAt.value
+                        existing.project = ProjectEntity[backendStructure.projectId]
+                        existing.name = backendStructure.name
+                        existing.floorPlanUrl = backendStructure.floorPlanUrl
+                        existing.updatedAt = backendStructure.updatedAt.value
                         existing.deletedAt = backendStructure.deletedAt?.value
                     } else {
-                        StructureEntity.new(backendStructure.structure.id) {
-                            project = ProjectEntity[backendStructure.structure.projectId]
-                            name = backendStructure.structure.name
-                            floorPlanUrl = backendStructure.structure.floorPlanUrl
-                            updatedAt = backendStructure.structure.updatedAt.value
+                        StructureEntity.new(backendStructure.id) {
+                            project = ProjectEntity[backendStructure.projectId]
+                            name = backendStructure.name
+                            floorPlanUrl = backendStructure.floorPlanUrl
+                            updatedAt = backendStructure.updatedAt.value
                             deletedAt = backendStructure.deletedAt?.value
                         }
                     }

@@ -12,10 +12,8 @@
 
 package cz.adamec.timotej.snag.sync.be.model
 
-import cz.adamec.timotej.snag.core.foundation.common.Timestamp
+import cz.adamec.timotej.snag.sync.model.Versioned
 
-interface Syncable {
-    val updatedAt: Timestamp
-
-    val deletedAt: Timestamp?
-}
+interface Syncable :
+    Versioned,
+    SoftDeletable

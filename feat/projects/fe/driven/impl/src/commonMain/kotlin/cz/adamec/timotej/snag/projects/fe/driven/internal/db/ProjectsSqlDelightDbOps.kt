@@ -15,14 +15,14 @@ package cz.adamec.timotej.snag.projects.fe.driven.internal.db
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.ProjectEntity
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.ProjectEntityQueries
 import cz.adamec.timotej.snag.lib.database.fe.SqlDelightDbOps
+import cz.adamec.timotej.snag.projects.app.model.AppProject
 import cz.adamec.timotej.snag.projects.fe.driven.internal.LH
-import cz.adamec.timotej.snag.projects.fe.model.FrontendProject
 import kotlinx.coroutines.CoroutineDispatcher
 
 internal class ProjectsSqlDelightDbOps(
     queries: ProjectEntityQueries,
     ioDispatcher: CoroutineDispatcher,
-) : SqlDelightDbOps<ProjectEntity, FrontendProject>(
+) : SqlDelightDbOps<ProjectEntity, AppProject>(
         ioDispatcher = ioDispatcher,
         logger = LH.logger,
         entityName = "project",

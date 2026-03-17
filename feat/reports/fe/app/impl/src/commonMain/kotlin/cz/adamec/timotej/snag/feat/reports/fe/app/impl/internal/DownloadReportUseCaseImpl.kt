@@ -15,14 +15,14 @@ package cz.adamec.timotej.snag.feat.reports.fe.app.impl.internal
 import cz.adamec.timotej.snag.core.network.fe.OnlineDataResult
 import cz.adamec.timotej.snag.core.network.fe.log
 import cz.adamec.timotej.snag.feat.reports.fe.app.api.DownloadReportUseCase
-import cz.adamec.timotej.snag.feat.reports.fe.model.FrontendReport
 import cz.adamec.timotej.snag.feat.reports.fe.ports.ReportsApi
+import cz.adamec.timotej.snag.reports.business.Report
 import kotlin.uuid.Uuid
 
 internal class DownloadReportUseCaseImpl(
     private val reportsApi: ReportsApi,
 ) : DownloadReportUseCase {
-    override suspend fun invoke(projectId: Uuid): OnlineDataResult<FrontendReport> {
+    override suspend fun invoke(projectId: Uuid): OnlineDataResult<Report> {
         val result = reportsApi.downloadReport(projectId)
         LH.logger.log(result, "downloadReport for projectId=$projectId")
         return result

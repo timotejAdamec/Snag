@@ -33,13 +33,13 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.core.foundation.common.UuidProvider
-import cz.adamec.timotej.snag.feat.structures.business.Structure
-import cz.adamec.timotej.snag.feat.structures.fe.model.FrontendStructure
+import cz.adamec.timotej.snag.feat.structures.app.model.AppStructure
+import cz.adamec.timotej.snag.feat.structures.app.model.AppStructureData
 import cz.adamec.timotej.snag.lib.design.fe.theme.SnagPreview
 
 @Composable
 fun StructureCard(
-    feStructure: FrontendStructure,
+    feStructure: AppStructure,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -51,7 +51,7 @@ fun StructureCard(
             ),
         onClick = onClick,
     ) {
-        if (feStructure.structure.floorPlanUrl != null) {
+        if (feStructure.floorPlanUrl != null) {
             Column {
                 AsyncImage(
                     modifier =
@@ -59,13 +59,13 @@ fun StructureCard(
                             .fillMaxWidth()
                             .weight(1f)
                             .clip(MaterialTheme.shapes.medium),
-                    model = feStructure.structure.floorPlanUrl,
-                    contentDescription = feStructure.structure.name,
+                    model = feStructure.floorPlanUrl,
+                    contentDescription = feStructure.name,
                     contentScale = ContentScale.Fit,
                 )
                 Text(
                     modifier = Modifier.padding(12.dp),
-                    text = feStructure.structure.name,
+                    text = feStructure.name,
                     style = MaterialTheme.typography.titleMedium,
                     maxLines = 2,
                 )
@@ -77,7 +77,7 @@ fun StructureCard(
             ) {
                 Text(
                     modifier = Modifier.padding(12.dp),
-                    text = feStructure.structure.name,
+                    text = feStructure.name,
                     style = MaterialTheme.typography.titleMedium,
                     textAlign = TextAlign.Center,
                     maxLines = 2,
@@ -97,14 +97,12 @@ private fun StructureCardPreview() {
         ) {
             StructureCard(
                 feStructure =
-                    FrontendStructure(
-                        Structure(
-                            id = UuidProvider.getUuid(),
-                            projectId = UuidProvider.getUuid(),
-                            name = "Structure Name",
-                            floorPlanUrl = "https://saterdesign.com/cdn/shop/products/6842.M_1200x.jpeg?v=1547874083",
-                            updatedAt = Timestamp(1L),
-                        ),
+                    AppStructureData(
+                        id = UuidProvider.getUuid(),
+                        projectId = UuidProvider.getUuid(),
+                        name = "Structure Name",
+                        floorPlanUrl = "https://saterdesign.com/cdn/shop/products/6842.M_1200x.jpeg?v=1547874083",
+                        updatedAt = Timestamp(1L),
                     ),
                 onClick = {},
             )

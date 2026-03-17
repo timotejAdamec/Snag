@@ -17,8 +17,7 @@ import cz.adamec.timotej.snag.core.foundation.common.UuidProvider
 import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.core.network.fe.log
 import cz.adamec.timotej.snag.core.network.fe.map
-import cz.adamec.timotej.snag.feat.structures.business.Structure
-import cz.adamec.timotej.snag.feat.structures.fe.model.FrontendStructure
+import cz.adamec.timotej.snag.feat.structures.app.model.AppStructureData
 import cz.adamec.timotej.snag.structures.fe.app.api.SaveStructureUseCase
 import cz.adamec.timotej.snag.structures.fe.app.api.model.SaveStructureRequest
 import cz.adamec.timotej.snag.structures.fe.app.impl.internal.LH.logger
@@ -35,15 +34,12 @@ class SaveStructureUseCaseImpl(
 ) : SaveStructureUseCase {
     override suspend operator fun invoke(request: SaveStructureRequest): OfflineFirstDataResult<Uuid> {
         val feStructure =
-            FrontendStructure(
-                structure =
-                    Structure(
-                        id = request.id ?: uuidProvider.getUuid(),
-                        projectId = request.projectId,
-                        name = request.name,
-                        floorPlanUrl = request.floorPlanUrl,
-                        updatedAt = timestampProvider.getNowTimestamp(),
-                    ),
+            AppStructureData(
+                id = request.id ?: uuidProvider.getUuid(),
+                projectId = request.projectId,
+                name = request.name,
+                floorPlanUrl = request.floorPlanUrl,
+                updatedAt = timestampProvider.getNowTimestamp(),
             )
 
         return structuresDb
@@ -56,11 +52,11 @@ class SaveStructureUseCaseImpl(
                 if (it is OfflineFirstDataResult.Success) {
                     enqueueSyncSaveUseCase(
                         entityTypeId = STRUCTURE_SYNC_ENTITY_TYPE,
-                        entityId = feStructure.structure.id,
+                        entityId = feStructure.id,
                     )
                 }
             }.map {
-                feStructure.structure.id
+                feStructure.id
             }
     }
 }

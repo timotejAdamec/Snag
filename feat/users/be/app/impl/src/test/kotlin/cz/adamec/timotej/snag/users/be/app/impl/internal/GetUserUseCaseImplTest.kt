@@ -15,9 +15,8 @@ package cz.adamec.timotej.snag.users.be.app.impl.internal
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
 import cz.adamec.timotej.snag.users.be.app.api.GetUserUseCase
-import cz.adamec.timotej.snag.users.be.model.BackendUser
+import cz.adamec.timotej.snag.users.be.model.BackendUserData
 import cz.adamec.timotej.snag.users.be.ports.UsersDb
-import cz.adamec.timotej.snag.users.business.User
 import cz.adamec.timotej.snag.users.business.UserRole
 import kotlinx.coroutines.test.runTest
 import org.koin.test.inject
@@ -36,15 +35,12 @@ class GetUserUseCaseImplTest : BackendKoinInitializedTest() {
     fun `returns user when found`() =
         runTest(testDispatcher) {
             val user =
-                BackendUser(
-                    user =
-                        User(
-                            id = userId,
-                            entraId = "entra-1",
-                            email = "user@example.com",
-                            role = UserRole.PASSPORT_LEAD,
-                            updatedAt = Timestamp(100L),
-                        ),
+                BackendUserData(
+                    id = userId,
+                    entraId = "entra-1",
+                    email = "user@example.com",
+                    role = UserRole.PASSPORT_LEAD,
+                    updatedAt = Timestamp(100L),
                 )
             dataSource.saveUser(user)
 

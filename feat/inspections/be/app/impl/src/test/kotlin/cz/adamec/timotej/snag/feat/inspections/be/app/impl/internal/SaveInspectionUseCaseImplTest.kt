@@ -15,12 +15,10 @@ package cz.adamec.timotej.snag.feat.inspections.be.app.impl.internal
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.core.foundation.common.UuidProvider
 import cz.adamec.timotej.snag.feat.inspections.be.app.api.SaveInspectionUseCase
-import cz.adamec.timotej.snag.feat.inspections.be.model.BackendInspection
+import cz.adamec.timotej.snag.feat.inspections.be.model.BackendInspectionData
 import cz.adamec.timotej.snag.feat.inspections.be.ports.InspectionsDb
-import cz.adamec.timotej.snag.feat.inspections.business.Inspection
-import cz.adamec.timotej.snag.projects.be.model.BackendProject
+import cz.adamec.timotej.snag.projects.be.model.BackendProjectData
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
-import cz.adamec.timotej.snag.projects.business.Project
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
 import kotlinx.coroutines.test.runTest
 import org.koin.test.inject
@@ -37,31 +35,25 @@ class SaveInspectionUseCaseImplTest : BackendKoinInitializedTest() {
     private val inspectionId = UuidProvider.getUuid()
 
     private val backendInspection =
-        BackendInspection(
-            inspection =
-                Inspection(
-                    id = inspectionId,
-                    projectId = projectId,
-                    startedAt = null,
-                    endedAt = null,
-                    participants = null,
-                    climate = null,
-                    note = null,
-                    updatedAt = Timestamp(10L),
-                ),
+        BackendInspectionData(
+            id = inspectionId,
+            projectId = projectId,
+            startedAt = null,
+            endedAt = null,
+            participants = null,
+            climate = null,
+            note = null,
+            updatedAt = Timestamp(10L),
         )
 
     private suspend fun seedClosedProject() {
         projectsDb.saveProject(
-            BackendProject(
-                project =
-                    Project(
-                        id = projectId,
-                        name = "Test Project",
-                        address = "Test Address",
-                        isClosed = true,
-                        updatedAt = Timestamp(1L),
-                    ),
+            BackendProjectData(
+                id = projectId,
+                name = "Test Project",
+                address = "Test Address",
+                isClosed = true,
+                updatedAt = Timestamp(1L),
             ),
         )
     }
@@ -74,11 +66,8 @@ class SaveInspectionUseCaseImplTest : BackendKoinInitializedTest() {
 
             val newInspection =
                 backendInspection.copy(
-                    inspection =
-                        backendInspection.inspection.copy(
-                            participants = "Bob",
-                            updatedAt = Timestamp(20L),
-                        ),
+                    participants = "Bob",
+                    updatedAt = Timestamp(20L),
                 )
 
             val result = useCase(newInspection)

@@ -69,11 +69,11 @@ internal fun ClientsContent(
         ) {
             items(
                 items = state.clients,
-                key = { it.client.id },
+                key = { it.id },
             ) { client ->
                 ClientListItem(
                     modifier = Modifier,
-                    onClick = { onClientClick(client.client.id) },
+                    onClick = { onClientClick(client.id) },
                     client = client,
                 )
             }

@@ -3,6 +3,7 @@ plugins {
 }
 
 dependencies {
+    implementation(projects.feat.projects.business.rules)
     implementation(projects.feat.projects.be.app.api)
     testImplementation(projects.feat.projects.be.ports)
 }

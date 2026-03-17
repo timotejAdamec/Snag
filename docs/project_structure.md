@@ -15,28 +15,30 @@ between the features. If no layer is specified, the module is considered to be i
 (`driving`/`driven`) layer.
 
 ### Feature directory structure
-Each feature contains is structured by platforms and by layers:
-- `business` for code that is shared by all platforms including the server.
-  - This code is in this sense platform-agnostic.
-  - This module is the core from clean architecture perspective and contains models that are a direct
-    representation of the analytical domain model.
-  - This module has no dependencies on other modules except the `:core:foundation`.
-- `app` is similar but additionally contains application logic.
-  - Can depend on any `core` module.
-- `be` for backend code.
-- `fe` for frontend code.
+Each feature is structured by platforms and by layers:
+- `business/` is a directory (not a module) containing platform-agnostic domain code:
+  - `business/model/` — Pure domain interfaces representing the analytical domain model. These have
+    no dependencies on other modules except `:core:foundation`. No `updatedAt` or sync concerns.
+  - `business/rules/` — Business rules operating on domain interfaces (e.g., validation rules).
+    Depends on `business/model/`.
+- `app/` contains application-layer code shared by all platforms:
+  - `app/model/` — Shared application interfaces (`AppX : X, Versioned`) and data classes. Extends
+    business models with `updatedAt` for sync versioning.
+- `be/` for backend code.
+- `fe/` for frontend code.
 
-The `be` and `fe` directories are platform-specific. They are broken down into layer directories/modules:
-- `app` for application domain code. This is a core layer that sits around the platform-agnostic
-  `app` and `business` modules.
-- `model` allows extending the models in the platform-agnostic `app` and `business` modules with
-  platform-specific data. Used as a dependency for all the other platform-specific layers.
-- `ports` as in the ports and adapters pattern. These ports are used by `app` modules.
-- `driven` as in the driven ports pattern. This is the most outer layer. These ports are
-  implementations of the `ports`. They implement different technologies to satisfy the `ports` API.
-- `driving` as in the driving adapters pattern. This is also the most outer layer. This code also
-  integrates with technologies. This code depends on the `app` module for application logic.
-  `driving` code is the entry point for the platform.
+The `be/` and `fe/` directories are platform-specific. They are broken down into layer
+directories/modules:
+- `app/` for application domain code. This is a core layer that sits around the platform-agnostic
+  `app/` and `business/` modules.
+  - `app/model/` extends shared `app/model/` with platform-specific data (e.g., BE adds
+    `BackendX : AppX, Syncable` with `deletedAt` for soft-delete support).
+- `ports/` as in the ports and adapters pattern. These ports are used by `app/` modules.
+- `driven/` as in the driven ports pattern. This is the most outer layer. These ports are
+  implementations of the `ports/`. They implement different technologies to satisfy the `ports/` API.
+- `driving/` as in the driving adapters pattern. This is also the most outer layer. This code also
+  integrates with technologies. This code depends on the `app/` module for application logic.
+  `driving/` code is the entry point for the platform.
 
 ### Shared modules (`feat/shared/`)
 
@@ -79,8 +81,8 @@ Each feature/core/library module/directory can be split into submodules if there
 [application] -> feat -> lib -> core
 
 driving -
-         -> app -> ports -> model -> business
-driven  -
+         -> app -> ports -> app/model -> business/model
+driven  -                   be/app/model ──┘
 
 impl -
        -> api

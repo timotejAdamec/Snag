@@ -14,14 +14,12 @@ package cz.adamec.timotej.snag.projects.be.app.impl.internal
 
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.projects.be.app.api.GetProjectAssignmentsUseCase
-import cz.adamec.timotej.snag.projects.be.model.BackendProject
+import cz.adamec.timotej.snag.projects.be.model.BackendProjectData
 import cz.adamec.timotej.snag.projects.be.ports.ProjectAssignmentsDb
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
-import cz.adamec.timotej.snag.projects.business.Project
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
-import cz.adamec.timotej.snag.users.be.model.BackendUser
+import cz.adamec.timotej.snag.users.be.model.BackendUserData
 import cz.adamec.timotej.snag.users.be.ports.UsersDb
-import cz.adamec.timotej.snag.users.business.User
 import cz.adamec.timotej.snag.users.business.UserRole
 import kotlinx.coroutines.test.runTest
 import org.koin.test.inject
@@ -39,14 +37,11 @@ class GetProjectAssignmentsUseCaseImplTest : BackendKoinInitializedTest() {
 
     private suspend fun createProject() {
         projectsDb.saveProject(
-            BackendProject(
-                project =
-                    Project(
-                        id = projectId,
-                        name = "Test Project",
-                        address = "Test Address",
-                        updatedAt = Timestamp(10L),
-                    ),
+            BackendProjectData(
+                id = projectId,
+                name = "Test Project",
+                address = "Test Address",
+                updatedAt = Timestamp(10L),
             ),
         )
     }
@@ -64,30 +59,24 @@ class GetProjectAssignmentsUseCaseImplTest : BackendKoinInitializedTest() {
         runTest(testDispatcher) {
             createProject()
             val user1 =
-                BackendUser(
-                    user =
-                        User(
-                            id = Uuid.parse("00000000-0000-0000-0000-000000000010"),
-                            entraId = "entra-1",
-                            email = "user1@example.com",
-                            role = UserRole.ADMINISTRATOR,
-                            updatedAt = Timestamp(100L),
-                        ),
+                BackendUserData(
+                    id = Uuid.parse("00000000-0000-0000-0000-000000000010"),
+                    entraId = "entra-1",
+                    email = "user1@example.com",
+                    role = UserRole.ADMINISTRATOR,
+                    updatedAt = Timestamp(100L),
                 )
             val user2 =
-                BackendUser(
-                    user =
-                        User(
-                            id = Uuid.parse("00000000-0000-0000-0000-000000000020"),
-                            entraId = "entra-2",
-                            email = "user2@example.com",
-                            updatedAt = Timestamp(100L),
-                        ),
+                BackendUserData(
+                    id = Uuid.parse("00000000-0000-0000-0000-000000000020"),
+                    entraId = "entra-2",
+                    email = "user2@example.com",
+                    updatedAt = Timestamp(100L),
                 )
             usersDb.saveUser(user1)
             usersDb.saveUser(user2)
-            assignmentsDb.assignUser(user1.user.id, projectId)
-            assignmentsDb.assignUser(user2.user.id, projectId)
+            assignmentsDb.assignUser(user1.id, projectId)
+            assignmentsDb.assignUser(user2.id, projectId)
 
             val result = useCase(projectId)
 

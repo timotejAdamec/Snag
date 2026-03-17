@@ -18,9 +18,8 @@ import cz.adamec.timotej.snag.network.be.test.jsonClient
 import cz.adamec.timotej.snag.projects.be.driving.contract.DeleteProjectApiDto
 import cz.adamec.timotej.snag.projects.be.driving.contract.ProjectApiDto
 import cz.adamec.timotej.snag.projects.be.driving.contract.PutProjectApiDto
-import cz.adamec.timotej.snag.projects.be.model.BackendProject
+import cz.adamec.timotej.snag.projects.be.model.BackendProjectData
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
-import cz.adamec.timotej.snag.projects.business.Project
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
 import io.ktor.client.call.body
 import io.ktor.client.request.get
@@ -68,25 +67,19 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
         testApplication {
             configureApp()
             dataSource.saveProject(
-                BackendProject(
-                    project =
-                        Project(
-                            id = TEST_ID_1,
-                            name = "Project 1",
-                            address = "Address 1",
-                            updatedAt = Timestamp(100L),
-                        ),
+                BackendProjectData(
+                    id = TEST_ID_1,
+                    name = "Project 1",
+                    address = "Address 1",
+                    updatedAt = Timestamp(100L),
                 ),
             )
             dataSource.saveProject(
-                BackendProject(
-                    project =
-                        Project(
-                            id = TEST_ID_2,
-                            name = "Project 2",
-                            address = "Address 2",
-                            updatedAt = Timestamp(200L),
-                        ),
+                BackendProjectData(
+                    id = TEST_ID_2,
+                    name = "Project 2",
+                    address = "Address 2",
+                    updatedAt = Timestamp(200L),
                 ),
             )
             val client = jsonClient()
@@ -103,25 +96,19 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
         testApplication {
             configureApp()
             dataSource.saveProject(
-                BackendProject(
-                    project =
-                        Project(
-                            id = TEST_ID_1,
-                            name = "Active",
-                            address = "Addr",
-                            updatedAt = Timestamp(100L),
-                        ),
+                BackendProjectData(
+                    id = TEST_ID_1,
+                    name = "Active",
+                    address = "Addr",
+                    updatedAt = Timestamp(100L),
                 ),
             )
             dataSource.saveProject(
-                BackendProject(
-                    project =
-                        Project(
-                            id = TEST_ID_2,
-                            name = "Deleted",
-                            address = "Addr",
-                            updatedAt = Timestamp(100L),
-                        ),
+                BackendProjectData(
+                    id = TEST_ID_2,
+                    name = "Deleted",
+                    address = "Addr",
+                    updatedAt = Timestamp(100L),
                     deletedAt = Timestamp(200L),
                 ),
             )
@@ -143,25 +130,19 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
         testApplication {
             configureApp()
             dataSource.saveProject(
-                BackendProject(
-                    project =
-                        Project(
-                            id = TEST_ID_1,
-                            name = "Old",
-                            address = "Addr",
-                            updatedAt = Timestamp(50L),
-                        ),
+                BackendProjectData(
+                    id = TEST_ID_1,
+                    name = "Old",
+                    address = "Addr",
+                    updatedAt = Timestamp(50L),
                 ),
             )
             dataSource.saveProject(
-                BackendProject(
-                    project =
-                        Project(
-                            id = TEST_ID_2,
-                            name = "Modified",
-                            address = "Addr",
-                            updatedAt = Timestamp(150L),
-                        ),
+                BackendProjectData(
+                    id = TEST_ID_2,
+                    name = "Modified",
+                    address = "Addr",
+                    updatedAt = Timestamp(150L),
                 ),
             )
             val client = jsonClient()
@@ -179,14 +160,11 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
         testApplication {
             configureApp()
             dataSource.saveProject(
-                BackendProject(
-                    project =
-                        Project(
-                            id = TEST_ID_1,
-                            name = "Deleted After Since",
-                            address = "Addr",
-                            updatedAt = Timestamp(50L),
-                        ),
+                BackendProjectData(
+                    id = TEST_ID_1,
+                    name = "Deleted After Since",
+                    address = "Addr",
+                    updatedAt = Timestamp(50L),
                     deletedAt = Timestamp(150L),
                 ),
             )
@@ -205,14 +183,11 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
         testApplication {
             configureApp()
             dataSource.saveProject(
-                BackendProject(
-                    project =
-                        Project(
-                            id = TEST_ID_1,
-                            name = "Found Project",
-                            address = "Found Address",
-                            updatedAt = Timestamp(100L),
-                        ),
+                BackendProjectData(
+                    id = TEST_ID_1,
+                    name = "Found Project",
+                    address = "Found Address",
+                    updatedAt = Timestamp(100L),
                 ),
             )
             val client = jsonClient()
@@ -230,14 +205,11 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
         testApplication {
             configureApp()
             dataSource.saveProject(
-                BackendProject(
-                    project =
-                        Project(
-                            id = TEST_ID_1,
-                            name = "Deleted Project",
-                            address = "Addr",
-                            updatedAt = Timestamp(100L),
-                        ),
+                BackendProjectData(
+                    id = TEST_ID_1,
+                    name = "Deleted Project",
+                    address = "Addr",
+                    updatedAt = Timestamp(100L),
                     deletedAt = Timestamp(200L),
                 ),
             )
@@ -293,14 +265,11 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
         testApplication {
             configureApp()
             dataSource.saveProject(
-                BackendProject(
-                    project =
-                        Project(
-                            id = TEST_ID_1,
-                            name = "Existing",
-                            address = "Addr",
-                            updatedAt = Timestamp(200L),
-                        ),
+                BackendProjectData(
+                    id = TEST_ID_1,
+                    name = "Existing",
+                    address = "Addr",
+                    updatedAt = Timestamp(200L),
                 ),
             )
             val client = jsonClient()
@@ -322,14 +291,11 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
         testApplication {
             configureApp()
             dataSource.saveProject(
-                BackendProject(
-                    project =
-                        Project(
-                            id = TEST_ID_1,
-                            name = "Deleted",
-                            address = "Addr",
-                            updatedAt = Timestamp(200L),
-                        ),
+                BackendProjectData(
+                    id = TEST_ID_1,
+                    name = "Deleted",
+                    address = "Addr",
+                    updatedAt = Timestamp(200L),
                     deletedAt = Timestamp(300L),
                 ),
             )
@@ -382,14 +348,11 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
         testApplication {
             configureApp()
             dataSource.saveProject(
-                BackendProject(
-                    project =
-                        Project(
-                            id = TEST_ID_1,
-                            name = "To Delete",
-                            address = "Addr",
-                            updatedAt = Timestamp(100L),
-                        ),
+                BackendProjectData(
+                    id = TEST_ID_1,
+                    name = "To Delete",
+                    address = "Addr",
+                    updatedAt = Timestamp(100L),
                 ),
             )
             val client = jsonClient()
@@ -408,14 +371,11 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
         testApplication {
             configureApp()
             dataSource.saveProject(
-                BackendProject(
-                    project =
-                        Project(
-                            id = TEST_ID_1,
-                            name = "To Delete",
-                            address = "Addr",
-                            updatedAt = Timestamp(100L),
-                        ),
+                BackendProjectData(
+                    id = TEST_ID_1,
+                    name = "To Delete",
+                    address = "Addr",
+                    updatedAt = Timestamp(100L),
                 ),
             )
             val client = jsonClient()
@@ -437,14 +397,11 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
         testApplication {
             configureApp()
             dataSource.saveProject(
-                BackendProject(
-                    project =
-                        Project(
-                            id = TEST_ID_1,
-                            name = "Existing",
-                            address = "Addr",
-                            updatedAt = Timestamp(300L),
-                        ),
+                BackendProjectData(
+                    id = TEST_ID_1,
+                    name = "Existing",
+                    address = "Addr",
+                    updatedAt = Timestamp(300L),
                 ),
             )
             val client = jsonClient()

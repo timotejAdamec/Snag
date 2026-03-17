@@ -31,8 +31,8 @@ import androidx.compose.ui.unit.dp
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.core.foundation.common.UuidProvider
 import cz.adamec.timotej.snag.lib.design.fe.theme.SnagPreview
-import cz.adamec.timotej.snag.projects.business.Project
-import cz.adamec.timotej.snag.projects.fe.model.FrontendProject
+import cz.adamec.timotej.snag.projects.app.model.AppProject
+import cz.adamec.timotej.snag.projects.app.model.AppProjectData
 import org.jetbrains.compose.resources.painterResource
 import snag.lib.design.fe.generated.resources.ic_chevron_right
 import snag.lib.design.fe.generated.resources.ic_lock
@@ -42,11 +42,11 @@ private const val CLOSED_ALPHA = 0.6f
 
 @Composable
 internal fun ProjectListItem(
-    project: FrontendProject,
+    project: AppProject,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val isClosed = project.project.isClosed
+    val isClosed = project.isClosed
     ListItem(
         modifier =
             modifier
@@ -56,7 +56,7 @@ internal fun ProjectListItem(
         headlineContent = {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
-                    text = project.project.name,
+                    text = project.name,
                     style = MaterialTheme.typography.titleLargeEmphasized,
                 )
                 if (isClosed) {
@@ -71,7 +71,7 @@ internal fun ProjectListItem(
         },
         supportingContent = {
             Text(
-                text = project.project.address,
+                text = project.address,
                 style = MaterialTheme.typography.bodyLarge,
                 maxLines = 2,
             )
@@ -96,14 +96,11 @@ internal fun ProjectListItemPreview() {
                     height = 100.dp,
                 ),
             project =
-                FrontendProject(
-                    project =
-                        Project(
-                            id = UuidProvider.getUuid(),
-                            name = "Project A",
-                            address = "Client A",
-                            updatedAt = Timestamp(0L),
-                        ),
+                AppProjectData(
+                    id = UuidProvider.getUuid(),
+                    name = "Project A",
+                    address = "Client A",
+                    updatedAt = Timestamp(0L),
                 ),
             onClick = {},
         )

@@ -14,10 +14,10 @@ package cz.adamec.timotej.snag.feat.inspections.fe.app.impl.internal
 
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
-import cz.adamec.timotej.snag.feat.inspections.business.Inspection
+import cz.adamec.timotej.snag.feat.inspections.app.model.AppInspection
+import cz.adamec.timotej.snag.feat.inspections.app.model.AppInspectionData
 import cz.adamec.timotej.snag.feat.inspections.fe.app.api.CascadeDeleteLocalInspectionsByProjectIdUseCase
 import cz.adamec.timotej.snag.feat.inspections.fe.driven.test.FakeInspectionsDb
-import cz.adamec.timotej.snag.feat.inspections.fe.model.FrontendInspection
 import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
@@ -42,18 +42,15 @@ class CascadeDeleteLocalInspectionsByProjectIdUseCaseImplTest : FrontendKoinInit
     private fun createInspection(
         id: Uuid,
         projectId: Uuid,
-    ) = FrontendInspection(
-        inspection =
-            Inspection(
-                id = id,
-                projectId = projectId,
-                startedAt = null,
-                endedAt = null,
-                participants = null,
-                climate = null,
-                note = null,
-                updatedAt = Timestamp(1L),
-            ),
+    ) = AppInspectionData(
+        id = id,
+        projectId = projectId,
+        startedAt = null,
+        endedAt = null,
+        participants = null,
+        climate = null,
+        note = null,
+        updatedAt = Timestamp(1L),
     )
 
     @Test
@@ -66,7 +63,7 @@ class CascadeDeleteLocalInspectionsByProjectIdUseCaseImplTest : FrontendKoinInit
             useCase(projectId1)
 
             val result = fakeInspectionsDb.getInspectionsFlow(projectId1).first()
-            assertIs<OfflineFirstDataResult.Success<List<FrontendInspection>>>(result)
+            assertIs<OfflineFirstDataResult.Success<List<AppInspection>>>(result)
             assertTrue(result.data.isEmpty())
         }
 
@@ -80,7 +77,7 @@ class CascadeDeleteLocalInspectionsByProjectIdUseCaseImplTest : FrontendKoinInit
             useCase(projectId1)
 
             val result = fakeInspectionsDb.getInspectionsFlow(projectId2).first()
-            assertIs<OfflineFirstDataResult.Success<List<FrontendInspection>>>(result)
+            assertIs<OfflineFirstDataResult.Success<List<AppInspection>>>(result)
             assertTrue(result.data.size == 1)
         }
 }

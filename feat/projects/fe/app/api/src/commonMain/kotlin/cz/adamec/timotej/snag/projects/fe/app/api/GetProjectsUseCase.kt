@@ -13,9 +13,9 @@
 package cz.adamec.timotej.snag.projects.fe.app.api
 
 import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
-import cz.adamec.timotej.snag.projects.fe.model.FrontendProject
+import cz.adamec.timotej.snag.projects.app.model.AppProject
 import kotlinx.coroutines.flow.Flow
 
 interface GetProjectsUseCase {
-    operator fun invoke(): Flow<OfflineFirstDataResult<List<FrontendProject>>>
+    operator fun invoke(): Flow<OfflineFirstDataResult<List<AppProject>>>
 }

@@ -12,10 +12,9 @@
 
 package cz.adamec.timotej.snag.clients.fe.driving.impl.internal.clients.vm
 
-import cz.adamec.timotej.snag.clients.business.Client
+import cz.adamec.timotej.snag.clients.app.model.AppClientData
 import cz.adamec.timotej.snag.clients.fe.app.api.GetClientsUseCase
 import cz.adamec.timotej.snag.clients.fe.driven.test.FakeClientsDb
-import cz.adamec.timotej.snag.clients.fe.model.FrontendClient
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -51,16 +50,13 @@ class ClientsViewModelTest : FrontendKoinInitializedTest() {
     fun `loads clients from db`() =
         runTest(testDispatcher) {
             val client =
-                FrontendClient(
-                    client =
-                        Client(
-                            id = Uuid.random(),
-                            name = "Test Client",
-                            address = "Test Address",
-                            phoneNumber = "+420123456789",
-                            email = "test@example.com",
-                            updatedAt = Timestamp(10L),
-                        ),
+                AppClientData(
+                    id = Uuid.random(),
+                    name = "Test Client",
+                    address = "Test Address",
+                    phoneNumber = "+420123456789",
+                    email = "test@example.com",
+                    updatedAt = Timestamp(10L),
                 )
             fakeClientsDb.setClient(client)
 
@@ -70,6 +66,6 @@ class ClientsViewModelTest : FrontendKoinInitializedTest() {
 
             val clients = viewModel.state.value.clients
             assertEquals(1, clients.size)
-            assertEquals("Test Client", clients.first().client.name)
+            assertEquals("Test Client", clients.first().name)
         }
 }

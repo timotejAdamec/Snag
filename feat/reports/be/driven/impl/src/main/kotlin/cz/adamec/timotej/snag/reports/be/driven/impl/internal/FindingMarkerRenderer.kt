@@ -67,8 +67,8 @@ internal object FindingMarkerRenderer {
 
         findings.forEachIndexed { index, backendFinding ->
             val label = "${index + 1}"
-            val color = findingTypeColor(backendFinding.finding.type)
-            backendFinding.finding.coordinates.forEach { coord ->
+            val color = findingTypeColor(backendFinding.type)
+            backendFinding.coordinates.forEach { coord ->
                 drawMarker(g, coord, canvas.width, canvas.height, markerRadius, label, color)
             }
         }

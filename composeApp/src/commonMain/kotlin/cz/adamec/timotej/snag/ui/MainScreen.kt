@@ -26,7 +26,11 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import cz.adamec.timotej.snag.lib.design.fe.adaptive.ContentPane
 import cz.adamec.timotej.snag.lib.design.fe.adaptive.ContentPaneDefaults
+import cz.adamec.timotej.snag.lib.design.fe.adaptive.ContentPaneSpacing
+import cz.adamec.timotej.snag.lib.design.fe.adaptive.isScreenWide
+import cz.adamec.timotej.snag.lib.design.fe.layout.systemBarsPaddingCoerceAtLeast
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.AppScaffold
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.SyncStatusBar
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.SyncStatusBarState

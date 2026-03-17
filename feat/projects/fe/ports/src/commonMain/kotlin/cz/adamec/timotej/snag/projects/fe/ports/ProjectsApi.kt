@@ -14,7 +14,7 @@ package cz.adamec.timotej.snag.projects.fe.ports
 
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.core.network.fe.OnlineDataResult
-import cz.adamec.timotej.snag.projects.fe.model.FrontendProject
+import cz.adamec.timotej.snag.projects.app.model.AppProject
 import kotlin.uuid.Uuid
 
 sealed interface ProjectSyncResult {
@@ -23,21 +23,21 @@ sealed interface ProjectSyncResult {
     ) : ProjectSyncResult
 
     data class Updated(
-        val project: FrontendProject,
+        val project: AppProject,
     ) : ProjectSyncResult
 }
 
 interface ProjectsApi {
-    suspend fun getProjects(): OnlineDataResult<List<FrontendProject>>
+    suspend fun getProjects(): OnlineDataResult<List<AppProject>>
 
-    suspend fun getProject(id: Uuid): OnlineDataResult<FrontendProject>
+    suspend fun getProject(id: Uuid): OnlineDataResult<AppProject>
 
-    suspend fun saveProject(project: FrontendProject): OnlineDataResult<FrontendProject?>
+    suspend fun saveProject(project: AppProject): OnlineDataResult<AppProject?>
 
     suspend fun deleteProject(
         id: Uuid,
         deletedAt: Timestamp,
-    ): OnlineDataResult<FrontendProject?>
+    ): OnlineDataResult<AppProject?>
 
     suspend fun getProjectsModifiedSince(since: Timestamp): OnlineDataResult<List<ProjectSyncResult>>
 }

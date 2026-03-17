@@ -63,7 +63,7 @@ internal class UserManagementViewModel(
                                 users =
                                     usersDataResult.data
                                         .map { user ->
-                                            val existing = currentState.users.find { it.id == user.user.id }
+                                            val existing = currentState.users.find { it.id == user.id }
                                             user.toUserItem().copy(
                                                 isUpdatingRole = existing?.isUpdatingRole ?: false,
                                             )

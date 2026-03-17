@@ -14,9 +14,8 @@ package cz.adamec.timotej.snag.reports.be.driving.impl.internal
 
 import cz.adamec.timotej.snag.configuration.be.AppConfiguration
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
-import cz.adamec.timotej.snag.projects.be.model.BackendProject
+import cz.adamec.timotej.snag.projects.be.model.BackendProjectData
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
-import cz.adamec.timotej.snag.projects.business.Project
 import cz.adamec.timotej.snag.reports.be.driven.test.FakePdfReportGenerator
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
 import io.ktor.client.request.get
@@ -59,14 +58,11 @@ class ReportRouteTest : BackendKoinInitializedTest() {
         testApplication {
             configureApp()
             projectsDb.saveProject(
-                BackendProject(
-                    project =
-                        Project(
-                            id = PROJECT_ID,
-                            name = "Test Project",
-                            address = "Test Address",
-                            updatedAt = Timestamp(1L),
-                        ),
+                BackendProjectData(
+                    id = PROJECT_ID,
+                    name = "Test Project",
+                    address = "Test Address",
+                    updatedAt = Timestamp(1L),
                 ),
             )
             val client = createClient { }

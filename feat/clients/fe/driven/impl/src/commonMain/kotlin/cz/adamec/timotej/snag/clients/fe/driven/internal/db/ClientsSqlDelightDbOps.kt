@@ -12,8 +12,8 @@
 
 package cz.adamec.timotej.snag.clients.fe.driven.internal.db
 
+import cz.adamec.timotej.snag.clients.app.model.AppClient
 import cz.adamec.timotej.snag.clients.fe.driven.internal.LH
-import cz.adamec.timotej.snag.clients.fe.model.FrontendClient
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.ClientEntity
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.ClientEntityQueries
 import cz.adamec.timotej.snag.lib.database.fe.SqlDelightDbOps
@@ -22,7 +22,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 internal class ClientsSqlDelightDbOps(
     queries: ClientEntityQueries,
     ioDispatcher: CoroutineDispatcher,
-) : SqlDelightDbOps<ClientEntity, FrontendClient>(
+) : SqlDelightDbOps<ClientEntity, AppClient>(
         ioDispatcher = ioDispatcher,
         logger = LH.logger,
         entityName = "client",

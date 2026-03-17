@@ -13,8 +13,8 @@
 package cz.adamec.timotej.snag.findings.fe.app.impl.internal
 
 import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
+import cz.adamec.timotej.snag.feat.findings.app.model.AppFinding
 import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
-import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
 import cz.adamec.timotej.snag.findings.fe.app.api.SaveNewFindingUseCase
 import cz.adamec.timotej.snag.findings.fe.app.api.model.SaveNewFindingRequest
 import cz.adamec.timotej.snag.findings.fe.app.impl.internal.sync.FINDING_SYNC_ENTITY_TYPE
@@ -73,7 +73,7 @@ class SaveNewFindingUseCaseImplTest : FrontendKoinInitializedTest() {
 
             assertIs<OfflineFirstDataResult.Success<Uuid>>(result)
             val savedFinding = getSavedFinding(result.data)
-            assertEquals(emptySet(), savedFinding.finding.coordinates)
+            assertEquals(emptySet(), savedFinding.coordinates)
         }
 
     @Test
@@ -92,7 +92,7 @@ class SaveNewFindingUseCaseImplTest : FrontendKoinInitializedTest() {
 
             assertIs<OfflineFirstDataResult.Success<Uuid>>(result)
             val savedFinding = getSavedFinding(result.data)
-            assertEquals(coordinates, savedFinding.finding.coordinates)
+            assertEquals(coordinates, savedFinding.coordinates)
         }
 
     @Test
@@ -143,12 +143,12 @@ class SaveNewFindingUseCaseImplTest : FrontendKoinInitializedTest() {
 
             assertIs<OfflineFirstDataResult.Success<Uuid>>(result)
             val savedFinding = getSavedFinding(result.data)
-            assertEquals("Finding name", savedFinding.finding.name)
-            assertEquals("Finding description", savedFinding.finding.description)
-            assertEquals(structureId, savedFinding.finding.structureId)
+            assertEquals("Finding name", savedFinding.name)
+            assertEquals("Finding description", savedFinding.description)
+            assertEquals(structureId, savedFinding.structureId)
         }
 
-    private suspend fun getSavedFinding(id: Uuid): FrontendFinding {
+    private suspend fun getSavedFinding(id: Uuid): AppFinding {
         fakeFindingsDb.forcedFailure = null
         val result = fakeFindingsDb.getFindingFlow(id).first()
         return (result as OfflineFirstDataResult.Success).data!!

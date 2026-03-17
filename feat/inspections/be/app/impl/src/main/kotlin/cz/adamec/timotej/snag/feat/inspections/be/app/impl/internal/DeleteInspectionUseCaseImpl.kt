@@ -28,8 +28,8 @@ internal class DeleteInspectionUseCaseImpl(
     override suspend operator fun invoke(request: DeleteInspectionRequest): BackendInspection? {
         val inspection = inspectionsDb.getInspection(request.inspectionId)
         if (inspection != null) {
-            val project = getProjectUseCase(inspection.inspection.projectId)
-            if (project != null && !canEditProjectEntitiesRule(project.project)) {
+            val project = getProjectUseCase(inspection.projectId)
+            if (project != null && !canEditProjectEntitiesRule(project)) {
                 return inspection
             }
         }

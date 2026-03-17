@@ -12,9 +12,9 @@
 
 package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.vm
 
-import cz.adamec.timotej.snag.feat.inspections.fe.model.FrontendInspection
-import cz.adamec.timotej.snag.feat.structures.fe.model.FrontendStructure
-import cz.adamec.timotej.snag.projects.fe.model.FrontendProject
+import cz.adamec.timotej.snag.feat.inspections.app.model.AppInspection
+import cz.adamec.timotej.snag.feat.structures.app.model.AppStructure
+import cz.adamec.timotej.snag.projects.app.model.AppProject
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
@@ -25,11 +25,11 @@ internal data class ProjectDetailsUiState(
     val isBeingDeleted: Boolean = false,
     val isDownloadingReport: Boolean = false,
     val isClosingOrReopening: Boolean = false,
-    val project: FrontendProject? = null,
-    val structures: ImmutableList<FrontendStructure> = persistentListOf(),
-    val inspections: ImmutableList<FrontendInspection> = persistentListOf(),
+    val project: AppProject? = null,
+    val structures: ImmutableList<AppStructure> = persistentListOf(),
+    val inspections: ImmutableList<AppInspection> = persistentListOf(),
 ) {
-    val isClosed: Boolean get() = project?.project?.isClosed == true
+    val isClosed: Boolean get() = project?.isClosed == true
     val isProjectEditable: Boolean get() = projectStatus == ProjectDetailsUiStatus.LOADED && !isClosed
     val canInvokeDeletion = isProjectEditable && !isBeingDeleted
     val canDownloadReport = projectStatus == ProjectDetailsUiStatus.LOADED && !isDownloadingReport

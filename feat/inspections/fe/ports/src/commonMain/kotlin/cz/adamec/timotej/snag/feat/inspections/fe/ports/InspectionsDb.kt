@@ -13,16 +13,16 @@
 package cz.adamec.timotej.snag.feat.inspections.fe.ports
 
 import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
-import cz.adamec.timotej.snag.feat.inspections.fe.model.FrontendInspection
+import cz.adamec.timotej.snag.feat.inspections.app.model.AppInspection
 import kotlinx.coroutines.flow.Flow
 import kotlin.uuid.Uuid
 
 interface InspectionsDb {
-    fun getInspectionsFlow(projectId: Uuid): Flow<OfflineFirstDataResult<List<FrontendInspection>>>
+    fun getInspectionsFlow(projectId: Uuid): Flow<OfflineFirstDataResult<List<AppInspection>>>
 
-    suspend fun saveInspection(inspection: FrontendInspection): OfflineFirstDataResult<Unit>
+    suspend fun saveInspection(inspection: AppInspection): OfflineFirstDataResult<Unit>
 
-    fun getInspectionFlow(id: Uuid): Flow<OfflineFirstDataResult<FrontendInspection?>>
+    fun getInspectionFlow(id: Uuid): Flow<OfflineFirstDataResult<AppInspection?>>
 
     suspend fun deleteInspection(id: Uuid): OfflineFirstDataResult<Unit>
 

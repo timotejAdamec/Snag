@@ -12,11 +12,11 @@
 
 package cz.adamec.timotej.snag.clients.fe.driving.impl.internal.clientDetailsEdit.vm
 
-import cz.adamec.timotej.snag.clients.business.Client
+import cz.adamec.timotej.snag.clients.app.model.AppClient
+import cz.adamec.timotej.snag.clients.app.model.AppClientData
 import cz.adamec.timotej.snag.clients.fe.app.api.GetClientUseCase
 import cz.adamec.timotej.snag.clients.fe.app.api.SaveClientUseCase
 import cz.adamec.timotej.snag.clients.fe.driven.test.FakeClientsDb
-import cz.adamec.timotej.snag.clients.fe.model.FrontendClient
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
@@ -66,16 +66,13 @@ class ClientDetailsEditViewModelTest : FrontendKoinInitializedTest() {
         runTest(testDispatcher) {
             val clientId = Uuid.random()
             val client =
-                FrontendClient(
-                    client =
-                        Client(
-                            id = clientId,
-                            name = "Test Client",
-                            address = "Test Address",
-                            phoneNumber = "+420123456789",
-                            email = "test@example.com",
-                            updatedAt = Timestamp(10L),
-                        ),
+                AppClientData(
+                    id = clientId,
+                    name = "Test Client",
+                    address = "Test Address",
+                    phoneNumber = "+420123456789",
+                    email = "test@example.com",
+                    updatedAt = Timestamp(10L),
                 )
             fakeClientsDb.setClient(client)
 
@@ -209,9 +206,9 @@ class ClientDetailsEditViewModelTest : FrontendKoinInitializedTest() {
             val savedId = viewModel.saveEventFlow.first()
 
             val savedClientResult = fakeClientsDb.getClientFlow(savedId).first()
-            assertIs<OfflineFirstDataResult.Success<FrontendClient?>>(savedClientResult)
+            assertIs<OfflineFirstDataResult.Success<AppClient?>>(savedClientResult)
             val savedClient = savedClientResult.data
-            assertEquals("Name", savedClient?.client?.name)
+            assertEquals("Name", savedClient?.name)
         }
 
     @Test

@@ -16,22 +16,22 @@ import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.core.foundation.common.TimestampProvider
 import cz.adamec.timotej.snag.core.foundation.common.UuidProvider
 import cz.adamec.timotej.snag.core.network.fe.OnlineDataResult
-import cz.adamec.timotej.snag.feat.inspections.business.Inspection
+import cz.adamec.timotej.snag.feat.inspections.app.model.AppInspection
+import cz.adamec.timotej.snag.feat.inspections.app.model.AppInspectionData
 import cz.adamec.timotej.snag.feat.inspections.fe.app.api.GetInspectionsUseCase
 import cz.adamec.timotej.snag.feat.inspections.fe.app.api.SaveInspectionUseCase
 import cz.adamec.timotej.snag.feat.inspections.fe.driven.test.FakeInspectionsApi
 import cz.adamec.timotej.snag.feat.inspections.fe.driven.test.FakeInspectionsDb
-import cz.adamec.timotej.snag.feat.inspections.fe.model.FrontendInspection
 import cz.adamec.timotej.snag.feat.reports.fe.app.api.DownloadReportUseCase
 import cz.adamec.timotej.snag.feat.reports.fe.driven.test.FakeReportsApi
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
-import cz.adamec.timotej.snag.projects.business.Project
+import cz.adamec.timotej.snag.projects.app.model.AppProject
+import cz.adamec.timotej.snag.projects.app.model.AppProjectData
 import cz.adamec.timotej.snag.projects.fe.app.api.DeleteProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.GetProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.SetProjectClosedUseCase
 import cz.adamec.timotej.snag.projects.fe.driven.test.FakeProjectsApi
 import cz.adamec.timotej.snag.projects.fe.driven.test.FakeProjectsDb
-import cz.adamec.timotej.snag.projects.fe.model.FrontendProject
 import cz.adamec.timotej.snag.structures.fe.app.api.GetStructuresUseCase
 import cz.adamec.timotej.snag.sync.fe.driven.test.FakeSyncQueue
 import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
@@ -102,35 +102,29 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
         participants: String? = "Alice",
         climate: String? = "sunny",
         note: String? = "note",
-    ): FrontendInspection {
+    ): AppInspection {
         val inspection =
-            FrontendInspection(
-                inspection =
-                    Inspection(
-                        id = inspectionId,
-                        projectId = projectId,
-                        startedAt = startedAt,
-                        endedAt = endedAt,
-                        participants = participants,
-                        climate = climate,
-                        note = note,
-                        updatedAt = Timestamp(10L),
-                    ),
+            AppInspectionData(
+                id = inspectionId,
+                projectId = projectId,
+                startedAt = startedAt,
+                endedAt = endedAt,
+                participants = participants,
+                climate = climate,
+                note = note,
+                updatedAt = Timestamp(10L),
             )
         fakeInspectionsDb.setInspection(inspection)
         return inspection
     }
 
-    private fun seedProject(projectId: Uuid): FrontendProject {
+    private fun seedProject(projectId: Uuid): AppProject {
         val project =
-            FrontendProject(
-                project =
-                    Project(
-                        id = projectId,
-                        name = "Test Project",
-                        address = "Test Address",
-                        updatedAt = Timestamp(10L),
-                    ),
+            AppProjectData(
+                id = projectId,
+                name = "Test Project",
+                address = "Test Address",
+                updatedAt = Timestamp(10L),
             )
         fakeProjectsDb.setProject(project)
         return project
@@ -151,8 +145,8 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
             viewModel.onDownloadReport()
 
             val report = viewModel.reportReadyFlow.first()
-            assertTrue(report.report.bytes.contentEquals(samplePdfBytes))
-            assertEquals("Test_Project_Report.pdf", report.report.fileName)
+            assertTrue(report.bytes.contentEquals(samplePdfBytes))
+            assertEquals("Test_Project_Report.pdf", report.fileName)
             assertFalse(viewModel.state.value.isDownloadingReport)
         }
 
@@ -272,8 +266,8 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
 
             val saved =
                 viewModel.state.value.inspections
-                    .find { it.inspection.id == inspectionId }
-            assertEquals(fixedNow, saved?.inspection?.startedAt)
+                    .find { it.id == inspectionId }
+            assertEquals(fixedNow, saved?.startedAt)
         }
 
     @Test
@@ -299,13 +293,12 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
 
             val saved =
                 viewModel.state.value.inspections
-                    .find { it.inspection.id == inspectionId }
-            val insp = saved?.inspection
-            assertEquals(projectId, insp?.projectId)
-            assertEquals(Timestamp(999L), insp?.endedAt)
-            assertEquals("Bob", insp?.participants)
-            assertEquals("rainy", insp?.climate)
-            assertEquals("my note", insp?.note)
+                    .find { it.id == inspectionId }
+            assertEquals(projectId, saved?.projectId)
+            assertEquals(Timestamp(999L), saved?.endedAt)
+            assertEquals("Bob", saved?.participants)
+            assertEquals("rainy", saved?.climate)
+            assertEquals("my note", saved?.note)
         }
 
     @Test
@@ -324,8 +317,8 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
 
             val saved =
                 viewModel.state.value.inspections
-                    .find { it.inspection.id == inspectionId }
-            assertEquals(fixedNow, saved?.inspection?.endedAt)
+                    .find { it.id == inspectionId }
+            assertEquals(fixedNow, saved?.endedAt)
         }
 
     @Test
@@ -349,8 +342,8 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
 
             val saved =
                 viewModel.state.value.inspections
-                    .find { it.inspection.id == inspectionId }
-            assertEquals(existingStartedAt, saved?.inspection?.startedAt)
+                    .find { it.id == inspectionId }
+            assertEquals(existingStartedAt, saved?.startedAt)
         }
 
     @Test
@@ -399,9 +392,9 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
 
             assertTrue(fakeSyncQueue.getAllPending().isEmpty())
             val apiResult = fakeInspectionsApi.getInspections(projectId)
-            assertIs<OnlineDataResult.Success<List<FrontendInspection>>>(apiResult)
-            val synced = apiResult.data.find { it.inspection.id == inspectionId }
-            assertEquals(fixedNow, synced?.inspection?.startedAt)
+            assertIs<OnlineDataResult.Success<List<AppInspection>>>(apiResult)
+            val synced = apiResult.data.find { it.id == inspectionId }
+            assertEquals(fixedNow, synced?.startedAt)
         }
 
     @Test
@@ -420,22 +413,19 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
 
             assertTrue(fakeSyncQueue.getAllPending().isEmpty())
             val apiResult = fakeInspectionsApi.getInspections(projectId)
-            assertIs<OnlineDataResult.Success<List<FrontendInspection>>>(apiResult)
-            val synced = apiResult.data.find { it.inspection.id == inspectionId }
-            assertEquals(fixedNow, synced?.inspection?.endedAt)
+            assertIs<OnlineDataResult.Success<List<AppInspection>>>(apiResult)
+            val synced = apiResult.data.find { it.id == inspectionId }
+            assertEquals(fixedNow, synced?.endedAt)
         }
 
-    private fun seedClosedProject(projectId: Uuid): FrontendProject {
+    private fun seedClosedProject(projectId: Uuid): AppProject {
         val project =
-            FrontendProject(
-                project =
-                    Project(
-                        id = projectId,
-                        name = "Closed Project",
-                        address = "Test Address",
-                        isClosed = true,
-                        updatedAt = Timestamp(10L),
-                    ),
+            AppProjectData(
+                id = projectId,
+                name = "Closed Project",
+                address = "Test Address",
+                isClosed = true,
+                updatedAt = Timestamp(10L),
             )
         fakeProjectsDb.setProject(project)
         return project

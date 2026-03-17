@@ -14,14 +14,22 @@ package cz.adamec.timotej.snag.reports.business
 
 import kotlin.uuid.Uuid
 
-data class Report(
-    val projectId: Uuid,
-    val fileName: String,
-    val bytes: ByteArray,
-) {
+interface Report {
+    val projectId: Uuid
+
+    val fileName: String
+
+    val bytes: ByteArray
+}
+
+data class ReportData(
+    override val projectId: Uuid,
+    override val fileName: String,
+    override val bytes: ByteArray,
+) : Report {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other !is Report) return false
+        if (other !is ReportData) return false
         return projectId == other.projectId &&
             fileName == other.fileName &&
             bytes.contentEquals(other.bytes)
@@ -34,5 +42,5 @@ data class Report(
         return result
     }
 
-    override fun toString(): String = "Report(projectId=$projectId, fileName=$fileName, bytes=${bytes.size} bytes)"
+    override fun toString(): String = "ReportData(projectId=$projectId, fileName=$fileName, bytes=${bytes.size} bytes)"
 }

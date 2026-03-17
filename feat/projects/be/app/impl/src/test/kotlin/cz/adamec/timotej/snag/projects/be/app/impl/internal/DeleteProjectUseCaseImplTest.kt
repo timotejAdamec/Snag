@@ -15,9 +15,8 @@ package cz.adamec.timotej.snag.projects.be.app.impl.internal
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.projects.be.app.api.DeleteProjectUseCase
 import cz.adamec.timotej.snag.projects.be.app.api.model.DeleteProjectRequest
-import cz.adamec.timotej.snag.projects.be.model.BackendProject
+import cz.adamec.timotej.snag.projects.be.model.BackendProjectData
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
-import cz.adamec.timotej.snag.projects.business.Project
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
 import kotlinx.coroutines.test.runTest
 import org.koin.test.inject
@@ -34,14 +33,11 @@ class DeleteProjectUseCaseImplTest : BackendKoinInitializedTest() {
     private val projectId = Uuid.parse("00000000-0000-0000-0000-000000000001")
 
     private val project =
-        BackendProject(
-            project =
-                Project(
-                    id = projectId,
-                    name = "Test Project",
-                    address = "Test Address",
-                    updatedAt = Timestamp(10L),
-                ),
+        BackendProjectData(
+            id = projectId,
+            name = "Test Project",
+            address = "Test Address",
+            updatedAt = Timestamp(10L),
         )
 
     @Test

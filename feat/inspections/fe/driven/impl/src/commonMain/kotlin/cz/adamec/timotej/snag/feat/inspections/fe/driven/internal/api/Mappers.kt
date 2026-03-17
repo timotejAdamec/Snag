@@ -12,33 +12,30 @@
 
 package cz.adamec.timotej.snag.feat.inspections.fe.driven.internal.api
 
+import cz.adamec.timotej.snag.feat.inspections.app.model.AppInspection
+import cz.adamec.timotej.snag.feat.inspections.app.model.AppInspectionData
 import cz.adamec.timotej.snag.feat.inspections.be.driving.contract.InspectionApiDto
 import cz.adamec.timotej.snag.feat.inspections.be.driving.contract.PutInspectionApiDto
-import cz.adamec.timotej.snag.feat.inspections.business.Inspection
-import cz.adamec.timotej.snag.feat.inspections.fe.model.FrontendInspection
 
 internal fun InspectionApiDto.toModel() =
-    FrontendInspection(
-        inspection =
-            Inspection(
-                id = id,
-                projectId = projectId,
-                startedAt = startedAt,
-                endedAt = endedAt,
-                participants = participants,
-                climate = climate,
-                note = note,
-                updatedAt = updatedAt,
-            ),
+    AppInspectionData(
+        id = id,
+        projectId = projectId,
+        startedAt = startedAt,
+        endedAt = endedAt,
+        participants = participants,
+        climate = climate,
+        note = note,
+        updatedAt = updatedAt,
     )
 
-internal fun FrontendInspection.toPutApiDto() =
+internal fun AppInspection.toPutApiDto() =
     PutInspectionApiDto(
-        projectId = inspection.projectId,
-        startedAt = inspection.startedAt,
-        endedAt = inspection.endedAt,
-        participants = inspection.participants,
-        climate = inspection.climate,
-        note = inspection.note,
-        updatedAt = inspection.updatedAt,
+        projectId = projectId,
+        startedAt = startedAt,
+        endedAt = endedAt,
+        participants = participants,
+        climate = climate,
+        note = note,
+        updatedAt = updatedAt,
     )

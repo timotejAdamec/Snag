@@ -19,7 +19,7 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(project(":feat:users:fe:app:api"))
-                implementation(project(":feat:users:business"))
+                implementation(project(":feat:users:business:model"))
             }
         }
         commonTest {

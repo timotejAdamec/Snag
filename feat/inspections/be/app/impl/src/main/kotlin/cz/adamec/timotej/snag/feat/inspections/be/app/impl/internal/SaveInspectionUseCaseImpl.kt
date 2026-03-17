@@ -25,9 +25,9 @@ internal class SaveInspectionUseCaseImpl(
     private val canEditProjectEntitiesRule: CanEditProjectEntitiesRule,
 ) : SaveInspectionUseCase {
     override suspend operator fun invoke(backendInspection: BackendInspection): BackendInspection? {
-        val project = getProjectUseCase(backendInspection.inspection.projectId)
-        if (project != null && !canEditProjectEntitiesRule(project.project)) {
-            return inspectionsDb.getInspection(backendInspection.inspection.id)
+        val project = getProjectUseCase(backendInspection.projectId)
+        if (project != null && !canEditProjectEntitiesRule(project)) {
+            return inspectionsDb.getInspection(backendInspection.id)
         }
         logger.debug("Saving inspection {} to local storage.", backendInspection)
         val isRejected = inspectionsDb.saveInspection(backendInspection)

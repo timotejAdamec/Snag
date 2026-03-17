@@ -14,27 +14,24 @@ package cz.adamec.timotej.snag.structures.fe.driven.internal.db
 
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.StructureEntity
-import cz.adamec.timotej.snag.feat.structures.business.Structure
-import cz.adamec.timotej.snag.feat.structures.fe.model.FrontendStructure
+import cz.adamec.timotej.snag.feat.structures.app.model.AppStructure
+import cz.adamec.timotej.snag.feat.structures.app.model.AppStructureData
 import kotlin.uuid.Uuid
 
-internal fun FrontendStructure.toEntity() =
+internal fun AppStructure.toEntity() =
     StructureEntity(
-        id = structure.id.toString(),
-        projectId = structure.projectId.toString(),
-        name = structure.name,
-        floorPlanUrl = structure.floorPlanUrl,
-        updatedAt = structure.updatedAt.value,
+        id = id.toString(),
+        projectId = projectId.toString(),
+        name = name,
+        floorPlanUrl = floorPlanUrl,
+        updatedAt = updatedAt.value,
     )
 
 internal fun StructureEntity.toModel() =
-    FrontendStructure(
-        structure =
-            Structure(
-                id = Uuid.parse(id),
-                projectId = Uuid.parse(projectId),
-                name = name,
-                floorPlanUrl = floorPlanUrl,
-                updatedAt = Timestamp(updatedAt),
-            ),
+    AppStructureData(
+        id = Uuid.parse(id),
+        projectId = Uuid.parse(projectId),
+        name = name,
+        floorPlanUrl = floorPlanUrl,
+        updatedAt = Timestamp(updatedAt),
     )

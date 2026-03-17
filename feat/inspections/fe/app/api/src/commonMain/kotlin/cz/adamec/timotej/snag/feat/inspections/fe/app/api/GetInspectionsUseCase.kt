@@ -13,10 +13,10 @@
 package cz.adamec.timotej.snag.feat.inspections.fe.app.api
 
 import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
-import cz.adamec.timotej.snag.feat.inspections.fe.model.FrontendInspection
+import cz.adamec.timotej.snag.feat.inspections.app.model.AppInspection
 import kotlinx.coroutines.flow.Flow
 import kotlin.uuid.Uuid
 
 interface GetInspectionsUseCase {
-    operator fun invoke(projectId: Uuid): Flow<OfflineFirstDataResult<List<FrontendInspection>>>
+    operator fun invoke(projectId: Uuid): Flow<OfflineFirstDataResult<List<AppInspection>>>
 }

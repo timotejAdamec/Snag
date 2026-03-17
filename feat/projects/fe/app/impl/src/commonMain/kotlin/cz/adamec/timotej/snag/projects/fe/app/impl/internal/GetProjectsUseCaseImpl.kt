@@ -15,9 +15,9 @@ package cz.adamec.timotej.snag.projects.fe.app.impl.internal
 import cz.adamec.timotej.snag.core.foundation.common.ApplicationScope
 import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.core.network.fe.log
+import cz.adamec.timotej.snag.projects.app.model.AppProject
 import cz.adamec.timotej.snag.projects.fe.app.api.GetProjectsUseCase
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.sync.PROJECT_SYNC_ENTITY_TYPE
-import cz.adamec.timotej.snag.projects.fe.model.FrontendProject
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsDb
 import cz.adamec.timotej.snag.sync.fe.app.api.ExecutePullSyncUseCase
 import kotlinx.coroutines.flow.Flow
@@ -30,7 +30,7 @@ class GetProjectsUseCaseImpl(
     private val projectsDb: ProjectsDb,
     private val applicationScope: ApplicationScope,
 ) : GetProjectsUseCase {
-    override operator fun invoke(): Flow<OfflineFirstDataResult<List<FrontendProject>>> {
+    override operator fun invoke(): Flow<OfflineFirstDataResult<List<AppProject>>> {
         applicationScope.launch {
             executePullSyncUseCase(entityTypeId = PROJECT_SYNC_ENTITY_TYPE)
         }

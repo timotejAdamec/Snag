@@ -14,7 +14,7 @@ package cz.adamec.timotej.snag.findings.fe.app.impl.internal
 
 import cz.adamec.timotej.snag.core.foundation.common.ApplicationScope
 import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
-import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
+import cz.adamec.timotej.snag.feat.findings.app.model.AppFinding
 import cz.adamec.timotej.snag.findings.fe.app.api.GetFindingsUseCase
 import cz.adamec.timotej.snag.findings.fe.app.impl.internal.sync.FINDING_SYNC_ENTITY_TYPE
 import cz.adamec.timotej.snag.findings.fe.ports.FindingsDb
@@ -29,7 +29,7 @@ class GetFindingsUseCaseImpl(
     private val findingsDb: FindingsDb,
     private val applicationScope: ApplicationScope,
 ) : GetFindingsUseCase {
-    override operator fun invoke(structureId: Uuid): Flow<OfflineFirstDataResult<List<FrontendFinding>>> {
+    override operator fun invoke(structureId: Uuid): Flow<OfflineFirstDataResult<List<AppFinding>>> {
         applicationScope.launch {
             executePullSyncUseCase(
                 entityTypeId = FINDING_SYNC_ENTITY_TYPE,

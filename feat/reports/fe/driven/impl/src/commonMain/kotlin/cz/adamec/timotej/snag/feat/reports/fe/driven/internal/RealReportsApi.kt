@@ -14,10 +14,10 @@ package cz.adamec.timotej.snag.feat.reports.fe.driven.internal
 
 import cz.adamec.timotej.snag.core.network.fe.OnlineDataResult
 import cz.adamec.timotej.snag.core.network.fe.safeApiCall
-import cz.adamec.timotej.snag.feat.reports.fe.model.FrontendReport
 import cz.adamec.timotej.snag.feat.reports.fe.ports.ReportsApi
 import cz.adamec.timotej.snag.network.fe.SnagNetworkHttpClient
 import cz.adamec.timotej.snag.reports.business.Report
+import cz.adamec.timotej.snag.reports.business.ReportData
 import io.ktor.client.call.body
 import io.ktor.http.ContentDisposition
 import io.ktor.http.HttpHeaders
@@ -26,7 +26,7 @@ import kotlin.uuid.Uuid
 internal class RealReportsApi(
     private val httpClient: SnagNetworkHttpClient,
 ) : ReportsApi {
-    override suspend fun downloadReport(projectId: Uuid): OnlineDataResult<FrontendReport> =
+    override suspend fun downloadReport(projectId: Uuid): OnlineDataResult<Report> =
         safeApiCall(
             logger = LH.logger,
             errorContext = "Error downloading report for project $projectId.",
@@ -38,13 +38,10 @@ internal class RealReportsApi(
                     ?.let { ContentDisposition.parse(it) }
                     ?.parameter(ContentDisposition.Parameters.FileName)
                     ?: "report.pdf"
-            FrontendReport(
-                report =
-                    Report(
-                        projectId = projectId,
-                        fileName = fileName,
-                        bytes = bytes,
-                    ),
+            ReportData(
+                projectId = projectId,
+                fileName = fileName,
+                bytes = bytes,
             )
         }
 }

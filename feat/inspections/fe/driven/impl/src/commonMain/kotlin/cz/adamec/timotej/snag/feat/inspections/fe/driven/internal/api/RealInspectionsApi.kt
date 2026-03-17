@@ -15,10 +15,10 @@ package cz.adamec.timotej.snag.feat.inspections.fe.driven.internal.api
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.core.network.fe.OnlineDataResult
 import cz.adamec.timotej.snag.core.network.fe.safeApiCall
+import cz.adamec.timotej.snag.feat.inspections.app.model.AppInspection
 import cz.adamec.timotej.snag.feat.inspections.be.driving.contract.DeleteInspectionApiDto
 import cz.adamec.timotej.snag.feat.inspections.be.driving.contract.InspectionApiDto
 import cz.adamec.timotej.snag.feat.inspections.fe.driven.internal.LH
-import cz.adamec.timotej.snag.feat.inspections.fe.model.FrontendInspection
 import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionSyncResult
 import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionsApi
 import cz.adamec.timotej.snag.network.fe.SnagNetworkHttpClient
@@ -30,7 +30,7 @@ import kotlin.uuid.Uuid
 internal class RealInspectionsApi(
     private val httpClient: SnagNetworkHttpClient,
 ) : InspectionsApi {
-    override suspend fun getInspections(projectId: Uuid): OnlineDataResult<List<FrontendInspection>> {
+    override suspend fun getInspections(projectId: Uuid): OnlineDataResult<List<AppInspection>> {
         LH.logger.d { "Fetching inspections for project $projectId..." }
         val result =
             safeApiCall(logger = LH.logger, errorContext = "Error fetching inspections for project $projectId.") {
@@ -47,7 +47,7 @@ internal class RealInspectionsApi(
     override suspend fun deleteInspection(
         id: Uuid,
         deletedAt: Timestamp,
-    ): OnlineDataResult<FrontendInspection?> {
+    ): OnlineDataResult<AppInspection?> {
         LH.logger.d { "Deleting inspection $id from API..." }
         val result =
             safeApiCall(logger = LH.logger, errorContext = "Error deleting inspection $id from API.") {
@@ -67,17 +67,17 @@ internal class RealInspectionsApi(
         return result
     }
 
-    override suspend fun saveInspection(frontendInspection: FrontendInspection): OnlineDataResult<FrontendInspection?> {
-        LH.logger.d { "Saving inspection ${frontendInspection.inspection.id} to API..." }
+    override suspend fun saveInspection(frontendInspection: AppInspection): OnlineDataResult<AppInspection?> {
+        LH.logger.d { "Saving inspection ${frontendInspection.id} to API..." }
         val result =
             safeApiCall(
                 logger = LH.logger,
-                errorContext = "Error saving inspection ${frontendInspection.inspection.id} to API.",
+                errorContext = "Error saving inspection ${frontendInspection.id} to API.",
             ) {
                 val inspectionDto = frontendInspection.toPutApiDto()
                 val response =
                     httpClient.put(
-                        "/projects/${frontendInspection.inspection.projectId}/inspections/${frontendInspection.inspection.id}",
+                        "/projects/${frontendInspection.projectId}/inspections/${frontendInspection.id}",
                     ) {
                         setBody(inspectionDto)
                     }
@@ -88,7 +88,7 @@ internal class RealInspectionsApi(
                 }
             }
         if (result is OnlineDataResult.Success) {
-            LH.logger.d { "Saved inspection ${frontendInspection.inspection.id} to API." }
+            LH.logger.d { "Saved inspection ${frontendInspection.id} to API." }
         }
         return result
     }

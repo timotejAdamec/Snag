@@ -50,27 +50,27 @@ internal class RealInspectionsDb(
 
     override suspend fun saveInspection(backendInspection: BackendInspection): BackendInspection? =
         transaction(database) {
-            val existing = InspectionEntity.findById(backendInspection.inspection.id)
+            val existing = InspectionEntity.findById(backendInspection.id)
             when (val result = resolveConflictForSave(existing?.toModel(), backendInspection)) {
                 is SaveConflictResult.Proceed -> {
                     if (existing != null) {
-                        existing.project = ProjectEntity[backendInspection.inspection.projectId]
-                        existing.startedAt = backendInspection.inspection.startedAt?.value
-                        existing.endedAt = backendInspection.inspection.endedAt?.value
-                        existing.participants = backendInspection.inspection.participants
-                        existing.climate = backendInspection.inspection.climate
-                        existing.note = backendInspection.inspection.note
-                        existing.updatedAt = backendInspection.inspection.updatedAt.value
+                        existing.project = ProjectEntity[backendInspection.projectId]
+                        existing.startedAt = backendInspection.startedAt?.value
+                        existing.endedAt = backendInspection.endedAt?.value
+                        existing.participants = backendInspection.participants
+                        existing.climate = backendInspection.climate
+                        existing.note = backendInspection.note
+                        existing.updatedAt = backendInspection.updatedAt.value
                         existing.deletedAt = backendInspection.deletedAt?.value
                     } else {
-                        InspectionEntity.new(backendInspection.inspection.id) {
-                            project = ProjectEntity[backendInspection.inspection.projectId]
-                            startedAt = backendInspection.inspection.startedAt?.value
-                            endedAt = backendInspection.inspection.endedAt?.value
-                            participants = backendInspection.inspection.participants
-                            climate = backendInspection.inspection.climate
-                            note = backendInspection.inspection.note
-                            updatedAt = backendInspection.inspection.updatedAt.value
+                        InspectionEntity.new(backendInspection.id) {
+                            project = ProjectEntity[backendInspection.projectId]
+                            startedAt = backendInspection.startedAt?.value
+                            endedAt = backendInspection.endedAt?.value
+                            participants = backendInspection.participants
+                            climate = backendInspection.climate
+                            note = backendInspection.note
+                            updatedAt = backendInspection.updatedAt.value
                             deletedAt = backendInspection.deletedAt?.value
                         }
                     }

@@ -13,29 +13,26 @@
 package cz.adamec.timotej.snag.users.fe.driven.internal.api
 
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
+import cz.adamec.timotej.snag.users.app.model.AppUser
+import cz.adamec.timotej.snag.users.app.model.AppUserData
 import cz.adamec.timotej.snag.users.be.driving.contract.PutUserApiDto
 import cz.adamec.timotej.snag.users.be.driving.contract.UserApiDto
-import cz.adamec.timotej.snag.users.business.User
 import cz.adamec.timotej.snag.users.business.UserRole
-import cz.adamec.timotej.snag.users.fe.model.FrontendUser
 import kotlin.uuid.Uuid
 
 internal fun UserApiDto.toModel() =
-    FrontendUser(
-        user =
-            User(
-                id = Uuid.parse(id),
-                entraId = entraId,
-                email = email,
-                role = role?.let { UserRole.valueOf(it) },
-                updatedAt = Timestamp(updatedAt),
-            ),
+    AppUserData(
+        id = Uuid.parse(id),
+        entraId = entraId,
+        email = email,
+        role = role?.let { UserRole.valueOf(it) },
+        updatedAt = Timestamp(updatedAt),
     )
 
-internal fun FrontendUser.toApiDto() =
+internal fun AppUser.toApiDto() =
     PutUserApiDto(
-        entraId = user.entraId,
-        email = user.email,
-        role = user.role?.name,
-        updatedAt = user.updatedAt.value,
+        entraId = entraId,
+        email = email,
+        role = role?.name,
+        updatedAt = updatedAt.value,
     )

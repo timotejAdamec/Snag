@@ -84,9 +84,9 @@ internal class StructureDetailsEditViewModel(
                         result.data?.let { data ->
                             _state.update {
                                 it.copy(
-                                    structureName = data.structure.name,
-                                    floorPlanUrl = data.structure.floorPlanUrl,
-                                    projectId = data.structure.projectId,
+                                    structureName = data.name,
+                                    floorPlanUrl = data.floorPlanUrl,
+                                    projectId = data.projectId,
                                 )
                             }
                             cancel()

@@ -13,8 +13,8 @@
 package cz.adamec.timotej.snag.structures.fe.driving.impl.internal.floorPlan.vm
 
 import androidx.compose.runtime.Immutable
-import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
-import cz.adamec.timotej.snag.feat.structures.fe.model.FrontendStructure
+import cz.adamec.timotej.snag.feat.findings.app.model.AppFinding
+import cz.adamec.timotej.snag.feat.structures.app.model.AppStructure
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlin.uuid.Uuid
@@ -23,8 +23,8 @@ import kotlin.uuid.Uuid
 internal data class StructureDetailsUiState(
     val status: StructureDetailsUiStatus = StructureDetailsUiStatus.LOADING,
     val isBeingDeleted: Boolean = false,
-    val feStructure: FrontendStructure? = null,
-    val findings: ImmutableList<FrontendFinding> = persistentListOf(),
+    val feStructure: AppStructure? = null,
+    val findings: ImmutableList<AppFinding> = persistentListOf(),
     val selectedFindingId: Uuid? = null,
     val isProjectClosed: Boolean = false,
 ) {

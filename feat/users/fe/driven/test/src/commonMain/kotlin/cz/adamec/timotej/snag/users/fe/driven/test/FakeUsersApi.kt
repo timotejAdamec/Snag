@@ -15,13 +15,13 @@ package cz.adamec.timotej.snag.users.fe.driven.test
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.core.network.fe.OnlineDataResult
 import cz.adamec.timotej.snag.network.fe.test.FakeApiOps
-import cz.adamec.timotej.snag.users.fe.model.FrontendUser
+import cz.adamec.timotej.snag.users.app.model.AppUser
 import cz.adamec.timotej.snag.users.fe.ports.UserSyncResult
 import cz.adamec.timotej.snag.users.fe.ports.UsersApi
 import kotlin.uuid.Uuid
 
 class FakeUsersApi : UsersApi {
-    private val ops = FakeApiOps<FrontendUser, UserSyncResult>(getId = { it.user.id })
+    private val ops = FakeApiOps<AppUser, UserSyncResult>(getId = { it.id })
 
     var forcedFailure
         get() = ops.forcedFailure
@@ -35,17 +35,17 @@ class FakeUsersApi : UsersApi {
             ops.modifiedSinceResults = value
         }
 
-    override suspend fun getUsers(): OnlineDataResult<List<FrontendUser>> = ops.getAllItems()
+    override suspend fun getUsers(): OnlineDataResult<List<AppUser>> = ops.getAllItems()
 
-    override suspend fun getUser(id: Uuid): OnlineDataResult<FrontendUser> = ops.getItemById(id)
+    override suspend fun getUser(id: Uuid): OnlineDataResult<AppUser> = ops.getItemById(id)
 
     override suspend fun getUsersModifiedSince(since: Timestamp): OnlineDataResult<List<UserSyncResult>> = ops.getModifiedSinceItems()
 
-    override suspend fun updateUser(user: FrontendUser): OnlineDataResult<FrontendUser> {
+    override suspend fun updateUser(user: AppUser): OnlineDataResult<AppUser> {
         forcedFailure?.let { return it }
         ops.setItem(user)
         return OnlineDataResult.Success(user)
     }
 
-    fun setUser(user: FrontendUser) = ops.setItem(user)
+    fun setUser(user: AppUser) = ops.setItem(user)
 }

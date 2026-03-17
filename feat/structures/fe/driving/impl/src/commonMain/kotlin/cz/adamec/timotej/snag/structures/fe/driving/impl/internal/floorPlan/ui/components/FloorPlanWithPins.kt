@@ -38,10 +38,10 @@ import com.github.panpf.zoomimage.CoilZoomAsyncImage
 import com.github.panpf.zoomimage.CoilZoomState
 import com.github.panpf.zoomimage.rememberCoilZoomState
 import com.github.panpf.zoomimage.zoom.ContainerWhitespace
+import cz.adamec.timotej.snag.feat.findings.app.model.AppFinding
 import cz.adamec.timotej.snag.feat.findings.business.FindingType
 import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
 import cz.adamec.timotej.snag.feat.findings.fe.driving.api.visuals
-import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
 import kotlinx.collections.immutable.ImmutableList
 import org.jetbrains.compose.resources.painterResource
 import kotlin.math.sqrt
@@ -53,7 +53,7 @@ private const val BACKGROUND_CIRCLE_SCALE = 1.3f
 internal fun FloorPlanWithPins(
     floorPlanUrl: String,
     contentDescription: String,
-    findings: ImmutableList<FrontendFinding>,
+    findings: ImmutableList<AppFinding>,
     selectedFindingId: Uuid?,
     onFindingClick: (Uuid) -> Unit,
     onEmptySpaceTap: (RelativeCoordinate) -> Unit,
@@ -120,7 +120,7 @@ internal fun FloorPlanWithPins(
 @Composable
 private fun FindingsPinsOverlay(
     zoomableState: CoilZoomState,
-    findings: List<FrontendFinding>,
+    findings: List<AppFinding>,
     selectedFindingId: Uuid?,
     modifier: Modifier = Modifier,
 ) {
@@ -143,8 +143,8 @@ private fun FindingsPinsOverlay(
     Canvas(modifier = modifier.fillMaxSize()) {
         // Draw non-selected pins first, then selected pin on top
         findings.forEach { finding ->
-            if (finding.finding.id == selectedFindingId) return@forEach
-            finding.finding.coordinates.forEach { coord ->
+            if (finding.id == selectedFindingId) return@forEach
+            finding.coordinates.forEach { coord ->
                 val drawPoint =
                     Offset(
                         x = displayRect.left + coord.x * displayRect.width,
@@ -152,7 +152,7 @@ private fun FindingsPinsOverlay(
                     )
 
                 val (painter, color) =
-                    when (finding.finding.type) {
+                    when (finding.type) {
                         is FindingType.Classic -> classicPainter to classicVisuals.pinColor
                         is FindingType.Unvisited -> unvisitedPainter to unvisitedVisuals.pinColor
                         is FindingType.Note -> notePainter to noteVisuals.pinColor
@@ -170,9 +170,9 @@ private fun FindingsPinsOverlay(
         // Draw selected pins last so it appears on top
         if (selectedFindingId != null) {
             findings
-                .find { it.finding.id == selectedFindingId }
+                .find { it.id == selectedFindingId }
                 ?.let { finding ->
-                    finding.finding.coordinates.forEach { coord ->
+                    finding.coordinates.forEach { coord ->
                         val drawPoint =
                             Offset(
                                 x = displayRect.left + coord.x * displayRect.width,
@@ -180,7 +180,7 @@ private fun FindingsPinsOverlay(
                             )
 
                         val (painter, _) =
-                            when (finding.finding.type) {
+                            when (finding.type) {
                                 is FindingType.Classic ->
                                     classicPainter to classicVisuals.pinColor
 
@@ -248,7 +248,7 @@ private fun DrawScope.drawFindingPin(
 private fun findTappedFinding(
     tapOffset: Offset,
     displayRect: Rect,
-    findings: List<FrontendFinding>,
+    findings: List<AppFinding>,
     touchTargetRadiusPx: Float,
 ): Uuid? {
     if (displayRect.isEmpty) return null
@@ -257,7 +257,7 @@ private fun findTappedFinding(
     var closestDistance = Float.MAX_VALUE
 
     for (finding in findings) {
-        for (coord in finding.finding.coordinates) {
+        for (coord in finding.coordinates) {
             val pinCenter =
                 Offset(
                     x = displayRect.left + coord.x * displayRect.width,
@@ -268,7 +268,7 @@ private fun findTappedFinding(
             val distance = sqrt(dx * dx + dy * dy)
             if (distance <= touchTargetRadiusPx && distance < closestDistance) {
                 closestDistance = distance
-                closestId = finding.finding.id
+                closestId = finding.id
             }
         }
     }

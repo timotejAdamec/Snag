@@ -13,7 +13,7 @@
 package cz.adamec.timotej.snag.findings.be.driving.impl.internal
 
 import cz.adamec.timotej.snag.feat.findings.be.model.BackendFinding
-import cz.adamec.timotej.snag.feat.findings.business.Finding
+import cz.adamec.timotej.snag.feat.findings.be.model.BackendFindingData
 import cz.adamec.timotej.snag.feat.findings.business.FindingType
 import cz.adamec.timotej.snag.feat.findings.business.Importance
 import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
@@ -31,18 +31,17 @@ internal fun FindingType.toDtoKey(): FindingTypeDtoKey =
     }
 
 internal fun BackendFinding.toDto(): FindingApiDto {
-    val type = finding.type
     val classic = type as? FindingType.Classic
     return FindingApiDto(
-        id = finding.id,
-        structureId = finding.structureId,
+        id = id,
+        structureId = structureId,
         type = type.toDtoKey().name,
-        name = finding.name,
-        description = finding.description,
+        name = name,
+        description = description,
         importance = classic?.importance?.name,
         term = classic?.term?.name,
-        coordinates = finding.coordinates.map { it.toDto() }.toSet(),
-        updatedAt = finding.updatedAt,
+        coordinates = coordinates.map { it.toDto() }.toSet(),
+        updatedAt = updatedAt,
         deletedAt = deletedAt,
     )
 }
@@ -79,17 +78,14 @@ internal fun PutFindingApiDto.toModel(id: Uuid): BackendFinding {
                 FindingType.Classic()
             }
         }
-    return BackendFinding(
-        finding =
-            Finding(
-                id = id,
-                structureId = structureId,
-                name = name,
-                description = description,
-                type = findingType,
-                coordinates = coordinates.map { it.toBusiness() }.toSet(),
-                updatedAt = updatedAt,
-            ),
+    return BackendFindingData(
+        id = id,
+        structureId = structureId,
+        name = name,
+        description = description,
+        type = findingType,
+        coordinates = coordinates.map { it.toBusiness() }.toSet(),
+        updatedAt = updatedAt,
     )
 }
 
