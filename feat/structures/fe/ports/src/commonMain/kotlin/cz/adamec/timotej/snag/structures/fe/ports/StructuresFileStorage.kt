@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.structures.fe.ports
 
-import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
+import cz.adamec.timotej.snag.core.network.fe.OnlineDataResult
 
 interface StructuresFileStorage {
     suspend fun uploadFile(

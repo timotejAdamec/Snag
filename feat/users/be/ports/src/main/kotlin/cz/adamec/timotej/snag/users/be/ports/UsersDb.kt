@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.users.be.ports
 
-import cz.adamec.timotej.snag.lib.core.common.Timestamp
+import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.users.be.model.BackendUser
 import kotlin.uuid.Uuid
 

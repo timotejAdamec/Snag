@@ -12,12 +12,12 @@
 
 package cz.adamec.timotej.snag.feat.inspections.fe.driven.di
 
+import cz.adamec.timotej.snag.core.foundation.common.di.getIoDispatcher
 import cz.adamec.timotej.snag.feat.inspections.fe.driven.internal.api.RealInspectionsApi
 import cz.adamec.timotej.snag.feat.inspections.fe.driven.internal.db.InspectionsSqlDelightDbOps
 import cz.adamec.timotej.snag.feat.inspections.fe.driven.internal.db.RealInspectionsDb
 import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionsApi
 import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionsDb
-import cz.adamec.timotej.snag.lib.core.common.di.getIoDispatcher
 import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.bind
 import org.koin.dsl.module

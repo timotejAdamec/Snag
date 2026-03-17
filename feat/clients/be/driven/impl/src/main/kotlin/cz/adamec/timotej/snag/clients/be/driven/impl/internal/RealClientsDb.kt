@@ -14,13 +14,13 @@ package cz.adamec.timotej.snag.clients.be.driven.impl.internal
 
 import cz.adamec.timotej.snag.clients.be.model.BackendClient
 import cz.adamec.timotej.snag.clients.be.ports.ClientsDb
+import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.feat.shared.database.be.ClientEntity
 import cz.adamec.timotej.snag.feat.shared.database.be.ClientsTable
-import cz.adamec.timotej.snag.lib.core.common.Timestamp
-import cz.adamec.timotej.snag.lib.sync.be.DeleteConflictResult
-import cz.adamec.timotej.snag.lib.sync.be.ResolveConflictForDeleteUseCase
-import cz.adamec.timotej.snag.lib.sync.be.ResolveConflictForSaveUseCase
-import cz.adamec.timotej.snag.lib.sync.be.SaveConflictResult
+import cz.adamec.timotej.snag.sync.be.DeleteConflictResult
+import cz.adamec.timotej.snag.sync.be.ResolveConflictForDeleteUseCase
+import cz.adamec.timotej.snag.sync.be.ResolveConflictForSaveUseCase
+import cz.adamec.timotej.snag.sync.be.SaveConflictResult
 import org.jetbrains.exposed.v1.core.greater
 import org.jetbrains.exposed.v1.core.or
 import org.jetbrains.exposed.v1.jdbc.Database

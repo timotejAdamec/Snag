@@ -12,10 +12,10 @@
 
 package cz.adamec.timotej.snag.users.fe.app.impl.internal
 
-import cz.adamec.timotej.snag.lib.core.common.Timestamp
-import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
-import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
-import cz.adamec.timotej.snag.lib.sync.fe.driven.test.FakePullSyncTimestampDb
+import cz.adamec.timotej.snag.core.foundation.common.Timestamp
+import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
+import cz.adamec.timotej.snag.core.network.fe.OnlineDataResult
+import cz.adamec.timotej.snag.sync.fe.driven.test.FakePullSyncTimestampDb
 import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
 import cz.adamec.timotej.snag.users.business.User
 import cz.adamec.timotej.snag.users.fe.app.api.PullUserChangesUseCase

@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.findings.be.app.api.model
 
-import cz.adamec.timotej.snag.lib.core.common.Timestamp
+import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import kotlin.uuid.Uuid
 
 data class DeleteFindingRequest(

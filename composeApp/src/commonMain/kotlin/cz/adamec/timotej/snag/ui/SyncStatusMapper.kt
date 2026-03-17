@@ -13,7 +13,7 @@
 package cz.adamec.timotej.snag.ui
 
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.SyncStatusBarState
-import cz.adamec.timotej.snag.lib.sync.fe.model.SyncStatus
+import cz.adamec.timotej.snag.sync.fe.model.SyncStatus
 
 internal fun SyncStatus.toBarState(): SyncStatusBarState =
     when (this) {

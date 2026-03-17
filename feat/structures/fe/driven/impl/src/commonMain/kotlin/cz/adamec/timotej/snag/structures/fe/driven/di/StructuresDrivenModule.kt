@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.structures.fe.driven.di
 
-import cz.adamec.timotej.snag.lib.core.common.di.getIoDispatcher
+import cz.adamec.timotej.snag.core.foundation.common.di.getIoDispatcher
 import cz.adamec.timotej.snag.structures.fe.driven.internal.api.RealStructuresApi
 import cz.adamec.timotej.snag.structures.fe.driven.internal.db.RealStructuresDb
 import cz.adamec.timotej.snag.structures.fe.driven.internal.db.StructuresSqlDelightDbOps

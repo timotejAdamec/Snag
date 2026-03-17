@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.feat.inspections.be.driving.impl.internal
 
+import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.feat.inspections.be.app.api.DeleteInspectionUseCase
 import cz.adamec.timotej.snag.feat.inspections.be.app.api.GetInspectionsModifiedSinceUseCase
 import cz.adamec.timotej.snag.feat.inspections.be.app.api.GetInspectionsUseCase
@@ -19,7 +20,6 @@ import cz.adamec.timotej.snag.feat.inspections.be.app.api.SaveInspectionUseCase
 import cz.adamec.timotej.snag.feat.inspections.be.app.api.model.DeleteInspectionRequest
 import cz.adamec.timotej.snag.feat.inspections.be.driving.contract.DeleteInspectionApiDto
 import cz.adamec.timotej.snag.feat.inspections.be.driving.contract.PutInspectionApiDto
-import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.routing.be.AppRoute
 import cz.adamec.timotej.snag.routing.be.getDtoFromBody
 import cz.adamec.timotej.snag.routing.be.getIdFromParameters

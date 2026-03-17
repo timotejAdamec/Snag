@@ -12,10 +12,10 @@
 
 package cz.adamec.timotej.snag.feat.inspections.be.driven.impl.internal
 
+import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.feat.inspections.be.model.BackendInspection
 import cz.adamec.timotej.snag.feat.inspections.business.Inspection
 import cz.adamec.timotej.snag.feat.shared.database.be.InspectionEntity
-import cz.adamec.timotej.snag.lib.core.common.Timestamp
 
 internal fun InspectionEntity.toModel() =
     BackendInspection(

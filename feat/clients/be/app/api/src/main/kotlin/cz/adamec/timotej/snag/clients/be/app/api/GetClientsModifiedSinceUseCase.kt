@@ -13,7 +13,7 @@
 package cz.adamec.timotej.snag.clients.be.app.api
 
 import cz.adamec.timotej.snag.clients.be.model.BackendClient
-import cz.adamec.timotej.snag.lib.core.common.Timestamp
+import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 
 interface GetClientsModifiedSinceUseCase {
     suspend operator fun invoke(since: Timestamp): List<BackendClient>

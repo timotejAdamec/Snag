@@ -16,6 +16,7 @@ import cz.adamec.timotej.snag.clients.fe.app.impl.di.clientsAppModule
 import cz.adamec.timotej.snag.clients.fe.driven.di.clientsDrivenModule
 import cz.adamec.timotej.snag.clients.fe.driving.api.di.clientsDrivingApiModule
 import cz.adamec.timotej.snag.clients.fe.driving.impl.di.clientsDrivingImplModule
+import cz.adamec.timotej.snag.core.foundation.fe.di.frontendCoreModule
 import cz.adamec.timotej.snag.feat.findings.fe.driving.api.di.findingsDrivingApiModule
 import cz.adamec.timotej.snag.feat.inspections.fe.app.impl.di.inspectionsAppModule
 import cz.adamec.timotej.snag.feat.inspections.fe.driven.di.inspectionsDrivenModule
@@ -29,11 +30,8 @@ import cz.adamec.timotej.snag.feat.structures.fe.driving.api.di.structuresDrivin
 import cz.adamec.timotej.snag.findings.fe.app.impl.di.findingsAppModule
 import cz.adamec.timotej.snag.findings.fe.driven.di.findingsDrivenModule
 import cz.adamec.timotej.snag.findings.fe.driving.impl.di.findingsDrivingImplModule
-import cz.adamec.timotej.snag.lib.core.fe.di.frontendCoreModule
 import cz.adamec.timotej.snag.lib.design.fe.di.designModule
 import cz.adamec.timotej.snag.lib.storage.fe.impl.di.fileStorageModule
-import cz.adamec.timotej.snag.lib.sync.fe.app.impl.di.syncAppModule
-import cz.adamec.timotej.snag.lib.sync.fe.driven.impl.di.syncDrivenModule
 import cz.adamec.timotej.snag.network.fe.app.impl.di.networkAppModule
 import cz.adamec.timotej.snag.network.fe.driven.impl.di.networkDrivenModule
 import cz.adamec.timotej.snag.projects.fe.app.impl.di.projectsAppModule
@@ -44,6 +42,8 @@ import cz.adamec.timotej.snag.shared.rules.business.impl.di.sharedRulesModule
 import cz.adamec.timotej.snag.structures.fe.app.impl.di.structuresAppModule
 import cz.adamec.timotej.snag.structures.fe.driven.di.structuresDrivenModule
 import cz.adamec.timotej.snag.structures.fe.driving.impl.di.structuresDrivingImplModule
+import cz.adamec.timotej.snag.sync.fe.app.impl.di.syncAppModule
+import cz.adamec.timotej.snag.sync.fe.driven.impl.di.syncDrivenModule
 import cz.adamec.timotej.snag.users.fe.app.impl.di.usersAppModule
 import cz.adamec.timotej.snag.users.fe.driven.di.usersDrivenModule
 import cz.adamec.timotej.snag.users.fe.driving.api.di.usersDrivingApiModule

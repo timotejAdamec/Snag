@@ -12,19 +12,19 @@
 
 package cz.adamec.timotej.snag.structures.fe.app.impl.internal
 
+import cz.adamec.timotej.snag.core.foundation.common.TimestampProvider
+import cz.adamec.timotej.snag.core.foundation.common.UuidProvider
+import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
+import cz.adamec.timotej.snag.core.network.fe.log
+import cz.adamec.timotej.snag.core.network.fe.map
 import cz.adamec.timotej.snag.feat.structures.business.Structure
 import cz.adamec.timotej.snag.feat.structures.fe.model.FrontendStructure
-import cz.adamec.timotej.snag.lib.core.common.TimestampProvider
-import cz.adamec.timotej.snag.lib.core.common.UuidProvider
-import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
-import cz.adamec.timotej.snag.lib.core.fe.log
-import cz.adamec.timotej.snag.lib.core.fe.map
-import cz.adamec.timotej.snag.lib.sync.fe.app.api.EnqueueSyncSaveUseCase
 import cz.adamec.timotej.snag.structures.fe.app.api.SaveStructureUseCase
 import cz.adamec.timotej.snag.structures.fe.app.api.model.SaveStructureRequest
 import cz.adamec.timotej.snag.structures.fe.app.impl.internal.LH.logger
 import cz.adamec.timotej.snag.structures.fe.app.impl.internal.sync.STRUCTURE_SYNC_ENTITY_TYPE
 import cz.adamec.timotej.snag.structures.fe.ports.StructuresDb
+import cz.adamec.timotej.snag.sync.fe.app.api.EnqueueSyncSaveUseCase
 import kotlin.uuid.Uuid
 
 class SaveStructureUseCaseImpl(

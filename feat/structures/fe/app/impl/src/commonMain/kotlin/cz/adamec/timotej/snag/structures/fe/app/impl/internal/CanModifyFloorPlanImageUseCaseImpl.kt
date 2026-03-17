@@ -12,17 +12,17 @@
 
 package cz.adamec.timotej.snag.structures.fe.app.impl.internal
 
-import cz.adamec.timotej.snag.network.fe.InternetConnectionStatusListener
+import cz.adamec.timotej.snag.core.network.fe.ConnectionStatusProvider
 import cz.adamec.timotej.snag.structures.fe.app.api.CanModifyFloorPlanImageUseCase
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.onEach
 
 internal class CanModifyFloorPlanImageUseCaseImpl(
-    private val internetConnectionStatusListener: InternetConnectionStatusListener,
+    private val connectionStatusProvider: ConnectionStatusProvider,
 ) : CanModifyFloorPlanImageUseCase {
     override fun invoke(): Flow<Boolean> =
-        internetConnectionStatusListener
+        connectionStatusProvider
             .isConnectedFlow()
             .distinctUntilChanged()
             .onEach {

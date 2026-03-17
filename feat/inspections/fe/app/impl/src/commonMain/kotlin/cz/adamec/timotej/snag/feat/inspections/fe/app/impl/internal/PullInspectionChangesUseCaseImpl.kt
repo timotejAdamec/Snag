@@ -12,18 +12,18 @@
 
 package cz.adamec.timotej.snag.feat.inspections.fe.app.impl.internal
 
+import cz.adamec.timotej.snag.core.foundation.common.Timestamp
+import cz.adamec.timotej.snag.core.foundation.common.TimestampProvider
+import cz.adamec.timotej.snag.core.network.fe.OnlineDataResult
 import cz.adamec.timotej.snag.feat.inspections.fe.app.api.PullInspectionChangesUseCase
 import cz.adamec.timotej.snag.feat.inspections.fe.app.impl.internal.sync.INSPECTION_SYNC_ENTITY_TYPE
 import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionSyncResult
 import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionsApi
 import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionsDb
-import cz.adamec.timotej.snag.lib.core.common.Timestamp
-import cz.adamec.timotej.snag.lib.core.common.TimestampProvider
-import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
-import cz.adamec.timotej.snag.lib.sync.fe.app.api.GetLastPullSyncedAtTimestampUseCase
-import cz.adamec.timotej.snag.lib.sync.fe.app.api.PullSyncTracker
-import cz.adamec.timotej.snag.lib.sync.fe.app.api.SetLastPullSyncedAtTimestampUseCase
-import cz.adamec.timotej.snag.lib.sync.fe.app.api.SyncCoordinator
+import cz.adamec.timotej.snag.sync.fe.app.api.GetLastPullSyncedAtTimestampUseCase
+import cz.adamec.timotej.snag.sync.fe.app.api.PullSyncTracker
+import cz.adamec.timotej.snag.sync.fe.app.api.SetLastPullSyncedAtTimestampUseCase
+import cz.adamec.timotej.snag.sync.fe.app.api.SyncCoordinator
 import kotlin.uuid.Uuid
 
 internal class PullInspectionChangesUseCaseImpl(

@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.users.be.app.api
 
-import cz.adamec.timotej.snag.lib.core.common.Timestamp
+import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.users.be.model.BackendUser
 
 interface GetUsersModifiedSinceUseCase {

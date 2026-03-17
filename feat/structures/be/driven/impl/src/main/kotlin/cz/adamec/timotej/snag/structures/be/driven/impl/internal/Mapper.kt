@@ -12,10 +12,10 @@
 
 package cz.adamec.timotej.snag.structures.be.driven.impl.internal
 
+import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.feat.shared.database.be.StructureEntity
 import cz.adamec.timotej.snag.feat.structures.be.model.BackendStructure
 import cz.adamec.timotej.snag.feat.structures.business.Structure
-import cz.adamec.timotej.snag.lib.core.common.Timestamp
 
 internal fun StructureEntity.toModel() =
     BackendStructure(

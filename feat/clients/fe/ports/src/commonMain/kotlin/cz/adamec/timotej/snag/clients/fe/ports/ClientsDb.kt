@@ -13,7 +13,7 @@
 package cz.adamec.timotej.snag.clients.fe.ports
 
 import cz.adamec.timotej.snag.clients.fe.model.FrontendClient
-import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
+import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
 import kotlinx.coroutines.flow.Flow
 import kotlin.uuid.Uuid
 

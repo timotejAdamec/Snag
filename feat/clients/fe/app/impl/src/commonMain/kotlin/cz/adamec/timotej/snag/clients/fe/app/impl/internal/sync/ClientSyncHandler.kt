@@ -16,9 +16,9 @@ import cz.adamec.timotej.snag.clients.fe.app.impl.internal.LH
 import cz.adamec.timotej.snag.clients.fe.model.FrontendClient
 import cz.adamec.timotej.snag.clients.fe.ports.ClientsApi
 import cz.adamec.timotej.snag.clients.fe.ports.ClientsDb
-import cz.adamec.timotej.snag.lib.core.common.Timestamp
-import cz.adamec.timotej.snag.lib.core.common.TimestampProvider
-import cz.adamec.timotej.snag.lib.sync.fe.app.api.handler.DbApiSyncHandler
+import cz.adamec.timotej.snag.core.foundation.common.Timestamp
+import cz.adamec.timotej.snag.core.foundation.common.TimestampProvider
+import cz.adamec.timotej.snag.sync.fe.app.api.handler.DbApiSyncHandler
 import kotlin.uuid.Uuid
 
 internal class ClientSyncHandler(

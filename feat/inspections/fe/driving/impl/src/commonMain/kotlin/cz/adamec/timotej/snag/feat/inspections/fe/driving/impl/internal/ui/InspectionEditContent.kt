@@ -42,11 +42,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import cz.adamec.timotej.snag.core.foundation.common.Timestamp
+import cz.adamec.timotej.snag.core.foundation.common.UuidProvider
+import cz.adamec.timotej.snag.core.foundation.common.toLocalDateTime
 import cz.adamec.timotej.snag.feat.inspections.fe.driving.impl.internal.ui.components.DateTimePickerField
 import cz.adamec.timotej.snag.feat.inspections.fe.driving.impl.internal.vm.InspectionEditUiState
-import cz.adamec.timotej.snag.lib.core.common.Timestamp
-import cz.adamec.timotej.snag.lib.core.common.UuidProvider
-import cz.adamec.timotej.snag.lib.core.common.toLocalDateTime
 import cz.adamec.timotej.snag.lib.design.fe.dialog.FullScreenDialogMeasurements
 import cz.adamec.timotej.snag.lib.design.fe.dialog.TimePickerDialog
 import cz.adamec.timotej.snag.lib.design.fe.theme.SnagPreview

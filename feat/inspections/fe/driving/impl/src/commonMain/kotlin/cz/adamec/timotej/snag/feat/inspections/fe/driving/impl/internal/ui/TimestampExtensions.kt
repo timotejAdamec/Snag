@@ -12,8 +12,8 @@
 
 package cz.adamec.timotej.snag.feat.inspections.fe.driving.impl.internal.ui
 
-import cz.adamec.timotej.snag.lib.core.common.Timestamp
-import cz.adamec.timotej.snag.lib.core.common.toLocalDateTime
+import cz.adamec.timotej.snag.core.foundation.common.Timestamp
+import cz.adamec.timotej.snag.core.foundation.common.toLocalDateTime
 
 internal fun Timestamp.toDisplayString(): String {
     val local = toLocalDateTime()

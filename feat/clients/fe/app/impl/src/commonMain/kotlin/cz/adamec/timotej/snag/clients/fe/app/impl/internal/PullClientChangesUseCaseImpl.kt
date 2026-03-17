@@ -17,13 +17,13 @@ import cz.adamec.timotej.snag.clients.fe.app.impl.internal.sync.CLIENT_SYNC_ENTI
 import cz.adamec.timotej.snag.clients.fe.ports.ClientSyncResult
 import cz.adamec.timotej.snag.clients.fe.ports.ClientsApi
 import cz.adamec.timotej.snag.clients.fe.ports.ClientsDb
-import cz.adamec.timotej.snag.lib.core.common.Timestamp
-import cz.adamec.timotej.snag.lib.core.common.TimestampProvider
-import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
-import cz.adamec.timotej.snag.lib.sync.fe.app.api.GetLastPullSyncedAtTimestampUseCase
-import cz.adamec.timotej.snag.lib.sync.fe.app.api.PullSyncTracker
-import cz.adamec.timotej.snag.lib.sync.fe.app.api.SetLastPullSyncedAtTimestampUseCase
-import cz.adamec.timotej.snag.lib.sync.fe.app.api.SyncCoordinator
+import cz.adamec.timotej.snag.core.foundation.common.Timestamp
+import cz.adamec.timotej.snag.core.foundation.common.TimestampProvider
+import cz.adamec.timotej.snag.core.network.fe.OnlineDataResult
+import cz.adamec.timotej.snag.sync.fe.app.api.GetLastPullSyncedAtTimestampUseCase
+import cz.adamec.timotej.snag.sync.fe.app.api.PullSyncTracker
+import cz.adamec.timotej.snag.sync.fe.app.api.SetLastPullSyncedAtTimestampUseCase
+import cz.adamec.timotej.snag.sync.fe.app.api.SyncCoordinator
 
 internal class PullClientChangesUseCaseImpl(
     private val clientsApi: ClientsApi,

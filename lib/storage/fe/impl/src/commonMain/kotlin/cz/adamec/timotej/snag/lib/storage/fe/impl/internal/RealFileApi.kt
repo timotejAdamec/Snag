@@ -12,13 +12,13 @@
 
 package cz.adamec.timotej.snag.lib.storage.fe.impl.internal
 
-import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
+import cz.adamec.timotej.snag.core.network.fe.OnlineDataResult
+import cz.adamec.timotej.snag.core.network.fe.safeApiCall
 import cz.adamec.timotej.snag.lib.storage.contract.FileUploadFormFields
 import cz.adamec.timotej.snag.lib.storage.contract.FileUploadResponseDto
 import cz.adamec.timotej.snag.lib.storage.fe.api.FileApi
 import cz.adamec.timotej.snag.lib.storage.fe.api.FileApiConfig
 import cz.adamec.timotej.snag.network.fe.SnagNetworkHttpClient
-import cz.adamec.timotej.snag.network.fe.safeApiCall
 import io.ktor.client.call.body
 import io.ktor.client.request.forms.MultiPartFormDataContent
 import io.ktor.client.request.forms.formData

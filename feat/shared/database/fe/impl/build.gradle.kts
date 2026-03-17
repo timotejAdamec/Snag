@@ -17,7 +17,7 @@ plugins {
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            implementation(project(":lib:core:fe"))
+            implementation(project(":core:foundation:fe"))
             implementation(project(":lib:database:fe"))
         }
     }

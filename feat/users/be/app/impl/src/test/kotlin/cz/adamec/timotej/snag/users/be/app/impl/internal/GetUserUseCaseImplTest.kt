@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.users.be.app.impl.internal
 
-import cz.adamec.timotej.snag.lib.core.common.Timestamp
+import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
 import cz.adamec.timotej.snag.users.be.app.api.GetUserUseCase
 import cz.adamec.timotej.snag.users.be.model.BackendUser

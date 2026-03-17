@@ -1,4 +1,4 @@
-import cz.adamec.timotej.snag.lib.core.common.Timestamp;
+import cz.adamec.timotej.snag.core.foundation.common.Timestamp;
 
 CREATE TABLE IF NOT EXISTS StructureEntity (
     id TEXT NOT NULL PRIMARY KEY,

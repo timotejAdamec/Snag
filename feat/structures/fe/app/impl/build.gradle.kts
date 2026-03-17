@@ -18,15 +18,14 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(project(":feat:findings:fe:app:api"))
-            implementation(project(":lib:sync:fe:app:api"))
-            implementation(project(":lib:sync:fe:model"))
-            implementation(projects.lib.network.fe.app.api)
+            implementation(project(":feat:sync:fe:app:api"))
+            implementation(project(":feat:sync:fe:model"))
         }
         commonTest {
             dependencies {
                 implementation(project(":feat:structures:fe:driven:test"))
                 implementation(project(":feat:findings:fe:driven:test"))
-                implementation(project(":lib:sync:fe:driven:test"))
+                implementation(project(":feat:sync:fe:driven:test"))
             }
         }
     }

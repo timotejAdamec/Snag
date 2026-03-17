@@ -13,7 +13,7 @@
 package cz.adamec.timotej.snag.lib.design.fe.initializers
 
 import cz.adamec.timotej.snag.configuration.common.SNAG_NAMESPACE
-import cz.adamec.timotej.snag.lib.core.fe.Initializer
+import cz.adamec.timotej.snag.core.foundation.fe.Initializer
 import io.github.vinceglb.filekit.FileKit
 
 internal class JvmDesignInitializer : Initializer {

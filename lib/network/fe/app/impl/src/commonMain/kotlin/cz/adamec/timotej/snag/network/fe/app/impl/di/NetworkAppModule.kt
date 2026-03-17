@@ -12,9 +12,7 @@
 
 package cz.adamec.timotej.snag.network.fe.app.impl.di
 
-import cz.adamec.timotej.snag.network.fe.InternetConnectionStatusListener
 import cz.adamec.timotej.snag.network.fe.SnagNetworkHttpClient
-import cz.adamec.timotej.snag.network.fe.app.impl.internal.InternetConnectionStatusListenerImpl
 import cz.adamec.timotej.snag.network.fe.app.impl.internal.SnagNetworkHttpClientImpl
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
@@ -23,5 +21,4 @@ import org.koin.dsl.module
 val networkAppModule =
     module {
         singleOf(::SnagNetworkHttpClientImpl) bind SnagNetworkHttpClient::class
-        singleOf(::InternetConnectionStatusListenerImpl) bind InternetConnectionStatusListener::class
     }

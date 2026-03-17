@@ -13,8 +13,8 @@
 package cz.adamec.timotej.snag.clients.fe.ports
 
 import cz.adamec.timotej.snag.clients.fe.model.FrontendClient
-import cz.adamec.timotej.snag.lib.core.common.Timestamp
-import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
+import cz.adamec.timotej.snag.core.foundation.common.Timestamp
+import cz.adamec.timotej.snag.core.network.fe.OnlineDataResult
 import kotlin.uuid.Uuid
 
 sealed interface ClientSyncResult {

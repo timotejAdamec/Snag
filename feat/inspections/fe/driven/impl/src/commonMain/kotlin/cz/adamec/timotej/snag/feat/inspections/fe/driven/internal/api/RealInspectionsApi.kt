@@ -12,16 +12,16 @@
 
 package cz.adamec.timotej.snag.feat.inspections.fe.driven.internal.api
 
+import cz.adamec.timotej.snag.core.foundation.common.Timestamp
+import cz.adamec.timotej.snag.core.network.fe.OnlineDataResult
+import cz.adamec.timotej.snag.core.network.fe.safeApiCall
 import cz.adamec.timotej.snag.feat.inspections.be.driving.contract.DeleteInspectionApiDto
 import cz.adamec.timotej.snag.feat.inspections.be.driving.contract.InspectionApiDto
 import cz.adamec.timotej.snag.feat.inspections.fe.driven.internal.LH
 import cz.adamec.timotej.snag.feat.inspections.fe.model.FrontendInspection
 import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionSyncResult
 import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionsApi
-import cz.adamec.timotej.snag.lib.core.common.Timestamp
-import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
 import cz.adamec.timotej.snag.network.fe.SnagNetworkHttpClient
-import cz.adamec.timotej.snag.network.fe.safeApiCall
 import io.ktor.client.call.body
 import io.ktor.client.request.setBody
 import io.ktor.http.HttpStatusCode

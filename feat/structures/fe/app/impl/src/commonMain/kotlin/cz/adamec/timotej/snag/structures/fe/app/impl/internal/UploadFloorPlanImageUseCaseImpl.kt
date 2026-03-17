@@ -12,9 +12,9 @@
 
 package cz.adamec.timotej.snag.structures.fe.app.impl.internal
 
-import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
-import cz.adamec.timotej.snag.lib.core.fe.onFailure
-import cz.adamec.timotej.snag.lib.core.fe.onSuccess
+import cz.adamec.timotej.snag.core.network.fe.OnlineDataResult
+import cz.adamec.timotej.snag.core.network.fe.onFailure
+import cz.adamec.timotej.snag.core.network.fe.onSuccess
 import cz.adamec.timotej.snag.structures.fe.app.api.UploadFloorPlanImageUseCase
 import cz.adamec.timotej.snag.structures.fe.ports.StructuresFileStorage
 import kotlin.uuid.Uuid

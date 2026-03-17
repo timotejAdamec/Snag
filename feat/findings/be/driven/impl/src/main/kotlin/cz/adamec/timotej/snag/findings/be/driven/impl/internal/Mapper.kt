@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.findings.be.driven.impl.internal
 
+import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.feat.findings.be.model.BackendFinding
 import cz.adamec.timotej.snag.feat.findings.business.Finding
 import cz.adamec.timotej.snag.feat.findings.business.FindingType
@@ -20,7 +21,6 @@ import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
 import cz.adamec.timotej.snag.feat.findings.business.Term
 import cz.adamec.timotej.snag.feat.shared.database.be.ClassicFindingEntity
 import cz.adamec.timotej.snag.feat.shared.database.be.FindingEntity
-import cz.adamec.timotej.snag.lib.core.common.Timestamp
 
 internal fun FindingType.toEntityKey(): FindingTypeEntityKey =
     when (this) {

@@ -12,9 +12,9 @@
 
 package cz.adamec.timotej.snag.feat.inspections.fe.driven.test
 
+import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.feat.inspections.fe.model.FrontendInspection
 import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionsDb
-import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.database.fe.test.FakeDbOps
 import kotlinx.coroutines.flow.Flow
 import kotlin.uuid.Uuid

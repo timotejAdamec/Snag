@@ -15,8 +15,8 @@ package cz.adamec.timotej.snag.vm
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cz.adamec.timotej.snag.lib.design.fe.state.DEFAULT_NO_STATE_SUBSCRIBER_TIMEOUT
-import cz.adamec.timotej.snag.lib.sync.fe.app.api.GetSyncStatusUseCase
-import cz.adamec.timotej.snag.lib.sync.fe.model.SyncStatus
+import cz.adamec.timotej.snag.sync.fe.app.api.GetSyncStatusUseCase
+import cz.adamec.timotej.snag.sync.fe.model.SyncStatus
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow

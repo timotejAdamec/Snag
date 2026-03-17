@@ -14,8 +14,8 @@ package cz.adamec.timotej.snag.clients.fe.driven.internal.db
 
 import cz.adamec.timotej.snag.clients.business.Client
 import cz.adamec.timotej.snag.clients.fe.model.FrontendClient
+import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.ClientEntity
-import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import kotlin.uuid.Uuid
 
 internal fun FrontendClient.toEntity() =

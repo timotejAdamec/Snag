@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.network.fe.driven.impl.internal
 
-import cz.adamec.timotej.snag.network.fe.NetworkException
+import cz.adamec.timotej.snag.core.network.fe.NetworkException
 import cz.adamec.timotej.snag.network.fe.ports.HttpClientConfiguration
 import cz.adamec.timotej.snag.network.fe.ports.NetworkErrorClassifier
 import io.ktor.client.HttpClientConfig

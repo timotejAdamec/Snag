@@ -18,7 +18,7 @@ Each feature contains is structured by platforms and by layers:
 - `business` for code that is shared by all platforms including the server.
   - This code is in this sense platform-agnostic.
   - This module is the core from clean architecture perspective.
-  - This module has no dependencies on other modules except the `:lib:core`.
+  - This module has no dependencies on other modules except the `:core:foundation`.
 - `be` for backend code.
 - `fe` for frontend code.
 
@@ -57,20 +57,27 @@ Dependencies between features and libs is handled by accessing:
 - use cases (`app/api`) for business logic.
 - `driving/api` for navigation or UI components.
 
+## Core modules
+Core modules are located in the `core` directory. These contain **infrastructure-free,
+feature-agnostic** domain types, language extensions, and utilities shared across all modules. They
+have no dependencies on external technologies.
+
+- `foundation/` — App-wide primitives: `Timestamp`, `TimestampProvider`, `UuidProvider`,
+  `ApplicationScope`, `Initializer`, and DI modules. Submodules: `common/`, `fe/`, `be/`.
+- `network/fe` — Network-dependent data lifecycle domain types used by frontend features:
+  `OnlineDataResult`, `OfflineFirstDataResult`, `OfflineFirstUpdateDataResult`, `SafeApiCall`,
+  `NetworkException`, `ConnectionStatusProvider`. No Ktor or HTTP client dependency — purely domain.
+
 ## Library modules
-Library modules are located in the `lib` directory. These contain **feature-agnostic** code –
-functionality not tied to a specific domain area (feature) that can theoretically be reused in other
-projects.
+Library modules are located in the `lib` directory. These contain **feature-agnostic infrastructure
+integrations** — external framework wrappers and connectors not tied to a specific domain area. All
+library modules are purely infrastructural (connector/adapter role). Their code lives implicitly in
+the adapters layer; for such modules architecture layering can be omitted and the code is understood
+to be driven/driving.
 
-Some library modules are purely infrastructural (connector/adapter role) – e.g., network, database,
-design system, routing. These integrate with technologies and their code lives implicitly in the
-adapters layer. For such modules architecture layering can be omitted and the code is understood to
-be driven/driving.
-
-Other library modules contain cross-cutting domain logic shared by multiple features – e.g., sync.
-These are structured into submodules just as features (app/api, app/impl, ports, driven, etc.).
-
-The only exception are the `core` modules, which can be used in any layer.
+Current library modules: network (Ktor HTTP client), database (SQLDelight), storage (GCS / file
+upload), design (Compose UI design system), routing (navigation), configuration (build/server
+config).
 
 ## Modules configurations
 The project uses custom plugins located in the top-level `build-logic` module.

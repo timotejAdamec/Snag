@@ -12,10 +12,10 @@
 
 package cz.adamec.timotej.snag.feat.inspections.fe.driven.internal.db
 
+import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.feat.inspections.business.Inspection
 import cz.adamec.timotej.snag.feat.inspections.fe.model.FrontendInspection
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.InspectionEntity
-import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import kotlin.uuid.Uuid
 
 internal fun FrontendInspection.toEntity() =

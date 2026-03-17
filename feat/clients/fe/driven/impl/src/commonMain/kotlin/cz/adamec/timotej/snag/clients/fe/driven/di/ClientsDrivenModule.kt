@@ -17,7 +17,7 @@ import cz.adamec.timotej.snag.clients.fe.driven.internal.db.ClientsSqlDelightDbO
 import cz.adamec.timotej.snag.clients.fe.driven.internal.db.RealClientsDb
 import cz.adamec.timotej.snag.clients.fe.ports.ClientsApi
 import cz.adamec.timotej.snag.clients.fe.ports.ClientsDb
-import cz.adamec.timotej.snag.lib.core.common.di.getIoDispatcher
+import cz.adamec.timotej.snag.core.foundation.common.di.getIoDispatcher
 import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.bind
 import org.koin.dsl.module

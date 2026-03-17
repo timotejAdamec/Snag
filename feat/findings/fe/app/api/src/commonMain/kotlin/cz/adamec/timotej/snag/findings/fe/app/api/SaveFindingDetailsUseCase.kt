@@ -12,8 +12,8 @@
 
 package cz.adamec.timotej.snag.findings.fe.app.api
 
+import cz.adamec.timotej.snag.core.network.fe.OfflineFirstUpdateDataResult
 import cz.adamec.timotej.snag.findings.fe.app.api.model.SaveFindingDetailsRequest
-import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstUpdateDataResult
 
 interface SaveFindingDetailsUseCase {
     suspend operator fun invoke(request: SaveFindingDetailsRequest): OfflineFirstUpdateDataResult

@@ -14,7 +14,7 @@ package cz.adamec.timotej.snag.clients.fe.driven.test
 
 import cz.adamec.timotej.snag.clients.fe.model.FrontendClient
 import cz.adamec.timotej.snag.clients.fe.ports.ClientsDb
-import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
+import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.database.fe.test.FakeDbOps
 import kotlinx.coroutines.flow.Flow
 import kotlin.uuid.Uuid

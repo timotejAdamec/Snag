@@ -12,8 +12,8 @@
 
 package cz.adamec.timotej.snag.users.fe.driven.internal.db
 
+import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.UserEntity
-import cz.adamec.timotej.snag.lib.core.common.Timestamp
 import cz.adamec.timotej.snag.users.business.User
 import cz.adamec.timotej.snag.users.business.UserRole
 import cz.adamec.timotej.snag.users.fe.model.FrontendUser

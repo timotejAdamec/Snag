@@ -12,8 +12,8 @@
 
 package cz.adamec.timotej.snag.feat.reports.fe.ports
 
+import cz.adamec.timotej.snag.core.network.fe.OnlineDataResult
 import cz.adamec.timotej.snag.feat.reports.fe.model.FrontendReport
-import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
 import kotlin.uuid.Uuid
 
 interface ReportsApi {

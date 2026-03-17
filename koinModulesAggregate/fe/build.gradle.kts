@@ -19,7 +19,7 @@ kotlin {
         commonMain.dependencies {
             // Core infrastructure
             implementation(projects.lib.design.fe)
-            implementation(projects.lib.core.fe)
+            implementation(projects.core.foundation.fe)
             implementation(projects.lib.network.fe.app.impl)
             implementation(projects.lib.network.fe.driven.impl)
             implementation(projects.lib.storage.fe.impl)
@@ -28,8 +28,8 @@ kotlin {
             implementation(projects.feat.shared.rules.business.impl)
 
             // Sync layer
-            implementation(projects.lib.sync.fe.driven.impl)
-            implementation(projects.lib.sync.fe.app.impl)
+            implementation(projects.feat.sync.fe.driven.impl)
+            implementation(projects.feat.sync.fe.app.impl)
 
             // Projects feature
             implementation(projects.feat.projects.fe.app.impl)

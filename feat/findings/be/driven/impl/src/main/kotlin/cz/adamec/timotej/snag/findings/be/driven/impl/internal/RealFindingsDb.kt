@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.findings.be.driven.impl.internal
 
+import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.feat.findings.be.model.BackendFinding
 import cz.adamec.timotej.snag.feat.findings.business.FindingType
 import cz.adamec.timotej.snag.feat.shared.database.be.ClassicFindingEntity
@@ -20,11 +21,10 @@ import cz.adamec.timotej.snag.feat.shared.database.be.FindingEntity
 import cz.adamec.timotej.snag.feat.shared.database.be.FindingsTable
 import cz.adamec.timotej.snag.feat.shared.database.be.StructureEntity
 import cz.adamec.timotej.snag.findings.be.ports.FindingsDb
-import cz.adamec.timotej.snag.lib.core.common.Timestamp
-import cz.adamec.timotej.snag.lib.sync.be.DeleteConflictResult
-import cz.adamec.timotej.snag.lib.sync.be.ResolveConflictForDeleteUseCase
-import cz.adamec.timotej.snag.lib.sync.be.ResolveConflictForSaveUseCase
-import cz.adamec.timotej.snag.lib.sync.be.SaveConflictResult
+import cz.adamec.timotej.snag.sync.be.DeleteConflictResult
+import cz.adamec.timotej.snag.sync.be.ResolveConflictForDeleteUseCase
+import cz.adamec.timotej.snag.sync.be.ResolveConflictForSaveUseCase
+import cz.adamec.timotej.snag.sync.be.SaveConflictResult
 import org.jetbrains.exposed.v1.core.and
 import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.core.greater

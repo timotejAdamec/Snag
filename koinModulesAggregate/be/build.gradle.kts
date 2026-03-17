@@ -16,8 +16,8 @@ plugins {
 
 dependencies {
     // Core infrastructure
-    implementation(projects.lib.core.be)
-    implementation(projects.lib.sync.be.impl)
+    implementation(projects.core.foundation.be)
+    implementation(projects.feat.sync.be.impl)
     implementation(projects.lib.configuration.be.impl)
     implementation(projects.lib.storage.be.impl)
     implementation(projects.feat.shared.storage.be)

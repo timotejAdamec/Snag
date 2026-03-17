@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.users.fe.app.api
 
-import cz.adamec.timotej.snag.lib.core.fe.OfflineFirstDataResult
+import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.users.fe.model.FrontendUser
 import kotlinx.coroutines.flow.Flow
 

@@ -12,8 +12,8 @@
 
 package cz.adamec.timotej.snag.projects.fe.ports
 
-import cz.adamec.timotej.snag.lib.core.common.Timestamp
-import cz.adamec.timotej.snag.lib.core.fe.OnlineDataResult
+import cz.adamec.timotej.snag.core.foundation.common.Timestamp
+import cz.adamec.timotej.snag.core.network.fe.OnlineDataResult
 import cz.adamec.timotej.snag.projects.fe.model.FrontendProject
 import kotlin.uuid.Uuid
 

@@ -13,8 +13,8 @@
 package cz.adamec.timotej.snag.clients.be.model
 
 import cz.adamec.timotej.snag.clients.business.Client
-import cz.adamec.timotej.snag.lib.core.common.Timestamp
-import cz.adamec.timotej.snag.lib.sync.be.model.Syncable
+import cz.adamec.timotej.snag.core.foundation.common.Timestamp
+import cz.adamec.timotej.snag.sync.be.model.Syncable
 
 data class BackendClient(
     val client: Client,
