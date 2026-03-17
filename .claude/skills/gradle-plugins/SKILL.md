@@ -7,64 +7,6 @@ allowed-tools: Read, Glob, Grep
 
 # Gradle Convention Plugins
 
-Read [docs/gradle_plugins.md](../../../docs/gradle_plugins.md) for full plugin details, dependencies each plugin adds, and the complete module-to-plugin mapping.
+Read [docs/gradle_plugins.md](../../../docs/gradle_plugins.md) for the plugin hierarchy, module-to-plugin mapping, and auto-wiring principles.
 
-## Module path → plugin
-
-When creating a new module at `feat/<feature>/<path>`, use this mapping:
-
-```
-feat/<feature>/
-├── business/                → snagMultiplatformModule
-├── fe/
-    ├── model/               → snagFrontendMultiplatformModule
-│   ├── ports/               → snagFrontendMultiplatformModule
-│   ├── app/
-│   │   ├── api/             → snagFrontendMultiplatformModule
-│   │   ├── impl/            → snagFrontendMultiplatformModule
-│   │   └── test/            → snagFrontendMultiplatformModule
-│   ├── driving/
-│   │   ├── api/             → snagDrivingFrontendMultiplatformModule
-│   │   └── impl/            → snagDrivingFrontendMultiplatformModule
-│   └── driven/
-│       ├── impl/            → snagDrivenFrontendMultiplatformModule
-│       └── test/            → snagDrivenFrontendMultiplatformModule
-└── be/
-    ├── model/               → snagBackendModule
-    ├── ports/               → snagBackendModule
-    ├── app/
-    │   ├── api/             → snagBackendModule
-    │   ├── impl/            → snagBackendModule
-    │   └── test/            → snagBackendModule
-    ├── driving/
-    │   ├── api/             → snagBackendModule
-    │   ├── contract/        → snagContractDrivingBackendMultiplatformModule
-    │   └── impl/            → snagImplDrivingBackendModule
-    └── driven/
-        ├── impl/            → snagDrivenBackendModule
-        └── test/            → snagBackendModule
-```
-
-Applied in `build.gradle.kts` as: `alias(libs.plugins.<alias>)`
-
-**Auto-wiring:** Convention plugins handle most inter-module dependencies automatically. When creating a new module, start with only the plugin — add explicit dependencies only if the build requires them.
-
-## Plugin inheritance chain
-
-```
-snagMultiplatformModule
-├── snagFrontendMultiplatformModule
-│   ├── snagDrivingFrontendMultiplatformModule    (+ Compose)
-│   └── snagNetworkFrontendMultiplatformModule    (+ Ktor client)
-│       └── snagDrivenFrontendMultiplatformModule (+ Serialization, DB)
-└── snagContractDrivingBackendMultiplatformModule (+ Serialization)
-
-snagBackendModule
-├── snagDrivenBackendModule                        (+ Exposed, DB)
-└── snagImplDrivingBackendModule                  (+ Ktor server)
-```
-
-Applied in `build.gradle.kts` as: `alias(libs.plugins.<alias>)`
-
-Plugin sources: `build-logic/src/main/kotlin/cz/adamec/timotej/snag/buildsrc/plugins/`
-Configuration sources: `build-logic/src/main/kotlin/cz/adamec/timotej/snag/buildsrc/configuration/`
+When the doc is not sufficient, read plugin sources in `build-logic/` directly.
