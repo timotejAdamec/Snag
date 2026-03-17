@@ -55,7 +55,7 @@ internal class FindingPullSyncHandler(
                 findingsDb.deleteFinding(change.id)
             }
             is FindingSyncResult.Updated -> {
-                LH.logger.d { "Processing updated finding ${change.finding.finding.id}." }
+                LH.logger.d { "Processing updated finding ${change.finding.id}." }
                 findingsDb.saveFinding(change.finding)
             }
         }

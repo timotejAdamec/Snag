@@ -55,7 +55,7 @@ internal class InspectionPullSyncHandler(
                 inspectionsDb.deleteInspection(change.id)
             }
             is InspectionSyncResult.Updated -> {
-                LH.logger.d { "Processing updated inspection ${change.inspection.inspection.id}." }
+                LH.logger.d { "Processing updated inspection ${change.inspection.id}." }
                 inspectionsDb.saveInspection(change.inspection)
             }
         }

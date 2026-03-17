@@ -51,7 +51,7 @@ internal class ClientPullSyncHandler(
                 clientsDb.deleteClient(change.id)
             }
             is ClientSyncResult.Updated -> {
-                LH.logger.d { "Processing updated client ${change.client.client.id}." }
+                LH.logger.d { "Processing updated client ${change.client.id}." }
                 clientsDb.saveClient(change.client)
             }
         }

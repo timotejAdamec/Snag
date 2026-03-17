@@ -47,7 +47,7 @@ internal class UserPullSyncHandler(
     override suspend fun applyChange(change: UserSyncResult) {
         when (change) {
             is UserSyncResult.Updated -> {
-                LH.logger.d { "Processing updated user ${change.user.user.id}." }
+                LH.logger.d { "Processing updated user ${change.user.id}." }
                 usersDb.saveUser(change.user)
             }
         }

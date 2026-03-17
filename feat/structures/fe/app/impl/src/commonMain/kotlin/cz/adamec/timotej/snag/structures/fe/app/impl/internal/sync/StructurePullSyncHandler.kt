@@ -58,7 +58,7 @@ internal class StructurePullSyncHandler(
                 structuresDb.deleteStructure(change.id)
             }
             is StructureSyncResult.Updated -> {
-                LH.logger.d { "Processing updated structure ${change.structure.structure.id}." }
+                LH.logger.d { "Processing updated structure ${change.structure.id}." }
                 structuresDb.saveStructure(change.structure)
             }
         }
