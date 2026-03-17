@@ -15,11 +15,13 @@ package cz.adamec.timotej.snag.sync.fe.app.impl
 import app.cash.turbine.test
 import cz.adamec.timotej.snag.core.foundation.common.ApplicationScope
 import cz.adamec.timotej.snag.core.network.fe.ConnectionStatusProvider
-import cz.adamec.timotej.snag.sync.fe.app.api.handler.SyncOperationHandler
-import cz.adamec.timotej.snag.sync.fe.app.api.handler.SyncOperationResult
+import cz.adamec.timotej.snag.sync.fe.app.api.handler.PullSyncOperationHandler
+import cz.adamec.timotej.snag.sync.fe.app.api.handler.PullSyncOperationResult
+import cz.adamec.timotej.snag.sync.fe.app.api.handler.PushSyncOperationHandler
+import cz.adamec.timotej.snag.sync.fe.app.api.handler.PushSyncOperationResult
 import cz.adamec.timotej.snag.sync.fe.app.impl.internal.GetSyncStatusUseCaseImpl
-import cz.adamec.timotej.snag.sync.fe.app.impl.internal.PullSyncTrackerImpl
-import cz.adamec.timotej.snag.sync.fe.app.impl.internal.SyncEngine
+import cz.adamec.timotej.snag.sync.fe.app.impl.internal.PullSyncEngine
+import cz.adamec.timotej.snag.sync.fe.app.impl.internal.PushSyncEngine
 import cz.adamec.timotej.snag.sync.fe.driven.test.FakeSyncQueue
 import cz.adamec.timotej.snag.sync.fe.model.SyncOperationType
 import cz.adamec.timotej.snag.sync.fe.model.SyncStatus
@@ -41,27 +43,33 @@ class GetSyncStatusUseCaseImplTest : FrontendKoinInitializedTest() {
     private val fakeSyncQueue: FakeSyncQueue by inject()
     private val applicationScope: ApplicationScope by inject()
     private val fakeConnectionStatusProvider = FakeConnectionStatusProvider()
-    private val pullSyncTracker = PullSyncTrackerImpl()
 
-    private fun createEngine(handlers: List<SyncOperationHandler> = emptyList()) =
-        SyncEngine(
+    private fun createPushEngine(handlers: List<PushSyncOperationHandler> = emptyList()) =
+        PushSyncEngine(
             syncQueue = fakeSyncQueue,
             handlers = handlers,
             applicationScope = applicationScope,
         )
 
-    private fun createUseCase(engine: SyncEngine) =
-        GetSyncStatusUseCaseImpl(
-            syncEngine = engine,
-            connectionStatusProvider = fakeConnectionStatusProvider,
-            pullSyncTracker = pullSyncTracker,
+    private fun createPullEngine(handlers: List<PullSyncOperationHandler> = emptyList()) =
+        PullSyncEngine(
+            handlers = handlers,
+            syncCoordinator = createPushEngine(),
         )
+
+    private fun createUseCase(
+        pushEngine: PushSyncEngine = createPushEngine(),
+        pullEngine: PullSyncEngine = createPullEngine(),
+    ) = GetSyncStatusUseCaseImpl(
+        pushSyncEngine = pushEngine,
+        connectionStatusProvider = fakeConnectionStatusProvider,
+        pullSyncEngine = pullEngine,
+    )
 
     @Test
     fun `connected and Idle yields Synced`() =
         runTest(testDispatcher) {
-            val engine = createEngine()
-            val useCase = createUseCase(engine)
+            val useCase = createUseCase()
             fakeConnectionStatusProvider.emit(true)
 
             useCase().test {
@@ -70,34 +78,34 @@ class GetSyncStatusUseCaseImplTest : FrontendKoinInitializedTest() {
         }
 
     @Test
-    fun `connected and Syncing yields Syncing`() =
+    fun `connected and Pushing yields Syncing`() =
         runTest(testDispatcher) {
-            val deferred = CompletableDeferred<SyncOperationResult>()
-            val handler = SuspendingHandler("project", deferred)
-            val engine = createEngine(listOf(handler))
-            val useCase = createUseCase(engine)
+            val deferred = CompletableDeferred<PushSyncOperationResult>()
+            val handler = SuspendingPushHandler("project", deferred)
+            val pushEngine = createPushEngine(listOf(handler))
+            val useCase = createUseCase(pushEngine = pushEngine)
             fakeConnectionStatusProvider.emit(true)
 
-            engine.invoke("project", Uuid.random(), SyncOperationType.UPSERT)
+            pushEngine.invoke("project", Uuid.random(), SyncOperationType.UPSERT)
             advanceUntilIdle()
 
             useCase().test {
                 assertEquals(SyncStatus.Syncing, awaitItem())
             }
 
-            deferred.complete(SyncOperationResult.Success)
+            deferred.complete(PushSyncOperationResult.Success)
             advanceUntilIdle()
         }
 
     @Test
-    fun `connected and Failed yields Error`() =
+    fun `connected and push Failed yields Error`() =
         runTest(testDispatcher) {
-            val handler = FixedResultHandler("project", SyncOperationResult.Failure)
-            val engine = createEngine(listOf(handler))
-            val useCase = createUseCase(engine)
+            val handler = FixedResultPushHandler("project", PushSyncOperationResult.Failure)
+            val pushEngine = createPushEngine(listOf(handler))
+            val useCase = createUseCase(pushEngine = pushEngine)
             fakeConnectionStatusProvider.emit(true)
 
-            engine.invoke("project", Uuid.random(), SyncOperationType.UPSERT)
+            pushEngine.invoke("project", Uuid.random(), SyncOperationType.UPSERT)
             advanceUntilIdle()
 
             useCase().test {
@@ -108,8 +116,7 @@ class GetSyncStatusUseCaseImplTest : FrontendKoinInitializedTest() {
     @Test
     fun `disconnected and Idle yields Offline`() =
         runTest(testDispatcher) {
-            val engine = createEngine()
-            val useCase = createUseCase(engine)
+            val useCase = createUseCase()
             fakeConnectionStatusProvider.emit(false)
 
             useCase().test {
@@ -118,34 +125,34 @@ class GetSyncStatusUseCaseImplTest : FrontendKoinInitializedTest() {
         }
 
     @Test
-    fun `disconnected and Syncing yields Offline`() =
+    fun `disconnected and Pushing yields Offline`() =
         runTest(testDispatcher) {
-            val deferred = CompletableDeferred<SyncOperationResult>()
-            val handler = SuspendingHandler("project", deferred)
-            val engine = createEngine(listOf(handler))
-            val useCase = createUseCase(engine)
+            val deferred = CompletableDeferred<PushSyncOperationResult>()
+            val handler = SuspendingPushHandler("project", deferred)
+            val pushEngine = createPushEngine(listOf(handler))
+            val useCase = createUseCase(pushEngine = pushEngine)
             fakeConnectionStatusProvider.emit(false)
 
-            engine.invoke("project", Uuid.random(), SyncOperationType.UPSERT)
+            pushEngine.invoke("project", Uuid.random(), SyncOperationType.UPSERT)
             advanceUntilIdle()
 
             useCase().test {
                 assertEquals(SyncStatus.Offline, awaitItem())
             }
 
-            deferred.complete(SyncOperationResult.Success)
+            deferred.complete(PushSyncOperationResult.Success)
             advanceUntilIdle()
         }
 
     @Test
     fun `disconnected and Failed yields Offline`() =
         runTest(testDispatcher) {
-            val handler = FixedResultHandler("project", SyncOperationResult.Failure)
-            val engine = createEngine(listOf(handler))
-            val useCase = createUseCase(engine)
+            val handler = FixedResultPushHandler("project", PushSyncOperationResult.Failure)
+            val pushEngine = createPushEngine(listOf(handler))
+            val useCase = createUseCase(pushEngine = pushEngine)
             fakeConnectionStatusProvider.emit(false)
 
-            engine.invoke("project", Uuid.random(), SyncOperationType.UPSERT)
+            pushEngine.invoke("project", Uuid.random(), SyncOperationType.UPSERT)
             advanceUntilIdle()
 
             useCase().test {
@@ -156,14 +163,20 @@ class GetSyncStatusUseCaseImplTest : FrontendKoinInitializedTest() {
     @Test
     fun `connected and pulling yields Syncing`() =
         runTest(testDispatcher) {
-            val engine = createEngine()
-            val useCase = createUseCase(engine)
+            val deferred = CompletableDeferred<PullSyncOperationResult>()
+            val handler = SuspendingPullHandler("project", deferred)
+            val pushEngine = createPushEngine()
+            val pullEngine =
+                PullSyncEngine(
+                    handlers = listOf(handler),
+                    syncCoordinator = pushEngine,
+                )
+            val useCase = createUseCase(pushEngine = pushEngine, pullEngine = pullEngine)
             fakeConnectionStatusProvider.emit(true)
 
-            val deferred = CompletableDeferred<Unit>()
             val job =
                 launch {
-                    pullSyncTracker.track { deferred.await() }
+                    pullEngine.invoke("project")
                 }
             advanceUntilIdle()
 
@@ -171,7 +184,7 @@ class GetSyncStatusUseCaseImplTest : FrontendKoinInitializedTest() {
                 assertEquals(SyncStatus.Syncing, awaitItem())
             }
 
-            deferred.complete(Unit)
+            deferred.complete(PullSyncOperationResult.Success)
             advanceUntilIdle()
             job.join()
         }
@@ -179,14 +192,20 @@ class GetSyncStatusUseCaseImplTest : FrontendKoinInitializedTest() {
     @Test
     fun `disconnected and pulling yields Offline`() =
         runTest(testDispatcher) {
-            val engine = createEngine()
-            val useCase = createUseCase(engine)
+            val deferred = CompletableDeferred<PullSyncOperationResult>()
+            val handler = SuspendingPullHandler("project", deferred)
+            val pushEngine = createPushEngine()
+            val pullEngine =
+                PullSyncEngine(
+                    handlers = listOf(handler),
+                    syncCoordinator = pushEngine,
+                )
+            val useCase = createUseCase(pushEngine = pushEngine, pullEngine = pullEngine)
             fakeConnectionStatusProvider.emit(false)
 
-            val deferred = CompletableDeferred<Unit>()
             val job =
                 launch {
-                    pullSyncTracker.track { deferred.await() }
+                    pullEngine.invoke("project")
                 }
             advanceUntilIdle()
 
@@ -194,9 +213,29 @@ class GetSyncStatusUseCaseImplTest : FrontendKoinInitializedTest() {
                 assertEquals(SyncStatus.Offline, awaitItem())
             }
 
-            deferred.complete(Unit)
+            deferred.complete(PullSyncOperationResult.Success)
             advanceUntilIdle()
             job.join()
+        }
+
+    @Test
+    fun `connected and pull Failed yields Error`() =
+        runTest(testDispatcher) {
+            val handler = FixedResultPullHandler("project", PullSyncOperationResult.Failure)
+            val pushEngine = createPushEngine()
+            val pullEngine =
+                PullSyncEngine(
+                    handlers = listOf(handler),
+                    syncCoordinator = pushEngine,
+                )
+            val useCase = createUseCase(pushEngine = pushEngine, pullEngine = pullEngine)
+            fakeConnectionStatusProvider.emit(true)
+
+            pullEngine.invoke("project")
+
+            useCase().test {
+                assertEquals(SyncStatus.Error, awaitItem())
+            }
         }
 
     private class FakeConnectionStatusProvider : ConnectionStatusProvider {
@@ -209,23 +248,37 @@ class GetSyncStatusUseCaseImplTest : FrontendKoinInitializedTest() {
         override fun isConnectedFlow(): Flow<Boolean> = connectedFlow
     }
 
-    private class FixedResultHandler(
+    private class FixedResultPushHandler(
         override val entityTypeId: String,
-        private val result: SyncOperationResult,
-    ) : SyncOperationHandler {
+        private val result: PushSyncOperationResult,
+    ) : PushSyncOperationHandler {
         override suspend fun execute(
             entityId: Uuid,
             operationType: SyncOperationType,
-        ): SyncOperationResult = result
+        ): PushSyncOperationResult = result
     }
 
-    private class SuspendingHandler(
+    private class SuspendingPushHandler(
         override val entityTypeId: String,
-        private val deferred: CompletableDeferred<SyncOperationResult>,
-    ) : SyncOperationHandler {
+        private val deferred: CompletableDeferred<PushSyncOperationResult>,
+    ) : PushSyncOperationHandler {
         override suspend fun execute(
             entityId: Uuid,
             operationType: SyncOperationType,
-        ): SyncOperationResult = deferred.await()
+        ): PushSyncOperationResult = deferred.await()
+    }
+
+    private class FixedResultPullHandler(
+        override val entityTypeId: String,
+        private val result: PullSyncOperationResult,
+    ) : PullSyncOperationHandler {
+        override suspend fun execute(scopeId: String): PullSyncOperationResult = result
+    }
+
+    private class SuspendingPullHandler(
+        override val entityTypeId: String,
+        private val deferred: CompletableDeferred<PullSyncOperationResult>,
+    ) : PullSyncOperationHandler {
+        override suspend fun execute(scopeId: String): PullSyncOperationResult = deferred.await()
     }
 }

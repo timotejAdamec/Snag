@@ -10,12 +10,10 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.sync.fe.app.api
+package cz.adamec.timotej.snag.sync.fe.app.api.handler
 
-import kotlinx.coroutines.flow.StateFlow
+interface PullSyncOperationHandler {
+    val entityTypeId: String
 
-interface PullSyncTracker {
-    val isPulling: StateFlow<Boolean>
-
-    suspend fun <T> track(block: suspend () -> T): T
+    suspend fun execute(scopeId: String = ""): PullSyncOperationResult
 }

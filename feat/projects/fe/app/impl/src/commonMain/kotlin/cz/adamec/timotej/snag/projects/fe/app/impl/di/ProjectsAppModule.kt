@@ -27,8 +27,10 @@ import cz.adamec.timotej.snag.projects.fe.app.impl.internal.IsProjectClosedUseCa
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.PullProjectChangesUseCaseImpl
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.SaveProjectUseCaseImpl
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.SetProjectClosedUseCaseImpl
+import cz.adamec.timotej.snag.projects.fe.app.impl.internal.sync.ProjectPullSyncHandler
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.sync.ProjectSyncHandler
-import cz.adamec.timotej.snag.sync.fe.app.api.handler.SyncOperationHandler
+import cz.adamec.timotej.snag.sync.fe.app.api.handler.PullSyncOperationHandler
+import cz.adamec.timotej.snag.sync.fe.app.api.handler.PushSyncOperationHandler
 import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
@@ -43,5 +45,6 @@ val projectsAppModule =
         factoryOf(::SetProjectClosedUseCaseImpl) bind SetProjectClosedUseCase::class
         factoryOf(::IsProjectClosedUseCaseImpl) bind IsProjectClosedUseCase::class
         factoryOf(::CanEditProjectEntitiesRule)
-        factoryOf(::ProjectSyncHandler) bind SyncOperationHandler::class
+        factoryOf(::ProjectSyncHandler) bind PushSyncOperationHandler::class
+        factoryOf(::ProjectPullSyncHandler) bind PullSyncOperationHandler::class
     }

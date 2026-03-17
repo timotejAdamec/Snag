@@ -20,7 +20,7 @@ import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
 import cz.adamec.timotej.snag.findings.fe.app.impl.internal.LH
 import cz.adamec.timotej.snag.findings.fe.ports.FindingsApi
 import cz.adamec.timotej.snag.findings.fe.ports.FindingsDb
-import cz.adamec.timotej.snag.sync.fe.app.api.handler.DbApiSyncHandler
+import cz.adamec.timotej.snag.sync.fe.app.api.handler.DbApiPushSyncHandler
 import kotlinx.coroutines.flow.Flow
 import kotlin.uuid.Uuid
 
@@ -28,7 +28,7 @@ internal class FindingSyncHandler(
     private val findingsApi: FindingsApi,
     private val findingsDb: FindingsDb,
     timestampProvider: TimestampProvider,
-) : DbApiSyncHandler<FrontendFinding>(LH.logger, timestampProvider) {
+) : DbApiPushSyncHandler<FrontendFinding>(LH.logger, timestampProvider) {
     override val entityTypeId: String = FINDING_SYNC_ENTITY_TYPE
     override val entityName: String = "finding"
 

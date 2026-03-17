@@ -14,27 +14,27 @@ package cz.adamec.timotej.snag.sync.fe.app.impl.internal
 
 import cz.adamec.timotej.snag.core.network.fe.ConnectionStatusProvider
 import cz.adamec.timotej.snag.sync.fe.app.api.GetSyncStatusUseCase
-import cz.adamec.timotej.snag.sync.fe.app.api.PullSyncTracker
 import cz.adamec.timotej.snag.sync.fe.model.SyncStatus
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 
 internal class GetSyncStatusUseCaseImpl(
-    private val syncEngine: SyncEngine,
+    private val pushSyncEngine: PushSyncEngine,
     private val connectionStatusProvider: ConnectionStatusProvider,
-    private val pullSyncTracker: PullSyncTracker,
+    private val pullSyncEngine: PullSyncEngine,
 ) : GetSyncStatusUseCase {
     override fun invoke(): Flow<SyncStatus> =
         combine(
-            syncEngine.status,
+            pushSyncEngine.status,
+            pullSyncEngine.status,
             connectionStatusProvider.isConnectedFlow(),
-            pullSyncTracker.isPulling,
-        ) { engineStatus, isConnected, isPulling ->
+        ) { pushStatus, pullStatus, isConnected ->
             when {
                 !isConnected -> SyncStatus.Offline
-                engineStatus is SyncEngineStatus.Syncing -> SyncStatus.Syncing
-                isPulling -> SyncStatus.Syncing
-                engineStatus is SyncEngineStatus.Failed -> SyncStatus.Error
+                pushStatus is PushSyncEngineStatus.Pushing -> SyncStatus.Syncing
+                pullStatus is PullSyncEngineStatus.Pulling -> SyncStatus.Syncing
+                pushStatus is PushSyncEngineStatus.Failed -> SyncStatus.Error
+                pullStatus is PullSyncEngineStatus.Failed -> SyncStatus.Error
                 else -> SyncStatus.Synced
             }
         }

@@ -12,80 +12,18 @@
 
 package cz.adamec.timotej.snag.structures.fe.app.impl.internal
 
-import cz.adamec.timotej.snag.core.foundation.common.Timestamp
-import cz.adamec.timotej.snag.core.foundation.common.TimestampProvider
-import cz.adamec.timotej.snag.core.network.fe.OnlineDataResult
-import cz.adamec.timotej.snag.findings.fe.app.api.CascadeDeleteLocalFindingsByStructureIdUseCase
 import cz.adamec.timotej.snag.structures.fe.app.api.PullStructureChangesUseCase
 import cz.adamec.timotej.snag.structures.fe.app.impl.internal.sync.STRUCTURE_SYNC_ENTITY_TYPE
-import cz.adamec.timotej.snag.structures.fe.ports.StructureSyncResult
-import cz.adamec.timotej.snag.structures.fe.ports.StructuresApi
-import cz.adamec.timotej.snag.structures.fe.ports.StructuresDb
-import cz.adamec.timotej.snag.sync.fe.app.api.GetLastPullSyncedAtTimestampUseCase
-import cz.adamec.timotej.snag.sync.fe.app.api.PullSyncTracker
-import cz.adamec.timotej.snag.sync.fe.app.api.SetLastPullSyncedAtTimestampUseCase
-import cz.adamec.timotej.snag.sync.fe.app.api.SyncCoordinator
+import cz.adamec.timotej.snag.sync.fe.app.api.ExecutePullSyncUseCase
 import kotlin.uuid.Uuid
 
 internal class PullStructureChangesUseCaseImpl(
-    private val structuresApi: StructuresApi,
-    private val structuresDb: StructuresDb,
-    private val cascadeDeleteLocalFindingsByStructureIdUseCase: CascadeDeleteLocalFindingsByStructureIdUseCase,
-    private val getLastPullSyncedAtTimestampUseCase: GetLastPullSyncedAtTimestampUseCase,
-    private val setLastPullSyncedAtTimestampUseCase: SetLastPullSyncedAtTimestampUseCase,
-    private val syncCoordinator: SyncCoordinator,
-    private val timestampProvider: TimestampProvider,
-    private val pullSyncTracker: PullSyncTracker,
+    private val executePullSyncUseCase: ExecutePullSyncUseCase,
 ) : PullStructureChangesUseCase {
-    @Suppress("LabeledExpression")
-    override suspend operator fun invoke(projectId: Uuid) =
-        pullSyncTracker.track {
-            LH.logger.d { "Starting pull sync for structures in project $projectId." }
-            syncCoordinator.withFlushedQueue { wasFlushingSuccessful ->
-                if (!wasFlushingSuccessful) {
-                    LH.logger.w {
-                        "Flushing sync queue was not successful, skipping pull sync for structures in project $projectId."
-                    }
-                    return@withFlushedQueue
-                }
-                val since =
-                    getLastPullSyncedAtTimestampUseCase(
-                        entityType = STRUCTURE_SYNC_ENTITY_TYPE,
-                        scopeId = projectId.toString(),
-                    ) ?: Timestamp(0)
-                val now = timestampProvider.getNowTimestamp()
-                LH.logger.d { "Pulling structure changes for project $projectId since=$since, now=$now." }
-
-                when (val result = structuresApi.getStructuresModifiedSince(projectId, since)) {
-                    is OnlineDataResult.Failure -> {
-                        LH.logger.w { "Error pulling structure changes for project $projectId." }
-                    }
-
-                    is OnlineDataResult.Success -> {
-                        val changes = result.data
-                        LH.logger.d { "Received ${changes.size} structure change(s) for project $projectId." }
-                        changes.forEach { syncResult ->
-                            when (syncResult) {
-                                is StructureSyncResult.Deleted -> {
-                                    LH.logger.d { "Processing deleted structure ${syncResult.id}." }
-                                    cascadeDeleteLocalFindingsByStructureIdUseCase(syncResult.id)
-                                    structuresDb.deleteStructure(syncResult.id)
-                                }
-
-                                is StructureSyncResult.Updated -> {
-                                    LH.logger.d { "Processing updated structure ${syncResult.structure.structure.id}." }
-                                    structuresDb.saveStructure(syncResult.structure)
-                                }
-                            }
-                        }
-                        setLastPullSyncedAtTimestampUseCase(
-                            entityType = STRUCTURE_SYNC_ENTITY_TYPE,
-                            timestamp = now,
-                            scopeId = projectId.toString(),
-                        )
-                        LH.logger.d { "Pull sync for structures in project $projectId completed, updated lastSyncedAt=$now." }
-                    }
-                }
-            }
-        }
+    override suspend fun invoke(projectId: Uuid) {
+        executePullSyncUseCase(
+            entityTypeId = STRUCTURE_SYNC_ENTITY_TYPE,
+            scopeId = projectId.toString(),
+        )
+    }
 }

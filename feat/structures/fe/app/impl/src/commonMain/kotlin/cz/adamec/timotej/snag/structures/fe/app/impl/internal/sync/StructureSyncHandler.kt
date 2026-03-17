@@ -21,7 +21,7 @@ import cz.adamec.timotej.snag.findings.fe.app.api.CascadeRestoreLocalFindingsByS
 import cz.adamec.timotej.snag.structures.fe.app.impl.internal.LH
 import cz.adamec.timotej.snag.structures.fe.ports.StructuresApi
 import cz.adamec.timotej.snag.structures.fe.ports.StructuresDb
-import cz.adamec.timotej.snag.sync.fe.app.api.handler.DbApiSyncHandler
+import cz.adamec.timotej.snag.sync.fe.app.api.handler.DbApiPushSyncHandler
 import kotlinx.coroutines.flow.Flow
 import kotlin.uuid.Uuid
 
@@ -30,7 +30,7 @@ internal class StructureSyncHandler(
     private val structuresDb: StructuresDb,
     private val cascadeRestoreLocalFindingsByStructureIdUseCase: CascadeRestoreLocalFindingsByStructureIdUseCase,
     timestampProvider: TimestampProvider,
-) : DbApiSyncHandler<FrontendStructure>(LH.logger, timestampProvider) {
+) : DbApiPushSyncHandler<FrontendStructure>(LH.logger, timestampProvider) {
     override val entityTypeId: String = STRUCTURE_SYNC_ENTITY_TYPE
     override val entityName: String = "structure"
 

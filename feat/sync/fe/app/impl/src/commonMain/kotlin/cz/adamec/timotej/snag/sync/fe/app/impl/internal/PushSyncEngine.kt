@@ -14,8 +14,8 @@ package cz.adamec.timotej.snag.sync.fe.app.impl.internal
 
 import cz.adamec.timotej.snag.core.foundation.common.ApplicationScope
 import cz.adamec.timotej.snag.sync.fe.app.api.SyncCoordinator
-import cz.adamec.timotej.snag.sync.fe.app.api.handler.SyncOperationHandler
-import cz.adamec.timotej.snag.sync.fe.app.api.handler.SyncOperationResult
+import cz.adamec.timotej.snag.sync.fe.app.api.handler.PushSyncOperationHandler
+import cz.adamec.timotej.snag.sync.fe.app.api.handler.PushSyncOperationResult
 import cz.adamec.timotej.snag.sync.fe.model.SyncOperationType
 import cz.adamec.timotej.snag.sync.fe.ports.SyncOperation
 import cz.adamec.timotej.snag.sync.fe.ports.SyncQueue
@@ -27,15 +27,15 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlin.uuid.Uuid
 
-internal class SyncEngine(
+internal class PushSyncEngine(
     private val syncQueue: SyncQueue,
-    private val handlers: List<SyncOperationHandler>,
+    private val handlers: List<PushSyncOperationHandler>,
     private val applicationScope: ApplicationScope,
 ) : EnqueueSyncOperationUseCase,
     SyncCoordinator {
     private val mutex = Mutex()
-    private val _status = MutableStateFlow<SyncEngineStatus>(SyncEngineStatus.Idle)
-    val status: StateFlow<SyncEngineStatus> = _status.asStateFlow()
+    private val _status = MutableStateFlow<PushSyncEngineStatus>(PushSyncEngineStatus.Idle)
+    val status: StateFlow<PushSyncEngineStatus> = _status.asStateFlow()
 
     override suspend fun invoke(
         entityTypeId: String,
@@ -43,7 +43,7 @@ internal class SyncEngine(
         operationType: SyncOperationType,
     ) {
         require(handlers.any { it.entityTypeId == entityTypeId }) {
-            "No SyncOperationHandler registered for entityTypeId='$entityTypeId'"
+            "No PushSyncOperationHandler registered for entityTypeId='$entityTypeId'"
         }
         syncQueue.enqueue(entityTypeId, entityId, operationType)
         applicationScope.launch {
@@ -66,12 +66,12 @@ internal class SyncEngine(
     private suspend fun processAllPending(): Boolean {
         val pending = syncQueue.getAllPending()
         if (pending.isEmpty()) {
-            _status.value = SyncEngineStatus.Idle
+            _status.value = PushSyncEngineStatus.Idle
             return true
         }
-        _status.value = SyncEngineStatus.Syncing
+        _status.value = PushSyncEngineStatus.Pushing
         val succeeded = processPendingOperations(pending)
-        _status.value = if (succeeded) SyncEngineStatus.Idle else SyncEngineStatus.Failed
+        _status.value = if (succeeded) PushSyncEngineStatus.Idle else PushSyncEngineStatus.Failed
         return succeeded
     }
 
@@ -80,20 +80,20 @@ internal class SyncEngine(
             val handler =
                 handlers.find { it.entityTypeId == operation.entityTypeId }
                     ?: error(
-                        "No SyncOperationHandler registered for entityTypeId='${operation.entityTypeId}'",
+                        "No PushSyncOperationHandler registered for entityTypeId='${operation.entityTypeId}'",
                     )
             when (handler.execute(operation.entityId, operation.operationType)) {
-                SyncOperationResult.Success -> {
+                PushSyncOperationResult.Success -> {
                     LH.logger.d { "Sync operation ${operation.id} succeeded, removing from queue." }
                     syncQueue.remove(operation.id)
                 }
 
-                SyncOperationResult.EntityNotFound -> {
+                PushSyncOperationResult.EntityNotFound -> {
                     LH.logger.d { "Entity not found for operation ${operation.id}, discarding." }
                     syncQueue.remove(operation.id)
                 }
 
-                SyncOperationResult.Failure -> {
+                PushSyncOperationResult.Failure -> {
                     LH.logger.w { "Sync operation ${operation.id} failed, stopping processing." }
                     return false
                 }

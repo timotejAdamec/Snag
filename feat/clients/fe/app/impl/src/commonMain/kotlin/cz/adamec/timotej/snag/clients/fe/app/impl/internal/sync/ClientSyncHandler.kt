@@ -18,14 +18,14 @@ import cz.adamec.timotej.snag.clients.fe.ports.ClientsApi
 import cz.adamec.timotej.snag.clients.fe.ports.ClientsDb
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.core.foundation.common.TimestampProvider
-import cz.adamec.timotej.snag.sync.fe.app.api.handler.DbApiSyncHandler
+import cz.adamec.timotej.snag.sync.fe.app.api.handler.DbApiPushSyncHandler
 import kotlin.uuid.Uuid
 
 internal class ClientSyncHandler(
     private val clientsApi: ClientsApi,
     private val clientsDb: ClientsDb,
     timestampProvider: TimestampProvider,
-) : DbApiSyncHandler<FrontendClient>(LH.logger, timestampProvider) {
+) : DbApiPushSyncHandler<FrontendClient>(LH.logger, timestampProvider) {
     override val entityTypeId: String = CLIENT_SYNC_ENTITY_TYPE
     override val entityName: String = "client"
 

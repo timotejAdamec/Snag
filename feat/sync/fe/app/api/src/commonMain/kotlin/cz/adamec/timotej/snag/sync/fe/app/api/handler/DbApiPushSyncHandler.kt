@@ -22,10 +22,10 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlin.uuid.Uuid
 
-abstract class DbApiSyncHandler<T>(
+abstract class DbApiPushSyncHandler<T>(
     private val logger: Logger,
     private val timestampProvider: TimestampProvider,
-) : SyncOperationHandler {
+) : PushSyncOperationHandler {
     /**
      * Freeform string used for logging.
      */
@@ -47,14 +47,14 @@ abstract class DbApiSyncHandler<T>(
     override suspend fun execute(
         entityId: Uuid,
         operationType: SyncOperationType,
-    ): SyncOperationResult =
+    ): PushSyncOperationResult =
         when (operationType) {
             SyncOperationType.UPSERT -> executeUpsert(entityId)
             SyncOperationType.DELETE -> executeDelete(entityId)
         }
 
     @Suppress("ReturnCount")
-    private suspend fun executeUpsert(entityId: Uuid): SyncOperationResult {
+    private suspend fun executeUpsert(entityId: Uuid): PushSyncOperationResult {
         val entityResult = getEntityFlow(entityId).first()
         val entity =
             when (entityResult) {
@@ -65,14 +65,14 @@ abstract class DbApiSyncHandler<T>(
                     logger.e(throwable = entityResult.throwable) {
                         "DB error reading $entityName $entityId for sync. Error: ${entityResult.throwable}"
                     }
-                    return SyncOperationResult.Failure
+                    return PushSyncOperationResult.Failure
                 }
             }
         if (entity == null) {
             logger.d {
                 "${entityName.replaceFirstChar { it.uppercase() }} $entityId not found in local DB, discarding sync operation."
             }
-            return SyncOperationResult.EntityNotFound
+            return PushSyncOperationResult.EntityNotFound
         }
 
         return when (val apiResult = saveEntityToApi(entity)) {
@@ -81,16 +81,16 @@ abstract class DbApiSyncHandler<T>(
                     logger.d { "Saving fresher $updatedEntity from API to DB." }
                     saveEntityToDb(updatedEntity)
                 }
-                SyncOperationResult.Success
+                PushSyncOperationResult.Success
             }
             is OnlineDataResult.Failure -> {
                 logger.w { "API failure syncing $entityName $entityId." }
-                SyncOperationResult.Failure
+                PushSyncOperationResult.Failure
             }
         }
     }
 
-    private suspend fun executeDelete(entityId: Uuid): SyncOperationResult =
+    private suspend fun executeDelete(entityId: Uuid): PushSyncOperationResult =
         when (val result = deleteEntityFromApi(entityId, timestampProvider.getNowTimestamp())) {
             is OnlineDataResult.Success -> {
                 result.data?.let { updatedEntity ->
@@ -98,11 +98,11 @@ abstract class DbApiSyncHandler<T>(
                     saveEntityToDb(updatedEntity)
                     onDeleteRejected(entityId)
                 } ?: logger.d { "Deleted $entityName $entityId from API." }
-                SyncOperationResult.Success
+                PushSyncOperationResult.Success
             }
             is OnlineDataResult.Failure -> {
                 logger.w { "API failure deleting $entityName $entityId." }
-                SyncOperationResult.Failure
+                PushSyncOperationResult.Failure
             }
         }
 }

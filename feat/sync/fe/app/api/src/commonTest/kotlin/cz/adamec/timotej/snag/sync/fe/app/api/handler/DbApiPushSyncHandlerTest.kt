@@ -28,7 +28,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNull
 import kotlin.uuid.Uuid
 
-class DbApiSyncHandlerTest {
+class DbApiPushSyncHandlerTest {
     private val testDispatcher = StandardTestDispatcher()
 
     private data class TestEntity(
@@ -36,13 +36,13 @@ class DbApiSyncHandlerTest {
         val name: String,
     )
 
-    private class TestDbApiSyncHandler(
+    private class TestDbApiPushSyncHandler(
         private val db: MutableMap<Uuid, TestEntity> = mutableMapOf(),
         var apiSaveResponse: ((TestEntity) -> OnlineDataResult<TestEntity?>)? = null,
         var apiDeleteResponse: ((Uuid) -> OnlineDataResult<TestEntity?>)? = null,
         var apiForcedFailure: OnlineDataResult.Failure? = null,
-    ) : DbApiSyncHandler<TestEntity>(
-            logger = Logger.withTag("TestDbApiSyncHandler"),
+    ) : DbApiPushSyncHandler<TestEntity>(
+            logger = Logger.withTag("TestDbApiPushSyncHandler"),
             timestampProvider =
                 object : TimestampProvider {
                     override fun getNowTimestamp(): Timestamp = Timestamp(0L)
@@ -97,11 +97,11 @@ class DbApiSyncHandlerTest {
     fun `executeUpsert reads from db and calls api`() =
         runTest(testDispatcher) {
             val entity = createEntity()
-            val handler = TestDbApiSyncHandler(db = mutableMapOf(entity.id to entity))
+            val handler = TestDbApiPushSyncHandler(db = mutableMapOf(entity.id to entity))
 
             val result = handler.execute(entity.id, SyncOperationType.UPSERT)
 
-            assertEquals(SyncOperationResult.Success, result)
+            assertEquals(PushSyncOperationResult.Success, result)
             assertEquals(entity, handler.lastSavedToApi)
         }
 
@@ -112,25 +112,25 @@ class DbApiSyncHandlerTest {
             val fresherEntity = entity.copy(name = "Updated by API")
             val db = mutableMapOf(entity.id to entity)
             val handler =
-                TestDbApiSyncHandler(
+                TestDbApiPushSyncHandler(
                     db = db,
                     apiSaveResponse = { OnlineDataResult.Success(fresherEntity) },
                 )
 
             val result = handler.execute(entity.id, SyncOperationType.UPSERT)
 
-            assertEquals(SyncOperationResult.Success, result)
+            assertEquals(PushSyncOperationResult.Success, result)
             assertEquals("Updated by API", handler.getDbEntity(entity.id)?.name)
         }
 
     @Test
     fun `executeUpsert when entity not in db returns entity not found`() =
         runTest(testDispatcher) {
-            val handler = TestDbApiSyncHandler()
+            val handler = TestDbApiPushSyncHandler()
 
             val result = handler.execute(UuidProvider.getUuid(), SyncOperationType.UPSERT)
 
-            assertEquals(SyncOperationResult.EntityNotFound, result)
+            assertEquals(PushSyncOperationResult.EntityNotFound, result)
         }
 
     @Test
@@ -139,14 +139,14 @@ class DbApiSyncHandlerTest {
             val entity = createEntity()
             val db = mutableMapOf(entity.id to entity)
             val handler =
-                TestDbApiSyncHandler(
+                TestDbApiPushSyncHandler(
                     db = db,
                     apiForcedFailure = OnlineDataResult.Failure.ProgrammerError(Exception("API error")),
                 )
 
             val result = handler.execute(entity.id, SyncOperationType.UPSERT)
 
-            assertEquals(SyncOperationResult.Failure, result)
+            assertEquals(PushSyncOperationResult.Failure, result)
             assertEquals(entity, handler.getDbEntity(entity.id))
         }
 
@@ -154,11 +154,11 @@ class DbApiSyncHandlerTest {
     fun `executeDelete calls api and returns success`() =
         runTest(testDispatcher) {
             val entityId = UuidProvider.getUuid()
-            val handler = TestDbApiSyncHandler()
+            val handler = TestDbApiPushSyncHandler()
 
             val result = handler.execute(entityId, SyncOperationType.DELETE)
 
-            assertEquals(SyncOperationResult.Success, result)
+            assertEquals(PushSyncOperationResult.Success, result)
             assertEquals(entityId, handler.lastDeletedFromApiId)
         }
 
@@ -168,14 +168,14 @@ class DbApiSyncHandlerTest {
             val entity = createEntity(name = "Restored by API")
             val db = mutableMapOf<Uuid, TestEntity>()
             val handler =
-                TestDbApiSyncHandler(
+                TestDbApiPushSyncHandler(
                     db = db,
                     apiDeleteResponse = { OnlineDataResult.Success(entity) },
                 )
 
             val result = handler.execute(entity.id, SyncOperationType.DELETE)
 
-            assertEquals(SyncOperationResult.Success, result)
+            assertEquals(PushSyncOperationResult.Success, result)
             assertEquals(entity, handler.getDbEntity(entity.id))
         }
 
@@ -184,11 +184,11 @@ class DbApiSyncHandlerTest {
         runTest(testDispatcher) {
             val entityId = UuidProvider.getUuid()
             val db = mutableMapOf<Uuid, TestEntity>()
-            val handler = TestDbApiSyncHandler(db = db)
+            val handler = TestDbApiPushSyncHandler(db = db)
 
             val result = handler.execute(entityId, SyncOperationType.DELETE)
 
-            assertEquals(SyncOperationResult.Success, result)
+            assertEquals(PushSyncOperationResult.Success, result)
             assertNull(handler.getDbEntity(entityId))
         }
 
@@ -197,7 +197,7 @@ class DbApiSyncHandlerTest {
         runTest(testDispatcher) {
             val entity = createEntity(name = "Restored by API")
             val handler =
-                TestDbApiSyncHandler(
+                TestDbApiPushSyncHandler(
                     apiDeleteResponse = { OnlineDataResult.Success(entity) },
                 )
 
@@ -209,7 +209,7 @@ class DbApiSyncHandlerTest {
     @Test
     fun `executeDelete does not call onDeleteRejected when api returns null`() =
         runTest(testDispatcher) {
-            val handler = TestDbApiSyncHandler()
+            val handler = TestDbApiPushSyncHandler()
 
             handler.execute(UuidProvider.getUuid(), SyncOperationType.DELETE)
 
@@ -220,12 +220,12 @@ class DbApiSyncHandlerTest {
     fun `executeDelete when api fails returns failure`() =
         runTest(testDispatcher) {
             val handler =
-                TestDbApiSyncHandler(
+                TestDbApiPushSyncHandler(
                     apiForcedFailure = OnlineDataResult.Failure.ProgrammerError(Exception("API error")),
                 )
 
             val result = handler.execute(UuidProvider.getUuid(), SyncOperationType.DELETE)
 
-            assertEquals(SyncOperationResult.Failure, result)
+            assertEquals(PushSyncOperationResult.Failure, result)
         }
 }

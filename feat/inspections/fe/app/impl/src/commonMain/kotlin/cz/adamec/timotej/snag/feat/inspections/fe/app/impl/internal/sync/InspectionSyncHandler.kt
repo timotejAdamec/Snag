@@ -20,7 +20,7 @@ import cz.adamec.timotej.snag.feat.inspections.fe.app.impl.internal.LH
 import cz.adamec.timotej.snag.feat.inspections.fe.model.FrontendInspection
 import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionsApi
 import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionsDb
-import cz.adamec.timotej.snag.sync.fe.app.api.handler.DbApiSyncHandler
+import cz.adamec.timotej.snag.sync.fe.app.api.handler.DbApiPushSyncHandler
 import kotlinx.coroutines.flow.Flow
 import kotlin.uuid.Uuid
 
@@ -28,7 +28,7 @@ internal class InspectionSyncHandler(
     private val inspectionsApi: InspectionsApi,
     private val inspectionsDb: InspectionsDb,
     timestampProvider: TimestampProvider,
-) : DbApiSyncHandler<FrontendInspection>(LH.logger, timestampProvider) {
+) : DbApiPushSyncHandler<FrontendInspection>(LH.logger, timestampProvider) {
     override val entityTypeId: String = INSPECTION_SYNC_ENTITY_TYPE
     override val entityName: String = "inspection"
 

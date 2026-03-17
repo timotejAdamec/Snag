@@ -12,14 +12,10 @@
 
 package cz.adamec.timotej.snag.sync.fe.app.api.handler
 
-import cz.adamec.timotej.snag.sync.fe.model.SyncOperationType
-import kotlin.uuid.Uuid
+sealed interface PushSyncOperationResult {
+    data object Success : PushSyncOperationResult
 
-interface SyncOperationHandler {
-    val entityTypeId: String
+    data object EntityNotFound : PushSyncOperationResult
 
-    suspend fun execute(
-        entityId: Uuid,
-        operationType: SyncOperationType,
-    ): SyncOperationResult
+    data object Failure : PushSyncOperationResult
 }

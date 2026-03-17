@@ -18,6 +18,8 @@ import cz.adamec.timotej.snag.users.fe.app.api.PullUserChangesUseCase
 import cz.adamec.timotej.snag.users.fe.app.impl.internal.ChangeUserRoleUseCaseImpl
 import cz.adamec.timotej.snag.users.fe.app.impl.internal.GetUsersUseCaseImpl
 import cz.adamec.timotej.snag.users.fe.app.impl.internal.PullUserChangesUseCaseImpl
+import cz.adamec.timotej.snag.users.fe.app.impl.internal.sync.UserPullSyncHandler
+import cz.adamec.timotej.snag.sync.fe.app.api.handler.PullSyncOperationHandler
 import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
@@ -27,4 +29,5 @@ val usersAppModule =
         factoryOf(::GetUsersUseCaseImpl) bind GetUsersUseCase::class
         factoryOf(::PullUserChangesUseCaseImpl) bind PullUserChangesUseCase::class
         factoryOf(::ChangeUserRoleUseCaseImpl) bind ChangeUserRoleUseCase::class
+        factoryOf(::UserPullSyncHandler) bind PullSyncOperationHandler::class
     }

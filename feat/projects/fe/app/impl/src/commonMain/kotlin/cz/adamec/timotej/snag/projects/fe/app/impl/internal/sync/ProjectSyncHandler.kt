@@ -22,7 +22,7 @@ import cz.adamec.timotej.snag.projects.fe.model.FrontendProject
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsApi
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsDb
 import cz.adamec.timotej.snag.structures.fe.app.api.CascadeRestoreLocalStructuresByProjectIdUseCase
-import cz.adamec.timotej.snag.sync.fe.app.api.handler.DbApiSyncHandler
+import cz.adamec.timotej.snag.sync.fe.app.api.handler.DbApiPushSyncHandler
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
@@ -34,7 +34,7 @@ internal class ProjectSyncHandler(
     private val cascadeRestoreLocalStructuresByProjectIdUseCase: CascadeRestoreLocalStructuresByProjectIdUseCase,
     private val cascadeRestoreLocalInspectionsByProjectIdUseCase: CascadeRestoreLocalInspectionsByProjectIdUseCase,
     timestampProvider: TimestampProvider,
-) : DbApiSyncHandler<FrontendProject>(LH.logger, timestampProvider) {
+) : DbApiPushSyncHandler<FrontendProject>(LH.logger, timestampProvider) {
     override val entityTypeId: String = PROJECT_SYNC_ENTITY_TYPE
     override val entityName: String = "project"
 

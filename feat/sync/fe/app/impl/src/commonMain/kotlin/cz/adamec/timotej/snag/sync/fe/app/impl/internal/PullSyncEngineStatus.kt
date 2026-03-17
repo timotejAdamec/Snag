@@ -10,12 +10,12 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.sync.fe.app.api.handler
+package cz.adamec.timotej.snag.sync.fe.app.impl.internal
 
-sealed interface SyncOperationResult {
-    data object Success : SyncOperationResult
+internal sealed interface PullSyncEngineStatus {
+    data object Idle : PullSyncEngineStatus
 
-    data object EntityNotFound : SyncOperationResult
+    data object Pulling : PullSyncEngineStatus
 
-    data object Failure : SyncOperationResult
+    data object Failed : PullSyncEngineStatus
 }
