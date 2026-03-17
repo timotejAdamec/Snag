@@ -12,11 +12,13 @@
 
 package cz.adamec.timotej.snag.ui
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.WideNavigationRailDefaults
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteDefaults
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
@@ -88,7 +90,15 @@ private fun MainScreenContent(
                 projectsRoute = projectsRoute,
                 usersRoute = usersRoute,
             )
-            dialogContent?.invoke()
+            dialogContent?.let { content ->
+                Box(
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .background(MaterialTheme.colorScheme.scrim.copy(alpha = SCRIM_ALPHA)),
+                )
+                content()
+            }
         }
     }
 }
@@ -178,3 +188,5 @@ private fun MainScreenScaffold(
         }
     }
 }
+
+private const val SCRIM_ALPHA = 0.32f
