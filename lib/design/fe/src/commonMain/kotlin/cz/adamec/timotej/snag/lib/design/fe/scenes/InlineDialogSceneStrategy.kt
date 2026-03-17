@@ -12,10 +12,11 @@
 
 package cz.adamec.timotej.snag.lib.design.fe.scenes
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Modifier
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.scene.Scene
@@ -28,19 +29,13 @@ import androidx.navigation3.scene.SceneStrategyScope
 //  DialogSceneStrategy from Navigation3 uses platform Dialog, triggering this crash.
 //  Test on JVM desktop before removing. When fixed:
 //  1. Delete this file (InlineDialogSceneStrategy.kt)
-//  2. Delete DialogPortal.kt (LocalDialogPortal)
-//  3. In MainScreen.kt: remove dialogContent state, CompositionLocalProvider for
-//     LocalDialogPortal, the wrapping Box, and MainScreenScaffold — inline its body
-//     back into MainScreenContent
-//  4. In ProjectsNavigation.kt and UsersNavigation.kt: replace
+//  2. In ProjectsNavigation.kt and UsersNavigation.kt: replace
 //     InlineDialogSceneStrategy with DialogSceneStrategy
 /**
- * Renders dialog entries as inline composable overlays instead of
- * platform `Dialog` windows.
+ * Renders dialog entries as inline composable overlays (stacked in a [Box])
+ * instead of platform `Dialog` windows.
  *
- * Uses [LocalDialogPortal] to render dialog content at the top of
- * the composition tree (above the navigation rail), falling back to
- * inline rendering if the portal is not provided.
+ * Includes a scrim layer between background and dialog content.
  *
  * This avoids the cross-composition-tree `movableContentOf` crash that
  * [androidx.navigation3.scene.DialogSceneStrategy] triggers on Compose
@@ -70,6 +65,8 @@ class InlineDialogSceneStrategy<T : Any> : SceneStrategy<T> {
     }
 }
 
+private const val SCRIM_ALPHA = 0.32f
+
 private class InlineDialogScene<T : Any>(
     override val key: Any,
     override val entries: List<NavEntry<T>>,
@@ -79,19 +76,17 @@ private class InlineDialogScene<T : Any>(
     override val previousEntries: List<NavEntry<T>> = emptyList()
 
     override val content: @Composable () -> Unit = {
-        backgroundEntries.lastOrNull()?.Content()
-
-        val portal = LocalDialogPortal.current
-        if (portal != null) {
-            val dialogContent: @Composable () -> Unit = { dialogEntry.Content() }
-            DisposableEffect(dialogEntry.contentKey) {
-                portal(dialogContent)
-                onDispose { portal(null) }
-            }
-        } else {
-            Box(modifier = Modifier.fillMaxSize()) {
-                dialogEntry.Content()
-            }
+        Box(modifier = Modifier.fillMaxSize()) {
+            backgroundEntries.lastOrNull()?.Content()
+            Box(
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .background(
+                            MaterialTheme.colorScheme.scrim.copy(alpha = SCRIM_ALPHA),
+                        ),
+            ) {}
+            dialogEntry.Content()
         }
     }
 }

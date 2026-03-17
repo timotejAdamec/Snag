@@ -12,18 +12,13 @@
 
 package cz.adamec.timotej.snag.ui
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.consumeWindowInsets
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.WideNavigationRailDefaults
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteDefaults
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,7 +31,6 @@ import cz.adamec.timotej.snag.lib.design.fe.adaptive.ContentPaneDefaults
 import cz.adamec.timotej.snag.lib.design.fe.adaptive.ContentPaneSpacing
 import cz.adamec.timotej.snag.lib.design.fe.adaptive.isScreenWide
 import cz.adamec.timotej.snag.lib.design.fe.layout.systemBarsPaddingCoerceAtLeast
-import cz.adamec.timotej.snag.lib.design.fe.scenes.LocalDialogPortal
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.AppScaffold
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.SyncStatusBar
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.SyncStatusBarState
@@ -59,39 +53,22 @@ internal fun MainScreen(
     usersRoute: UsersRoute = koinInject(),
 ) {
     val syncStatus by mainViewModel.syncStatus.collectAsStateWithLifecycle()
-    var dialogContent by remember { mutableStateOf<(@Composable () -> Unit)?>(null) }
-
     SnagTheme {
-        CompositionLocalProvider(LocalDialogPortal provides { dialogContent = it }) {
-            Box(modifier = Modifier.fillMaxSize()) {
-                AppScaffold(
-                    containerColor = ContentPaneDefaults.containerColor,
-                ) { paddingValues ->
-                    MainScreenScaffold(
-                        paddingValues = paddingValues,
-                        syncBarState = syncStatus.toBarState(),
-                        projectsRoute = projectsRoute,
-                        usersRoute = usersRoute,
-                    )
-                }
-                dialogContent?.let { content ->
-                    Box(
-                        modifier =
-                            Modifier
-                                .fillMaxSize()
-                                .background(
-                                    MaterialTheme.colorScheme.scrim.copy(alpha = SCRIM_ALPHA),
-                                ),
-                    ) {}
-                    content()
-                }
-            }
+        AppScaffold(
+            containerColor = ContentPaneDefaults.containerColor,
+        ) { paddingValues ->
+            MainScreenContent(
+                paddingValues = paddingValues,
+                syncBarState = syncStatus.toBarState(),
+                projectsRoute = projectsRoute,
+                usersRoute = usersRoute,
+            )
         }
     }
 }
 
 @Composable
-private fun MainScreenScaffold(
+private fun MainScreenContent(
     paddingValues: PaddingValues,
     syncBarState: SyncStatusBarState,
     projectsRoute: ProjectsRoute,
@@ -175,5 +152,3 @@ private fun MainScreenScaffold(
         }
     }
 }
-
-private const val SCRIM_ALPHA = 0.32f
