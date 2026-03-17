@@ -12,8 +12,6 @@
 
 package cz.adamec.timotej.snag.core.network.fe
 
-import cz.adamec.timotej.snag.core.network.fe.OnlineDataResult
-
 fun NetworkException.toOnlineDataResult() =
     when (this) {
         is NetworkException.ClientError ->
