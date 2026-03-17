@@ -47,25 +47,19 @@ internal fun Project.configureBackendModule() {
                     api(project("$featureRootPath:app:model"))
                 } else if (hasFolderInPath("$featureRootPath:business", "model")) {
                     api(project("$featureRootPath:business:model"))
-                } else if (hasFolderInPath(featureRootPath, "business")) {
-                    api(project("$featureRootPath:business"))
                 }
             } else if (path.contains(":fe:") || path.contains(":be:")) {
-                // fe/model or be/model (legacy) → app/model, then business/model, then business
+                // fe/model or be/model (legacy) → app/model, then business/model
                 if (hasFolderInPath("$modulePreDirectoryPath:app", "model")) {
                     api(project("$modulePreDirectoryPath:app:model"))
                 } else if (hasFolderInPath("$modulePreDirectoryPath:business", "model")) {
                     api(project("$modulePreDirectoryPath:business:model"))
-                } else if (hasFolderInPath(modulePreDirectoryPath, "business")) {
-                    api(project("$modulePreDirectoryPath:business"))
                 }
             } else if (path.contains(":app:")) {
-                // app/model → business/model, then business
+                // app/model → business/model
                 val featureRootPath = moduleDirectoryPath.substringBeforeLast(":app")
                 if (hasFolderInPath("$featureRootPath:business", "model")) {
                     api(project("$featureRootPath:business:model"))
-                } else if (hasFolderInPath(featureRootPath, "business")) {
-                    api(project("$featureRootPath:business"))
                 }
             }
             // business/model → no model dependency (it's the base)
@@ -87,8 +81,6 @@ internal fun Project.configureBackendModule() {
                 api(project("$modulePreDirectoryPath:app:model"))
             } else if (hasFolderInPath("$modulePreDirectoryPath:business", "model")) {
                 api(project("$modulePreDirectoryPath:business:model"))
-            } else if (hasFolderInPath(modulePreDirectoryPath, "business")) {
-                api(project("$modulePreDirectoryPath:business"))
             }
         } else if (name == "app") {
             implementation(project("$moduleDirectoryPath:ports"))
@@ -106,8 +98,6 @@ internal fun Project.configureBackendModule() {
                 api(project("$businessDirectoryPath:app:model"))
             } else if (hasFolderInPath("$businessDirectoryPath:business", "model")) {
                 api(project("$businessDirectoryPath:business:model"))
-            } else if (hasFolderInPath(businessDirectoryPath, "business")) {
-                api(project("$businessDirectoryPath:business"))
             }
         } else if (name == "impl" && hasFolderInPath(moduleDirectoryPath, "api")) {
             implementation(project("$moduleDirectoryPath:api"))
