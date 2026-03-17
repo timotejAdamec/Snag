@@ -82,15 +82,10 @@ internal fun StructureDetailNestedNav(
         )
     }
 
-    val sceneStrategy =
-        remember {
-            MapListDetailSceneStrategy<StructureDetailNavRoute>()
-        }
-
     NavDisplay(
         backStack = backStack.value,
         entryProvider = koinEntryProvider,
-        sceneStrategy = sceneStrategy,
+        sceneStrategies = listOf(MapListDetailSceneStrategy()),
         entryDecorators =
             listOf(
                 rememberSaveableStateHolderNavEntryDecorator(),

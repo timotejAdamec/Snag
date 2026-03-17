@@ -13,12 +13,11 @@
 package cz.adamec.timotej.snag.users.fe.driving.api
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
+import androidx.navigation3.scene.DialogSceneStrategy
 import androidx.navigation3.ui.NavDisplay
-import cz.adamec.timotej.snag.lib.design.fe.scenes.InlineDialogSceneStrategy
 import org.koin.compose.koinInject
 import org.koin.compose.navigation3.koinEntryProvider
 
@@ -28,12 +27,11 @@ fun UsersNavigation(
     backStack: UsersBackStack = koinInject(),
 ) {
     val entryProvider = koinEntryProvider<UsersNavRoute>()
-    val sceneStrategy = remember { InlineDialogSceneStrategy<UsersNavRoute>() }
     NavDisplay(
         modifier = modifier,
         backStack = backStack.value,
         entryProvider = entryProvider,
-        sceneStrategy = sceneStrategy,
+        sceneStrategies = listOf(DialogSceneStrategy()),
         entryDecorators =
             listOf(
                 rememberSaveableStateHolderNavEntryDecorator(),
