@@ -79,7 +79,8 @@ Adds on top of Frontend:
 - Ktor client core, content negotiation, logging
 - Kotlin serialization JSON
 - Platform engines: OkHttp (Android/JVM), Darwin (iOS), CIO (WasmJS), JS (JS)
-- `:lib:network:fe` dependency
+- `:lib:network:fe:api` dependency (for non-network modules)
+- `:lib:network:fe:test` dependency (for `driven:test` modules)
 
 ### snagDrivenFrontendMultiplatformModule
 

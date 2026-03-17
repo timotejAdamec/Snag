@@ -27,7 +27,7 @@ kotlin {
             implementation(projects.feat.reports.fe.driven.test)
             implementation(projects.feat.structures.fe.driven.test)
             implementation(projects.feat.users.fe.driven.test)
-            implementation(projects.lib.network.fe.driven.test)
+            implementation(projects.lib.network.fe.test)
             implementation(projects.lib.storage.fe.test)
             implementation(projects.feat.sync.fe.driven.test)
         }

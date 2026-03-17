@@ -20,8 +20,7 @@ kotlin {
             // Core infrastructure
             implementation(projects.lib.design.fe)
             implementation(projects.core.foundation.fe)
-            implementation(projects.lib.network.fe.app.impl)
-            implementation(projects.lib.network.fe.driven.impl)
+            implementation(projects.lib.network.fe.impl)
             implementation(projects.lib.storage.fe.impl)
             implementation(projects.feat.shared.database.fe.impl)
             implementation(projects.feat.shared.storage.fe)

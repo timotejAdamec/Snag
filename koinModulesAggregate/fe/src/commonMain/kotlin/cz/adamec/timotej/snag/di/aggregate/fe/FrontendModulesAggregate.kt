@@ -32,8 +32,7 @@ import cz.adamec.timotej.snag.findings.fe.driven.di.findingsDrivenModule
 import cz.adamec.timotej.snag.findings.fe.driving.impl.di.findingsDrivingImplModule
 import cz.adamec.timotej.snag.lib.design.fe.di.designModule
 import cz.adamec.timotej.snag.lib.storage.fe.impl.di.fileStorageModule
-import cz.adamec.timotej.snag.network.fe.app.impl.di.networkAppModule
-import cz.adamec.timotej.snag.network.fe.driven.impl.di.networkDrivenModule
+import cz.adamec.timotej.snag.network.fe.impl.di.networkModule
 import cz.adamec.timotej.snag.projects.fe.app.impl.di.projectsAppModule
 import cz.adamec.timotej.snag.projects.fe.driven.di.projectsDrivenModule
 import cz.adamec.timotej.snag.projects.fe.driving.api.di.projectsDrivingApiModule
@@ -55,8 +54,7 @@ val frontendModulesAggregate =
         includes(
             frontendCoreModule,
             designModule,
-            networkAppModule,
-            networkDrivenModule,
+            networkModule,
             databaseModule,
             sharedRulesModule,
             fileStorageModule,
