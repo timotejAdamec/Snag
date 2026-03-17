@@ -73,7 +73,25 @@ Each feature/core/library module/directory can be split into submodules if there
   of `impl`. In features, it is typical for the `driven` layer so that tests in `driving` and `app`
   layers can run with non-production unit-test-friendly adapter `ports`.
 
+## Dependency directions
+
+```
+[application] -> feat -> lib -> core
+
+driving -
+         -> app -> ports -> model -> business
+driven  -
+
+impl -
+       -> api
+test -
+```
+
 ## Modules configurations
 The project uses custom plugins located in the top-level `build-logic` module.
 Convention plugins auto-wire most inter-module dependencies — when creating a new module, apply only
 the convention plugin and add explicit dependencies only if the build requires them.
+
+## Local project structure hints
+
+`README.md` files in the codebase also give local project structure information.
