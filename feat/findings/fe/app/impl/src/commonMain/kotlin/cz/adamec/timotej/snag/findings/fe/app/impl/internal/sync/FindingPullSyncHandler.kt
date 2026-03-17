@@ -31,20 +31,20 @@ internal class FindingPullSyncHandler(
     setLastPullSyncedAtTimestampUseCase: SetLastPullSyncedAtTimestampUseCase,
     timestampProvider: TimestampProvider,
 ) : DbApiPullSyncHandler<FindingSyncResult>(
-    logger = LH.logger,
-    timestampProvider = timestampProvider,
-    getLastPullSyncedAtTimestampUseCase = getLastPullSyncedAtTimestampUseCase,
-    setLastPullSyncedAtTimestampUseCase = setLastPullSyncedAtTimestampUseCase,
-) {
+        logger = LH.logger,
+        timestampProvider = timestampProvider,
+        getLastPullSyncedAtTimestampUseCase = getLastPullSyncedAtTimestampUseCase,
+        setLastPullSyncedAtTimestampUseCase = setLastPullSyncedAtTimestampUseCase,
+    ) {
     override val entityTypeId: String = FINDING_SYNC_ENTITY_TYPE
     override val entityName: String = "finding"
 
     override suspend fun fetchChangesFromApi(
-        scopeId: String,
+        scopeId: Uuid?,
         since: Timestamp,
     ): OnlineDataResult<List<FindingSyncResult>> =
         findingsApi.getFindingsModifiedSince(
-            structureId = Uuid.parse(scopeId),
+            structureId = scopeId!!,
             since = since,
         )
 

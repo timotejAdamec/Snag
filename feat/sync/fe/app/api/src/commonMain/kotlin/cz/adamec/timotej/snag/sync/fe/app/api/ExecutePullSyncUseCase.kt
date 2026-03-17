@@ -12,9 +12,11 @@
 
 package cz.adamec.timotej.snag.sync.fe.app.api
 
+import kotlin.uuid.Uuid
+
 interface ExecutePullSyncUseCase {
     suspend operator fun invoke(
         entityTypeId: String,
-        scopeId: String = "",
+        scopeId: Uuid? = null,
     )
 }

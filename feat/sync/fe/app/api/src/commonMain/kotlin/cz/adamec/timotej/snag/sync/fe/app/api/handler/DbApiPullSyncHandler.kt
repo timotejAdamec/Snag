@@ -18,6 +18,7 @@ import cz.adamec.timotej.snag.core.foundation.common.TimestampProvider
 import cz.adamec.timotej.snag.core.network.fe.OnlineDataResult
 import cz.adamec.timotej.snag.sync.fe.app.api.GetLastPullSyncedAtTimestampUseCase
 import cz.adamec.timotej.snag.sync.fe.app.api.SetLastPullSyncedAtTimestampUseCase
+import kotlin.uuid.Uuid
 
 abstract class DbApiPullSyncHandler<TChange>(
     private val logger: Logger,
@@ -31,18 +32,19 @@ abstract class DbApiPullSyncHandler<TChange>(
     protected abstract val entityName: String
 
     protected abstract suspend fun fetchChangesFromApi(
-        scopeId: String,
+        scopeId: Uuid?,
         since: Timestamp,
     ): OnlineDataResult<List<TChange>>
 
     protected abstract suspend fun applyChange(change: TChange)
 
-    override suspend fun execute(scopeId: String): PullSyncOperationResult {
+    override suspend fun execute(scopeId: Uuid?): PullSyncOperationResult {
+        val scopeIdString = scopeId?.toString() ?: ""
         logger.d { "Starting pull sync for ${entityName}s (scopeId=$scopeId)." }
         val since =
             getLastPullSyncedAtTimestampUseCase(
                 entityType = entityTypeId,
-                scopeId = scopeId,
+                scopeId = scopeIdString,
             ) ?: Timestamp(0)
         val now = timestampProvider.getNowTimestamp()
         logger.d { "Pulling $entityName changes since=$since, now=$now." }
@@ -61,7 +63,7 @@ abstract class DbApiPullSyncHandler<TChange>(
                 setLastPullSyncedAtTimestampUseCase(
                     entityType = entityTypeId,
                     timestamp = now,
-                    scopeId = scopeId,
+                    scopeId = scopeIdString,
                 )
                 logger.d { "Pull sync for ${entityName}s completed (scopeId=$scopeId), updated lastSyncedAt=$now." }
                 PullSyncOperationResult.Success

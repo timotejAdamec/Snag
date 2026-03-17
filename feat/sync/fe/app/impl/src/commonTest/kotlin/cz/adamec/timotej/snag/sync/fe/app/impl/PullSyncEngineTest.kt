@@ -30,6 +30,7 @@ import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.uuid.Uuid
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class PullSyncEngineTest : FrontendKoinInitializedTest() {
@@ -191,13 +192,13 @@ class PullSyncEngineTest : FrontendKoinInitializedTest() {
         override val entityTypeId: String,
         private val deferred: CompletableDeferred<PullSyncOperationResult>,
     ) : PullSyncOperationHandler {
-        override suspend fun execute(scopeId: String): PullSyncOperationResult = deferred.await()
+        override suspend fun execute(scopeId: Uuid?): PullSyncOperationResult = deferred.await()
     }
 
     private class FixedResultHandler(
         override val entityTypeId: String,
         var result: PullSyncOperationResult,
     ) : PullSyncOperationHandler {
-        override suspend fun execute(scopeId: String): PullSyncOperationResult = result
+        override suspend fun execute(scopeId: Uuid?): PullSyncOperationResult = result
     }
 }

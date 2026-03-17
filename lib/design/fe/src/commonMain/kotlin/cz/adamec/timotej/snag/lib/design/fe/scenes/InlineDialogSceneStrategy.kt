@@ -10,6 +10,8 @@
  * Department of Software Engineering
  */
 
+@file:Suppress("UnnecessaryFullyQualifiedName", "ForbiddenComment")
+
 package cz.adamec.timotej.snag.lib.design.fe.scenes
 
 import androidx.compose.foundation.layout.Box
@@ -29,6 +31,7 @@ import androidx.navigation3.scene.SceneStrategyScope
 //  1. Delete this file (InlineDialogSceneStrategy.kt)
 //  2. In ProjectsNavigation.kt and UsersNavigation.kt: replace
 //     InlineDialogSceneStrategy with DialogSceneStrategy
+
 /**
  * Renders dialog entries as inline composable overlays (stacked in a [Box])
  * instead of platform `Dialog` windows.

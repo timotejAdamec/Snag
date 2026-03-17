@@ -22,6 +22,7 @@ import cz.adamec.timotej.snag.users.fe.app.impl.internal.LH
 import cz.adamec.timotej.snag.users.fe.ports.UserSyncResult
 import cz.adamec.timotej.snag.users.fe.ports.UsersApi
 import cz.adamec.timotej.snag.users.fe.ports.UsersDb
+import kotlin.uuid.Uuid
 
 internal class UserPullSyncHandler(
     private val usersApi: UsersApi,
@@ -30,16 +31,16 @@ internal class UserPullSyncHandler(
     setLastPullSyncedAtTimestampUseCase: SetLastPullSyncedAtTimestampUseCase,
     timestampProvider: TimestampProvider,
 ) : DbApiPullSyncHandler<UserSyncResult>(
-    logger = LH.logger,
-    timestampProvider = timestampProvider,
-    getLastPullSyncedAtTimestampUseCase = getLastPullSyncedAtTimestampUseCase,
-    setLastPullSyncedAtTimestampUseCase = setLastPullSyncedAtTimestampUseCase,
-) {
+        logger = LH.logger,
+        timestampProvider = timestampProvider,
+        getLastPullSyncedAtTimestampUseCase = getLastPullSyncedAtTimestampUseCase,
+        setLastPullSyncedAtTimestampUseCase = setLastPullSyncedAtTimestampUseCase,
+    ) {
     override val entityTypeId: String = USER_SYNC_ENTITY_TYPE
     override val entityName: String = "user"
 
     override suspend fun fetchChangesFromApi(
-        scopeId: String,
+        scopeId: Uuid?,
         since: Timestamp,
     ): OnlineDataResult<List<UserSyncResult>> = usersApi.getUsersModifiedSince(since)
 

@@ -24,6 +24,7 @@ import cz.adamec.timotej.snag.structures.fe.app.api.CascadeDeleteLocalStructures
 import cz.adamec.timotej.snag.sync.fe.app.api.GetLastPullSyncedAtTimestampUseCase
 import cz.adamec.timotej.snag.sync.fe.app.api.SetLastPullSyncedAtTimestampUseCase
 import cz.adamec.timotej.snag.sync.fe.app.api.handler.DbApiPullSyncHandler
+import kotlin.uuid.Uuid
 
 internal class ProjectPullSyncHandler(
     private val projectsApi: ProjectsApi,
@@ -34,16 +35,16 @@ internal class ProjectPullSyncHandler(
     setLastPullSyncedAtTimestampUseCase: SetLastPullSyncedAtTimestampUseCase,
     timestampProvider: TimestampProvider,
 ) : DbApiPullSyncHandler<ProjectSyncResult>(
-    logger = LH.logger,
-    timestampProvider = timestampProvider,
-    getLastPullSyncedAtTimestampUseCase = getLastPullSyncedAtTimestampUseCase,
-    setLastPullSyncedAtTimestampUseCase = setLastPullSyncedAtTimestampUseCase,
-) {
+        logger = LH.logger,
+        timestampProvider = timestampProvider,
+        getLastPullSyncedAtTimestampUseCase = getLastPullSyncedAtTimestampUseCase,
+        setLastPullSyncedAtTimestampUseCase = setLastPullSyncedAtTimestampUseCase,
+    ) {
     override val entityTypeId: String = PROJECT_SYNC_ENTITY_TYPE
     override val entityName: String = "project"
 
     override suspend fun fetchChangesFromApi(
-        scopeId: String,
+        scopeId: Uuid?,
         since: Timestamp,
     ): OnlineDataResult<List<ProjectSyncResult>> = projectsApi.getProjectsModifiedSince(since)
 

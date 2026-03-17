@@ -31,20 +31,20 @@ internal class InspectionPullSyncHandler(
     setLastPullSyncedAtTimestampUseCase: SetLastPullSyncedAtTimestampUseCase,
     timestampProvider: TimestampProvider,
 ) : DbApiPullSyncHandler<InspectionSyncResult>(
-    logger = LH.logger,
-    timestampProvider = timestampProvider,
-    getLastPullSyncedAtTimestampUseCase = getLastPullSyncedAtTimestampUseCase,
-    setLastPullSyncedAtTimestampUseCase = setLastPullSyncedAtTimestampUseCase,
-) {
+        logger = LH.logger,
+        timestampProvider = timestampProvider,
+        getLastPullSyncedAtTimestampUseCase = getLastPullSyncedAtTimestampUseCase,
+        setLastPullSyncedAtTimestampUseCase = setLastPullSyncedAtTimestampUseCase,
+    ) {
     override val entityTypeId: String = INSPECTION_SYNC_ENTITY_TYPE
     override val entityName: String = "inspection"
 
     override suspend fun fetchChangesFromApi(
-        scopeId: String,
+        scopeId: Uuid?,
         since: Timestamp,
     ): OnlineDataResult<List<InspectionSyncResult>> =
         inspectionsApi.getInspectionsModifiedSince(
-            projectId = Uuid.parse(scopeId),
+            projectId = scopeId!!,
             since = since,
         )
 

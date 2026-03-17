@@ -33,20 +33,20 @@ internal class StructurePullSyncHandler(
     setLastPullSyncedAtTimestampUseCase: SetLastPullSyncedAtTimestampUseCase,
     timestampProvider: TimestampProvider,
 ) : DbApiPullSyncHandler<StructureSyncResult>(
-    logger = LH.logger,
-    timestampProvider = timestampProvider,
-    getLastPullSyncedAtTimestampUseCase = getLastPullSyncedAtTimestampUseCase,
-    setLastPullSyncedAtTimestampUseCase = setLastPullSyncedAtTimestampUseCase,
-) {
+        logger = LH.logger,
+        timestampProvider = timestampProvider,
+        getLastPullSyncedAtTimestampUseCase = getLastPullSyncedAtTimestampUseCase,
+        setLastPullSyncedAtTimestampUseCase = setLastPullSyncedAtTimestampUseCase,
+    ) {
     override val entityTypeId: String = STRUCTURE_SYNC_ENTITY_TYPE
     override val entityName: String = "structure"
 
     override suspend fun fetchChangesFromApi(
-        scopeId: String,
+        scopeId: Uuid?,
         since: Timestamp,
     ): OnlineDataResult<List<StructureSyncResult>> =
         structuresApi.getStructuresModifiedSince(
-            projectId = Uuid.parse(scopeId),
+            projectId = scopeId!!,
             since = since,
         )
 

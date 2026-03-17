@@ -15,8 +15,9 @@ package cz.adamec.timotej.snag.users.fe.app.impl.internal
 import cz.adamec.timotej.snag.core.foundation.common.ApplicationScope
 import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.core.network.fe.log
+import cz.adamec.timotej.snag.sync.fe.app.api.ExecutePullSyncUseCase
 import cz.adamec.timotej.snag.users.fe.app.api.GetUsersUseCase
-import cz.adamec.timotej.snag.users.fe.app.api.PullUserChangesUseCase
+import cz.adamec.timotej.snag.users.fe.app.impl.internal.sync.USER_SYNC_ENTITY_TYPE
 import cz.adamec.timotej.snag.users.fe.model.FrontendUser
 import cz.adamec.timotej.snag.users.fe.ports.UsersDb
 import kotlinx.coroutines.flow.Flow
@@ -25,13 +26,13 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 class GetUsersUseCaseImpl(
-    private val pullUserChangesUseCase: PullUserChangesUseCase,
+    private val executePullSyncUseCase: ExecutePullSyncUseCase,
     private val usersDb: UsersDb,
     private val applicationScope: ApplicationScope,
 ) : GetUsersUseCase {
     override operator fun invoke(): Flow<OfflineFirstDataResult<List<FrontendUser>>> {
         applicationScope.launch {
-            pullUserChangesUseCase()
+            executePullSyncUseCase(entityTypeId = USER_SYNC_ENTITY_TYPE)
         }
 
         return usersDb

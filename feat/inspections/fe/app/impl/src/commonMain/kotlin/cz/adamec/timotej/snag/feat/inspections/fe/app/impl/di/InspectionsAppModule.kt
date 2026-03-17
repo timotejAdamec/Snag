@@ -17,14 +17,12 @@ import cz.adamec.timotej.snag.feat.inspections.fe.app.api.CascadeRestoreLocalIns
 import cz.adamec.timotej.snag.feat.inspections.fe.app.api.DeleteInspectionUseCase
 import cz.adamec.timotej.snag.feat.inspections.fe.app.api.GetInspectionUseCase
 import cz.adamec.timotej.snag.feat.inspections.fe.app.api.GetInspectionsUseCase
-import cz.adamec.timotej.snag.feat.inspections.fe.app.api.PullInspectionChangesUseCase
 import cz.adamec.timotej.snag.feat.inspections.fe.app.api.SaveInspectionUseCase
 import cz.adamec.timotej.snag.feat.inspections.fe.app.impl.internal.CascadeDeleteLocalInspectionsByProjectIdUseCaseImpl
 import cz.adamec.timotej.snag.feat.inspections.fe.app.impl.internal.CascadeRestoreLocalInspectionsByProjectIdUseCaseImpl
 import cz.adamec.timotej.snag.feat.inspections.fe.app.impl.internal.DeleteInspectionUseCaseImpl
 import cz.adamec.timotej.snag.feat.inspections.fe.app.impl.internal.GetInspectionUseCaseImpl
 import cz.adamec.timotej.snag.feat.inspections.fe.app.impl.internal.GetInspectionsUseCaseImpl
-import cz.adamec.timotej.snag.feat.inspections.fe.app.impl.internal.PullInspectionChangesUseCaseImpl
 import cz.adamec.timotej.snag.feat.inspections.fe.app.impl.internal.SaveInspectionUseCaseImpl
 import cz.adamec.timotej.snag.feat.inspections.fe.app.impl.internal.sync.InspectionPullSyncHandler
 import cz.adamec.timotej.snag.feat.inspections.fe.app.impl.internal.sync.InspectionSyncHandler
@@ -42,7 +40,6 @@ val inspectionsAppModule =
         factoryOf(::SaveInspectionUseCaseImpl) bind SaveInspectionUseCase::class
         factoryOf(::CascadeDeleteLocalInspectionsByProjectIdUseCaseImpl) bind CascadeDeleteLocalInspectionsByProjectIdUseCase::class
         factoryOf(::CascadeRestoreLocalInspectionsByProjectIdUseCaseImpl) bind CascadeRestoreLocalInspectionsByProjectIdUseCase::class
-        factoryOf(::PullInspectionChangesUseCaseImpl) bind PullInspectionChangesUseCase::class
         factoryOf(::InspectionSyncHandler) bind PushSyncOperationHandler::class
         factoryOf(::InspectionPullSyncHandler) bind PullSyncOperationHandler::class
     }

@@ -10,6 +10,8 @@
  * Department of Software Engineering
  */
 
+@file:Suppress("UnnecessaryFullyQualifiedName")
+
 package cz.adamec.timotej.snag.lib.design.fe.scenes
 
 import androidx.compose.runtime.Composable
@@ -30,6 +32,7 @@ import cz.adamec.timotej.snag.lib.design.fe.layout.systemBarsPaddingCoerceAtLeas
  * list so dialog entries are handled first and don't get wrapped.
  */
 class ContentPaneSceneStrategy<T : Any> : SceneStrategy<T> {
+    @Suppress("ReturnCount")
     override fun SceneStrategyScope<T>.calculateScene(entries: List<NavEntry<T>>): Scene<T>? {
         val lastEntry = entries.lastOrNull() ?: return null
         if (lastEntry.metadata.containsKey(ContentPaneSceneMetadata.SKIP_KEY)) return null

@@ -21,6 +21,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlin.uuid.Uuid
 
 internal class PullSyncEngine(
     private val handlers: List<PullSyncOperationHandler>,
@@ -32,9 +33,10 @@ internal class PullSyncEngine(
     private val _status = MutableStateFlow<PullSyncEngineStatus>(PullSyncEngineStatus.Idle)
     val status: StateFlow<PullSyncEngineStatus> = _status.asStateFlow()
 
+    @Suppress("TooGenericExceptionCaught")
     override suspend fun invoke(
         entityTypeId: String,
-        scopeId: String,
+        scopeId: Uuid?,
     ) {
         val handler =
             handlers.find { it.entityTypeId == entityTypeId }
@@ -55,6 +57,7 @@ internal class PullSyncEngine(
                         LH.logger.w {
                             "Flushing sync queue was not successful, skipping pull sync for entityTypeId='$entityTypeId'."
                         }
+                        @Suppress("LabeledExpression")
                         return@withFlushedQueue PullSyncOperationResult.Failure
                     }
                     handler.execute(scopeId)

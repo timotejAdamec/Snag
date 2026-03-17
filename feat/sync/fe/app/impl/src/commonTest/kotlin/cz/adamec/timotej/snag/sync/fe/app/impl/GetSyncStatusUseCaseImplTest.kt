@@ -272,13 +272,13 @@ class GetSyncStatusUseCaseImplTest : FrontendKoinInitializedTest() {
         override val entityTypeId: String,
         private val result: PullSyncOperationResult,
     ) : PullSyncOperationHandler {
-        override suspend fun execute(scopeId: String): PullSyncOperationResult = result
+        override suspend fun execute(scopeId: Uuid?): PullSyncOperationResult = result
     }
 
     private class SuspendingPullHandler(
         override val entityTypeId: String,
         private val deferred: CompletableDeferred<PullSyncOperationResult>,
     ) : PullSyncOperationHandler {
-        override suspend fun execute(scopeId: String): PullSyncOperationResult = deferred.await()
+        override suspend fun execute(scopeId: Uuid?): PullSyncOperationResult = deferred.await()
     }
 }

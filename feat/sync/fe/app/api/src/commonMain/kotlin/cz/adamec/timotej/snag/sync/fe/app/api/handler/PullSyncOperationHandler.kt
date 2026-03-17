@@ -12,8 +12,10 @@
 
 package cz.adamec.timotej.snag.sync.fe.app.api.handler
 
+import kotlin.uuid.Uuid
+
 interface PullSyncOperationHandler {
     val entityTypeId: String
 
-    suspend fun execute(scopeId: String = ""): PullSyncOperationResult
+    suspend fun execute(scopeId: Uuid? = null): PullSyncOperationResult
 }
