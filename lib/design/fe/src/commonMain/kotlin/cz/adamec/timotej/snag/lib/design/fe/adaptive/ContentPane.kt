@@ -12,7 +12,6 @@
 
 package cz.adamec.timotej.snag.lib.design.fe.adaptive
 
-import androidx.compose.animation.animateContentSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -42,7 +41,7 @@ fun ContentPane(
     content: @Composable () -> Unit,
 ) {
     Surface(
-        modifier = modifier.animateContentSize(),
+        modifier = modifier,
         shape = MaterialTheme.shapes.extraLarge,
         color = ContentPaneDefaults.paneColor,
     ) {
