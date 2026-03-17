@@ -32,6 +32,7 @@ import cz.adamec.timotej.snag.lib.design.fe.layout.systemBarsPaddingCoerceAtLeas
 class ContentPaneSceneStrategy<T : Any> : SceneStrategy<T> {
     override fun SceneStrategyScope<T>.calculateScene(entries: List<NavEntry<T>>): Scene<T>? {
         val lastEntry = entries.lastOrNull() ?: return null
+        if (lastEntry.metadata.containsKey(ContentPaneSceneMetadata.SKIP_KEY)) return null
         return ContentPaneScene(
             key = lastEntry.contentKey,
             entries = listOf(lastEntry),
@@ -63,4 +64,10 @@ private class ContentPaneScene<T : Any>(
             entry.Content()
         }
     }
+}
+
+object ContentPaneSceneMetadata {
+    const val SKIP_KEY = "ContentPane-Skip"
+
+    fun skip(): Map<String, Any> = mapOf(SKIP_KEY to true)
 }
