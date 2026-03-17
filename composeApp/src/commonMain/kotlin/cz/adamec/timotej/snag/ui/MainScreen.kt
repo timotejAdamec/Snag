@@ -59,45 +59,32 @@ internal fun MainScreen(
     usersRoute: UsersRoute = koinInject(),
 ) {
     val syncStatus by mainViewModel.syncStatus.collectAsStateWithLifecycle()
-    SnagTheme {
-        AppScaffold(
-            containerColor = ContentPaneDefaults.containerColor,
-        ) { paddingValues ->
-            MainScreenContent(
-                paddingValues = paddingValues,
-                syncBarState = syncStatus.toBarState(),
-                projectsRoute = projectsRoute,
-                usersRoute = usersRoute,
-            )
-        }
-    }
-}
-
-@Composable
-private fun MainScreenContent(
-    paddingValues: PaddingValues,
-    syncBarState: SyncStatusBarState,
-    projectsRoute: ProjectsRoute,
-    usersRoute: UsersRoute,
-) {
     var dialogContent by remember { mutableStateOf<(@Composable () -> Unit)?>(null) }
 
-    CompositionLocalProvider(LocalDialogPortal provides { dialogContent = it }) {
-        Box(modifier = Modifier.fillMaxSize()) {
-            MainScreenScaffold(
-                paddingValues = paddingValues,
-                syncBarState = syncBarState,
-                projectsRoute = projectsRoute,
-                usersRoute = usersRoute,
-            )
-            dialogContent?.let { content ->
-                Box(
-                    modifier =
-                        Modifier
-                            .fillMaxSize()
-                            .background(MaterialTheme.colorScheme.scrim.copy(alpha = SCRIM_ALPHA)),
-                )
-                content()
+    SnagTheme {
+        CompositionLocalProvider(LocalDialogPortal provides { dialogContent = it }) {
+            Box(modifier = Modifier.fillMaxSize()) {
+                AppScaffold(
+                    containerColor = ContentPaneDefaults.containerColor,
+                ) { paddingValues ->
+                    MainScreenScaffold(
+                        paddingValues = paddingValues,
+                        syncBarState = syncStatus.toBarState(),
+                        projectsRoute = projectsRoute,
+                        usersRoute = usersRoute,
+                    )
+                }
+                dialogContent?.let { content ->
+                    Box(
+                        modifier =
+                            Modifier
+                                .fillMaxSize()
+                                .background(
+                                    MaterialTheme.colorScheme.scrim.copy(alpha = SCRIM_ALPHA),
+                                ),
+                    ) {}
+                    content()
+                }
             }
         }
     }
