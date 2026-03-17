@@ -12,10 +12,8 @@
 
 package cz.adamec.timotej.snag.lib.design.fe.scenes
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation3.runtime.NavEntry
@@ -34,8 +32,6 @@ import androidx.navigation3.scene.SceneStrategyScope
 /**
  * Renders dialog entries as inline composable overlays (stacked in a [Box])
  * instead of platform `Dialog` windows.
- *
- * Includes a scrim layer between background and dialog content.
  *
  * This avoids the cross-composition-tree `movableContentOf` crash that
  * [androidx.navigation3.scene.DialogSceneStrategy] triggers on Compose
@@ -65,8 +61,6 @@ class InlineDialogSceneStrategy<T : Any> : SceneStrategy<T> {
     }
 }
 
-private const val SCRIM_ALPHA = 0.32f
-
 private class InlineDialogScene<T : Any>(
     override val key: Any,
     override val entries: List<NavEntry<T>>,
@@ -78,14 +72,6 @@ private class InlineDialogScene<T : Any>(
     override val content: @Composable () -> Unit = {
         Box(modifier = Modifier.fillMaxSize()) {
             backgroundEntries.lastOrNull()?.Content()
-            Box(
-                modifier =
-                    Modifier
-                        .fillMaxSize()
-                        .background(
-                            MaterialTheme.colorScheme.scrim.copy(alpha = SCRIM_ALPHA),
-                        ),
-            ) {}
             dialogEntry.Content()
         }
     }
