@@ -13,11 +13,8 @@
 package cz.adamec.timotej.snag.projects.fe.app.api
 
 import cz.adamec.timotej.snag.core.network.fe.OnlineDataResult
-import kotlin.uuid.Uuid
+import cz.adamec.timotej.snag.projects.fe.app.api.model.SetProjectClosedRequest
 
 interface SetProjectClosedUseCase {
-    suspend operator fun invoke(
-        projectId: Uuid,
-        isClosed: Boolean,
-    ): OnlineDataResult<Unit>
+    suspend operator fun invoke(request: SetProjectClosedRequest): OnlineDataResult<Unit>
 }

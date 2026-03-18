@@ -20,6 +20,7 @@ import cz.adamec.timotej.snag.feat.inspections.fe.app.api.GetInspectionsUseCase
 import cz.adamec.timotej.snag.feat.inspections.fe.app.impl.internal.sync.INSPECTION_SYNC_ENTITY_TYPE
 import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionsDb
 import cz.adamec.timotej.snag.sync.fe.app.api.ExecutePullSyncUseCase
+import cz.adamec.timotej.snag.sync.fe.app.api.model.ExecutePullSyncRequest
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.onEach
@@ -34,8 +35,10 @@ internal class GetInspectionsUseCaseImpl(
     override operator fun invoke(projectId: Uuid): Flow<OfflineFirstDataResult<List<AppInspection>>> {
         applicationScope.launch {
             executePullSyncUseCase(
-                entityTypeId = INSPECTION_SYNC_ENTITY_TYPE,
-                scopeId = projectId,
+                ExecutePullSyncRequest(
+                    entityTypeId = INSPECTION_SYNC_ENTITY_TYPE,
+                    scopeId = projectId,
+                ),
             )
         }
 

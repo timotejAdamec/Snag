@@ -17,6 +17,7 @@ import cz.adamec.timotej.snag.feat.structures.be.model.BackendStructureData
 import cz.adamec.timotej.snag.projects.be.model.BackendProjectData
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
 import cz.adamec.timotej.snag.structures.be.app.api.GetStructuresModifiedSinceUseCase
+import cz.adamec.timotej.snag.structures.be.app.api.model.GetStructuresModifiedSinceRequest
 import cz.adamec.timotej.snag.structures.be.ports.StructuresDb
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
 import kotlinx.coroutines.test.runTest
@@ -37,7 +38,7 @@ class GetStructuresModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
     @Test
     fun `returns empty list when no structures exist`() =
         runTest(testDispatcher) {
-            val result = useCase(projectId = projectId, since = Timestamp(100L))
+            val result = useCase(GetStructuresModifiedSinceRequest(projectId = projectId, since = Timestamp(100L)))
 
             assertTrue(result.isEmpty())
         }
@@ -63,7 +64,7 @@ class GetStructuresModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
                 )
             dataSource.saveStructure(structure)
 
-            val result = useCase(projectId = projectId, since = Timestamp(100L))
+            val result = useCase(GetStructuresModifiedSinceRequest(projectId = projectId, since = Timestamp(100L)))
 
             assertEquals(listOf(structure), result)
         }
@@ -89,7 +90,7 @@ class GetStructuresModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
                 )
             dataSource.saveStructure(structure)
 
-            val result = useCase(projectId = projectId, since = Timestamp(100L))
+            val result = useCase(GetStructuresModifiedSinceRequest(projectId = projectId, since = Timestamp(100L)))
 
             assertTrue(result.isEmpty())
         }
@@ -116,7 +117,7 @@ class GetStructuresModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
                 )
             dataSource.saveStructure(structure)
 
-            val result = useCase(projectId = projectId, since = Timestamp(100L))
+            val result = useCase(GetStructuresModifiedSinceRequest(projectId = projectId, since = Timestamp(100L)))
 
             assertEquals(listOf(structure), result)
         }
@@ -142,7 +143,7 @@ class GetStructuresModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
                 )
             dataSource.saveStructure(structure)
 
-            val result = useCase(projectId = projectId, since = Timestamp(100L))
+            val result = useCase(GetStructuresModifiedSinceRequest(projectId = projectId, since = Timestamp(100L)))
 
             assertTrue(result.isEmpty())
         }

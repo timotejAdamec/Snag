@@ -21,6 +21,7 @@ import cz.adamec.timotej.snag.structures.be.app.api.GetStructuresModifiedSinceUs
 import cz.adamec.timotej.snag.structures.be.app.api.GetStructuresUseCase
 import cz.adamec.timotej.snag.structures.be.app.api.SaveStructureUseCase
 import cz.adamec.timotej.snag.structures.be.app.api.model.DeleteStructureRequest
+import cz.adamec.timotej.snag.structures.be.app.api.model.GetStructuresModifiedSinceRequest
 import cz.adamec.timotej.snag.structures.be.driving.contract.DeleteStructureApiDto
 import cz.adamec.timotej.snag.structures.be.driving.contract.PutStructureApiDto
 import io.ktor.http.HttpStatusCode
@@ -64,7 +65,13 @@ internal class StructuresRoute(
                 val sinceParam = call.request.queryParameters["since"]
                 if (sinceParam != null) {
                     val since = Timestamp(sinceParam.toLong())
-                    val modified = getStructuresModifiedSinceUseCase(projectId, since).map { it.toDto() }
+                    val modified =
+                        getStructuresModifiedSinceUseCase(
+                            GetStructuresModifiedSinceRequest(
+                                projectId = projectId,
+                                since = since,
+                            ),
+                        ).map { it.toDto() }
                     call.respond(modified)
                 } else {
                     val dtoStructures = getStructuresUseCase(projectId).map { it.toDto() }

@@ -24,6 +24,7 @@ import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.core.network.fe.log
 import cz.adamec.timotej.snag.core.network.fe.map
 import cz.adamec.timotej.snag.sync.fe.app.api.EnqueueSyncSaveUseCase
+import cz.adamec.timotej.snag.sync.fe.app.api.model.EnqueueSyncSaveRequest
 import kotlin.uuid.Uuid
 
 internal class SaveClientUseCaseImpl(
@@ -52,8 +53,10 @@ internal class SaveClientUseCaseImpl(
                 )
                 if (it is OfflineFirstDataResult.Success) {
                     enqueueSyncSaveUseCase(
-                        entityTypeId = CLIENT_SYNC_ENTITY_TYPE,
-                        entityId = client.id,
+                        EnqueueSyncSaveRequest(
+                            entityTypeId = CLIENT_SYNC_ENTITY_TYPE,
+                            entityId = client.id,
+                        ),
                     )
                 }
             }.map {

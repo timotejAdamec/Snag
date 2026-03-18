@@ -21,6 +21,7 @@ import cz.adamec.timotej.snag.projects.fe.app.impl.internal.sync.PROJECT_SYNC_EN
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsDb
 import cz.adamec.timotej.snag.structures.fe.app.api.CascadeDeleteLocalStructuresByProjectIdUseCase
 import cz.adamec.timotej.snag.sync.fe.app.api.EnqueueSyncDeleteUseCase
+import cz.adamec.timotej.snag.sync.fe.app.api.model.EnqueueSyncDeleteRequest
 import kotlin.uuid.Uuid
 
 class DeleteProjectUseCaseImpl(
@@ -41,8 +42,10 @@ class DeleteProjectUseCaseImpl(
                 )
                 if (it is OfflineFirstDataResult.Success) {
                     enqueueSyncDeleteUseCase(
-                        entityTypeId = PROJECT_SYNC_ENTITY_TYPE,
-                        entityId = projectId,
+                        EnqueueSyncDeleteRequest(
+                            entityTypeId = PROJECT_SYNC_ENTITY_TYPE,
+                            entityId = projectId,
+                        ),
                     )
                 }
             }

@@ -17,6 +17,7 @@ import cz.adamec.timotej.snag.feat.findings.be.model.BackendFindingData
 import cz.adamec.timotej.snag.feat.findings.business.FindingType
 import cz.adamec.timotej.snag.feat.structures.be.model.BackendStructureData
 import cz.adamec.timotej.snag.findings.be.app.api.GetFindingsModifiedSinceUseCase
+import cz.adamec.timotej.snag.findings.be.app.api.model.GetFindingsModifiedSinceRequest
 import cz.adamec.timotej.snag.findings.be.ports.FindingsDb
 import cz.adamec.timotej.snag.projects.be.model.BackendProjectData
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
@@ -71,7 +72,7 @@ class GetFindingsModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
     @Test
     fun `returns empty list when no findings exist`() =
         runTest(testDispatcher) {
-            val result = useCase(structureId = structureId, since = Timestamp(100L))
+            val result = useCase(GetFindingsModifiedSinceRequest(structureId = structureId, since = Timestamp(100L)))
 
             assertTrue(result.isEmpty())
         }
@@ -92,7 +93,7 @@ class GetFindingsModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
                 )
             dataSource.saveFinding(finding)
 
-            val result = useCase(structureId = structureId, since = Timestamp(100L))
+            val result = useCase(GetFindingsModifiedSinceRequest(structureId = structureId, since = Timestamp(100L)))
 
             assertEquals(listOf(finding), result)
         }
@@ -113,7 +114,7 @@ class GetFindingsModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
                 )
             dataSource.saveFinding(finding)
 
-            val result = useCase(structureId = structureId, since = Timestamp(100L))
+            val result = useCase(GetFindingsModifiedSinceRequest(structureId = structureId, since = Timestamp(100L)))
 
             assertTrue(result.isEmpty())
         }
@@ -135,7 +136,7 @@ class GetFindingsModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
                 )
             dataSource.saveFinding(finding)
 
-            val result = useCase(structureId = structureId, since = Timestamp(100L))
+            val result = useCase(GetFindingsModifiedSinceRequest(structureId = structureId, since = Timestamp(100L)))
 
             assertEquals(listOf(finding), result)
         }
@@ -156,7 +157,7 @@ class GetFindingsModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
                 )
             dataSource.saveFinding(finding)
 
-            val result = useCase(structureId = structureId, since = Timestamp(100L))
+            val result = useCase(GetFindingsModifiedSinceRequest(structureId = structureId, since = Timestamp(100L)))
 
             assertTrue(result.isEmpty())
         }

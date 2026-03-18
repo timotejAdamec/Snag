@@ -18,6 +18,7 @@ import cz.adamec.timotej.snag.feat.inspections.be.app.api.GetInspectionsModified
 import cz.adamec.timotej.snag.feat.inspections.be.app.api.GetInspectionsUseCase
 import cz.adamec.timotej.snag.feat.inspections.be.app.api.SaveInspectionUseCase
 import cz.adamec.timotej.snag.feat.inspections.be.app.api.model.DeleteInspectionRequest
+import cz.adamec.timotej.snag.feat.inspections.be.app.api.model.GetInspectionsModifiedSinceRequest
 import cz.adamec.timotej.snag.feat.inspections.be.driving.contract.DeleteInspectionApiDto
 import cz.adamec.timotej.snag.feat.inspections.be.driving.contract.PutInspectionApiDto
 import cz.adamec.timotej.snag.routing.be.AppRoute
@@ -64,7 +65,13 @@ internal class InspectionsRoute(
                 val sinceParam = call.request.queryParameters["since"]
                 if (sinceParam != null) {
                     val since = Timestamp(sinceParam.toLong())
-                    val modified = getInspectionsModifiedSinceUseCase(projectId, since).map { it.toDto() }
+                    val modified =
+                        getInspectionsModifiedSinceUseCase(
+                            GetInspectionsModifiedSinceRequest(
+                                projectId = projectId,
+                                since = since,
+                            ),
+                        ).map { it.toDto() }
                     call.respond(modified)
                 } else {
                     val dtoInspections = getInspectionsUseCase(projectId).map { it.toDto() }

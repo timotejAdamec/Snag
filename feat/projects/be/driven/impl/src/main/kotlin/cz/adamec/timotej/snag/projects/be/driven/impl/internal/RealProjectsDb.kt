@@ -22,6 +22,8 @@ import cz.adamec.timotej.snag.sync.be.DeleteConflictResult
 import cz.adamec.timotej.snag.sync.be.ResolveConflictForDeleteUseCase
 import cz.adamec.timotej.snag.sync.be.ResolveConflictForSaveUseCase
 import cz.adamec.timotej.snag.sync.be.SaveConflictResult
+import cz.adamec.timotej.snag.sync.be.model.ResolveConflictForDeleteRequest
+import cz.adamec.timotej.snag.sync.be.model.ResolveConflictForSaveRequest
 import org.jetbrains.exposed.v1.core.greater
 import org.jetbrains.exposed.v1.core.or
 import org.jetbrains.exposed.v1.jdbc.Database
@@ -46,7 +48,15 @@ internal class RealProjectsDb(
     override suspend fun saveProject(project: BackendProject): BackendProject? =
         transaction(database) {
             val existing = ProjectEntity.findById(project.id)
-            when (val result = resolveConflictForSave(existing?.toModel(), project)) {
+            when (
+                val result =
+                    resolveConflictForSave(
+                        ResolveConflictForSaveRequest(
+                            existing = existing?.toModel(),
+                            incoming = project,
+                        ),
+                    )
+            ) {
                 is SaveConflictResult.Proceed -> {
                     if (existing != null) {
                         existing.name = project.name
@@ -79,7 +89,15 @@ internal class RealProjectsDb(
     ): BackendProject? =
         transaction(database) {
             val existing = ProjectEntity.findById(id)
-            when (val result = resolveConflictForDelete(existing?.toModel(), deletedAt)) {
+            when (
+                val result =
+                    resolveConflictForDelete(
+                        ResolveConflictForDeleteRequest(
+                            existing = existing?.toModel(),
+                            deletedAt = deletedAt,
+                        ),
+                    )
+            ) {
                 is DeleteConflictResult.Proceed -> {
                     existing!!.deletedAt = deletedAt.value
                     null

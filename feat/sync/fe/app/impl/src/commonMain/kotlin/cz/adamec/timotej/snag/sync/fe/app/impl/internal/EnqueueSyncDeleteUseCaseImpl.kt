@@ -13,16 +13,13 @@
 package cz.adamec.timotej.snag.sync.fe.app.impl.internal
 
 import cz.adamec.timotej.snag.sync.fe.app.api.EnqueueSyncDeleteUseCase
+import cz.adamec.timotej.snag.sync.fe.app.api.model.EnqueueSyncDeleteRequest
 import cz.adamec.timotej.snag.sync.fe.model.SyncOperationType
-import kotlin.uuid.Uuid
 
 internal class EnqueueSyncDeleteUseCaseImpl(
     private val enqueueSyncOperationUseCase: EnqueueSyncOperationUseCase,
 ) : EnqueueSyncDeleteUseCase {
-    override suspend fun invoke(
-        entityTypeId: String,
-        entityId: Uuid,
-    ) {
-        enqueueSyncOperationUseCase(entityTypeId, entityId, SyncOperationType.DELETE)
+    override suspend fun invoke(request: EnqueueSyncDeleteRequest) {
+        enqueueSyncOperationUseCase(request.entityTypeId, request.entityId, SyncOperationType.DELETE)
     }
 }

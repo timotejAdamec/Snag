@@ -16,34 +16,31 @@ import cz.adamec.timotej.snag.core.network.fe.OnlineDataResult
 import cz.adamec.timotej.snag.core.network.fe.onFailure
 import cz.adamec.timotej.snag.core.network.fe.onSuccess
 import cz.adamec.timotej.snag.structures.fe.app.api.UploadFloorPlanImageUseCase
+import cz.adamec.timotej.snag.structures.fe.app.api.model.UploadFloorPlanImageRequest
 import cz.adamec.timotej.snag.structures.fe.ports.StructuresFileStorage
-import kotlin.uuid.Uuid
 
 class UploadFloorPlanImageUseCaseImpl(
     private val structuresFileStorage: StructuresFileStorage,
 ) : UploadFloorPlanImageUseCase {
-    override suspend fun invoke(
-        projectId: Uuid,
-        structureId: Uuid,
-        bytes: ByteArray,
-        fileName: String,
-    ): OnlineDataResult<String> {
+    override suspend fun invoke(request: UploadFloorPlanImageRequest): OnlineDataResult<String> {
         LH.logger.d {
-            "Uploading floor plan image $fileName for structure $structureId in project $projectId."
+            "Uploading floor plan image ${request.fileName} for structure ${request.structureId}" +
+                " in project ${request.projectId}."
         }
         return structuresFileStorage
             .uploadFile(
-                bytes = bytes,
-                fileName = fileName,
-                directory = "projects/$projectId/structures/$structureId",
+                bytes = request.bytes,
+                fileName = request.fileName,
+                directory = "projects/${request.projectId}/structures/${request.structureId}",
             ).onSuccess {
                 LH.logger.d {
-                    "Uploaded floor plan image $fileName for structure $structureId in project $projectId." +
-                        " The floor plan is now available at $it."
+                    "Uploaded floor plan image ${request.fileName} for structure ${request.structureId}" +
+                        " in project ${request.projectId}. The floor plan is now available at $it."
                 }
             }.onFailure {
                 LH.logger.w {
-                    "Error uploading floor plan image $fileName for structure $structureId in project $projectId."
+                    "Error uploading floor plan image ${request.fileName} for structure ${request.structureId}" +
+                        " in project ${request.projectId}."
                 }
             }
     }

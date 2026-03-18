@@ -21,7 +21,9 @@ import cz.adamec.timotej.snag.projects.be.app.api.GetProjectsModifiedSinceUseCas
 import cz.adamec.timotej.snag.projects.be.app.api.GetProjectsUseCase
 import cz.adamec.timotej.snag.projects.be.app.api.RemoveUserFromProjectUseCase
 import cz.adamec.timotej.snag.projects.be.app.api.SaveProjectUseCase
+import cz.adamec.timotej.snag.projects.be.app.api.model.AssignUserToProjectRequest
 import cz.adamec.timotej.snag.projects.be.app.api.model.DeleteProjectRequest
+import cz.adamec.timotej.snag.projects.be.app.api.model.RemoveUserFromProjectRequest
 import cz.adamec.timotej.snag.projects.be.driving.contract.DeleteProjectApiDto
 import cz.adamec.timotej.snag.projects.be.driving.contract.PutProjectApiDto
 import cz.adamec.timotej.snag.routing.be.AppRoute
@@ -119,14 +121,24 @@ internal class ProjectsRoute(
             put("/{userId}") {
                 val projectId = getIdFromParameters("projectId")
                 val userId = getIdFromParameters("userId")
-                assignUserToProjectUseCase(userId, projectId)
+                assignUserToProjectUseCase(
+                    AssignUserToProjectRequest(
+                        userId = userId,
+                        projectId = projectId,
+                    ),
+                )
                 call.respond(HttpStatusCode.NoContent)
             }
 
             delete("/{userId}") {
                 val projectId = getIdFromParameters("projectId")
                 val userId = getIdFromParameters("userId")
-                removeUserFromProjectUseCase(userId, projectId)
+                removeUserFromProjectUseCase(
+                    RemoveUserFromProjectRequest(
+                        userId = userId,
+                        projectId = projectId,
+                    ),
+                )
                 call.respond(HttpStatusCode.NoContent)
             }
         }

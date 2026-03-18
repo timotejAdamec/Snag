@@ -16,6 +16,7 @@ import app.cash.turbine.test
 import cz.adamec.timotej.snag.core.foundation.common.ApplicationScope
 import cz.adamec.timotej.snag.sync.fe.app.api.handler.PullSyncOperationHandler
 import cz.adamec.timotej.snag.sync.fe.app.api.handler.PullSyncOperationResult
+import cz.adamec.timotej.snag.sync.fe.app.api.model.ExecutePullSyncRequest
 import cz.adamec.timotej.snag.sync.fe.app.impl.internal.PullSyncEngine
 import cz.adamec.timotej.snag.sync.fe.app.impl.internal.PullSyncEngineStatus
 import cz.adamec.timotej.snag.sync.fe.app.impl.internal.PushSyncEngine
@@ -70,7 +71,7 @@ class PullSyncEngineTest : FrontendKoinInitializedTest() {
             engine.status.test {
                 assertEquals(PullSyncEngineStatus.Idle, awaitItem())
 
-                val job = launch { engine.invoke("project") }
+                val job = launch { engine.invoke(ExecutePullSyncRequest(entityTypeId = "project")) }
                 advanceUntilIdle()
                 assertEquals(PullSyncEngineStatus.Pulling, awaitItem())
 
@@ -91,7 +92,7 @@ class PullSyncEngineTest : FrontendKoinInitializedTest() {
             engine.status.test {
                 assertEquals(PullSyncEngineStatus.Idle, awaitItem())
 
-                val job = launch { engine.invoke("project") }
+                val job = launch { engine.invoke(ExecutePullSyncRequest(entityTypeId = "project")) }
                 advanceUntilIdle()
                 assertEquals(PullSyncEngineStatus.Pulling, awaitItem())
 
@@ -114,11 +115,11 @@ class PullSyncEngineTest : FrontendKoinInitializedTest() {
             engine.status.test {
                 assertEquals(PullSyncEngineStatus.Idle, awaitItem())
 
-                val job1 = launch { engine.invoke("project") }
+                val job1 = launch { engine.invoke(ExecutePullSyncRequest(entityTypeId = "project")) }
                 advanceUntilIdle()
                 assertEquals(PullSyncEngineStatus.Pulling, awaitItem())
 
-                val job2 = launch { engine.invoke("client") }
+                val job2 = launch { engine.invoke(ExecutePullSyncRequest(entityTypeId = "client")) }
                 advanceUntilIdle()
 
                 deferred1.complete(PullSyncOperationResult.Success)
@@ -146,11 +147,11 @@ class PullSyncEngineTest : FrontendKoinInitializedTest() {
             engine.status.test {
                 assertEquals(PullSyncEngineStatus.Idle, awaitItem())
 
-                val job1 = launch { engine.invoke("project") }
+                val job1 = launch { engine.invoke(ExecutePullSyncRequest(entityTypeId = "project")) }
                 advanceUntilIdle()
                 assertEquals(PullSyncEngineStatus.Pulling, awaitItem())
 
-                val job2 = launch { engine.invoke("client") }
+                val job2 = launch { engine.invoke(ExecutePullSyncRequest(entityTypeId = "client")) }
                 advanceUntilIdle()
 
                 deferred1.complete(PullSyncOperationResult.Failure)
@@ -170,11 +171,11 @@ class PullSyncEngineTest : FrontendKoinInitializedTest() {
             val handler = FixedResultHandler("project", PullSyncOperationResult.Failure)
             val engine = createEngine(listOf(handler))
 
-            engine.invoke("project")
+            engine.invoke(ExecutePullSyncRequest(entityTypeId = "project"))
             assertEquals(PullSyncEngineStatus.Failed, engine.status.value)
 
             handler.result = PullSyncOperationResult.Success
-            engine.invoke("project")
+            engine.invoke(ExecutePullSyncRequest(entityTypeId = "project"))
             assertEquals(PullSyncEngineStatus.Idle, engine.status.value)
         }
 
@@ -184,7 +185,7 @@ class PullSyncEngineTest : FrontendKoinInitializedTest() {
             val engine = createEngine(emptyList())
 
             assertFailsWith<IllegalStateException> {
-                engine.invoke("nonexistent")
+                engine.invoke(ExecutePullSyncRequest(entityTypeId = "nonexistent"))
             }
         }
 

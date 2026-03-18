@@ -12,23 +12,28 @@
 
 package cz.adamec.timotej.snag.findings.be.app.impl.internal
 
-import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.feat.findings.be.model.BackendFinding
 import cz.adamec.timotej.snag.findings.be.app.api.GetFindingsModifiedSinceUseCase
+import cz.adamec.timotej.snag.findings.be.app.api.model.GetFindingsModifiedSinceRequest
 import cz.adamec.timotej.snag.findings.be.app.impl.internal.LH.logger
 import cz.adamec.timotej.snag.findings.be.ports.FindingsDb
-import kotlin.uuid.Uuid
 
 internal class GetFindingsModifiedSinceUseCaseImpl(
     private val findingsDb: FindingsDb,
 ) : GetFindingsModifiedSinceUseCase {
-    override suspend operator fun invoke(
-        structureId: Uuid,
-        since: Timestamp,
-    ): List<BackendFinding> {
-        logger.debug("Getting findings modified since {} for structure {} from local storage.", since, structureId)
-        return findingsDb.getFindingsModifiedSince(structureId, since).also {
-            logger.debug("Got {} findings modified since {} for structure {} from local storage.", it.size, since, structureId)
+    override suspend operator fun invoke(request: GetFindingsModifiedSinceRequest): List<BackendFinding> {
+        logger.debug(
+            "Getting findings modified since {} for structure {} from local storage.",
+            request.since,
+            request.structureId,
+        )
+        return findingsDb.getFindingsModifiedSince(request.structureId, request.since).also {
+            logger.debug(
+                "Got {} findings modified since {} for structure {} from local storage.",
+                it.size,
+                request.since,
+                request.structureId,
+            )
         }
     }
 }

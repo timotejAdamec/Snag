@@ -13,19 +13,16 @@
 package cz.adamec.timotej.snag.projects.be.app.impl.internal
 
 import cz.adamec.timotej.snag.projects.be.app.api.RemoveUserFromProjectUseCase
+import cz.adamec.timotej.snag.projects.be.app.api.model.RemoveUserFromProjectRequest
 import cz.adamec.timotej.snag.projects.be.app.impl.internal.LH.logger
 import cz.adamec.timotej.snag.projects.be.ports.ProjectAssignmentsDb
-import kotlin.uuid.Uuid
 
 internal class RemoveUserFromProjectUseCaseImpl(
     private val projectAssignmentsDb: ProjectAssignmentsDb,
 ) : RemoveUserFromProjectUseCase {
-    override suspend operator fun invoke(
-        userId: Uuid,
-        projectId: Uuid,
-    ) {
-        logger.debug("Removing user {} from project {}.", userId, projectId)
-        projectAssignmentsDb.removeUser(userId, projectId)
-        logger.debug("Removed user {} from project {}.", userId, projectId)
+    override suspend operator fun invoke(request: RemoveUserFromProjectRequest) {
+        logger.debug("Removing user {} from project {}.", request.userId, request.projectId)
+        projectAssignmentsDb.removeUser(request.userId, request.projectId)
+        logger.debug("Removed user {} from project {}.", request.userId, request.projectId)
     }
 }

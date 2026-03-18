@@ -24,6 +24,7 @@ import cz.adamec.timotej.snag.feat.inspections.fe.app.impl.internal.LH.logger
 import cz.adamec.timotej.snag.feat.inspections.fe.app.impl.internal.sync.INSPECTION_SYNC_ENTITY_TYPE
 import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionsDb
 import cz.adamec.timotej.snag.sync.fe.app.api.EnqueueSyncSaveUseCase
+import cz.adamec.timotej.snag.sync.fe.app.api.model.EnqueueSyncSaveRequest
 import kotlin.uuid.Uuid
 
 class SaveInspectionUseCaseImpl(
@@ -52,8 +53,10 @@ class SaveInspectionUseCaseImpl(
         )
         if (result is OfflineFirstDataResult.Success) {
             enqueueSyncSaveUseCase(
-                entityTypeId = INSPECTION_SYNC_ENTITY_TYPE,
-                entityId = feInspection.id,
+                EnqueueSyncSaveRequest(
+                    entityTypeId = INSPECTION_SYNC_ENTITY_TYPE,
+                    entityId = feInspection.id,
+                ),
             )
         }
         return result.map {

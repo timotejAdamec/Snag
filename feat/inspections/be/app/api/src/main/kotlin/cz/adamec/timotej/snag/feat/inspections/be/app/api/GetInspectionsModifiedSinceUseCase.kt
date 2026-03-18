@@ -12,13 +12,9 @@
 
 package cz.adamec.timotej.snag.feat.inspections.be.app.api
 
-import cz.adamec.timotej.snag.core.foundation.common.Timestamp
+import cz.adamec.timotej.snag.feat.inspections.be.app.api.model.GetInspectionsModifiedSinceRequest
 import cz.adamec.timotej.snag.feat.inspections.be.model.BackendInspection
-import kotlin.uuid.Uuid
 
 interface GetInspectionsModifiedSinceUseCase {
-    suspend operator fun invoke(
-        projectId: Uuid,
-        since: Timestamp,
-    ): List<BackendInspection>
+    suspend operator fun invoke(request: GetInspectionsModifiedSinceRequest): List<BackendInspection>
 }

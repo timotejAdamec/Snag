@@ -19,6 +19,7 @@ import cz.adamec.timotej.snag.findings.fe.app.api.GetFindingsUseCase
 import cz.adamec.timotej.snag.findings.fe.app.impl.internal.sync.FINDING_SYNC_ENTITY_TYPE
 import cz.adamec.timotej.snag.findings.fe.ports.FindingsDb
 import cz.adamec.timotej.snag.sync.fe.app.api.ExecutePullSyncUseCase
+import cz.adamec.timotej.snag.sync.fe.app.api.model.ExecutePullSyncRequest
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
@@ -32,8 +33,10 @@ class GetFindingsUseCaseImpl(
     override operator fun invoke(structureId: Uuid): Flow<OfflineFirstDataResult<List<AppFinding>>> {
         applicationScope.launch {
             executePullSyncUseCase(
-                entityTypeId = FINDING_SYNC_ENTITY_TYPE,
-                scopeId = structureId,
+                ExecutePullSyncRequest(
+                    entityTypeId = FINDING_SYNC_ENTITY_TYPE,
+                    scopeId = structureId,
+                ),
             )
         }
         return findingsDb

@@ -24,6 +24,7 @@ import cz.adamec.timotej.snag.structures.fe.app.impl.internal.LH.logger
 import cz.adamec.timotej.snag.structures.fe.app.impl.internal.sync.STRUCTURE_SYNC_ENTITY_TYPE
 import cz.adamec.timotej.snag.structures.fe.ports.StructuresDb
 import cz.adamec.timotej.snag.sync.fe.app.api.EnqueueSyncSaveUseCase
+import cz.adamec.timotej.snag.sync.fe.app.api.model.EnqueueSyncSaveRequest
 import kotlin.uuid.Uuid
 
 class SaveStructureUseCaseImpl(
@@ -51,8 +52,10 @@ class SaveStructureUseCaseImpl(
                 )
                 if (it is OfflineFirstDataResult.Success) {
                     enqueueSyncSaveUseCase(
-                        entityTypeId = STRUCTURE_SYNC_ENTITY_TYPE,
-                        entityId = feStructure.id,
+                        EnqueueSyncSaveRequest(
+                            entityTypeId = STRUCTURE_SYNC_ENTITY_TYPE,
+                            entityId = feStructure.id,
+                        ),
                     )
                 }
             }.map {
