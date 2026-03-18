@@ -1,0 +1,102 @@
+/*
+ * Copyright (c) 2026 Timotej Adamec
+ * SPDX-License-Identifier: MIT
+ *
+ * This file is part of the thesis:
+ * "Multiplatform snagging system with code sharing maximisation"
+ *
+ * Czech Technical University in Prague
+ * Faculty of Information Technology
+ * Department of Software Engineering
+ */
+
+package cz.adamec.timotej.snag.clients.be.app.impl.internal
+
+import cz.adamec.timotej.snag.clients.be.app.api.DeleteClientUseCase
+import cz.adamec.timotej.snag.clients.be.app.api.model.DeleteClientRequest
+import cz.adamec.timotej.snag.clients.be.model.BackendClientData
+import cz.adamec.timotej.snag.clients.be.ports.ClientsDb
+import cz.adamec.timotej.snag.core.foundation.common.Timestamp
+import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
+import kotlinx.coroutines.test.runTest
+import org.koin.test.inject
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
+import kotlin.test.assertNull
+import kotlin.uuid.Uuid
+
+class DeleteClientUseCaseImplTest : BackendKoinInitializedTest() {
+    private val dataSource: ClientsDb by inject()
+    private val useCase: DeleteClientUseCase by inject()
+
+    private val clientId = Uuid.parse("00000000-0000-0000-0000-000000000001")
+
+    private val client =
+        BackendClientData(
+            id = clientId,
+            name = "Test Client",
+            address = "Test Address",
+            phoneNumber = "+420123456789",
+            email = "test@example.com",
+            updatedAt = Timestamp(10L),
+        )
+
+    @Test
+    fun `soft-deletes client in storage`() =
+        runTest(testDispatcher) {
+            dataSource.saveClient(client)
+
+            useCase(DeleteClientRequest(clientId = clientId, deletedAt = Timestamp(20L)))
+
+            val deletedClient = dataSource.getClient(clientId)
+            assertNotNull(deletedClient)
+            assertEquals(Timestamp(20L), deletedClient.deletedAt)
+        }
+
+    @Test
+    fun `does not delete client when saved updated at is later than deleted at`() =
+        runTest(testDispatcher) {
+            dataSource.saveClient(client)
+
+            useCase(
+                DeleteClientRequest(
+                    clientId = clientId,
+                    deletedAt = Timestamp(value = 1L),
+                ),
+            )
+
+            assertNotNull(dataSource.getClient(clientId))
+        }
+
+    @Test
+    fun `returns saved client when saved updated at is later than deleted at`() =
+        runTest(testDispatcher) {
+            dataSource.saveClient(client)
+
+            val result =
+                useCase(
+                    DeleteClientRequest(
+                        clientId = clientId,
+                        deletedAt = Timestamp(value = 1L),
+                    ),
+                )
+
+            assertNotNull(result)
+            assertEquals(client, result)
+        }
+
+    @Test
+    fun `returns null if no client was saved`() =
+        runTest(testDispatcher) {
+            val result =
+                useCase(
+                    DeleteClientRequest(
+                        clientId = clientId,
+                        deletedAt = Timestamp(value = 20L),
+                    ),
+                )
+
+            assertNull(result)
+        }
+}
