@@ -13,13 +13,8 @@
 package cz.adamec.timotej.snag.structures.fe.app.api
 
 import cz.adamec.timotej.snag.core.network.fe.OnlineDataResult
-import kotlin.uuid.Uuid
+import cz.adamec.timotej.snag.structures.fe.app.api.model.UploadFloorPlanImageRequest
 
 interface UploadFloorPlanImageUseCase {
-    suspend operator fun invoke(
-        projectId: Uuid,
-        structureId: Uuid,
-        bytes: ByteArray,
-        fileName: String,
-    ): OnlineDataResult<String>
+    suspend operator fun invoke(request: UploadFloorPlanImageRequest): OnlineDataResult<String>
 }

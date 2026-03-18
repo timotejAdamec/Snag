@@ -13,19 +13,16 @@
 package cz.adamec.timotej.snag.projects.be.app.impl.internal
 
 import cz.adamec.timotej.snag.projects.be.app.api.AssignUserToProjectUseCase
+import cz.adamec.timotej.snag.projects.be.app.api.model.AssignUserToProjectRequest
 import cz.adamec.timotej.snag.projects.be.app.impl.internal.LH.logger
 import cz.adamec.timotej.snag.projects.be.ports.ProjectAssignmentsDb
-import kotlin.uuid.Uuid
 
 internal class AssignUserToProjectUseCaseImpl(
     private val projectAssignmentsDb: ProjectAssignmentsDb,
 ) : AssignUserToProjectUseCase {
-    override suspend operator fun invoke(
-        userId: Uuid,
-        projectId: Uuid,
-    ) {
-        logger.debug("Assigning user {} to project {}.", userId, projectId)
-        projectAssignmentsDb.assignUser(userId, projectId)
-        logger.debug("Assigned user {} to project {}.", userId, projectId)
+    override suspend operator fun invoke(request: AssignUserToProjectRequest) {
+        logger.debug("Assigning user {} to project {}.", request.userId, request.projectId)
+        projectAssignmentsDb.assignUser(request.userId, request.projectId)
+        logger.debug("Assigned user {} to project {}.", request.userId, request.projectId)
     }
 }

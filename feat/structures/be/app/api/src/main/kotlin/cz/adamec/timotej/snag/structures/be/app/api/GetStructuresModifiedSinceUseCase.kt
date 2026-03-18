@@ -12,13 +12,9 @@
 
 package cz.adamec.timotej.snag.structures.be.app.api
 
-import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.feat.structures.be.model.BackendStructure
-import kotlin.uuid.Uuid
+import cz.adamec.timotej.snag.structures.be.app.api.model.GetStructuresModifiedSinceRequest
 
 interface GetStructuresModifiedSinceUseCase {
-    suspend operator fun invoke(
-        projectId: Uuid,
-        since: Timestamp,
-    ): List<BackendStructure>
+    suspend operator fun invoke(request: GetStructuresModifiedSinceRequest): List<BackendStructure>
 }

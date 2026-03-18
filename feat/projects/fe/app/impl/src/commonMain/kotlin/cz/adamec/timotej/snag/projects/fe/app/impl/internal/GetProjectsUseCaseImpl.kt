@@ -20,6 +20,7 @@ import cz.adamec.timotej.snag.projects.fe.app.api.GetProjectsUseCase
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.sync.PROJECT_SYNC_ENTITY_TYPE
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsDb
 import cz.adamec.timotej.snag.sync.fe.app.api.ExecutePullSyncUseCase
+import cz.adamec.timotej.snag.sync.fe.app.api.model.ExecutePullSyncRequest
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.onEach
@@ -32,7 +33,7 @@ class GetProjectsUseCaseImpl(
 ) : GetProjectsUseCase {
     override operator fun invoke(): Flow<OfflineFirstDataResult<List<AppProject>>> {
         applicationScope.launch {
-            executePullSyncUseCase(entityTypeId = PROJECT_SYNC_ENTITY_TYPE)
+            executePullSyncUseCase(ExecutePullSyncRequest(entityTypeId = PROJECT_SYNC_ENTITY_TYPE))
         }
 
         return projectsDb

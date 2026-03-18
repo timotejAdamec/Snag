@@ -24,6 +24,7 @@ import cz.adamec.timotej.snag.projects.fe.app.impl.internal.LH.logger
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.sync.PROJECT_SYNC_ENTITY_TYPE
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsDb
 import cz.adamec.timotej.snag.sync.fe.app.api.EnqueueSyncSaveUseCase
+import cz.adamec.timotej.snag.sync.fe.app.api.model.EnqueueSyncSaveRequest
 import kotlin.uuid.Uuid
 
 class SaveProjectUseCaseImpl(
@@ -51,8 +52,10 @@ class SaveProjectUseCaseImpl(
                 )
                 if (it is OfflineFirstDataResult.Success) {
                     enqueueSyncSaveUseCase(
-                        entityTypeId = PROJECT_SYNC_ENTITY_TYPE,
-                        entityId = project.id,
+                        EnqueueSyncSaveRequest(
+                            entityTypeId = PROJECT_SYNC_ENTITY_TYPE,
+                            entityId = project.id,
+                        ),
                     )
                 }
             }.map {

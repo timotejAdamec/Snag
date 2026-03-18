@@ -12,18 +12,14 @@
 
 package cz.adamec.timotej.snag.sync.fe.app.impl.internal
 
-import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.sync.fe.app.api.SetLastPullSyncedAtTimestampUseCase
+import cz.adamec.timotej.snag.sync.fe.app.api.model.SetLastPullSyncedAtTimestampRequest
 import cz.adamec.timotej.snag.sync.fe.ports.PullSyncTimestampDb
 
 internal class SetLastPullSyncedAtTimestampUseCaseImpl(
     private val timestampDb: PullSyncTimestampDb,
 ) : SetLastPullSyncedAtTimestampUseCase {
-    override suspend fun invoke(
-        entityType: String,
-        timestamp: Timestamp,
-        scopeId: String,
-    ) {
-        timestampDb.setLastSyncedAt(entityType, scopeId, timestamp)
+    override suspend fun invoke(request: SetLastPullSyncedAtTimestampRequest) {
+        timestampDb.setLastSyncedAt(request.entityType, request.scopeId, request.timestamp)
     }
 }

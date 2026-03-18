@@ -20,6 +20,7 @@ import cz.adamec.timotej.snag.structures.fe.app.impl.internal.LH.logger
 import cz.adamec.timotej.snag.structures.fe.app.impl.internal.sync.STRUCTURE_SYNC_ENTITY_TYPE
 import cz.adamec.timotej.snag.structures.fe.ports.StructuresDb
 import cz.adamec.timotej.snag.sync.fe.app.api.EnqueueSyncDeleteUseCase
+import cz.adamec.timotej.snag.sync.fe.app.api.model.EnqueueSyncDeleteRequest
 import kotlin.uuid.Uuid
 
 class DeleteStructureUseCaseImpl(
@@ -38,8 +39,10 @@ class DeleteStructureUseCaseImpl(
                 )
                 if (it is OfflineFirstDataResult.Success) {
                     enqueueSyncDeleteUseCase(
-                        entityTypeId = STRUCTURE_SYNC_ENTITY_TYPE,
-                        entityId = structureId,
+                        EnqueueSyncDeleteRequest(
+                            entityTypeId = STRUCTURE_SYNC_ENTITY_TYPE,
+                            entityId = structureId,
+                        ),
                     )
                 }
             }

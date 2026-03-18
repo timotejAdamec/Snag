@@ -14,6 +14,7 @@ package cz.adamec.timotej.snag.projects.be.app.impl.internal
 
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.projects.be.app.api.AssignUserToProjectUseCase
+import cz.adamec.timotej.snag.projects.be.app.api.model.AssignUserToProjectRequest
 import cz.adamec.timotej.snag.projects.be.model.BackendProjectData
 import cz.adamec.timotej.snag.projects.be.ports.ProjectAssignmentsDb
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
@@ -59,7 +60,7 @@ class AssignUserToProjectUseCaseImplTest : BackendKoinInitializedTest() {
                 )
             usersDb.saveUser(user)
 
-            useCase(userId, projectId)
+            useCase(AssignUserToProjectRequest(userId = userId, projectId = projectId))
 
             val assigned = assignmentsDb.getAssignedUsers(projectId)
             assertEquals(1, assigned.size)
@@ -79,8 +80,8 @@ class AssignUserToProjectUseCaseImplTest : BackendKoinInitializedTest() {
                 )
             usersDb.saveUser(user)
 
-            useCase(userId, projectId)
-            useCase(userId, projectId)
+            useCase(AssignUserToProjectRequest(userId = userId, projectId = projectId))
+            useCase(AssignUserToProjectRequest(userId = userId, projectId = projectId))
 
             val assigned = assignmentsDb.getAssignedUsers(projectId)
             assertEquals(1, assigned.size)

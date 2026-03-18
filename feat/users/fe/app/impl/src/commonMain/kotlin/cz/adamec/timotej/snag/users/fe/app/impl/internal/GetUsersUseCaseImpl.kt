@@ -16,6 +16,7 @@ import cz.adamec.timotej.snag.core.foundation.common.ApplicationScope
 import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.core.network.fe.log
 import cz.adamec.timotej.snag.sync.fe.app.api.ExecutePullSyncUseCase
+import cz.adamec.timotej.snag.sync.fe.app.api.model.ExecutePullSyncRequest
 import cz.adamec.timotej.snag.users.app.model.AppUser
 import cz.adamec.timotej.snag.users.fe.app.api.GetUsersUseCase
 import cz.adamec.timotej.snag.users.fe.app.impl.internal.sync.USER_SYNC_ENTITY_TYPE
@@ -32,7 +33,7 @@ class GetUsersUseCaseImpl(
 ) : GetUsersUseCase {
     override operator fun invoke(): Flow<OfflineFirstDataResult<List<AppUser>>> {
         applicationScope.launch {
-            executePullSyncUseCase(entityTypeId = USER_SYNC_ENTITY_TYPE)
+            executePullSyncUseCase(ExecutePullSyncRequest(entityTypeId = USER_SYNC_ENTITY_TYPE))
         }
 
         return usersDb

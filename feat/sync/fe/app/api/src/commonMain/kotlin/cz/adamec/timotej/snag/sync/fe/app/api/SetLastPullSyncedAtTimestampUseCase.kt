@@ -12,12 +12,8 @@
 
 package cz.adamec.timotej.snag.sync.fe.app.api
 
-import cz.adamec.timotej.snag.core.foundation.common.Timestamp
+import cz.adamec.timotej.snag.sync.fe.app.api.model.SetLastPullSyncedAtTimestampRequest
 
 interface SetLastPullSyncedAtTimestampUseCase {
-    suspend operator fun invoke(
-        entityType: String,
-        timestamp: Timestamp,
-        scopeId: String = "",
-    )
+    suspend operator fun invoke(request: SetLastPullSyncedAtTimestampRequest)
 }

@@ -16,12 +16,12 @@ import cz.adamec.timotej.snag.sync.fe.app.api.ExecutePullSyncUseCase
 import cz.adamec.timotej.snag.sync.fe.app.api.SyncCoordinator
 import cz.adamec.timotej.snag.sync.fe.app.api.handler.PullSyncOperationHandler
 import cz.adamec.timotej.snag.sync.fe.app.api.handler.PullSyncOperationResult
+import cz.adamec.timotej.snag.sync.fe.app.api.model.ExecutePullSyncRequest
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import kotlin.uuid.Uuid
 
 internal class PullSyncEngine(
     private val handlers: List<PullSyncOperationHandler>,
@@ -34,13 +34,10 @@ internal class PullSyncEngine(
     val status: StateFlow<PullSyncEngineStatus> = _status.asStateFlow()
 
     @Suppress("TooGenericExceptionCaught")
-    override suspend fun invoke(
-        entityTypeId: String,
-        scopeId: Uuid?,
-    ) {
+    override suspend fun invoke(request: ExecutePullSyncRequest) {
         val handler =
-            handlers.find { it.entityTypeId == entityTypeId }
-                ?: error("No PullSyncOperationHandler registered for entityTypeId='$entityTypeId'")
+            handlers.find { it.entityTypeId == request.entityTypeId }
+                ?: error("No PullSyncOperationHandler registered for entityTypeId='${request.entityTypeId}'")
 
         mutex.withLock {
             if (activeCount == 0) {
@@ -55,12 +52,12 @@ internal class PullSyncEngine(
                 syncCoordinator.withFlushedQueue { wasFlushingSuccessful ->
                     if (!wasFlushingSuccessful) {
                         LH.logger.w {
-                            "Flushing sync queue was not successful, skipping pull sync for entityTypeId='$entityTypeId'."
+                            "Flushing sync queue was not successful, skipping pull sync for entityTypeId='${request.entityTypeId}'."
                         }
                         @Suppress("LabeledExpression")
                         return@withFlushedQueue PullSyncOperationResult.Failure
                     }
-                    handler.execute(scopeId)
+                    handler.execute(request.scopeId)
                 }
 
             if (result is PullSyncOperationResult.Failure) {

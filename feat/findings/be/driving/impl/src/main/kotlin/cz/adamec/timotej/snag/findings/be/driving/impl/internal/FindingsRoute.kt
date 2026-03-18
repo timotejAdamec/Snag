@@ -18,6 +18,7 @@ import cz.adamec.timotej.snag.findings.be.app.api.GetFindingsModifiedSinceUseCas
 import cz.adamec.timotej.snag.findings.be.app.api.GetFindingsUseCase
 import cz.adamec.timotej.snag.findings.be.app.api.SaveFindingUseCase
 import cz.adamec.timotej.snag.findings.be.app.api.model.DeleteFindingRequest
+import cz.adamec.timotej.snag.findings.be.app.api.model.GetFindingsModifiedSinceRequest
 import cz.adamec.timotej.snag.findings.be.driving.contract.DeleteFindingApiDto
 import cz.adamec.timotej.snag.findings.be.driving.contract.PutFindingApiDto
 import cz.adamec.timotej.snag.routing.be.AppRoute
@@ -64,7 +65,13 @@ internal class FindingsRoute(
                 val sinceParam = call.request.queryParameters["since"]
                 if (sinceParam != null) {
                     val since = Timestamp(sinceParam.toLong())
-                    val modified = getFindingsModifiedSinceUseCase(structureId, since).map { it.toDto() }
+                    val modified =
+                        getFindingsModifiedSinceUseCase(
+                            GetFindingsModifiedSinceRequest(
+                                structureId = structureId,
+                                since = since,
+                            ),
+                        ).map { it.toDto() }
                     call.respond(modified)
                 } else {
                     val dtoFindings = getFindingsUseCase(structureId).map { it.toDto() }

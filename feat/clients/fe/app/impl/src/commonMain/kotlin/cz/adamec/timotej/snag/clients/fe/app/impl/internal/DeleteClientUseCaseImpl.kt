@@ -19,6 +19,7 @@ import cz.adamec.timotej.snag.clients.fe.ports.ClientsDb
 import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.core.network.fe.log
 import cz.adamec.timotej.snag.sync.fe.app.api.EnqueueSyncDeleteUseCase
+import cz.adamec.timotej.snag.sync.fe.app.api.model.EnqueueSyncDeleteRequest
 import kotlin.uuid.Uuid
 
 internal class DeleteClientUseCaseImpl(
@@ -35,8 +36,10 @@ internal class DeleteClientUseCaseImpl(
                 )
                 if (it is OfflineFirstDataResult.Success) {
                     enqueueSyncDeleteUseCase(
-                        entityTypeId = CLIENT_SYNC_ENTITY_TYPE,
-                        entityId = clientId,
+                        EnqueueSyncDeleteRequest(
+                            entityTypeId = CLIENT_SYNC_ENTITY_TYPE,
+                            entityId = clientId,
+                        ),
                     )
                 }
             }

@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.sync.be
 
+import cz.adamec.timotej.snag.sync.be.model.ResolveConflictForSaveRequest
 import cz.adamec.timotej.snag.sync.be.model.Syncable
 
 sealed interface SaveConflictResult<out T : Syncable> {
@@ -23,8 +24,5 @@ sealed interface SaveConflictResult<out T : Syncable> {
 }
 
 interface ResolveConflictForSaveUseCase {
-    operator fun <T : Syncable> invoke(
-        existing: T?,
-        incoming: T,
-    ): SaveConflictResult<T>
+    operator fun <T : Syncable> invoke(request: ResolveConflictForSaveRequest<T>): SaveConflictResult<T>
 }

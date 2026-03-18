@@ -19,6 +19,7 @@ import cz.adamec.timotej.snag.sync.fe.app.api.handler.PullSyncOperationHandler
 import cz.adamec.timotej.snag.sync.fe.app.api.handler.PullSyncOperationResult
 import cz.adamec.timotej.snag.sync.fe.app.api.handler.PushSyncOperationHandler
 import cz.adamec.timotej.snag.sync.fe.app.api.handler.PushSyncOperationResult
+import cz.adamec.timotej.snag.sync.fe.app.api.model.ExecutePullSyncRequest
 import cz.adamec.timotej.snag.sync.fe.app.impl.internal.GetSyncStatusUseCaseImpl
 import cz.adamec.timotej.snag.sync.fe.app.impl.internal.PullSyncEngine
 import cz.adamec.timotej.snag.sync.fe.app.impl.internal.PushSyncEngine
@@ -176,7 +177,7 @@ class GetSyncStatusUseCaseImplTest : FrontendKoinInitializedTest() {
 
             val job =
                 launch {
-                    pullEngine.invoke("project")
+                    pullEngine.invoke(ExecutePullSyncRequest(entityTypeId = "project"))
                 }
             advanceUntilIdle()
 
@@ -205,7 +206,7 @@ class GetSyncStatusUseCaseImplTest : FrontendKoinInitializedTest() {
 
             val job =
                 launch {
-                    pullEngine.invoke("project")
+                    pullEngine.invoke(ExecutePullSyncRequest(entityTypeId = "project"))
                 }
             advanceUntilIdle()
 
@@ -231,7 +232,7 @@ class GetSyncStatusUseCaseImplTest : FrontendKoinInitializedTest() {
             val useCase = createUseCase(pushEngine = pushEngine, pullEngine = pullEngine)
             fakeConnectionStatusProvider.emit(true)
 
-            pullEngine.invoke("project")
+            pullEngine.invoke(ExecutePullSyncRequest(entityTypeId = "project"))
 
             useCase().test {
                 assertEquals(SyncStatus.Error, awaitItem())

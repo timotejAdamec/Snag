@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.sync.be
 
-import cz.adamec.timotej.snag.core.foundation.common.Timestamp
+import cz.adamec.timotej.snag.sync.be.model.ResolveConflictForDeleteRequest
 import cz.adamec.timotej.snag.sync.be.model.Syncable
 
 sealed interface DeleteConflictResult<out T : Syncable> {
@@ -28,8 +28,5 @@ sealed interface DeleteConflictResult<out T : Syncable> {
 }
 
 interface ResolveConflictForDeleteUseCase {
-    operator fun <T : Syncable> invoke(
-        existing: T?,
-        deletedAt: Timestamp,
-    ): DeleteConflictResult<T>
+    operator fun <T : Syncable> invoke(request: ResolveConflictForDeleteRequest<T>): DeleteConflictResult<T>
 }

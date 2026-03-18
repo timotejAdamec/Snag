@@ -20,6 +20,7 @@ import cz.adamec.timotej.snag.core.foundation.common.ApplicationScope
 import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.core.network.fe.log
 import cz.adamec.timotej.snag.sync.fe.app.api.ExecutePullSyncUseCase
+import cz.adamec.timotej.snag.sync.fe.app.api.model.ExecutePullSyncRequest
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.onEach
@@ -32,7 +33,7 @@ internal class GetClientsUseCaseImpl(
 ) : GetClientsUseCase {
     override operator fun invoke(): Flow<OfflineFirstDataResult<List<AppClient>>> {
         applicationScope.launch {
-            executePullSyncUseCase(entityTypeId = CLIENT_SYNC_ENTITY_TYPE)
+            executePullSyncUseCase(ExecutePullSyncRequest(entityTypeId = CLIENT_SYNC_ENTITY_TYPE))
         }
 
         return clientsDb
