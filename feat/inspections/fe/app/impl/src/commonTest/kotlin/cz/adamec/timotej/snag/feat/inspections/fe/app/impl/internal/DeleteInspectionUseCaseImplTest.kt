@@ -14,11 +14,11 @@ package cz.adamec.timotej.snag.feat.inspections.fe.app.impl.internal
 
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
-import cz.adamec.timotej.snag.feat.inspections.business.Inspection
+import cz.adamec.timotej.snag.feat.inspections.app.model.AppInspection
+import cz.adamec.timotej.snag.feat.inspections.app.model.AppInspectionData
 import cz.adamec.timotej.snag.feat.inspections.fe.app.api.DeleteInspectionUseCase
 import cz.adamec.timotej.snag.feat.inspections.fe.app.impl.internal.sync.INSPECTION_SYNC_ENTITY_TYPE
 import cz.adamec.timotej.snag.feat.inspections.fe.driven.test.FakeInspectionsDb
-import cz.adamec.timotej.snag.feat.inspections.fe.model.FrontendInspection
 import cz.adamec.timotej.snag.sync.fe.driven.test.FakeSyncQueue
 import cz.adamec.timotej.snag.sync.fe.model.SyncOperationType
 import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
@@ -42,18 +42,15 @@ class DeleteInspectionUseCaseImplTest : FrontendKoinInitializedTest() {
     private val inspectionId = Uuid.parse("00000000-0000-0000-0001-000000000001")
 
     private fun createInspection(id: Uuid) =
-        FrontendInspection(
-            inspection =
-                Inspection(
-                    id = id,
-                    projectId = projectId,
-                    startedAt = Timestamp(100L),
-                    endedAt = null,
-                    participants = "John Doe",
-                    climate = "Sunny",
-                    note = null,
-                    updatedAt = Timestamp(100L),
-                ),
+        AppInspectionData(
+            id = id,
+            projectId = projectId,
+            startedAt = Timestamp(100L),
+            endedAt = null,
+            participants = "John Doe",
+            climate = "Sunny",
+            note = null,
+            updatedAt = Timestamp(100L),
         )
 
     @Test
@@ -65,7 +62,7 @@ class DeleteInspectionUseCaseImplTest : FrontendKoinInitializedTest() {
             useCase(inspectionId)
 
             val result = fakeInspectionsDb.getInspectionFlow(inspectionId).first()
-            assertIs<OfflineFirstDataResult.Success<FrontendInspection?>>(result)
+            assertIs<OfflineFirstDataResult.Success<AppInspection?>>(result)
             assertNull(result.data)
         }
 

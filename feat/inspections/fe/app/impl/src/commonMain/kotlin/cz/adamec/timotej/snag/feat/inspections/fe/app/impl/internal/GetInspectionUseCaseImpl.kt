@@ -13,8 +13,8 @@
 package cz.adamec.timotej.snag.feat.inspections.fe.app.impl.internal
 
 import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
+import cz.adamec.timotej.snag.feat.inspections.app.model.AppInspection
 import cz.adamec.timotej.snag.feat.inspections.fe.app.api.GetInspectionUseCase
-import cz.adamec.timotej.snag.feat.inspections.fe.model.FrontendInspection
 import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionsDb
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -23,7 +23,7 @@ import kotlin.uuid.Uuid
 class GetInspectionUseCaseImpl(
     private val inspectionsDb: InspectionsDb,
 ) : GetInspectionUseCase {
-    override operator fun invoke(inspectionId: Uuid): Flow<OfflineFirstDataResult<FrontendInspection?>> {
+    override operator fun invoke(inspectionId: Uuid): Flow<OfflineFirstDataResult<AppInspection?>> {
         val flow = inspectionsDb.getInspectionFlow(inspectionId)
         return flow.distinctUntilChanged()
     }

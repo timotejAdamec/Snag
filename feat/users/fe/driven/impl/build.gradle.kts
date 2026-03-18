@@ -18,7 +18,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(project(":feat:users:be:driving:contract"))
-            implementation(project(":feat:users:business"))
+            implementation(project(":feat:users:business:model"))
             implementation(project(":lib:database:fe"))
         }
     }

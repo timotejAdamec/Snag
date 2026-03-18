@@ -15,9 +15,8 @@ package cz.adamec.timotej.snag.users.be.app.impl.internal
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
 import cz.adamec.timotej.snag.users.be.app.api.GetUsersModifiedSinceUseCase
-import cz.adamec.timotej.snag.users.be.model.BackendUser
+import cz.adamec.timotej.snag.users.be.model.BackendUserData
 import cz.adamec.timotej.snag.users.be.ports.UsersDb
-import cz.adamec.timotej.snag.users.business.User
 import cz.adamec.timotej.snag.users.business.UserRole
 import kotlinx.coroutines.test.runTest
 import org.koin.test.inject
@@ -33,14 +32,11 @@ class GetUsersModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
     fun `returns empty list when no users modified since`() =
         runTest(testDispatcher) {
             dataSource.saveUser(
-                BackendUser(
-                    user =
-                        User(
-                            id = Uuid.parse("00000000-0000-0000-0000-000000000001"),
-                            entraId = "entra-1",
-                            email = "user@example.com",
-                            updatedAt = Timestamp(100L),
-                        ),
+                BackendUserData(
+                    id = Uuid.parse("00000000-0000-0000-0000-000000000001"),
+                    entraId = "entra-1",
+                    email = "user@example.com",
+                    updatedAt = Timestamp(100L),
                 ),
             )
 
@@ -53,25 +49,19 @@ class GetUsersModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
     fun `returns users modified since timestamp`() =
         runTest(testDispatcher) {
             val oldUser =
-                BackendUser(
-                    user =
-                        User(
-                            id = Uuid.parse("00000000-0000-0000-0000-000000000001"),
-                            entraId = "entra-1",
-                            email = "old@example.com",
-                            updatedAt = Timestamp(100L),
-                        ),
+                BackendUserData(
+                    id = Uuid.parse("00000000-0000-0000-0000-000000000001"),
+                    entraId = "entra-1",
+                    email = "old@example.com",
+                    updatedAt = Timestamp(100L),
                 )
             val newUser =
-                BackendUser(
-                    user =
-                        User(
-                            id = Uuid.parse("00000000-0000-0000-0000-000000000002"),
-                            entraId = "entra-2",
-                            email = "new@example.com",
-                            role = UserRole.ADMINISTRATOR,
-                            updatedAt = Timestamp(300L),
-                        ),
+                BackendUserData(
+                    id = Uuid.parse("00000000-0000-0000-0000-000000000002"),
+                    entraId = "entra-2",
+                    email = "new@example.com",
+                    role = UserRole.ADMINISTRATOR,
+                    updatedAt = Timestamp(300L),
                 )
             dataSource.saveUser(oldUser)
             dataSource.saveUser(newUser)

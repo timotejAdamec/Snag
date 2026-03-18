@@ -52,8 +52,8 @@ internal class StructureFloorPlanViewModel(
                 initial = StructureDetailsUiState(),
             ) { prev, new ->
                 @Suppress("LabeledExpression")
-                val newStructureId = new.feStructure?.structure?.id ?: return@scan new
-                if (prev.feStructure?.structure?.id != newStructureId) {
+                val newStructureId = new.feStructure?.id ?: return@scan new
+                if (prev.feStructure?.id != newStructureId) {
                     collectFindings(newStructureId)
                 }
                 new

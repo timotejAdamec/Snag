@@ -12,31 +12,25 @@
 
 package cz.adamec.timotej.snag.impl.internal
 
-import cz.adamec.timotej.snag.clients.be.model.BackendClient
+import cz.adamec.timotej.snag.clients.be.model.BackendClientData
 import cz.adamec.timotej.snag.clients.be.ports.ClientsDb
-import cz.adamec.timotej.snag.clients.business.Client
 import cz.adamec.timotej.snag.configuration.be.AppConfiguration
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.core.foundation.common.TimestampProvider
-import cz.adamec.timotej.snag.feat.findings.be.model.BackendFinding
-import cz.adamec.timotej.snag.feat.findings.business.Finding
+import cz.adamec.timotej.snag.feat.findings.be.model.BackendFindingData
 import cz.adamec.timotej.snag.feat.findings.business.FindingType
 import cz.adamec.timotej.snag.feat.findings.business.Importance
 import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
 import cz.adamec.timotej.snag.feat.findings.business.Term
-import cz.adamec.timotej.snag.feat.inspections.be.model.BackendInspection
+import cz.adamec.timotej.snag.feat.inspections.be.model.BackendInspectionData
 import cz.adamec.timotej.snag.feat.inspections.be.ports.InspectionsDb
-import cz.adamec.timotej.snag.feat.inspections.business.Inspection
-import cz.adamec.timotej.snag.feat.structures.be.model.BackendStructure
-import cz.adamec.timotej.snag.feat.structures.business.Structure
+import cz.adamec.timotej.snag.feat.structures.be.model.BackendStructureData
 import cz.adamec.timotej.snag.findings.be.ports.FindingsDb
-import cz.adamec.timotej.snag.projects.be.model.BackendProject
+import cz.adamec.timotej.snag.projects.be.model.BackendProjectData
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
-import cz.adamec.timotej.snag.projects.business.Project
 import cz.adamec.timotej.snag.structures.be.ports.StructuresDb
-import cz.adamec.timotej.snag.users.be.model.BackendUser
+import cz.adamec.timotej.snag.users.be.model.BackendUserData
 import cz.adamec.timotej.snag.users.be.ports.UsersDb
-import cz.adamec.timotej.snag.users.business.User
 import cz.adamec.timotej.snag.users.business.UserRole
 import io.ktor.server.application.Application
 import kotlinx.coroutines.runBlocking
@@ -66,65 +60,47 @@ internal class DevDataSeederConfiguration(
     private suspend fun seedUsers() {
         val now = timestampProvider.getNowTimestamp()
         listOf(
-            BackendUser(
-                user =
-                    User(
-                        id = Uuid.parse(USER_1),
-                        entraId = "entra-admin-001",
-                        email = "jan.novak@snag.cz",
-                        role = UserRole.ADMINISTRATOR,
-                        updatedAt = now,
-                    ),
+            BackendUserData(
+                id = Uuid.parse(USER_1),
+                entraId = "entra-admin-001",
+                email = "jan.novak@snag.cz",
+                role = UserRole.ADMINISTRATOR,
+                updatedAt = now,
             ),
-            BackendUser(
-                user =
-                    User(
-                        id = Uuid.parse(USER_2),
-                        entraId = "entra-lead-001",
-                        email = "petr.svoboda@snag.cz",
-                        role = UserRole.PASSPORT_LEAD,
-                        updatedAt = now,
-                    ),
+            BackendUserData(
+                id = Uuid.parse(USER_2),
+                entraId = "entra-lead-001",
+                email = "petr.svoboda@snag.cz",
+                role = UserRole.PASSPORT_LEAD,
+                updatedAt = now,
             ),
-            BackendUser(
-                user =
-                    User(
-                        id = Uuid.parse(USER_3),
-                        entraId = "entra-tech-001",
-                        email = "marie.kralova@snag.cz",
-                        role = UserRole.PASSPORT_TECHNICIAN,
-                        updatedAt = now,
-                    ),
+            BackendUserData(
+                id = Uuid.parse(USER_3),
+                entraId = "entra-tech-001",
+                email = "marie.kralova@snag.cz",
+                role = UserRole.PASSPORT_TECHNICIAN,
+                updatedAt = now,
             ),
-            BackendUser(
-                user =
-                    User(
-                        id = Uuid.parse(USER_4),
-                        entraId = "entra-slead-001",
-                        email = "tomas.benes@snag.cz",
-                        role = UserRole.SERVICE_LEAD,
-                        updatedAt = now,
-                    ),
+            BackendUserData(
+                id = Uuid.parse(USER_4),
+                entraId = "entra-slead-001",
+                email = "tomas.benes@snag.cz",
+                role = UserRole.SERVICE_LEAD,
+                updatedAt = now,
             ),
-            BackendUser(
-                user =
-                    User(
-                        id = Uuid.parse(USER_5),
-                        entraId = "entra-worker-001",
-                        email = "eva.dvorakova@snag.cz",
-                        role = UserRole.SERVICE_WORKER,
-                        updatedAt = now,
-                    ),
+            BackendUserData(
+                id = Uuid.parse(USER_5),
+                entraId = "entra-worker-001",
+                email = "eva.dvorakova@snag.cz",
+                role = UserRole.SERVICE_WORKER,
+                updatedAt = now,
             ),
-            BackendUser(
-                user =
-                    User(
-                        id = Uuid.parse(USER_6),
-                        entraId = "entra-norole-001",
-                        email = "lukas.horak@snag.cz",
-                        role = null,
-                        updatedAt = now,
-                    ),
+            BackendUserData(
+                id = Uuid.parse(USER_6),
+                entraId = "entra-norole-001",
+                email = "lukas.horak@snag.cz",
+                role = null,
+                updatedAt = now,
             ),
         ).forEach { usersDb.saveUser(it) }
     }
@@ -132,27 +108,21 @@ internal class DevDataSeederConfiguration(
     private suspend fun seedClients() {
         val now = timestampProvider.getNowTimestamp()
         listOf(
-            BackendClient(
-                client =
-                    Client(
-                        id = Uuid.parse(CLIENT_1),
-                        name = "CTU Prague",
-                        address = "Zikova 1903/4, 166 36 Praha 6",
-                        phoneNumber = "+420 224 351 111",
-                        email = "info@cvut.cz",
-                        updatedAt = now,
-                    ),
+            BackendClientData(
+                id = Uuid.parse(CLIENT_1),
+                name = "CTU Prague",
+                address = "Zikova 1903/4, 166 36 Praha 6",
+                phoneNumber = "+420 224 351 111",
+                email = "info@cvut.cz",
+                updatedAt = now,
             ),
-            BackendClient(
-                client =
-                    Client(
-                        id = Uuid.parse(CLIENT_2),
-                        name = "Prague 6 Municipality",
-                        address = "Čs. armády 601/23, 160 52 Praha 6",
-                        phoneNumber = null,
-                        email = "podatelna@praha6.cz",
-                        updatedAt = now,
-                    ),
+            BackendClientData(
+                id = Uuid.parse(CLIENT_2),
+                name = "Prague 6 Municipality",
+                address = "Čs. armády 601/23, 160 52 Praha 6",
+                phoneNumber = null,
+                email = "podatelna@praha6.cz",
+                updatedAt = now,
             ),
         ).forEach { clientsDb.saveClient(it) }
     }
@@ -160,35 +130,26 @@ internal class DevDataSeederConfiguration(
     private suspend fun seedProjects() {
         val now = timestampProvider.getNowTimestamp()
         listOf(
-            BackendProject(
-                project =
-                    Project(
-                        id = Uuid.parse(PROJECT_1),
-                        name = "Strahov Dormitories Renovation",
-                        address = "Chaloupeckého 1917/9, 160 17 Praha 6",
-                        clientId = Uuid.parse(CLIENT_1),
-                        updatedAt = now,
-                    ),
+            BackendProjectData(
+                id = Uuid.parse(PROJECT_1),
+                name = "Strahov Dormitories Renovation",
+                address = "Chaloupeckého 1917/9, 160 17 Praha 6",
+                clientId = Uuid.parse(CLIENT_1),
+                updatedAt = now,
             ),
-            BackendProject(
-                project =
-                    Project(
-                        id = Uuid.parse(PROJECT_2),
-                        name = "FIT CTU New Building",
-                        address = "Thákurova 9, 160 00 Praha 6",
-                        clientId = Uuid.parse(CLIENT_1),
-                        updatedAt = now,
-                    ),
+            BackendProjectData(
+                id = Uuid.parse(PROJECT_2),
+                name = "FIT CTU New Building",
+                address = "Thákurova 9, 160 00 Praha 6",
+                clientId = Uuid.parse(CLIENT_1),
+                updatedAt = now,
             ),
-            BackendProject(
-                project =
-                    Project(
-                        id = Uuid.parse(PROJECT_3),
-                        name = "National Library of Technology",
-                        address = "Technická 2710/6, 160 00 Praha 6",
-                        clientId = Uuid.parse(CLIENT_2),
-                        updatedAt = now,
-                    ),
+            BackendProjectData(
+                id = Uuid.parse(PROJECT_3),
+                name = "National Library of Technology",
+                address = "Technická 2710/6, 160 00 Praha 6",
+                clientId = Uuid.parse(CLIENT_2),
+                updatedAt = now,
             ),
         ).forEach { projectsDb.saveProject(it) }
     }
@@ -201,73 +162,55 @@ internal class DevDataSeederConfiguration(
 
     private fun project1Structures(now: Timestamp) =
         listOf(
-            BackendStructure(
-                structure =
-                    Structure(
-                        id = Uuid.parse(STRUCTURE_1),
-                        projectId = Uuid.parse(PROJECT_1),
-                        name = "Block A - Ground Floor",
-                        floorPlanUrl = FLOOR_PLAN_URL_1,
-                        updatedAt = now,
-                    ),
+            BackendStructureData(
+                id = Uuid.parse(STRUCTURE_1),
+                projectId = Uuid.parse(PROJECT_1),
+                name = "Block A - Ground Floor",
+                floorPlanUrl = FLOOR_PLAN_URL_1,
+                updatedAt = now,
             ),
-            BackendStructure(
-                structure =
-                    Structure(
-                        id = Uuid.parse(STRUCTURE_2),
-                        projectId = Uuid.parse(PROJECT_1),
-                        name = "Block A - First Floor",
-                        floorPlanUrl = "https://saterdesign.com/cdn/shop/products/6842.M_1200x.jpeg?v=1547874083",
-                        updatedAt = now,
-                    ),
+            BackendStructureData(
+                id = Uuid.parse(STRUCTURE_2),
+                projectId = Uuid.parse(PROJECT_1),
+                name = "Block A - First Floor",
+                floorPlanUrl = "https://saterdesign.com/cdn/shop/products/6842.M_1200x.jpeg?v=1547874083",
+                updatedAt = now,
             ),
-            BackendStructure(
-                structure =
-                    Structure(
-                        id = Uuid.parse(STRUCTURE_3),
-                        projectId = Uuid.parse(PROJECT_1),
-                        name = "Block B - Ground Floor",
-                        floorPlanUrl = null,
-                        updatedAt = now,
-                    ),
+            BackendStructureData(
+                id = Uuid.parse(STRUCTURE_3),
+                projectId = Uuid.parse(PROJECT_1),
+                name = "Block B - Ground Floor",
+                floorPlanUrl = null,
+                updatedAt = now,
             ),
         )
 
     private fun project2Structures(now: Timestamp) =
         listOf(
-            BackendStructure(
-                structure =
-                    Structure(
-                        id = Uuid.parse(STRUCTURE_4),
-                        projectId = Uuid.parse(PROJECT_2),
-                        name = "Main Building - Basement",
-                        floorPlanUrl = null,
-                        updatedAt = now,
-                    ),
+            BackendStructureData(
+                id = Uuid.parse(STRUCTURE_4),
+                projectId = Uuid.parse(PROJECT_2),
+                name = "Main Building - Basement",
+                floorPlanUrl = null,
+                updatedAt = now,
             ),
-            BackendStructure(
-                structure =
-                    Structure(
-                        id = Uuid.parse(STRUCTURE_5),
-                        projectId = Uuid.parse(PROJECT_2),
-                        name = "Main Building - Ground Floor",
-                        floorPlanUrl = "https://www.thehousedesigners.com/images/plans/01/SCA/bulk/9333/1st-floor_m.webp",
-                        updatedAt = now,
-                    ),
+            BackendStructureData(
+                id = Uuid.parse(STRUCTURE_5),
+                projectId = Uuid.parse(PROJECT_2),
+                name = "Main Building - Ground Floor",
+                floorPlanUrl = "https://www.thehousedesigners.com/images/plans/01/SCA/bulk/9333/1st-floor_m.webp",
+                updatedAt = now,
             ),
         )
 
     private fun project3Structures(now: Timestamp) =
         listOf(
-            BackendStructure(
-                structure =
-                    Structure(
-                        id = Uuid.parse(STRUCTURE_6),
-                        projectId = Uuid.parse(PROJECT_3),
-                        name = "Reading Hall - Level 1",
-                        floorPlanUrl = FLOOR_PLAN_URL_6,
-                        updatedAt = now,
-                    ),
+            BackendStructureData(
+                id = Uuid.parse(STRUCTURE_6),
+                projectId = Uuid.parse(PROJECT_3),
+                name = "Reading Hall - Level 1",
+                floorPlanUrl = FLOOR_PLAN_URL_6,
+                updatedAt = now,
             ),
         )
 
@@ -275,69 +218,54 @@ internal class DevDataSeederConfiguration(
     private suspend fun seedFindings() {
         val now = timestampProvider.getNowTimestamp()
         listOf(
-            BackendFinding(
-                finding =
-                    Finding(
-                        id = Uuid.parse(FINDING_1),
-                        structureId = Uuid.parse(STRUCTURE_1),
-                        name = "Cracked wall tile",
-                        description = "Visible crack on wall tile near entrance.",
-                        type = FindingType.Classic(importance = Importance.HIGH, term = Term.T1),
-                        coordinates = setOf(RelativeCoordinate(x = 0.25f, y = 0.40f)),
-                        updatedAt = now,
-                    ),
+            BackendFindingData(
+                id = Uuid.parse(FINDING_1),
+                structureId = Uuid.parse(STRUCTURE_1),
+                name = "Cracked wall tile",
+                description = "Visible crack on wall tile near entrance.",
+                type = FindingType.Classic(importance = Importance.HIGH, term = Term.T1),
+                coordinates = setOf(RelativeCoordinate(x = 0.25f, y = 0.40f)),
+                updatedAt = now,
             ),
-            BackendFinding(
-                finding =
-                    Finding(
-                        id = Uuid.parse(FINDING_2),
-                        structureId = Uuid.parse(STRUCTURE_1),
-                        name = "Missing paint patch",
-                        description = "Unpainted area on the ceiling in hallway.",
-                        type = FindingType.Classic(importance = Importance.MEDIUM, term = Term.T2),
-                        coordinates = setOf(RelativeCoordinate(x = 0.60f, y = 0.15f)),
-                        updatedAt = now,
-                    ),
+            BackendFindingData(
+                id = Uuid.parse(FINDING_2),
+                structureId = Uuid.parse(STRUCTURE_1),
+                name = "Missing paint patch",
+                description = "Unpainted area on the ceiling in hallway.",
+                type = FindingType.Classic(importance = Importance.MEDIUM, term = Term.T2),
+                coordinates = setOf(RelativeCoordinate(x = 0.60f, y = 0.15f)),
+                updatedAt = now,
             ),
-            BackendFinding(
-                finding =
-                    Finding(
-                        id = Uuid.parse(FINDING_3),
-                        structureId = Uuid.parse(STRUCTURE_2),
-                        name = "Loose handrail",
-                        description = null,
-                        type = FindingType.Classic(importance = Importance.LOW, term = Term.T3),
-                        coordinates =
-                            setOf(
-                                RelativeCoordinate(x = 0.80f, y = 0.55f),
-                                RelativeCoordinate(x = 0.82f, y = 0.60f),
-                            ),
-                        updatedAt = now,
+            BackendFindingData(
+                id = Uuid.parse(FINDING_3),
+                structureId = Uuid.parse(STRUCTURE_2),
+                name = "Loose handrail",
+                description = null,
+                type = FindingType.Classic(importance = Importance.LOW, term = Term.T3),
+                coordinates =
+                    setOf(
+                        RelativeCoordinate(x = 0.80f, y = 0.55f),
+                        RelativeCoordinate(x = 0.82f, y = 0.60f),
                     ),
+                updatedAt = now,
             ),
-            BackendFinding(
-                finding =
-                    Finding(
-                        id = Uuid.parse(FINDING_4),
-                        structureId = Uuid.parse(STRUCTURE_1),
-                        name = "Bathroom not visited",
-                        description = "Bathroom was locked during inspection.",
-                        type = FindingType.Unvisited,
-                        coordinates = setOf(RelativeCoordinate(x = 0.45f, y = 0.70f)),
-                        updatedAt = now,
-                    ),
+            BackendFindingData(
+                id = Uuid.parse(FINDING_4),
+                structureId = Uuid.parse(STRUCTURE_1),
+                name = "Bathroom not visited",
+                description = "Bathroom was locked during inspection.",
+                type = FindingType.Unvisited,
+                coordinates = setOf(RelativeCoordinate(x = 0.45f, y = 0.70f)),
+                updatedAt = now,
             ),
-            BackendFinding(
-                finding =
-                    Finding(
-                        id = Uuid.parse(FINDING_5),
-                        structureId = Uuid.parse(STRUCTURE_2),
-                        name = "Owner requests extra outlet",
-                        description = "Owner mentioned wanting an additional power outlet near the kitchen island.",
-                        type = FindingType.Note,
-                        coordinates = setOf(RelativeCoordinate(x = 0.35f, y = 0.30f)),
-                        updatedAt = now,
-                    ),
+            BackendFindingData(
+                id = Uuid.parse(FINDING_5),
+                structureId = Uuid.parse(STRUCTURE_2),
+                name = "Owner requests extra outlet",
+                description = "Owner mentioned wanting an additional power outlet near the kitchen island.",
+                type = FindingType.Note,
+                coordinates = setOf(RelativeCoordinate(x = 0.35f, y = 0.30f)),
+                updatedAt = now,
             ),
         ).forEach { findingsDb.saveFinding(it) }
     }
@@ -346,57 +274,45 @@ internal class DevDataSeederConfiguration(
     private suspend fun seedInspections() {
         val now = timestampProvider.getNowTimestamp()
         listOf(
-            BackendInspection(
-                inspection =
-                    Inspection(
-                        id = Uuid.parse(INSPECTION_1),
-                        projectId = Uuid.parse(PROJECT_1),
-                        startedAt = Timestamp(now.value - 7200000),
-                        endedAt = Timestamp(now.value - 3600000),
-                        participants = "Jan Novak, Petr Svoboda",
-                        climate = "Sunny, 22C",
-                        note = "Initial site walkthrough completed.",
-                        updatedAt = now,
-                    ),
+            BackendInspectionData(
+                id = Uuid.parse(INSPECTION_1),
+                projectId = Uuid.parse(PROJECT_1),
+                startedAt = Timestamp(now.value - 7200000),
+                endedAt = Timestamp(now.value - 3600000),
+                participants = "Jan Novak, Petr Svoboda",
+                climate = "Sunny, 22C",
+                note = "Initial site walkthrough completed.",
+                updatedAt = now,
             ),
-            BackendInspection(
-                inspection =
-                    Inspection(
-                        id = Uuid.parse(INSPECTION_2),
-                        projectId = Uuid.parse(PROJECT_1),
-                        startedAt = Timestamp(now.value - 1800000),
-                        endedAt = null,
-                        participants = "Jan Novak",
-                        climate = null,
-                        note = null,
-                        updatedAt = now,
-                    ),
+            BackendInspectionData(
+                id = Uuid.parse(INSPECTION_2),
+                projectId = Uuid.parse(PROJECT_1),
+                startedAt = Timestamp(now.value - 1800000),
+                endedAt = null,
+                participants = "Jan Novak",
+                climate = null,
+                note = null,
+                updatedAt = now,
             ),
-            BackendInspection(
-                inspection =
-                    Inspection(
-                        id = Uuid.parse(INSPECTION_3),
-                        projectId = Uuid.parse(PROJECT_2),
-                        startedAt = Timestamp(now.value - 86400000),
-                        endedAt = Timestamp(now.value - 82800000),
-                        participants = "Marie Kralova, Tomas Benes",
-                        climate = "Overcast, 15C",
-                        note = "Follow-up inspection after plumbing fixes.",
-                        updatedAt = now,
-                    ),
+            BackendInspectionData(
+                id = Uuid.parse(INSPECTION_3),
+                projectId = Uuid.parse(PROJECT_2),
+                startedAt = Timestamp(now.value - 86400000),
+                endedAt = Timestamp(now.value - 82800000),
+                participants = "Marie Kralova, Tomas Benes",
+                climate = "Overcast, 15C",
+                note = "Follow-up inspection after plumbing fixes.",
+                updatedAt = now,
             ),
-            BackendInspection(
-                inspection =
-                    Inspection(
-                        id = Uuid.parse(INSPECTION_4),
-                        projectId = Uuid.parse(PROJECT_3),
-                        startedAt = null,
-                        endedAt = null,
-                        participants = null,
-                        climate = null,
-                        note = null,
-                        updatedAt = now,
-                    ),
+            BackendInspectionData(
+                id = Uuid.parse(INSPECTION_4),
+                projectId = Uuid.parse(PROJECT_3),
+                startedAt = null,
+                endedAt = null,
+                participants = null,
+                climate = null,
+                note = null,
+                updatedAt = now,
             ),
         ).forEach { inspectionsDb.saveInspection(it) }
     }

@@ -19,9 +19,9 @@ import cz.adamec.timotej.snag.projects.be.app.api.GetProjectUseCase
 import cz.adamec.timotej.snag.reports.be.app.api.GenerateProjectReportUseCase
 import cz.adamec.timotej.snag.reports.be.app.impl.internal.LH.logger
 import cz.adamec.timotej.snag.reports.be.model.BackendReport
+import cz.adamec.timotej.snag.reports.be.model.BackendReportData
 import cz.adamec.timotej.snag.reports.be.ports.PdfReportGenerator
 import cz.adamec.timotej.snag.reports.be.ports.ProjectReportData
-import cz.adamec.timotej.snag.reports.business.Report
 import cz.adamec.timotej.snag.structures.be.app.api.GetStructuresUseCase
 import kotlin.uuid.Uuid
 
@@ -37,12 +37,12 @@ internal class GenerateProjectReportUseCaseImpl(
         logger.debug("Generating report for project {}.", projectId)
 
         val backendProject = getProjectUseCase(projectId) ?: return null
-        val backendClient = backendProject.project.clientId?.let { getClientUseCase(it) }
+        val backendClient = backendProject.clientId?.let { getClientUseCase(it) }
         val structures =
             getStructuresUseCase(projectId).filter { it.deletedAt == null }
         val findingsByStructure =
             structures.associateWith { structure ->
-                getFindingsUseCase(structure.structure.id).filter { it.deletedAt == null }
+                getFindingsUseCase(structure.id).filter { it.deletedAt == null }
             }
         val inspections =
             getInspectionsUseCase(projectId).filter { it.deletedAt == null }
@@ -58,16 +58,13 @@ internal class GenerateProjectReportUseCaseImpl(
         val bytes = pdfReportGenerator.generate(reportData)
         logger.debug("Generated report for project {} ({} bytes).", projectId, bytes.size)
         val fileName =
-            "${backendProject.project.name}-report.pdf"
+            "${backendProject.name}-report.pdf"
                 .lowercase()
                 .replace(Regex("\\s+"), "-")
-        return BackendReport(
-            report =
-                Report(
-                    projectId = projectId,
-                    fileName = fileName,
-                    bytes = bytes,
-                ),
+        return BackendReportData(
+            projectId = projectId,
+            fileName = fileName,
+            bytes = bytes,
         )
     }
 }

@@ -14,7 +14,7 @@ package cz.adamec.timotej.snag.feat.inspections.fe.driven.test
 
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.core.network.fe.OnlineDataResult
-import cz.adamec.timotej.snag.feat.inspections.fe.model.FrontendInspection
+import cz.adamec.timotej.snag.feat.inspections.app.model.AppInspection
 import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionSyncResult
 import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionsApi
 import cz.adamec.timotej.snag.network.fe.test.FakeApiOps
@@ -22,7 +22,7 @@ import kotlin.uuid.Uuid
 
 class FakeInspectionsApi : InspectionsApi {
     private val ops =
-        FakeApiOps<FrontendInspection, InspectionSyncResult>(getId = { it.inspection.id })
+        FakeApiOps<AppInspection, InspectionSyncResult>(getId = { it.id })
 
     var forcedFailure
         get() = ops.forcedFailure
@@ -42,15 +42,15 @@ class FakeInspectionsApi : InspectionsApi {
             ops.modifiedSinceResults = value
         }
 
-    override suspend fun getInspections(projectId: Uuid): OnlineDataResult<List<FrontendInspection>> =
-        ops.getAllItems { it.inspection.projectId == projectId }
+    override suspend fun getInspections(projectId: Uuid): OnlineDataResult<List<AppInspection>> =
+        ops.getAllItems { it.projectId == projectId }
 
     override suspend fun deleteInspection(
         id: Uuid,
         deletedAt: Timestamp,
-    ): OnlineDataResult<FrontendInspection?> = ops.deleteItemById(id)
+    ): OnlineDataResult<AppInspection?> = ops.deleteItemById(id)
 
-    override suspend fun saveInspection(frontendInspection: FrontendInspection): OnlineDataResult<FrontendInspection?> =
+    override suspend fun saveInspection(frontendInspection: AppInspection): OnlineDataResult<AppInspection?> =
         ops.saveItem(frontendInspection)
 
     override suspend fun getInspectionsModifiedSince(
@@ -58,7 +58,7 @@ class FakeInspectionsApi : InspectionsApi {
         since: Timestamp,
     ): OnlineDataResult<List<InspectionSyncResult>> = ops.getModifiedSinceItems()
 
-    fun setInspection(inspection: FrontendInspection) = ops.setItem(inspection)
+    fun setInspection(inspection: AppInspection) = ops.setItem(inspection)
 
-    fun setInspections(inspections: List<FrontendInspection>) = ops.setItems(inspections)
+    fun setInspections(inspections: List<AppInspection>) = ops.setItems(inspections)
 }

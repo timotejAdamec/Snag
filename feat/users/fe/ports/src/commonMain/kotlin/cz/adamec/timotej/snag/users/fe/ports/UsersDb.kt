@@ -13,16 +13,16 @@
 package cz.adamec.timotej.snag.users.fe.ports
 
 import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
-import cz.adamec.timotej.snag.users.fe.model.FrontendUser
+import cz.adamec.timotej.snag.users.app.model.AppUser
 import kotlinx.coroutines.flow.Flow
 import kotlin.uuid.Uuid
 
 interface UsersDb {
-    fun getAllUsersFlow(): Flow<OfflineFirstDataResult<List<FrontendUser>>>
+    fun getAllUsersFlow(): Flow<OfflineFirstDataResult<List<AppUser>>>
 
-    fun getUserFlow(id: Uuid): Flow<OfflineFirstDataResult<FrontendUser?>>
+    fun getUserFlow(id: Uuid): Flow<OfflineFirstDataResult<AppUser?>>
 
-    suspend fun saveUser(user: FrontendUser): OfflineFirstDataResult<Unit>
+    suspend fun saveUser(user: AppUser): OfflineFirstDataResult<Unit>
 
-    suspend fun saveUsers(users: List<FrontendUser>): OfflineFirstDataResult<Unit>
+    suspend fun saveUsers(users: List<AppUser>): OfflineFirstDataResult<Unit>
 }

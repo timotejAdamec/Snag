@@ -12,18 +12,18 @@
 
 package cz.adamec.timotej.snag.findings.fe.driven.internal.api
 
-import cz.adamec.timotej.snag.feat.findings.business.Finding
+import cz.adamec.timotej.snag.feat.findings.app.model.AppFinding
+import cz.adamec.timotej.snag.feat.findings.app.model.AppFindingData
 import cz.adamec.timotej.snag.feat.findings.business.FindingType
 import cz.adamec.timotej.snag.feat.findings.business.Importance
 import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
 import cz.adamec.timotej.snag.feat.findings.business.Term
-import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
 import cz.adamec.timotej.snag.findings.be.driving.contract.FindingApiDto
 import cz.adamec.timotej.snag.findings.be.driving.contract.PutFindingApiDto
 import cz.adamec.timotej.snag.findings.be.driving.contract.RelativeCoordinateApiDto
 import cz.adamec.timotej.snag.findings.fe.driven.internal.LH
 
-internal fun FindingApiDto.toModel(): FrontendFinding {
+internal fun FindingApiDto.toModel(): AppFinding {
     val apiKey =
         try {
             FindingTypeDtoKey.valueOf(type)
@@ -43,17 +43,14 @@ internal fun FindingApiDto.toModel(): FrontendFinding {
             FindingTypeDtoKey.NOTE -> FindingType.Note
             null -> FindingType.Classic()
         }
-    return FrontendFinding(
-        finding =
-            Finding(
-                id = id,
-                structureId = structureId,
-                name = name,
-                description = description,
-                type = findingType,
-                coordinates = coordinates.map { it.toBusiness() }.toSet(),
-                updatedAt = updatedAt,
-            ),
+    return AppFindingData(
+        id = id,
+        structureId = structureId,
+        name = name,
+        description = description,
+        type = findingType,
+        coordinates = coordinates.map { it.toBusiness() }.toSet(),
+        updatedAt = updatedAt,
     )
 }
 
@@ -70,17 +67,16 @@ internal fun FindingType.toDtoKey(): FindingTypeDtoKey =
         is FindingType.Note -> FindingTypeDtoKey.NOTE
     }
 
-internal fun FrontendFinding.toPutApiDto(): PutFindingApiDto {
-    val type = finding.type
+internal fun AppFinding.toPutApiDto(): PutFindingApiDto {
     val classic = type as? FindingType.Classic
     return PutFindingApiDto(
-        structureId = finding.structureId,
+        structureId = structureId,
         type = type.toDtoKey().name,
-        name = finding.name,
-        description = finding.description,
+        name = name,
+        description = description,
         importance = classic?.importance?.name,
         term = classic?.term?.name,
-        coordinates = finding.coordinates.map { RelativeCoordinateApiDto(x = it.x, y = it.y) }.toSet(),
-        updatedAt = finding.updatedAt,
+        coordinates = coordinates.map { RelativeCoordinateApiDto(x = it.x, y = it.y) }.toSet(),
+        updatedAt = updatedAt,
     )
 }

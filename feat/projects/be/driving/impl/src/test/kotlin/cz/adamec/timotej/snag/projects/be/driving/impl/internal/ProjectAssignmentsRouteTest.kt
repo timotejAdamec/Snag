@@ -15,15 +15,13 @@ package cz.adamec.timotej.snag.projects.be.driving.impl.internal
 import cz.adamec.timotej.snag.configuration.be.AppConfiguration
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.network.be.test.jsonClient
-import cz.adamec.timotej.snag.projects.be.model.BackendProject
+import cz.adamec.timotej.snag.projects.be.model.BackendProjectData
 import cz.adamec.timotej.snag.projects.be.ports.ProjectAssignmentsDb
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
-import cz.adamec.timotej.snag.projects.business.Project
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
 import cz.adamec.timotej.snag.users.be.driving.contract.UserApiDto
-import cz.adamec.timotej.snag.users.be.model.BackendUser
+import cz.adamec.timotej.snag.users.be.model.BackendUserData
 import cz.adamec.timotej.snag.users.be.ports.UsersDb
-import cz.adamec.timotej.snag.users.business.User
 import io.ktor.client.call.body
 import io.ktor.client.request.delete
 import io.ktor.client.request.get
@@ -43,14 +41,11 @@ class ProjectAssignmentsRouteTest : BackendKoinInitializedTest() {
 
     private suspend fun createProject(id: Uuid) {
         projectsDb.saveProject(
-            BackendProject(
-                project =
-                    Project(
-                        id = id,
-                        name = "Test Project",
-                        address = "Test Address",
-                        updatedAt = Timestamp(10L),
-                    ),
+            BackendProjectData(
+                id = id,
+                name = "Test Project",
+                address = "Test Address",
+                updatedAt = Timestamp(10L),
             ),
         )
     }
@@ -82,14 +77,11 @@ class ProjectAssignmentsRouteTest : BackendKoinInitializedTest() {
             configureApp()
             createProject(TEST_PROJECT_1)
             usersDb.saveUser(
-                BackendUser(
-                    user =
-                        User(
-                            id = TEST_USER_1,
-                            entraId = "entra-1",
-                            email = "user@example.com",
-                            updatedAt = Timestamp(100L),
-                        ),
+                BackendUserData(
+                    id = TEST_USER_1,
+                    entraId = "entra-1",
+                    email = "user@example.com",
+                    updatedAt = Timestamp(100L),
                 ),
             )
             assignmentsDb.assignUser(TEST_USER_1, TEST_PROJECT_1)
@@ -109,14 +101,11 @@ class ProjectAssignmentsRouteTest : BackendKoinInitializedTest() {
             configureApp()
             createProject(TEST_PROJECT_1)
             usersDb.saveUser(
-                BackendUser(
-                    user =
-                        User(
-                            id = TEST_USER_1,
-                            entraId = "entra-1",
-                            email = "user@example.com",
-                            updatedAt = Timestamp(100L),
-                        ),
+                BackendUserData(
+                    id = TEST_USER_1,
+                    entraId = "entra-1",
+                    email = "user@example.com",
+                    updatedAt = Timestamp(100L),
                 ),
             )
             val client = jsonClient()
@@ -132,14 +121,11 @@ class ProjectAssignmentsRouteTest : BackendKoinInitializedTest() {
             configureApp()
             createProject(TEST_PROJECT_1)
             usersDb.saveUser(
-                BackendUser(
-                    user =
-                        User(
-                            id = TEST_USER_1,
-                            entraId = "entra-1",
-                            email = "user@example.com",
-                            updatedAt = Timestamp(100L),
-                        ),
+                BackendUserData(
+                    id = TEST_USER_1,
+                    entraId = "entra-1",
+                    email = "user@example.com",
+                    updatedAt = Timestamp(100L),
                 ),
             )
             val client = jsonClient()
@@ -156,14 +142,11 @@ class ProjectAssignmentsRouteTest : BackendKoinInitializedTest() {
             configureApp()
             createProject(TEST_PROJECT_1)
             usersDb.saveUser(
-                BackendUser(
-                    user =
-                        User(
-                            id = TEST_USER_1,
-                            entraId = "entra-1",
-                            email = "user@example.com",
-                            updatedAt = Timestamp(100L),
-                        ),
+                BackendUserData(
+                    id = TEST_USER_1,
+                    entraId = "entra-1",
+                    email = "user@example.com",
+                    updatedAt = Timestamp(100L),
                 ),
             )
             assignmentsDb.assignUser(TEST_USER_1, TEST_PROJECT_1)

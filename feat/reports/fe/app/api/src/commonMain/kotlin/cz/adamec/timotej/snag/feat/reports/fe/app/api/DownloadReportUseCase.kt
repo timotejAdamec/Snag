@@ -13,9 +13,9 @@
 package cz.adamec.timotej.snag.feat.reports.fe.app.api
 
 import cz.adamec.timotej.snag.core.network.fe.OnlineDataResult
-import cz.adamec.timotej.snag.feat.reports.fe.model.FrontendReport
+import cz.adamec.timotej.snag.reports.business.Report
 import kotlin.uuid.Uuid
 
 interface DownloadReportUseCase {
-    suspend operator fun invoke(projectId: Uuid): OnlineDataResult<FrontendReport>
+    suspend operator fun invoke(projectId: Uuid): OnlineDataResult<Report>
 }

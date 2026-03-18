@@ -57,7 +57,7 @@ internal class ProjectPullSyncHandler(
                 projectsDb.deleteProject(change.id)
             }
             is ProjectSyncResult.Updated -> {
-                LH.logger.d { "Processing updated project ${change.project.project.id}." }
+                LH.logger.d { "Processing updated project ${change.project.id}." }
                 projectsDb.saveProject(change.project)
             }
         }

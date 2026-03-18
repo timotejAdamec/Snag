@@ -15,14 +15,14 @@ package cz.adamec.timotej.snag.users.fe.driven.internal.db
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.UserEntity
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.UserEntityQueries
 import cz.adamec.timotej.snag.lib.database.fe.SqlDelightDbOps
+import cz.adamec.timotej.snag.users.app.model.AppUser
 import cz.adamec.timotej.snag.users.fe.driven.internal.LH
-import cz.adamec.timotej.snag.users.fe.model.FrontendUser
 import kotlinx.coroutines.CoroutineDispatcher
 
 internal class UsersSqlDelightDbOps(
     queries: UserEntityQueries,
     ioDispatcher: CoroutineDispatcher,
-) : SqlDelightDbOps<UserEntity, FrontendUser>(
+) : SqlDelightDbOps<UserEntity, AppUser>(
         ioDispatcher = ioDispatcher,
         logger = LH.logger,
         entityName = "user",

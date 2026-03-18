@@ -25,9 +25,9 @@ internal class SaveStructureUseCaseImpl(
     private val canEditProjectEntitiesRule: CanEditProjectEntitiesRule,
 ) : SaveStructureUseCase {
     override suspend operator fun invoke(backendStructure: BackendStructure): BackendStructure? {
-        val project = getProjectUseCase(backendStructure.structure.projectId)
-        if (project != null && !canEditProjectEntitiesRule(project.project)) {
-            return structuresDb.getStructure(backendStructure.structure.id)
+        val project = getProjectUseCase(backendStructure.projectId)
+        if (project != null && !canEditProjectEntitiesRule(project)) {
+            return structuresDb.getStructure(backendStructure.id)
         }
         logger.debug("Saving structure {} to local storage.", backendStructure)
         val isRejected = structuresDb.saveStructure(backendStructure)

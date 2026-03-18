@@ -13,8 +13,8 @@
 package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.ui
 
 import androidx.compose.runtime.Composable
-import cz.adamec.timotej.snag.feat.reports.fe.model.FrontendReport
+import cz.adamec.timotej.snag.reports.business.Report
 import kotlinx.coroutines.flow.Flow
 
 @Composable
-internal expect fun SaveReportEffect(reportFlow: Flow<FrontendReport>)
+internal expect fun SaveReportEffect(reportFlow: Flow<Report>)

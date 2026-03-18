@@ -13,9 +13,9 @@
 package cz.adamec.timotej.snag.users.fe.app.api
 
 import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
-import cz.adamec.timotej.snag.users.fe.model.FrontendUser
+import cz.adamec.timotej.snag.users.app.model.AppUser
 import kotlinx.coroutines.flow.Flow
 
 interface GetUsersUseCase {
-    operator fun invoke(): Flow<OfflineFirstDataResult<List<FrontendUser>>>
+    operator fun invoke(): Flow<OfflineFirstDataResult<List<AppUser>>>
 }

@@ -15,9 +15,8 @@ package cz.adamec.timotej.snag.findings.fe.app.impl.internal
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.core.network.fe.OfflineFirstUpdateDataResult
-import cz.adamec.timotej.snag.feat.findings.business.Finding
+import cz.adamec.timotej.snag.feat.findings.app.model.AppFindingData
 import cz.adamec.timotej.snag.feat.findings.business.FindingType
-import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
 import cz.adamec.timotej.snag.findings.fe.app.api.SaveFindingDetailsUseCase
 import cz.adamec.timotej.snag.findings.fe.app.api.model.SaveFindingDetailsRequest
 import cz.adamec.timotej.snag.findings.fe.app.impl.internal.sync.FINDING_SYNC_ENTITY_TYPE
@@ -43,17 +42,14 @@ class SaveFindingDetailsUseCaseImplTest : FrontendKoinInitializedTest() {
     private val findingId = Uuid.parse("00000000-0000-0000-0001-000000000001")
 
     private val existingFinding =
-        FrontendFinding(
-            finding =
-                Finding(
-                    id = findingId,
-                    structureId = structureId,
-                    name = "Old name",
-                    description = "Old description",
-                    type = FindingType.Classic(),
-                    coordinates = emptySet(),
-                    updatedAt = Timestamp(10L),
-                ),
+        AppFindingData(
+            id = findingId,
+            structureId = structureId,
+            name = "Old name",
+            description = "Old description",
+            type = FindingType.Classic(),
+            coordinates = emptySet(),
+            updatedAt = Timestamp(10L),
         )
 
     @Test

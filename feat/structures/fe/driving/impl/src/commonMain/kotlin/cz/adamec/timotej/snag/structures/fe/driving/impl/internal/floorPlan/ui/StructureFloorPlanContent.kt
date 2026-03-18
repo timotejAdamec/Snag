@@ -133,7 +133,6 @@ private fun LoadedStructureDetailsContent(
                             ),
                         text =
                             state.feStructure
-                                ?.structure
                                 ?.name
                                 .orEmpty(),
                         maxLines = 1,
@@ -177,12 +176,12 @@ private fun LoadedStructureDetailsContent(
                     bottom = bottomFromToolbar,
                 )
 
-            val floorPlanUrl = state.feStructure?.structure?.floorPlanUrl
+            val floorPlanUrl = state.feStructure?.floorPlanUrl
             if (floorPlanUrl != null) {
                 FloorPlanWithPins(
                     modifier = Modifier.fillMaxSize(),
                     floorPlanUrl = floorPlanUrl,
-                    contentDescription = state.feStructure.structure.name,
+                    contentDescription = state.feStructure.name,
                     findings = state.findings,
                     selectedFindingId = state.selectedFindingId,
                     contentPadding = floorPlanContentPadding,

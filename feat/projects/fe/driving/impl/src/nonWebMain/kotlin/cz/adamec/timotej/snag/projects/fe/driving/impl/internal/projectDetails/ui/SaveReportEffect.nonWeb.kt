@@ -14,8 +14,8 @@ package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
-import cz.adamec.timotej.snag.feat.reports.fe.model.FrontendReport
 import cz.adamec.timotej.snag.lib.design.fe.events.ObserveAsEvents
+import cz.adamec.timotej.snag.reports.business.Report
 import io.github.vinceglb.filekit.FileKit
 import io.github.vinceglb.filekit.dialogs.openFileSaver
 import io.github.vinceglb.filekit.write
@@ -23,7 +23,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
 @Composable
-internal actual fun SaveReportEffect(reportFlow: Flow<FrontendReport>) {
+internal actual fun SaveReportEffect(reportFlow: Flow<Report>) {
     val scope = rememberCoroutineScope()
 
     ObserveAsEvents(
@@ -32,10 +32,10 @@ internal actual fun SaveReportEffect(reportFlow: Flow<FrontendReport>) {
             scope.launch {
                 val file =
                     FileKit.openFileSaver(
-                        suggestedName = report.report.fileName.removeSuffix(".pdf"),
+                        suggestedName = report.fileName.removeSuffix(".pdf"),
                         extension = "pdf",
                     )
-                file?.write(report.report.bytes)
+                file?.write(report.bytes)
             }
         },
     )

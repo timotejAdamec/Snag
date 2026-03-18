@@ -14,29 +14,26 @@ package cz.adamec.timotej.snag.projects.fe.driven.internal.db
 
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.ProjectEntity
-import cz.adamec.timotej.snag.projects.business.Project
-import cz.adamec.timotej.snag.projects.fe.model.FrontendProject
+import cz.adamec.timotej.snag.projects.app.model.AppProject
+import cz.adamec.timotej.snag.projects.app.model.AppProjectData
 import kotlin.uuid.Uuid
 
-internal fun FrontendProject.toEntity() =
+internal fun AppProject.toEntity() =
     ProjectEntity(
-        id = project.id.toString(),
-        name = project.name,
-        address = project.address,
-        clientId = project.clientId?.toString(),
-        isClosed = if (project.isClosed) 1L else 0L,
-        updatedAt = project.updatedAt.value,
+        id = id.toString(),
+        name = name,
+        address = address,
+        clientId = clientId?.toString(),
+        isClosed = if (isClosed) 1L else 0L,
+        updatedAt = updatedAt.value,
     )
 
-internal fun ProjectEntity.toModel() =
-    FrontendProject(
-        project =
-            Project(
-                id = Uuid.parse(id),
-                name = name,
-                address = address,
-                clientId = clientId?.let { Uuid.parse(it) },
-                isClosed = isClosed == 1L,
-                updatedAt = Timestamp(updatedAt),
-            ),
+internal fun ProjectEntity.toModel(): AppProject =
+    AppProjectData(
+        id = Uuid.parse(id),
+        name = name,
+        address = address,
+        clientId = clientId?.let { Uuid.parse(it) },
+        isClosed = isClosed == 1L,
+        updatedAt = Timestamp(updatedAt),
     )

@@ -20,9 +20,9 @@ import app.cash.sqldelight.coroutines.mapToOneOrNull
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.core.network.fe.OfflineFirstUpdateDataResult
+import cz.adamec.timotej.snag.feat.findings.app.model.AppFinding
 import cz.adamec.timotej.snag.feat.findings.business.FindingType
 import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
-import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.ClassicFindingEntityQueries
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.FindingCoordinateEntityQueries
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.FindingEntityQueries
@@ -44,12 +44,12 @@ internal class RealFindingsDb(
     private val classicFindingEntityQueries: ClassicFindingEntityQueries,
     private val ioDispatcher: CoroutineDispatcher,
 ) : FindingsDb {
-    override fun getFindingsFlow(structureId: Uuid): Flow<OfflineFirstDataResult<List<FrontendFinding>>> =
+    override fun getFindingsFlow(structureId: Uuid): Flow<OfflineFirstDataResult<List<AppFinding>>> =
         findingEntityQueries
             .selectByStructureId(structureId.toString())
             .asFlow()
             .mapToList(ioDispatcher)
-            .map<List<SelectByStructureId>, OfflineFirstDataResult<List<FrontendFinding>>> { entities ->
+            .map<List<SelectByStructureId>, OfflineFirstDataResult<List<AppFinding>>> { entities ->
                 OfflineFirstDataResult.Success(
                     entities.map { it.toModel(loadCoordinates(it.id)) },
                 )
@@ -58,23 +58,23 @@ internal class RealFindingsDb(
                 emit(OfflineFirstDataResult.ProgrammerError(throwable = e))
             }
 
-    override suspend fun saveFindings(findings: List<FrontendFinding>): OfflineFirstDataResult<Unit> =
+    override suspend fun saveFindings(findings: List<AppFinding>): OfflineFirstDataResult<Unit> =
         safeDbWrite(ioDispatcher = ioDispatcher, logger = LH.logger, errorMessage = "Error saving findings $findings to DB.") {
             findingEntityQueries.transactionWithResult {
                 findings.forEach { finding ->
                     findingEntityQueries.save(finding.toEntity())
                     saveClassicDetails(finding)
-                    saveCoordinates(finding.finding.id.toString(), finding.finding.coordinates)
+                    saveCoordinates(finding.id.toString(), finding.coordinates)
                 }
             }
         }
 
-    override suspend fun saveFinding(finding: FrontendFinding): OfflineFirstDataResult<Unit> =
+    override suspend fun saveFinding(finding: AppFinding): OfflineFirstDataResult<Unit> =
         safeDbWrite(ioDispatcher = ioDispatcher, logger = LH.logger, errorMessage = "Error saving finding $finding to DB.") {
             findingEntityQueries.transactionWithResult {
                 findingEntityQueries.save(finding.toEntity())
                 saveClassicDetails(finding)
-                saveCoordinates(finding.finding.id.toString(), finding.finding.coordinates)
+                saveCoordinates(finding.id.toString(), finding.coordinates)
             }
         }
 
@@ -83,12 +83,12 @@ internal class RealFindingsDb(
             findingEntityQueries.deleteById(id.toString())
         }
 
-    override fun getFindingFlow(id: Uuid): Flow<OfflineFirstDataResult<FrontendFinding?>> =
+    override fun getFindingFlow(id: Uuid): Flow<OfflineFirstDataResult<AppFinding?>> =
         findingEntityQueries
             .selectById(id.toString())
             .asFlow()
             .mapToOneOrNull(ioDispatcher)
-            .map<SelectById?, OfflineFirstDataResult<FrontendFinding?>> { entity ->
+            .map<SelectById?, OfflineFirstDataResult<AppFinding?>> { entity ->
                 OfflineFirstDataResult.Success(entity?.toModel(loadCoordinates(entity.id)))
             }.catch { e ->
                 LH.logger.e { "Error loading finding $id from DB." }
@@ -198,16 +198,16 @@ internal class RealFindingsDb(
             .map { RelativeCoordinate(x = it.x.toFloat(), y = it.y.toFloat()) }
             .toSet()
 
-    private suspend fun saveClassicDetails(finding: FrontendFinding) {
-        val type = finding.finding.type
+    private suspend fun saveClassicDetails(finding: AppFinding) {
+        val type = finding.type
         if (type is FindingType.Classic) {
             classicFindingEntityQueries.save(
-                finding.finding.id.toString(),
+                finding.id.toString(),
                 type.importance.name,
                 type.term.name,
             )
         } else {
-            classicFindingEntityQueries.deleteByFindingId(finding.finding.id.toString())
+            classicFindingEntityQueries.deleteByFindingId(finding.id.toString())
         }
     }
 }

@@ -14,7 +14,7 @@ package cz.adamec.timotej.snag.structures.fe.driven.internal.db
 
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.StructureEntity
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.StructureEntityQueries
-import cz.adamec.timotej.snag.feat.structures.fe.model.FrontendStructure
+import cz.adamec.timotej.snag.feat.structures.app.model.AppStructure
 import cz.adamec.timotej.snag.lib.database.fe.SqlDelightDbOps
 import cz.adamec.timotej.snag.structures.fe.driven.internal.LH
 import kotlinx.coroutines.CoroutineDispatcher
@@ -24,7 +24,7 @@ import kotlin.uuid.Uuid
 internal class StructuresSqlDelightDbOps(
     private val queries: StructureEntityQueries,
     private val ioDispatcher: CoroutineDispatcher,
-) : SqlDelightDbOps<StructureEntity, FrontendStructure>(
+) : SqlDelightDbOps<StructureEntity, AppStructure>(
         ioDispatcher = ioDispatcher,
         logger = LH.logger,
         entityName = "structure",

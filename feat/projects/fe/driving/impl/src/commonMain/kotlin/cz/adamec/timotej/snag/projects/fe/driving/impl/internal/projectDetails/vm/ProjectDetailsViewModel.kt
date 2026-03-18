@@ -21,12 +21,12 @@ import cz.adamec.timotej.snag.feat.inspections.fe.app.api.GetInspectionsUseCase
 import cz.adamec.timotej.snag.feat.inspections.fe.app.api.SaveInspectionUseCase
 import cz.adamec.timotej.snag.feat.inspections.fe.app.api.model.SaveInspectionRequest
 import cz.adamec.timotej.snag.feat.reports.fe.app.api.DownloadReportUseCase
-import cz.adamec.timotej.snag.feat.reports.fe.model.FrontendReport
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.lib.design.fe.error.toUiError
 import cz.adamec.timotej.snag.projects.fe.app.api.DeleteProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.GetProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.SetProjectClosedUseCase
+import cz.adamec.timotej.snag.reports.business.Report
 import cz.adamec.timotej.snag.structures.fe.app.api.GetStructuresUseCase
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.channels.Channel
@@ -59,7 +59,7 @@ internal class ProjectDetailsViewModel(
     private val deletedSuccessfullyEventChannel = Channel<Unit>()
     val deletedSuccessfullyEventFlow = deletedSuccessfullyEventChannel.receiveAsFlow()
 
-    private val reportReadyChannel = Channel<FrontendReport>()
+    private val reportReadyChannel = Channel<Report>()
     val reportReadyFlow = reportReadyChannel.receiveAsFlow()
 
     init {
@@ -178,8 +178,7 @@ internal class ProjectDetailsViewModel(
     fun onStartInspection(inspectionId: Uuid) =
         viewModelScope.launch {
             state.value.inspections
-                .find { it.inspection.id == inspectionId }
-                ?.inspection
+                .find { it.id == inspectionId }
                 ?.let { insp ->
                     saveInspectionUseCase(
                         SaveInspectionRequest(
@@ -198,8 +197,7 @@ internal class ProjectDetailsViewModel(
     fun onEndInspection(inspectionId: Uuid) =
         viewModelScope.launch {
             state.value.inspections
-                .find { it.inspection.id == inspectionId }
-                ?.inspection
+                .find { it.id == inspectionId }
                 ?.let { insp ->
                     saveInspectionUseCase(
                         SaveInspectionRequest(

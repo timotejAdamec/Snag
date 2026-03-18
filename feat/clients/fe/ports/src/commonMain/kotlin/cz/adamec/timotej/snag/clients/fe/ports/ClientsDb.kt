@@ -12,19 +12,19 @@
 
 package cz.adamec.timotej.snag.clients.fe.ports
 
-import cz.adamec.timotej.snag.clients.fe.model.FrontendClient
+import cz.adamec.timotej.snag.clients.app.model.AppClient
 import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
 import kotlinx.coroutines.flow.Flow
 import kotlin.uuid.Uuid
 
 interface ClientsDb {
-    fun getAllClientsFlow(): Flow<OfflineFirstDataResult<List<FrontendClient>>>
+    fun getAllClientsFlow(): Flow<OfflineFirstDataResult<List<AppClient>>>
 
-    suspend fun saveClients(clients: List<FrontendClient>): OfflineFirstDataResult<Unit>
+    suspend fun saveClients(clients: List<AppClient>): OfflineFirstDataResult<Unit>
 
-    fun getClientFlow(id: Uuid): Flow<OfflineFirstDataResult<FrontendClient?>>
+    fun getClientFlow(id: Uuid): Flow<OfflineFirstDataResult<AppClient?>>
 
-    suspend fun saveClient(client: FrontendClient): OfflineFirstDataResult<Unit>
+    suspend fun saveClient(client: AppClient): OfflineFirstDataResult<Unit>
 
     suspend fun deleteClient(id: Uuid): OfflineFirstDataResult<Unit>
 }

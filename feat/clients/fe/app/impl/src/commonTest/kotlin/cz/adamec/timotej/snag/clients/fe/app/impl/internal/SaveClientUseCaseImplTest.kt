@@ -12,11 +12,11 @@
 
 package cz.adamec.timotej.snag.clients.fe.app.impl.internal
 
+import cz.adamec.timotej.snag.clients.app.model.AppClient
 import cz.adamec.timotej.snag.clients.fe.app.api.SaveClientUseCase
 import cz.adamec.timotej.snag.clients.fe.app.api.model.SaveClientRequest
 import cz.adamec.timotej.snag.clients.fe.app.impl.internal.sync.CLIENT_SYNC_ENTITY_TYPE
 import cz.adamec.timotej.snag.clients.fe.driven.test.FakeClientsDb
-import cz.adamec.timotej.snag.clients.fe.model.FrontendClient
 import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.sync.fe.driven.test.FakeSyncQueue
 import cz.adamec.timotej.snag.sync.fe.model.SyncOperationType
@@ -75,10 +75,10 @@ class SaveClientUseCaseImplTest : FrontendKoinInitializedTest() {
 
             assertIs<OfflineFirstDataResult.Success<Uuid>>(result)
             val savedClient = getSavedClient(result.data)
-            assertEquals("Client Name", savedClient.client.name)
-            assertEquals("Client Address", savedClient.client.address)
-            assertEquals("+420111222333", savedClient.client.phoneNumber)
-            assertEquals("client@example.com", savedClient.client.email)
+            assertEquals("Client Name", savedClient.name)
+            assertEquals("Client Address", savedClient.address)
+            assertEquals("+420111222333", savedClient.phoneNumber)
+            assertEquals("client@example.com", savedClient.email)
         }
 
     @Test
@@ -158,7 +158,7 @@ class SaveClientUseCaseImplTest : FrontendKoinInitializedTest() {
             assertTrue(fakeSyncQueue.getAllPending().isEmpty())
         }
 
-    private suspend fun getSavedClient(id: Uuid): FrontendClient {
+    private suspend fun getSavedClient(id: Uuid): AppClient {
         fakeClientsDb.forcedFailure = null
         val result = fakeClientsDb.getClientFlow(id).first()
         return (result as OfflineFirstDataResult.Success).data!!

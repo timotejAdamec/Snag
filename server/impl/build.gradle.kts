@@ -52,7 +52,7 @@ dependencies {
     implementation(projects.feat.findings.be.ports)
     implementation(projects.feat.inspections.be.ports)
     implementation(projects.feat.users.be.ports)
-    implementation(projects.feat.users.business)
+    implementation(projects.feat.users.business.model)
 
     implementation(libs.ktor.server.core)
     implementation(libs.ktor.server.netty)

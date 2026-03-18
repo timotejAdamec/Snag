@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetailsEdit.vm
 
-import cz.adamec.timotej.snag.clients.fe.model.FrontendClient
+import cz.adamec.timotej.snag.clients.app.model.AppClient
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import org.jetbrains.compose.resources.StringResource
@@ -23,7 +23,7 @@ internal data class ProjectDetailsEditUiState(
     val projectAddress: String = "",
     val selectedClientId: Uuid? = null,
     val selectedClientName: String = "",
-    val availableClients: ImmutableList<FrontendClient> = persistentListOf(),
+    val availableClients: ImmutableList<AppClient> = persistentListOf(),
     val projectNameError: StringResource? = null,
     val projectAddressError: StringResource? = null,
 )

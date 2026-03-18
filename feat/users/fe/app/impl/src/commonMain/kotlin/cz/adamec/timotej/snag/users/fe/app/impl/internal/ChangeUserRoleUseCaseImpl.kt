@@ -14,9 +14,10 @@ package cz.adamec.timotej.snag.users.fe.app.impl.internal
 
 import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.core.network.fe.OnlineDataResult
+import cz.adamec.timotej.snag.users.app.model.AppUser
+import cz.adamec.timotej.snag.users.app.model.AppUserData
 import cz.adamec.timotej.snag.users.fe.app.api.ChangeUserRoleUseCase
 import cz.adamec.timotej.snag.users.fe.app.api.model.ChangeUserRoleRequest
-import cz.adamec.timotej.snag.users.fe.model.FrontendUser
 import cz.adamec.timotej.snag.users.fe.ports.UsersApi
 import cz.adamec.timotej.snag.users.fe.ports.UsersDb
 import kotlinx.coroutines.flow.first
@@ -25,7 +26,7 @@ class ChangeUserRoleUseCaseImpl(
     private val usersApi: UsersApi,
     private val usersDb: UsersDb,
 ) : ChangeUserRoleUseCase {
-    override suspend fun invoke(request: ChangeUserRoleRequest): OnlineDataResult<FrontendUser> {
+    override suspend fun invoke(request: ChangeUserRoleRequest): OnlineDataResult<AppUser> {
         val userResult = usersDb.getUserFlow(request.userId).first()
         return when (userResult) {
             is OfflineFirstDataResult.ProgrammerError ->
@@ -37,16 +38,20 @@ class ChangeUserRoleUseCaseImpl(
 
     private suspend fun updateUser(
         request: ChangeUserRoleRequest,
-        user: FrontendUser?,
-    ): OnlineDataResult<FrontendUser> {
+        user: AppUser?,
+    ): OnlineDataResult<AppUser> {
         if (user == null) {
             return OnlineDataResult.Failure.ProgrammerError(
                 IllegalStateException("User ${request.userId} not found in DB"),
             )
         }
         val updatedUser =
-            FrontendUser(
-                user = user.user.copy(role = request.newRole),
+            AppUserData(
+                id = user.id,
+                entraId = user.entraId,
+                email = user.email,
+                role = request.newRole,
+                updatedAt = user.updatedAt,
             )
         return when (val result = usersApi.updateUser(updatedUser)) {
             is OnlineDataResult.Success -> {

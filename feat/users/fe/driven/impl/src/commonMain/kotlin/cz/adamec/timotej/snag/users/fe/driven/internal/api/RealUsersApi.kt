@@ -16,9 +16,9 @@ import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.core.network.fe.OnlineDataResult
 import cz.adamec.timotej.snag.core.network.fe.safeApiCall
 import cz.adamec.timotej.snag.network.fe.SnagNetworkHttpClient
+import cz.adamec.timotej.snag.users.app.model.AppUser
 import cz.adamec.timotej.snag.users.be.driving.contract.UserApiDto
 import cz.adamec.timotej.snag.users.fe.driven.internal.LH
-import cz.adamec.timotej.snag.users.fe.model.FrontendUser
 import cz.adamec.timotej.snag.users.fe.ports.UserSyncResult
 import cz.adamec.timotej.snag.users.fe.ports.UsersApi
 import io.ktor.client.call.body
@@ -30,7 +30,7 @@ import kotlin.uuid.Uuid
 internal class RealUsersApi(
     private val httpClient: SnagNetworkHttpClient,
 ) : UsersApi {
-    override suspend fun getUsers(): OnlineDataResult<List<FrontendUser>> {
+    override suspend fun getUsers(): OnlineDataResult<List<AppUser>> {
         LH.logger.d { "Fetching users..." }
         return safeApiCall(logger = LH.logger, errorContext = "Error fetching users.") {
             httpClient.get("/users").body<List<UserApiDto>>().map {
@@ -39,7 +39,7 @@ internal class RealUsersApi(
         }.also { if (it is OnlineDataResult.Success) LH.logger.d { "Fetched ${it.data.size} users." } }
     }
 
-    override suspend fun getUser(id: Uuid): OnlineDataResult<FrontendUser> {
+    override suspend fun getUser(id: Uuid): OnlineDataResult<AppUser> {
         LH.logger.d { "Fetching user $id..." }
         return safeApiCall(logger = LH.logger, errorContext = "Error fetching user $id.") {
             httpClient.get("/users/$id").body<UserApiDto>().toModel()
@@ -55,8 +55,8 @@ internal class RealUsersApi(
         }.also { if (it is OnlineDataResult.Success) LH.logger.d { "Fetched ${it.data.size} modified users." } }
     }
 
-    override suspend fun updateUser(user: FrontendUser): OnlineDataResult<FrontendUser> {
-        val userId = user.user.id
+    override suspend fun updateUser(user: AppUser): OnlineDataResult<AppUser> {
+        val userId = user.id
         LH.logger.d { "Updating user $userId to API..." }
         return safeApiCall(logger = LH.logger, errorContext = "Error updating user $userId to API.") {
             httpClient

@@ -14,19 +14,15 @@ package cz.adamec.timotej.snag.users.be.driving.impl.internal
 
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.users.be.driving.contract.PutUserApiDto
-import cz.adamec.timotej.snag.users.be.model.BackendUser
-import cz.adamec.timotej.snag.users.business.User
+import cz.adamec.timotej.snag.users.be.model.BackendUserData
 import cz.adamec.timotej.snag.users.business.UserRole
 import kotlin.uuid.Uuid
 
 internal fun PutUserApiDto.toModel(id: Uuid) =
-    BackendUser(
-        user =
-            User(
-                id = id,
-                entraId = entraId,
-                email = email,
-                role = role?.let { UserRole.valueOf(it) },
-                updatedAt = Timestamp(updatedAt),
-            ),
+    BackendUserData(
+        id = id,
+        entraId = entraId,
+        email = email,
+        role = role?.let { UserRole.valueOf(it) },
+        updatedAt = Timestamp(updatedAt),
     )

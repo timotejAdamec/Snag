@@ -15,11 +15,11 @@ package cz.adamec.timotej.snag.structures.fe.app.impl.internal
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.core.network.fe.OnlineDataResult
-import cz.adamec.timotej.snag.feat.findings.business.Finding
+import cz.adamec.timotej.snag.feat.findings.app.model.AppFinding
+import cz.adamec.timotej.snag.feat.findings.app.model.AppFindingData
 import cz.adamec.timotej.snag.feat.findings.business.FindingType
-import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
-import cz.adamec.timotej.snag.feat.structures.business.Structure
-import cz.adamec.timotej.snag.feat.structures.fe.model.FrontendStructure
+import cz.adamec.timotej.snag.feat.structures.app.model.AppStructure
+import cz.adamec.timotej.snag.feat.structures.app.model.AppStructureData
 import cz.adamec.timotej.snag.findings.fe.driven.test.FakeFindingsApi
 import cz.adamec.timotej.snag.findings.fe.driven.test.FakeFindingsDb
 import cz.adamec.timotej.snag.structures.fe.app.api.CascadeRestoreLocalStructuresByProjectIdUseCase
@@ -49,31 +49,25 @@ class CascadeRestoreLocalStructuresByProjectIdUseCaseImplTest : FrontendKoinInit
     private fun createStructure(
         id: Uuid,
         projectId: Uuid,
-    ) = FrontendStructure(
-        structure =
-            Structure(
-                id = id,
-                projectId = projectId,
-                name = "Structure",
-                floorPlanUrl = null,
-                updatedAt = Timestamp(1L),
-            ),
+    ) = AppStructureData(
+        id = id,
+        projectId = projectId,
+        name = "Structure",
+        floorPlanUrl = null,
+        updatedAt = Timestamp(1L),
     )
 
     private fun createFinding(
         id: Uuid,
         structureId: Uuid,
-    ) = FrontendFinding(
-        finding =
-            Finding(
-                id = id,
-                structureId = structureId,
-                name = "Finding",
-                description = null,
-                type = FindingType.Classic(),
-                coordinates = emptySet(),
-                updatedAt = Timestamp(1L),
-            ),
+    ) = AppFindingData(
+        id = id,
+        structureId = structureId,
+        name = "Finding",
+        description = null,
+        type = FindingType.Classic(),
+        coordinates = emptySet(),
+        updatedAt = Timestamp(1L),
     )
 
     @Test
@@ -86,7 +80,7 @@ class CascadeRestoreLocalStructuresByProjectIdUseCaseImplTest : FrontendKoinInit
             useCase(projectId)
 
             val result = fakeStructuresDb.getStructuresFlow(projectId).first()
-            assertIs<OfflineFirstDataResult.Success<List<FrontendStructure>>>(result)
+            assertIs<OfflineFirstDataResult.Success<List<AppStructure>>>(result)
             assertTrue(result.data.size == 2)
         }
 
@@ -111,7 +105,7 @@ class CascadeRestoreLocalStructuresByProjectIdUseCaseImplTest : FrontendKoinInit
             useCase(projectId)
 
             val findingsResult = fakeFindingsDb.getFindingsFlow(structureId1).first()
-            assertIs<OfflineFirstDataResult.Success<List<FrontendFinding>>>(findingsResult)
+            assertIs<OfflineFirstDataResult.Success<List<AppFinding>>>(findingsResult)
             assertTrue(findingsResult.data.size == 2)
         }
 
@@ -124,7 +118,7 @@ class CascadeRestoreLocalStructuresByProjectIdUseCaseImplTest : FrontendKoinInit
             useCase(projectId)
 
             val result = fakeStructuresDb.getStructuresFlow(projectId).first()
-            assertIs<OfflineFirstDataResult.Success<List<FrontendStructure>>>(result)
+            assertIs<OfflineFirstDataResult.Success<List<AppStructure>>>(result)
             assertTrue(result.data.isEmpty())
         }
 }

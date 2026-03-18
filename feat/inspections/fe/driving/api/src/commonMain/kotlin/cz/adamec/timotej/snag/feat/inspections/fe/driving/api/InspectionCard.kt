@@ -38,8 +38,8 @@ import androidx.compose.ui.unit.dp
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.core.foundation.common.TimestampProvider
 import cz.adamec.timotej.snag.core.foundation.common.toLocalDateTime
-import cz.adamec.timotej.snag.feat.inspections.business.Inspection
-import cz.adamec.timotej.snag.feat.inspections.fe.model.FrontendInspection
+import cz.adamec.timotej.snag.feat.inspections.app.model.AppInspection
+import cz.adamec.timotej.snag.feat.inspections.app.model.AppInspectionData
 import cz.adamec.timotej.snag.lib.design.fe.theme.SnagPreview
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.StringResource
@@ -73,7 +73,7 @@ private enum class CardStatus {
 
 @Composable
 fun InspectionCard(
-    feInspection: FrontendInspection,
+    feInspection: AppInspection,
     onClick: () -> Unit,
     onStartClick: () -> Unit,
     onEndClick: () -> Unit,
@@ -81,17 +81,16 @@ fun InspectionCard(
 ) {
     val timestampProvider = koinInject<TimestampProvider>()
     val now = timestampProvider.getNowTimestamp()
-    val inspection = feInspection.inspection
 
     val cardState =
         resolveCardStatus(
-            startedAt = inspection.startedAt,
-            endedAt = inspection.endedAt,
+            startedAt = feInspection.startedAt,
+            endedAt = feInspection.endedAt,
             now = now,
         )
 
     InspectionCardContent(
-        inspection = inspection,
+        inspection = feInspection,
         cardState = cardState,
         onClick = onClick,
         onStartClick = onStartClick,
@@ -102,7 +101,7 @@ fun InspectionCard(
 
 @Composable
 private fun InspectionCardContent(
-    inspection: Inspection,
+    inspection: AppInspection,
     cardState: CardStatus,
     onClick: () -> Unit,
     onStartClick: () -> Unit,
@@ -300,7 +299,7 @@ private fun previewInspection(
     startedAt: Timestamp? = null,
     endedAt: Timestamp? = null,
     participants: String? = "Alice, Bob",
-) = Inspection(
+) = AppInspectionData(
     id = Uuid.random(),
     projectId = Uuid.random(),
     startedAt = startedAt,

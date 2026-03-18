@@ -18,7 +18,7 @@ import cz.adamec.timotej.snag.feat.shared.database.be.UserEntity
 import cz.adamec.timotej.snag.feat.shared.database.be.UsersTable
 import cz.adamec.timotej.snag.projects.be.ports.ProjectAssignmentsDb
 import cz.adamec.timotej.snag.users.be.model.BackendUser
-import cz.adamec.timotej.snag.users.business.User
+import cz.adamec.timotej.snag.users.be.model.BackendUserData
 import cz.adamec.timotej.snag.users.business.UserRole
 import org.jetbrains.exposed.v1.core.and
 import org.jetbrains.exposed.v1.core.eq
@@ -43,7 +43,7 @@ internal class RealProjectAssignmentsDb(
 
             UserEntity
                 .find { UsersTable.id inList userIds }
-                .map { it.toBackendUser() }
+                .map { it.toBackendUserData() }
         }
 
     override suspend fun assignUser(
@@ -79,14 +79,11 @@ internal class RealProjectAssignmentsDb(
         }
 }
 
-private fun UserEntity.toBackendUser() =
-    BackendUser(
-        user =
-            User(
-                id = id.value,
-                entraId = entraId,
-                email = email,
-                role = role?.let { UserRole.valueOf(it) },
-                updatedAt = Timestamp(updatedAt),
-            ),
+private fun UserEntity.toBackendUserData(): BackendUser =
+    BackendUserData(
+        id = id.value,
+        entraId = entraId,
+        email = email,
+        role = role?.let { UserRole.valueOf(it) },
+        updatedAt = Timestamp(updatedAt),
     )

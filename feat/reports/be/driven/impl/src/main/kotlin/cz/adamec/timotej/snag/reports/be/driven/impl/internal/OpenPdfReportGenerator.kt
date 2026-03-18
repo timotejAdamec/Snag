@@ -56,11 +56,11 @@ internal class OpenPdfReportGenerator : PdfReportGenerator {
     ) {
         @Suppress("StringShouldBeRawString")
         document.add(Paragraph("\n\n\n"))
-        document.add(Paragraph(data.project.project.name, FONT_TITLE))
+        document.add(Paragraph(data.project.name, FONT_TITLE))
         document.add(Paragraph("Project report", FONT_SMALL))
         document.add(Paragraph("\n"))
 
-        val address = data.project.project.address
+        val address = data.project.address
         if (address.isNotBlank()) {
             document.add(Paragraph("Address: $address", FONT_NORMAL))
         }
@@ -68,14 +68,14 @@ internal class OpenPdfReportGenerator : PdfReportGenerator {
         data.client?.let { client ->
             document.add(Paragraph("\n"))
             document.add(Paragraph("Client Information", FONT_SUBHEADING))
-            document.add(Paragraph("Name: ${client.client.name}", FONT_NORMAL))
-            client.client.address?.let {
+            document.add(Paragraph("Name: ${client.name}", FONT_NORMAL))
+            client.address?.let {
                 document.add(Paragraph("Address: $it", FONT_NORMAL))
             }
-            client.client.phoneNumber?.let {
+            client.phoneNumber?.let {
                 document.add(Paragraph("Phone: $it", FONT_NORMAL))
             }
-            client.client.email?.let {
+            client.email?.let {
                 document.add(Paragraph("Email: $it", FONT_NORMAL))
             }
         }
@@ -118,7 +118,7 @@ internal class OpenPdfReportGenerator : PdfReportGenerator {
         addHeaderCell(table, "Note")
 
         data.inspections.forEach { inspection ->
-            val i = inspection.inspection
+            val i = inspection
             table.addCell(createCell(i.startedAt?.let { formatTimestamp(it.value) } ?: "-"))
             table.addCell(createCell(i.endedAt?.let { formatTimestamp(it.value) } ?: "-"))
             table.addCell(createCell(i.participants ?: "-"))
@@ -148,7 +148,7 @@ internal class OpenPdfReportGenerator : PdfReportGenerator {
         structure: BackendStructure,
         findings: List<BackendFinding>,
     ) {
-        document.add(Paragraph(structure.structure.name, FONT_HEADING))
+        document.add(Paragraph(structure.name, FONT_HEADING))
         document.add(Paragraph("\n"))
 
         addFloorPlan(document, structure, findings)
@@ -172,7 +172,7 @@ internal class OpenPdfReportGenerator : PdfReportGenerator {
         addHeaderCell(table, "Type")
 
         findings.forEachIndexed { index, backendFinding ->
-            val f = backendFinding.finding
+            val f = backendFinding
             table.addCell(createCell("${index + 1}"))
             table.addCell(createCell(f.name))
             table.addCell(createCell(f.description ?: "-"))
@@ -188,7 +188,7 @@ internal class OpenPdfReportGenerator : PdfReportGenerator {
         structure: BackendStructure,
         findings: List<BackendFinding>,
     ) {
-        val floorPlanUrl = structure.structure.floorPlanUrl ?: return
+        val floorPlanUrl = structure.floorPlanUrl ?: return
 
         val imageBytesResult =
             runCatching { URI(floorPlanUrl).toURL().readBytes() }
@@ -199,7 +199,7 @@ internal class OpenPdfReportGenerator : PdfReportGenerator {
         val imageBytes = imageBytesResult.getOrNull() ?: return
 
         val annotatedBytes =
-            if (findings.any { it.finding.coordinates.isNotEmpty() }) {
+            if (findings.any { it.coordinates.isNotEmpty() }) {
                 FindingMarkerRenderer.drawMarkersOnImage(imageBytes, findings)
             } else {
                 imageBytes
@@ -236,9 +236,9 @@ internal class OpenPdfReportGenerator : PdfReportGenerator {
         document.add(Paragraph("\n"))
 
         document.add(Paragraph("Findings by Type", FONT_SUBHEADING))
-        val classicCount = allFindings.count { it.finding.type is FindingType.Classic }
-        val noteCount = allFindings.count { it.finding.type is FindingType.Note }
-        val unvisitedCount = allFindings.count { it.finding.type is FindingType.Unvisited }
+        val classicCount = allFindings.count { it.type is FindingType.Classic }
+        val noteCount = allFindings.count { it.type is FindingType.Note }
+        val unvisitedCount = allFindings.count { it.type is FindingType.Unvisited }
         document.add(Paragraph("Classic: $classicCount", FONT_NORMAL))
         document.add(Paragraph("Note: $noteCount", FONT_NORMAL))
         document.add(Paragraph("Unvisited: $unvisitedCount", FONT_NORMAL))
@@ -248,7 +248,7 @@ internal class OpenPdfReportGenerator : PdfReportGenerator {
             document.add(Paragraph("Classic Findings by Importance", FONT_SUBHEADING))
             val classicFindings =
                 allFindings
-                    .map { it.finding.type }
+                    .map { it.type }
                     .filterIsInstance<FindingType.Classic>()
             val byImportance = classicFindings.groupBy { it.importance }
             byImportance.forEach { (importance, list) ->

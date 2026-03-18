@@ -13,9 +13,9 @@
 package cz.adamec.timotej.snag.users.fe.app.api
 
 import cz.adamec.timotej.snag.core.network.fe.OnlineDataResult
+import cz.adamec.timotej.snag.users.app.model.AppUser
 import cz.adamec.timotej.snag.users.fe.app.api.model.ChangeUserRoleRequest
-import cz.adamec.timotej.snag.users.fe.model.FrontendUser
 
 interface ChangeUserRoleUseCase {
-    suspend operator fun invoke(request: ChangeUserRoleRequest): OnlineDataResult<FrontendUser>
+    suspend operator fun invoke(request: ChangeUserRoleRequest): OnlineDataResult<AppUser>
 }

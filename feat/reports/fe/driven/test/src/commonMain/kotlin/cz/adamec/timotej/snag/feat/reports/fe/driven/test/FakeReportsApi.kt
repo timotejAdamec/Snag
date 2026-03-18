@@ -13,9 +13,9 @@
 package cz.adamec.timotej.snag.feat.reports.fe.driven.test
 
 import cz.adamec.timotej.snag.core.network.fe.OnlineDataResult
-import cz.adamec.timotej.snag.feat.reports.fe.model.FrontendReport
 import cz.adamec.timotej.snag.feat.reports.fe.ports.ReportsApi
 import cz.adamec.timotej.snag.reports.business.Report
+import cz.adamec.timotej.snag.reports.business.ReportData
 import kotlinx.coroutines.CompletableDeferred
 import kotlin.uuid.Uuid
 
@@ -26,19 +26,16 @@ class FakeReportsApi : ReportsApi {
     var downloadDeferred: CompletableDeferred<Unit>? = null
     val downloadedProjectIds = mutableListOf<Uuid>()
 
-    override suspend fun downloadReport(projectId: Uuid): OnlineDataResult<FrontendReport> {
+    override suspend fun downloadReport(projectId: Uuid): OnlineDataResult<Report> {
         downloadedProjectIds.add(projectId)
         downloadDeferred?.await()
         val failure = forcedFailure
         if (failure != null) return failure
         return OnlineDataResult.Success(
-            FrontendReport(
-                report =
-                    Report(
-                        projectId = projectId,
-                        fileName = reportFileName,
-                        bytes = reportBytes,
-                    ),
+            ReportData(
+                projectId = projectId,
+                fileName = reportFileName,
+                bytes = reportBytes,
             ),
         )
     }

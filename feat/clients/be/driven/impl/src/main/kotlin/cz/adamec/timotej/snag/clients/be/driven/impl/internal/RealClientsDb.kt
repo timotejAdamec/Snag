@@ -44,23 +44,23 @@ internal class RealClientsDb(
 
     override suspend fun saveClient(client: BackendClient): BackendClient? =
         transaction(database) {
-            val existing = ClientEntity.findById(client.client.id)
+            val existing = ClientEntity.findById(client.id)
             when (val result = resolveConflictForSave(existing?.toModel(), client)) {
                 is SaveConflictResult.Proceed -> {
                     if (existing != null) {
-                        existing.name = client.client.name
-                        existing.address = client.client.address
-                        existing.phoneNumber = client.client.phoneNumber
-                        existing.email = client.client.email
-                        existing.updatedAt = client.client.updatedAt.value
+                        existing.name = client.name
+                        existing.address = client.address
+                        existing.phoneNumber = client.phoneNumber
+                        existing.email = client.email
+                        existing.updatedAt = client.updatedAt.value
                         existing.deletedAt = client.deletedAt?.value
                     } else {
-                        ClientEntity.new(client.client.id) {
-                            name = client.client.name
-                            address = client.client.address
-                            phoneNumber = client.client.phoneNumber
-                            email = client.client.email
-                            updatedAt = client.client.updatedAt.value
+                        ClientEntity.new(client.id) {
+                            name = client.name
+                            address = client.address
+                            phoneNumber = client.phoneNumber
+                            email = client.email
+                            updatedAt = client.updatedAt.value
                             deletedAt = client.deletedAt?.value
                         }
                     }

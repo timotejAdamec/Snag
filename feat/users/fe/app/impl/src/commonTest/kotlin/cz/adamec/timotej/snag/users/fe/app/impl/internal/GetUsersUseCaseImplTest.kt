@@ -15,10 +15,10 @@ package cz.adamec.timotej.snag.users.fe.app.impl.internal
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
-import cz.adamec.timotej.snag.users.business.User
+import cz.adamec.timotej.snag.users.app.model.AppUser
+import cz.adamec.timotej.snag.users.app.model.AppUserData
 import cz.adamec.timotej.snag.users.fe.app.api.GetUsersUseCase
 import cz.adamec.timotej.snag.users.fe.driven.test.FakeUsersDb
-import cz.adamec.timotej.snag.users.fe.model.FrontendUser
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.koin.test.inject
@@ -35,20 +35,17 @@ class GetUsersUseCaseImplTest : FrontendKoinInitializedTest() {
     fun `emits users from db flow`() =
         runTest(testDispatcher) {
             val user =
-                FrontendUser(
-                    user =
-                        User(
-                            id = Uuid.parse("00000000-0000-0000-0000-000000000001"),
-                            entraId = "entra-1",
-                            email = "user@example.com",
-                            updatedAt = Timestamp(100L),
-                        ),
+                AppUserData(
+                    id = Uuid.parse("00000000-0000-0000-0000-000000000001"),
+                    entraId = "entra-1",
+                    email = "user@example.com",
+                    updatedAt = Timestamp(100L),
                 )
             fakeUsersDb.setUser(user)
 
             val result = useCase().first()
 
-            assertIs<OfflineFirstDataResult.Success<List<FrontendUser>>>(result)
+            assertIs<OfflineFirstDataResult.Success<List<AppUser>>>(result)
             assertEquals(1, result.data.size)
             assertEquals(user, result.data[0])
         }
@@ -58,7 +55,7 @@ class GetUsersUseCaseImplTest : FrontendKoinInitializedTest() {
         runTest(testDispatcher) {
             val result = useCase().first()
 
-            assertIs<OfflineFirstDataResult.Success<List<FrontendUser>>>(result)
+            assertIs<OfflineFirstDataResult.Success<List<AppUser>>>(result)
             assertEquals(emptyList(), result.data)
         }
 }

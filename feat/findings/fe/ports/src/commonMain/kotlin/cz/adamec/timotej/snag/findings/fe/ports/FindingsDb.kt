@@ -15,20 +15,20 @@ package cz.adamec.timotej.snag.findings.fe.ports
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.core.network.fe.OfflineFirstUpdateDataResult
+import cz.adamec.timotej.snag.feat.findings.app.model.AppFinding
 import cz.adamec.timotej.snag.feat.findings.business.FindingType
 import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
-import cz.adamec.timotej.snag.feat.findings.fe.model.FrontendFinding
 import kotlinx.coroutines.flow.Flow
 import kotlin.uuid.Uuid
 
 interface FindingsDb {
-    fun getFindingsFlow(structureId: Uuid): Flow<OfflineFirstDataResult<List<FrontendFinding>>>
+    fun getFindingsFlow(structureId: Uuid): Flow<OfflineFirstDataResult<List<AppFinding>>>
 
-    suspend fun saveFindings(findings: List<FrontendFinding>): OfflineFirstDataResult<Unit>
+    suspend fun saveFindings(findings: List<AppFinding>): OfflineFirstDataResult<Unit>
 
-    suspend fun saveFinding(finding: FrontendFinding): OfflineFirstDataResult<Unit>
+    suspend fun saveFinding(finding: AppFinding): OfflineFirstDataResult<Unit>
 
-    fun getFindingFlow(id: Uuid): Flow<OfflineFirstDataResult<FrontendFinding?>>
+    fun getFindingFlow(id: Uuid): Flow<OfflineFirstDataResult<AppFinding?>>
 
     suspend fun deleteFinding(id: Uuid): OfflineFirstDataResult<Unit>
 

@@ -16,13 +16,12 @@ import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.core.network.fe.OnlineDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
-import cz.adamec.timotej.snag.users.business.User
+import cz.adamec.timotej.snag.users.app.model.AppUserData
 import cz.adamec.timotej.snag.users.business.UserRole
 import cz.adamec.timotej.snag.users.fe.app.api.ChangeUserRoleUseCase
 import cz.adamec.timotej.snag.users.fe.app.api.GetUsersUseCase
 import cz.adamec.timotej.snag.users.fe.driven.test.FakeUsersApi
 import cz.adamec.timotej.snag.users.fe.driven.test.FakeUsersDb
-import cz.adamec.timotej.snag.users.fe.model.FrontendUser
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -42,15 +41,12 @@ class UserManagementViewModelTest : FrontendKoinInitializedTest() {
     private val changeUserRoleUseCase: ChangeUserRoleUseCase by inject()
 
     private val testUser =
-        FrontendUser(
-            user =
-                User(
-                    id = Uuid.parse("00000000-0000-0000-0000-000000000001"),
-                    entraId = "entra-1",
-                    email = "user@example.com",
-                    role = null,
-                    updatedAt = Timestamp(100L),
-                ),
+        AppUserData(
+            id = Uuid.parse("00000000-0000-0000-0000-000000000001"),
+            entraId = "entra-1",
+            email = "user@example.com",
+            role = null,
+            updatedAt = Timestamp(100L),
         )
 
     private fun createViewModel() =
@@ -70,7 +66,7 @@ class UserManagementViewModelTest : FrontendKoinInitializedTest() {
             val state = viewModel.state.value
             assertEquals(false, state.isLoading)
             assertEquals(1, state.users.size)
-            assertEquals(testUser.user.email, state.users[0].email)
+            assertEquals(testUser.email, state.users[0].email)
             assertEquals(null, state.users[0].role)
         }
 
@@ -96,7 +92,7 @@ class UserManagementViewModelTest : FrontendKoinInitializedTest() {
 
             fakeUsersApi.forcedFailure = OnlineDataResult.Failure.NetworkUnavailable
 
-            viewModel.onRoleChanged(testUser.user.id, UserRole.ADMINISTRATOR)
+            viewModel.onRoleChanged(testUser.id, UserRole.ADMINISTRATOR)
             advanceUntilIdle()
 
             val error = viewModel.errorsFlow.first()
@@ -112,7 +108,7 @@ class UserManagementViewModelTest : FrontendKoinInitializedTest() {
             val viewModel = createViewModel()
             advanceUntilIdle()
 
-            viewModel.onRoleChanged(testUser.user.id, UserRole.SERVICE_WORKER)
+            viewModel.onRoleChanged(testUser.id, UserRole.SERVICE_WORKER)
             advanceUntilIdle()
 
             val state = viewModel.state.value
@@ -128,7 +124,7 @@ class UserManagementViewModelTest : FrontendKoinInitializedTest() {
             val viewModel = createViewModel()
             advanceUntilIdle()
 
-            viewModel.onRoleChanged(testUser.user.id, UserRole.SERVICE_LEAD)
+            viewModel.onRoleChanged(testUser.id, UserRole.SERVICE_LEAD)
             advanceUntilIdle()
 
             val userItem = viewModel.state.value.users[0]
@@ -146,7 +142,7 @@ class UserManagementViewModelTest : FrontendKoinInitializedTest() {
 
             fakeUsersApi.forcedFailure = OnlineDataResult.Failure.NetworkUnavailable
 
-            viewModel.onRoleChanged(testUser.user.id, UserRole.PASSPORT_LEAD)
+            viewModel.onRoleChanged(testUser.id, UserRole.PASSPORT_LEAD)
             advanceUntilIdle()
 
             val userItem = viewModel.state.value.users[0]

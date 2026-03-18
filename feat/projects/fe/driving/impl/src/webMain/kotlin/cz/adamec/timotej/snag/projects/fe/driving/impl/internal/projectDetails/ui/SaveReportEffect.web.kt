@@ -14,15 +14,15 @@ package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
-import cz.adamec.timotej.snag.feat.reports.fe.model.FrontendReport
 import cz.adamec.timotej.snag.lib.design.fe.events.ObserveAsEvents
+import cz.adamec.timotej.snag.reports.business.Report
 import io.github.vinceglb.filekit.FileKit
 import io.github.vinceglb.filekit.download
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
 @Composable
-internal actual fun SaveReportEffect(reportFlow: Flow<FrontendReport>) {
+internal actual fun SaveReportEffect(reportFlow: Flow<Report>) {
     val scope = rememberCoroutineScope()
 
     ObserveAsEvents(
@@ -30,8 +30,8 @@ internal actual fun SaveReportEffect(reportFlow: Flow<FrontendReport>) {
         onEvent = { report ->
             scope.launch {
                 FileKit.download(
-                    bytes = report.report.bytes,
-                    fileName = report.report.fileName,
+                    bytes = report.bytes,
+                    fileName = report.fileName,
                 )
             }
         },

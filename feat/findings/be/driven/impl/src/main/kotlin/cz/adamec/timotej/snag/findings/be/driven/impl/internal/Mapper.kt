@@ -14,7 +14,7 @@ package cz.adamec.timotej.snag.findings.be.driven.impl.internal
 
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.feat.findings.be.model.BackendFinding
-import cz.adamec.timotej.snag.feat.findings.business.Finding
+import cz.adamec.timotej.snag.feat.findings.be.model.BackendFindingData
 import cz.adamec.timotej.snag.feat.findings.business.FindingType
 import cz.adamec.timotej.snag.feat.findings.business.Importance
 import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
@@ -60,21 +60,18 @@ internal fun FindingEntity.toModel(): BackendFinding {
                 FindingType.Classic()
             }
         }
-    return BackendFinding(
-        finding =
-            Finding(
-                id = id.value,
-                structureId = structure.id.value,
-                name = name,
-                description = description,
-                type = findingType,
-                coordinates =
-                    coordinates
-                        .map {
-                            RelativeCoordinate(x = it.x, y = it.y)
-                        }.toSet(),
-                updatedAt = Timestamp(updatedAt),
-            ),
+    return BackendFindingData(
+        id = id.value,
+        structureId = structure.id.value,
+        name = name,
+        description = description,
+        type = findingType,
+        coordinates =
+            coordinates
+                .map {
+                    RelativeCoordinate(x = it.x, y = it.y)
+                }.toSet(),
+        updatedAt = Timestamp(updatedAt),
         deletedAt = deletedAt?.let { Timestamp(it) },
     )
 }

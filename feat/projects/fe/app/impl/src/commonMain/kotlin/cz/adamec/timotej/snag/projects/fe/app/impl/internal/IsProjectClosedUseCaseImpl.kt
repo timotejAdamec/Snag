@@ -30,7 +30,7 @@ class IsProjectClosedUseCaseImpl(
             .map { result ->
                 when (result) {
                     is OfflineFirstDataResult.Success ->
-                        result.data?.project?.isClosed ?: false
+                        result.data?.isClosed ?: false
                     is OfflineFirstDataResult.ProgrammerError -> false
                 }
             }.catch { emit(false) }

@@ -28,8 +28,8 @@ internal class DeleteStructureUseCaseImpl(
     override suspend operator fun invoke(request: DeleteStructureRequest): BackendStructure? {
         val structure = structuresDb.getStructure(request.structureId)
         if (structure != null) {
-            val project = getProjectUseCase(structure.structure.projectId)
-            if (project != null && !canEditProjectEntitiesRule(project.project)) {
+            val project = getProjectUseCase(structure.projectId)
+            if (project != null && !canEditProjectEntitiesRule(project)) {
                 return structure
             }
         }

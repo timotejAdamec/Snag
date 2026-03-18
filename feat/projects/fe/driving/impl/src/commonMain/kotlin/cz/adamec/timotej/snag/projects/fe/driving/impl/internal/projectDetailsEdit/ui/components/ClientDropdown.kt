@@ -31,8 +31,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import cz.adamec.timotej.snag.clients.business.Client
-import cz.adamec.timotej.snag.clients.fe.model.FrontendClient
+import cz.adamec.timotej.snag.clients.app.model.AppClient
+import cz.adamec.timotej.snag.clients.app.model.AppClientData
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.core.foundation.common.UuidProvider
 import cz.adamec.timotej.snag.lib.design.fe.theme.SnagPreview
@@ -51,7 +51,7 @@ import snag.lib.design.fe.generated.resources.Res as DesignRes
 @Composable
 internal fun ClientDropdown(
     selectedClientName: String,
-    availableClients: ImmutableList<FrontendClient>,
+    availableClients: ImmutableList<AppClient>,
     onSelectClient: (Uuid, String) -> Unit,
     onClearClient: () -> Unit,
     onCreateNewClientClick: () -> Unit,
@@ -88,9 +88,9 @@ internal fun ClientDropdown(
             HorizontalDivider()
             availableClients.forEach { frontendClient ->
                 DropdownMenuItem(
-                    text = { Text(frontendClient.client.name) },
+                    text = { Text(frontendClient.name) },
                     onClick = {
-                        onSelectClient(frontendClient.client.id, frontendClient.client.name)
+                        onSelectClient(frontendClient.id, frontendClient.name)
                         expanded = false
                     },
                 )
@@ -128,27 +128,21 @@ private fun ClientDropdownPreview() {
             selectedClientName = "Acme Corp",
             availableClients =
                 persistentListOf(
-                    FrontendClient(
-                        client =
-                            Client(
-                                id = UuidProvider.getUuid(),
-                                name = "Acme Corp",
-                                address = "123 Main Street",
-                                phoneNumber = null,
-                                email = null,
-                                updatedAt = Timestamp(0L),
-                            ),
+                    AppClientData(
+                        id = UuidProvider.getUuid(),
+                        name = "Acme Corp",
+                        address = "123 Main Street",
+                        phoneNumber = null,
+                        email = null,
+                        updatedAt = Timestamp(0L),
                     ),
-                    FrontendClient(
-                        client =
-                            Client(
-                                id = UuidProvider.getUuid(),
-                                name = "BuildRight Ltd",
-                                address = null,
-                                phoneNumber = null,
-                                email = null,
-                                updatedAt = Timestamp(0L),
-                            ),
+                    AppClientData(
+                        id = UuidProvider.getUuid(),
+                        name = "BuildRight Ltd",
+                        address = null,
+                        phoneNumber = null,
+                        email = null,
+                        updatedAt = Timestamp(0L),
                     ),
                 ),
             onSelectClient = { _, _ -> },

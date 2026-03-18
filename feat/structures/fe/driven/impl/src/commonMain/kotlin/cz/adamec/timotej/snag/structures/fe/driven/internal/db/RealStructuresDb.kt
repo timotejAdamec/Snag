@@ -13,7 +13,7 @@
 package cz.adamec.timotej.snag.structures.fe.driven.internal.db
 
 import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
-import cz.adamec.timotej.snag.feat.structures.fe.model.FrontendStructure
+import cz.adamec.timotej.snag.feat.structures.app.model.AppStructure
 import cz.adamec.timotej.snag.structures.fe.ports.StructuresDb
 import kotlinx.coroutines.flow.Flow
 import kotlin.uuid.Uuid
@@ -21,14 +21,14 @@ import kotlin.uuid.Uuid
 internal class RealStructuresDb(
     private val ops: StructuresSqlDelightDbOps,
 ) : StructuresDb {
-    override fun getStructuresFlow(projectId: Uuid): Flow<OfflineFirstDataResult<List<FrontendStructure>>> =
+    override fun getStructuresFlow(projectId: Uuid): Flow<OfflineFirstDataResult<List<AppStructure>>> =
         ops.structuresByProjectIdFlow(projectId)
 
-    override fun getStructureFlow(id: Uuid): Flow<OfflineFirstDataResult<FrontendStructure?>> = ops.entityByIdFlow(id)
+    override fun getStructureFlow(id: Uuid): Flow<OfflineFirstDataResult<AppStructure?>> = ops.entityByIdFlow(id)
 
-    override suspend fun saveStructure(structure: FrontendStructure): OfflineFirstDataResult<Unit> = ops.saveOne(structure)
+    override suspend fun saveStructure(structure: AppStructure): OfflineFirstDataResult<Unit> = ops.saveOne(structure)
 
-    override suspend fun saveStructures(structures: List<FrontendStructure>): OfflineFirstDataResult<Unit> = ops.saveMany(structures)
+    override suspend fun saveStructures(structures: List<AppStructure>): OfflineFirstDataResult<Unit> = ops.saveMany(structures)
 
     override suspend fun deleteStructure(id: Uuid): OfflineFirstDataResult<Unit> = ops.deleteById(id)
 

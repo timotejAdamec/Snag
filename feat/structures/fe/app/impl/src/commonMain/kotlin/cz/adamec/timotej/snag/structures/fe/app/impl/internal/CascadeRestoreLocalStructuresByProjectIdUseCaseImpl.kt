@@ -29,7 +29,7 @@ internal class CascadeRestoreLocalStructuresByProjectIdUseCaseImpl(
             is OnlineDataResult.Success -> {
                 structuresDb.saveStructures(result.data)
                 result.data.forEach {
-                    cascadeRestoreLocalFindingsByStructureIdUseCase(it.structure.id)
+                    cascadeRestoreLocalFindingsByStructureIdUseCase(it.id)
                 }
             }
             is OnlineDataResult.Failure -> {

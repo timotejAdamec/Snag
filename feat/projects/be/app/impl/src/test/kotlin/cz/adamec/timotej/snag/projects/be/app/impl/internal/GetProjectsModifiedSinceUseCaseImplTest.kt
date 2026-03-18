@@ -14,9 +14,8 @@ package cz.adamec.timotej.snag.projects.be.app.impl.internal
 
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.projects.be.app.api.GetProjectsModifiedSinceUseCase
-import cz.adamec.timotej.snag.projects.be.model.BackendProject
+import cz.adamec.timotej.snag.projects.be.model.BackendProjectData
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
-import cz.adamec.timotej.snag.projects.business.Project
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
 import kotlinx.coroutines.test.runTest
 import org.koin.test.inject
@@ -41,14 +40,11 @@ class GetProjectsModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
     fun `returns projects with updatedAt after since`() =
         runTest(testDispatcher) {
             val project =
-                BackendProject(
-                    project =
-                        Project(
-                            id = Uuid.parse("00000000-0000-0000-0000-000000000001"),
-                            name = "Project 1",
-                            address = "Address 1",
-                            updatedAt = Timestamp(200L),
-                        ),
+                BackendProjectData(
+                    id = Uuid.parse("00000000-0000-0000-0000-000000000001"),
+                    name = "Project 1",
+                    address = "Address 1",
+                    updatedAt = Timestamp(200L),
                 )
             dataSource.saveProject(project)
 
@@ -61,14 +57,11 @@ class GetProjectsModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
     fun `excludes projects with updatedAt before since`() =
         runTest(testDispatcher) {
             val project =
-                BackendProject(
-                    project =
-                        Project(
-                            id = Uuid.parse("00000000-0000-0000-0000-000000000001"),
-                            name = "Project 1",
-                            address = "Address 1",
-                            updatedAt = Timestamp(50L),
-                        ),
+                BackendProjectData(
+                    id = Uuid.parse("00000000-0000-0000-0000-000000000001"),
+                    name = "Project 1",
+                    address = "Address 1",
+                    updatedAt = Timestamp(50L),
                 )
             dataSource.saveProject(project)
 
@@ -81,14 +74,11 @@ class GetProjectsModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
     fun `returns deleted projects when deletedAt is after since`() =
         runTest(testDispatcher) {
             val project =
-                BackendProject(
-                    project =
-                        Project(
-                            id = Uuid.parse("00000000-0000-0000-0000-000000000001"),
-                            name = "Project 1",
-                            address = "Address 1",
-                            updatedAt = Timestamp(50L),
-                        ),
+                BackendProjectData(
+                    id = Uuid.parse("00000000-0000-0000-0000-000000000001"),
+                    name = "Project 1",
+                    address = "Address 1",
+                    updatedAt = Timestamp(50L),
                     deletedAt = Timestamp(200L),
                 )
             dataSource.saveProject(project)
@@ -102,14 +92,11 @@ class GetProjectsModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
     fun `excludes deleted projects when deletedAt is before since`() =
         runTest(testDispatcher) {
             val project =
-                BackendProject(
-                    project =
-                        Project(
-                            id = Uuid.parse("00000000-0000-0000-0000-000000000001"),
-                            name = "Project 1",
-                            address = "Address 1",
-                            updatedAt = Timestamp(50L),
-                        ),
+                BackendProjectData(
+                    id = Uuid.parse("00000000-0000-0000-0000-000000000001"),
+                    name = "Project 1",
+                    address = "Address 1",
+                    updatedAt = Timestamp(50L),
                     deletedAt = Timestamp(80L),
                 )
             dataSource.saveProject(project)
