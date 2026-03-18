@@ -17,6 +17,7 @@ import cz.adamec.timotej.snag.core.foundation.common.UuidProvider
 import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.feat.inspections.app.model.AppInspection
 import cz.adamec.timotej.snag.feat.inspections.app.model.AppInspectionData
+import cz.adamec.timotej.snag.feat.inspections.fe.app.api.DeleteInspectionUseCase
 import cz.adamec.timotej.snag.feat.inspections.fe.app.api.GetInspectionUseCase
 import cz.adamec.timotej.snag.feat.inspections.fe.app.api.SaveInspectionUseCase
 import cz.adamec.timotej.snag.feat.inspections.fe.driven.test.FakeInspectionsDb
@@ -33,6 +34,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertIs
 import kotlin.test.assertNotNull
+import kotlin.test.assertNull
 import kotlin.uuid.Uuid
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -41,6 +43,7 @@ class InspectionEditViewModelTest : FrontendKoinInitializedTest() {
 
     private val getInspectionUseCase: GetInspectionUseCase by inject()
     private val saveInspectionUseCase: SaveInspectionUseCase by inject()
+    private val deleteInspectionUseCase: DeleteInspectionUseCase by inject()
     private val isProjectClosedUseCase: IsProjectClosedUseCase by inject()
 
     private fun createViewModel(
@@ -51,6 +54,7 @@ class InspectionEditViewModelTest : FrontendKoinInitializedTest() {
         projectId = projectId,
         getInspectionUseCase = getInspectionUseCase,
         saveInspectionUseCase = saveInspectionUseCase,
+        deleteInspectionUseCase = deleteInspectionUseCase,
         isProjectClosedUseCase = isProjectClosedUseCase,
     )
 
@@ -231,4 +235,65 @@ class InspectionEditViewModelTest : FrontendKoinInitializedTest() {
             createViewModel(inspectionId = null, projectId = null)
         }
     }
+
+    @Test
+    fun `onDelete successful sends deleted event`() =
+        runTest(testDispatcher) {
+            val projectId = UuidProvider.getUuid()
+            val inspectionId = UuidProvider.getUuid()
+            val inspection =
+                AppInspectionData(
+                    id = inspectionId,
+                    projectId = projectId,
+                    startedAt = null,
+                    endedAt = null,
+                    participants = "John Doe",
+                    climate = null,
+                    note = null,
+                    updatedAt = Timestamp(10L),
+                )
+            fakeInspectionsDb.setInspection(inspection)
+
+            val viewModel = createViewModel(inspectionId = inspectionId)
+
+            advanceUntilIdle()
+
+            viewModel.onDelete()
+
+            viewModel.deletedSuccessfullyEventFlow.first()
+
+            val result = fakeInspectionsDb.getInspectionFlow(inspectionId).first()
+            assertIs<OfflineFirstDataResult.Success<AppInspection?>>(result)
+            assertNull(result.data)
+        }
+
+    @Test
+    fun `onDelete failure sends error and resets isBeingDeleted`() =
+        runTest(testDispatcher) {
+            val projectId = UuidProvider.getUuid()
+            val inspectionId = UuidProvider.getUuid()
+            val viewModel = createViewModel(inspectionId = inspectionId, projectId = projectId)
+
+            fakeInspectionsDb.forcedFailure =
+                OfflineFirstDataResult.ProgrammerError(RuntimeException("Failed"))
+
+            viewModel.onDelete()
+
+            val error = viewModel.errorsFlow.first()
+            assertIs<UiError.Unknown>(error)
+            assertEquals(false, viewModel.state.value.isBeingDeleted)
+        }
+
+    @Test
+    fun `onDelete does nothing when inspectionId is null`() =
+        runTest(testDispatcher) {
+            val projectId = UuidProvider.getUuid()
+            val viewModel = createViewModel(projectId = projectId)
+
+            viewModel.onDelete()
+
+            advanceUntilIdle()
+
+            assertEquals(false, viewModel.state.value.isBeingDeleted)
+        }
 }

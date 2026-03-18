@@ -46,6 +46,7 @@ import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.core.foundation.common.UuidProvider
 import cz.adamec.timotej.snag.core.foundation.common.toLocalDateTime
 import cz.adamec.timotej.snag.feat.inspections.fe.driving.impl.internal.ui.components.DateTimePickerField
+import cz.adamec.timotej.snag.feat.inspections.fe.driving.impl.internal.ui.components.InspectionDeletionAlertDialog
 import cz.adamec.timotej.snag.feat.inspections.fe.driving.impl.internal.vm.InspectionEditUiState
 import cz.adamec.timotej.snag.lib.design.fe.dialog.FullScreenDialogMeasurements
 import cz.adamec.timotej.snag.lib.design.fe.dialog.TimePickerDialog
@@ -62,7 +63,9 @@ import snag.feat.inspections.fe.driving.impl.generated.resources.participants_la
 import snag.feat.inspections.fe.driving.impl.generated.resources.started_at_label
 import snag.lib.design.fe.generated.resources.cancel
 import snag.lib.design.fe.generated.resources.close
+import snag.lib.design.fe.generated.resources.delete
 import snag.lib.design.fe.generated.resources.ic_close
+import snag.lib.design.fe.generated.resources.ic_delete
 import snag.lib.design.fe.generated.resources.ic_event_available
 import snag.lib.design.fe.generated.resources.ic_group
 import snag.lib.design.fe.generated.resources.ic_notes
@@ -95,11 +98,21 @@ internal fun InspectionEditContent(
     onClimateChange: (String) -> Unit,
     onNoteChange: (String) -> Unit,
     onSaveClick: () -> Unit,
+    onDeleteClick: () -> Unit,
     onCancelClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var startedAtPickerStep by remember { mutableStateOf<PickerStep>(PickerStep.None) }
     var endedAtPickerStep by remember { mutableStateOf<PickerStep>(PickerStep.None) }
+    var isShowingDeleteConfirmation by remember { mutableStateOf(false) }
+
+    if (isShowingDeleteConfirmation) {
+        InspectionDeletionAlertDialog(
+            areButtonsEnabled = state.canInvokeDeletion,
+            onDelete = onDeleteClick,
+            onDismiss = { isShowingDeleteConfirmation = false },
+        )
+    }
 
     when (val step = startedAtPickerStep) {
         PickerStep.None -> {}
@@ -242,6 +255,17 @@ internal fun InspectionEditContent(
                     }
                 },
                 actions = {
+                    if (isEditMode) {
+                        IconButton(
+                            enabled = state.canInvokeDeletion,
+                            onClick = { isShowingDeleteConfirmation = true },
+                        ) {
+                            Icon(
+                                painter = painterResource(DesignRes.drawable.ic_delete),
+                                contentDescription = stringResource(DesignRes.string.delete),
+                            )
+                        }
+                    }
                     Button(
                         onClick = onSaveClick,
                         enabled = state.canSave,
@@ -351,6 +375,7 @@ private fun InspectionEditContentEmptyPreview() {
             onClimateChange = {},
             onNoteChange = {},
             onSaveClick = {},
+            onDeleteClick = {},
             onCancelClick = {},
         )
     }
@@ -379,6 +404,7 @@ private fun InspectionEditContentFilledPreview() {
             onClimateChange = {},
             onNoteChange = {},
             onSaveClick = {},
+            onDeleteClick = {},
             onCancelClick = {},
         )
     }

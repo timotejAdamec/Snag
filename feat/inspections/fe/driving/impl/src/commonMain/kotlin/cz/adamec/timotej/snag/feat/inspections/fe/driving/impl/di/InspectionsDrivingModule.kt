@@ -37,6 +37,10 @@ internal inline fun <reified T : InspectionCreationRoute> Module.inspectionCreat
                 val backStack = get<ProjectsBackStack>()
                 backStack.removeLastSafely()
             },
+            onDeleteInspection = {
+                val backStack = get<ProjectsBackStack>()
+                backStack.removeLastSafely()
+            },
         )
     }
 
@@ -50,12 +54,17 @@ internal inline fun <reified T : InspectionEditRoute> Module.inspectionEditScree
                 val backStack = get<ProjectsBackStack>()
                 backStack.removeLastSafely()
             },
+            onDeleteInspection = {
+                val backStack = get<ProjectsBackStack>()
+                backStack.removeLastSafely()
+            },
         )
     }
 
 @Composable
 private fun Scope.InspectionEditScreenSetup(
     onSaveInspection: (savedInspectionId: Uuid) -> Unit,
+    onDeleteInspection: () -> Unit,
     inspectionId: Uuid? = null,
     projectId: Uuid? = null,
 ) {
@@ -65,6 +74,7 @@ private fun Scope.InspectionEditScreenSetup(
         onSaveInspection = { savedInspectionId ->
             onSaveInspection(savedInspectionId)
         },
+        onDeleteInspection = onDeleteInspection,
         onCancelClick = {
             val backStack = get<ProjectsBackStack>()
             backStack.removeLastSafely()
@@ -81,6 +91,7 @@ val inspectionsDrivingImplModule =
                 projectId = projectId,
                 getInspectionUseCase = get(),
                 saveInspectionUseCase = get(),
+                deleteInspectionUseCase = get(),
                 isProjectClosedUseCase = get(),
             )
         }
