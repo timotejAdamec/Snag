@@ -31,8 +31,7 @@ The `be/` and `fe/` directories are platform-specific. They are broken down into
 directories/modules:
 - `app/` for application domain code. This is a core layer that sits around the platform-agnostic
   `app/` and `business/` modules.
-  - `app/model/` extends shared `app/model/` with platform-specific data (e.g., BE adds
-    `BackendX : AppX, Syncable` with `deletedAt` for soft-delete support).
+  - `app/model/` extends shared `app/model/` with platform-specific data.
 - `ports/` as in the ports and adapters pattern. These ports are used by `app/` modules.
 - `driven/` as in the driven ports pattern. This is the most outer layer. These ports are
   implementations of the `ports/`. They implement different technologies to satisfy the `ports/` API.
@@ -81,8 +80,8 @@ Each feature/core/library module/directory can be split into submodules if there
 [application] -> feat -> lib -> core
 
 driving -
-         -> app -> ports -> app/model -> business/model
-driven  -                   be/app/model ──┘
+         -> app -> business
+driven  -
 
 impl -
        -> api

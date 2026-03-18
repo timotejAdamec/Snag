@@ -28,21 +28,15 @@ The module's location in the project tree determines which plugin to apply:
 
 ```
 feat/<feature>/
-├── business/
-│   ├── model/               → snagMultiplatformModule
-│   └── rules/               → snagMultiplatformModule
-├── app/
-│   └── model/               → snagMultiplatformModule
+├── business/                → snagMultiplatformModule
 ├── fe/
 │   ├── ports/               → snagFrontendMultiplatformModule
 │   ├── app/                 → snagFrontendMultiplatformModule
-│   ├── app/model/           → snagFrontendMultiplatformModule
 │   ├── driving/             → snagDrivingFrontendMultiplatformModule
 │   └── driven/              → snagDrivenFrontendMultiplatformModule
 └── be/
     ├── ports/               → snagBackendModule
     ├── app/                 → snagBackendModule
-    ├── app/model/           → snagBackendModule
     ├── driving/
     │   ├── contract/        → snagContractDrivingBackendMultiplatformModule
     │   └── impl/            → snagImplDrivingBackendModule
