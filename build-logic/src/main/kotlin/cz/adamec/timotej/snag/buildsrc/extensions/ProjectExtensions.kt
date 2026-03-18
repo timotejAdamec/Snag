@@ -38,5 +38,6 @@ fun Project.dotFormattedPath(): String = path
 fun Project.hasFolderInPath(gradlePath: String, subFolder: String): Boolean {
     val physicalPath = gradlePath.removePrefix(":").replace(":", "/")
     val targetDir = File(rootDir, "$physicalPath/$subFolder")
-    return targetDir.exists() && targetDir.isDirectory
+    return targetDir.exists() && targetDir.isDirectory &&
+        File(targetDir, "build.gradle.kts").exists()
 }
