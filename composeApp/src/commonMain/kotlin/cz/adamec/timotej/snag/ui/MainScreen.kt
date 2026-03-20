@@ -27,6 +27,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cz.adamec.timotej.snag.lib.design.fe.adaptive.ContentPaneDefaults
+import cz.adamec.timotej.snag.lib.design.fe.adaptive.isScreenWide
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.AppScaffold
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.SyncStatusBar
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.SyncStatusBarState
@@ -50,8 +51,14 @@ internal fun MainScreen(
 ) {
     val syncStatus by mainViewModel.syncStatus.collectAsStateWithLifecycle()
     SnagTheme {
+        val outerContainerColor =
+            if (isScreenWide()) {
+                ContentPaneDefaults.containerColor
+            } else {
+                ContentPaneDefaults.paneColor
+            }
         AppScaffold(
-            containerColor = ContentPaneDefaults.containerColor,
+            containerColor = outerContainerColor,
         ) { paddingValues ->
             MainScreenContent(
                 paddingValues = paddingValues,
@@ -97,7 +104,12 @@ private fun MainScreenContent(
             mutableStateOf(TopLevelDestination.PROJECTS)
         }
 
-        val tintedBackground = ContentPaneDefaults.containerColor
+        val tintedBackground =
+            if (isScreenWide()) {
+                ContentPaneDefaults.containerColor
+            } else {
+                ContentPaneDefaults.paneColor
+            }
         NavigationSuiteScaffold(
             modifier = navigationModifier,
             containerColor = tintedBackground,
