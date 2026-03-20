@@ -37,6 +37,7 @@ import kotlin.uuid.Uuid
 @Composable
 internal fun InspectionEditScreen(
     onSaveInspection: (inspectionId: Uuid) -> Unit,
+    onDeleteInspection: () -> Unit,
     onCancelClick: () -> Unit,
     inspectionId: Uuid? = null,
     projectId: Uuid? = null,
@@ -58,6 +59,12 @@ internal fun InspectionEditScreen(
         eventsFlow = viewModel.saveEventFlow,
         onEvent = { savedInspectionId ->
             onSaveInspection(savedInspectionId)
+        },
+    )
+    ObserveAsEvents(
+        eventsFlow = viewModel.deletedSuccessfullyEventFlow,
+        onEvent = {
+            onDeleteInspection()
         },
     )
 
@@ -82,6 +89,7 @@ internal fun InspectionEditScreen(
         onClimateChange = viewModel::onClimateChange,
         onNoteChange = viewModel::onNoteChange,
         onSaveClick = { viewModel.onSaveInspection() },
+        onDeleteClick = { viewModel.onDelete() },
         onCancelClick = onCancelClick,
     )
 }

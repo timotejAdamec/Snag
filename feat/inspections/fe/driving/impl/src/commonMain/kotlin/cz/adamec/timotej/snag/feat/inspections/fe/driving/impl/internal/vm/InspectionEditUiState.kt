@@ -23,6 +23,7 @@ internal data class InspectionEditUiState(
     val climate: String = "",
     val note: String = "",
     val isProjectClosed: Boolean = false,
+    val isBeingDeleted: Boolean = false,
 ) {
-    val canSave = !isProjectClosed
+    val canEdit = !isBeingDeleted && !isProjectClosed
 }

@@ -16,6 +16,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
+import cz.adamec.timotej.snag.feat.inspections.fe.app.api.DeleteInspectionUseCase
 import cz.adamec.timotej.snag.feat.inspections.fe.app.api.GetInspectionUseCase
 import cz.adamec.timotej.snag.feat.inspections.fe.app.api.SaveInspectionUseCase
 import cz.adamec.timotej.snag.feat.inspections.fe.app.api.model.SaveInspectionRequest
@@ -36,6 +37,7 @@ internal class InspectionEditViewModel(
     @InjectedParam private val projectId: Uuid?,
     private val getInspectionUseCase: GetInspectionUseCase,
     private val saveInspectionUseCase: SaveInspectionUseCase,
+    private val deleteInspectionUseCase: DeleteInspectionUseCase,
     private val isProjectClosedUseCase: IsProjectClosedUseCase,
 ) : ViewModel() {
     private val _state: MutableStateFlow<InspectionEditUiState> =
@@ -47,6 +49,9 @@ internal class InspectionEditViewModel(
 
     private val saveEventChannel = Channel<Uuid>()
     val saveEventFlow = saveEventChannel.receiveAsFlow()
+
+    private val deletedSuccessfullyEventChannel = Channel<Unit>()
+    val deletedSuccessfullyEventFlow = deletedSuccessfullyEventChannel.receiveAsFlow()
 
     init {
         require(inspectionId != null || projectId != null) {
@@ -111,6 +116,24 @@ internal class InspectionEditViewModel(
 
     fun onNoteChange(value: String) {
         _state.update { it.copy(note = value) }
+    }
+
+    fun onDelete() {
+        val id = inspectionId ?: return
+        viewModelScope.launch {
+            _state.update { it.copy(isBeingDeleted = true) }
+            when (deleteInspectionUseCase(id)) {
+                is OfflineFirstDataResult.ProgrammerError -> {
+                    _state.update { it.copy(isBeingDeleted = false) }
+                    errorEventsChannel.send(UiError.Unknown)
+                }
+
+                is OfflineFirstDataResult.Success -> {
+                    _state.update { it.copy(isBeingDeleted = false) }
+                    deletedSuccessfullyEventChannel.send(Unit)
+                }
+            }
+        }
     }
 
     fun onSaveInspection() =

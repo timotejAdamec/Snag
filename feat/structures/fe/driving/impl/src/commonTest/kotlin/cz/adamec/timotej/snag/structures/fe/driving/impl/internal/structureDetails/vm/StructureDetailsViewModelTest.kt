@@ -167,7 +167,7 @@ class StructureDetailsViewModelTest : FrontendKoinInitializedTest() {
         }
 
     @Test
-    fun `canInvokeDeletion is false while deleting`() =
+    fun `canEdit is false while deleting`() =
         runTest(testDispatcher) {
             fakeStructuresDb.setStructure(structure)
 
@@ -178,7 +178,7 @@ class StructureDetailsViewModelTest : FrontendKoinInitializedTest() {
                 skipItems(1)
 
                 val loadedState = awaitItem()
-                assertEquals(true, loadedState.canInvokeDeletion)
+                assertEquals(true, loadedState.canEdit)
 
                 cancelAndIgnoreRemainingEvents()
             }
@@ -187,7 +187,7 @@ class StructureDetailsViewModelTest : FrontendKoinInitializedTest() {
             assertEquals(
                 StructureDetailsUiStatus.LOADING,
                 StructureDetailsUiState().let {
-                    assertFalse(it.canInvokeDeletion)
+                    assertFalse(it.canEdit)
                     it.status
                 },
             )

@@ -187,7 +187,7 @@ private fun LoadedStructureDetailsContent(
                     contentPadding = floorPlanContentPadding,
                     onFindingClick = onFindingClick,
                     onEmptySpaceTap = { coordinate ->
-                        if (state.canCreateFinding) {
+                        if (state.canEdit) {
                             pendingCreationCoordinate = coordinate
                         }
                     },
@@ -215,7 +215,7 @@ private fun LoadedStructureDetailsContent(
             var isShowingDeleteConfirmation by remember { mutableStateOf(false) }
             if (isShowingDeleteConfirmation) {
                 StructureDeletionAlertDialog(
-                    areButtonsEnabled = state.canInvokeDeletion,
+                    areButtonsEnabled = state.canEdit,
                     onDelete = onDelete,
                     onDismiss = {
                         isShowingDeleteConfirmation = false
@@ -247,7 +247,7 @@ private fun LoadedStructureDetailsContent(
                         )
                     }
                     IconButton(
-                        enabled = state.canInvokeDeletion,
+                        enabled = state.canEdit,
                         onClick = {
                             isShowingDeleteConfirmation = true
                         },
