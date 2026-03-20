@@ -42,9 +42,9 @@ Do not worry about migrations, this is not in production yet.
 
 ## Available skills
 
-- `/project-structure` — KMP & JVM module structure with Clean Architecture + Hexagonal layers
-- `/gradle-plugins` — Custom Gradle convention plugins reference
-- `/thesis-reminder` — Reminds to update the master's thesis when major changes are made
+- `/project-structure`
+- `/gradle-plugins`
+- `/thesis-reminder`
 
 ## Keeping thesis up to date
 

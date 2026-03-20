@@ -1,5 +1,7 @@
 # Project Structure
 
+Module structure with architecture layers and multiplatform levels.
+
 ## Application modules
 Each platform application is runnable from the following modules:
 - :composeApp

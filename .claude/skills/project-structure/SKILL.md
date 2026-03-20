@@ -1,6 +1,6 @@
 ---
 name: project-structure
-description: KMP & plain JVM module structure with Clean Architecture + Hexagonal (Ports & Adapters) layers. Use when navigating the codebase, deciding where new code belongs, creating new modules, or answering questions about module layout and dependencies.
+description: Module structure with architecture layers and multiplatform levels. Use when navigating the codebase, deciding where new code belongs, creating new modules, or answering questions about project structure / module layout / architecture and dependencies.
 user-invocable: false
 allowed-tools: Read, Glob, Grep
 ---
