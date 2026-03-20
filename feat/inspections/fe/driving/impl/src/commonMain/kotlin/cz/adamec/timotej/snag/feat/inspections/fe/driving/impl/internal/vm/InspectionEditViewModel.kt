@@ -118,9 +118,9 @@ internal class InspectionEditViewModel(
         _state.update { it.copy(note = value) }
     }
 
-    fun onDelete() =
+    fun onDelete() {
+        val id = inspectionId ?: return
         viewModelScope.launch {
-            val id = inspectionId ?: return@launch
             _state.update { it.copy(isBeingDeleted = true) }
             when (deleteInspectionUseCase(id)) {
                 is OfflineFirstDataResult.ProgrammerError -> {
@@ -134,6 +134,7 @@ internal class InspectionEditViewModel(
                 }
             }
         }
+    }
 
     fun onSaveInspection() =
         viewModelScope.launch {
