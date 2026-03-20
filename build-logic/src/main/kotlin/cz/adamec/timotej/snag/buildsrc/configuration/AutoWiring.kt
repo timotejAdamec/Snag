@@ -97,8 +97,8 @@ internal fun Project.resolveHexagonalDependencies(): List<AutoWiredDependency> {
     }
 
     // shared validation rules for all feat modules
-    if (path.startsWith(":feat:") && !path.contains(":shared:rules:")) {
-        result += AutoWiredDependency(":feat:shared:rules:business:api", DependencyScope.IMPLEMENTATION)
+    if (path.startsWith(":feat:")) {
+        result += AutoWiredDependency(":core:rules:business:api", DependencyScope.IMPLEMENTATION)
     }
 
     return result

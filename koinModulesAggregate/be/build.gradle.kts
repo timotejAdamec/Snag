@@ -22,7 +22,7 @@ dependencies {
     implementation(projects.lib.storage.be.impl)
     implementation(projects.feat.shared.storage.be)
     implementation(projects.feat.shared.database.be.impl)
-    implementation(projects.feat.shared.rules.business.impl)
+    implementation(projects.core.rules.business.impl)
 
     // Projects feature
     implementation(projects.feat.projects.be.driving.impl)
