@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.projects.fe.driving.impl.di
 
+import cz.adamec.timotej.snag.projects.fe.driving.api.NonWebProjectClientCreationRoute
 import cz.adamec.timotej.snag.projects.fe.driving.api.NonWebProjectCreationRoute
 import cz.adamec.timotej.snag.projects.fe.driving.api.NonWebProjectDetailRoute
 import cz.adamec.timotej.snag.projects.fe.driving.api.NonWebProjectEditRoute
@@ -23,5 +24,6 @@ internal actual val platformModule =
         projectsScreenNavigation<NonWebProjectsRoute>()
         projectCreationScreenNavigation<NonWebProjectCreationRoute>()
         projectEditScreenNavigation<NonWebProjectEditRoute>()
+        projectClientCreationScreenNavigation<NonWebProjectClientCreationRoute>()
         projectDetailsScreenNavigation<NonWebProjectDetailRoute>()
     }

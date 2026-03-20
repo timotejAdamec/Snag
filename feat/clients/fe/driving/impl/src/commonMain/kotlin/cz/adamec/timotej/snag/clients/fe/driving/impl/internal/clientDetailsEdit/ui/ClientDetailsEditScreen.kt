@@ -35,17 +35,19 @@ import org.koin.core.parameter.parametersOf
 import kotlin.uuid.Uuid
 
 @Composable
-internal fun ClientDetailsEditScreen(
+fun ClientDetailsEditScreen(
     onSaveClient: (clientId: Uuid) -> Unit,
     onCancelClick: () -> Unit,
+    modifier: Modifier = Modifier,
     clientId: Uuid? = null,
-    viewModel: ClientDetailsEditViewModel =
+    onDeleteClient: (() -> Unit)? = null,
+) {
+    val viewModel: ClientDetailsEditViewModel =
         koinViewModel(
             viewModelStoreOwner =
                 LocalViewModelStoreOwner.current
                     ?: error("No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"),
-        ) { parametersOf(clientId) },
-) {
+        ) { parametersOf(clientId) }
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     val snackbarHostState = remember { SnackbarHostState() }
@@ -59,19 +61,27 @@ internal fun ClientDetailsEditScreen(
             onSaveClient(newClientId)
         },
     )
+    if (onDeleteClient != null) {
+        ObserveAsEvents(
+            eventsFlow = viewModel.deletedSuccessfullyEventFlow,
+            onEvent = {
+                onDeleteClient()
+            },
+        )
+    }
 
-    val modifier =
+    val contentModifier =
         if (isScreenLarge()) {
-            Modifier
+            modifier
                 .dialogPadding()
                 .clip(shape = MaterialTheme.shapes.large)
                 .widthIn(max = WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND.dp)
         } else {
-            Modifier
+            modifier
                 .fillMaxSize()
         }
     ClientDetailsEditContent(
-        modifier = modifier,
+        modifier = contentModifier,
         clientId = clientId,
         state = state,
         snackbarHostState = snackbarHostState,
@@ -80,6 +90,7 @@ internal fun ClientDetailsEditScreen(
         onClientPhoneNumberChange = viewModel::onClientPhoneNumberChange,
         onClientEmailChange = viewModel::onClientEmailChange,
         onSaveClick = viewModel::onSaveClient,
+        onDeleteClick = viewModel::onDelete,
         onCancelClick = onCancelClick,
     )
 }

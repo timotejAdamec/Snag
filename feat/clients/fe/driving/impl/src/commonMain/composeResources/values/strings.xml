@@ -6,4 +6,6 @@
     <string name="client_phone_label">Phone Number</string>
     <string name="client_email_label">Email</string>
     <string name="required">Required</string>
+    <string name="delete_client_confirmation_title">Delete Client</string>
+    <string name="delete_client_confirmation_text">Are you sure you want to delete this client? This action cannot be undone.</string>
 </resources>

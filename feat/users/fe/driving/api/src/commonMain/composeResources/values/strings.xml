@@ -11,5 +11,5 @@
   -->
 
 <resources>
-    <string name="users_tab_title">Users</string>
+    <string name="directory_tab_title">Directory</string>
 </resources>

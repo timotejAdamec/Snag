@@ -12,11 +12,14 @@
 
 package cz.adamec.timotej.snag.users.fe.driving.api
 
-import androidx.compose.runtime.Immutable
-import kotlinx.serialization.Serializable
+import org.koin.core.annotation.Provided
+import kotlin.jvm.JvmInline
 
-@Serializable
-@Immutable
-data object WebUsersRoute : UsersRoute {
-    const val URL_NAME = "users"
+@JvmInline
+value class DirectoryBackStack(
+    @Provided val value: MutableList<DirectoryNavRoute>,
+) {
+    fun removeLastSafely() {
+        if (value.size > 1) value.removeLastOrNull()
+    }
 }

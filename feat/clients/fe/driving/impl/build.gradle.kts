@@ -8,7 +8,6 @@ kotlin {
             dependencies {
                 implementation(project(":feat:clients:fe:app:api"))
                 implementation(project(":feat:clients:business:model"))
-                implementation(project(":feat:projects:fe:driving:api"))
             }
         }
         commonTest {

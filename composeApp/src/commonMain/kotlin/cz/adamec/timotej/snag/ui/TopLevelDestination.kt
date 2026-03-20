@@ -14,5 +14,5 @@ package cz.adamec.timotej.snag.ui
 
 internal enum class TopLevelDestination {
     PROJECTS,
-    USERS,
+    DIRECTORY,
 }

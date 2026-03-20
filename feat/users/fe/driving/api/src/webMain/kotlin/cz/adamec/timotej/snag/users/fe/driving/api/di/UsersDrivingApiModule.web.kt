@@ -12,12 +12,12 @@
 
 package cz.adamec.timotej.snag.users.fe.driving.api.di
 
-import cz.adamec.timotej.snag.users.fe.driving.api.UsersRoute
-import cz.adamec.timotej.snag.users.fe.driving.api.WebUsersRoute
+import cz.adamec.timotej.snag.users.fe.driving.api.DirectoryRoute
+import cz.adamec.timotej.snag.users.fe.driving.api.WebDirectoryRoute
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
 internal actual val platformModule =
     module {
-        factory { WebUsersRoute } bind UsersRoute::class
+        factory { WebDirectoryRoute } bind DirectoryRoute::class
     }

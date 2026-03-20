@@ -6,7 +6,7 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                api(project(":feat:projects:fe:driving:api"))
+                api(project(":feat:users:fe:driving:api"))
             }
         }
     }
