@@ -112,7 +112,7 @@ internal fun FindingDetailContent(
             var isShowingDeleteConfirmation by remember { mutableStateOf(false) }
             if (isShowingDeleteConfirmation) {
                 FindingDeletionAlertDialog(
-                    areButtonsEnabled = state.canInvokeDeletion,
+                    areButtonsEnabled = state.canEdit,
                     onDelete = onDelete,
                     onDismiss = {
                         isShowingDeleteConfirmation = false
@@ -252,7 +252,7 @@ internal fun FindingDetailContent(
                             )
                         }
                         IconButton(
-                            enabled = state.canInvokeDeletion,
+                            enabled = state.canEdit,
                             onClick = {
                                 isShowingDeleteConfirmation = true
                             },

@@ -145,11 +145,11 @@ class FindingDetailViewModelTest : FrontendKoinInitializedTest() {
         }
 
     @Test
-    fun `canInvokeDeletion is false while loading`() =
+    fun `canEdit is false while loading`() =
         runTest(testDispatcher) {
             val viewModel = createViewModel()
 
             assertEquals(FindingDetailUiStatus.LOADING, viewModel.state.value.status)
-            assertFalse(viewModel.state.value.canInvokeDeletion)
+            assertFalse(viewModel.state.value.canEdit)
         }
 }

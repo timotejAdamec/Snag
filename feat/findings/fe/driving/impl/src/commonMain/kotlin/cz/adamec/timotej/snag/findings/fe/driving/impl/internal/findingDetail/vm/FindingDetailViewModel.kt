@@ -65,21 +65,18 @@ internal class FindingDetailViewModel(
             }
             when (deleteFindingUseCase(findingId)) {
                 is OfflineFirstDataResult.ProgrammerError -> {
-                    _state.update {
-                        it.copy(isBeingDeleted = false)
-                    }
                     errorEventsChannel.send(Unknown)
                 }
 
                 is OfflineFirstDataResult.Success -> {
                     _state.update {
-                        it.copy(
-                            status = FindingDetailUiStatus.DELETED,
-                            isBeingDeleted = false,
-                        )
+                        it.copy(status = FindingDetailUiStatus.DELETED)
                     }
                     deletedSuccessfullyEventChannel.send(Unit)
                 }
+            }
+            _state.update {
+                it.copy(isBeingDeleted = false)
             }
         }
 

@@ -28,11 +28,7 @@ internal data class StructureDetailsUiState(
     val selectedFindingId: Uuid? = null,
     val isProjectClosed: Boolean = false,
 ) {
-    val canInvokeDeletion = status == StructureDetailsUiStatus.LOADED && !isBeingDeleted && !isProjectClosed
-
-    val canEdit = status == StructureDetailsUiStatus.LOADED && !isProjectClosed
-
-    val canCreateFinding = status == StructureDetailsUiStatus.LOADED && !isProjectClosed
+    val canEdit = status == StructureDetailsUiStatus.LOADED && !isBeingDeleted && !isProjectClosed
 }
 
 internal enum class StructureDetailsUiStatus {

@@ -316,7 +316,7 @@ private fun LoadedProjectDetailsContent(
             var isShowingDeleteConfirmation by remember { mutableStateOf(false) }
             if (isShowingDeleteConfirmation) {
                 ProjectDeletionAlertDialog(
-                    areButtonsEnabled = state.canInvokeDeletion,
+                    areButtonsEnabled = state.canEdit,
                     onDelete = onDelete,
                     onDismiss = {
                         isShowingDeleteConfirmation = false
@@ -362,7 +362,7 @@ private fun LoadedProjectDetailsContent(
                     }
                 }
                 IconButton(
-                    enabled = state.isProjectEditable,
+                    enabled = state.canEdit,
                     onClick = onEditClick,
                 ) {
                     Icon(
@@ -386,7 +386,7 @@ private fun LoadedProjectDetailsContent(
                     }
                 }
                 IconButton(
-                    enabled = state.canInvokeDeletion,
+                    enabled = state.canEdit,
                     onClick = {
                         isShowingDeleteConfirmation = true
                     },

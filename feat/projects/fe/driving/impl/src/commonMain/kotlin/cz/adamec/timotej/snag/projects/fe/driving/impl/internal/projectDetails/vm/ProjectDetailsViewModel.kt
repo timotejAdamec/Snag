@@ -156,23 +156,18 @@ internal class ProjectDetailsViewModel(
             }
             when (deleteProjectUseCase(projectId)) {
                 is OfflineFirstDataResult.ProgrammerError -> {
-                    _state.update {
-                        it.copy(
-                            isBeingDeleted = false,
-                        )
-                    }
                     errorEventsChannel.send(UiError.Unknown)
                 }
 
                 is OfflineFirstDataResult.Success -> {
                     _state.update {
-                        it.copy(
-                            projectStatus = ProjectDetailsUiStatus.DELETED,
-                            isBeingDeleted = false,
-                        )
+                        it.copy(projectStatus = ProjectDetailsUiStatus.DELETED)
                     }
                     deletedSuccessfullyEventChannel.send(Unit)
                 }
+            }
+            _state.update {
+                it.copy(isBeingDeleted = false)
             }
         }
 
