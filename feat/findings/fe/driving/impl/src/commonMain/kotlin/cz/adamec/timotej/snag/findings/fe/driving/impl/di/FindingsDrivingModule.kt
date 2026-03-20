@@ -167,7 +167,7 @@ val findingsDrivingImplModule =
                 projectId = projectId,
                 getFindingUseCase = get(),
                 deleteFindingUseCase = get(),
-                isProjectClosedUseCase = get(),
+                canEditProjectEntitiesUseCase = get(),
             )
         }
         @Suppress("DestructuringDeclarationWithTooManyEntries")
@@ -189,7 +189,7 @@ val findingsDrivingImplModule =
                 getFindingUseCase = get(),
                 saveNewFindingUseCase = get(),
                 saveFindingDetailsUseCase = get(),
-                isProjectClosedUseCase = get(),
+                canEditProjectEntitiesUseCase = get(),
             )
         }
     }

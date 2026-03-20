@@ -13,18 +13,18 @@
 package cz.adamec.timotej.snag.projects.fe.app.impl.di
 
 import cz.adamec.timotej.snag.projects.business.CanEditProjectEntitiesRule
+import cz.adamec.timotej.snag.projects.fe.app.api.CanEditProjectEntitiesUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.DeleteProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.GetProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.GetProjectsUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.IsClientReferencedByProjectUseCase
-import cz.adamec.timotej.snag.projects.fe.app.api.IsProjectClosedUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.SaveProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.SetProjectClosedUseCase
+import cz.adamec.timotej.snag.projects.fe.app.impl.internal.CanEditProjectEntitiesUseCaseImpl
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.DeleteProjectUseCaseImpl
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.GetProjectUseCaseImpl
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.GetProjectsUseCaseImpl
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.IsClientReferencedByProjectUseCaseImpl
-import cz.adamec.timotej.snag.projects.fe.app.impl.internal.IsProjectClosedUseCaseImpl
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.SaveProjectUseCaseImpl
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.SetProjectClosedUseCaseImpl
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.sync.ProjectPullSyncHandler
@@ -42,7 +42,7 @@ val projectsAppModule =
         factoryOf(::SaveProjectUseCaseImpl) bind SaveProjectUseCase::class
         factoryOf(::DeleteProjectUseCaseImpl) bind DeleteProjectUseCase::class
         factoryOf(::SetProjectClosedUseCaseImpl) bind SetProjectClosedUseCase::class
-        factoryOf(::IsProjectClosedUseCaseImpl) bind IsProjectClosedUseCase::class
+        factoryOf(::CanEditProjectEntitiesUseCaseImpl) bind CanEditProjectEntitiesUseCase::class
         factoryOf(::IsClientReferencedByProjectUseCaseImpl) bind IsClientReferencedByProjectUseCase::class
         factoryOf(::CanEditProjectEntitiesRule)
         factoryOf(::ProjectSyncHandler) bind PushSyncOperationHandler::class

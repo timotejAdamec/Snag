@@ -21,7 +21,7 @@ import cz.adamec.timotej.snag.feat.inspections.fe.app.api.GetInspectionUseCase
 import cz.adamec.timotej.snag.feat.inspections.fe.app.api.SaveInspectionUseCase
 import cz.adamec.timotej.snag.feat.inspections.fe.app.api.model.SaveInspectionRequest
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
-import cz.adamec.timotej.snag.projects.fe.app.api.IsProjectClosedUseCase
+import cz.adamec.timotej.snag.projects.fe.app.api.CanEditProjectEntitiesUseCase
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -38,7 +38,7 @@ internal class InspectionEditViewModel(
     private val getInspectionUseCase: GetInspectionUseCase,
     private val saveInspectionUseCase: SaveInspectionUseCase,
     private val deleteInspectionUseCase: DeleteInspectionUseCase,
-    private val isProjectClosedUseCase: IsProjectClosedUseCase,
+    private val canEditProjectEntitiesUseCase: CanEditProjectEntitiesUseCase,
 ) : ViewModel() {
     private val _state: MutableStateFlow<InspectionEditUiState> =
         MutableStateFlow(InspectionEditUiState(projectId = projectId))
@@ -58,13 +58,13 @@ internal class InspectionEditViewModel(
             "Either inspectionId or projectId must be provided"
         }
         inspectionId?.let { collectInspection(it) }
-        projectId?.let { collectProjectClosed(it) }
+        projectId?.let { collectCanEditProjectEntities(it) }
     }
 
-    private fun collectProjectClosed(projectId: Uuid) =
+    private fun collectCanEditProjectEntities(projectId: Uuid) =
         viewModelScope.launch {
-            isProjectClosedUseCase(projectId).collect { isClosed ->
-                _state.update { it.copy(isProjectClosed = isClosed) }
+            canEditProjectEntitiesUseCase(projectId).collect { canEdit ->
+                _state.update { it.copy(canEditProjectEntities = canEdit) }
             }
         }
 
@@ -89,7 +89,7 @@ internal class InspectionEditViewModel(
                                 )
                             }
                             if (projectId == null) {
-                                collectProjectClosed(data.projectId)
+                                collectCanEditProjectEntities(data.projectId)
                             }
                             cancel()
                         }

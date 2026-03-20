@@ -19,7 +19,7 @@ import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.core.network.fe.OnlineDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError.Unknown
-import cz.adamec.timotej.snag.projects.fe.app.api.IsProjectClosedUseCase
+import cz.adamec.timotej.snag.projects.fe.app.api.CanEditProjectEntitiesUseCase
 import cz.adamec.timotej.snag.structures.fe.app.api.CanModifyFloorPlanImageUseCase
 import cz.adamec.timotej.snag.structures.fe.app.api.DeleteFloorPlanImageUseCase
 import cz.adamec.timotej.snag.structures.fe.app.api.GetStructureUseCase
@@ -49,7 +49,7 @@ internal class StructureDetailsEditViewModel(
     private val uploadFloorPlanImageUseCase: UploadFloorPlanImageUseCase,
     private val deleteFloorPlanImageUseCase: DeleteFloorPlanImageUseCase,
     private val canModifyFloorPlanImageUseCase: CanModifyFloorPlanImageUseCase,
-    private val isProjectClosedUseCase: IsProjectClosedUseCase,
+    private val canEditProjectEntitiesUseCase: CanEditProjectEntitiesUseCase,
 ) : ViewModel() {
     private val _state: MutableStateFlow<StructureDetailsEditUiState> =
         MutableStateFlow(
@@ -71,7 +71,7 @@ internal class StructureDetailsEditViewModel(
     init {
         structureId?.let { collectStructure(it) }
         collectCanModifyFloorPlanImage()
-        collectProjectClosed()
+        collectCanEditProjectEntities()
     }
 
     private fun collectStructure(structureId: Uuid) =
@@ -108,10 +108,10 @@ internal class StructureDetailsEditViewModel(
             }
         }
 
-    private fun collectProjectClosed() =
+    private fun collectCanEditProjectEntities() =
         viewModelScope.launch {
-            isProjectClosedUseCase(projectId).collect { isClosed ->
-                _state.update { it.copy(isProjectClosed = isClosed) }
+            canEditProjectEntitiesUseCase(projectId).collect { canEdit ->
+                _state.update { it.copy(canEditProjectEntities = canEdit) }
             }
         }
 

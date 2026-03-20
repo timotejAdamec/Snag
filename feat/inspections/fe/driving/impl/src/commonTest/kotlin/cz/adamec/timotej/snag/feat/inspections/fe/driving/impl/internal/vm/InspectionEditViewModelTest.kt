@@ -22,7 +22,7 @@ import cz.adamec.timotej.snag.feat.inspections.fe.app.api.GetInspectionUseCase
 import cz.adamec.timotej.snag.feat.inspections.fe.app.api.SaveInspectionUseCase
 import cz.adamec.timotej.snag.feat.inspections.fe.driven.test.FakeInspectionsDb
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
-import cz.adamec.timotej.snag.projects.fe.app.api.IsProjectClosedUseCase
+import cz.adamec.timotej.snag.projects.fe.app.api.CanEditProjectEntitiesUseCase
 import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
@@ -44,7 +44,7 @@ class InspectionEditViewModelTest : FrontendKoinInitializedTest() {
     private val getInspectionUseCase: GetInspectionUseCase by inject()
     private val saveInspectionUseCase: SaveInspectionUseCase by inject()
     private val deleteInspectionUseCase: DeleteInspectionUseCase by inject()
-    private val isProjectClosedUseCase: IsProjectClosedUseCase by inject()
+    private val canEditProjectEntitiesUseCase: CanEditProjectEntitiesUseCase by inject()
 
     private fun createViewModel(
         inspectionId: Uuid? = null,
@@ -55,7 +55,7 @@ class InspectionEditViewModelTest : FrontendKoinInitializedTest() {
         getInspectionUseCase = getInspectionUseCase,
         saveInspectionUseCase = saveInspectionUseCase,
         deleteInspectionUseCase = deleteInspectionUseCase,
-        isProjectClosedUseCase = isProjectClosedUseCase,
+        canEditProjectEntitiesUseCase = canEditProjectEntitiesUseCase,
     )
 
     @Test

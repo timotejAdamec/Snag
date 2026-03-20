@@ -20,7 +20,7 @@ internal data class FindingDetailsEditUiState(
     val findingDescription: String = "",
     val findingType: FindingType = FindingType.Classic(),
     val findingNameError: StringResource? = null,
-    val isProjectClosed: Boolean = false,
+    val canEditProjectEntities: Boolean = true,
 ) {
-    val canSave = !isProjectClosed
+    val canSave = canEditProjectEntities
 }

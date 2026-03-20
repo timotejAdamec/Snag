@@ -15,6 +15,6 @@ package cz.adamec.timotej.snag.projects.fe.app.api
 import kotlinx.coroutines.flow.Flow
 import kotlin.uuid.Uuid
 
-interface IsProjectClosedUseCase {
+interface CanEditProjectEntitiesUseCase {
     operator fun invoke(projectId: Uuid): Flow<Boolean>
 }

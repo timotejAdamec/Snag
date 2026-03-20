@@ -21,7 +21,7 @@ import cz.adamec.timotej.snag.findings.fe.app.api.DeleteFindingUseCase
 import cz.adamec.timotej.snag.findings.fe.app.api.GetFindingUseCase
 import cz.adamec.timotej.snag.findings.fe.driven.test.FakeFindingsDb
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
-import cz.adamec.timotej.snag.projects.fe.app.api.IsProjectClosedUseCase
+import cz.adamec.timotej.snag.projects.fe.app.api.CanEditProjectEntitiesUseCase
 import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
@@ -41,7 +41,7 @@ class FindingDetailViewModelTest : FrontendKoinInitializedTest() {
 
     private val getFindingUseCase: GetFindingUseCase by inject()
     private val deleteFindingUseCase: DeleteFindingUseCase by inject()
-    private val isProjectClosedUseCase: IsProjectClosedUseCase by inject()
+    private val canEditProjectEntitiesUseCase: CanEditProjectEntitiesUseCase by inject()
 
     private val projectId = Uuid.parse("00000000-0000-0000-0000-000000000002")
     private val structureId = Uuid.parse("00000000-0000-0000-0000-000000000001")
@@ -63,7 +63,7 @@ class FindingDetailViewModelTest : FrontendKoinInitializedTest() {
             projectId = projectId,
             getFindingUseCase = getFindingUseCase,
             deleteFindingUseCase = deleteFindingUseCase,
-            isProjectClosedUseCase = isProjectClosedUseCase,
+            canEditProjectEntitiesUseCase = canEditProjectEntitiesUseCase,
         )
 
     @Test

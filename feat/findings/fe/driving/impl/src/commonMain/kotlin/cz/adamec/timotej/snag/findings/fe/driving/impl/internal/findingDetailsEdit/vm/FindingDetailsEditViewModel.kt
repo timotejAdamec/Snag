@@ -29,7 +29,7 @@ import cz.adamec.timotej.snag.findings.fe.app.api.model.SaveFindingDetailsReques
 import cz.adamec.timotej.snag.findings.fe.app.api.model.SaveNewFindingRequest
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError.Unknown
-import cz.adamec.timotej.snag.projects.fe.app.api.IsProjectClosedUseCase
+import cz.adamec.timotej.snag.projects.fe.app.api.CanEditProjectEntitiesUseCase
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -51,7 +51,7 @@ internal class FindingDetailsEditViewModel(
     private val getFindingUseCase: GetFindingUseCase,
     private val saveNewFindingUseCase: SaveNewFindingUseCase,
     private val saveFindingDetailsUseCase: SaveFindingDetailsUseCase,
-    private val isProjectClosedUseCase: IsProjectClosedUseCase,
+    private val canEditProjectEntitiesUseCase: CanEditProjectEntitiesUseCase,
 ) : ViewModel() {
     private val _state: MutableStateFlow<FindingDetailsEditUiState> =
         MutableStateFlow(
@@ -72,13 +72,13 @@ internal class FindingDetailsEditViewModel(
             "Either findingId or structureId must be provided"
         }
         findingId?.let { collectFinding(it) }
-        collectProjectClosed()
+        collectCanEditProjectEntities()
     }
 
-    private fun collectProjectClosed() =
+    private fun collectCanEditProjectEntities() =
         viewModelScope.launch {
-            isProjectClosedUseCase(projectId).collect { isClosed ->
-                _state.update { it.copy(isProjectClosed = isClosed) }
+            canEditProjectEntitiesUseCase(projectId).collect { canEdit ->
+                _state.update { it.copy(canEditProjectEntities = canEdit) }
             }
         }
 
