@@ -16,8 +16,8 @@ import cz.adamec.timotej.snag.clients.be.app.impl.di.clientsAppModule
 import cz.adamec.timotej.snag.clients.be.driven.impl.di.clientsDrivenModule
 import cz.adamec.timotej.snag.clients.be.driving.impl.di.clientsDrivingModule
 import cz.adamec.timotej.snag.configuration.be.impl.di.configurationModule
+import cz.adamec.timotej.snag.core.business.rules.impl.di.sharedRulesModule
 import cz.adamec.timotej.snag.core.foundation.be.backendCoreModule
-import cz.adamec.timotej.snag.core.rules.business.impl.di.sharedRulesModule
 import cz.adamec.timotej.snag.feat.inspections.be.app.impl.di.inspectionsAppModule
 import cz.adamec.timotej.snag.feat.inspections.be.driven.impl.di.inspectionsDrivenModule
 import cz.adamec.timotej.snag.feat.inspections.be.driving.impl.di.inspectionsDrivingModule

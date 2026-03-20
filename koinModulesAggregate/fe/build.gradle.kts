@@ -24,7 +24,7 @@ kotlin {
             implementation(projects.lib.storage.fe.impl)
             implementation(projects.feat.shared.database.fe.impl)
             implementation(projects.feat.shared.storage.fe)
-            implementation(projects.core.rules.business.impl)
+            implementation(projects.core.business.rules.impl)
 
             // Sync layer
             implementation(projects.feat.sync.fe.driven.impl)
