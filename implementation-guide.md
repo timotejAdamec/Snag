@@ -95,7 +95,7 @@ The following features are new compared to the original analysis (which had no r
 2. **User assignment to / removal from project** — leads can add/remove technicians or service workers. *(Done — BE API + DB, Phase 1)*
 3. **Authentication (EntraID)** — mandatory Microsoft EntraID login (standalone mechanism, not a UC).
 4. **Role management (UC7)** — admin manages all roles; passport lead delegates technician role; service lead delegates service worker role. *(Done — BE API: role set via PUT /users/{id}, Phase 1)*
-5. **Inspection deletion** — UC5 Scenario E.
+5. **Inspection deletion** — UC5 Scenario E. *(Done — full-stack: BE API + DB soft delete + sync, FE use case + local delete + sync enqueue, FE UI delete button + confirmation dialog)*
 6. **Service protocol** — second PDF export format with signature fields.
 
 ---
@@ -109,7 +109,7 @@ The following features are new compared to the original analysis (which had no r
 | FP4c | Assign user to project | UC1 | **Done** (BE API + DB) |
 | FP4d | Remove user from project | UC1 | **Done** (BE API + DB) |
 | FP4e | Close project — creator access: only creator retains access to closed project | UC1 | **Partial** — sub-entity editing blocked on closed projects, creator-only enforcement requires roles |
-| FP31 | Delete inspection | UC5 |
+| FP31 | Delete inspection | UC5 | **Done** |
 | FP32b | Generate service protocol — PDF with work description and signature fields | UC6 |
 | FP34 | Authentication via Microsoft EntraID | — |
 | FP35 | Deny access without authentication | — |
