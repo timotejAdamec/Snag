@@ -124,14 +124,15 @@ internal class InspectionEditViewModel(
             _state.update { it.copy(isBeingDeleted = true) }
             when (deleteInspectionUseCase(id)) {
                 is OfflineFirstDataResult.ProgrammerError -> {
+                    _state.update { it.copy(isBeingDeleted = false) }
                     errorEventsChannel.send(UiError.Unknown)
                 }
 
                 is OfflineFirstDataResult.Success -> {
+                    _state.update { it.copy(isBeingDeleted = false) }
                     deletedSuccessfullyEventChannel.send(Unit)
                 }
             }
-            _state.update { it.copy(isBeingDeleted = false) }
         }
     }
 
