@@ -270,12 +270,12 @@ private fun CardStatus.toStringRes(): StringResource =
 private fun Timestamp.toDisplayString(): String =
     try {
         val local = toLocalDateTime()
-        val hour = local.hour.toString().padStart(2, '0')
-        val minute = local.minute.toString().padStart(2, '0')
         val day = local.day
         val month = local.month.ordinal
         val year = local.year
-        "$day. $month. $year $hour:$minute"
+        val hour = local.hour.toString().padStart(2, '0')
+        val minute = local.minute.toString().padStart(2, '0')
+        "$day.$month.$year · $hour:$minute"
     } catch (_: Throwable) {
         "-- -- ---- --:--"
     }

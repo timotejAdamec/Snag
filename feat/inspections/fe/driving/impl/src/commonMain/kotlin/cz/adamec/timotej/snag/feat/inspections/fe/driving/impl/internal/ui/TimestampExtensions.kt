@@ -17,10 +17,10 @@ import cz.adamec.timotej.snag.core.foundation.common.toLocalDateTime
 
 internal fun Timestamp.toDisplayString(): String {
     val local = toLocalDateTime()
+    val day = local.day
+    val month = local.month.ordinal
+    val year = local.year
     val hour = local.hour.toString().padStart(2, '0')
     val minute = local.minute.toString().padStart(2, '0')
-    val day = local.day.toString().padStart(2, '0')
-    val month = local.month.toString().padStart(2, '0')
-    val year = local.year
     return "$day.$month.$year · $hour:$minute"
 }
