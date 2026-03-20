@@ -17,11 +17,11 @@ import androidx.lifecycle.viewModelScope
 import cz.adamec.timotej.snag.clients.fe.app.api.GetClientUseCase
 import cz.adamec.timotej.snag.clients.fe.app.api.SaveClientUseCase
 import cz.adamec.timotej.snag.clients.fe.app.api.model.SaveClientRequest
+import cz.adamec.timotej.snag.core.business.rules.api.EmailFormatRule
+import cz.adamec.timotej.snag.core.business.rules.api.PhoneNumberRule
 import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError.Unknown
-import cz.adamec.timotej.snag.shared.rules.business.api.EmailFormatRule
-import cz.adamec.timotej.snag.shared.rules.business.api.PhoneNumberRule
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
