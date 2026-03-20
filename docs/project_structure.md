@@ -10,11 +10,13 @@ Each platform application is runnable from the following modules:
 - :iosApp
 - :server:impl
 
-## Feature directories
+## Feature modules
 Feature modules are located in the `feat` directory. These contain domain-tied code. Each feature is
 a submodule there with an exception to the `shared` directory, which contains concerns that are shared
 between the features. If no layer is specified, the module is considered to be in the infrastructure
 (`driving`/`driven`) layer.
+
+Can depend on both `core` and `feat` code.
 
 ### Feature directory structure
 Each feature is structured by platforms and by layers:
@@ -42,14 +44,12 @@ directories/modules:
   `driving/` code is the entry point for the platform.
 
 ### Shared modules (`feat/shared/`)
-
 The `shared` directory contains cross-cutting concerns used by multiple features:
 - `database/` — Shared database infrastructure (`fe/`, `be/impl`, `be/test`).
 - `rules/business/` — Cross-cutting business-layer validation rules (`api/impl` split).
   Auto-wired as a dependency to all feature modules via the convention plugin.
 
 ### Cross-feature dependencies
-
 Dependencies between features and libs is handled by accessing:
 - use cases (`app/api`) for business logic.
 - `driving/api` for navigation or UI components.
@@ -59,12 +59,16 @@ Core modules are located in the `core` directory. These contain **infrastructure
 feature-agnostic** domain types, language extensions, and utilities shared across all modules. They
 have no dependencies on external technologies.
 
+Cannot depend on `feat` or `lib` code.
+
 ## Library modules
 Library modules are located in the `lib` directory. These contain **feature-agnostic infrastructure
 integrations** — external framework wrappers and connectors not tied to a specific domain area. All
 library modules are purely infrastructural (connector/adapter role). Their code lives implicitly in
 the adapters layer; for such modules architecture layering can be omitted and the code is understood
 to be driven/driving.
+
+Can depend on `core` code, cannot depend on `feat` code.
 
 #### Encapsulation module splits
 Each feature/core/library module/directory can be split into submodules if there is a need for it:
@@ -77,7 +81,6 @@ Each feature/core/library module/directory can be split into submodules if there
   layers can run with non-production unit-test-friendly adapter `ports`.
 
 ## Dependency directions
-
 ```
 [application] -> feat -> lib -> core
 
@@ -96,5 +99,4 @@ Convention plugins auto-wire most inter-module dependencies — when creating a 
 the convention plugin and add explicit dependencies only if the build requires them.
 
 ## Local project structure hints
-
 `README.md` files in the codebase also give local project structure information.
