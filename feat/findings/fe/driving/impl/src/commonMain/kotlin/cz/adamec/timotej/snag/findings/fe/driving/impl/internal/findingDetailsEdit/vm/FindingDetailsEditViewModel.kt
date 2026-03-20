@@ -72,13 +72,13 @@ internal class FindingDetailsEditViewModel(
             "Either findingId or structureId must be provided"
         }
         findingId?.let { collectFinding(it) }
-        collectCanEditProjectEntities()
+        collectIsProjectOpen()
     }
 
-    private fun collectCanEditProjectEntities() =
+    private fun collectIsProjectOpen() =
         viewModelScope.launch {
-            canEditProjectEntitiesUseCase(projectId).collect { canEdit ->
-                _state.update { it.copy(canEditProjectEntities = canEdit) }
+            canEditProjectEntitiesUseCase(projectId).collect { isOpen ->
+                _state.update { it.copy(isProjectOpen = isOpen) }
             }
         }
 

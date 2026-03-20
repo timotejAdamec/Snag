@@ -58,13 +58,13 @@ internal class InspectionEditViewModel(
             "Either inspectionId or projectId must be provided"
         }
         inspectionId?.let { collectInspection(it) }
-        projectId?.let { collectCanEditProjectEntities(it) }
+        projectId?.let { collectIsProjectOpen(it) }
     }
 
-    private fun collectCanEditProjectEntities(projectId: Uuid) =
+    private fun collectIsProjectOpen(projectId: Uuid) =
         viewModelScope.launch {
-            canEditProjectEntitiesUseCase(projectId).collect { canEdit ->
-                _state.update { it.copy(canEditProjectEntities = canEdit) }
+            canEditProjectEntitiesUseCase(projectId).collect { isOpen ->
+                _state.update { it.copy(isProjectOpen = isOpen) }
             }
         }
 
@@ -89,7 +89,7 @@ internal class InspectionEditViewModel(
                                 )
                             }
                             if (projectId == null) {
-                                collectCanEditProjectEntities(data.projectId)
+                                collectIsProjectOpen(data.projectId)
                             }
                             cancel()
                         }

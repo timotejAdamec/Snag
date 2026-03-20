@@ -23,8 +23,8 @@ internal data class StructureDetailsEditUiState(
     val pendingUploadUrl: String? = null,
     val isUploadingImage: Boolean = false,
     val canModifyFloorPlanImage: Boolean = true,
-    val canEditProjectEntities: Boolean = true,
+    val isProjectOpen: Boolean = true,
     val projectId: Uuid? = null,
 ) {
-    val canSave = !isUploadingImage && canEditProjectEntities
+    val canSave = !isUploadingImage && isProjectOpen
 }

@@ -18,9 +18,9 @@ internal data class FindingDetailUiState(
     val status: FindingDetailUiStatus = FindingDetailUiStatus.LOADING,
     val finding: AppFinding? = null,
     val isBeingDeleted: Boolean = false,
-    val canEditProjectEntities: Boolean = true,
+    val isProjectOpen: Boolean = true,
 ) {
-    val canEdit = status == FindingDetailUiStatus.LOADED && !isBeingDeleted && canEditProjectEntities
+    val canEdit = status == FindingDetailUiStatus.LOADED && !isBeingDeleted && isProjectOpen
 }
 
 internal enum class FindingDetailUiStatus {

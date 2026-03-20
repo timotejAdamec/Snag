@@ -71,7 +71,7 @@ internal class StructureDetailsEditViewModel(
     init {
         structureId?.let { collectStructure(it) }
         collectCanModifyFloorPlanImage()
-        collectCanEditProjectEntities()
+        collectIsProjectOpen()
     }
 
     private fun collectStructure(structureId: Uuid) =
@@ -108,10 +108,10 @@ internal class StructureDetailsEditViewModel(
             }
         }
 
-    private fun collectCanEditProjectEntities() =
+    private fun collectIsProjectOpen() =
         viewModelScope.launch {
-            canEditProjectEntitiesUseCase(projectId).collect { canEdit ->
-                _state.update { it.copy(canEditProjectEntities = canEdit) }
+            canEditProjectEntitiesUseCase(projectId).collect { isOpen ->
+                _state.update { it.copy(isProjectOpen = isOpen) }
             }
         }
 
