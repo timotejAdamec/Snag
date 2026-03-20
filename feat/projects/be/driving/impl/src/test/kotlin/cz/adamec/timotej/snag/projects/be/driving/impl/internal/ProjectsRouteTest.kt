@@ -285,7 +285,6 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
         testApplication {
             configureApp()
             seedAdminUser()
-            seedAdminUser()
             val client = jsonClient()
 
             val response =
@@ -309,7 +308,6 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
     fun `PUT project returns existing project on conflict`() =
         testApplication {
             configureApp()
-            seedAdminUser()
             seedAdminUser()
             dataSource.saveProject(
                 BackendProjectData(
@@ -346,7 +344,6 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
     fun `PUT project conflict includes deletedAt when existing is soft-deleted`() =
         testApplication {
             configureApp()
-            seedAdminUser()
             seedAdminUser()
             dataSource.saveProject(
                 BackendProjectData(
@@ -385,7 +382,6 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
         testApplication {
             configureApp()
             seedAdminUser()
-            seedAdminUser()
             val client = jsonClient()
 
             val response =
@@ -409,7 +405,6 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
     fun `PUT project with invalid body returns 400`() =
         testApplication {
             configureApp()
-            seedAdminUser()
             seedAdminUser()
             val client = jsonClient()
 

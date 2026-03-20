@@ -37,18 +37,6 @@ class GetStructuresUseCaseImplTest : BackendKoinInitializedTest() {
     private val projectId = Uuid.parse("00000000-0000-0000-0000-000000000001")
     private val otherProjectId = Uuid.parse("00000000-0000-0000-0000-000000000002")
 
-    private suspend fun seedTestUser() {
-        usersDb.saveUser(
-            BackendUserData(
-                id = TEST_USER_ID,
-                entraId = "test-entra",
-                email = "test@example.com",
-                role = UserRole.ADMINISTRATOR,
-                updatedAt = Timestamp(1L),
-            ),
-        )
-    }
-
     private val structure1 =
         BackendStructureData(
             id = Uuid.parse("00000000-0000-0000-0001-000000000001"),
@@ -73,6 +61,18 @@ class GetStructuresUseCaseImplTest : BackendKoinInitializedTest() {
             floorPlanUrl = null,
             updatedAt = Timestamp(3L),
         )
+
+    private suspend fun seedTestUser() {
+        usersDb.saveUser(
+            BackendUserData(
+                id = TEST_USER_ID,
+                entraId = "test-entra",
+                email = "test@example.com",
+                role = UserRole.ADMINISTRATOR,
+                updatedAt = Timestamp(1L),
+            ),
+        )
+    }
 
     @Test
     fun `returns empty list when none`() =

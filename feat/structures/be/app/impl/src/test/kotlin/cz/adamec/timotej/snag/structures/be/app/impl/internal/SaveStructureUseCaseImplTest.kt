@@ -151,10 +151,6 @@ class SaveStructureUseCaseImplTest : BackendKoinInitializedTest() {
             )
         }
 
-    companion object {
-        private val TEST_USER_ID = Uuid.parse("00000000-0000-0000-0000-000000000042")
-    }
-
     @Test
     fun `returns existing entity when project is closed`() =
         runTest(testDispatcher) {
@@ -182,4 +178,8 @@ class SaveStructureUseCaseImplTest : BackendKoinInitializedTest() {
 
             assertNull(result)
         }
+
+    companion object {
+        private val TEST_USER_ID = Uuid.parse("00000000-0000-0000-0000-000000000042")
+    }
 }

@@ -158,10 +158,6 @@ class DeleteStructureUseCaseImplTest : BackendKoinInitializedTest() {
             )
         }
 
-    companion object {
-        private val TEST_USER_ID = Uuid.parse("00000000-0000-0000-0000-000000000042")
-    }
-
     @Test
     fun `returns existing entity when project is closed`() =
         runTest(testDispatcher) {
@@ -181,4 +177,8 @@ class DeleteStructureUseCaseImplTest : BackendKoinInitializedTest() {
                 dataSource.getStructures(projectId).find { it.id == structureId }
             assertNull(stored?.deletedAt)
         }
+
+    companion object {
+        private val TEST_USER_ID = Uuid.parse("00000000-0000-0000-0000-000000000042")
+    }
 }
