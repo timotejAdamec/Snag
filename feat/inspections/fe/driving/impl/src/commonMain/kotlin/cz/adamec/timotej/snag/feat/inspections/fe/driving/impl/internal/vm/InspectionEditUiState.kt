@@ -22,8 +22,8 @@ internal data class InspectionEditUiState(
     val participants: String = "",
     val climate: String = "",
     val note: String = "",
-    val isProjectOpen: Boolean = true,
+    val canEditInspection: Boolean = true,
     val isBeingDeleted: Boolean = false,
 ) {
-    val canEdit = !isBeingDeleted && isProjectOpen
+    val canEdit = !isBeingDeleted && canEditInspection
 }

@@ -48,13 +48,13 @@ internal class FindingDetailViewModel(
 
     init {
         collectFinding()
-        collectIsProjectOpen()
+        collectCanEditFinding()
     }
 
-    private fun collectIsProjectOpen() =
+    private fun collectCanEditFinding() =
         viewModelScope.launch {
-            canEditProjectEntitiesUseCase(projectId).collect { isOpen ->
-                _state.update { it.copy(isProjectOpen = isOpen) }
+            canEditProjectEntitiesUseCase(projectId).collect { canEdit ->
+                _state.update { it.copy(canEditFinding = canEdit) }
             }
         }
 

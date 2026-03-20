@@ -26,9 +26,9 @@ internal data class StructureDetailsUiState(
     val feStructure: AppStructure? = null,
     val findings: ImmutableList<AppFinding> = persistentListOf(),
     val selectedFindingId: Uuid? = null,
-    val isProjectOpen: Boolean = true,
+    val canEditStructure: Boolean = true,
 ) {
-    val canEdit = status == StructureDetailsUiStatus.LOADED && !isBeingDeleted && isProjectOpen
+    val canEdit = status == StructureDetailsUiStatus.LOADED && !isBeingDeleted && canEditStructure
 }
 
 internal enum class StructureDetailsUiStatus {
