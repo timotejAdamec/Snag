@@ -43,6 +43,7 @@ class SetProjectClosedUseCaseImplTest : FrontendKoinInitializedTest() {
                 id = projectId,
                 name = "Test Project",
                 address = "Test Address",
+                creatorId = UuidProvider.getUuid(),
                 updatedAt = Timestamp(100L),
             ),
         )
@@ -54,6 +55,7 @@ class SetProjectClosedUseCaseImplTest : FrontendKoinInitializedTest() {
                 id = projectId,
                 name = "Test Project",
                 address = "Test Address",
+                creatorId = UuidProvider.getUuid(),
                 isClosed = true,
                 updatedAt = Timestamp(100L),
             ),

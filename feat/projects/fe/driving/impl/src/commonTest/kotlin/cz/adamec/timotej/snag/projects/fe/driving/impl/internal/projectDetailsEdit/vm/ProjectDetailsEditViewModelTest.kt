@@ -16,6 +16,7 @@ import cz.adamec.timotej.snag.clients.app.model.AppClientData
 import cz.adamec.timotej.snag.clients.fe.app.api.GetClientsUseCase
 import cz.adamec.timotej.snag.clients.fe.driven.test.FakeClientsDb
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
+import cz.adamec.timotej.snag.core.foundation.common.UuidProvider
 import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.projects.app.model.AppProject
@@ -73,6 +74,7 @@ class ProjectDetailsEditViewModelTest : FrontendKoinInitializedTest() {
                     id = projectId,
                     name = "Test Project",
                     address = "Test Address",
+                    creatorId = UuidProvider.getUuid(),
                     updatedAt = Timestamp(10L),
                 )
             fakeProjectsDb.setProject(project)
@@ -268,6 +270,7 @@ class ProjectDetailsEditViewModelTest : FrontendKoinInitializedTest() {
                     name = "Test Project",
                     address = "Test Address",
                     clientId = clientId,
+                    creatorId = UuidProvider.getUuid(),
                     updatedAt = Timestamp(10L),
                 ),
             )

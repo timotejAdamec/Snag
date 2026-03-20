@@ -24,16 +24,21 @@ import cz.adamec.timotej.snag.projects.be.model.BackendProjectData
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
 import cz.adamec.timotej.snag.structures.be.ports.StructuresDb
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
+import cz.adamec.timotej.snag.users.be.model.BackendUserData
+import cz.adamec.timotej.snag.users.be.ports.UsersDb
+import cz.adamec.timotej.snag.users.business.UserRole
 import kotlinx.coroutines.test.runTest
 import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
+import kotlin.uuid.Uuid
 
 class DeleteFindingUseCaseImplTest : BackendKoinInitializedTest() {
     private val findingsDb: FindingsDb by inject()
     private val projectsDb: ProjectsDb by inject()
     private val structuresDb: StructuresDb by inject()
+    private val usersDb: UsersDb by inject()
     private val useCase: DeleteFindingUseCase by inject()
 
     private val projectId = UuidProvider.getUuid()
@@ -51,12 +56,26 @@ class DeleteFindingUseCaseImplTest : BackendKoinInitializedTest() {
             updatedAt = Timestamp(10L),
         )
 
+    private suspend fun seedTestUser() {
+        usersDb.saveUser(
+            BackendUserData(
+                id = TEST_USER_ID,
+                entraId = "test-entra",
+                email = "test@example.com",
+                role = UserRole.ADMINISTRATOR,
+                updatedAt = Timestamp(1L),
+            ),
+        )
+    }
+
     private suspend fun seedClosedProject() {
+        seedTestUser()
         projectsDb.saveProject(
             BackendProjectData(
                 id = projectId,
                 name = "Test Project",
                 address = "Test Address",
+                creatorId = TEST_USER_ID,
                 isClosed = true,
                 updatedAt = Timestamp(1L),
             ),
@@ -90,4 +109,8 @@ class DeleteFindingUseCaseImplTest : BackendKoinInitializedTest() {
             val stored = findingsDb.getFinding(findingId)
             assertNull(stored?.deletedAt)
         }
+
+    companion object {
+        private val TEST_USER_ID = Uuid.parse("00000000-0000-0000-0000-000000000042")
+    }
 }

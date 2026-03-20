@@ -20,6 +20,9 @@ import cz.adamec.timotej.snag.structures.be.app.api.GetStructuresModifiedSinceUs
 import cz.adamec.timotej.snag.structures.be.app.api.model.GetStructuresModifiedSinceRequest
 import cz.adamec.timotej.snag.structures.be.ports.StructuresDb
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
+import cz.adamec.timotej.snag.users.be.model.BackendUserData
+import cz.adamec.timotej.snag.users.be.ports.UsersDb
+import cz.adamec.timotej.snag.users.business.UserRole
 import kotlinx.coroutines.test.runTest
 import org.koin.test.inject
 import kotlin.test.Test
@@ -30,10 +33,23 @@ import kotlin.uuid.Uuid
 class GetStructuresModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
     private val dataSource: StructuresDb by inject()
     private val projectsDb: ProjectsDb by inject()
+    private val usersDb: UsersDb by inject()
     private val useCase: GetStructuresModifiedSinceUseCase by inject()
 
     private val projectId = Uuid.parse("00000000-0000-0000-0000-000000000001")
     private val otherProjectId = Uuid.parse("00000000-0000-0000-0000-000000000002")
+
+    private suspend fun seedTestUser() {
+        usersDb.saveUser(
+            BackendUserData(
+                id = TEST_USER_ID,
+                entraId = "test-entra",
+                email = "test@example.com",
+                role = UserRole.ADMINISTRATOR,
+                updatedAt = Timestamp(1L),
+            ),
+        )
+    }
 
     @Test
     fun `returns empty list when no structures exist`() =
@@ -46,11 +62,13 @@ class GetStructuresModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
     @Test
     fun `returns structures with updatedAt after since`() =
         runTest(testDispatcher) {
+            seedTestUser()
             projectsDb.saveProject(
                 BackendProjectData(
                     id = projectId,
                     name = "Test Project",
                     address = "Test Address",
+                    creatorId = TEST_USER_ID,
                     updatedAt = Timestamp(1L),
                 ),
             )
@@ -72,11 +90,13 @@ class GetStructuresModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
     @Test
     fun `excludes structures from different project`() =
         runTest(testDispatcher) {
+            seedTestUser()
             projectsDb.saveProject(
                 BackendProjectData(
                     id = otherProjectId,
                     name = "Other Project",
                     address = "Other Address",
+                    creatorId = TEST_USER_ID,
                     updatedAt = Timestamp(1L),
                 ),
             )
@@ -98,11 +118,13 @@ class GetStructuresModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
     @Test
     fun `returns deleted structures when deletedAt is after since`() =
         runTest(testDispatcher) {
+            seedTestUser()
             projectsDb.saveProject(
                 BackendProjectData(
                     id = projectId,
                     name = "Test Project",
                     address = "Test Address",
+                    creatorId = TEST_USER_ID,
                     updatedAt = Timestamp(1L),
                 ),
             )
@@ -125,11 +147,13 @@ class GetStructuresModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
     @Test
     fun `excludes unchanged structures`() =
         runTest(testDispatcher) {
+            seedTestUser()
             projectsDb.saveProject(
                 BackendProjectData(
                     id = projectId,
                     name = "Test Project",
                     address = "Test Address",
+                    creatorId = TEST_USER_ID,
                     updatedAt = Timestamp(1L),
                 ),
             )
@@ -147,4 +171,8 @@ class GetStructuresModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
 
             assertTrue(result.isEmpty())
         }
+
+    companion object {
+        private val TEST_USER_ID = Uuid.parse("00000000-0000-0000-0000-000000000042")
+    }
 }

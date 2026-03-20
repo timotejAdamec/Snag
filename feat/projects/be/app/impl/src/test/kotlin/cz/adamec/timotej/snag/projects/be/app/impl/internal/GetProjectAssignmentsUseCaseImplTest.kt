@@ -35,12 +35,26 @@ class GetProjectAssignmentsUseCaseImplTest : BackendKoinInitializedTest() {
 
     private val projectId = Uuid.parse("00000000-0000-0000-0000-000000000001")
 
+    private suspend fun seedTestUser() {
+        usersDb.saveUser(
+            BackendUserData(
+                id = TEST_USER_ID,
+                entraId = "test-entra",
+                email = "test@example.com",
+                role = UserRole.ADMINISTRATOR,
+                updatedAt = Timestamp(1L),
+            ),
+        )
+    }
+
     private suspend fun createProject() {
+        seedTestUser()
         projectsDb.saveProject(
             BackendProjectData(
                 id = projectId,
                 name = "Test Project",
                 address = "Test Address",
+                creatorId = TEST_USER_ID,
                 updatedAt = Timestamp(10L),
             ),
         )
@@ -82,4 +96,8 @@ class GetProjectAssignmentsUseCaseImplTest : BackendKoinInitializedTest() {
 
             assertEquals(2, result.size)
         }
+
+    companion object {
+        private val TEST_USER_ID = Uuid.parse("00000000-0000-0000-0000-000000000042")
+    }
 }

@@ -23,6 +23,7 @@ internal fun ProjectApiDto.toModel(): AppProject =
         name = name,
         address = address,
         clientId = clientId,
+        creatorId = creatorId,
         isClosed = isClosed,
         updatedAt = updatedAt,
     )
@@ -32,6 +33,7 @@ internal fun AppProject.toPutApiDto() =
         name = name,
         address = address,
         clientId = clientId,
+        creatorId = creatorId,
         isClosed = isClosed,
         updatedAt = updatedAt,
     )

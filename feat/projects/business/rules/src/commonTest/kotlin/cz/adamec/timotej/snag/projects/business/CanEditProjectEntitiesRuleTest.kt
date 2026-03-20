@@ -27,6 +27,7 @@ class CanEditProjectEntitiesRuleTest {
             override val name: String = "Test Project"
             override val address: String = "Test Address"
             override val clientId: Uuid? = null
+            override val creatorId: Uuid = UuidProvider.getUuid()
             override val isClosed: Boolean = isClosed
         }
 

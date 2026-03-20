@@ -13,6 +13,7 @@
 package cz.adamec.timotej.snag.configuration.be.impl.internal
 
 import cz.adamec.timotej.snag.configuration.be.AppConfiguration
+import cz.adamec.timotej.snag.configuration.be.AppStatusPageHandler
 import cz.adamec.timotej.snag.routing.be.InvalidBodyException
 import cz.adamec.timotej.snag.routing.be.InvalidIdException
 import io.ktor.http.HttpStatusCode
@@ -20,9 +21,11 @@ import io.ktor.server.application.Application
 import io.ktor.server.application.install
 import io.ktor.server.plugins.statuspages.StatusPages
 import io.ktor.server.response.respond
+import org.koin.ktor.ext.getKoin
 
 internal class StatusPagesConfiguration : AppConfiguration {
     override fun Application.setup() {
+        val handlers = getKoin().getAll<AppStatusPageHandler>()
         install(StatusPages) {
             exception<InvalidIdException> { call, _ ->
                 call.respond(
@@ -35,6 +38,9 @@ internal class StatusPagesConfiguration : AppConfiguration {
                     status = HttpStatusCode.BadRequest,
                     message = "Invalid request body.",
                 )
+            }
+            handlers.forEach { handler ->
+                with(handler) { setup() }
             }
         }
     }

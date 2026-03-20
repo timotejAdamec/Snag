@@ -22,6 +22,7 @@ data class ProjectApiDto(
     val name: String,
     val address: String,
     val clientId: Uuid? = null,
+    val creatorId: Uuid,
     val isClosed: Boolean = false,
     val updatedAt: Timestamp,
     val deletedAt: Timestamp? = null,

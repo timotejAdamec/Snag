@@ -23,6 +23,7 @@ internal fun ProjectEntity.toModel(): BackendProject =
         name = name,
         address = address,
         clientId = client?.id?.value,
+        creatorId = creatorId,
         isClosed = isClosed,
         updatedAt = Timestamp(updatedAt),
         deletedAt = deletedAt?.let { Timestamp(it) },

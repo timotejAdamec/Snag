@@ -18,6 +18,9 @@ import cz.adamec.timotej.snag.projects.be.model.BackendProjectData
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
 import cz.adamec.timotej.snag.reports.be.driven.test.FakePdfReportGenerator
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
+import cz.adamec.timotej.snag.users.be.model.BackendUserData
+import cz.adamec.timotej.snag.users.be.ports.UsersDb
+import cz.adamec.timotej.snag.users.business.UserRole
 import io.ktor.client.request.get
 import io.ktor.client.statement.readRawBytes
 import io.ktor.http.ContentType
@@ -32,6 +35,19 @@ import kotlin.uuid.Uuid
 
 class ReportRouteTest : BackendKoinInitializedTest() {
     private val projectsDb: ProjectsDb by inject()
+    private val usersDb: UsersDb by inject()
+
+    private suspend fun seedTestUser() {
+        usersDb.saveUser(
+            BackendUserData(
+                id = TEST_USER_ID,
+                entraId = "test-entra",
+                email = "test@example.com",
+                role = UserRole.ADMINISTRATOR,
+                updatedAt = Timestamp(1L),
+            ),
+        )
+    }
 
     private fun ApplicationTestBuilder.configureApp() {
         val configurations = getKoin().getAll<AppConfiguration>()
@@ -57,11 +73,13 @@ class ReportRouteTest : BackendKoinInitializedTest() {
     fun `GET report returns PDF for existing project`() =
         testApplication {
             configureApp()
+            seedTestUser()
             projectsDb.saveProject(
                 BackendProjectData(
                     id = PROJECT_ID,
                     name = "Test Project",
                     address = "Test Address",
+                    creatorId = TEST_USER_ID,
                     updatedAt = Timestamp(1L),
                 ),
             )
@@ -89,6 +107,7 @@ class ReportRouteTest : BackendKoinInitializedTest() {
         }
 
     companion object {
+        private val TEST_USER_ID = Uuid.parse("00000000-0000-0000-0000-000000000042")
         private val PROJECT_ID = Uuid.parse("00000000-0000-0000-0000-000000000001")
     }
 }
