@@ -16,15 +16,15 @@ import cz.adamec.timotej.snag.lib.navigation.fe.TabNavRoute
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.StringResource
 import snag.feat.users.fe.driving.api.generated.resources.Res
-import snag.feat.users.fe.driving.api.generated.resources.users_tab_title
-import snag.lib.design.fe.generated.resources.ic_person
-import snag.lib.design.fe.generated.resources.ic_person_filled
+import snag.feat.users.fe.driving.api.generated.resources.directory_tab_title
+import snag.lib.design.fe.generated.resources.ic_contacts
+import snag.lib.design.fe.generated.resources.ic_contacts_filled
 import snag.lib.design.fe.generated.resources.Res as DesignRes
 
-interface UsersNavRoute : TabNavRoute {
-    override val tabIcon: DrawableResource get() = DesignRes.drawable.ic_person
-    override val tabIconSelected: DrawableResource get() = DesignRes.drawable.ic_person_filled
-    override val tabLabel: StringResource get() = Res.string.users_tab_title
+interface DirectoryNavRoute : TabNavRoute {
+    override val tabIcon: DrawableResource get() = DesignRes.drawable.ic_contacts
+    override val tabIconSelected: DrawableResource get() = DesignRes.drawable.ic_contacts_filled
+    override val tabLabel: StringResource get() = Res.string.directory_tab_title
 }
 
-interface UsersRoute : UsersNavRoute
+interface DirectoryRoute : DirectoryNavRoute

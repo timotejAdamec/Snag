@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.projects.fe.driving.impl.di
 
+import cz.adamec.timotej.snag.projects.fe.driving.api.WebProjectClientCreationRoute
 import cz.adamec.timotej.snag.projects.fe.driving.api.WebProjectCreationRoute
 import cz.adamec.timotej.snag.projects.fe.driving.api.WebProjectDetailRoute
 import cz.adamec.timotej.snag.projects.fe.driving.api.WebProjectEditRoute
@@ -23,5 +24,6 @@ internal actual val platformModule =
         projectsScreenNavigation<WebProjectsRoute>()
         projectCreationScreenNavigation<WebProjectCreationRoute>()
         projectEditScreenNavigation<WebProjectEditRoute>()
+        projectClientCreationScreenNavigation<WebProjectClientCreationRoute>()
         projectDetailsScreenNavigation<WebProjectDetailRoute>()
     }

@@ -22,12 +22,12 @@ import org.koin.compose.viewmodel.koinViewModel
 import kotlin.uuid.Uuid
 
 @Composable
-internal fun ClientsScreen(
+fun ClientsScreen(
     onNewClientClick: () -> Unit,
     onClientClick: (clientId: Uuid) -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: ClientsViewModel = koinViewModel(),
 ) {
+    val viewModel: ClientsViewModel = koinViewModel()
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     ShowSnackbarOnError(viewModel.errorsFlow)

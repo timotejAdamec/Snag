@@ -34,8 +34,8 @@ import cz.adamec.timotej.snag.lib.design.fe.theme.SnagTheme
 import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectsNavigation
 import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectsRoute
 import cz.adamec.timotej.snag.ui.components.TabItem
-import cz.adamec.timotej.snag.users.fe.driving.api.UsersNavigation
-import cz.adamec.timotej.snag.users.fe.driving.api.UsersRoute
+import cz.adamec.timotej.snag.users.fe.driving.api.DirectoryNavigation
+import cz.adamec.timotej.snag.users.fe.driving.api.DirectoryRoute
 import cz.adamec.timotej.snag.vm.MainViewModel
 import kotlinx.coroutines.FlowPreview
 import org.koin.compose.koinInject
@@ -46,7 +46,7 @@ import org.koin.compose.viewmodel.koinViewModel
 internal fun MainScreen(
     mainViewModel: MainViewModel = koinViewModel(),
     projectsRoute: ProjectsRoute = koinInject(),
-    usersRoute: UsersRoute = koinInject(),
+    directoryRoute: DirectoryRoute = koinInject(),
 ) {
     val syncStatus by mainViewModel.syncStatus.collectAsStateWithLifecycle()
     SnagTheme {
@@ -57,7 +57,7 @@ internal fun MainScreen(
                 paddingValues = paddingValues,
                 syncBarState = syncStatus.toBarState(),
                 projectsRoute = projectsRoute,
-                usersRoute = usersRoute,
+                directoryRoute = directoryRoute,
             )
         }
     }
@@ -68,7 +68,7 @@ private fun MainScreenContent(
     paddingValues: PaddingValues,
     syncBarState: SyncStatusBarState,
     projectsRoute: ProjectsRoute,
-    usersRoute: UsersRoute,
+    directoryRoute: DirectoryRoute,
 ) {
     Column {
         var isSyncStatusBarVisible by remember { mutableStateOf(false) }
@@ -117,17 +117,17 @@ private fun MainScreenContent(
                     },
                 )
                 TabItem(
-                    route = usersRoute,
-                    selected = currentDestination == TopLevelDestination.USERS,
+                    route = directoryRoute,
+                    selected = currentDestination == TopLevelDestination.DIRECTORY,
                     onClick = {
-                        currentDestination = TopLevelDestination.USERS
+                        currentDestination = TopLevelDestination.DIRECTORY
                     },
                 )
             },
         ) {
             when (currentDestination) {
                 TopLevelDestination.PROJECTS -> ProjectsNavigation()
-                TopLevelDestination.USERS -> UsersNavigation()
+                TopLevelDestination.DIRECTORY -> DirectoryNavigation()
             }
         }
     }

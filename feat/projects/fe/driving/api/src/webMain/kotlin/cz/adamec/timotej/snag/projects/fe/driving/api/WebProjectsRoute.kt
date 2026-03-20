@@ -55,3 +55,16 @@ class WebProjectEditRouteFactory : ProjectEditRouteFactory {
 class WebProjectDetailRouteFactory : ProjectDetailRouteFactory {
     override fun create(projectId: Uuid): ProjectDetailRoute = WebProjectDetailRoute(projectId)
 }
+
+@Immutable
+data class WebProjectClientCreationRoute(
+    override val onCreated: (Uuid) -> Unit,
+) : ProjectClientCreationRoute {
+    companion object {
+        const val URL_NAME = "new-client-from-project"
+    }
+}
+
+class WebProjectClientCreationRouteFactory : ProjectClientCreationRouteFactory {
+    override fun create(onCreated: (Uuid) -> Unit) = WebProjectClientCreationRoute(onCreated)
+}

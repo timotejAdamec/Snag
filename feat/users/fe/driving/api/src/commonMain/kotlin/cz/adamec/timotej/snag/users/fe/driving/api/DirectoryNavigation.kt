@@ -23,11 +23,11 @@ import org.koin.compose.koinInject
 import org.koin.compose.navigation3.koinEntryProvider
 
 @Composable
-fun UsersNavigation(
+fun DirectoryNavigation(
     modifier: Modifier = Modifier,
-    backStack: UsersBackStack = koinInject(),
+    backStack: DirectoryBackStack = koinInject(),
 ) {
-    val entryProvider = koinEntryProvider<UsersNavRoute>()
+    val entryProvider = koinEntryProvider<DirectoryNavRoute>()
     NavDisplay(
         modifier = modifier,
         backStack = backStack.value,

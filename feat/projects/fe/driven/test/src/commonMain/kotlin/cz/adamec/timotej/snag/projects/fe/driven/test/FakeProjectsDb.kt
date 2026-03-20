@@ -40,5 +40,12 @@ class FakeProjectsDb : ProjectsDb {
 
     override suspend fun deleteProject(id: Uuid): OfflineFirstDataResult<Unit> = ops.deleteItem(id)
 
+    override suspend fun isClientReferencedByProject(clientId: Uuid): OfflineFirstDataResult<Boolean> {
+        val isReferenced =
+            ops.items.value.values
+                .any { it.clientId == clientId }
+        return OfflineFirstDataResult.Success(isReferenced)
+    }
+
     fun setProject(project: AppProject) = ops.setItem(project)
 }

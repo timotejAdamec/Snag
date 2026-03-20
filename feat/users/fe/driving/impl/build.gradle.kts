@@ -20,6 +20,8 @@ kotlin {
             dependencies {
                 implementation(project(":feat:users:fe:app:api"))
                 implementation(project(":feat:users:business:model"))
+                implementation(project(":feat:clients:fe:driving:api"))
+                implementation(project(":feat:clients:fe:driving:impl"))
             }
         }
         commonTest {

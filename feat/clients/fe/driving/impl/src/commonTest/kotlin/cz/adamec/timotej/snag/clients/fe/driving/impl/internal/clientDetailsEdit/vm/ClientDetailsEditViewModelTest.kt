@@ -14,6 +14,8 @@ package cz.adamec.timotej.snag.clients.fe.driving.impl.internal.clientDetailsEdi
 
 import cz.adamec.timotej.snag.clients.app.model.AppClient
 import cz.adamec.timotej.snag.clients.app.model.AppClientData
+import cz.adamec.timotej.snag.clients.fe.app.api.CanDeleteClientUseCase
+import cz.adamec.timotej.snag.clients.fe.app.api.DeleteClientUseCase
 import cz.adamec.timotej.snag.clients.fe.app.api.GetClientUseCase
 import cz.adamec.timotej.snag.clients.fe.app.api.SaveClientUseCase
 import cz.adamec.timotej.snag.clients.fe.driven.test.FakeClientsDb
@@ -40,12 +42,16 @@ class ClientDetailsEditViewModelTest : FrontendKoinInitializedTest() {
 
     private val getClientUseCase: GetClientUseCase by inject()
     private val saveClientUseCase: SaveClientUseCase by inject()
+    private val deleteClientUseCase: DeleteClientUseCase by inject()
+    private val canDeleteClientUseCase: CanDeleteClientUseCase by inject()
 
     private fun createViewModel(clientId: Uuid? = null) =
         ClientDetailsEditViewModel(
             clientId = clientId,
             getClientUseCase = getClientUseCase,
             saveClientUseCase = saveClientUseCase,
+            deleteClientUseCase = deleteClientUseCase,
+            canDeleteClientUseCase = canDeleteClientUseCase,
             emailFormatRule = get(),
             phoneNumberRule = get(),
         )
