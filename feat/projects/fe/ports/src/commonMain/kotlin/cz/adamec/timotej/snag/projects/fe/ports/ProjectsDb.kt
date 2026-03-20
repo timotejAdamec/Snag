@@ -29,4 +29,6 @@ interface ProjectsDb {
     suspend fun saveProject(project: AppProject): OfflineFirstDataResult<Unit>
 
     suspend fun deleteProject(id: Uuid): OfflineFirstDataResult<Unit>
+
+    suspend fun isClientReferencedByProject(clientId: Uuid): OfflineFirstDataResult<Boolean>
 }

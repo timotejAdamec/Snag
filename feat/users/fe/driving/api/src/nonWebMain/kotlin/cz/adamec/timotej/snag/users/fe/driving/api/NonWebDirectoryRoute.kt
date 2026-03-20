@@ -12,14 +12,9 @@
 
 package cz.adamec.timotej.snag.users.fe.driving.api
 
-import org.koin.core.annotation.Provided
-import kotlin.jvm.JvmInline
+import androidx.compose.runtime.Immutable
+import kotlinx.serialization.Serializable
 
-@JvmInline
-value class UsersBackStack(
-    @Provided val value: MutableList<UsersNavRoute>,
-) {
-    fun removeLastSafely() {
-        if (value.size > 1) value.removeLastOrNull()
-    }
-}
+@Serializable
+@Immutable
+data object NonWebDirectoryRoute : DirectoryRoute

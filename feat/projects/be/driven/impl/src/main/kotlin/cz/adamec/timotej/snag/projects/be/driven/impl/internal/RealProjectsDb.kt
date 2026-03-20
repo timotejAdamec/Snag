@@ -24,7 +24,10 @@ import cz.adamec.timotej.snag.sync.be.ResolveConflictForSaveUseCase
 import cz.adamec.timotej.snag.sync.be.SaveConflictResult
 import cz.adamec.timotej.snag.sync.be.model.ResolveConflictForDeleteRequest
 import cz.adamec.timotej.snag.sync.be.model.ResolveConflictForSaveRequest
+import org.jetbrains.exposed.v1.core.and
+import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.core.greater
+import org.jetbrains.exposed.v1.core.isNull
 import org.jetbrains.exposed.v1.core.or
 import org.jetbrains.exposed.v1.jdbc.Database
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
@@ -112,6 +115,16 @@ internal class RealProjectsDb(
                     result.serverVersion
                 }
             }
+        }
+
+    override suspend fun isClientReferencedByProject(clientId: Uuid): Boolean =
+        transaction(database) {
+            ProjectEntity
+                .find {
+                    ProjectsTable.client eq clientId and
+                        ProjectsTable.deletedAt.isNull()
+                }.empty()
+                .not()
         }
 
     override suspend fun getProjectsModifiedSince(since: Timestamp): List<BackendProject> =

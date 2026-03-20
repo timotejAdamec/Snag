@@ -12,10 +12,13 @@
 
 package cz.adamec.timotej.snag.clients.fe.app.impl.di
 
+import cz.adamec.timotej.snag.clients.business.CanDeleteClientRule
+import cz.adamec.timotej.snag.clients.fe.app.api.CanDeleteClientUseCase
 import cz.adamec.timotej.snag.clients.fe.app.api.DeleteClientUseCase
 import cz.adamec.timotej.snag.clients.fe.app.api.GetClientUseCase
 import cz.adamec.timotej.snag.clients.fe.app.api.GetClientsUseCase
 import cz.adamec.timotej.snag.clients.fe.app.api.SaveClientUseCase
+import cz.adamec.timotej.snag.clients.fe.app.impl.internal.CanDeleteClientUseCaseImpl
 import cz.adamec.timotej.snag.clients.fe.app.impl.internal.DeleteClientUseCaseImpl
 import cz.adamec.timotej.snag.clients.fe.app.impl.internal.GetClientUseCaseImpl
 import cz.adamec.timotej.snag.clients.fe.app.impl.internal.GetClientsUseCaseImpl
@@ -34,6 +37,8 @@ val clientsAppModule =
         factoryOf(::GetClientUseCaseImpl) bind GetClientUseCase::class
         factoryOf(::SaveClientUseCaseImpl) bind SaveClientUseCase::class
         factoryOf(::DeleteClientUseCaseImpl) bind DeleteClientUseCase::class
+        factoryOf(::CanDeleteClientUseCaseImpl) bind CanDeleteClientUseCase::class
+        factoryOf(::CanDeleteClientRule)
         factoryOf(::ClientSyncHandler) bind PushSyncOperationHandler::class
         factoryOf(::ClientPullSyncHandler) bind PullSyncOperationHandler::class
     }

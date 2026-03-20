@@ -10,11 +10,8 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.users.fe.driving.api
+package cz.adamec.timotej.snag.clients.business
 
-import androidx.compose.runtime.Immutable
-import kotlinx.serialization.Serializable
-
-@Serializable
-@Immutable
-data object NonWebUsersRoute : UsersRoute
+class CanDeleteClientRule {
+    operator fun invoke(isReferencedByProject: Boolean): Boolean = !isReferencedByProject
+}

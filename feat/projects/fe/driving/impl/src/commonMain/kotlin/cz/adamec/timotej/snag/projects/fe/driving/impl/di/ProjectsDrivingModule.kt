@@ -17,12 +17,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.ui.Modifier
 import androidx.navigation3.scene.DialogSceneStrategy
-import cz.adamec.timotej.snag.clients.fe.driving.api.ClientCreationRouteFactory
+import cz.adamec.timotej.snag.clients.fe.driving.impl.internal.clientDetailsEdit.ui.ClientDetailsEditScreen
 import cz.adamec.timotej.snag.feat.inspections.fe.driving.api.InspectionCreationRouteFactory
 import cz.adamec.timotej.snag.feat.inspections.fe.driving.api.InspectionEditRouteFactory
 import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureCreationRouteFactory
 import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureDetailRouteFactory
 import cz.adamec.timotej.snag.lib.design.fe.dialog.fullscreenDialogProperties
+import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectClientCreationRoute
+import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectClientCreationRouteFactory
 import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectCreationRoute
 import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectDetailRoute
 import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectDetailRouteFactory
@@ -100,7 +102,7 @@ private fun Scope.ProjectDetailsEditScreenInjection(
     projectId: Uuid? = null,
     onSaveProject: (savedProjectId: Uuid) -> Unit,
 ) {
-    val clientCreationRouteFactory = koinInject<ClientCreationRouteFactory>()
+    val clientCreationRouteFactory = koinInject<ProjectClientCreationRouteFactory>()
     ProjectDetailsEditScreen(
         projectId = projectId,
         onSaveProject = { savedProjectId ->
@@ -116,6 +118,24 @@ private fun Scope.ProjectDetailsEditScreenInjection(
         },
     )
 }
+
+@Suppress("FunctionNameMaxLength")
+internal inline fun <reified T : ProjectClientCreationRoute> Module.projectClientCreationScreenNavigation() =
+    navigation<T>(
+        metadata = DialogSceneStrategy.dialog(fullscreenDialogProperties()),
+    ) { route ->
+        ClientDetailsEditScreen(
+            onSaveClient = { savedClientId ->
+                route.onCreated(savedClientId)
+                val backStack = get<ProjectsBackStack>()
+                backStack.removeLastSafely()
+            },
+            onCancelClick = {
+                val backStack = get<ProjectsBackStack>()
+                backStack.removeLastSafely()
+            },
+        )
+    }
 
 internal inline fun <reified T : ProjectDetailRoute> Module.projectDetailsScreenNavigation() =
     navigation<T> { route ->
