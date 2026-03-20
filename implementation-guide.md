@@ -32,13 +32,13 @@ This document is a reference for the implementation team. It describes what the 
 
 ### On project close
 - [x] The project state is set to "closed".
-- [ ] Users assigned to the project lose access to it (they no longer see it in their project list). *(requires roles/assignment — not yet implemented)*
+- [ ] Only the creator retains access; other users no longer see the project in their list. *(requires roles — not yet implemented)*
 - [x] All project data is preserved — **no data is deleted**.
 - [x] Pending synchronisation queue entries for this project should be discarded / ignored. *(backend returns server entity instead of 403, frontend treats as success — queue unblocks)*
 
 ### On project reopen
 - [x] The project state is set back to "open".
-- [ ] Previously assigned users regain access. *(requires roles/assignment — not yet implemented)*
+- [ ] Previously assigned users can access the project again. *(requires roles — not yet implemented)*
 
 ---
 
@@ -63,16 +63,17 @@ Both the **creator** and any **assigned user** of an open project have **full CR
 
 When a project is **closed**, only the creator retains access. Assigned users lose all access immediately.
 
-> **Status**: [x] Backend rejects sub-entity save/delete on closed projects (returns server entity for sync compatibility). [ ] Creator-only access enforcement requires roles — not yet implemented.
+- [x] Backend rejects sub-entity save/delete on closed projects (returns server entity for sync compatibility).
+- [ ] Creator-only access enforcement requires roles — not yet implemented.
 
 ---
 
 ## 4. Authentication
 
-- Login exclusively via **corporate Microsoft EntraID**.
-- No invite flow, no password management in the system.
-- A user without a valid EntraID token has no access whatsoever.
-- After successful authentication the system maps the EntraID identity to a role stored in the system.
+- [ ] Login exclusively via **corporate Microsoft EntraID**.
+- [x] No invite flow, no password management in the system.
+- [ ] A user without a valid EntraID token has no access whatsoever.
+- [ ] After successful authentication the system maps the EntraID identity to a role stored in the system.
 
 ---
 
@@ -91,43 +92,43 @@ When a project is **closed**, only the creator retains access. Assigned users lo
 
 The following features are new compared to the original analysis (which had no roles):
 
-1. **Project closure and reopening** — projects can be closed (access revoked) and reopened; no deletion of projects.
-2. **User assignment to / removal from project** — leads can add/remove technicians or service workers. *(Done — BE API + DB, Phase 1)*
-3. **Authentication (EntraID)** — mandatory Microsoft EntraID login (standalone mechanism, not a UC).
-4. **Role management (UC7)** — admin manages all roles; passport lead delegates technician role; service lead delegates service worker role. *(Done — BE API: role set via PUT /users/{id}, Phase 1)*
-5. **Inspection deletion** — UC5 Scenario E. *(Done — full-stack: BE API + DB soft delete + sync, FE use case + local delete + sync enqueue, FE UI delete button + confirmation dialog)*
-6. **Service protocol** — second PDF export format with signature fields.
+1. - [ ] **Project closure and reopening** — projects can be closed and reopened; access is determined by project state and roles. *(close/reopen mechanism done; role-based access rules not yet enforced)*
+2. - [ ] **User assignment to / removal from project** — leads can add/remove technicians or service workers. *(BE API + DB done; role-restricted access not enforced)*
+3. - [ ] **Authentication (EntraID)** — mandatory Microsoft EntraID login (standalone mechanism, not a UC).
+4. - [ ] **Role management (UC7)** — admin manages all roles; passport lead delegates technician role; service lead delegates service worker role. *(BE API done: role set via PUT /users/{id}; authorization enforcement missing)*
+5. - [x] **Inspection deletion** — UC5 Scenario E. *(full-stack: BE API + DB soft delete + sync, FE use case + local delete + sync enqueue, FE UI delete button + confirmation dialog)*
+6. - [ ] **Service protocol** — second PDF export format with signature fields.
 
 ---
 
 ## 7. New Functional Requirements
 
-| FP | Description | UC |
-|---|---|---|
-| FP4 | Close project — revoke access, preserve data | UC1 | **Partial** — close mechanism done, access revocation requires roles |
-| FP4b | Reopen project — reopen a closed project | UC1 | **Partial** — reopen mechanism done, access restoration requires roles |
-| FP4c | Assign user to project | UC1 | **Done** (BE API + DB) |
-| FP4d | Remove user from project | UC1 | **Done** (BE API + DB) |
-| FP4e | Close project — creator access: only creator retains access to closed project | UC1 | **Partial** — sub-entity editing blocked on closed projects, creator-only enforcement requires roles |
-| FP31 | Delete inspection | UC5 | **Done** |
-| FP32b | Generate service protocol — PDF with work description and signature fields | UC6 |
-| FP34 | Authentication via Microsoft EntraID | — |
-| FP35 | Deny access without authentication | — |
-| FP36 | Role management by administrator | UC7 | **Done** (BE API: PUT /users/{id} with role) |
-| FP37 | Delegate and remove passport technician role | UC7 | **Done** (BE API: PUT /users/{id} with role) |
-| FP38 | Delegate and remove service worker role | UC7 | **Done** (BE API: PUT /users/{id} with role) |
+| FP | Description | UC | Status |
+|---|---|---|---|
+| FP4 | Close project — restrict access to creator, preserve data | UC1 | - [ ] Close mechanism done; role-based access rules not yet enforced |
+| FP4b | Reopen project — reopen a closed project | UC1 | - [ ] Reopen mechanism done; role-based access rules not yet enforced |
+| FP4c | Assign user to project | UC1 | - [ ] BE API + DB done; role-restricted access not enforced |
+| FP4d | Remove user from project | UC1 | - [ ] BE API + DB done; role-restricted access not enforced |
+| FP4e | Close project — creator access: only creator retains access to closed project | UC1 | - [ ] Sub-entity editing blocked on closed projects; creator-only enforcement requires roles |
+| FP31 | Delete inspection | UC5 | - [x] Done |
+| FP32b | Generate service protocol — PDF with work description and signature fields | UC6 | - [ ] Not started |
+| FP34 | Authentication via Microsoft EntraID | — | - [ ] Not started |
+| FP35 | Deny access without authentication | — | - [ ] Not started |
+| FP36 | Role management by administrator | UC7 | - [ ] BE API done (PUT /users/{id} with role); authorization enforcement missing |
+| FP37 | Delegate and remove passport technician role | UC7 | - [ ] BE API done (PUT /users/{id} with role); authorization enforcement missing |
+| FP38 | Delegate and remove service worker role | UC7 | - [ ] BE API done (PUT /users/{id} with role); authorization enforcement missing |
 
 ---
 
 ## 8. Non-Functional Requirements for Implementation
 
 ### NP12 — Authentication via EntraID
-- **Backend**: validate EntraID JWT on every protected endpoint; reject requests without valid token.
-- **Frontend**: implement OAuth2 / OIDC flow with EntraID; store tokens securely; refresh tokens before expiry.
+- [ ] **Backend**: validate EntraID JWT on every protected endpoint; reject requests without valid token.
+- [ ] **Frontend**: implement OAuth2 / OIDC flow with EntraID; store tokens securely; refresh tokens before expiry.
 
 ### NP13 — Role-based authorisation
-- **Backend**: check user role on every endpoint; return 403 for insufficient permissions.
-- **Frontend**: hide/show UI elements based on role; do not rely solely on frontend gating.
+- [ ] **Backend**: check user role on every endpoint; return 403 for insufficient permissions.
+- [ ] **Frontend**: hide/show UI elements based on role; do not rely solely on frontend gating.
 
 ### Detailed Permission Matrix
 
