@@ -108,7 +108,7 @@ internal fun InspectionEditContent(
 
     if (isShowingDeleteConfirmation) {
         InspectionDeletionAlertDialog(
-            areButtonsEnabled = state.canInvokeDeletion,
+            areButtonsEnabled = state.canEdit,
             onDelete = onDeleteClick,
             onDismiss = { isShowingDeleteConfirmation = false },
         )
@@ -257,7 +257,7 @@ internal fun InspectionEditContent(
                 actions = {
                     if (isEditMode) {
                         IconButton(
-                            enabled = state.canInvokeDeletion,
+                            enabled = state.canEdit,
                             onClick = { isShowingDeleteConfirmation = true },
                         ) {
                             Icon(
@@ -268,7 +268,7 @@ internal fun InspectionEditContent(
                     }
                     Button(
                         onClick = onSaveClick,
-                        enabled = state.canSave,
+                        enabled = state.canEdit,
                     ) {
                         Text(text = stringResource(DesignRes.string.save))
                     }

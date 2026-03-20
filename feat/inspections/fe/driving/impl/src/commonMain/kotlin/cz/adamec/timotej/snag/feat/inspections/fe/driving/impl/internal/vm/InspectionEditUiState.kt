@@ -25,6 +25,5 @@ internal data class InspectionEditUiState(
     val isProjectClosed: Boolean = false,
     val isBeingDeleted: Boolean = false,
 ) {
-    val canSave = !isProjectClosed
-    val canInvokeDeletion = !isBeingDeleted && !isProjectClosed
+    val canEdit = !isBeingDeleted && !isProjectClosed
 }
