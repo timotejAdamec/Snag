@@ -17,6 +17,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 @Immutable
-data object WebDirectoryRoute : DirectoryRoute {
-    const val URL_NAME = "directory"
+data object WebUsersRoute : UsersRoute {
+    const val URL_NAME = "users"
 }

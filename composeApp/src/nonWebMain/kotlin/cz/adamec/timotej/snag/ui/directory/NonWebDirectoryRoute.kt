@@ -10,11 +10,11 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.users.fe.driving.api
+package cz.adamec.timotej.snag.ui.directory
 
 import androidx.compose.runtime.Immutable
 import kotlinx.serialization.Serializable
 
 @Serializable
 @Immutable
-data object NonWebDirectoryRoute : DirectoryRoute
+internal data object NonWebDirectoryRoute : DirectoryRoute

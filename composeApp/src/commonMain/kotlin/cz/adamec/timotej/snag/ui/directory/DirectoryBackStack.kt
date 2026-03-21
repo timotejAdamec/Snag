@@ -10,14 +10,14 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.users.fe.driving.api
+package cz.adamec.timotej.snag.ui.directory
 
 import cz.adamec.timotej.snag.lib.navigation.fe.SnagNavRoute
 import org.koin.core.annotation.Provided
 import kotlin.jvm.JvmInline
 
 @JvmInline
-value class DirectoryBackStack(
+internal value class DirectoryBackStack(
     @Provided val value: MutableList<SnagNavRoute>,
 ) {
     fun removeLastSafely() {

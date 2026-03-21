@@ -13,11 +13,9 @@
 package cz.adamec.timotej.snag.users.fe.driving.impl.di
 
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.ui.Modifier
-import cz.adamec.timotej.snag.users.fe.driving.api.DirectoryBackStack
-import cz.adamec.timotej.snag.users.fe.driving.api.DirectoryRoute
-import cz.adamec.timotej.snag.users.fe.driving.impl.internal.directory.ui.DirectoryScreen
+import cz.adamec.timotej.snag.users.fe.driving.api.UsersRoute
+import cz.adamec.timotej.snag.users.fe.driving.impl.internal.userManagement.ui.UsersScreen
 import cz.adamec.timotej.snag.users.fe.driving.impl.internal.userManagement.vm.UserManagementViewModel
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.module.Module
@@ -25,9 +23,9 @@ import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 import org.koin.dsl.navigation3.navigation
 
-internal inline fun <reified T : DirectoryRoute> Module.directoryScreenNavigation() =
+internal inline fun <reified T : UsersRoute> Module.usersScreenNavigation() =
     navigation<T> {
-        DirectoryScreen(
+        UsersScreen(
             modifier = Modifier.fillMaxSize(),
             userManagementViewModel = koinViewModel(),
         )
@@ -36,11 +34,6 @@ internal inline fun <reified T : DirectoryRoute> Module.directoryScreenNavigatio
 val usersDrivingImplModule =
     module {
         includes(platformModule)
-        single {
-            DirectoryBackStack(
-                value = mutableStateListOf(get<DirectoryRoute>()),
-            )
-        }
         viewModelOf(::UserManagementViewModel)
     }
 

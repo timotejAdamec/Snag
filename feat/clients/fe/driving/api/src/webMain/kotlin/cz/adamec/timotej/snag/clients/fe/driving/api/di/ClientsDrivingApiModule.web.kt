@@ -15,10 +15,10 @@ package cz.adamec.timotej.snag.clients.fe.driving.api.di
 import cz.adamec.timotej.snag.clients.fe.driving.api.ClientCreationRouteFactory
 import cz.adamec.timotej.snag.clients.fe.driving.api.ClientEditRouteFactory
 import cz.adamec.timotej.snag.clients.fe.driving.api.ClientsBrowserHistoryFragmentBuilder
-import cz.adamec.timotej.snag.clients.fe.driving.api.ClientsRoute
+import cz.adamec.timotej.snag.clients.fe.driving.api.ClientsRouteFactory
 import cz.adamec.timotej.snag.clients.fe.driving.api.WebClientCreationRouteFactory
 import cz.adamec.timotej.snag.clients.fe.driving.api.WebClientEditRouteFactory
-import cz.adamec.timotej.snag.clients.fe.driving.api.WebClientsRoute
+import cz.adamec.timotej.snag.clients.fe.driving.api.WebClientsRouteFactory
 import cz.adamec.timotej.snag.lib.navigation.fe.BrowserHistoryFragmentBuilder
 import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.bind
@@ -26,7 +26,7 @@ import org.koin.dsl.module
 
 internal actual val platformModule =
     module {
-        factory { WebClientsRoute } bind ClientsRoute::class
+        factory { WebClientsRouteFactory() } bind ClientsRouteFactory::class
         factory { WebClientCreationRouteFactory() } bind ClientCreationRouteFactory::class
         factory { WebClientEditRouteFactory() } bind ClientEditRouteFactory::class
         factoryOf(::ClientsBrowserHistoryFragmentBuilder) bind BrowserHistoryFragmentBuilder::class

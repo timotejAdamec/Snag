@@ -10,12 +10,8 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.users.fe.driving.impl.di
+package cz.adamec.timotej.snag.users.fe.driving.api
 
-import cz.adamec.timotej.snag.users.fe.driving.api.WebUsersRoute
-import org.koin.dsl.module
+import cz.adamec.timotej.snag.lib.navigation.fe.SnagNavRoute
 
-internal actual val platformModule =
-    module {
-        usersScreenNavigation<WebUsersRoute>()
-    }
+interface UsersRoute : SnagNavRoute

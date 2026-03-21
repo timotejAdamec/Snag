@@ -14,16 +14,16 @@ package cz.adamec.timotej.snag.clients.fe.driving.api.di
 
 import cz.adamec.timotej.snag.clients.fe.driving.api.ClientCreationRouteFactory
 import cz.adamec.timotej.snag.clients.fe.driving.api.ClientEditRouteFactory
-import cz.adamec.timotej.snag.clients.fe.driving.api.ClientsRoute
+import cz.adamec.timotej.snag.clients.fe.driving.api.ClientsRouteFactory
 import cz.adamec.timotej.snag.clients.fe.driving.api.NonWebClientCreationRouteFactory
 import cz.adamec.timotej.snag.clients.fe.driving.api.NonWebClientEditRouteFactory
-import cz.adamec.timotej.snag.clients.fe.driving.api.NonWebClientsRoute
+import cz.adamec.timotej.snag.clients.fe.driving.api.NonWebClientsRouteFactory
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
 internal actual val platformModule =
     module {
-        factory { NonWebClientsRoute } bind ClientsRoute::class
+        factory { NonWebClientsRouteFactory() } bind ClientsRouteFactory::class
         factory { NonWebClientCreationRouteFactory() } bind ClientCreationRouteFactory::class
         factory { NonWebClientEditRouteFactory() } bind ClientEditRouteFactory::class
     }

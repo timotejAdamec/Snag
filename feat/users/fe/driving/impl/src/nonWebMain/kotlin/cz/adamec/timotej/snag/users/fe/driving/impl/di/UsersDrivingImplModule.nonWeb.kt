@@ -12,10 +12,10 @@
 
 package cz.adamec.timotej.snag.users.fe.driving.impl.di
 
-import cz.adamec.timotej.snag.users.fe.driving.api.NonWebDirectoryRoute
+import cz.adamec.timotej.snag.users.fe.driving.api.NonWebUsersRoute
 import org.koin.dsl.module
 
 internal actual val platformModule =
     module {
-        directoryScreenNavigation<NonWebDirectoryRoute>()
+        usersScreenNavigation<NonWebUsersRoute>()
     }

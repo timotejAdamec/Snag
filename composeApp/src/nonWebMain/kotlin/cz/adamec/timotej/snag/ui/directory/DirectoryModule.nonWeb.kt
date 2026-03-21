@@ -10,12 +10,12 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.users.fe.driving.impl.di
+package cz.adamec.timotej.snag.ui.directory
 
-import cz.adamec.timotej.snag.users.fe.driving.api.WebUsersRoute
+import org.koin.dsl.bind
 import org.koin.dsl.module
 
-internal actual val platformModule =
+internal actual val directoryPlatformModule =
     module {
-        usersScreenNavigation<WebUsersRoute>()
+        factory { NonWebDirectoryRoute } bind DirectoryRoute::class
     }

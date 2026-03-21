@@ -13,13 +13,26 @@
 package cz.adamec.timotej.snag.clients.fe.driving.api
 
 import androidx.compose.runtime.Immutable
-import kotlinx.serialization.Serializable
 import kotlin.uuid.Uuid
 
-@Serializable
 @Immutable
-data object WebClientsRoute : ClientsRoute {
-    const val URL_NAME = "clients"
+data class WebClientsRoute(
+    override val onNewClientClick: () -> Unit,
+    override val onClientClick: (Uuid) -> Unit,
+) : ClientsRoute {
+    companion object {
+        const val URL_NAME = "clients"
+    }
+}
+
+class WebClientsRouteFactory : ClientsRouteFactory {
+    override fun create(
+        onNewClientClick: () -> Unit,
+        onClientClick: (Uuid) -> Unit,
+    ) = WebClientsRoute(
+        onNewClientClick = onNewClientClick,
+        onClientClick = onClientClick,
+    )
 }
 
 @Immutable
@@ -42,10 +55,10 @@ class WebClientCreationRouteFactory : ClientCreationRouteFactory {
     )
 }
 
-@Serializable
 @Immutable
 data class WebClientEditRoute(
     override val clientId: Uuid,
+    override val onDismiss: () -> Unit,
 ) : ClientEditRoute {
     companion object {
         const val URL_NAME = "edit-client"
@@ -53,5 +66,11 @@ data class WebClientEditRoute(
 }
 
 class WebClientEditRouteFactory : ClientEditRouteFactory {
-    override fun create(clientId: Uuid): ClientEditRoute = WebClientEditRoute(clientId)
+    override fun create(
+        clientId: Uuid,
+        onDismiss: () -> Unit,
+    ) = WebClientEditRoute(
+        clientId = clientId,
+        onDismiss = onDismiss,
+    )
 }

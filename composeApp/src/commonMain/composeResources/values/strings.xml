@@ -12,4 +12,6 @@
 
 <resources>
     <string name="directory_tab_title">Directory</string>
+    <string name="users_tab_title">Users</string>
+    <string name="clients_tab_title">Clients</string>
 </resources>
