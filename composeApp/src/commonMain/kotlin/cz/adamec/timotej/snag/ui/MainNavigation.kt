@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
+import cz.adamec.timotej.snag.lib.design.fe.scenes.ContentPaneSceneStrategy
 import cz.adamec.timotej.snag.lib.design.fe.scenes.InlineDialogSceneStrategy
 import cz.adamec.timotej.snag.lib.navigation.fe.SnagNavRoute
 import org.koin.compose.koinInject
@@ -31,6 +32,7 @@ internal fun MainNavigation() {
         sceneStrategies =
             listOf(
                 InlineDialogSceneStrategy(),
+                ContentPaneSceneStrategy(),
             ),
         entryDecorators =
             listOf(

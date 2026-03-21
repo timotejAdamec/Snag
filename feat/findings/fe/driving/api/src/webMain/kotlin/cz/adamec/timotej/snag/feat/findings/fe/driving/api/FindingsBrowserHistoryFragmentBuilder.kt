@@ -17,10 +17,26 @@ import cz.adamec.timotej.snag.lib.navigation.fe.BrowserHistoryFragmentBuilder
 import cz.adamec.timotej.snag.lib.navigation.fe.SnagNavRoute
 
 internal class FindingsBrowserHistoryFragmentBuilder : BrowserHistoryFragmentBuilder {
-    override fun handles(route: SnagNavRoute): Boolean = route is WebFindingEditRoute || route is WebFindingCreationRoute
+    override fun handles(route: SnagNavRoute): Boolean =
+        route is WebFindingsListRoute ||
+            route is WebFindingDetailRoute ||
+            route is WebFindingEditRoute ||
+            route is WebFindingCreationRoute
 
     override fun build(route: SnagNavRoute): String =
         when (route) {
+            is WebFindingsListRoute ->
+                buildBrowserHistoryFragment(
+                    WebFindingsListRoute.URL_NAME,
+                    mapOf("structureId" to route.structureId.toString()),
+                )
+
+            is WebFindingDetailRoute ->
+                buildBrowserHistoryFragment(
+                    WebFindingDetailRoute.URL_NAME,
+                    mapOf("id" to route.findingId.toString()),
+                )
+
             is WebFindingEditRoute ->
                 buildBrowserHistoryFragment(
                     WebFindingEditRoute.URL_NAME,

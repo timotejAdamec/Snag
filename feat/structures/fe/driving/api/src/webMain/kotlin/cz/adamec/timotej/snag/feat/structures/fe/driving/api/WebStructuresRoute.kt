@@ -42,7 +42,11 @@ data class WebStructureEditRoute(
 data class WebStructureFloorPlanRoute(
     override val projectId: Uuid,
     override val structureId: Uuid,
-) : StructureFloorPlanRoute
+) : StructureFloorPlanRoute {
+    companion object {
+        const val URL_NAME = "structure-floor-plan"
+    }
+}
 
 class WebStructureCreationRouteFactory : StructureCreationRouteFactory {
     override fun create(projectId: Uuid): StructureCreationRoute = WebStructureCreationRoute(projectId)

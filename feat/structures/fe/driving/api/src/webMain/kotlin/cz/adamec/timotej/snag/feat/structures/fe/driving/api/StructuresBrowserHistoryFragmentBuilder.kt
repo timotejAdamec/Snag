@@ -20,7 +20,8 @@ internal class StructuresBrowserHistoryFragmentBuilder : BrowserHistoryFragmentB
     override fun handles(route: SnagNavRoute): Boolean =
         route is WebStructureCreationRoute ||
             route is WebStructureDetailNavRoute ||
-            route is WebStructureEditRoute
+            route is WebStructureEditRoute ||
+            route is WebStructureFloorPlanRoute
 
     override fun build(route: SnagNavRoute): String =
         when (route) {
@@ -28,6 +29,11 @@ internal class StructuresBrowserHistoryFragmentBuilder : BrowserHistoryFragmentB
                 buildBrowserHistoryFragment(
                     WebStructureCreationRoute.URL_NAME,
                     mapOf("projectId" to route.projectId.toString()),
+                )
+            is WebStructureFloorPlanRoute ->
+                buildBrowserHistoryFragment(
+                    WebStructureFloorPlanRoute.URL_NAME,
+                    mapOf("id" to route.structureId.toString()),
                 )
             is WebStructureDetailNavRoute ->
                 buildBrowserHistoryFragment(

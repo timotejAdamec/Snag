@@ -39,7 +39,7 @@ fun ProjectsNavigation(
         sceneStrategies =
             listOf(
                 InlineDialogSceneStrategy(),
-                ContentPaneSceneStrategy(),
+//                ContentPaneSceneStrategy(),
             ),
         entryDecorators =
             listOf(
