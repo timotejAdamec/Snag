@@ -21,8 +21,12 @@ import cz.adamec.timotej.snag.projects.be.driving.contract.PutProjectApiDto
 import cz.adamec.timotej.snag.projects.be.model.BackendProjectData
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
+import cz.adamec.timotej.snag.users.be.model.BackendUserData
+import cz.adamec.timotej.snag.users.be.ports.UsersDb
+import cz.adamec.timotej.snag.users.business.UserRole
 import io.ktor.client.call.body
 import io.ktor.client.request.get
+import io.ktor.client.request.header
 import io.ktor.client.request.patch
 import io.ktor.client.request.put
 import io.ktor.client.request.setBody
@@ -40,6 +44,7 @@ import kotlin.uuid.Uuid
 
 class ProjectsRouteTest : BackendKoinInitializedTest() {
     private val dataSource: ProjectsDb by inject()
+    private val usersDb: UsersDb by inject()
 
     private fun ApplicationTestBuilder.configureApp() {
         val configurations = getKoin().getAll<AppConfiguration>()
@@ -50,10 +55,23 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
         }
     }
 
+    private suspend fun seedAdminUser() {
+        usersDb.saveUser(
+            BackendUserData(
+                id = ADMIN_USER_ID,
+                entraId = "admin-entra",
+                email = "admin@example.com",
+                role = UserRole.ADMINISTRATOR,
+                updatedAt = Timestamp(1L),
+            ),
+        )
+    }
+
     @Test
     fun `GET projects returns empty list when no projects exist`() =
         testApplication {
             configureApp()
+            seedAdminUser()
             val client = jsonClient()
 
             val response = client.get("/projects")
@@ -66,11 +84,13 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
     fun `GET projects returns all projects`() =
         testApplication {
             configureApp()
+            seedAdminUser()
             dataSource.saveProject(
                 BackendProjectData(
                     id = TEST_ID_1,
                     name = "Project 1",
                     address = "Address 1",
+                    creatorId = ADMIN_USER_ID,
                     updatedAt = Timestamp(100L),
                 ),
             )
@@ -79,6 +99,7 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
                     id = TEST_ID_2,
                     name = "Project 2",
                     address = "Address 2",
+                    creatorId = ADMIN_USER_ID,
                     updatedAt = Timestamp(200L),
                 ),
             )
@@ -95,11 +116,13 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
     fun `GET projects includes deletedAt for soft-deleted projects`() =
         testApplication {
             configureApp()
+            seedAdminUser()
             dataSource.saveProject(
                 BackendProjectData(
                     id = TEST_ID_1,
                     name = "Active",
                     address = "Addr",
+                    creatorId = ADMIN_USER_ID,
                     updatedAt = Timestamp(100L),
                 ),
             )
@@ -108,6 +131,7 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
                     id = TEST_ID_2,
                     name = "Deleted",
                     address = "Addr",
+                    creatorId = ADMIN_USER_ID,
                     updatedAt = Timestamp(100L),
                     deletedAt = Timestamp(200L),
                 ),
@@ -129,11 +153,13 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
     fun `GET projects with since parameter returns modified projects`() =
         testApplication {
             configureApp()
+            seedAdminUser()
             dataSource.saveProject(
                 BackendProjectData(
                     id = TEST_ID_1,
                     name = "Old",
                     address = "Addr",
+                    creatorId = ADMIN_USER_ID,
                     updatedAt = Timestamp(50L),
                 ),
             )
@@ -142,6 +168,7 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
                     id = TEST_ID_2,
                     name = "Modified",
                     address = "Addr",
+                    creatorId = ADMIN_USER_ID,
                     updatedAt = Timestamp(150L),
                 ),
             )
@@ -159,11 +186,13 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
     fun `GET projects with since returns soft-deleted projects with deletedAt`() =
         testApplication {
             configureApp()
+            seedAdminUser()
             dataSource.saveProject(
                 BackendProjectData(
                     id = TEST_ID_1,
                     name = "Deleted After Since",
                     address = "Addr",
+                    creatorId = ADMIN_USER_ID,
                     updatedAt = Timestamp(50L),
                     deletedAt = Timestamp(150L),
                 ),
@@ -182,11 +211,13 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
     fun `GET project by id returns project when found`() =
         testApplication {
             configureApp()
+            seedAdminUser()
             dataSource.saveProject(
                 BackendProjectData(
                     id = TEST_ID_1,
                     name = "Found Project",
                     address = "Found Address",
+                    creatorId = ADMIN_USER_ID,
                     updatedAt = Timestamp(100L),
                 ),
             )
@@ -204,11 +235,13 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
     fun `GET project by id includes deletedAt when soft-deleted`() =
         testApplication {
             configureApp()
+            seedAdminUser()
             dataSource.saveProject(
                 BackendProjectData(
                     id = TEST_ID_1,
                     name = "Deleted Project",
                     address = "Addr",
+                    creatorId = ADMIN_USER_ID,
                     updatedAt = Timestamp(100L),
                     deletedAt = Timestamp(200L),
                 ),
@@ -227,6 +260,7 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
     fun `GET project by id returns 404 when not found`() =
         testApplication {
             configureApp()
+            seedAdminUser()
             val client = jsonClient()
 
             val response = client.get("/projects/$TEST_ID_1")
@@ -238,6 +272,7 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
     fun `GET project with invalid id returns 400`() =
         testApplication {
             configureApp()
+            seedAdminUser()
             val client = jsonClient()
 
             val response = client.get("/projects/not-a-uuid")
@@ -249,12 +284,21 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
     fun `PUT project returns 204 when successfully saved`() =
         testApplication {
             configureApp()
+            seedAdminUser()
             val client = jsonClient()
 
             val response =
                 client.put("/projects/$TEST_ID_1") {
                     contentType(ContentType.Application.Json)
-                    setBody(PutProjectApiDto(name = "New", address = "Addr", updatedAt = Timestamp(100L)))
+                    header("X-User-Id", ADMIN_USER_ID.toString())
+                    setBody(
+                        PutProjectApiDto(
+                            name = "New",
+                            address = "Addr",
+                            creatorId = ADMIN_USER_ID,
+                            updatedAt = Timestamp(100L),
+                        ),
+                    )
                 }
 
             assertEquals(HttpStatusCode.NoContent, response.status)
@@ -264,11 +308,13 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
     fun `PUT project returns existing project on conflict`() =
         testApplication {
             configureApp()
+            seedAdminUser()
             dataSource.saveProject(
                 BackendProjectData(
                     id = TEST_ID_1,
                     name = "Existing",
                     address = "Addr",
+                    creatorId = ADMIN_USER_ID,
                     updatedAt = Timestamp(200L),
                 ),
             )
@@ -277,7 +323,15 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
             val response =
                 client.put("/projects/$TEST_ID_1") {
                     contentType(ContentType.Application.Json)
-                    setBody(PutProjectApiDto(name = "New", address = "Addr", updatedAt = Timestamp(100L)))
+                    header("X-User-Id", ADMIN_USER_ID.toString())
+                    setBody(
+                        PutProjectApiDto(
+                            name = "New",
+                            address = "Addr",
+                            creatorId = ADMIN_USER_ID,
+                            updatedAt = Timestamp(100L),
+                        ),
+                    )
                 }
 
             assertEquals(HttpStatusCode.OK, response.status)
@@ -290,11 +344,13 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
     fun `PUT project conflict includes deletedAt when existing is soft-deleted`() =
         testApplication {
             configureApp()
+            seedAdminUser()
             dataSource.saveProject(
                 BackendProjectData(
                     id = TEST_ID_1,
                     name = "Deleted",
                     address = "Addr",
+                    creatorId = ADMIN_USER_ID,
                     updatedAt = Timestamp(200L),
                     deletedAt = Timestamp(300L),
                 ),
@@ -304,7 +360,15 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
             val response =
                 client.put("/projects/$TEST_ID_1") {
                     contentType(ContentType.Application.Json)
-                    setBody(PutProjectApiDto(name = "New", address = "Addr", updatedAt = Timestamp(100L)))
+                    header("X-User-Id", ADMIN_USER_ID.toString())
+                    setBody(
+                        PutProjectApiDto(
+                            name = "New",
+                            address = "Addr",
+                            creatorId = ADMIN_USER_ID,
+                            updatedAt = Timestamp(100L),
+                        ),
+                    )
                 }
 
             assertEquals(HttpStatusCode.OK, response.status)
@@ -317,12 +381,21 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
     fun `PUT project with invalid id returns 400`() =
         testApplication {
             configureApp()
+            seedAdminUser()
             val client = jsonClient()
 
             val response =
                 client.put("/projects/not-a-uuid") {
                     contentType(ContentType.Application.Json)
-                    setBody(PutProjectApiDto(name = "New", address = "Addr", updatedAt = Timestamp(100L)))
+                    header("X-User-Id", ADMIN_USER_ID.toString())
+                    setBody(
+                        PutProjectApiDto(
+                            name = "New",
+                            address = "Addr",
+                            creatorId = ADMIN_USER_ID,
+                            updatedAt = Timestamp(100L),
+                        ),
+                    )
                 }
 
             assertEquals(HttpStatusCode.BadRequest, response.status)
@@ -332,11 +405,13 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
     fun `PUT project with invalid body returns 400`() =
         testApplication {
             configureApp()
+            seedAdminUser()
             val client = jsonClient()
 
             val response =
                 client.put("/projects/$TEST_ID_1") {
                     contentType(ContentType.Application.Json)
+                    header("X-User-Id", ADMIN_USER_ID.toString())
                     setBody("{\"invalid\": true}")
                 }
 
@@ -344,14 +419,117 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
         }
 
     @Test
+    fun `PUT project without X-User-Id header fails with missing user context`() =
+        testApplication {
+            configureApp()
+            seedAdminUser()
+            val client = jsonClient()
+
+            val response =
+                client.put("/projects/$TEST_ID_1") {
+                    contentType(ContentType.Application.Json)
+                    setBody(
+                        PutProjectApiDto(
+                            name = "New",
+                            address = "Addr",
+                            creatorId = ADMIN_USER_ID,
+                            updatedAt = Timestamp(100L),
+                        ),
+                    )
+                }
+
+            assertEquals(HttpStatusCode.InternalServerError, response.status)
+        }
+
+    @Test
+    fun `PUT project with unauthorized role returns 403`() =
+        testApplication {
+            configureApp()
+            seedAdminUser()
+            val technicianId = Uuid.parse("00000000-0000-0000-0000-000000000099")
+            usersDb.saveUser(
+                BackendUserData(
+                    id = technicianId,
+                    entraId = "tech-entra",
+                    email = "tech@example.com",
+                    role = UserRole.PASSPORT_TECHNICIAN,
+                    updatedAt = Timestamp(1L),
+                ),
+            )
+            val client = jsonClient()
+
+            val response =
+                client.put("/projects/$TEST_ID_1") {
+                    contentType(ContentType.Application.Json)
+                    header("X-User-Id", technicianId.toString())
+                    setBody(
+                        PutProjectApiDto(
+                            name = "New",
+                            address = "Addr",
+                            creatorId = technicianId,
+                            updatedAt = Timestamp(100L),
+                        ),
+                    )
+                }
+
+            assertEquals(HttpStatusCode.Forbidden, response.status)
+        }
+
+    @Test
+    fun `PUT project close by non-creator non-admin returns 403`() =
+        testApplication {
+            configureApp()
+            seedAdminUser()
+            val leadId = Uuid.parse("00000000-0000-0000-0000-000000000098")
+            usersDb.saveUser(
+                BackendUserData(
+                    id = leadId,
+                    entraId = "lead-entra",
+                    email = "lead@example.com",
+                    role = UserRole.PASSPORT_LEAD,
+                    updatedAt = Timestamp(1L),
+                ),
+            )
+            dataSource.saveProject(
+                BackendProjectData(
+                    id = TEST_ID_1,
+                    name = "Open Project",
+                    address = "Addr",
+                    creatorId = ADMIN_USER_ID,
+                    updatedAt = Timestamp(100L),
+                ),
+            )
+            val client = jsonClient()
+
+            val response =
+                client.put("/projects/$TEST_ID_1") {
+                    contentType(ContentType.Application.Json)
+                    header("X-User-Id", leadId.toString())
+                    setBody(
+                        PutProjectApiDto(
+                            name = "Open Project",
+                            address = "Addr",
+                            creatorId = ADMIN_USER_ID,
+                            isClosed = true,
+                            updatedAt = Timestamp(200L),
+                        ),
+                    )
+                }
+
+            assertEquals(HttpStatusCode.Forbidden, response.status)
+        }
+
+    @Test
     fun `PATCH soft-delete project returns 204 when successfully deleted`() =
         testApplication {
             configureApp()
+            seedAdminUser()
             dataSource.saveProject(
                 BackendProjectData(
                     id = TEST_ID_1,
                     name = "To Delete",
                     address = "Addr",
+                    creatorId = ADMIN_USER_ID,
                     updatedAt = Timestamp(100L),
                 ),
             )
@@ -370,11 +548,13 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
     fun `PATCH soft-delete project sets deletedAt on successful deletion`() =
         testApplication {
             configureApp()
+            seedAdminUser()
             dataSource.saveProject(
                 BackendProjectData(
                     id = TEST_ID_1,
                     name = "To Delete",
                     address = "Addr",
+                    creatorId = ADMIN_USER_ID,
                     updatedAt = Timestamp(100L),
                 ),
             )
@@ -396,11 +576,13 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
     fun `PATCH soft-delete project returns existing project on conflict`() =
         testApplication {
             configureApp()
+            seedAdminUser()
             dataSource.saveProject(
                 BackendProjectData(
                     id = TEST_ID_1,
                     name = "Existing",
                     address = "Addr",
+                    creatorId = ADMIN_USER_ID,
                     updatedAt = Timestamp(300L),
                 ),
             )
@@ -421,6 +603,7 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
     fun `PATCH soft-delete project with invalid id returns 400`() =
         testApplication {
             configureApp()
+            seedAdminUser()
             val client = jsonClient()
 
             val response =
@@ -436,6 +619,7 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
     fun `PATCH soft-delete project with invalid body returns 400`() =
         testApplication {
             configureApp()
+            seedAdminUser()
             val client = jsonClient()
 
             val response =
@@ -450,5 +634,6 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
     companion object {
         private val TEST_ID_1 = Uuid.parse("00000000-0000-0000-0000-000000000001")
         private val TEST_ID_2 = Uuid.parse("00000000-0000-0000-0000-000000000002")
+        private val ADMIN_USER_ID = Uuid.parse("00000000-0000-0000-0000-000000000010")
     }
 }

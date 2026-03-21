@@ -13,6 +13,7 @@
 package cz.adamec.timotej.snag.projects.fe.app.impl.internal
 
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
+import cz.adamec.timotej.snag.core.foundation.common.UuidProvider
 import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.feat.structures.app.model.AppStructure
 import cz.adamec.timotej.snag.feat.structures.app.model.AppStructureData
@@ -50,6 +51,7 @@ class DeleteProjectUseCaseImplTest : FrontendKoinInitializedTest() {
             id = id,
             name = "Test Project",
             address = "Test Address",
+            creatorId = UuidProvider.getUuid(),
             updatedAt = Timestamp(100L),
         )
 

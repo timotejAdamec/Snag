@@ -11,5 +11,7 @@ interface Project {
 
     val clientId: Uuid?
 
+    val creatorId: Uuid
+
     val isClosed: Boolean
 }

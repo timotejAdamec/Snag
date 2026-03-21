@@ -20,6 +20,9 @@ import cz.adamec.timotej.snag.structures.be.app.api.DeleteStructureUseCase
 import cz.adamec.timotej.snag.structures.be.app.api.model.DeleteStructureRequest
 import cz.adamec.timotej.snag.structures.be.ports.StructuresDb
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
+import cz.adamec.timotej.snag.users.be.model.BackendUserData
+import cz.adamec.timotej.snag.users.be.ports.UsersDb
+import cz.adamec.timotej.snag.users.business.UserRole
 import kotlinx.coroutines.test.runTest
 import org.koin.test.inject
 import kotlin.test.Test
@@ -31,6 +34,7 @@ import kotlin.uuid.Uuid
 class DeleteStructureUseCaseImplTest : BackendKoinInitializedTest() {
     private val dataSource: StructuresDb by inject()
     private val projectsDb: ProjectsDb by inject()
+    private val usersDb: UsersDb by inject()
     private val useCase: DeleteStructureUseCase by inject()
 
     private val projectId = Uuid.parse("00000000-0000-0000-0000-000000000001")
@@ -44,13 +48,27 @@ class DeleteStructureUseCaseImplTest : BackendKoinInitializedTest() {
             updatedAt = Timestamp(value = 10L),
         )
 
+    private suspend fun seedTestUser() {
+        usersDb.saveUser(
+            BackendUserData(
+                id = TEST_USER_ID,
+                entraId = "test-entra",
+                email = "test@example.com",
+                role = UserRole.ADMINISTRATOR,
+                updatedAt = Timestamp(1L),
+            ),
+        )
+    }
+
     private fun createProject() =
         runTest(testDispatcher) {
+            seedTestUser()
             projectsDb.saveProject(
                 BackendProjectData(
                     id = projectId,
                     name = "Test Project",
                     address = "Test Address",
+                    creatorId = TEST_USER_ID,
                     updatedAt = Timestamp(1L),
                 ),
             )
@@ -127,11 +145,13 @@ class DeleteStructureUseCaseImplTest : BackendKoinInitializedTest() {
 
     private fun createClosedProject() =
         runTest(testDispatcher) {
+            seedTestUser()
             projectsDb.saveProject(
                 BackendProjectData(
                     id = projectId,
                     name = "Test Project",
                     address = "Test Address",
+                    creatorId = TEST_USER_ID,
                     isClosed = true,
                     updatedAt = Timestamp(1L),
                 ),
@@ -157,4 +177,8 @@ class DeleteStructureUseCaseImplTest : BackendKoinInitializedTest() {
                 dataSource.getStructures(projectId).find { it.id == structureId }
             assertNull(stored?.deletedAt)
         }
+
+    companion object {
+        private val TEST_USER_ID = Uuid.parse("00000000-0000-0000-0000-000000000042")
+    }
 }

@@ -100,6 +100,7 @@ internal fun ProjectListItemPreview() {
                     id = UuidProvider.getUuid(),
                     name = "Project A",
                     address = "Client A",
+                    creatorId = UuidProvider.getUuid(),
                     updatedAt = Timestamp(0L),
                 ),
             onClick = {},

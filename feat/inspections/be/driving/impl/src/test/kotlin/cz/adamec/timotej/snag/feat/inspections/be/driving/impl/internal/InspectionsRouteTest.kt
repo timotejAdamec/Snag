@@ -22,6 +22,9 @@ import cz.adamec.timotej.snag.network.be.test.jsonClient
 import cz.adamec.timotej.snag.projects.be.model.BackendProjectData
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
+import cz.adamec.timotej.snag.users.be.model.BackendUserData
+import cz.adamec.timotej.snag.users.be.ports.UsersDb
+import cz.adamec.timotej.snag.users.business.UserRole
 import io.ktor.client.call.body
 import io.ktor.client.request.delete
 import io.ktor.client.request.setBody
@@ -38,13 +41,28 @@ import kotlin.uuid.Uuid
 class InspectionsRouteTest : BackendKoinInitializedTest() {
     private val inspectionsDb: InspectionsDb by inject()
     private val projectsDb: ProjectsDb by inject()
+    private val usersDb: UsersDb by inject()
+
+    private suspend fun seedTestUser() {
+        usersDb.saveUser(
+            BackendUserData(
+                id = TEST_USER_ID,
+                entraId = "test-entra",
+                email = "test@example.com",
+                role = UserRole.ADMINISTRATOR,
+                updatedAt = Timestamp(1L),
+            ),
+        )
+    }
 
     private suspend fun seedProject() {
+        seedTestUser()
         projectsDb.saveProject(
             BackendProjectData(
                 id = PROJECT_ID,
                 name = "Test Project",
                 address = "Test Address",
+                creatorId = TEST_USER_ID,
                 updatedAt = Timestamp(1L),
             ),
         )
@@ -152,6 +170,7 @@ class InspectionsRouteTest : BackendKoinInitializedTest() {
     // endregion
 
     companion object {
+        private val TEST_USER_ID = Uuid.parse("00000000-0000-0000-0000-000000000042")
         private val PROJECT_ID = Uuid.parse("00000000-0000-0000-0000-000000000020")
         private val TEST_ID_1 = Uuid.parse("00000000-0000-0000-0000-000000000001")
     }

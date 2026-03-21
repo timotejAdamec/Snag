@@ -40,6 +40,7 @@ class SetProjectClosedUseCaseImpl(
                 name = localProject.name,
                 address = localProject.address,
                 clientId = localProject.clientId,
+                creatorId = localProject.creatorId,
                 isClosed = request.isClosed,
                 updatedAt = timestampProvider.getNowTimestamp(),
             )

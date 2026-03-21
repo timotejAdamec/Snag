@@ -24,6 +24,7 @@ internal fun AppProject.toEntity() =
         name = name,
         address = address,
         clientId = clientId?.toString(),
+        creatorId = creatorId.toString(),
         isClosed = if (isClosed) 1L else 0L,
         updatedAt = updatedAt.value,
     )
@@ -34,6 +35,7 @@ internal fun ProjectEntity.toModel(): AppProject =
         name = name,
         address = address,
         clientId = clientId?.let { Uuid.parse(it) },
+        creatorId = Uuid.parse(creatorId),
         isClosed = isClosed == 1L,
         updatedAt = Timestamp(updatedAt),
     )

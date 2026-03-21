@@ -5,6 +5,8 @@ plugins {
 dependencies {
     implementation(project(":feat:projects:be:driving:contract"))
     implementation(project(":feat:projects:be:app:api"))
+    implementation(project(":feat:authentication:be:driving:api"))
+    implementation(project(":feat:authorization:be:driving:api"))
     implementation(project(":feat:users:be:driving:api"))
     implementation(project(":feat:users:be:driving:contract"))
     implementation(project(":feat:users:be:app:model"))
