@@ -10,9 +10,10 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.ui.directory
+package cz.adamec.timotej.snag.directory.di
 
 import androidx.compose.runtime.mutableStateListOf
+import cz.adamec.timotej.snag.directory.ui.DirectoryBackStack
 import cz.adamec.timotej.snag.users.fe.driving.api.UsersRoute
 import org.koin.core.module.Module
 import org.koin.dsl.module

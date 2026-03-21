@@ -10,9 +10,10 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.ui.directory
+package cz.adamec.timotej.snag.directory
 
 import androidx.compose.runtime.Immutable
+import cz.adamec.timotej.snag.directory.ui.DirectoryRoute
 import kotlinx.serialization.Serializable
 
 @Serializable

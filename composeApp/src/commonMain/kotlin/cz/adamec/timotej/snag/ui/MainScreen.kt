@@ -35,9 +35,9 @@ import cz.adamec.timotej.snag.lib.design.fe.theme.SnagTheme
 import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectsNavigation
 import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectsRoute
 import cz.adamec.timotej.snag.ui.components.TabItem
-import cz.adamec.timotej.snag.ui.directory.DirectoryBackStack
-import cz.adamec.timotej.snag.ui.directory.DirectoryRoute
-import cz.adamec.timotej.snag.ui.directory.DirectoryScreen
+import cz.adamec.timotej.snag.directory.ui.DirectoryBackStack
+import cz.adamec.timotej.snag.directory.ui.DirectoryRoute
+import cz.adamec.timotej.snag.directory.ui.DirectoryScreen
 import cz.adamec.timotej.snag.vm.MainViewModel
 import kotlinx.coroutines.FlowPreview
 import org.koin.compose.koinInject

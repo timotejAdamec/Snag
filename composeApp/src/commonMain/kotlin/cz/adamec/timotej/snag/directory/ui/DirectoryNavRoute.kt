@@ -10,7 +10,7 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.ui.directory
+package cz.adamec.timotej.snag.directory.ui
 
 import cz.adamec.timotej.snag.lib.navigation.fe.TabNavRoute
 import org.jetbrains.compose.resources.DrawableResource
