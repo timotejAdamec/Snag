@@ -37,10 +37,10 @@ internal class FindingDetailViewModel(
     private val deleteFindingUseCase: DeleteFindingUseCase,
     private val canEditProjectEntitiesUseCase: CanEditProjectEntitiesUseCase,
 ) : ViewModel() {
-    private val _state: MutableStateFlow<FindingDetailVmState> =
+    private val vmState: MutableStateFlow<FindingDetailVmState> =
         MutableStateFlow(FindingDetailVmState())
     val state: StateFlow<FindingDetailUiState> =
-        _state.mapState { it.toUiState() }
+        vmState.mapState { it.toUiState() }
 
     private val errorEventsChannel = Channel<UiError>()
     val errorsFlow = errorEventsChannel.receiveAsFlow()
@@ -56,25 +56,25 @@ internal class FindingDetailViewModel(
     private fun collectCanEditFinding() =
         viewModelScope.launch {
             canEditProjectEntitiesUseCase(projectId).collect { canEdit ->
-                _state.update { it.copy(canEditFinding = canEdit) }
+                vmState.update { it.copy(canEditFinding = canEdit) }
             }
         }
 
     fun onDelete() =
         viewModelScope.launch {
-            _state.update {
+            vmState.update {
                 it.copy(isBeingDeleted = true)
             }
             when (deleteFindingUseCase(findingId)) {
                 is OfflineFirstDataResult.ProgrammerError -> {
-                    _state.update {
+                    vmState.update {
                         it.copy(isBeingDeleted = false)
                     }
                     errorEventsChannel.send(Unknown)
                 }
 
                 is OfflineFirstDataResult.Success -> {
-                    _state.update {
+                    vmState.update {
                         it.copy(
                             status = FindingDetailUiStatus.DELETED,
                             isBeingDeleted = false,
@@ -90,7 +90,7 @@ internal class FindingDetailViewModel(
             getFindingUseCase(findingId).collect { result ->
                 when (result) {
                     is OfflineFirstDataResult.ProgrammerError -> {
-                        _state.update {
+                        vmState.update {
                             it.copy(status = FindingDetailUiStatus.ERROR)
                         }
                     }
@@ -98,13 +98,13 @@ internal class FindingDetailViewModel(
                     is OfflineFirstDataResult.Success -> {
                         val finding = result.data
                         if (finding == null) {
-                            if (_state.value.status != FindingDetailUiStatus.DELETED) {
-                                _state.update {
+                            if (vmState.value.status != FindingDetailUiStatus.DELETED) {
+                                vmState.update {
                                     it.copy(status = FindingDetailUiStatus.NOT_FOUND)
                                 }
                             }
                         } else {
-                            _state.update {
+                            vmState.update {
                                 it.copy(
                                     status = FindingDetailUiStatus.LOADED,
                                     finding = finding,

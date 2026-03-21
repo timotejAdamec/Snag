@@ -54,14 +54,14 @@ internal class FindingDetailsEditViewModel(
     private val saveFindingDetailsUseCase: SaveFindingDetailsUseCase,
     private val canEditProjectEntitiesUseCase: CanEditProjectEntitiesUseCase,
 ) : ViewModel() {
-    private val _state: MutableStateFlow<FindingDetailsEditVmState> =
+    private val vmState: MutableStateFlow<FindingDetailsEditVmState> =
         MutableStateFlow(
             FindingDetailsEditVmState(
                 findingType = findingTypeKey?.toDefaultFindingType() ?: FindingType.Classic(),
             ),
         )
     val state: StateFlow<FindingDetailsEditUiState> =
-        _state.mapState { it.toUiState() }
+        vmState.mapState { it.toUiState() }
 
     private val errorEventsChannel = Channel<UiError>()
     val errorsFlow = errorEventsChannel.receiveAsFlow()
@@ -80,7 +80,7 @@ internal class FindingDetailsEditViewModel(
     private fun collectCanEditFinding() =
         viewModelScope.launch {
             canEditProjectEntitiesUseCase(projectId).collect { canEdit ->
-                _state.update { it.copy(canEditFinding = canEdit) }
+                vmState.update { it.copy(canEditFinding = canEdit) }
             }
         }
 
@@ -93,7 +93,7 @@ internal class FindingDetailsEditViewModel(
                     }
                     is OfflineFirstDataResult.Success -> {
                         result.data?.let { data ->
-                            _state.update {
+                            vmState.update {
                                 it.copy(
                                     findingName = data.name,
                                     findingDescription = data.description.orEmpty(),
@@ -108,15 +108,15 @@ internal class FindingDetailsEditViewModel(
         }
 
     fun onFindingNameChange(updatedName: String) {
-        _state.update { it.copy(findingName = updatedName, findingNameError = null) }
+        vmState.update { it.copy(findingName = updatedName, findingNameError = null) }
     }
 
     fun onFindingDescriptionChange(updatedDescription: String) {
-        _state.update { it.copy(findingDescription = updatedDescription) }
+        vmState.update { it.copy(findingDescription = updatedDescription) }
     }
 
     fun onImportanceChange(importance: Importance) {
-        _state.update { state ->
+        vmState.update { state ->
             val currentType = state.findingType
             if (currentType is FindingType.Classic) {
                 state.copy(findingType = currentType.copy(importance = importance))
@@ -127,7 +127,7 @@ internal class FindingDetailsEditViewModel(
     }
 
     fun onTermChange(term: Term) {
-        _state.update { state ->
+        vmState.update { state ->
             val currentType = state.findingType
             if (currentType is FindingType.Classic) {
                 state.copy(findingType = currentType.copy(term = term))
@@ -139,8 +139,8 @@ internal class FindingDetailsEditViewModel(
 
     fun onSaveFinding() =
         viewModelScope.launch {
-            if (_state.value.findingName.isBlank()) {
-                _state.update { it.copy(findingNameError = Res.string.error_field_required) }
+            if (vmState.value.findingName.isBlank()) {
+                vmState.update { it.copy(findingNameError = Res.string.error_field_required) }
             } else {
                 val currentFindingId = findingId
                 if (currentFindingId != null) {
@@ -157,9 +157,9 @@ internal class FindingDetailsEditViewModel(
                 request =
                     SaveNewFindingRequest(
                         structureId = structureId!!,
-                        name = _state.value.findingName,
-                        description = _state.value.findingDescription.ifBlank { null },
-                        findingType = _state.value.findingType,
+                        name = vmState.value.findingName,
+                        description = vmState.value.findingDescription.ifBlank { null },
+                        findingType = vmState.value.findingType,
                         coordinates = setOfNotNull(coordinate),
                     ),
             )
@@ -179,9 +179,9 @@ internal class FindingDetailsEditViewModel(
                 request =
                     SaveFindingDetailsRequest(
                         findingId = findingId,
-                        name = _state.value.findingName,
-                        description = _state.value.findingDescription.ifBlank { null },
-                        findingType = _state.value.findingType,
+                        name = vmState.value.findingName,
+                        description = vmState.value.findingDescription.ifBlank { null },
+                        findingType = vmState.value.findingType,
                     ),
             )
         when (result) {
