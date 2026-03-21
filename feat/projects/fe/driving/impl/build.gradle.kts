@@ -24,7 +24,6 @@ kotlin {
                 implementation(project(":feat:structures:fe:driving:api"))
                 implementation(project(":feat:clients:fe:app:api"))
                 implementation(project(":feat:clients:fe:driving:api"))
-                implementation(project(":feat:clients:fe:driving:impl"))
                 implementation(project(":feat:inspections:fe:app:api"))
                 implementation(project(":feat:inspections:fe:driving:api"))
                 implementation(project(":feat:reports:fe:app:api"))

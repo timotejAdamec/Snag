@@ -14,10 +14,12 @@ package cz.adamec.timotej.snag.clients.fe.driving.impl.di
 
 import cz.adamec.timotej.snag.clients.fe.driving.api.NonWebClientCreationRoute
 import cz.adamec.timotej.snag.clients.fe.driving.api.NonWebClientEditRoute
+import cz.adamec.timotej.snag.clients.fe.driving.api.NonWebClientsRoute
 import org.koin.dsl.module
 
 internal actual val platformModule =
     module {
+        clientsScreenNavigation<NonWebClientsRoute>()
         clientCreationScreenNavigation<NonWebClientCreationRoute>()
         clientEditScreenNavigation<NonWebClientEditRoute>()
     }

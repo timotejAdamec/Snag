@@ -12,12 +12,13 @@
 
 package cz.adamec.timotej.snag.users.fe.driving.api
 
+import cz.adamec.timotej.snag.lib.navigation.fe.SnagNavRoute
 import org.koin.core.annotation.Provided
 import kotlin.jvm.JvmInline
 
 @JvmInline
 value class DirectoryBackStack(
-    @Provided val value: MutableList<DirectoryNavRoute>,
+    @Provided val value: MutableList<SnagNavRoute>,
 ) {
     fun removeLastSafely() {
         if (value.size > 1) value.removeLastOrNull()

@@ -23,10 +23,17 @@ data object NonWebClientsRoute : ClientsRoute
 @Immutable
 data class NonWebClientCreationRoute(
     override val onCreated: (Uuid) -> Unit,
+    override val onDismiss: () -> Unit,
 ) : ClientCreationRoute
 
 class NonWebClientCreationRouteFactory : ClientCreationRouteFactory {
-    override fun create(onCreated: (Uuid) -> Unit) = NonWebClientCreationRoute(onCreated)
+    override fun create(
+        onCreated: (Uuid) -> Unit,
+        onDismiss: () -> Unit,
+    ) = NonWebClientCreationRoute(
+        onCreated = onCreated,
+        onDismiss = onDismiss,
+    )
 }
 
 @Serializable

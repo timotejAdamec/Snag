@@ -25,6 +25,7 @@ data object WebClientsRoute : ClientsRoute {
 @Immutable
 data class WebClientCreationRoute(
     override val onCreated: (Uuid) -> Unit,
+    override val onDismiss: () -> Unit,
 ) : ClientCreationRoute {
     companion object {
         const val URL_NAME = "new-client"
@@ -32,7 +33,13 @@ data class WebClientCreationRoute(
 }
 
 class WebClientCreationRouteFactory : ClientCreationRouteFactory {
-    override fun create(onCreated: (Uuid) -> Unit) = WebClientCreationRoute(onCreated)
+    override fun create(
+        onCreated: (Uuid) -> Unit,
+        onDismiss: () -> Unit,
+    ) = WebClientCreationRoute(
+        onCreated = onCreated,
+        onDismiss = onDismiss,
+    )
 }
 
 @Serializable

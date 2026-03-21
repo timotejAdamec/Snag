@@ -43,12 +43,3 @@ class NonWebProjectEditRouteFactory : ProjectEditRouteFactory {
 class NonWebProjectDetailRouteFactory : ProjectDetailRouteFactory {
     override fun create(projectId: Uuid): ProjectDetailRoute = NonWebProjectDetailRoute(projectId)
 }
-
-@Immutable
-data class NonWebProjectClientCreationRoute(
-    override val onCreated: (Uuid) -> Unit,
-) : ProjectClientCreationRoute
-
-class NonWebProjectClientCreationRouteFactory : ProjectClientCreationRouteFactory {
-    override fun create(onCreated: (Uuid) -> Unit) = NonWebProjectClientCreationRoute(onCreated)
-}
