@@ -23,6 +23,7 @@ import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import cz.adamec.timotej.snag.feat.findings.fe.driving.api.FindingsListRouteFactory
 import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureDetailBackStack
+import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureDetailNavRoute
 import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureFloorPlanRouteFactory
 import cz.adamec.timotej.snag.lib.design.fe.scenes.MapListDetailSceneStrategy
 import cz.adamec.timotej.snag.lib.navigation.fe.SnagNavRoute
@@ -51,6 +52,11 @@ internal fun StructureDetailNestedNav(
     }
 
     LaunchedEffect(structureId) {
+        val isAlreadyInitialized =
+            backStack.value
+                .filterIsInstance<StructureDetailNavRoute>()
+                .any { it.structureId == structureId }
+        if (isAlreadyInitialized) return@LaunchedEffect
         backStack.value.clear()
         backStack.value.addAll(
             listOf(

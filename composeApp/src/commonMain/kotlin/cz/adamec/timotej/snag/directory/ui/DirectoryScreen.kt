@@ -117,7 +117,6 @@ internal fun DirectoryScreen(
             sceneStrategies =
                 listOf(
                     InlineDialogSceneStrategy(),
-                    ContentPaneSceneStrategy(),
                 ),
             entryDecorators =
                 listOf(
