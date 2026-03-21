@@ -32,13 +32,13 @@ This document is a reference for the implementation team. It describes what the 
 
 ### On project close
 - [x] The project state is set to "closed".
-- [ ] Only the creator retains access; other users no longer see the project in their list. *(requires roles — not yet implemented)*
+- [ ] Only the creator retains access; other users no longer see the project in their list. *(creator-only close/reopen enforced via `CanCloseProjectRule`; visibility filtering not yet implemented)*
 - [x] All project data is preserved — **no data is deleted**.
 - [x] Pending synchronisation queue entries for this project should be discarded / ignored. *(backend returns server entity instead of 403, frontend treats as success — queue unblocks)*
 
 ### On project reopen
 - [x] The project state is set back to "open".
-- [ ] Previously assigned users can access the project again. *(requires roles — not yet implemented)*
+- [ ] Previously assigned users can access the project again. *(creator-only reopen enforced; visibility filtering not yet implemented)*
 
 ---
 
@@ -64,7 +64,7 @@ Both the **creator** and any **assigned user** of an open project have **full CR
 When a project is **closed**, only the creator retains access. Assigned users lose all access immediately.
 
 - [x] Backend rejects sub-entity save/delete on closed projects (returns server entity for sync compatibility).
-- [ ] Creator-only access enforcement requires roles — not yet implemented.
+- [ ] Creator-only access enforcement — `creatorId` tracked on projects; close/reopen authorization enforced; full visibility filtering not yet implemented.
 
 ---
 
@@ -73,7 +73,7 @@ When a project is **closed**, only the creator retains access. Assigned users lo
 - [ ] Login exclusively via **corporate Microsoft EntraID**.
 - [x] No invite flow, no password management in the system.
 - [ ] A user without a valid EntraID token has no access whatsoever.
-- [ ] After successful authentication the system maps the EntraID identity to a role stored in the system.
+- [x] After successful authentication the system maps the EntraID identity to a role stored in the system. *(infrastructure done: `CallCurrentUserPlugin` resolves user from `X-User-Id` header and maps to `CallCurrentUser` with `UserRole`; EntraID JWT validation not yet implemented)*
 
 ---
 
@@ -92,7 +92,7 @@ When a project is **closed**, only the creator retains access. Assigned users lo
 
 The following features are new compared to the original analysis (which had no roles):
 
-1. - [ ] **Project closure and reopening** — projects can be closed and reopened; access is determined by project state and roles. *(close/reopen mechanism done; role-based access rules not yet enforced)*
+1. - [ ] **Project closure and reopening** — projects can be closed and reopened; access is determined by project state and roles. *(close/reopen mechanism done; creator-only close/reopen authorization enforced on BE via `CanCloseProjectRule`; project visibility filtering not yet enforced)*
 2. - [ ] **User assignment to / removal from project** — leads can add/remove technicians or service workers. *(BE API + DB done; role-restricted access not enforced)*
 3. - [ ] **Authentication (EntraID)** — mandatory Microsoft EntraID login (standalone mechanism, not a UC).
 4. - [ ] **Role management (UC7)** — admin manages all roles; passport lead delegates technician role; service lead delegates service worker role. *(BE API done: role set via PUT /users/{id}; authorization enforcement missing)*
@@ -105,11 +105,11 @@ The following features are new compared to the original analysis (which had no r
 
 | FP | Description | UC | Status |
 |---|---|---|---|
-| FP4 | Close project — restrict access to creator, preserve data | UC1 | - [ ] Close mechanism done; role-based access rules not yet enforced |
-| FP4b | Reopen project — reopen a closed project | UC1 | - [ ] Reopen mechanism done; role-based access rules not yet enforced |
+| FP4 | Close project — restrict access to creator, preserve data | UC1 | - [ ] Close mechanism done; creator-only close authorization enforced on BE (`CanCloseProjectRule`); project visibility filtering not yet enforced |
+| FP4b | Reopen project — reopen a closed project | UC1 | - [ ] Reopen mechanism done; creator-only reopen authorization enforced on BE (`CanCloseProjectRule`); project visibility filtering not yet enforced |
 | FP4c | Assign user to project | UC1 | - [ ] BE API + DB done; role-restricted access not enforced |
 | FP4d | Remove user from project | UC1 | - [ ] BE API + DB done; role-restricted access not enforced |
-| FP4e | Close project — creator access: only creator retains access to closed project | UC1 | - [ ] Sub-entity editing blocked on closed projects; creator-only enforcement requires roles |
+| FP4e | Close project — creator access: only creator retains access to closed project | UC1 | - [ ] Sub-entity editing blocked on closed projects; `creatorId` tracked on projects; creator-only close/reopen enforced; full visibility filtering not yet enforced |
 | FP31 | Delete inspection | UC5 | - [x] Done |
 | FP32b | Generate service protocol — PDF with work description and signature fields | UC6 | - [ ] Not started |
 | FP34 | Authentication via Microsoft EntraID | — | - [ ] Not started |
@@ -127,7 +127,7 @@ The following features are new compared to the original analysis (which had no r
 - [ ] **Frontend**: implement OAuth2 / OIDC flow with EntraID; store tokens securely; refresh tokens before expiry.
 
 ### NP13 — Role-based authorisation
-- [ ] **Backend**: check user role on every endpoint; return 403 for insufficient permissions.
+- [x] **Backend**: authorization framework implemented — `CallCurrentUserPlugin` extracts user from `X-User-Id` header, `CanCreateProjectRule`/`CanCloseProjectRule` enforce permissions on project PUT endpoint, `ForbiddenException` → 403. *(proof of concept on project CRUD; remaining endpoints need wiring)*
 - [ ] **Frontend**: hide/show UI elements based on role; do not rely solely on frontend gating.
 
 ### Detailed Permission Matrix
