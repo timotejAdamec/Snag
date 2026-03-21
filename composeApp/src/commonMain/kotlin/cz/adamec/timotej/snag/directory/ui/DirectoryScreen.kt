@@ -22,13 +22,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
+import androidx.navigation3.scene.DialogSceneStrategy
 import androidx.navigation3.ui.NavDisplay
 import cz.adamec.timotej.snag.clients.fe.driving.api.ClientCreationRouteFactory
 import cz.adamec.timotej.snag.clients.fe.driving.api.ClientEditRouteFactory
 import cz.adamec.timotej.snag.clients.fe.driving.api.ClientsRoute
 import cz.adamec.timotej.snag.clients.fe.driving.api.ClientsRouteFactory
-import cz.adamec.timotej.snag.lib.design.fe.scenes.ContentPaneSceneStrategy
-import cz.adamec.timotej.snag.lib.design.fe.scenes.InlineDialogSceneStrategy
 import cz.adamec.timotej.snag.lib.navigation.fe.SnagNavRoute
 import cz.adamec.timotej.snag.users.fe.driving.api.UsersRoute
 import org.jetbrains.compose.resources.stringResource
@@ -114,10 +113,9 @@ internal fun DirectoryScreen(
             modifier = modifier,
             backStack = backStackEntriesState.value,
             entryProvider = entryProvider,
-            sceneStrategies =
-                listOf(
-                    InlineDialogSceneStrategy(),
-                ),
+            sceneStrategies = listOf(
+                DialogSceneStrategy(),
+            ),
             entryDecorators =
                 listOf(
                     rememberSaveableStateHolderNavEntryDecorator(),

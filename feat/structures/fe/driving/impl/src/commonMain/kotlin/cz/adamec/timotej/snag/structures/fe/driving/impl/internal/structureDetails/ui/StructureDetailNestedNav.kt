@@ -20,6 +20,7 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
+import androidx.navigation3.scene.DialogSceneStrategy
 import androidx.navigation3.ui.NavDisplay
 import cz.adamec.timotej.snag.feat.findings.fe.driving.api.FindingsListRouteFactory
 import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureDetailBackStack
@@ -91,7 +92,10 @@ internal fun StructureDetailNestedNav(
     NavDisplay(
         backStack = backStack.value,
         entryProvider = koinEntryProvider,
-        sceneStrategies = listOf(MapListDetailSceneStrategy()),
+        sceneStrategies = listOf(
+            DialogSceneStrategy(),
+            MapListDetailSceneStrategy(),
+        ),
         entryDecorators =
             listOf(
                 rememberSaveableStateHolderNavEntryDecorator(),
