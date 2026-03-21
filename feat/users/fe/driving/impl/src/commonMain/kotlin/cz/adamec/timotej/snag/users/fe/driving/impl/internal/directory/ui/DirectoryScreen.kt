@@ -19,14 +19,9 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import cz.adamec.timotej.snag.clients.fe.driving.api.ClientCreationRouteFactory
-import cz.adamec.timotej.snag.clients.fe.driving.api.ClientEditRouteFactory
-import cz.adamec.timotej.snag.clients.fe.driving.impl.internal.clients.ui.ClientsScreen
+import cz.adamec.timotej.snag.clients.fe.driving.api.ClientsRoute
 import cz.adamec.timotej.snag.lib.design.fe.error.ShowSnackbarOnError
 import cz.adamec.timotej.snag.users.fe.driving.api.DirectoryBackStack
 import cz.adamec.timotej.snag.users.fe.driving.impl.internal.userManagement.ui.UserManagementContent
@@ -46,47 +41,44 @@ internal fun DirectoryScreen(
     modifier: Modifier = Modifier,
     userManagementViewModel: UserManagementViewModel = koinViewModel(),
     backStack: DirectoryBackStack = koinInject(),
-    clientCreationRouteFactory: ClientCreationRouteFactory = koinInject(),
-    clientEditRouteFactory: ClientEditRouteFactory = koinInject(),
+    clientsRoute: ClientsRoute = koinInject(),
 ) {
     val userManagementState by userManagementViewModel.state.collectAsStateWithLifecycle()
 
     ShowSnackbarOnError(userManagementViewModel.errorsFlow)
 
-    var selectedTab by rememberSaveable { mutableIntStateOf(USERS_TAB_INDEX) }
-
     Column(modifier = modifier) {
-        SecondaryTabRow(selectedTabIndex = selectedTab) {
-            Tab(
-                selected = selectedTab == USERS_TAB_INDEX,
-                onClick = { selectedTab = USERS_TAB_INDEX },
-                text = { Text(text = stringResource(Res.string.users_tab_title)) },
-            )
-            Tab(
-                selected = selectedTab == CLIENTS_TAB_INDEX,
-                onClick = { selectedTab = CLIENTS_TAB_INDEX },
-                text = { Text(text = stringResource(Res.string.clients_tab_title)) },
-            )
-        }
+        DirectoryTabRow(
+            selectedTab = USERS_TAB_INDEX,
+            onClientsTabClick = {
+                backStack.value[backStack.value.lastIndex] = clientsRoute
+            },
+        )
 
-        when (selectedTab) {
-            USERS_TAB_INDEX ->
-                UserManagementContent(
-                    modifier = Modifier.fillMaxSize(),
-                    state = userManagementState,
-                    onRoleChange = userManagementViewModel::onRoleChanged,
-                )
+        UserManagementContent(
+            modifier = Modifier.fillMaxSize(),
+            state = userManagementState,
+            onRoleChange = userManagementViewModel::onRoleChanged,
+        )
+    }
+}
 
-            CLIENTS_TAB_INDEX ->
-                ClientsScreen(
-                    modifier = Modifier.fillMaxSize(),
-                    onNewClientClick = {
-                        backStack.value.add(clientCreationRouteFactory.create { })
-                    },
-                    onClientClick = { clientId ->
-                        backStack.value.add(clientEditRouteFactory.create(clientId))
-                    },
-                )
-        }
+@Composable
+internal fun DirectoryTabRow(
+    selectedTab: Int,
+    onUsersTabClick: (() -> Unit)? = null,
+    onClientsTabClick: (() -> Unit)? = null,
+) {
+    SecondaryTabRow(selectedTabIndex = selectedTab) {
+        Tab(
+            selected = selectedTab == USERS_TAB_INDEX,
+            onClick = { onUsersTabClick?.invoke() },
+            text = { Text(text = stringResource(Res.string.users_tab_title)) },
+        )
+        Tab(
+            selected = selectedTab == CLIENTS_TAB_INDEX,
+            onClick = { onClientsTabClick?.invoke() },
+            text = { Text(text = stringResource(Res.string.clients_tab_title)) },
+        )
     }
 }

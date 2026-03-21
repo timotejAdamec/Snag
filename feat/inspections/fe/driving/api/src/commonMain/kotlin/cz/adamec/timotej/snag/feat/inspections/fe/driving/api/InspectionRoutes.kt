@@ -12,14 +12,14 @@
 
 package cz.adamec.timotej.snag.feat.inspections.fe.driving.api
 
-import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectsNavRoute
+import cz.adamec.timotej.snag.lib.navigation.fe.SnagNavRoute
 import kotlin.uuid.Uuid
 
-interface InspectionCreationRoute : ProjectsNavRoute {
+interface InspectionCreationRoute : SnagNavRoute {
     val projectId: Uuid
 }
 
-interface InspectionEditRoute : ProjectsNavRoute {
+interface InspectionEditRoute : SnagNavRoute {
     val inspectionId: Uuid
 }
 

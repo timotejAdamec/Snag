@@ -22,6 +22,8 @@ import cz.adamec.timotej.snag.clients.fe.driven.test.FakeClientsDb
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
+import cz.adamec.timotej.snag.projects.app.model.AppProjectData
+import cz.adamec.timotej.snag.projects.fe.driven.test.FakeProjectsDb
 import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
@@ -31,14 +33,17 @@ import org.koin.test.get
 import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertIs
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
+import kotlin.test.assertTrue
 import kotlin.uuid.Uuid
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class ClientDetailsEditViewModelTest : FrontendKoinInitializedTest() {
     private val fakeClientsDb: FakeClientsDb by inject()
+    private val fakeProjectsDb: FakeProjectsDb by inject()
 
     private val getClientUseCase: GetClientUseCase by inject()
     private val saveClientUseCase: SaveClientUseCase by inject()
@@ -230,5 +235,106 @@ class ClientDetailsEditViewModelTest : FrontendKoinInitializedTest() {
 
             val error = viewModel.errorsFlow.first()
             assertIs<UiError.Unknown>(error)
+        }
+
+    @Test
+    fun `onDelete success sends deleted event`() =
+        runTest(testDispatcher) {
+            val clientId = Uuid.random()
+            val client =
+                AppClientData(
+                    id = clientId,
+                    name = "Test Client",
+                    address = null,
+                    phoneNumber = null,
+                    email = null,
+                    updatedAt = Timestamp(10L),
+                )
+            fakeClientsDb.setClient(client)
+
+            val viewModel = createViewModel(clientId = clientId)
+            advanceUntilIdle()
+
+            viewModel.onDelete()
+
+            viewModel.deletedSuccessfullyEventFlow.first()
+        }
+
+    @Test
+    fun `onDelete failure sends error`() =
+        runTest(testDispatcher) {
+            val clientId = Uuid.random()
+            val client =
+                AppClientData(
+                    id = clientId,
+                    name = "Test Client",
+                    address = null,
+                    phoneNumber = null,
+                    email = null,
+                    updatedAt = Timestamp(10L),
+                )
+            fakeClientsDb.setClient(client)
+
+            val viewModel = createViewModel(clientId = clientId)
+            advanceUntilIdle()
+
+            fakeClientsDb.forcedFailure =
+                OfflineFirstDataResult.ProgrammerError(RuntimeException("Failed"))
+
+            viewModel.onDelete()
+
+            val error = viewModel.errorsFlow.first()
+            assertIs<UiError.Unknown>(error)
+        }
+
+    @Test
+    fun `canDelete is true when client is not referenced`() =
+        runTest(testDispatcher) {
+            val clientId = Uuid.random()
+            val client =
+                AppClientData(
+                    id = clientId,
+                    name = "Test Client",
+                    address = null,
+                    phoneNumber = null,
+                    email = null,
+                    updatedAt = Timestamp(10L),
+                )
+            fakeClientsDb.setClient(client)
+
+            val viewModel = createViewModel(clientId = clientId)
+            advanceUntilIdle()
+
+            assertTrue(viewModel.state.value.canDelete)
+        }
+
+    @Test
+    fun `canDelete is false when client is referenced by project`() =
+        runTest(testDispatcher) {
+            val clientId = Uuid.random()
+            val client =
+                AppClientData(
+                    id = clientId,
+                    name = "Test Client",
+                    address = null,
+                    phoneNumber = null,
+                    email = null,
+                    updatedAt = Timestamp(10L),
+                )
+            fakeClientsDb.setClient(client)
+            fakeProjectsDb.setProject(
+                AppProjectData(
+                    id = Uuid.random(),
+                    name = "Test Project",
+                    address = "Test Address",
+                    clientId = clientId,
+                    updatedAt = Timestamp(100L),
+                ),
+            )
+
+            val viewModel = createViewModel(clientId = clientId)
+            advanceUntilIdle()
+
+            assertFalse(viewModel.state.value.canDelete)
         }
 }

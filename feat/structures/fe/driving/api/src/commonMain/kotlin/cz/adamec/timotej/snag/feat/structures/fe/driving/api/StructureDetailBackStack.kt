@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.feat.structures.fe.driving.api
 
-import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectsNavRoute
+import cz.adamec.timotej.snag.lib.navigation.fe.SnagNavRoute
 import org.koin.core.annotation.Provided
 import kotlin.jvm.JvmInline
 import kotlin.uuid.Uuid
@@ -22,7 +22,7 @@ import kotlin.uuid.Uuid
  */
 @JvmInline
 value class StructureDetailBackStack(
-    @Provided val value: MutableList<StructureDetailNavRoute>,
+    @Provided val value: MutableList<SnagNavRoute>,
 ) {
     fun removeLastSafely() {
         if (value.size > 1) value.removeLastOrNull()
@@ -32,7 +32,7 @@ value class StructureDetailBackStack(
 /**
  * Nav route for the structure detail nested navigation graph.
  */
-interface StructureDetailNavRoute : ProjectsNavRoute {
+interface StructureDetailNavRoute : SnagNavRoute {
     val projectId: Uuid
     val structureId: Uuid
 }
@@ -41,5 +41,5 @@ interface StructureDetailRouteFactory {
     fun create(
         projectId: Uuid,
         structureId: Uuid,
-    ): ProjectsNavRoute
+    ): SnagNavRoute
 }

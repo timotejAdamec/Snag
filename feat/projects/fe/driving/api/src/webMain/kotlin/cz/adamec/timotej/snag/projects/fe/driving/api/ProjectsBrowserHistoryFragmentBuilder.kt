@@ -21,8 +21,7 @@ internal class ProjectsBrowserHistoryFragmentBuilder : BrowserHistoryFragmentBui
         route is WebProjectsRoute ||
             route is WebProjectCreationRoute ||
             route is WebProjectEditRoute ||
-            route is WebProjectDetailRoute ||
-            route is WebProjectClientCreationRoute
+            route is WebProjectDetailRoute
 
     override fun build(route: SnagNavRoute): String =
         when (route) {
@@ -38,8 +37,6 @@ internal class ProjectsBrowserHistoryFragmentBuilder : BrowserHistoryFragmentBui
                     WebProjectDetailRoute.URL_NAME,
                     mapOf("id" to route.projectId.toString()),
                 )
-            is WebProjectClientCreationRoute ->
-                buildBrowserHistoryFragment(WebProjectClientCreationRoute.URL_NAME)
             else -> error("ProjectsBrowserHistoryFragmentBuilder cannot handle $route")
         }
 }

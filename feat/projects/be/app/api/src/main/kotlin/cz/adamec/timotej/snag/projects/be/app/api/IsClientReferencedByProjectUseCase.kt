@@ -10,14 +10,10 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.projects.fe.driving.api
+package cz.adamec.timotej.snag.projects.be.app.api
 
 import kotlin.uuid.Uuid
 
-interface ProjectClientCreationRoute : ProjectsNavRoute {
-    val onCreated: (newClientId: Uuid) -> Unit
-}
-
-interface ProjectClientCreationRouteFactory {
-    fun create(onCreated: (newClientId: Uuid) -> Unit): ProjectClientCreationRoute
+interface IsClientReferencedByProjectUseCase {
+    suspend operator fun invoke(clientId: Uuid): Boolean
 }

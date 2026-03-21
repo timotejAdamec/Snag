@@ -19,6 +19,7 @@ import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import cz.adamec.timotej.snag.lib.design.fe.scenes.ContentPaneSceneStrategy
 import cz.adamec.timotej.snag.lib.design.fe.scenes.InlineDialogSceneStrategy
+import cz.adamec.timotej.snag.lib.navigation.fe.SnagNavRoute
 import org.koin.compose.koinInject
 import org.koin.compose.navigation3.koinEntryProvider
 
@@ -27,7 +28,7 @@ fun DirectoryNavigation(
     modifier: Modifier = Modifier,
     backStack: DirectoryBackStack = koinInject(),
 ) {
-    val entryProvider = koinEntryProvider<DirectoryNavRoute>()
+    val entryProvider = koinEntryProvider<SnagNavRoute>()
     NavDisplay(
         modifier = modifier,
         backStack = backStack.value,
