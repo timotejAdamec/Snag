@@ -10,7 +10,7 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.directory.ui
+package cz.adamec.timotej.snag.ui
 
 import cz.adamec.timotej.snag.lib.navigation.fe.SnagBackStack
 import cz.adamec.timotej.snag.lib.navigation.fe.SnagNavRoute
@@ -18,6 +18,6 @@ import org.koin.core.annotation.Provided
 import kotlin.jvm.JvmInline
 
 @JvmInline
-internal value class DirectoryBackStack(
+value class MainBackStack(
     @Provided override val value: MutableList<SnagNavRoute>,
 ) : SnagBackStack

@@ -21,14 +21,19 @@ import cz.adamec.timotej.snag.clients.fe.driving.api.ClientCreationRouteFactory
 import cz.adamec.timotej.snag.feat.inspections.fe.driving.api.InspectionCreationRouteFactory
 import cz.adamec.timotej.snag.feat.inspections.fe.driving.api.InspectionEditRouteFactory
 import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureCreationRouteFactory
+import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureDetailNavRoute
 import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureDetailRouteFactory
 import cz.adamec.timotej.snag.lib.design.fe.dialog.fullscreenDialogProperties
+import cz.adamec.timotej.snag.lib.design.fe.scenes.ContentPaneSceneMetadata
+import cz.adamec.timotej.snag.lib.navigation.fe.SnagBackStack
 import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectCreationRoute
 import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectDetailRoute
 import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectDetailRouteFactory
 import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectEditRoute
 import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectEditRouteFactory
 import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectsBackStack
+import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectsNavRoute
+import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectsNavigation
 import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectsRoute
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.ui.ProjectDetailsScreen
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.vm.ProjectDetailsViewModel
@@ -42,6 +47,7 @@ import org.koin.core.module.Module
 import org.koin.core.module.dsl.viewModel
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.core.scope.Scope
+import org.koin.dsl.bind
 import org.koin.dsl.module
 import org.koin.dsl.navigation3.navigation
 import kotlin.uuid.Uuid
@@ -166,11 +172,15 @@ internal inline fun <reified T : ProjectDetailRoute> Module.projectDetailsScreen
 val projectsDrivingImplModule =
     module {
         includes(platformModule)
+
+        navigation<ProjectsNavRoute> {
+            ProjectsNavigation()
+        }
         single {
             ProjectsBackStack(
                 value = mutableStateListOf(get<ProjectsRoute>()),
             )
-        }
+        } bind SnagBackStack::class
         viewModelOf(::ProjectsViewModel)
         viewModel { (projectId: Uuid?) ->
             ProjectDetailsEditViewModel(

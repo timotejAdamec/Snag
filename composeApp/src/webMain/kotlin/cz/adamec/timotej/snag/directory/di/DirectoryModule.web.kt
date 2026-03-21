@@ -12,8 +12,8 @@
 
 package cz.adamec.timotej.snag.directory.di
 
-import cz.adamec.timotej.snag.directory.ui.DirectoryRoute
 import cz.adamec.timotej.snag.directory.WebDirectoryRoute
+import cz.adamec.timotej.snag.directory.ui.DirectoryRoute
 import org.koin.dsl.bind
 import org.koin.dsl.module
 

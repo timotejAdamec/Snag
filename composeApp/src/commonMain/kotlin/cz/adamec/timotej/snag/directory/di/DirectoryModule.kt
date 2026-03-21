@@ -14,18 +14,22 @@ package cz.adamec.timotej.snag.directory.di
 
 import androidx.compose.runtime.mutableStateListOf
 import cz.adamec.timotej.snag.directory.ui.DirectoryBackStack
+import cz.adamec.timotej.snag.directory.ui.DirectoryNavRoute
+import cz.adamec.timotej.snag.directory.ui.DirectoryScreen
+import cz.adamec.timotej.snag.lib.navigation.fe.SnagBackStack
 import cz.adamec.timotej.snag.users.fe.driving.api.UsersRoute
-import org.koin.core.module.Module
+import org.koin.dsl.bind
 import org.koin.dsl.module
+import org.koin.dsl.navigation3.navigation
 
 internal val directoryModule =
     module {
-        includes(directoryPlatformModule)
+        navigation<DirectoryNavRoute> {
+            DirectoryScreen()
+        }
         single {
             DirectoryBackStack(
                 value = mutableStateListOf(get<UsersRoute>()),
             )
-        }
+        } bind SnagBackStack::class
     }
-
-internal expect val directoryPlatformModule: Module

@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import cz.adamec.timotej.snag.clients.app.model.AppClient
 import org.jetbrains.compose.resources.painterResource
 import snag.lib.design.fe.generated.resources.ic_chevron_right
+import snag.lib.design.fe.generated.resources.ic_work
 import snag.lib.design.fe.generated.resources.Res as DesignRes
 
 @Composable
@@ -34,6 +35,12 @@ internal fun ClientListItem(
         modifier =
             modifier
                 .clickable(onClick = onClick),
+        leadingContent = {
+            Icon(
+                painter = painterResource(DesignRes.drawable.ic_work),
+                contentDescription = null,
+            )
+        },
         headlineContent = {
             Text(
                 text = client.name,

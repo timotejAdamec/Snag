@@ -10,12 +10,12 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.directory
+package cz.adamec.timotej.snag.lib.navigation.fe
 
-import androidx.compose.runtime.Immutable
-import cz.adamec.timotej.snag.directory.ui.DirectoryRoute
-import kotlinx.serialization.Serializable
+interface SnagBackStack {
+    val value: MutableList<SnagNavRoute>
 
-@Serializable
-@Immutable
-internal data object NonWebDirectoryRoute : DirectoryRoute
+    fun removeLastSafely() {
+        if (value.size > 1) value.removeLastOrNull()
+    }
+}

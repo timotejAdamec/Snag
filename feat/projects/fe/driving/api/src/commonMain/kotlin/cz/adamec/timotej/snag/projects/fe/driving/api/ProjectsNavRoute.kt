@@ -12,17 +12,12 @@
 
 package cz.adamec.timotej.snag.projects.fe.driving.api
 
-import cz.adamec.timotej.snag.lib.navigation.fe.TabNavRoute
-import org.jetbrains.compose.resources.DrawableResource
-import org.jetbrains.compose.resources.StringResource
-import snag.feat.projects.fe.driving.api.generated.resources.Res
-import snag.feat.projects.fe.driving.api.generated.resources.projects_tab_title
-import snag.lib.design.fe.generated.resources.ic_home
-import snag.lib.design.fe.generated.resources.ic_home_filled
-import snag.lib.design.fe.generated.resources.Res as DesignRes
+import androidx.compose.runtime.Immutable
+import cz.adamec.timotej.snag.lib.navigation.fe.SnagNavRoute
+import kotlinx.serialization.Serializable
 
-interface ProjectsNavRoute : TabNavRoute {
-    override val tabIcon: DrawableResource get() = DesignRes.drawable.ic_home
-    override val tabIconSelected: DrawableResource get() = DesignRes.drawable.ic_home_filled
-    override val tabLabel: StringResource get() = Res.string.projects_tab_title
-}
+@Serializable
+@Immutable
+data class ProjectsNavRoute(
+    val onExit: () -> Unit,
+) : SnagNavRoute

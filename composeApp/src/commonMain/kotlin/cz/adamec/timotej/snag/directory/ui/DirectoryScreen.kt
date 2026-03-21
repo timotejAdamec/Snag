@@ -13,11 +13,12 @@
 package cz.adamec.timotej.snag.directory.ui
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.SecondaryTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
@@ -42,17 +43,20 @@ private const val CLIENTS_TAB_INDEX = 1
 
 @Composable
 internal fun DirectoryScreen(
-    backStack: DirectoryBackStack,
     modifier: Modifier = Modifier,
-    usersRoute: UsersRoute = koinInject(),
 ) {
+    val backStack: DirectoryBackStack = koinInject()
+    val backStackEntriesState = remember { mutableStateOf(backStack.value) }
     val clientsRouteFactory = koinInject<ClientsRouteFactory>()
     val clientCreationRouteFactory = koinInject<ClientCreationRouteFactory>()
     val clientEditRouteFactory = koinInject<ClientEditRouteFactory>()
 
-    val currentTop = backStack.value.lastOrNull()
+    val backStackContainsClients =
+        backStackEntriesState.value
+            .filterIsInstance<ClientsRoute>()
+            .isNotEmpty()
     val selectedTab =
-        if (currentTop is ClientsRoute) CLIENTS_TAB_INDEX else USERS_TAB_INDEX
+        if (backStackContainsClients) CLIENTS_TAB_INDEX else USERS_TAB_INDEX
 
     val clientsRoute =
         clientsRouteFactory.create(
@@ -73,6 +77,7 @@ internal fun DirectoryScreen(
                 )
             },
         )
+    val usersRoute: UsersRoute = koinInject()
 
     Column(modifier = modifier) {
         SecondaryTabRow(selectedTabIndex = selectedTab) {
@@ -82,6 +87,14 @@ internal fun DirectoryScreen(
                     if (selectedTab != USERS_TAB_INDEX) {
                         backStack.value[backStack.value.lastIndex] = usersRoute
                     }
+//                    if (selectedTab != USERS_TAB_INDEX) {
+//                        backStack.value.add(usersRoute)
+//                        for (i in 0 until backStack.value.size) {
+//                            if (i != backStack.value.lastIndex) {
+//                                backStack.value.removeAt(i)
+//                            }
+//                        }
+//                    }
                 },
                 text = { Text(text = stringResource(Res.string.users_tab_title)) },
             )
@@ -98,8 +111,8 @@ internal fun DirectoryScreen(
 
         val entryProvider = koinEntryProvider<SnagNavRoute>()
         NavDisplay(
-            modifier = Modifier.fillMaxSize(),
-            backStack = backStack.value,
+            modifier = modifier,
+            backStack = backStackEntriesState.value,
             entryProvider = entryProvider,
             sceneStrategies =
                 listOf(
