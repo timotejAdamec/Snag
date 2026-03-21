@@ -17,12 +17,10 @@ import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectCreationRoute
 import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectDetailRouteFactory
 import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectEditRouteFactory
 import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectsBrowserHistoryFragmentBuilder
-import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectsNavRouteFactory
 import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectsRoute
 import cz.adamec.timotej.snag.projects.fe.driving.api.WebProjectCreationRoute
 import cz.adamec.timotej.snag.projects.fe.driving.api.WebProjectDetailRouteFactory
 import cz.adamec.timotej.snag.projects.fe.driving.api.WebProjectEditRouteFactory
-import cz.adamec.timotej.snag.projects.fe.driving.api.WebProjectsNavRouteFactory
 import cz.adamec.timotej.snag.projects.fe.driving.api.WebProjectsRoute
 import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.bind
@@ -34,6 +32,5 @@ internal actual val platformModule =
         factory { WebProjectCreationRoute } bind ProjectCreationRoute::class
         factory { WebProjectEditRouteFactory() } bind ProjectEditRouteFactory::class
         factory { WebProjectDetailRouteFactory() } bind ProjectDetailRouteFactory::class
-        factory { WebProjectsNavRouteFactory() } bind ProjectsNavRouteFactory::class
         factoryOf(::ProjectsBrowserHistoryFragmentBuilder) bind BrowserHistoryFragmentBuilder::class
     }
