@@ -10,16 +10,12 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.users.fe.driving.api
+package cz.adamec.timotej.snag.ui.directory
 
-import org.koin.core.annotation.Provided
-import kotlin.jvm.JvmInline
+import org.koin.dsl.bind
+import org.koin.dsl.module
 
-@JvmInline
-value class UsersBackStack(
-    @Provided val value: MutableList<UsersNavRoute>,
-) {
-    fun removeLastSafely() {
-        if (value.size > 1) value.removeLastOrNull()
+internal actual val directoryPlatformModule =
+    module {
+        factory { NonWebDirectoryRoute } bind DirectoryRoute::class
     }
-}

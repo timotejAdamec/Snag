@@ -28,3 +28,6 @@ DELETE FROM ProjectEntity WHERE id = :id;
 
 deleteAll:
 DELETE FROM ProjectEntity;
+
+existsByClientId:
+SELECT COUNT(*) > 0 FROM ProjectEntity WHERE clientId = :clientId;

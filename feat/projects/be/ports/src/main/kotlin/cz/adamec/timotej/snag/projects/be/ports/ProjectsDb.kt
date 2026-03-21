@@ -29,4 +29,6 @@ interface ProjectsDb {
     ): BackendProject?
 
     suspend fun getProjectsModifiedSince(since: Timestamp): List<BackendProject>
+
+    suspend fun isClientReferencedByProject(clientId: Uuid): Boolean
 }

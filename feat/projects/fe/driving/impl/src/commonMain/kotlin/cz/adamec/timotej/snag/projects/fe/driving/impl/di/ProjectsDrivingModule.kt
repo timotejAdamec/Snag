@@ -112,7 +112,12 @@ private fun Scope.ProjectDetailsEditScreenInjection(
         },
         onNavigateToClientCreation = { onCreated ->
             val backStack = get<ProjectsBackStack>()
-            backStack.value.add(clientCreationRouteFactory.create(onCreated))
+            backStack.value.add(
+                clientCreationRouteFactory.create(
+                    onCreated = onCreated,
+                    onDismiss = { backStack.removeLastSafely() },
+                ),
+            )
         },
     )
 }

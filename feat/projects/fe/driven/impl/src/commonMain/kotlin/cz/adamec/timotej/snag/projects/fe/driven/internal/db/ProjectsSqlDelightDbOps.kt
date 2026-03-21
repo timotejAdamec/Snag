@@ -18,10 +18,12 @@ import cz.adamec.timotej.snag.lib.database.fe.SqlDelightDbOps
 import cz.adamec.timotej.snag.projects.app.model.AppProject
 import cz.adamec.timotej.snag.projects.fe.driven.internal.LH
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.withContext
+import kotlin.uuid.Uuid
 
 internal class ProjectsSqlDelightDbOps(
-    queries: ProjectEntityQueries,
-    ioDispatcher: CoroutineDispatcher,
+    private val queries: ProjectEntityQueries,
+    private val ioDispatcher: CoroutineDispatcher,
 ) : SqlDelightDbOps<ProjectEntity, AppProject>(
         ioDispatcher = ioDispatcher,
         logger = LH.logger,
@@ -33,4 +35,11 @@ internal class ProjectsSqlDelightDbOps(
         saveEntity = { queries.save(it) },
         deleteEntityById = { queries.deleteById(it) },
         runInTransaction = { block -> queries.transaction { block() } },
-    )
+    ) {
+    suspend fun existsByClientId(clientId: Uuid): Boolean =
+        withContext(ioDispatcher) {
+            queries
+                .existsByClientId(clientId.toString())
+                .executeAsOne()
+        }
+}

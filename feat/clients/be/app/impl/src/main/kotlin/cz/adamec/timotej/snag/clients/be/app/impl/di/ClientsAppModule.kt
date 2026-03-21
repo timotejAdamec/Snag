@@ -22,6 +22,7 @@ import cz.adamec.timotej.snag.clients.be.app.impl.internal.GetClientUseCaseImpl
 import cz.adamec.timotej.snag.clients.be.app.impl.internal.GetClientsModifiedSinceUseCaseImpl
 import cz.adamec.timotej.snag.clients.be.app.impl.internal.GetClientsUseCaseImpl
 import cz.adamec.timotej.snag.clients.be.app.impl.internal.SaveClientUseCaseImpl
+import cz.adamec.timotej.snag.clients.business.CanDeleteClientRule
 import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
@@ -32,5 +33,6 @@ val clientsAppModule =
         factoryOf(::GetClientUseCaseImpl) bind GetClientUseCase::class
         factoryOf(::SaveClientUseCaseImpl) bind SaveClientUseCase::class
         factoryOf(::DeleteClientUseCaseImpl) bind DeleteClientUseCase::class
+        factoryOf(::CanDeleteClientRule)
         factoryOf(::GetClientsModifiedSinceUseCaseImpl) bind GetClientsModifiedSinceUseCase::class
     }
