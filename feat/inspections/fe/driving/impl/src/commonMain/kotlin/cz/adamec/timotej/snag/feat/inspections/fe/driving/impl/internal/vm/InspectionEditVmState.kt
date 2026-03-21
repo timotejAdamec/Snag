@@ -13,12 +13,15 @@
 package cz.adamec.timotej.snag.feat.inspections.fe.driving.impl.internal.vm
 
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
+import kotlin.uuid.Uuid
 
-internal data class InspectionEditUiState(
+internal data class InspectionEditVmState(
+    val projectId: Uuid? = null,
     val startedAt: Timestamp? = null,
     val endedAt: Timestamp? = null,
     val participants: String = "",
     val climate: String = "",
     val note: String = "",
-    val canEdit: Boolean = true,
+    val canEditInspection: Boolean = true,
+    val isBeingDeleted: Boolean = false,
 )

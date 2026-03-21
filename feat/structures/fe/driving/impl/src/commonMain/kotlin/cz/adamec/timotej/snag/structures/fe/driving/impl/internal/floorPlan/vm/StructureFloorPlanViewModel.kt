@@ -28,6 +28,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.scan
 import kotlinx.coroutines.flow.stateIn
@@ -44,12 +45,12 @@ internal class StructureFloorPlanViewModel(
     private val getFindingsUseCase: GetFindingsUseCase,
     private val canEditProjectEntitiesUseCase: CanEditProjectEntitiesUseCase,
 ) : ViewModel() {
-    private val _state: MutableStateFlow<StructureDetailsUiState> =
-        MutableStateFlow(StructureDetailsUiState())
+    private val _state: MutableStateFlow<StructureDetailsVmState> =
+        MutableStateFlow(StructureDetailsVmState())
     val state: StateFlow<StructureDetailsUiState> =
         _state
             .scan(
-                initial = StructureDetailsUiState(),
+                initial = StructureDetailsVmState(),
             ) { prev, new ->
                 @Suppress("LabeledExpression")
                 val newStructureId = new.feStructure?.id ?: return@scan new
@@ -57,13 +58,15 @@ internal class StructureFloorPlanViewModel(
                     collectFindings(newStructureId)
                 }
                 new
-            }.stateIn(
+            }
+            .map { it.toUiState() }
+            .stateIn(
                 scope = viewModelScope,
                 started =
                     SharingStarted.WhileSubscribed(
                         stopTimeoutMillis = DEFAULT_NO_STATE_SUBSCRIBER_TIMEOUT,
                     ),
-                initialValue = StructureDetailsUiState(),
+                initialValue = StructureDetailsVmState().toUiState(),
             )
 
     private val errorEventsChannel = Channel<UiError>()
@@ -98,7 +101,7 @@ internal class StructureFloorPlanViewModel(
                                     feStructure = structure,
                                 )
                             }
-                        } ?: if (state.value.status != StructureDetailsUiStatus.DELETED) {
+                        } ?: if (_state.value.status != StructureDetailsUiStatus.DELETED) {
                             _state.update {
                                 it.copy(status = StructureDetailsUiStatus.NOT_FOUND)
                             }

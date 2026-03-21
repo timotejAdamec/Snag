@@ -19,6 +19,7 @@ import cz.adamec.timotej.snag.findings.fe.app.api.DeleteFindingUseCase
 import cz.adamec.timotej.snag.findings.fe.app.api.GetFindingUseCase
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError.Unknown
+import cz.adamec.timotej.snag.lib.design.fe.state.mapState
 import cz.adamec.timotej.snag.projects.fe.app.api.CanEditProjectEntitiesUseCase
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -36,9 +37,10 @@ internal class FindingDetailViewModel(
     private val deleteFindingUseCase: DeleteFindingUseCase,
     private val canEditProjectEntitiesUseCase: CanEditProjectEntitiesUseCase,
 ) : ViewModel() {
-    private val _state: MutableStateFlow<FindingDetailUiState> =
-        MutableStateFlow(FindingDetailUiState())
-    val state: StateFlow<FindingDetailUiState> = _state
+    private val _state: MutableStateFlow<FindingDetailVmState> =
+        MutableStateFlow(FindingDetailVmState())
+    val state: StateFlow<FindingDetailUiState> =
+        _state.mapState { it.toUiState() }
 
     private val errorEventsChannel = Channel<UiError>()
     val errorsFlow = errorEventsChannel.receiveAsFlow()

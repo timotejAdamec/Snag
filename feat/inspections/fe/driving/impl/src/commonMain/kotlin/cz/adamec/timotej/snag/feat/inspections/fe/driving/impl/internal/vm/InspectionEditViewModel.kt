@@ -21,6 +21,7 @@ import cz.adamec.timotej.snag.feat.inspections.fe.app.api.GetInspectionUseCase
 import cz.adamec.timotej.snag.feat.inspections.fe.app.api.SaveInspectionUseCase
 import cz.adamec.timotej.snag.feat.inspections.fe.app.api.model.SaveInspectionRequest
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
+import cz.adamec.timotej.snag.lib.design.fe.state.mapState
 import cz.adamec.timotej.snag.projects.fe.app.api.CanEditProjectEntitiesUseCase
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
@@ -40,9 +41,10 @@ internal class InspectionEditViewModel(
     private val deleteInspectionUseCase: DeleteInspectionUseCase,
     private val canEditProjectEntitiesUseCase: CanEditProjectEntitiesUseCase,
 ) : ViewModel() {
-    private val _state: MutableStateFlow<InspectionEditUiState> =
-        MutableStateFlow(InspectionEditUiState(projectId = projectId))
-    val state: StateFlow<InspectionEditUiState> = _state
+    private val _state: MutableStateFlow<InspectionEditVmState> =
+        MutableStateFlow(InspectionEditVmState(projectId = projectId))
+    val state: StateFlow<InspectionEditUiState> =
+        _state.mapState { it.toUiState() }
 
     private val errorEventsChannel = Channel<UiError>()
     val errorsFlow = errorEventsChannel.receiveAsFlow()
@@ -142,7 +144,7 @@ internal class InspectionEditViewModel(
         }
 
     private suspend fun saveInspection() {
-        val currentState = state.value
+        val currentState = _state.value
         val result =
             saveInspectionUseCase(
                 request =

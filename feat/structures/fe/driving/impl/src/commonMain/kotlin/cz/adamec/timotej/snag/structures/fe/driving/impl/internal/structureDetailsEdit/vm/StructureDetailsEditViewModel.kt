@@ -19,6 +19,7 @@ import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.core.network.fe.OnlineDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError.Unknown
+import cz.adamec.timotej.snag.lib.design.fe.state.mapState
 import cz.adamec.timotej.snag.projects.fe.app.api.CanEditProjectEntitiesUseCase
 import cz.adamec.timotej.snag.structures.fe.app.api.CanModifyFloorPlanImageUseCase
 import cz.adamec.timotej.snag.structures.fe.app.api.DeleteFloorPlanImageUseCase
@@ -51,14 +52,15 @@ internal class StructureDetailsEditViewModel(
     private val canModifyFloorPlanImageUseCase: CanModifyFloorPlanImageUseCase,
     private val canEditProjectEntitiesUseCase: CanEditProjectEntitiesUseCase,
 ) : ViewModel() {
-    private val _state: MutableStateFlow<StructureDetailsEditUiState> =
+    private val _state: MutableStateFlow<StructureDetailsEditVmState> =
         MutableStateFlow(
-            StructureDetailsEditUiState(
+            StructureDetailsEditVmState(
                 isCreatingNew = structureId == null,
                 projectId = projectId,
             ),
         )
-    val state: StateFlow<StructureDetailsEditUiState> = _state
+    val state: StateFlow<StructureDetailsEditUiState> =
+        _state.mapState { it.toUiState() }
 
     private val errorEventsChannel = Channel<UiError>()
     val errorsFlow = errorEventsChannel.receiveAsFlow()
@@ -170,7 +172,7 @@ internal class StructureDetailsEditViewModel(
 
     fun onSaveStructure() =
         viewModelScope.launch {
-            if (state.value.structureName.isBlank()) {
+            if (_state.value.structureName.isBlank()) {
                 _state.update { it.copy(structureNameError = Res.string.error_field_required) }
             } else {
                 saveStructure()
@@ -184,8 +186,8 @@ internal class StructureDetailsEditViewModel(
                     SaveStructureRequest(
                         id = resolvedStructureId,
                         projectId = projectId,
-                        name = state.value.structureName,
-                        floorPlanUrl = state.value.floorPlanUrl,
+                        name = _state.value.structureName,
+                        floorPlanUrl = _state.value.floorPlanUrl,
                     ),
             )
         when (result) {

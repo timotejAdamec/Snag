@@ -15,10 +15,10 @@ package cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetailsE
 import cz.adamec.timotej.snag.feat.findings.business.FindingType
 import org.jetbrains.compose.resources.StringResource
 
-internal data class FindingDetailsEditUiState(
+internal data class FindingDetailsEditVmState(
     val findingName: String = "",
     val findingDescription: String = "",
     val findingType: FindingType = FindingType.Classic(),
     val findingNameError: StringResource? = null,
-    val canSave: Boolean = true,
+    val canEditFinding: Boolean = true,
 )

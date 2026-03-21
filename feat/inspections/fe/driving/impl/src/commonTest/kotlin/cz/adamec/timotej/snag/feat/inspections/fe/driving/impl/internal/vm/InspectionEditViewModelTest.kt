@@ -69,7 +69,6 @@ class InspectionEditViewModelTest : FrontendKoinInitializedTest() {
             assertEquals("", viewModel.state.value.participants)
             assertEquals("", viewModel.state.value.climate)
             assertEquals("", viewModel.state.value.note)
-            assertEquals(projectId, viewModel.state.value.projectId)
         }
 
     @Test
@@ -99,7 +98,6 @@ class InspectionEditViewModelTest : FrontendKoinInitializedTest() {
             assertEquals("John Doe", viewModel.state.value.participants)
             assertEquals("Sunny", viewModel.state.value.climate)
             assertEquals("Test note", viewModel.state.value.note)
-            assertEquals(projectId, viewModel.state.value.projectId)
         }
 
     @Test
@@ -281,7 +279,7 @@ class InspectionEditViewModelTest : FrontendKoinInitializedTest() {
 
             val error = viewModel.errorsFlow.first()
             assertIs<UiError.Unknown>(error)
-            assertEquals(false, viewModel.state.value.isBeingDeleted)
+            assertEquals(true, viewModel.state.value.canEdit)
         }
 
     @Test
@@ -294,6 +292,6 @@ class InspectionEditViewModelTest : FrontendKoinInitializedTest() {
 
             advanceUntilIdle()
 
-            assertEquals(false, viewModel.state.value.isBeingDeleted)
+            assertEquals(true, viewModel.state.value.canEdit)
         }
 }

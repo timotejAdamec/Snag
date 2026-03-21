@@ -29,6 +29,7 @@ import cz.adamec.timotej.snag.findings.fe.app.api.model.SaveFindingDetailsReques
 import cz.adamec.timotej.snag.findings.fe.app.api.model.SaveNewFindingRequest
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError.Unknown
+import cz.adamec.timotej.snag.lib.design.fe.state.mapState
 import cz.adamec.timotej.snag.projects.fe.app.api.CanEditProjectEntitiesUseCase
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
@@ -53,13 +54,14 @@ internal class FindingDetailsEditViewModel(
     private val saveFindingDetailsUseCase: SaveFindingDetailsUseCase,
     private val canEditProjectEntitiesUseCase: CanEditProjectEntitiesUseCase,
 ) : ViewModel() {
-    private val _state: MutableStateFlow<FindingDetailsEditUiState> =
+    private val _state: MutableStateFlow<FindingDetailsEditVmState> =
         MutableStateFlow(
-            FindingDetailsEditUiState(
+            FindingDetailsEditVmState(
                 findingType = findingTypeKey?.toDefaultFindingType() ?: FindingType.Classic(),
             ),
         )
-    val state: StateFlow<FindingDetailsEditUiState> = _state
+    val state: StateFlow<FindingDetailsEditUiState> =
+        _state.mapState { it.toUiState() }
 
     private val errorEventsChannel = Channel<UiError>()
     val errorsFlow = errorEventsChannel.receiveAsFlow()
@@ -137,7 +139,7 @@ internal class FindingDetailsEditViewModel(
 
     fun onSaveFinding() =
         viewModelScope.launch {
-            if (state.value.findingName.isBlank()) {
+            if (_state.value.findingName.isBlank()) {
                 _state.update { it.copy(findingNameError = Res.string.error_field_required) }
             } else {
                 val currentFindingId = findingId
@@ -155,9 +157,9 @@ internal class FindingDetailsEditViewModel(
                 request =
                     SaveNewFindingRequest(
                         structureId = structureId!!,
-                        name = state.value.findingName,
-                        description = state.value.findingDescription.ifBlank { null },
-                        findingType = state.value.findingType,
+                        name = _state.value.findingName,
+                        description = _state.value.findingDescription.ifBlank { null },
+                        findingType = _state.value.findingType,
                         coordinates = setOfNotNull(coordinate),
                     ),
             )
@@ -177,9 +179,9 @@ internal class FindingDetailsEditViewModel(
                 request =
                     SaveFindingDetailsRequest(
                         findingId = findingId,
-                        name = state.value.findingName,
-                        description = state.value.findingDescription.ifBlank { null },
-                        findingType = state.value.findingType,
+                        name = _state.value.findingName,
+                        description = _state.value.findingDescription.ifBlank { null },
+                        findingType = _state.value.findingType,
                     ),
             )
         when (result) {

@@ -33,6 +33,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertIs
 import kotlin.test.assertNotNull
+import kotlin.test.assertTrue
 import kotlin.uuid.Uuid
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -123,7 +124,7 @@ class FindingDetailViewModelTest : FrontendKoinInitializedTest() {
             val event = viewModel.deletedSuccessfullyEventFlow.first()
             assertEquals(Unit, event)
             assertEquals(FindingDetailUiStatus.DELETED, viewModel.state.value.status)
-            assertFalse(viewModel.state.value.isBeingDeleted)
+            assertFalse(viewModel.state.value.canEdit)
         }
 
     @Test
@@ -141,7 +142,7 @@ class FindingDetailViewModelTest : FrontendKoinInitializedTest() {
 
             val error = viewModel.errorsFlow.first()
             assertIs<UiError.Unknown>(error)
-            assertFalse(viewModel.state.value.isBeingDeleted)
+            assertTrue(viewModel.state.value.canEdit)
         }
 
     @Test
