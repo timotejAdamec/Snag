@@ -12,7 +12,6 @@
 
 package cz.adamec.timotej.snag.structures.be.app.impl.internal
 
-import cz.adamec.timotej.snag.authorization.business.UserRole
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.feat.structures.be.model.BackendStructureData
 import cz.adamec.timotej.snag.projects.be.model.BackendProjectData
@@ -20,7 +19,8 @@ import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
 import cz.adamec.timotej.snag.structures.be.app.api.GetStructuresUseCase
 import cz.adamec.timotej.snag.structures.be.ports.StructuresDb
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
-import cz.adamec.timotej.snag.users.be.model.BackendUserData
+import cz.adamec.timotej.snag.testinfra.be.TEST_USER_ID
+import cz.adamec.timotej.snag.testinfra.be.seedTestUser
 import cz.adamec.timotej.snag.users.be.ports.UsersDb
 import kotlinx.coroutines.test.runTest
 import org.koin.test.inject
@@ -62,18 +62,6 @@ class GetStructuresUseCaseImplTest : BackendKoinInitializedTest() {
             updatedAt = Timestamp(3L),
         )
 
-    private suspend fun seedTestUser() {
-        usersDb.saveUser(
-            BackendUserData(
-                id = TEST_USER_ID,
-                entraId = "test-entra",
-                email = "test@example.com",
-                role = UserRole.ADMINISTRATOR,
-                updatedAt = Timestamp(1L),
-            ),
-        )
-    }
-
     @Test
     fun `returns empty list when none`() =
         runTest(testDispatcher) {
@@ -85,7 +73,7 @@ class GetStructuresUseCaseImplTest : BackendKoinInitializedTest() {
     @Test
     fun `returns structures for project`() =
         runTest(testDispatcher) {
-            seedTestUser()
+            usersDb.seedTestUser()
             projectsDb.saveProject(
                 BackendProjectData(
                     id = projectId,
@@ -116,7 +104,7 @@ class GetStructuresUseCaseImplTest : BackendKoinInitializedTest() {
     @Test
     fun `excludes other project structures`() =
         runTest(testDispatcher) {
-            seedTestUser()
+            usersDb.seedTestUser()
             projectsDb.saveProject(
                 BackendProjectData(
                     id = otherProjectId,
@@ -132,8 +120,4 @@ class GetStructuresUseCaseImplTest : BackendKoinInitializedTest() {
 
             assertEquals(emptyList(), result)
         }
-
-    companion object {
-        private val TEST_USER_ID = Uuid.parse("00000000-0000-0000-0000-000000000042")
-    }
 }

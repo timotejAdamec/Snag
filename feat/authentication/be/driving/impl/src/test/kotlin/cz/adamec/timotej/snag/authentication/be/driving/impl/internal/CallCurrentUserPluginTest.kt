@@ -13,6 +13,7 @@
 package cz.adamec.timotej.snag.authentication.be.driving.impl.internal
 
 import cz.adamec.timotej.snag.authentication.be.driving.api.CallCurrentUserKey
+import cz.adamec.timotej.snag.authentication.be.driving.api.USER_ID_HEADER
 import cz.adamec.timotej.snag.authorization.business.UserRole
 import cz.adamec.timotej.snag.configuration.be.AppConfiguration
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
@@ -73,7 +74,7 @@ class CallCurrentUserPluginTest : BackendKoinInitializedTest() {
 
             val response =
                 client.get("/test-current-user") {
-                    header("X-User-Id", "not-a-uuid")
+                    header(USER_ID_HEADER, "not-a-uuid")
                 }
 
             assertEquals(HttpStatusCode.NotFound, response.status)
@@ -86,7 +87,7 @@ class CallCurrentUserPluginTest : BackendKoinInitializedTest() {
 
             val response =
                 client.get("/test-current-user") {
-                    header("X-User-Id", UNKNOWN_USER_ID.toString())
+                    header(USER_ID_HEADER, UNKNOWN_USER_ID.toString())
                 }
 
             assertEquals(HttpStatusCode.NotFound, response.status)
@@ -108,7 +109,7 @@ class CallCurrentUserPluginTest : BackendKoinInitializedTest() {
 
             val response =
                 client.get("/test-current-user") {
-                    header("X-User-Id", EXISTING_USER_ID.toString())
+                    header(USER_ID_HEADER, EXISTING_USER_ID.toString())
                 }
 
             assertEquals(HttpStatusCode.OK, response.status)

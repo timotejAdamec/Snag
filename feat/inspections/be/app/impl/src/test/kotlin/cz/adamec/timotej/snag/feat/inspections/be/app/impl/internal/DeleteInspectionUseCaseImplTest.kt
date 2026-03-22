@@ -12,7 +12,6 @@
 
 package cz.adamec.timotej.snag.feat.inspections.be.app.impl.internal
 
-import cz.adamec.timotej.snag.authorization.business.UserRole
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.core.foundation.common.UuidProvider
 import cz.adamec.timotej.snag.feat.inspections.be.app.api.DeleteInspectionUseCase
@@ -22,14 +21,14 @@ import cz.adamec.timotej.snag.feat.inspections.be.ports.InspectionsDb
 import cz.adamec.timotej.snag.projects.be.model.BackendProjectData
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
-import cz.adamec.timotej.snag.users.be.model.BackendUserData
+import cz.adamec.timotej.snag.testinfra.be.TEST_USER_ID
+import cz.adamec.timotej.snag.testinfra.be.seedTestUser
 import cz.adamec.timotej.snag.users.be.ports.UsersDb
 import kotlinx.coroutines.test.runTest
 import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
-import kotlin.uuid.Uuid
 
 class DeleteInspectionUseCaseImplTest : BackendKoinInitializedTest() {
     private val inspectionsDb: InspectionsDb by inject()
@@ -52,20 +51,8 @@ class DeleteInspectionUseCaseImplTest : BackendKoinInitializedTest() {
             updatedAt = Timestamp(10L),
         )
 
-    private suspend fun seedTestUser() {
-        usersDb.saveUser(
-            BackendUserData(
-                id = TEST_USER_ID,
-                entraId = "test-entra",
-                email = "test@example.com",
-                role = UserRole.ADMINISTRATOR,
-                updatedAt = Timestamp(1L),
-            ),
-        )
-    }
-
     private suspend fun seedClosedProject() {
-        seedTestUser()
+        usersDb.seedTestUser()
         projectsDb.saveProject(
             BackendProjectData(
                 id = projectId,
@@ -96,8 +83,4 @@ class DeleteInspectionUseCaseImplTest : BackendKoinInitializedTest() {
             val stored = inspectionsDb.getInspection(inspectionId)
             assertNull(stored?.deletedAt)
         }
-
-    companion object {
-        private val TEST_USER_ID = Uuid.parse("00000000-0000-0000-0000-000000000042")
-    }
 }

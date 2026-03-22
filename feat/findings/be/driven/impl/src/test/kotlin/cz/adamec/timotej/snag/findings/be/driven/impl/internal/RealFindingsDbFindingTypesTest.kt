@@ -12,7 +12,6 @@
 
 package cz.adamec.timotej.snag.findings.be.driven.impl.internal
 
-import cz.adamec.timotej.snag.authorization.business.UserRole
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.feat.findings.be.model.BackendFinding
 import cz.adamec.timotej.snag.feat.findings.be.model.BackendFindingData
@@ -26,7 +25,8 @@ import cz.adamec.timotej.snag.projects.be.model.BackendProjectData
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
 import cz.adamec.timotej.snag.structures.be.ports.StructuresDb
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
-import cz.adamec.timotej.snag.users.be.model.BackendUserData
+import cz.adamec.timotej.snag.testinfra.be.TEST_USER_ID
+import cz.adamec.timotej.snag.testinfra.be.seedTestUser
 import cz.adamec.timotej.snag.users.be.ports.UsersDb
 import kotlinx.coroutines.test.runTest
 import org.koin.test.inject
@@ -41,20 +41,8 @@ class RealFindingsDbFindingTypesTest : BackendKoinInitializedTest() {
     private val structuresDb: StructuresDb by inject()
     private val usersDb: UsersDb by inject()
 
-    private suspend fun seedTestUser() {
-        usersDb.saveUser(
-            BackendUserData(
-                id = TEST_USER_ID,
-                entraId = "test-entra",
-                email = "test@example.com",
-                role = UserRole.ADMINISTRATOR,
-                updatedAt = Timestamp(1L),
-            ),
-        )
-    }
-
     private suspend fun seedParentEntities() {
-        seedTestUser()
+        usersDb.seedTestUser()
         projectsDb.saveProject(
             BackendProjectData(
                 id = PROJECT_ID,
@@ -322,7 +310,6 @@ class RealFindingsDbFindingTypesTest : BackendKoinInitializedTest() {
         }
 
     companion object {
-        private val TEST_USER_ID = Uuid.parse("00000000-0000-0000-0000-000000000042")
         private val PROJECT_ID = Uuid.parse("00000000-0000-0000-0000-000000000001")
         private val STRUCTURE_ID = Uuid.parse("00000000-0000-0000-0001-000000000001")
         private val FINDING_ID_1 = Uuid.parse("00000000-0000-0000-0002-000000000001")

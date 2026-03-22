@@ -12,13 +12,13 @@
 
 package cz.adamec.timotej.snag.projects.be.app.impl.internal
 
-import cz.adamec.timotej.snag.authorization.business.UserRole
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.projects.be.app.api.SaveProjectUseCase
 import cz.adamec.timotej.snag.projects.be.model.BackendProjectData
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
-import cz.adamec.timotej.snag.users.be.model.BackendUserData
+import cz.adamec.timotej.snag.testinfra.be.TEST_USER_ID
+import cz.adamec.timotej.snag.testinfra.be.seedTestUser
 import cz.adamec.timotej.snag.users.be.ports.UsersDb
 import kotlinx.coroutines.test.runTest
 import org.koin.test.inject
@@ -44,22 +44,10 @@ class SaveProjectUseCaseImplTest : BackendKoinInitializedTest() {
             updatedAt = Timestamp(10L),
         )
 
-    private suspend fun seedTestUser() {
-        usersDb.saveUser(
-            BackendUserData(
-                id = TEST_USER_ID,
-                entraId = "test-entra",
-                email = "test@example.com",
-                role = UserRole.ADMINISTRATOR,
-                updatedAt = Timestamp(1L),
-            ),
-        )
-    }
-
     @Test
     fun `saves project to data source`() =
         runTest(testDispatcher) {
-            seedTestUser()
+            usersDb.seedTestUser()
             useCase(project)
 
             val stored = dataSource.getProject(projectId)
@@ -69,7 +57,7 @@ class SaveProjectUseCaseImplTest : BackendKoinInitializedTest() {
     @Test
     fun `does not save project if saved updated at is later than the new one`() =
         runTest(testDispatcher) {
-            seedTestUser()
+            usersDb.seedTestUser()
             val savedProject =
                 project.copy(
                     updatedAt = Timestamp(value = 20L),
@@ -84,7 +72,7 @@ class SaveProjectUseCaseImplTest : BackendKoinInitializedTest() {
     @Test
     fun `returns null if project was not present`() =
         runTest(testDispatcher) {
-            seedTestUser()
+            usersDb.seedTestUser()
             val result = useCase(project)
 
             assertNull(result)
@@ -93,7 +81,7 @@ class SaveProjectUseCaseImplTest : BackendKoinInitializedTest() {
     @Test
     fun `returns saved project if saved updated at is later than the new one`() =
         runTest(testDispatcher) {
-            seedTestUser()
+            usersDb.seedTestUser()
             val savedProject =
                 project.copy(
                     updatedAt = Timestamp(value = 20L),
@@ -108,7 +96,7 @@ class SaveProjectUseCaseImplTest : BackendKoinInitializedTest() {
     @Test
     fun `returns null if saved updated at is earlier than the new one`() =
         runTest(testDispatcher) {
-            seedTestUser()
+            usersDb.seedTestUser()
             dataSource.saveProject(project)
 
             val newerProject =
@@ -125,7 +113,7 @@ class SaveProjectUseCaseImplTest : BackendKoinInitializedTest() {
     @Test
     fun `restores soft-deleted project when saved with newer updatedAt`() =
         runTest(testDispatcher) {
-            seedTestUser()
+            usersDb.seedTestUser()
             val deletedProject = project.copy(deletedAt = Timestamp(15L))
             dataSource.saveProject(deletedProject)
 
@@ -147,7 +135,7 @@ class SaveProjectUseCaseImplTest : BackendKoinInitializedTest() {
     @Test
     fun `does not restore soft-deleted project when saved with older updatedAt`() =
         runTest(testDispatcher) {
-            seedTestUser()
+            usersDb.seedTestUser()
             val deletedProject = project.copy(deletedAt = Timestamp(15L))
             dataSource.saveProject(deletedProject)
 
@@ -161,8 +149,4 @@ class SaveProjectUseCaseImplTest : BackendKoinInitializedTest() {
             assertNotNull(result)
             assertEquals(deletedProject, result)
         }
-
-    companion object {
-        private val TEST_USER_ID = Uuid.parse("00000000-0000-0000-0000-000000000042")
-    }
 }

@@ -15,6 +15,8 @@ package cz.adamec.timotej.snag.authentication.be.driving.api
 import io.ktor.server.routing.RoutingContext
 import io.ktor.util.AttributeKey
 
+const val USER_ID_HEADER = "X-User-Id"
+
 val CallCurrentUserKey = AttributeKey<CallCurrentUser>("CallCurrentUser")
 
 fun RoutingContext.currentUser(): CallCurrentUser = call.attributes[CallCurrentUserKey]

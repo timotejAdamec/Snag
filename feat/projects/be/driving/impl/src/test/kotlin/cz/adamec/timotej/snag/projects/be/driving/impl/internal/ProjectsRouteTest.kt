@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.projects.be.driving.impl.internal
 
+import cz.adamec.timotej.snag.authentication.be.driving.api.USER_ID_HEADER
 import cz.adamec.timotej.snag.authorization.business.UserRole
 import cz.adamec.timotej.snag.configuration.be.AppConfiguration
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
@@ -22,6 +23,7 @@ import cz.adamec.timotej.snag.projects.be.driving.contract.PutProjectApiDto
 import cz.adamec.timotej.snag.projects.be.model.BackendProjectData
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
+import cz.adamec.timotej.snag.testinfra.be.seedTestUser
 import cz.adamec.timotej.snag.users.be.model.BackendUserData
 import cz.adamec.timotej.snag.users.be.ports.UsersDb
 import io.ktor.client.call.body
@@ -56,15 +58,7 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
     }
 
     private suspend fun seedAdminUser() {
-        usersDb.saveUser(
-            BackendUserData(
-                id = ADMIN_USER_ID,
-                entraId = "admin-entra",
-                email = "admin@example.com",
-                role = UserRole.ADMINISTRATOR,
-                updatedAt = Timestamp(1L),
-            ),
-        )
+        usersDb.seedTestUser(id = ADMIN_USER_ID)
     }
 
     @Test
@@ -290,7 +284,7 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
             val response =
                 client.put("/projects/$TEST_ID_1") {
                     contentType(ContentType.Application.Json)
-                    header("X-User-Id", ADMIN_USER_ID.toString())
+                    header(USER_ID_HEADER, ADMIN_USER_ID.toString())
                     setBody(
                         PutProjectApiDto(
                             name = "New",
@@ -323,7 +317,7 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
             val response =
                 client.put("/projects/$TEST_ID_1") {
                     contentType(ContentType.Application.Json)
-                    header("X-User-Id", ADMIN_USER_ID.toString())
+                    header(USER_ID_HEADER, ADMIN_USER_ID.toString())
                     setBody(
                         PutProjectApiDto(
                             name = "New",
@@ -360,7 +354,7 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
             val response =
                 client.put("/projects/$TEST_ID_1") {
                     contentType(ContentType.Application.Json)
-                    header("X-User-Id", ADMIN_USER_ID.toString())
+                    header(USER_ID_HEADER, ADMIN_USER_ID.toString())
                     setBody(
                         PutProjectApiDto(
                             name = "New",
@@ -387,7 +381,7 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
             val response =
                 client.put("/projects/not-a-uuid") {
                     contentType(ContentType.Application.Json)
-                    header("X-User-Id", ADMIN_USER_ID.toString())
+                    header(USER_ID_HEADER, ADMIN_USER_ID.toString())
                     setBody(
                         PutProjectApiDto(
                             name = "New",
@@ -411,7 +405,7 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
             val response =
                 client.put("/projects/$TEST_ID_1") {
                     contentType(ContentType.Application.Json)
-                    header("X-User-Id", ADMIN_USER_ID.toString())
+                    header(USER_ID_HEADER, ADMIN_USER_ID.toString())
                     setBody("{\"invalid\": true}")
                 }
 
@@ -461,7 +455,7 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
             val response =
                 client.put("/projects/$TEST_ID_1") {
                     contentType(ContentType.Application.Json)
-                    header("X-User-Id", technicianId.toString())
+                    header(USER_ID_HEADER, technicianId.toString())
                     setBody(
                         PutProjectApiDto(
                             name = "New",
@@ -504,7 +498,7 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
             val response =
                 client.put("/projects/$TEST_ID_1") {
                     contentType(ContentType.Application.Json)
-                    header("X-User-Id", leadId.toString())
+                    header(USER_ID_HEADER, leadId.toString())
                     setBody(
                         PutProjectApiDto(
                             name = "Open Project",

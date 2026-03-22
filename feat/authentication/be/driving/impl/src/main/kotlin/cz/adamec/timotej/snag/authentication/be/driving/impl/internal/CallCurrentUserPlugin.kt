@@ -14,6 +14,7 @@ package cz.adamec.timotej.snag.authentication.be.driving.impl.internal
 
 import cz.adamec.timotej.snag.authentication.be.driving.api.CallCurrentUser
 import cz.adamec.timotej.snag.authentication.be.driving.api.CallCurrentUserKey
+import cz.adamec.timotej.snag.authentication.be.driving.api.USER_ID_HEADER
 import cz.adamec.timotej.snag.users.be.app.api.GetUserUseCase
 import io.ktor.server.application.createApplicationPlugin
 import kotlin.uuid.Uuid
@@ -23,7 +24,7 @@ internal fun callCurrentUserPlugin(getUserUseCase: GetUserUseCase) =
     createApplicationPlugin(name = "CallCurrentUserPlugin") {
         onCall { call ->
             resolveCurrentUser(
-                userIdHeader = call.request.headers["X-User-Id"],
+                userIdHeader = call.request.headers[USER_ID_HEADER],
                 getUserUseCase = getUserUseCase,
             )?.let { currentUser ->
                 call.attributes.put(CallCurrentUserKey, currentUser)

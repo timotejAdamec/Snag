@@ -12,7 +12,6 @@
 
 package cz.adamec.timotej.snag.structures.be.driving.impl.internal
 
-import cz.adamec.timotej.snag.authorization.business.UserRole
 import cz.adamec.timotej.snag.configuration.be.AppConfiguration
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.feat.structures.be.model.BackendStructureData
@@ -24,7 +23,8 @@ import cz.adamec.timotej.snag.structures.be.driving.contract.PutStructureApiDto
 import cz.adamec.timotej.snag.structures.be.driving.contract.StructureApiDto
 import cz.adamec.timotej.snag.structures.be.ports.StructuresDb
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
-import cz.adamec.timotej.snag.users.be.model.BackendUserData
+import cz.adamec.timotej.snag.testinfra.be.TEST_USER_ID
+import cz.adamec.timotej.snag.testinfra.be.seedTestUser
 import cz.adamec.timotej.snag.users.be.ports.UsersDb
 import io.ktor.client.call.body
 import io.ktor.client.request.get
@@ -48,20 +48,8 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
     private val projectsDb: ProjectsDb by inject()
     private val usersDb: UsersDb by inject()
 
-    private suspend fun seedTestUser() {
-        usersDb.saveUser(
-            BackendUserData(
-                id = TEST_USER_ID,
-                entraId = "test-entra",
-                email = "test@example.com",
-                role = UserRole.ADMINISTRATOR,
-                updatedAt = Timestamp(1L),
-            ),
-        )
-    }
-
     private suspend fun createParentProject() {
-        seedTestUser()
+        usersDb.seedTestUser()
         projectsDb.saveProject(
             BackendProjectData(
                 id = PROJECT_ID,
@@ -489,7 +477,6 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
     // endregion
 
     companion object {
-        private val TEST_USER_ID = Uuid.parse("00000000-0000-0000-0000-000000000042")
         private val PROJECT_ID = Uuid.parse("00000000-0000-0000-0000-000000000010")
         private val TEST_ID_1 = Uuid.parse("00000000-0000-0000-0000-000000000001")
         private val TEST_ID_2 = Uuid.parse("00000000-0000-0000-0000-000000000002")
