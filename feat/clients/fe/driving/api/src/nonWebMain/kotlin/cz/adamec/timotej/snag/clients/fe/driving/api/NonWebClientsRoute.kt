@@ -13,28 +13,52 @@
 package cz.adamec.timotej.snag.clients.fe.driving.api
 
 import androidx.compose.runtime.Immutable
-import kotlinx.serialization.Serializable
 import kotlin.uuid.Uuid
 
-@Serializable
 @Immutable
-data object NonWebClientsRoute : ClientsRoute
+data class NonWebClientsRoute(
+    override val onNewClientClick: () -> Unit,
+    override val onClientClick: (Uuid) -> Unit,
+) : ClientsRoute
+
+class NonWebClientsRouteFactory : ClientsRouteFactory {
+    override fun create(
+        onNewClientClick: () -> Unit,
+        onClientClick: (Uuid) -> Unit,
+    ) = NonWebClientsRoute(
+        onNewClientClick = onNewClientClick,
+        onClientClick = onClientClick,
+    )
+}
 
 @Immutable
 data class NonWebClientCreationRoute(
     override val onCreated: (Uuid) -> Unit,
+    override val onDismiss: () -> Unit,
 ) : ClientCreationRoute
 
 class NonWebClientCreationRouteFactory : ClientCreationRouteFactory {
-    override fun create(onCreated: (Uuid) -> Unit) = NonWebClientCreationRoute(onCreated)
+    override fun create(
+        onCreated: (Uuid) -> Unit,
+        onDismiss: () -> Unit,
+    ) = NonWebClientCreationRoute(
+        onCreated = onCreated,
+        onDismiss = onDismiss,
+    )
 }
 
-@Serializable
 @Immutable
 data class NonWebClientEditRoute(
     override val clientId: Uuid,
+    override val onDismiss: () -> Unit,
 ) : ClientEditRoute
 
 class NonWebClientEditRouteFactory : ClientEditRouteFactory {
-    override fun create(clientId: Uuid): ClientEditRoute = NonWebClientEditRoute(clientId)
+    override fun create(
+        clientId: Uuid,
+        onDismiss: () -> Unit,
+    ) = NonWebClientEditRoute(
+        clientId = clientId,
+        onDismiss = onDismiss,
+    )
 }

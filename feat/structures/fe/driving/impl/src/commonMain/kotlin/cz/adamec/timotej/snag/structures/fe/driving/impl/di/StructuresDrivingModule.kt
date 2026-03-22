@@ -31,6 +31,7 @@ import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureFloorPlanR
 import cz.adamec.timotej.snag.lib.design.fe.dialog.fullscreenDialogProperties
 import cz.adamec.timotej.snag.lib.design.fe.scenes.ContentPaneSceneMetadata
 import cz.adamec.timotej.snag.lib.design.fe.scenes.MapListDetailSceneMetadata
+import cz.adamec.timotej.snag.lib.navigation.fe.SnagBackStack
 import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectsBackStack
 import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.floorPlan.ui.StructureFloorPlanScreen
 import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.floorPlan.vm.StructureFloorPlanViewModel
@@ -41,6 +42,7 @@ import org.koin.compose.koinInject
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.viewModel
 import org.koin.core.scope.Scope
+import org.koin.dsl.bind
 import org.koin.dsl.module
 import org.koin.dsl.navigation3.navigation
 import kotlin.uuid.Uuid
@@ -166,7 +168,9 @@ private fun Scope.StructureEditScreenSetup(
 val structuresDrivingImplModule =
     module {
         includes(platformModule)
-        single { StructureDetailBackStack(mutableStateListOf()) }
+        single {
+            StructureDetailBackStack(mutableStateListOf())
+        } bind SnagBackStack::class
         viewModel { (structureId: Uuid, projectId: Uuid) ->
             StructureFloorPlanViewModel(
                 structureId = structureId,
@@ -174,7 +178,7 @@ val structuresDrivingImplModule =
                 getStructureUseCase = get(),
                 deleteStructureUseCase = get(),
                 getFindingsUseCase = get(),
-                isProjectClosedUseCase = get(),
+                canEditProjectEntitiesUseCase = get(),
             )
         }
         viewModel { (projectId: Uuid, structureId: Uuid?) ->
@@ -186,7 +190,7 @@ val structuresDrivingImplModule =
                 uploadFloorPlanImageUseCase = get(),
                 deleteFloorPlanImageUseCase = get(),
                 canModifyFloorPlanImageUseCase = get(),
-                isProjectClosedUseCase = get(),
+                canEditProjectEntitiesUseCase = get(),
             )
         }
     }

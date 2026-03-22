@@ -22,14 +22,11 @@ import kotlin.uuid.Uuid
 @Immutable
 internal data class StructureDetailsUiState(
     val status: StructureDetailsUiStatus = StructureDetailsUiStatus.LOADING,
-    val isBeingDeleted: Boolean = false,
     val feStructure: AppStructure? = null,
     val findings: ImmutableList<AppFinding> = persistentListOf(),
     val selectedFindingId: Uuid? = null,
-    val isProjectClosed: Boolean = false,
-) {
-    val canEdit = status == StructureDetailsUiStatus.LOADED && !isBeingDeleted && !isProjectClosed
-}
+    val canEdit: Boolean = false,
+)
 
 internal enum class StructureDetailsUiStatus {
     ERROR,

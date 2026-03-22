@@ -21,7 +21,7 @@ import cz.adamec.timotej.snag.findings.fe.app.api.DeleteFindingUseCase
 import cz.adamec.timotej.snag.findings.fe.app.api.GetFindingUseCase
 import cz.adamec.timotej.snag.findings.fe.driven.test.FakeFindingsDb
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
-import cz.adamec.timotej.snag.projects.fe.app.api.IsProjectClosedUseCase
+import cz.adamec.timotej.snag.projects.fe.app.api.CanEditProjectEntitiesUseCase
 import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
@@ -33,6 +33,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertIs
 import kotlin.test.assertNotNull
+import kotlin.test.assertTrue
 import kotlin.uuid.Uuid
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -41,7 +42,7 @@ class FindingDetailViewModelTest : FrontendKoinInitializedTest() {
 
     private val getFindingUseCase: GetFindingUseCase by inject()
     private val deleteFindingUseCase: DeleteFindingUseCase by inject()
-    private val isProjectClosedUseCase: IsProjectClosedUseCase by inject()
+    private val canEditProjectEntitiesUseCase: CanEditProjectEntitiesUseCase by inject()
 
     private val projectId = Uuid.parse("00000000-0000-0000-0000-000000000002")
     private val structureId = Uuid.parse("00000000-0000-0000-0000-000000000001")
@@ -63,7 +64,7 @@ class FindingDetailViewModelTest : FrontendKoinInitializedTest() {
             projectId = projectId,
             getFindingUseCase = getFindingUseCase,
             deleteFindingUseCase = deleteFindingUseCase,
-            isProjectClosedUseCase = isProjectClosedUseCase,
+            canEditProjectEntitiesUseCase = canEditProjectEntitiesUseCase,
         )
 
     @Test
@@ -123,7 +124,7 @@ class FindingDetailViewModelTest : FrontendKoinInitializedTest() {
             val event = viewModel.deletedSuccessfullyEventFlow.first()
             assertEquals(Unit, event)
             assertEquals(FindingDetailUiStatus.DELETED, viewModel.state.value.status)
-            assertFalse(viewModel.state.value.isBeingDeleted)
+            assertFalse(viewModel.state.value.canEdit)
         }
 
     @Test
@@ -141,7 +142,7 @@ class FindingDetailViewModelTest : FrontendKoinInitializedTest() {
 
             val error = viewModel.errorsFlow.first()
             assertIs<UiError.Unknown>(error)
-            assertFalse(viewModel.state.value.isBeingDeleted)
+            assertTrue(viewModel.state.value.canEdit)
         }
 
     @Test

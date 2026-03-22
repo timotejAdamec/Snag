@@ -21,6 +21,12 @@ which's meaning is obvious.
 
 Use trailing comma.
 
+## New modules
+
+Try implementing the `build.gradle.kts` just with the convention plugin described in `docs/gradle_plugins.md`
+without any explicit dependencies. The convention plugin should autowire the necessary dependencies.
+Only add if the autowiring does not wire them.
+
 ## Changes verification
 
 ### Up-to-date tests
@@ -29,7 +35,9 @@ For new code, tests should be created.
 
 ### Gradle
 
-Before creating a PR, run `check`.
+Before creating a PR, run `check`. If it fails, analyze **all** errors from the full output,
+fix them all in one pass, then re-run `check` once to confirm. Do not fix-and-rerun iteratively
+one error at a time.
 
 ### Following patterns
 

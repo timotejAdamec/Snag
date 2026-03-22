@@ -27,10 +27,15 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import cz.adamec.timotej.snag.clients.fe.driving.impl.internal.clientDetailsEdit.ui.components.ClientDeletionAlertDialog
 import cz.adamec.timotej.snag.clients.fe.driving.impl.internal.clientDetailsEdit.vm.ClientDetailsEditUiState
 import cz.adamec.timotej.snag.lib.design.fe.theme.SnagPreview
 import org.jetbrains.compose.resources.painterResource
@@ -43,8 +48,10 @@ import snag.feat.clients.fe.driving.impl.generated.resources.client_phone_label
 import snag.feat.clients.fe.driving.impl.generated.resources.new_client
 import snag.feat.clients.fe.driving.impl.generated.resources.required
 import snag.lib.design.fe.generated.resources.close
+import snag.lib.design.fe.generated.resources.delete
 import snag.lib.design.fe.generated.resources.ic_call
 import snag.lib.design.fe.generated.resources.ic_close
+import snag.lib.design.fe.generated.resources.ic_delete
 import snag.lib.design.fe.generated.resources.ic_location
 import snag.lib.design.fe.generated.resources.ic_mail
 import snag.lib.design.fe.generated.resources.ic_person
@@ -65,9 +72,20 @@ internal fun ClientDetailsEditContent(
     onClientPhoneNumberChange: (String) -> Unit,
     onClientEmailChange: (String) -> Unit,
     onSaveClick: () -> Unit,
+    onDeleteClick: () -> Unit,
     onCancelClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    var isShowingDeleteConfirmation by remember { mutableStateOf(false) }
+
+    if (isShowingDeleteConfirmation) {
+        ClientDeletionAlertDialog(
+            areButtonsEnabled = !state.isBeingDeleted,
+            onDelete = onDeleteClick,
+            onDismiss = { isShowingDeleteConfirmation = false },
+        )
+    }
+
     Scaffold(
         modifier = modifier,
         topBar = {
@@ -103,6 +121,17 @@ internal fun ClientDetailsEditContent(
                     }
                 },
                 actions = {
+                    if (clientId != null) {
+                        IconButton(
+                            enabled = state.canDelete && !state.isBeingDeleted,
+                            onClick = { isShowingDeleteConfirmation = true },
+                        ) {
+                            Icon(
+                                painter = painterResource(DesignRes.drawable.ic_delete),
+                                contentDescription = stringResource(DesignRes.string.delete),
+                            )
+                        }
+                    }
                     Button(
                         onClick = onSaveClick,
                     ) {
@@ -225,6 +254,7 @@ private fun ClientDetailsEditContentPreview() {
             onClientPhoneNumberChange = {},
             onClientEmailChange = {},
             onSaveClick = {},
+            onDeleteClick = {},
             onCancelClick = {},
         )
     }

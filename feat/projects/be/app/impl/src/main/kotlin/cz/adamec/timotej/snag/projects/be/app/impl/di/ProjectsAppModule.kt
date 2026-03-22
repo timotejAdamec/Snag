@@ -20,6 +20,7 @@ import cz.adamec.timotej.snag.projects.be.app.api.GetProjectAssignmentsUseCase
 import cz.adamec.timotej.snag.projects.be.app.api.GetProjectUseCase
 import cz.adamec.timotej.snag.projects.be.app.api.GetProjectsModifiedSinceUseCase
 import cz.adamec.timotej.snag.projects.be.app.api.GetProjectsUseCase
+import cz.adamec.timotej.snag.projects.be.app.api.IsClientReferencedByProjectUseCase
 import cz.adamec.timotej.snag.projects.be.app.api.RemoveUserFromProjectUseCase
 import cz.adamec.timotej.snag.projects.be.app.api.SaveProjectUseCase
 import cz.adamec.timotej.snag.projects.be.app.impl.internal.AssignUserToProjectUseCaseImpl
@@ -30,6 +31,7 @@ import cz.adamec.timotej.snag.projects.be.app.impl.internal.GetProjectAssignment
 import cz.adamec.timotej.snag.projects.be.app.impl.internal.GetProjectUseCaseImpl
 import cz.adamec.timotej.snag.projects.be.app.impl.internal.GetProjectsModifiedSinceUseCaseImpl
 import cz.adamec.timotej.snag.projects.be.app.impl.internal.GetProjectsUseCaseImpl
+import cz.adamec.timotej.snag.projects.be.app.impl.internal.IsClientReferencedByProjectUseCaseImpl
 import cz.adamec.timotej.snag.projects.be.app.impl.internal.RemoveUserFromProjectUseCaseImpl
 import cz.adamec.timotej.snag.projects.be.app.impl.internal.SaveProjectUseCaseImpl
 import cz.adamec.timotej.snag.projects.business.CanCloseProjectRule
@@ -49,6 +51,7 @@ val projectsAppModule =
         factoryOf(::GetProjectAssignmentsUseCaseImpl) bind GetProjectAssignmentsUseCase::class
         factoryOf(::AssignUserToProjectUseCaseImpl) bind AssignUserToProjectUseCase::class
         factoryOf(::RemoveUserFromProjectUseCaseImpl) bind RemoveUserFromProjectUseCase::class
+        factoryOf(::IsClientReferencedByProjectUseCaseImpl) bind IsClientReferencedByProjectUseCase::class
         factoryOf(::CanEditProjectEntitiesRule)
         factoryOf(::CanCreateProjectRule)
         factoryOf(::CanCloseProjectRule)

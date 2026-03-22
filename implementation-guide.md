@@ -97,7 +97,8 @@ The following features are new compared to the original analysis (which had no r
 3. - [ ] **Authentication (EntraID)** — mandatory Microsoft EntraID login (standalone mechanism, not a UC).
 4. - [ ] **Role management (UC7)** — admin manages all roles; passport lead delegates technician role; service lead delegates service worker role. *(BE API done: role set via PUT /users/{id}; authorization enforcement missing)*
 5. - [x] **Inspection deletion** — UC5 Scenario E. *(full-stack: BE API + DB soft delete + sync, FE use case + local delete + sync enqueue, FE UI delete button + confirmation dialog)*
-6. - [ ] **Service protocol** — second PDF export format with signature fields.
+6. - [x] **Client deletion** — UC2 Scenario F. A client can only be deleted if no project references it. *(full-stack: CanDeleteClientRule in business/rules, FE CanDeleteClientUseCase + delete guard in BE DeleteClientUseCaseImpl, FE UI delete button + confirmation dialog in client edit screen)*
+7. - [ ] **Service protocol** — second PDF export format with signature fields.
 
 ---
 
@@ -110,6 +111,7 @@ The following features are new compared to the original analysis (which had no r
 | FP4c | Assign user to project | UC1 | - [ ] BE API + DB done; role-restricted access not enforced |
 | FP4d | Remove user from project | UC1 | - [ ] BE API + DB done; role-restricted access not enforced |
 | FP4e | Close project — creator access: only creator retains access to closed project | UC1 | - [ ] Sub-entity editing blocked on closed projects; `creatorId` tracked on projects; creator-only close/reopen enforced; full visibility filtering not yet enforced |
+| FP10 | Delete client — only if not referenced by any project | UC2 | - [x] Done |
 | FP31 | Delete inspection | UC5 | - [x] Done |
 | FP32b | Generate service protocol — PDF with work description and signature fields | UC6 | - [ ] Not started |
 | FP34 | Authentication via Microsoft EntraID | — | - [ ] Not started |
@@ -145,6 +147,7 @@ This matrix mirrors the thesis permission matrix table. Legend: ✓ = unrestrict
 | Remove user from project | ✓ | ✓† | — | ✓‡ | — | — |
 | **Client management** | | | | | | |
 | Create/edit client | ✓ | ✓ | — | ✓ | ✓ | — |
+| Delete client | ✓ | ✓ | — | ✓ | ✓ | — |
 | Assign client to project | ✓ | P | — | P | P | — |
 | **CRUD project entities** (objects, inspections, findings, coordinates, photos) | | | | | | |
 | Create, read, edit, delete | ✓ | P | P | P | P | — |

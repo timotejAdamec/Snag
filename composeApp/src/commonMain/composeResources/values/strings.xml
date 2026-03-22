@@ -1,0 +1,18 @@
+<!--
+  ~ Copyright (c) 2026 Timotej Adamec
+  ~ SPDX-License-Identifier: MIT
+  ~
+  ~ This file is part of the thesis:
+  ~ "Multiplatform snagging system with code sharing maximisation"
+  ~
+  ~ Czech Technical University in Prague
+  ~ Faculty of Information Technology
+  ~ Department of Software Engineering
+  -->
+
+<resources>
+    <string name="projects_tab_title">Projects</string>
+    <string name="directory_tab_title">Directory</string>
+    <string name="users_tab_title">Users</string>
+    <string name="clients_tab_title">Clients</string>
+</resources>

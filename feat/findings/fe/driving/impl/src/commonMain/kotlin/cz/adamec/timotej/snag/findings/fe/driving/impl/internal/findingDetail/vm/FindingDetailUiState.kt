@@ -17,11 +17,8 @@ import cz.adamec.timotej.snag.feat.findings.app.model.AppFinding
 internal data class FindingDetailUiState(
     val status: FindingDetailUiStatus = FindingDetailUiStatus.LOADING,
     val finding: AppFinding? = null,
-    val isBeingDeleted: Boolean = false,
-    val isProjectClosed: Boolean = false,
-) {
-    val canEdit = status == FindingDetailUiStatus.LOADED && !isBeingDeleted && !isProjectClosed
-}
+    val canEdit: Boolean = false,
+)
 
 internal enum class FindingDetailUiStatus {
     ERROR,

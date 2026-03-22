@@ -12,12 +12,16 @@
 
 package cz.adamec.timotej.snag.users.fe.driving.api.di
 
+import cz.adamec.timotej.snag.lib.navigation.fe.BrowserHistoryFragmentBuilder
+import cz.adamec.timotej.snag.users.fe.driving.api.UsersBrowserHistoryFragmentBuilder
 import cz.adamec.timotej.snag.users.fe.driving.api.UsersRoute
 import cz.adamec.timotej.snag.users.fe.driving.api.WebUsersRoute
+import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
 internal actual val platformModule =
     module {
         factory { WebUsersRoute } bind UsersRoute::class
+        factoryOf(::UsersBrowserHistoryFragmentBuilder) bind BrowserHistoryFragmentBuilder::class
     }

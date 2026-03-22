@@ -50,6 +50,7 @@ kotlin {
             implementation(projects.feat.sync.fe.app.api)
             implementation(projects.feat.projects.fe.driving.api)
             implementation(projects.feat.users.fe.driving.api)
+            implementation(projects.feat.clients.fe.driving.api)
         }
         commonTest.dependencies {
             implementation(projects.feat.findings.fe.ports)

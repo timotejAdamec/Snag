@@ -33,4 +33,14 @@ internal class RealProjectsDb(
     override suspend fun saveProjects(projects: List<AppProject>): OfflineFirstDataResult<Unit> = ops.saveMany(projects)
 
     override suspend fun deleteProject(id: Uuid): OfflineFirstDataResult<Unit> = ops.deleteById(id)
+
+    override suspend fun isClientReferencedByProject(clientId: Uuid): OfflineFirstDataResult<Boolean> =
+        try {
+            OfflineFirstDataResult.Success(ops.existsByClientId(clientId))
+        } catch (
+            @Suppress("TooGenericExceptionCaught")
+            e: Exception,
+        ) {
+            OfflineFirstDataResult.ProgrammerError(e)
+        }
 }

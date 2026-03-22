@@ -43,7 +43,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
-import cz.adamec.timotej.snag.core.foundation.common.UuidProvider
 import cz.adamec.timotej.snag.core.foundation.common.toLocalDateTime
 import cz.adamec.timotej.snag.feat.inspections.fe.driving.impl.internal.ui.components.DateTimePickerField
 import cz.adamec.timotej.snag.feat.inspections.fe.driving.impl.internal.ui.components.InspectionDeletionAlertDialog
@@ -390,7 +389,6 @@ private fun InspectionEditContentFilledPreview() {
             isEditMode = true,
             state =
                 InspectionEditUiState(
-                    projectId = UuidProvider.getUuid(),
                     participants = "John Doe, Jane Smith",
                     climate = "Sunny, 18°C",
                     startedAt = Timestamp(1_740_391_800_000L),

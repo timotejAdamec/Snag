@@ -20,7 +20,7 @@ import cz.adamec.timotej.snag.feat.structures.app.model.AppStructure
 import cz.adamec.timotej.snag.feat.structures.app.model.AppStructureData
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.lib.storage.fe.test.FakeFileApi
-import cz.adamec.timotej.snag.projects.fe.app.api.IsProjectClosedUseCase
+import cz.adamec.timotej.snag.projects.fe.app.api.CanEditProjectEntitiesUseCase
 import cz.adamec.timotej.snag.structures.fe.app.api.CanModifyFloorPlanImageUseCase
 import cz.adamec.timotej.snag.structures.fe.app.api.DeleteFloorPlanImageUseCase
 import cz.adamec.timotej.snag.structures.fe.app.api.GetStructureUseCase
@@ -52,7 +52,7 @@ class StructureDetailsEditViewModelTest : FrontendKoinInitializedTest() {
     private val uploadFloorPlanImageUseCase: UploadFloorPlanImageUseCase by inject()
     private val deleteFloorPlanImageUseCase: DeleteFloorPlanImageUseCase by inject()
     private val canModifyFloorPlanImageUseCase: CanModifyFloorPlanImageUseCase by inject()
-    private val isProjectClosedUseCase: IsProjectClosedUseCase by inject()
+    private val canEditProjectEntitiesUseCase: CanEditProjectEntitiesUseCase by inject()
 
     private fun createViewModel(
         structureId: Uuid? = null,
@@ -65,7 +65,7 @@ class StructureDetailsEditViewModelTest : FrontendKoinInitializedTest() {
         uploadFloorPlanImageUseCase = uploadFloorPlanImageUseCase,
         deleteFloorPlanImageUseCase = deleteFloorPlanImageUseCase,
         canModifyFloorPlanImageUseCase = canModifyFloorPlanImageUseCase,
-        isProjectClosedUseCase = isProjectClosedUseCase,
+        canEditProjectEntitiesUseCase = canEditProjectEntitiesUseCase,
     )
 
     @Test
@@ -75,7 +75,6 @@ class StructureDetailsEditViewModelTest : FrontendKoinInitializedTest() {
             val viewModel = createViewModel(structureId = null, projectId = projectId)
 
             assertEquals("", viewModel.state.value.structureName)
-            assertEquals(projectId, viewModel.state.value.projectId)
         }
 
     @Test
@@ -98,7 +97,6 @@ class StructureDetailsEditViewModelTest : FrontendKoinInitializedTest() {
             advanceUntilIdle()
 
             assertEquals("Test Structure", viewModel.state.value.structureName)
-            assertEquals(projectId, viewModel.state.value.projectId)
         }
 
     @Test

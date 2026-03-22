@@ -14,14 +14,16 @@ package cz.adamec.timotej.snag.clients.fe.driving.impl.internal.clientDetailsEdi
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cz.adamec.timotej.snag.clients.fe.app.api.CanDeleteClientUseCase
+import cz.adamec.timotej.snag.clients.fe.app.api.DeleteClientUseCase
 import cz.adamec.timotej.snag.clients.fe.app.api.GetClientUseCase
 import cz.adamec.timotej.snag.clients.fe.app.api.SaveClientUseCase
 import cz.adamec.timotej.snag.clients.fe.app.api.model.SaveClientRequest
+import cz.adamec.timotej.snag.core.business.rules.api.EmailFormatRule
+import cz.adamec.timotej.snag.core.business.rules.api.PhoneNumberRule
 import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError.Unknown
-import cz.adamec.timotej.snag.shared.rules.business.api.EmailFormatRule
-import cz.adamec.timotej.snag.shared.rules.business.api.PhoneNumberRule
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -40,6 +42,8 @@ internal class ClientDetailsEditViewModel(
     @InjectedParam private val clientId: Uuid?,
     private val getClientUseCase: GetClientUseCase,
     private val saveClientUseCase: SaveClientUseCase,
+    private val deleteClientUseCase: DeleteClientUseCase,
+    private val canDeleteClientUseCase: CanDeleteClientUseCase,
     private val emailFormatRule: EmailFormatRule,
     private val phoneNumberRule: PhoneNumberRule,
 ) : ViewModel() {
@@ -53,8 +57,14 @@ internal class ClientDetailsEditViewModel(
     private val saveEventChannel = Channel<Uuid>()
     val saveEventFlow = saveEventChannel.receiveAsFlow()
 
+    private val deletedSuccessfullyEventChannel = Channel<Unit>()
+    val deletedSuccessfullyEventFlow = deletedSuccessfullyEventChannel.receiveAsFlow()
+
     init {
-        clientId?.let { collectClient(it) }
+        clientId?.let {
+            collectClient(it)
+            checkCanDelete(it)
+        }
     }
 
     private fun collectClient(clientId: Uuid) =
@@ -81,6 +91,18 @@ internal class ClientDetailsEditViewModel(
             }
         }
 
+    private fun checkCanDelete(clientId: Uuid) =
+        viewModelScope.launch {
+            when (val result = canDeleteClientUseCase(clientId)) {
+                is OfflineFirstDataResult.ProgrammerError -> {
+                    _state.update { it.copy(canDelete = false) }
+                }
+                is OfflineFirstDataResult.Success -> {
+                    _state.update { it.copy(canDelete = result.data) }
+                }
+            }
+        }
+
     fun onClientNameChange(updatedName: String) {
         _state.update { it.copy(clientName = updatedName, clientNameError = null) }
     }
@@ -95,6 +117,23 @@ internal class ClientDetailsEditViewModel(
 
     fun onClientEmailChange(updatedEmail: String) {
         _state.update { it.copy(clientEmail = updatedEmail, clientEmailError = null) }
+    }
+
+    fun onDelete() {
+        val id = clientId ?: return
+        viewModelScope.launch {
+            _state.update { it.copy(isBeingDeleted = true) }
+            when (deleteClientUseCase(id)) {
+                is OfflineFirstDataResult.ProgrammerError -> {
+                    _state.update { it.copy(isBeingDeleted = false) }
+                    errorEventsChannel.send(Unknown)
+                }
+                is OfflineFirstDataResult.Success -> {
+                    _state.update { it.copy(isBeingDeleted = false) }
+                    deletedSuccessfullyEventChannel.send(Unit)
+                }
+            }
+        }
     }
 
     fun onSaveClient() =

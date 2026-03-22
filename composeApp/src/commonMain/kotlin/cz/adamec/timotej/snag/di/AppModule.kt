@@ -14,13 +14,17 @@ package cz.adamec.timotej.snag.di
 
 import cz.adamec.timotej.snag.di.aggregate.fe.frontendModulesAggregate
 import cz.adamec.timotej.snag.logging.loggerModule
+import org.koin.core.module.Module
 import org.koin.dsl.module
 
 val appModule =
     module {
         includes(
+            platformModule,
             frontendModulesAggregate,
             loggerModule,
             mainModule,
         )
     }
+
+internal expect val platformModule: Module

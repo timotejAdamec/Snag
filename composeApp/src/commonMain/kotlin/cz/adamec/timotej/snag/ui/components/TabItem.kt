@@ -16,13 +16,13 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteItem
 import androidx.compose.runtime.Composable
-import cz.adamec.timotej.snag.lib.navigation.fe.TabNavRoute
+import cz.adamec.timotej.snag.ui.TopLevelDestination
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
 internal fun TabItem(
-    route: TabNavRoute,
+    topLevelDestination: TopLevelDestination,
     selected: Boolean,
     onClick: () -> Unit,
 ) {
@@ -32,17 +32,17 @@ internal fun TabItem(
         icon = {
             val painterResource =
                 if (selected) {
-                    route.tabIconSelected
+                    topLevelDestination.tabIconSelected
                 } else {
-                    route.tabIcon
+                    topLevelDestination.tabIcon
                 }
             Icon(
                 painter = painterResource(painterResource),
-                contentDescription = stringResource(route.tabLabel),
+                contentDescription = stringResource(topLevelDestination.tabLabel),
             )
         },
         label = {
-            Text(stringResource(route.tabLabel))
+            Text(stringResource(topLevelDestination.tabLabel))
         },
     )
 }

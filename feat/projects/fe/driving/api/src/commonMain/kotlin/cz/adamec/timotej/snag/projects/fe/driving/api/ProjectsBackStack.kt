@@ -12,14 +12,12 @@
 
 package cz.adamec.timotej.snag.projects.fe.driving.api
 
+import cz.adamec.timotej.snag.lib.navigation.fe.SnagBackStack
+import cz.adamec.timotej.snag.lib.navigation.fe.SnagNavRoute
 import org.koin.core.annotation.Provided
 import kotlin.jvm.JvmInline
 
 @JvmInline
 value class ProjectsBackStack(
-    @Provided val value: MutableList<ProjectsNavRoute>,
-) {
-    fun removeLastSafely() {
-        if (value.size > 1) value.removeLastOrNull()
-    }
-}
+    @Provided override val value: MutableList<SnagNavRoute>,
+) : SnagBackStack

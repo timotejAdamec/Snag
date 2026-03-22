@@ -22,20 +22,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import cz.adamec.timotej.snag.directory.ui.DirectoryNavRoute
 import cz.adamec.timotej.snag.lib.design.fe.adaptive.ContentPaneDefaults
+import cz.adamec.timotej.snag.lib.design.fe.adaptive.isScreenWide
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.AppScaffold
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.SyncStatusBar
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.SyncStatusBarState
 import cz.adamec.timotej.snag.lib.design.fe.theme.SnagTheme
-import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectsNavigation
-import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectsRoute
+import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectsNavRoute
 import cz.adamec.timotej.snag.ui.components.TabItem
-import cz.adamec.timotej.snag.users.fe.driving.api.UsersNavigation
-import cz.adamec.timotej.snag.users.fe.driving.api.UsersRoute
 import cz.adamec.timotej.snag.vm.MainViewModel
 import kotlinx.coroutines.FlowPreview
 import org.koin.compose.koinInject
@@ -45,19 +44,22 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 internal fun MainScreen(
     mainViewModel: MainViewModel = koinViewModel(),
-    projectsRoute: ProjectsRoute = koinInject(),
-    usersRoute: UsersRoute = koinInject(),
 ) {
     val syncStatus by mainViewModel.syncStatus.collectAsStateWithLifecycle()
     SnagTheme {
+        val outerContainerColor =
+            if (isScreenWide()) {
+                ContentPaneDefaults.containerColor
+            } else {
+                ContentPaneDefaults.paneColor
+            }
         AppScaffold(
-            containerColor = ContentPaneDefaults.containerColor,
+            containerColor = outerContainerColor,
         ) { paddingValues ->
             MainScreenContent(
                 paddingValues = paddingValues,
                 syncBarState = syncStatus.toBarState(),
-                projectsRoute = projectsRoute,
-                usersRoute = usersRoute,
+                outerContainerColor = outerContainerColor,
             )
         }
     }
@@ -67,8 +69,7 @@ internal fun MainScreen(
 private fun MainScreenContent(
     paddingValues: PaddingValues,
     syncBarState: SyncStatusBarState,
-    projectsRoute: ProjectsRoute,
-    usersRoute: UsersRoute,
+    outerContainerColor: Color,
 ) {
     Column {
         var isSyncStatusBarVisible by remember { mutableStateOf(false) }
@@ -93,42 +94,45 @@ private fun MainScreenContent(
                 Modifier
             }
 
-        var currentDestination by rememberSaveable {
-            mutableStateOf(TopLevelDestination.PROJECTS)
-        }
-
-        val tintedBackground = ContentPaneDefaults.containerColor
+        val mainBackStack = koinInject<MainBackStack>()
         NavigationSuiteScaffold(
             modifier = navigationModifier,
-            containerColor = tintedBackground,
+            containerColor = outerContainerColor,
             navigationSuiteColors =
                 NavigationSuiteDefaults.colors(
                     wideNavigationRailColors =
                         WideNavigationRailDefaults.colors(
-                            containerColor = tintedBackground,
+                            containerColor = outerContainerColor,
                         ),
                 ),
             navigationItems = {
                 TabItem(
-                    route = projectsRoute,
-                    selected = currentDestination == TopLevelDestination.PROJECTS,
+                    topLevelDestination = TopLevelDestination.Project,
+                    selected = mainBackStack.value.last() is ProjectsNavRoute,
                     onClick = {
-                        currentDestination = TopLevelDestination.PROJECTS
+                        if (mainBackStack.value.last() is DirectoryNavRoute) {
+                            mainBackStack.value.removeLastOrNull()
+                        }
                     },
                 )
                 TabItem(
-                    route = usersRoute,
-                    selected = currentDestination == TopLevelDestination.USERS,
+                    topLevelDestination = TopLevelDestination.Directory,
+                    selected = mainBackStack.value.last() is DirectoryNavRoute,
                     onClick = {
-                        currentDestination = TopLevelDestination.USERS
+                        if (mainBackStack.value.last() !is DirectoryNavRoute) {
+                            mainBackStack.value.add(
+                                DirectoryNavRoute(
+                                    onExit = {
+                                        mainBackStack.removeLastSafely()
+                                    }
+                                )
+                            )
+                        }
                     },
                 )
             },
         ) {
-            when (currentDestination) {
-                TopLevelDestination.PROJECTS -> ProjectsNavigation()
-                TopLevelDestination.USERS -> UsersNavigation()
-            }
+            MainNavigation()
         }
     }
 }

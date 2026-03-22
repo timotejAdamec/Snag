@@ -13,18 +13,13 @@
 package cz.adamec.timotej.snag.structures.fe.driving.impl.internal.structureDetailsEdit.vm
 
 import org.jetbrains.compose.resources.StringResource
-import kotlin.uuid.Uuid
 
 internal data class StructureDetailsEditUiState(
     val structureName: String = "",
     val isCreatingNew: Boolean = false,
     val structureNameError: StringResource? = null,
     val floorPlanUrl: String? = null,
-    val pendingUploadUrl: String? = null,
     val isUploadingImage: Boolean = false,
-    val canModifyFloorPlanImage: Boolean = true,
-    val isProjectClosed: Boolean = false,
-    val projectId: Uuid? = null,
-) {
-    val canSave = !isUploadingImage && !isProjectClosed
-}
+    val canModifyImage: Boolean = true,
+    val canSave: Boolean = true,
+)

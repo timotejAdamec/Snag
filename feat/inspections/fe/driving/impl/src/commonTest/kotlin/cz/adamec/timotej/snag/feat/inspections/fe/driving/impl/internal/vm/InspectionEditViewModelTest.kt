@@ -22,7 +22,7 @@ import cz.adamec.timotej.snag.feat.inspections.fe.app.api.GetInspectionUseCase
 import cz.adamec.timotej.snag.feat.inspections.fe.app.api.SaveInspectionUseCase
 import cz.adamec.timotej.snag.feat.inspections.fe.driven.test.FakeInspectionsDb
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
-import cz.adamec.timotej.snag.projects.fe.app.api.IsProjectClosedUseCase
+import cz.adamec.timotej.snag.projects.fe.app.api.CanEditProjectEntitiesUseCase
 import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
@@ -44,7 +44,7 @@ class InspectionEditViewModelTest : FrontendKoinInitializedTest() {
     private val getInspectionUseCase: GetInspectionUseCase by inject()
     private val saveInspectionUseCase: SaveInspectionUseCase by inject()
     private val deleteInspectionUseCase: DeleteInspectionUseCase by inject()
-    private val isProjectClosedUseCase: IsProjectClosedUseCase by inject()
+    private val canEditProjectEntitiesUseCase: CanEditProjectEntitiesUseCase by inject()
 
     private fun createViewModel(
         inspectionId: Uuid? = null,
@@ -55,7 +55,7 @@ class InspectionEditViewModelTest : FrontendKoinInitializedTest() {
         getInspectionUseCase = getInspectionUseCase,
         saveInspectionUseCase = saveInspectionUseCase,
         deleteInspectionUseCase = deleteInspectionUseCase,
-        isProjectClosedUseCase = isProjectClosedUseCase,
+        canEditProjectEntitiesUseCase = canEditProjectEntitiesUseCase,
     )
 
     @Test
@@ -69,7 +69,6 @@ class InspectionEditViewModelTest : FrontendKoinInitializedTest() {
             assertEquals("", viewModel.state.value.participants)
             assertEquals("", viewModel.state.value.climate)
             assertEquals("", viewModel.state.value.note)
-            assertEquals(projectId, viewModel.state.value.projectId)
         }
 
     @Test
@@ -99,7 +98,6 @@ class InspectionEditViewModelTest : FrontendKoinInitializedTest() {
             assertEquals("John Doe", viewModel.state.value.participants)
             assertEquals("Sunny", viewModel.state.value.climate)
             assertEquals("Test note", viewModel.state.value.note)
-            assertEquals(projectId, viewModel.state.value.projectId)
         }
 
     @Test
@@ -281,7 +279,7 @@ class InspectionEditViewModelTest : FrontendKoinInitializedTest() {
 
             val error = viewModel.errorsFlow.first()
             assertIs<UiError.Unknown>(error)
-            assertEquals(false, viewModel.state.value.isBeingDeleted)
+            assertEquals(true, viewModel.state.value.canEdit)
         }
 
     @Test
@@ -294,6 +292,6 @@ class InspectionEditViewModelTest : FrontendKoinInitializedTest() {
 
             advanceUntilIdle()
 
-            assertEquals(false, viewModel.state.value.isBeingDeleted)
+            assertEquals(true, viewModel.state.value.canEdit)
         }
 }

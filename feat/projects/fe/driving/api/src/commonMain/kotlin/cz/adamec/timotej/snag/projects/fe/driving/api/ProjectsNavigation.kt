@@ -13,33 +13,33 @@
 package cz.adamec.timotej.snag.projects.fe.driving.api
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
+import androidx.navigation3.scene.DialogSceneStrategy
 import androidx.navigation3.ui.NavDisplay
 import cz.adamec.timotej.snag.lib.design.fe.scenes.ContentPaneSceneStrategy
-import cz.adamec.timotej.snag.lib.design.fe.scenes.InlineDialogSceneStrategy
+import cz.adamec.timotej.snag.lib.navigation.fe.SnagNavRoute
 import org.koin.compose.koinInject
 import org.koin.compose.navigation3.koinEntryProvider
 
 @Composable
 fun ProjectsNavigation(
     modifier: Modifier = Modifier,
-    backStack: ProjectsBackStack = koinInject(),
 ) {
-    ProjectsNavigationPreparation(
-        backStack = backStack,
-    )
-    val entryProvider = koinEntryProvider<ProjectsNavRoute>()
+    val injectedBackStack: ProjectsBackStack = koinInject()
+    val backStack = remember { mutableStateOf(injectedBackStack.value) }
+    val entryProvider = koinEntryProvider<SnagNavRoute>()
     NavDisplay(
         modifier = modifier,
         backStack = backStack.value,
         entryProvider = entryProvider,
-        sceneStrategies =
-            listOf(
-                InlineDialogSceneStrategy(),
-                ContentPaneSceneStrategy(),
-            ),
+        sceneStrategies = listOf(
+            DialogSceneStrategy(),
+            ContentPaneSceneStrategy(),
+        ),
         entryDecorators =
             listOf(
                 rememberSaveableStateHolderNavEntryDecorator(),
@@ -47,6 +47,3 @@ fun ProjectsNavigation(
             ),
     )
 }
-
-@Composable
-internal expect fun ProjectsNavigationPreparation(backStack: ProjectsBackStack)
