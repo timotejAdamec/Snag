@@ -15,6 +15,7 @@ package cz.adamec.timotej.snag.users.fe.app.impl.internal
 import cz.adamec.timotej.snag.users.fe.app.api.GetCurrentUserUseCase
 import kotlin.uuid.Uuid
 
+// TODO Replace hardcoded user ID with real authentication (e.g., EntraID token resolution)
 internal class GetCurrentUserUseCaseImpl : GetCurrentUserUseCase {
     override operator fun invoke(): Uuid = Uuid.parse(HARDCODED_CURRENT_USER_ID)
 
