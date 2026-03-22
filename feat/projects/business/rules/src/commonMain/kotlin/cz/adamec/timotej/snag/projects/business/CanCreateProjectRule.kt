@@ -12,8 +12,8 @@
 
 package cz.adamec.timotej.snag.projects.business
 
+import cz.adamec.timotej.snag.authorization.business.UserRole
 import cz.adamec.timotej.snag.users.business.User
-import cz.adamec.timotej.snag.users.business.UserRole
 
 class CanCreateProjectRule {
     operator fun invoke(user: User) = user.role in ALLOWED_ROLES

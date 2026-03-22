@@ -5,6 +5,5 @@ plugins {
 dependencies {
     implementation(project(":feat:projects:business:rules"))
     implementation(project(":feat:users:be:app:api"))
-    implementation(project(":feat:users:be:app:model"))
     testImplementation(project(":feat:users:be:ports"))
 }

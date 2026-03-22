@@ -12,10 +12,10 @@
 
 package cz.adamec.timotej.snag.users.be.driven.impl.internal
 
+import cz.adamec.timotej.snag.authorization.business.UserRole
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.feat.shared.database.be.UserEntity
 import cz.adamec.timotej.snag.users.be.model.BackendUserData
-import cz.adamec.timotej.snag.users.business.UserRole
 
 internal fun UserEntity.toModel() =
     BackendUserData(

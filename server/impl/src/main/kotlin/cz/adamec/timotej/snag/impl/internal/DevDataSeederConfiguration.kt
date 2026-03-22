@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.impl.internal
 
+import cz.adamec.timotej.snag.authorization.business.UserRole
 import cz.adamec.timotej.snag.clients.be.model.BackendClientData
 import cz.adamec.timotej.snag.clients.be.ports.ClientsDb
 import cz.adamec.timotej.snag.configuration.be.AppConfiguration
@@ -31,7 +32,6 @@ import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
 import cz.adamec.timotej.snag.structures.be.ports.StructuresDb
 import cz.adamec.timotej.snag.users.be.model.BackendUserData
 import cz.adamec.timotej.snag.users.be.ports.UsersDb
-import cz.adamec.timotej.snag.users.business.UserRole
 import io.ktor.server.application.Application
 import kotlinx.coroutines.runBlocking
 import kotlin.uuid.Uuid
