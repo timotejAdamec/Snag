@@ -173,7 +173,9 @@ val projectsDrivingImplModule =
     module {
         includes(platformModule)
 
-        navigation<ProjectsNavRoute> {
+        navigation<ProjectsNavRoute>(
+            metadata = ContentPaneSceneMetadata.skip(),
+        ) {
             ProjectsNavigation()
         }
         single {
