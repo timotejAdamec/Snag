@@ -21,6 +21,12 @@ which's meaning is obvious.
 
 Use trailing comma.
 
+## New modules
+
+Try implementing the `build.gradle.kts` just with the convention plugin described in `docs/gradle_plugins.md`
+without any explicit dependencies. The convention plugin should autowire the necessary dependencies.
+Only add if the autowiring does not wire them.
+
 ## Changes verification
 
 ### Up-to-date tests
