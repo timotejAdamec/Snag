@@ -13,8 +13,3 @@
 plugins {
     alias(libs.plugins.snagBackendModule)
 }
-
-dependencies {
-    api(project(":feat:users:be:ports"))
-    api(project(":feat:users:be:app:model"))
-}
