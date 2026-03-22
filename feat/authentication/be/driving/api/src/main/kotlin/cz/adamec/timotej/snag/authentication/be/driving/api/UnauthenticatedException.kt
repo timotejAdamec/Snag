@@ -12,4 +12,4 @@
 
 package cz.adamec.timotej.snag.authentication.be.driving.api
 
-class UnauthorizedException : Throwable()
+class UnauthenticatedException : Throwable()
