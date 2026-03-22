@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 internal fun Project.configureKotlinMultiplatformModule() {
 
     // Fixes a problem where kotlin stdlib has a different version than the compiler
-    configurations.configureEach {
+    configurations.matching { it.name != "detekt" }.configureEach {
         resolutionStrategy.eachDependency {
             if (requested.group == "org.jetbrains.kotlin") {
                 useVersion(version("kotlin"))
