@@ -13,10 +13,10 @@
 package cz.adamec.timotej.snag.authentication.be.driving.impl.internal
 
 import cz.adamec.timotej.snag.authentication.be.driving.api.CallCurrentUserKey
-import cz.adamec.timotej.snag.authentication.be.driving.api.USER_ID_HEADER
 import cz.adamec.timotej.snag.authorization.business.UserRole
 import cz.adamec.timotej.snag.configuration.be.AppConfiguration
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
+import cz.adamec.timotej.snag.routing.be.USER_ID_HEADER
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
 import cz.adamec.timotej.snag.users.be.model.BackendUserData
 import cz.adamec.timotej.snag.users.be.ports.UsersDb
