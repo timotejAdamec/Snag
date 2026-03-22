@@ -21,6 +21,7 @@ import cz.adamec.timotej.snag.feat.inspections.fe.app.api.GetInspectionUseCase
 import cz.adamec.timotej.snag.feat.inspections.fe.app.api.SaveInspectionUseCase
 import cz.adamec.timotej.snag.feat.inspections.fe.app.api.model.SaveInspectionRequest
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
+import cz.adamec.timotej.snag.core.foundation.common.mapState
 import cz.adamec.timotej.snag.projects.fe.app.api.CanEditProjectEntitiesUseCase
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
@@ -40,9 +41,10 @@ internal class InspectionEditViewModel(
     private val deleteInspectionUseCase: DeleteInspectionUseCase,
     private val canEditProjectEntitiesUseCase: CanEditProjectEntitiesUseCase,
 ) : ViewModel() {
-    private val _state: MutableStateFlow<InspectionEditUiState> =
-        MutableStateFlow(InspectionEditUiState(projectId = projectId))
-    val state: StateFlow<InspectionEditUiState> = _state
+    private val vmState: MutableStateFlow<InspectionEditVmState> =
+        MutableStateFlow(InspectionEditVmState(projectId = projectId))
+    val state: StateFlow<InspectionEditUiState> =
+        vmState.mapState { it.toUiState() }
 
     private val errorEventsChannel = Channel<UiError>()
     val errorsFlow = errorEventsChannel.receiveAsFlow()
@@ -64,7 +66,7 @@ internal class InspectionEditViewModel(
     private fun collectCanEditInspection(projectId: Uuid) =
         viewModelScope.launch {
             canEditProjectEntitiesUseCase(projectId).collect { canEdit ->
-                _state.update { it.copy(canEditInspection = canEdit) }
+                vmState.update { it.copy(canEditInspection = canEdit) }
             }
         }
 
@@ -77,7 +79,7 @@ internal class InspectionEditViewModel(
                     }
                     is OfflineFirstDataResult.Success -> {
                         result.data?.let { data ->
-                            _state.update {
+                            vmState.update {
                                 it.copy(
                                     projectId = data.projectId,
                                     startedAt = data.startedAt,
@@ -99,37 +101,37 @@ internal class InspectionEditViewModel(
         }
 
     fun onStartedAtChange(value: Timestamp?) {
-        _state.update { it.copy(startedAt = value) }
+        vmState.update { it.copy(startedAt = value) }
     }
 
     fun onEndedAtChange(value: Timestamp?) {
-        _state.update { it.copy(endedAt = value) }
+        vmState.update { it.copy(endedAt = value) }
     }
 
     fun onParticipantsChange(value: String) {
-        _state.update { it.copy(participants = value) }
+        vmState.update { it.copy(participants = value) }
     }
 
     fun onClimateChange(value: String) {
-        _state.update { it.copy(climate = value) }
+        vmState.update { it.copy(climate = value) }
     }
 
     fun onNoteChange(value: String) {
-        _state.update { it.copy(note = value) }
+        vmState.update { it.copy(note = value) }
     }
 
     fun onDelete() {
         val id = inspectionId ?: return
         viewModelScope.launch {
-            _state.update { it.copy(isBeingDeleted = true) }
+            vmState.update { it.copy(isBeingDeleted = true) }
             when (deleteInspectionUseCase(id)) {
                 is OfflineFirstDataResult.ProgrammerError -> {
-                    _state.update { it.copy(isBeingDeleted = false) }
+                    vmState.update { it.copy(isBeingDeleted = false) }
                     errorEventsChannel.send(UiError.Unknown)
                 }
 
                 is OfflineFirstDataResult.Success -> {
-                    _state.update { it.copy(isBeingDeleted = false) }
+                    vmState.update { it.copy(isBeingDeleted = false) }
                     deletedSuccessfullyEventChannel.send(Unit)
                 }
             }
@@ -142,7 +144,7 @@ internal class InspectionEditViewModel(
         }
 
     private suspend fun saveInspection() {
-        val currentState = state.value
+        val currentState = vmState.value
         val result =
             saveInspectionUseCase(
                 request =

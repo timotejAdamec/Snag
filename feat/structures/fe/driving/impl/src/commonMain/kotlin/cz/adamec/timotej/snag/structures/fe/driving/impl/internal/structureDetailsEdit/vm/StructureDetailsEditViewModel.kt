@@ -19,6 +19,7 @@ import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.core.network.fe.OnlineDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError.Unknown
+import cz.adamec.timotej.snag.core.foundation.common.mapState
 import cz.adamec.timotej.snag.projects.fe.app.api.CanEditProjectEntitiesUseCase
 import cz.adamec.timotej.snag.structures.fe.app.api.CanModifyFloorPlanImageUseCase
 import cz.adamec.timotej.snag.structures.fe.app.api.DeleteFloorPlanImageUseCase
@@ -51,14 +52,15 @@ internal class StructureDetailsEditViewModel(
     private val canModifyFloorPlanImageUseCase: CanModifyFloorPlanImageUseCase,
     private val canEditProjectEntitiesUseCase: CanEditProjectEntitiesUseCase,
 ) : ViewModel() {
-    private val _state: MutableStateFlow<StructureDetailsEditUiState> =
+    private val vmState: MutableStateFlow<StructureDetailsEditVmState> =
         MutableStateFlow(
-            StructureDetailsEditUiState(
+            StructureDetailsEditVmState(
                 isCreatingNew = structureId == null,
                 projectId = projectId,
             ),
         )
-    val state: StateFlow<StructureDetailsEditUiState> = _state
+    val state: StateFlow<StructureDetailsEditUiState> =
+        vmState.mapState { it.toUiState() }
 
     private val errorEventsChannel = Channel<UiError>()
     val errorsFlow = errorEventsChannel.receiveAsFlow()
@@ -83,7 +85,7 @@ internal class StructureDetailsEditViewModel(
                     }
                     is OfflineFirstDataResult.Success -> {
                         result.data?.let { data ->
-                            _state.update {
+                            vmState.update {
                                 it.copy(
                                     structureName = data.name,
                                     floorPlanUrl = data.floorPlanUrl,
@@ -100,7 +102,7 @@ internal class StructureDetailsEditViewModel(
     private fun collectCanModifyFloorPlanImage() =
         viewModelScope.launch {
             canModifyFloorPlanImageUseCase().collect { canModify ->
-                _state.update {
+                vmState.update {
                     it.copy(
                         canModifyFloorPlanImage = canModify,
                     )
@@ -111,19 +113,19 @@ internal class StructureDetailsEditViewModel(
     private fun collectCanEditStructure() =
         viewModelScope.launch {
             canEditProjectEntitiesUseCase(projectId).collect { canEdit ->
-                _state.update { it.copy(canEditStructure = canEdit) }
+                vmState.update { it.copy(canEditStructure = canEdit) }
             }
         }
 
     fun onStructureNameChange(updatedName: String) {
-        _state.update { it.copy(structureName = updatedName, structureNameError = null) }
+        vmState.update { it.copy(structureName = updatedName, structureNameError = null) }
     }
 
     fun onImagePicked(
         bytes: ByteArray,
         fileName: String,
     ) = viewModelScope.launch {
-        _state.update { it.copy(isUploadingImage = true) }
+        vmState.update { it.copy(isUploadingImage = true) }
         when (
             val result =
                 uploadFloorPlanImageUseCase(
@@ -136,8 +138,8 @@ internal class StructureDetailsEditViewModel(
                 )
         ) {
             is OnlineDataResult.Success -> {
-                val previousPendingUrl = _state.value.pendingUploadUrl
-                _state.update {
+                val previousPendingUrl = vmState.value.pendingUploadUrl
+                vmState.update {
                     it.copy(
                         floorPlanUrl = result.data,
                         pendingUploadUrl = result.data,
@@ -149,15 +151,15 @@ internal class StructureDetailsEditViewModel(
                 }
             }
             is OnlineDataResult.Failure -> {
-                _state.update { it.copy(isUploadingImage = false) }
+                vmState.update { it.copy(isUploadingImage = false) }
                 errorEventsChannel.send(Unknown)
             }
         }
     }
 
     fun onRemoveImage() {
-        val pendingUrl = _state.value.pendingUploadUrl
-        _state.update {
+        val pendingUrl = vmState.value.pendingUploadUrl
+        vmState.update {
             it.copy(
                 floorPlanUrl = null,
                 pendingUploadUrl = null,
@@ -170,8 +172,8 @@ internal class StructureDetailsEditViewModel(
 
     fun onSaveStructure() =
         viewModelScope.launch {
-            if (state.value.structureName.isBlank()) {
-                _state.update { it.copy(structureNameError = Res.string.error_field_required) }
+            if (vmState.value.structureName.isBlank()) {
+                vmState.update { it.copy(structureNameError = Res.string.error_field_required) }
             } else {
                 saveStructure()
             }
@@ -184,8 +186,8 @@ internal class StructureDetailsEditViewModel(
                     SaveStructureRequest(
                         id = resolvedStructureId,
                         projectId = projectId,
-                        name = state.value.structureName,
-                        floorPlanUrl = state.value.floorPlanUrl,
+                        name = vmState.value.structureName,
+                        floorPlanUrl = vmState.value.floorPlanUrl,
                     ),
             )
         when (result) {
@@ -193,7 +195,7 @@ internal class StructureDetailsEditViewModel(
                 errorEventsChannel.send(Unknown)
             }
             is OfflineFirstDataResult.Success -> {
-                _state.update { it.copy(pendingUploadUrl = null) }
+                vmState.update { it.copy(pendingUploadUrl = null) }
                 saveEventChannel.send(result.data)
             }
         }
@@ -201,7 +203,7 @@ internal class StructureDetailsEditViewModel(
 
     override fun onCleared() {
         super.onCleared()
-        val pendingUrl = _state.value.pendingUploadUrl
+        val pendingUrl = vmState.value.pendingUploadUrl
         if (pendingUrl != null) {
             viewModelScope.launch {
                 withContext(NonCancellable) {

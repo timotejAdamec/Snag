@@ -20,18 +20,11 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlin.uuid.Uuid
 
 @Immutable
-internal data class StructureDetailsUiState(
+internal data class StructureDetailsVmState(
     val status: StructureDetailsUiStatus = StructureDetailsUiStatus.LOADING,
+    val isBeingDeleted: Boolean = false,
     val feStructure: AppStructure? = null,
     val findings: ImmutableList<AppFinding> = persistentListOf(),
     val selectedFindingId: Uuid? = null,
-    val canEdit: Boolean = false,
+    val canEditStructure: Boolean = true,
 )
-
-internal enum class StructureDetailsUiStatus {
-    ERROR,
-    NOT_FOUND,
-    LOADING,
-    LOADED,
-    DELETED,
-}

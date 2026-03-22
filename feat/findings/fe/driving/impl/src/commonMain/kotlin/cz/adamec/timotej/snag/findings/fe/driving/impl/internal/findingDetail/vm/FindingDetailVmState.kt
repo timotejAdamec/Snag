@@ -14,16 +14,9 @@ package cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetail.v
 
 import cz.adamec.timotej.snag.feat.findings.app.model.AppFinding
 
-internal data class FindingDetailUiState(
+internal data class FindingDetailVmState(
     val status: FindingDetailUiStatus = FindingDetailUiStatus.LOADING,
     val finding: AppFinding? = null,
-    val canEdit: Boolean = false,
+    val isBeingDeleted: Boolean = false,
+    val canEditFinding: Boolean = true,
 )
-
-internal enum class FindingDetailUiStatus {
-    ERROR,
-    NOT_FOUND,
-    LOADING,
-    LOADED,
-    DELETED,
-}

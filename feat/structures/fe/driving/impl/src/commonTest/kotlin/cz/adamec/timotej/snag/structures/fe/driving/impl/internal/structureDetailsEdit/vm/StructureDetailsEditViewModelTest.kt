@@ -75,7 +75,6 @@ class StructureDetailsEditViewModelTest : FrontendKoinInitializedTest() {
             val viewModel = createViewModel(structureId = null, projectId = projectId)
 
             assertEquals("", viewModel.state.value.structureName)
-            assertEquals(projectId, viewModel.state.value.projectId)
         }
 
     @Test
@@ -98,7 +97,6 @@ class StructureDetailsEditViewModelTest : FrontendKoinInitializedTest() {
             advanceUntilIdle()
 
             assertEquals("Test Structure", viewModel.state.value.structureName)
-            assertEquals(projectId, viewModel.state.value.projectId)
         }
 
     @Test

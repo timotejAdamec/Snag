@@ -12,13 +12,11 @@
 
 package cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetailsEdit.vm
 
-import cz.adamec.timotej.snag.feat.findings.business.FindingType
-import org.jetbrains.compose.resources.StringResource
-
-internal data class FindingDetailsEditUiState(
-    val findingName: String = "",
-    val findingDescription: String = "",
-    val findingType: FindingType = FindingType.Classic(),
-    val findingNameError: StringResource? = null,
-    val canSave: Boolean = true,
-)
+internal fun FindingDetailsEditVmState.toUiState(): FindingDetailsEditUiState =
+    FindingDetailsEditUiState(
+        findingName = findingName,
+        findingDescription = findingDescription,
+        findingType = findingType,
+        findingNameError = findingNameError,
+        canSave = canEditFinding,
+    )

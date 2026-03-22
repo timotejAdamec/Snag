@@ -34,6 +34,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertIs
 import kotlin.test.assertNotNull
+import kotlin.test.assertTrue
 import kotlin.uuid.Uuid
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -163,7 +164,7 @@ class StructureDetailsViewModelTest : FrontendKoinInitializedTest() {
                 cancelAndIgnoreRemainingEvents()
             }
 
-            assertFalse(viewModel.state.value.isBeingDeleted)
+            assertTrue(viewModel.state.value.canEdit)
         }
 
     @Test

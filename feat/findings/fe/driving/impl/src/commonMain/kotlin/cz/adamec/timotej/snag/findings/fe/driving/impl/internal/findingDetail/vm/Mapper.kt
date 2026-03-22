@@ -12,18 +12,9 @@
 
 package cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetail.vm
 
-import cz.adamec.timotej.snag.feat.findings.app.model.AppFinding
-
-internal data class FindingDetailUiState(
-    val status: FindingDetailUiStatus = FindingDetailUiStatus.LOADING,
-    val finding: AppFinding? = null,
-    val canEdit: Boolean = false,
-)
-
-internal enum class FindingDetailUiStatus {
-    ERROR,
-    NOT_FOUND,
-    LOADING,
-    LOADED,
-    DELETED,
-}
+internal fun FindingDetailVmState.toUiState(): FindingDetailUiState =
+    FindingDetailUiState(
+        status = status,
+        finding = finding,
+        canEdit = status == FindingDetailUiStatus.LOADED && !isBeingDeleted && canEditFinding,
+    )

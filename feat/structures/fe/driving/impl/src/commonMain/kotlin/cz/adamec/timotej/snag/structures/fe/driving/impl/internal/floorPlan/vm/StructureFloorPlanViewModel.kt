@@ -28,6 +28,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.scan
 import kotlinx.coroutines.flow.stateIn
@@ -44,12 +45,12 @@ internal class StructureFloorPlanViewModel(
     private val getFindingsUseCase: GetFindingsUseCase,
     private val canEditProjectEntitiesUseCase: CanEditProjectEntitiesUseCase,
 ) : ViewModel() {
-    private val _state: MutableStateFlow<StructureDetailsUiState> =
-        MutableStateFlow(StructureDetailsUiState())
+    private val vmState: MutableStateFlow<StructureDetailsVmState> =
+        MutableStateFlow(StructureDetailsVmState())
     val state: StateFlow<StructureDetailsUiState> =
-        _state
+        vmState
             .scan(
-                initial = StructureDetailsUiState(),
+                initial = StructureDetailsVmState(),
             ) { prev, new ->
                 @Suppress("LabeledExpression")
                 val newStructureId = new.feStructure?.id ?: return@scan new
@@ -57,13 +58,15 @@ internal class StructureFloorPlanViewModel(
                     collectFindings(newStructureId)
                 }
                 new
-            }.stateIn(
+            }
+            .map { it.toUiState() }
+            .stateIn(
                 scope = viewModelScope,
                 started =
                     SharingStarted.WhileSubscribed(
                         stopTimeoutMillis = DEFAULT_NO_STATE_SUBSCRIBER_TIMEOUT,
                     ),
-                initialValue = StructureDetailsUiState(),
+                initialValue = StructureDetailsVmState().toUiState(),
             )
 
     private val errorEventsChannel = Channel<UiError>()
@@ -84,7 +87,7 @@ internal class StructureFloorPlanViewModel(
             getStructureUseCase(structureId).collect { result ->
                 when (result) {
                     is OfflineFirstDataResult.ProgrammerError -> {
-                        _state.update {
+                        vmState.update {
                             it.copy(status = StructureDetailsUiStatus.ERROR)
                         }
                         errorEventsChannel.send(Unknown)
@@ -92,14 +95,14 @@ internal class StructureFloorPlanViewModel(
 
                     is OfflineFirstDataResult.Success -> {
                         result.data?.let { structure ->
-                            _state.update {
+                            vmState.update {
                                 it.copy(
                                     status = StructureDetailsUiStatus.LOADED,
                                     feStructure = structure,
                                 )
                             }
-                        } ?: if (state.value.status != StructureDetailsUiStatus.DELETED) {
-                            _state.update {
+                        } ?: if (vmState.value.status != StructureDetailsUiStatus.DELETED) {
+                            vmState.update {
                                 it.copy(status = StructureDetailsUiStatus.NOT_FOUND)
                             }
                         } else {
@@ -118,7 +121,7 @@ internal class StructureFloorPlanViewModel(
                     .collect { result ->
                         when (result) {
                             is OfflineFirstDataResult.Success -> {
-                                _state.update {
+                                vmState.update {
                                     it.copy(
                                         findings = result.data.toPersistentList(),
                                     )
@@ -135,29 +138,29 @@ internal class StructureFloorPlanViewModel(
     private fun collectCanEditStructure() =
         viewModelScope.launch {
             canEditProjectEntitiesUseCase(projectId).collect { canEdit ->
-                _state.update { it.copy(canEditStructure = canEdit) }
+                vmState.update { it.copy(canEditStructure = canEdit) }
             }
         }
 
     fun onFindingSelected(findingId: Uuid?) {
-        _state.update { it.copy(selectedFindingId = findingId) }
+        vmState.update { it.copy(selectedFindingId = findingId) }
     }
 
     fun onDelete() =
         viewModelScope.launch {
-            _state.update {
+            vmState.update {
                 it.copy(isBeingDeleted = true)
             }
             when (deleteStructureUseCase(structureId)) {
                 is OfflineFirstDataResult.ProgrammerError -> {
-                    _state.update {
+                    vmState.update {
                         it.copy(isBeingDeleted = false)
                     }
                     errorEventsChannel.send(Unknown)
                 }
 
                 is OfflineFirstDataResult.Success -> {
-                    _state.update {
+                    vmState.update {
                         it.copy(
                             status = StructureDetailsUiStatus.DELETED,
                             isBeingDeleted = false,
