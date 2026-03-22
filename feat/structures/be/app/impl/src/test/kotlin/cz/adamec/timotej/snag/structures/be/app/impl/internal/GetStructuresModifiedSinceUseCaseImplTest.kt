@@ -20,6 +20,9 @@ import cz.adamec.timotej.snag.structures.be.app.api.GetStructuresModifiedSinceUs
 import cz.adamec.timotej.snag.structures.be.app.api.model.GetStructuresModifiedSinceRequest
 import cz.adamec.timotej.snag.structures.be.ports.StructuresDb
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
+import cz.adamec.timotej.snag.users.be.driven.test.TEST_USER_ID
+import cz.adamec.timotej.snag.users.be.driven.test.seedTestUser
+import cz.adamec.timotej.snag.users.be.ports.UsersDb
 import kotlinx.coroutines.test.runTest
 import org.koin.test.inject
 import kotlin.test.Test
@@ -30,6 +33,7 @@ import kotlin.uuid.Uuid
 class GetStructuresModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
     private val dataSource: StructuresDb by inject()
     private val projectsDb: ProjectsDb by inject()
+    private val usersDb: UsersDb by inject()
     private val useCase: GetStructuresModifiedSinceUseCase by inject()
 
     private val projectId = Uuid.parse("00000000-0000-0000-0000-000000000001")
@@ -46,11 +50,13 @@ class GetStructuresModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
     @Test
     fun `returns structures with updatedAt after since`() =
         runTest(testDispatcher) {
+            usersDb.seedTestUser()
             projectsDb.saveProject(
                 BackendProjectData(
                     id = projectId,
                     name = "Test Project",
                     address = "Test Address",
+                    creatorId = TEST_USER_ID,
                     updatedAt = Timestamp(1L),
                 ),
             )
@@ -72,11 +78,13 @@ class GetStructuresModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
     @Test
     fun `excludes structures from different project`() =
         runTest(testDispatcher) {
+            usersDb.seedTestUser()
             projectsDb.saveProject(
                 BackendProjectData(
                     id = otherProjectId,
                     name = "Other Project",
                     address = "Other Address",
+                    creatorId = TEST_USER_ID,
                     updatedAt = Timestamp(1L),
                 ),
             )
@@ -98,11 +106,13 @@ class GetStructuresModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
     @Test
     fun `returns deleted structures when deletedAt is after since`() =
         runTest(testDispatcher) {
+            usersDb.seedTestUser()
             projectsDb.saveProject(
                 BackendProjectData(
                     id = projectId,
                     name = "Test Project",
                     address = "Test Address",
+                    creatorId = TEST_USER_ID,
                     updatedAt = Timestamp(1L),
                 ),
             )
@@ -125,11 +135,13 @@ class GetStructuresModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
     @Test
     fun `excludes unchanged structures`() =
         runTest(testDispatcher) {
+            usersDb.seedTestUser()
             projectsDb.saveProject(
                 BackendProjectData(
                     id = projectId,
                     name = "Test Project",
                     address = "Test Address",
+                    creatorId = TEST_USER_ID,
                     updatedAt = Timestamp(1L),
                 ),
             )

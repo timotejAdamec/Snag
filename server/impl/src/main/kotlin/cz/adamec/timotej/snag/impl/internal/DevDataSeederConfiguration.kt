@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.impl.internal
 
+import cz.adamec.timotej.snag.authorization.business.UserRole
 import cz.adamec.timotej.snag.clients.be.model.BackendClientData
 import cz.adamec.timotej.snag.clients.be.ports.ClientsDb
 import cz.adamec.timotej.snag.configuration.be.AppConfiguration
@@ -31,7 +32,6 @@ import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
 import cz.adamec.timotej.snag.structures.be.ports.StructuresDb
 import cz.adamec.timotej.snag.users.be.model.BackendUserData
 import cz.adamec.timotej.snag.users.be.ports.UsersDb
-import cz.adamec.timotej.snag.users.business.UserRole
 import io.ktor.server.application.Application
 import kotlinx.coroutines.runBlocking
 import kotlin.uuid.Uuid
@@ -135,6 +135,7 @@ internal class DevDataSeederConfiguration(
                 name = "Strahov Dormitories Renovation",
                 address = "Chaloupeckého 1917/9, 160 17 Praha 6",
                 clientId = Uuid.parse(CLIENT_1),
+                creatorId = Uuid.parse(USER_1),
                 updatedAt = now,
             ),
             BackendProjectData(
@@ -142,6 +143,7 @@ internal class DevDataSeederConfiguration(
                 name = "FIT CTU New Building",
                 address = "Thákurova 9, 160 00 Praha 6",
                 clientId = Uuid.parse(CLIENT_1),
+                creatorId = Uuid.parse(USER_1),
                 updatedAt = now,
             ),
             BackendProjectData(
@@ -149,6 +151,7 @@ internal class DevDataSeederConfiguration(
                 name = "National Library of Technology",
                 address = "Technická 2710/6, 160 00 Praha 6",
                 clientId = Uuid.parse(CLIENT_2),
+                creatorId = Uuid.parse(USER_1),
                 updatedAt = now,
             ),
         ).forEach { projectsDb.saveProject(it) }

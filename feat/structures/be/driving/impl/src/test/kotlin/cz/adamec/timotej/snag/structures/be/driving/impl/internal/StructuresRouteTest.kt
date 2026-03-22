@@ -23,6 +23,9 @@ import cz.adamec.timotej.snag.structures.be.driving.contract.PutStructureApiDto
 import cz.adamec.timotej.snag.structures.be.driving.contract.StructureApiDto
 import cz.adamec.timotej.snag.structures.be.ports.StructuresDb
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
+import cz.adamec.timotej.snag.users.be.driven.test.TEST_USER_ID
+import cz.adamec.timotej.snag.users.be.driven.test.seedTestUser
+import cz.adamec.timotej.snag.users.be.ports.UsersDb
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.request.patch
@@ -43,13 +46,16 @@ import kotlin.uuid.Uuid
 class StructuresRouteTest : BackendKoinInitializedTest() {
     private val dataSource: StructuresDb by inject()
     private val projectsDb: ProjectsDb by inject()
+    private val usersDb: UsersDb by inject()
 
     private suspend fun createParentProject() {
+        usersDb.seedTestUser()
         projectsDb.saveProject(
             BackendProjectData(
                 id = PROJECT_ID,
                 name = "Test Project",
                 address = "Test Address",
+                creatorId = TEST_USER_ID,
                 updatedAt = Timestamp(1L),
             ),
         )

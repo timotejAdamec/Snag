@@ -10,12 +10,6 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.users.business
-
-enum class UserRole {
-    ADMINISTRATOR,
-    PASSPORT_LEAD,
-    PASSPORT_TECHNICIAN,
-    SERVICE_LEAD,
-    SERVICE_WORKER,
+plugins {
+    alias(libs.plugins.snagBackendModule)
 }

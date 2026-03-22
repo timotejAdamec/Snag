@@ -24,6 +24,12 @@ dependencies {
     implementation(projects.feat.shared.database.be.impl)
     implementation(projects.core.business.rules.impl)
 
+    // Authentication feature
+    implementation(projects.feat.authentication.be.driving.impl)
+
+    // Authorization feature
+    implementation(projects.feat.authorization.be.driving.impl)
+
     // Projects feature
     implementation(projects.feat.projects.be.driving.impl)
     implementation(projects.feat.projects.be.driven.impl)

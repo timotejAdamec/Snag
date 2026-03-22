@@ -19,6 +19,8 @@ import cz.adamec.timotej.snag.projects.be.model.BackendProjectData
 import cz.adamec.timotej.snag.projects.be.ports.ProjectAssignmentsDb
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
+import cz.adamec.timotej.snag.users.be.driven.test.TEST_USER_ID
+import cz.adamec.timotej.snag.users.be.driven.test.seedTestUser
 import cz.adamec.timotej.snag.users.be.model.BackendUserData
 import cz.adamec.timotej.snag.users.be.ports.UsersDb
 import kotlinx.coroutines.test.runTest
@@ -39,11 +41,13 @@ class RemoveUserFromProjectUseCaseImplTest : BackendKoinInitializedTest() {
     @Test
     fun `removes user from project`() =
         runTest(testDispatcher) {
+            usersDb.seedTestUser()
             projectsDb.saveProject(
                 BackendProjectData(
                     id = projectId,
                     name = "Test Project",
                     address = "Test Address",
+                    creatorId = TEST_USER_ID,
                     updatedAt = Timestamp(10L),
                 ),
             )

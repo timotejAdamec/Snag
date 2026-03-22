@@ -8,4 +8,6 @@ dependencies {
     testImplementation(project(":lib:configuration:be:api"))
     testImplementation(project(":feat:structures:be:ports"))
     testImplementation(project(":feat:projects:be:ports"))
+    testImplementation(project(":feat:users:be:ports"))
+    testImplementation(project(":feat:users:be:app:model"))
 }

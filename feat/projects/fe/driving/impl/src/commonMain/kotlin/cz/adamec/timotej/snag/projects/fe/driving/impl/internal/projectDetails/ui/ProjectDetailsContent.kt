@@ -451,6 +451,7 @@ private fun LoadedProjectDetailsContentPreview() {
                             id = UuidProvider.getUuid(),
                             name = "Example project name",
                             address = "Example project address",
+                            creatorId = UuidProvider.getUuid(),
                             updatedAt = Timestamp(0L),
                         ),
                 ),

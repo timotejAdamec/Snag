@@ -19,6 +19,8 @@ import cz.adamec.timotej.snag.projects.be.model.BackendProjectData
 import cz.adamec.timotej.snag.projects.be.ports.ProjectAssignmentsDb
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
+import cz.adamec.timotej.snag.users.be.driven.test.TEST_USER_ID
+import cz.adamec.timotej.snag.users.be.driven.test.seedTestUser
 import cz.adamec.timotej.snag.users.be.driving.contract.UserApiDto
 import cz.adamec.timotej.snag.users.be.model.BackendUserData
 import cz.adamec.timotej.snag.users.be.ports.UsersDb
@@ -40,11 +42,13 @@ class ProjectAssignmentsRouteTest : BackendKoinInitializedTest() {
     private val assignmentsDb: ProjectAssignmentsDb by inject()
 
     private suspend fun createProject(id: Uuid) {
+        usersDb.seedTestUser()
         projectsDb.saveProject(
             BackendProjectData(
                 id = id,
                 name = "Test Project",
                 address = "Test Address",
+                creatorId = TEST_USER_ID,
                 updatedAt = Timestamp(10L),
             ),
         )

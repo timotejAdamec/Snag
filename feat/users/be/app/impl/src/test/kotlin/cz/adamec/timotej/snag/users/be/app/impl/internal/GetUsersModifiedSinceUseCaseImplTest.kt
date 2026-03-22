@@ -12,12 +12,12 @@
 
 package cz.adamec.timotej.snag.users.be.app.impl.internal
 
+import cz.adamec.timotej.snag.authorization.business.UserRole
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
 import cz.adamec.timotej.snag.users.be.app.api.GetUsersModifiedSinceUseCase
 import cz.adamec.timotej.snag.users.be.model.BackendUserData
 import cz.adamec.timotej.snag.users.be.ports.UsersDb
-import cz.adamec.timotej.snag.users.business.UserRole
 import kotlinx.coroutines.test.runTest
 import org.koin.test.inject
 import kotlin.test.Test

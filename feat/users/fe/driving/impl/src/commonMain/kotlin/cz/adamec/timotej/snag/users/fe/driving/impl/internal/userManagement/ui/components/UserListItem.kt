@@ -18,7 +18,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import cz.adamec.timotej.snag.users.business.UserRole
+import androidx.compose.ui.unit.dp
+import cz.adamec.timotej.snag.authorization.business.UserRole
 import cz.adamec.timotej.snag.users.fe.driving.impl.internal.userManagement.vm.UserItem
 import org.jetbrains.compose.resources.painterResource
 import snag.lib.design.fe.generated.resources.ic_person

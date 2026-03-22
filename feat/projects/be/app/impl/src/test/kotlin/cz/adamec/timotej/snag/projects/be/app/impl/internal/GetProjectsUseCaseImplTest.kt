@@ -17,6 +17,9 @@ import cz.adamec.timotej.snag.projects.be.app.api.GetProjectsUseCase
 import cz.adamec.timotej.snag.projects.be.model.BackendProjectData
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
+import cz.adamec.timotej.snag.users.be.driven.test.TEST_USER_ID
+import cz.adamec.timotej.snag.users.be.driven.test.seedTestUser
+import cz.adamec.timotej.snag.users.be.ports.UsersDb
 import kotlinx.coroutines.test.runTest
 import org.koin.test.inject
 import kotlin.test.Test
@@ -25,6 +28,7 @@ import kotlin.uuid.Uuid
 
 class GetProjectsUseCaseImplTest : BackendKoinInitializedTest() {
     private val dataSource: ProjectsDb by inject()
+    private val usersDb: UsersDb by inject()
     private val useCase: GetProjectsUseCase by inject()
 
     @Test
@@ -38,11 +42,13 @@ class GetProjectsUseCaseImplTest : BackendKoinInitializedTest() {
     @Test
     fun `returns all projects`() =
         runTest(testDispatcher) {
+            usersDb.seedTestUser()
             val project1 =
                 BackendProjectData(
                     id = Uuid.parse("00000000-0000-0000-0000-000000000001"),
                     name = "Project 1",
                     address = "Address 1",
+                    creatorId = TEST_USER_ID,
                     updatedAt = Timestamp(10L),
                 )
             val project2 =
@@ -50,6 +56,7 @@ class GetProjectsUseCaseImplTest : BackendKoinInitializedTest() {
                     id = Uuid.parse("00000000-0000-0000-0000-000000000002"),
                     name = "Project 2",
                     address = "Address 2",
+                    creatorId = TEST_USER_ID,
                     updatedAt = Timestamp(10L),
                 )
             dataSource.saveProject(project1)

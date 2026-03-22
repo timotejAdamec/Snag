@@ -25,6 +25,7 @@ import cz.adamec.timotej.snag.projects.fe.app.impl.internal.sync.PROJECT_SYNC_EN
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsDb
 import cz.adamec.timotej.snag.sync.fe.app.api.EnqueueSyncSaveUseCase
 import cz.adamec.timotej.snag.sync.fe.app.api.model.EnqueueSyncSaveRequest
+import cz.adamec.timotej.snag.users.fe.app.api.GetCurrentUserUseCase
 import kotlin.uuid.Uuid
 
 class SaveProjectUseCaseImpl(
@@ -32,14 +33,18 @@ class SaveProjectUseCaseImpl(
     private val enqueueSyncSaveUseCase: EnqueueSyncSaveUseCase,
     private val uuidProvider: UuidProvider,
     private val timestampProvider: TimestampProvider,
+    private val getCurrentUserUseCase: GetCurrentUserUseCase,
 ) : SaveProjectUseCase {
     override suspend operator fun invoke(request: SaveProjectRequest): OfflineFirstDataResult<Uuid> {
+        val creatorId = resolveCreatorId(request.id)
+
         val project =
             AppProjectData(
                 id = request.id ?: uuidProvider.getUuid(),
                 name = request.name,
                 address = request.address,
                 clientId = request.clientId,
+                creatorId = creatorId,
                 updatedAt = timestampProvider.getNowTimestamp(),
             )
 
@@ -61,5 +66,18 @@ class SaveProjectUseCaseImpl(
             }.map {
                 project.id
             }
+    }
+
+    private suspend fun resolveCreatorId(existingId: Uuid?): Uuid {
+        if (existingId != null) {
+            val existingResult = projectsDb.getProject(existingId)
+            if (existingResult is OfflineFirstDataResult.Success) {
+                val existingProject = existingResult.data
+                if (existingProject != null) {
+                    return existingProject.creatorId
+                }
+            }
+        }
+        return getCurrentUserUseCase()
     }
 }

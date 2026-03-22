@@ -24,6 +24,9 @@ import cz.adamec.timotej.snag.projects.be.model.BackendProjectData
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
 import cz.adamec.timotej.snag.structures.be.ports.StructuresDb
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
+import cz.adamec.timotej.snag.users.be.driven.test.TEST_USER_ID
+import cz.adamec.timotej.snag.users.be.driven.test.seedTestUser
+import cz.adamec.timotej.snag.users.be.ports.UsersDb
 import kotlinx.coroutines.test.runTest
 import org.koin.test.inject
 import kotlin.test.Test
@@ -34,6 +37,7 @@ class DeleteFindingUseCaseImplTest : BackendKoinInitializedTest() {
     private val findingsDb: FindingsDb by inject()
     private val projectsDb: ProjectsDb by inject()
     private val structuresDb: StructuresDb by inject()
+    private val usersDb: UsersDb by inject()
     private val useCase: DeleteFindingUseCase by inject()
 
     private val projectId = UuidProvider.getUuid()
@@ -52,11 +56,13 @@ class DeleteFindingUseCaseImplTest : BackendKoinInitializedTest() {
         )
 
     private suspend fun seedClosedProject() {
+        usersDb.seedTestUser()
         projectsDb.saveProject(
             BackendProjectData(
                 id = projectId,
                 name = "Test Project",
                 address = "Test Address",
+                creatorId = TEST_USER_ID,
                 isClosed = true,
                 updatedAt = Timestamp(1L),
             ),

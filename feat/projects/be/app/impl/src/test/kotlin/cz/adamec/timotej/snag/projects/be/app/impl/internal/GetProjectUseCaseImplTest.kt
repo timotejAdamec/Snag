@@ -17,6 +17,9 @@ import cz.adamec.timotej.snag.projects.be.app.api.GetProjectUseCase
 import cz.adamec.timotej.snag.projects.be.model.BackendProjectData
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
+import cz.adamec.timotej.snag.users.be.driven.test.TEST_USER_ID
+import cz.adamec.timotej.snag.users.be.driven.test.seedTestUser
+import cz.adamec.timotej.snag.users.be.ports.UsersDb
 import kotlinx.coroutines.test.runTest
 import org.koin.test.inject
 import kotlin.test.Test
@@ -26,6 +29,7 @@ import kotlin.uuid.Uuid
 
 class GetProjectUseCaseImplTest : BackendKoinInitializedTest() {
     private val dataSource: ProjectsDb by inject()
+    private val usersDb: UsersDb by inject()
     private val useCase: GetProjectUseCase by inject()
 
     private val projectId = Uuid.parse("00000000-0000-0000-0000-000000000001")
@@ -35,12 +39,14 @@ class GetProjectUseCaseImplTest : BackendKoinInitializedTest() {
             id = projectId,
             name = "Test Project",
             address = "Test Address",
+            creatorId = TEST_USER_ID,
             updatedAt = Timestamp(10L),
         )
 
     @Test
     fun `returns project when it exists`() =
         runTest(testDispatcher) {
+            usersDb.seedTestUser()
             dataSource.saveProject(project)
 
             val result = useCase(projectId)

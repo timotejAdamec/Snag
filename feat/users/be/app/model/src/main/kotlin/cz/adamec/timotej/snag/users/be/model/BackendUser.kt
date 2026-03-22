@@ -1,8 +1,8 @@
 package cz.adamec.timotej.snag.users.be.model
 
+import cz.adamec.timotej.snag.authorization.business.UserRole
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.users.app.model.AppUser
-import cz.adamec.timotej.snag.users.business.UserRole
 import kotlin.uuid.Uuid
 
 interface BackendUser : AppUser

@@ -12,8 +12,12 @@
 
 package cz.adamec.timotej.snag.projects.be.driving.impl.internal
 
+import cz.adamec.timotej.snag.authentication.be.driving.api.currentUser
+import cz.adamec.timotej.snag.authorization.be.driving.api.ForbiddenException
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.projects.be.app.api.AssignUserToProjectUseCase
+import cz.adamec.timotej.snag.projects.be.app.api.CanCloseProjectUseCase
+import cz.adamec.timotej.snag.projects.be.app.api.CanCreateProjectUseCase
 import cz.adamec.timotej.snag.projects.be.app.api.DeleteProjectUseCase
 import cz.adamec.timotej.snag.projects.be.app.api.GetProjectAssignmentsUseCase
 import cz.adamec.timotej.snag.projects.be.app.api.GetProjectUseCase
@@ -38,6 +42,7 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.patch
 import io.ktor.server.routing.put
 import io.ktor.server.routing.route
+import kotlin.uuid.Uuid
 
 @Suppress("LabeledExpression", "StringLiteralDuplication")
 internal class ProjectsRoute(
@@ -49,6 +54,8 @@ internal class ProjectsRoute(
     private val getProjectAssignmentsUseCase: GetProjectAssignmentsUseCase,
     private val assignUserToProjectUseCase: AssignUserToProjectUseCase,
     private val removeUserFromProjectUseCase: RemoveUserFromProjectUseCase,
+    private val canCreateProjectUseCase: CanCreateProjectUseCase,
+    private val canCloseProjectUseCase: CanCloseProjectUseCase,
 ) : AppRoute {
     override fun Route.setup() {
         route("/projects") {
@@ -79,8 +86,14 @@ internal class ProjectsRoute(
 
             put("/{id}") {
                 val id = getIdFromParameters()
-
+                val user = currentUser()
                 val putProjectDto = getDtoFromBody<PutProjectApiDto>()
+
+                authorizeProjectSave(
+                    userId = user.userId,
+                    projectId = id,
+                    incomingIsClosed = putProjectDto.isClosed,
+                )
 
                 val updatedProject = saveProjectUseCase(putProjectDto.toModel(id))
 
@@ -141,6 +154,25 @@ internal class ProjectsRoute(
                 )
                 call.respond(HttpStatusCode.NoContent)
             }
+        }
+    }
+
+    private suspend fun authorizeProjectSave(
+        userId: Uuid,
+        projectId: Uuid,
+        incomingIsClosed: Boolean,
+    ) {
+        val existingProject = getProjectUseCase(projectId)
+
+        if (existingProject == null && !canCreateProjectUseCase(userId)) {
+            throw ForbiddenException()
+        }
+
+        if (existingProject != null &&
+            incomingIsClosed != existingProject.isClosed &&
+            !canCloseProjectUseCase(userId = userId, projectId = projectId)
+        ) {
+            throw ForbiddenException()
         }
     }
 }

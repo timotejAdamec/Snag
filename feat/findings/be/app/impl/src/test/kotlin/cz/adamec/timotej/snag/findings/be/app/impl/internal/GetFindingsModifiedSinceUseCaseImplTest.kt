@@ -23,6 +23,9 @@ import cz.adamec.timotej.snag.projects.be.model.BackendProjectData
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
 import cz.adamec.timotej.snag.structures.be.ports.StructuresDb
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
+import cz.adamec.timotej.snag.users.be.driven.test.TEST_USER_ID
+import cz.adamec.timotej.snag.users.be.driven.test.seedTestUser
+import cz.adamec.timotej.snag.users.be.ports.UsersDb
 import kotlinx.coroutines.test.runTest
 import org.koin.test.inject
 import kotlin.test.Test
@@ -34,6 +37,7 @@ class GetFindingsModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
     private val dataSource: FindingsDb by inject()
     private val projectsDb: ProjectsDb by inject()
     private val structuresDb: StructuresDb by inject()
+    private val usersDb: UsersDb by inject()
     private val useCase: GetFindingsModifiedSinceUseCase by inject()
 
     private val projectId = Uuid.parse("00000000-0000-0000-0000-000000000001")
@@ -41,11 +45,13 @@ class GetFindingsModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
     private val otherStructureId = Uuid.parse("00000000-0000-0000-0001-000000000002")
 
     private suspend fun seedParentEntities() {
+        usersDb.seedTestUser()
         projectsDb.saveProject(
             BackendProjectData(
                 id = projectId,
                 name = "Test Project",
                 address = "Test Address",
+                creatorId = TEST_USER_ID,
                 updatedAt = Timestamp(1L),
             ),
         )

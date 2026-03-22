@@ -17,6 +17,9 @@ import cz.adamec.timotej.snag.projects.be.app.api.GetProjectsModifiedSinceUseCas
 import cz.adamec.timotej.snag.projects.be.model.BackendProjectData
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
+import cz.adamec.timotej.snag.users.be.driven.test.TEST_USER_ID
+import cz.adamec.timotej.snag.users.be.driven.test.seedTestUser
+import cz.adamec.timotej.snag.users.be.ports.UsersDb
 import kotlinx.coroutines.test.runTest
 import org.koin.test.inject
 import kotlin.test.Test
@@ -26,6 +29,7 @@ import kotlin.uuid.Uuid
 
 class GetProjectsModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
     private val dataSource: ProjectsDb by inject()
+    private val usersDb: UsersDb by inject()
     private val useCase: GetProjectsModifiedSinceUseCase by inject()
 
     @Test
@@ -39,11 +43,13 @@ class GetProjectsModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
     @Test
     fun `returns projects with updatedAt after since`() =
         runTest(testDispatcher) {
+            usersDb.seedTestUser()
             val project =
                 BackendProjectData(
                     id = Uuid.parse("00000000-0000-0000-0000-000000000001"),
                     name = "Project 1",
                     address = "Address 1",
+                    creatorId = TEST_USER_ID,
                     updatedAt = Timestamp(200L),
                 )
             dataSource.saveProject(project)
@@ -56,11 +62,13 @@ class GetProjectsModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
     @Test
     fun `excludes projects with updatedAt before since`() =
         runTest(testDispatcher) {
+            usersDb.seedTestUser()
             val project =
                 BackendProjectData(
                     id = Uuid.parse("00000000-0000-0000-0000-000000000001"),
                     name = "Project 1",
                     address = "Address 1",
+                    creatorId = TEST_USER_ID,
                     updatedAt = Timestamp(50L),
                 )
             dataSource.saveProject(project)
@@ -73,11 +81,13 @@ class GetProjectsModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
     @Test
     fun `returns deleted projects when deletedAt is after since`() =
         runTest(testDispatcher) {
+            usersDb.seedTestUser()
             val project =
                 BackendProjectData(
                     id = Uuid.parse("00000000-0000-0000-0000-000000000001"),
                     name = "Project 1",
                     address = "Address 1",
+                    creatorId = TEST_USER_ID,
                     updatedAt = Timestamp(50L),
                     deletedAt = Timestamp(200L),
                 )
@@ -91,11 +101,13 @@ class GetProjectsModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
     @Test
     fun `excludes deleted projects when deletedAt is before since`() =
         runTest(testDispatcher) {
+            usersDb.seedTestUser()
             val project =
                 BackendProjectData(
                     id = Uuid.parse("00000000-0000-0000-0000-000000000001"),
                     name = "Project 1",
                     address = "Address 1",
+                    creatorId = TEST_USER_ID,
                     updatedAt = Timestamp(50L),
                     deletedAt = Timestamp(80L),
                 )

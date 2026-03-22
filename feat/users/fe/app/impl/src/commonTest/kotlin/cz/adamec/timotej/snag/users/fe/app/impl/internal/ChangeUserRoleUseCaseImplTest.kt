@@ -12,13 +12,13 @@
 
 package cz.adamec.timotej.snag.users.fe.app.impl.internal
 
+import cz.adamec.timotej.snag.authorization.business.UserRole
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.core.network.fe.OnlineDataResult
 import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
 import cz.adamec.timotej.snag.users.app.model.AppUser
 import cz.adamec.timotej.snag.users.app.model.AppUserData
-import cz.adamec.timotej.snag.users.business.UserRole
 import cz.adamec.timotej.snag.users.fe.app.api.ChangeUserRoleUseCase
 import cz.adamec.timotej.snag.users.fe.app.api.model.ChangeUserRoleRequest
 import cz.adamec.timotej.snag.users.fe.driven.test.FakeUsersApi

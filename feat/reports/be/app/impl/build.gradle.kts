@@ -11,4 +11,6 @@ dependencies {
     testImplementation(project(":feat:reports:be:driven:test"))
     testImplementation(project(":feat:projects:be:ports"))
     testImplementation(project(":feat:structures:be:ports"))
+    testImplementation(project(":feat:users:be:ports"))
+    testImplementation(project(":feat:users:be:app:model"))
 }

@@ -22,6 +22,9 @@ import cz.adamec.timotej.snag.network.be.test.jsonClient
 import cz.adamec.timotej.snag.projects.be.model.BackendProjectData
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
+import cz.adamec.timotej.snag.users.be.driven.test.TEST_USER_ID
+import cz.adamec.timotej.snag.users.be.driven.test.seedTestUser
+import cz.adamec.timotej.snag.users.be.ports.UsersDb
 import io.ktor.client.call.body
 import io.ktor.client.request.delete
 import io.ktor.client.request.setBody
@@ -38,13 +41,16 @@ import kotlin.uuid.Uuid
 class InspectionsRouteTest : BackendKoinInitializedTest() {
     private val inspectionsDb: InspectionsDb by inject()
     private val projectsDb: ProjectsDb by inject()
+    private val usersDb: UsersDb by inject()
 
     private suspend fun seedProject() {
+        usersDb.seedTestUser()
         projectsDb.saveProject(
             BackendProjectData(
                 id = PROJECT_ID,
                 name = "Test Project",
                 address = "Test Address",
+                creatorId = TEST_USER_ID,
                 updatedAt = Timestamp(1L),
             ),
         )

@@ -12,15 +12,17 @@
 
 package cz.adamec.timotej.snag.projects.be.app.impl.internal
 
+import cz.adamec.timotej.snag.authorization.business.UserRole
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.projects.be.app.api.GetProjectAssignmentsUseCase
 import cz.adamec.timotej.snag.projects.be.model.BackendProjectData
 import cz.adamec.timotej.snag.projects.be.ports.ProjectAssignmentsDb
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
+import cz.adamec.timotej.snag.users.be.driven.test.TEST_USER_ID
+import cz.adamec.timotej.snag.users.be.driven.test.seedTestUser
 import cz.adamec.timotej.snag.users.be.model.BackendUserData
 import cz.adamec.timotej.snag.users.be.ports.UsersDb
-import cz.adamec.timotej.snag.users.business.UserRole
 import kotlinx.coroutines.test.runTest
 import org.koin.test.inject
 import kotlin.test.Test
@@ -36,11 +38,13 @@ class GetProjectAssignmentsUseCaseImplTest : BackendKoinInitializedTest() {
     private val projectId = Uuid.parse("00000000-0000-0000-0000-000000000001")
 
     private suspend fun createProject() {
+        usersDb.seedTestUser()
         projectsDb.saveProject(
             BackendProjectData(
                 id = projectId,
                 name = "Test Project",
                 address = "Test Address",
+                creatorId = TEST_USER_ID,
                 updatedAt = Timestamp(10L),
             ),
         )
