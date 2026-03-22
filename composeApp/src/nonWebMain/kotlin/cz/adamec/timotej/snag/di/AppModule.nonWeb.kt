@@ -10,16 +10,9 @@
  * Department of Software Engineering
  */
 
-@file:Suppress("ktlint:standard:filename")
+package cz.adamec.timotej.snag.di
 
-package cz.adamec.timotej.snag
+import org.koin.core.module.Module
+import org.koin.dsl.module
 
-import androidx.compose.ui.ExperimentalComposeUiApi
-import androidx.compose.ui.window.ComposeViewport
-
-@OptIn(ExperimentalComposeUiApi::class)
-fun main() {
-    ComposeViewport {
-        App()
-    }
-}
+internal actual val platformModule: Module = module {}

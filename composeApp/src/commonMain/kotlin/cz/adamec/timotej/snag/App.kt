@@ -23,6 +23,7 @@ import co.touchlab.kermit.Logger
 import co.touchlab.kermit.koin.KermitKoinLogger
 import cz.adamec.timotej.snag.core.foundation.fe.Initializer
 import cz.adamec.timotej.snag.di.appModule
+import cz.adamec.timotej.snag.lib.design.fe.initializer.ComposeInitializer
 import cz.adamec.timotej.snag.ui.MainScreen
 import org.koin.compose.KoinApplication
 import org.koin.compose.getKoin
@@ -52,9 +53,11 @@ fun InitializeInitializers(
     uninitializedContent: @Composable () -> Unit,
     initializedContent: @Composable () -> Unit,
 ) {
+    val composeInitializers = getKoin().getAll<ComposeInitializer>()
+    composeInitializers.forEach { it.init() }
+
     val initializers = getKoin().getAll<Initializer>()
     var isInitialized by remember { mutableStateOf(false) }
-
     LaunchedEffect(Unit) {
         initializers.forEach { it.init() }
         isInitialized = true

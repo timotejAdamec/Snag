@@ -10,16 +10,15 @@
  * Department of Software Engineering
  */
 
-@file:Suppress("ktlint:standard:filename")
+package cz.adamec.timotej.snag.lib.design.fe.initializer
 
-package cz.adamec.timotej.snag
+import androidx.compose.runtime.Composable
 
-import androidx.compose.ui.ExperimentalComposeUiApi
-import androidx.compose.ui.window.ComposeViewport
+/**
+ * Things that need to be initialized before the app starts with Compose context.
+ */
+interface ComposeInitializer {
 
-@OptIn(ExperimentalComposeUiApi::class)
-fun main() {
-    ComposeViewport {
-        App()
-    }
+    @Composable
+    fun init()
 }
