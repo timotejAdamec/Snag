@@ -10,20 +10,20 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.authentication.be.driving.impl.internal
+package cz.adamec.timotej.snag.authorization.be.driving.impl.internal
 
-import cz.adamec.timotej.snag.authentication.be.driving.api.UnauthorizedException
+import cz.adamec.timotej.snag.authorization.be.driving.api.ForbiddenException
 import cz.adamec.timotej.snag.configuration.be.AppStatusPageHandler
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.plugins.statuspages.StatusPagesConfig
 import io.ktor.server.response.respond
 
-internal class AuthenticationStatusPageHandler : AppStatusPageHandler {
+internal class AuthorizationStatusPageHandler : AppStatusPageHandler {
     override fun StatusPagesConfig.setup() {
-        exception<UnauthorizedException> { call, _ ->
+        exception<ForbiddenException> { call, _ ->
             call.respond(
-                status = HttpStatusCode.Unauthorized,
-                message = "Authentication required.",
+                status = HttpStatusCode.Forbidden,
+                message = "Access denied.",
             )
         }
     }

@@ -12,10 +12,8 @@
 
 package cz.adamec.timotej.snag.authentication.be.driving.api
 
-import cz.adamec.timotej.snag.authorization.business.UserRole
 import kotlin.uuid.Uuid
 
 data class CallCurrentUser(
     val userId: Uuid,
-    val role: UserRole?,
 )

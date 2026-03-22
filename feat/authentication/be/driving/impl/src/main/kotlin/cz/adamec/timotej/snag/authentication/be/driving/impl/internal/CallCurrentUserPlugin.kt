@@ -38,9 +38,6 @@ private suspend fun resolveCurrentUser(
     val userId = userIdHeader?.let { runCatching { Uuid.parse(it) }.getOrNull() }
     val user = userId?.let { getUserUseCase(it) }
     return user?.let {
-        CallCurrentUser(
-            userId = it.id,
-            role = it.role,
-        )
+        CallCurrentUser(userId = it.id)
     }
 }

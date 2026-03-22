@@ -4,5 +4,4 @@ plugins {
 
 dependencies {
     api(libs.ktor.server.core)
-    api(project(":feat:authorization:business:model"))
 }

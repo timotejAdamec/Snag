@@ -27,6 +27,9 @@ dependencies {
     // Authentication feature
     implementation(projects.feat.authentication.be.driving.impl)
 
+    // Authorization feature
+    implementation(projects.feat.authorization.be.driving.impl)
+
     // Projects feature
     implementation(projects.feat.projects.be.driving.impl)
     implementation(projects.feat.projects.be.driven.impl)
