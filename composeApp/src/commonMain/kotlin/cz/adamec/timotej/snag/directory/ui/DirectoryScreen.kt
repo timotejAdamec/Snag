@@ -13,7 +13,8 @@
 package cz.adamec.timotej.snag.directory.ui
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.material3.SecondaryTabRow
+import androidx.compose.material3.Icon
+import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,12 +31,18 @@ import cz.adamec.timotej.snag.clients.fe.driving.api.ClientsRoute
 import cz.adamec.timotej.snag.clients.fe.driving.api.ClientsRouteFactory
 import cz.adamec.timotej.snag.lib.navigation.fe.SnagNavRoute
 import cz.adamec.timotej.snag.users.fe.driving.api.UsersRoute
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.navigation3.koinEntryProvider
 import snag.composeapp.generated.resources.Res
 import snag.composeapp.generated.resources.clients_tab_title
 import snag.composeapp.generated.resources.users_tab_title
+import snag.lib.design.fe.generated.resources.ic_engineering
+import snag.lib.design.fe.generated.resources.ic_engineering_filled
+import snag.lib.design.fe.generated.resources.ic_work
+import snag.lib.design.fe.generated.resources.ic_work_filled
+import snag.lib.design.fe.generated.resources.Res as DesignRes
 
 private const val USERS_TAB_INDEX = 0
 private const val CLIENTS_TAB_INDEX = 1
@@ -79,7 +86,7 @@ internal fun DirectoryScreen(
     val usersRoute: UsersRoute = koinInject()
 
     Column(modifier = modifier) {
-        SecondaryTabRow(selectedTabIndex = selectedTab) {
+        PrimaryTabRow(selectedTabIndex = selectedTab) {
             Tab(
                 selected = selectedTab == USERS_TAB_INDEX,
                 onClick = {
@@ -88,6 +95,18 @@ internal fun DirectoryScreen(
                     }
                 },
                 text = { Text(text = stringResource(Res.string.users_tab_title)) },
+                icon = {
+                    val iconRes =
+                        if (selectedTab == USERS_TAB_INDEX) {
+                            DesignRes.drawable.ic_engineering_filled
+                        } else {
+                            DesignRes.drawable.ic_engineering
+                        }
+                    Icon(
+                        painter = painterResource(iconRes),
+                        contentDescription = null,
+                    )
+                },
             )
             Tab(
                 selected = selectedTab == CLIENTS_TAB_INDEX,
@@ -97,6 +116,18 @@ internal fun DirectoryScreen(
                     }
                 },
                 text = { Text(text = stringResource(Res.string.clients_tab_title)) },
+                icon = {
+                    val iconRes =
+                        if (selectedTab == CLIENTS_TAB_INDEX) {
+                            DesignRes.drawable.ic_work_filled
+                        } else {
+                            DesignRes.drawable.ic_work
+                        }
+                    Icon(
+                        painter = painterResource(iconRes),
+                        contentDescription = null,
+                    )
+                },
             )
         }
 
@@ -105,9 +136,10 @@ internal fun DirectoryScreen(
             modifier = modifier,
             backStack = backStackEntriesState.value,
             entryProvider = entryProvider,
-            sceneStrategies = listOf(
-                DialogSceneStrategy(),
-            ),
+            sceneStrategies =
+                listOf(
+                    DialogSceneStrategy(),
+                ),
             entryDecorators =
                 listOf(
                     rememberSaveableStateHolderNavEntryDecorator(),
