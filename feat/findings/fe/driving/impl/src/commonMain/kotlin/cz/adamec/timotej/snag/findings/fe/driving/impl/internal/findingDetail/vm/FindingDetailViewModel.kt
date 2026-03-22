@@ -19,7 +19,7 @@ import cz.adamec.timotej.snag.findings.fe.app.api.DeleteFindingUseCase
 import cz.adamec.timotej.snag.findings.fe.app.api.GetFindingUseCase
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError.Unknown
-import cz.adamec.timotej.snag.lib.design.fe.state.mapState
+import cz.adamec.timotej.snag.core.foundation.common.mapState
 import cz.adamec.timotej.snag.projects.fe.app.api.CanEditProjectEntitiesUseCase
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
