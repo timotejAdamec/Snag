@@ -86,14 +86,6 @@ internal fun DirectoryScreen(
                     if (selectedTab != USERS_TAB_INDEX) {
                         backStack.value[backStack.value.lastIndex] = usersRoute
                     }
-//                    if (selectedTab != USERS_TAB_INDEX) {
-//                        backStack.value.add(usersRoute)
-//                        for (i in 0 until backStack.value.size) {
-//                            if (i != backStack.value.lastIndex) {
-//                                backStack.value.removeAt(i)
-//                            }
-//                        }
-//                    }
                 },
                 text = { Text(text = stringResource(Res.string.users_tab_title)) },
             )
