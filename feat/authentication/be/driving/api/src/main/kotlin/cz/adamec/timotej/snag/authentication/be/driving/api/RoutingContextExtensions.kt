@@ -17,5 +17,5 @@ import io.ktor.util.AttributeKey
 
 val CallCurrentUserKey = AttributeKey<CallCurrentUser>("CallCurrentUser")
 
-// TODO Throw UnauthenticatedException instead of NoSuchElementException when attribute is missing
-fun RoutingContext.currentUser(): CallCurrentUser = call.attributes[CallCurrentUserKey]
+fun RoutingContext.currentUser(): CallCurrentUser =
+    call.attributes.getOrNull(CallCurrentUserKey) ?: throw UnauthenticatedException()

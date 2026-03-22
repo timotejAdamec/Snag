@@ -102,7 +102,6 @@ internal class ProjectsRoute(
                 } ?: call.respond(HttpStatusCode.NoContent)
             }
 
-            // TODO Add authorization check for project soft-delete
             patch("/{id}") {
                 val id = getIdFromParameters()
                 val deleteProjectDto = getDtoFromBody<DeleteProjectApiDto>()
@@ -124,7 +123,6 @@ internal class ProjectsRoute(
         setupAssignmentsRoute()
     }
 
-    // TODO Add authorization checks for assignment management endpoints
     private fun Route.setupAssignmentsRoute() {
         route("/projects/{projectId}/assignments") {
             get {

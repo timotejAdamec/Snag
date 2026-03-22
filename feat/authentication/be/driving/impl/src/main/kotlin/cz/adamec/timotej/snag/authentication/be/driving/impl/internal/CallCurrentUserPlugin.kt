@@ -19,6 +19,7 @@ import cz.adamec.timotej.snag.users.be.app.api.GetUserUseCase
 import io.ktor.server.application.createApplicationPlugin
 import kotlin.uuid.Uuid
 
+// TODO Replace X-User-Id header resolution with EntraID JWT token validation
 @Suppress("LabeledExpression")
 internal fun callCurrentUserPlugin(getUserUseCase: GetUserUseCase) =
     createApplicationPlugin(name = "CallCurrentUserPlugin") {

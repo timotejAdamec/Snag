@@ -12,4 +12,5 @@
 
 package cz.adamec.timotej.snag.routing.be
 
+// TODO Replace with EntraID JWT token-based authentication
 const val USER_ID_HEADER = "X-User-Id"

@@ -14,8 +14,6 @@ package cz.adamec.timotej.snag.authentication.be.driving.api
 
 import kotlin.uuid.Uuid
 
-// TODO Include role (and potentially other user data) to avoid redundant DB lookups in
-//  authorization checks — currently downstream use cases re-fetch the user from DB.
 data class CallCurrentUser(
     val userId: Uuid,
 )

@@ -413,7 +413,7 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
         }
 
     @Test
-    fun `PUT project without X-User-Id header fails with missing user context`() =
+    fun `PUT project without X-User-Id header returns 401`() =
         testApplication {
             configureApp()
             seedAdminUser()
@@ -432,7 +432,7 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
                     )
                 }
 
-            assertEquals(HttpStatusCode.InternalServerError, response.status)
+            assertEquals(HttpStatusCode.Unauthorized, response.status)
         }
 
     @Test
