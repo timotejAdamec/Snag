@@ -29,7 +29,8 @@ import cz.adamec.timotej.snag.findings.fe.app.api.model.SaveFindingDetailsReques
 import cz.adamec.timotej.snag.findings.fe.app.api.model.SaveNewFindingRequest
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError.Unknown
-import cz.adamec.timotej.snag.projects.fe.app.api.IsProjectClosedUseCase
+import cz.adamec.timotej.snag.core.foundation.common.mapState
+import cz.adamec.timotej.snag.projects.fe.app.api.CanEditProjectEntitiesUseCase
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -51,15 +52,16 @@ internal class FindingDetailsEditViewModel(
     private val getFindingUseCase: GetFindingUseCase,
     private val saveNewFindingUseCase: SaveNewFindingUseCase,
     private val saveFindingDetailsUseCase: SaveFindingDetailsUseCase,
-    private val isProjectClosedUseCase: IsProjectClosedUseCase,
+    private val canEditProjectEntitiesUseCase: CanEditProjectEntitiesUseCase,
 ) : ViewModel() {
-    private val _state: MutableStateFlow<FindingDetailsEditUiState> =
+    private val vmState: MutableStateFlow<FindingDetailsEditVmState> =
         MutableStateFlow(
-            FindingDetailsEditUiState(
+            FindingDetailsEditVmState(
                 findingType = findingTypeKey?.toDefaultFindingType() ?: FindingType.Classic(),
             ),
         )
-    val state: StateFlow<FindingDetailsEditUiState> = _state
+    val state: StateFlow<FindingDetailsEditUiState> =
+        vmState.mapState { it.toUiState() }
 
     private val errorEventsChannel = Channel<UiError>()
     val errorsFlow = errorEventsChannel.receiveAsFlow()
@@ -72,13 +74,13 @@ internal class FindingDetailsEditViewModel(
             "Either findingId or structureId must be provided"
         }
         findingId?.let { collectFinding(it) }
-        collectProjectClosed()
+        collectCanEditFinding()
     }
 
-    private fun collectProjectClosed() =
+    private fun collectCanEditFinding() =
         viewModelScope.launch {
-            isProjectClosedUseCase(projectId).collect { isClosed ->
-                _state.update { it.copy(isProjectClosed = isClosed) }
+            canEditProjectEntitiesUseCase(projectId).collect { canEdit ->
+                vmState.update { it.copy(canEditFinding = canEdit) }
             }
         }
 
@@ -91,7 +93,7 @@ internal class FindingDetailsEditViewModel(
                     }
                     is OfflineFirstDataResult.Success -> {
                         result.data?.let { data ->
-                            _state.update {
+                            vmState.update {
                                 it.copy(
                                     findingName = data.name,
                                     findingDescription = data.description.orEmpty(),
@@ -106,15 +108,15 @@ internal class FindingDetailsEditViewModel(
         }
 
     fun onFindingNameChange(updatedName: String) {
-        _state.update { it.copy(findingName = updatedName, findingNameError = null) }
+        vmState.update { it.copy(findingName = updatedName, findingNameError = null) }
     }
 
     fun onFindingDescriptionChange(updatedDescription: String) {
-        _state.update { it.copy(findingDescription = updatedDescription) }
+        vmState.update { it.copy(findingDescription = updatedDescription) }
     }
 
     fun onImportanceChange(importance: Importance) {
-        _state.update { state ->
+        vmState.update { state ->
             val currentType = state.findingType
             if (currentType is FindingType.Classic) {
                 state.copy(findingType = currentType.copy(importance = importance))
@@ -125,7 +127,7 @@ internal class FindingDetailsEditViewModel(
     }
 
     fun onTermChange(term: Term) {
-        _state.update { state ->
+        vmState.update { state ->
             val currentType = state.findingType
             if (currentType is FindingType.Classic) {
                 state.copy(findingType = currentType.copy(term = term))
@@ -137,8 +139,8 @@ internal class FindingDetailsEditViewModel(
 
     fun onSaveFinding() =
         viewModelScope.launch {
-            if (state.value.findingName.isBlank()) {
-                _state.update { it.copy(findingNameError = Res.string.error_field_required) }
+            if (vmState.value.findingName.isBlank()) {
+                vmState.update { it.copy(findingNameError = Res.string.error_field_required) }
             } else {
                 val currentFindingId = findingId
                 if (currentFindingId != null) {
@@ -155,9 +157,9 @@ internal class FindingDetailsEditViewModel(
                 request =
                     SaveNewFindingRequest(
                         structureId = structureId!!,
-                        name = state.value.findingName,
-                        description = state.value.findingDescription.ifBlank { null },
-                        findingType = state.value.findingType,
+                        name = vmState.value.findingName,
+                        description = vmState.value.findingDescription.ifBlank { null },
+                        findingType = vmState.value.findingType,
                         coordinates = setOfNotNull(coordinate),
                     ),
             )
@@ -177,9 +179,9 @@ internal class FindingDetailsEditViewModel(
                 request =
                     SaveFindingDetailsRequest(
                         findingId = findingId,
-                        name = state.value.findingName,
-                        description = state.value.findingDescription.ifBlank { null },
-                        findingType = state.value.findingType,
+                        name = vmState.value.findingName,
+                        description = vmState.value.findingDescription.ifBlank { null },
+                        findingType = vmState.value.findingType,
                     ),
             )
         when (result) {

@@ -127,7 +127,7 @@ internal fun StructureDetailsEditContent(
             FloorPlanEditSection(
                 floorPlanUrl = state.floorPlanUrl,
                 isUploading = state.isUploadingImage,
-                canModifyImage = state.canModifyFloorPlanImage && !state.isProjectClosed,
+                canModifyImage = state.canModifyImage,
                 onImagePick = onImagePick,
                 onRemoveImage = onRemoveImage,
             )

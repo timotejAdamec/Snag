@@ -13,7 +13,8 @@
 package cz.adamec.timotej.snag.projects.fe.app.impl.internal
 
 import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
-import cz.adamec.timotej.snag.projects.fe.app.api.IsProjectClosedUseCase
+import cz.adamec.timotej.snag.projects.business.CanEditProjectEntitiesRule
+import cz.adamec.timotej.snag.projects.fe.app.api.CanEditProjectEntitiesUseCase
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsDb
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -21,18 +22,19 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlin.uuid.Uuid
 
-class IsProjectClosedUseCaseImpl(
+class CanEditProjectEntitiesUseCaseImpl(
     private val projectsDb: ProjectsDb,
-) : IsProjectClosedUseCase {
+    private val canEditProjectEntitiesRule: CanEditProjectEntitiesRule,
+) : CanEditProjectEntitiesUseCase {
     override operator fun invoke(projectId: Uuid): Flow<Boolean> =
         projectsDb
             .getProjectFlow(projectId)
             .map { result ->
                 when (result) {
                     is OfflineFirstDataResult.Success ->
-                        result.data?.isClosed ?: false
-                    is OfflineFirstDataResult.ProgrammerError -> false
+                        result.data?.let { canEditProjectEntitiesRule(it) } ?: true
+                    is OfflineFirstDataResult.ProgrammerError -> true
                 }
-            }.catch { emit(false) }
+            }.catch { emit(true) }
             .distinctUntilChanged()
 }

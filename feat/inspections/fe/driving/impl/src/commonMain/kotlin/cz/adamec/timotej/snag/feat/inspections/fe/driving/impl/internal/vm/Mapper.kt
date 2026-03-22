@@ -12,13 +12,12 @@
 
 package cz.adamec.timotej.snag.feat.inspections.fe.driving.impl.internal.vm
 
-import cz.adamec.timotej.snag.core.foundation.common.Timestamp
-
-internal data class InspectionEditUiState(
-    val startedAt: Timestamp? = null,
-    val endedAt: Timestamp? = null,
-    val participants: String = "",
-    val climate: String = "",
-    val note: String = "",
-    val canEdit: Boolean = true,
-)
+internal fun InspectionEditVmState.toUiState(): InspectionEditUiState =
+    InspectionEditUiState(
+        startedAt = startedAt,
+        endedAt = endedAt,
+        participants = participants,
+        climate = climate,
+        note = note,
+        canEdit = !isBeingDeleted && canEditInspection,
+    )
