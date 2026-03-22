@@ -19,6 +19,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import cz.adamec.timotej.snag.clients.app.model.AppClient
 import org.jetbrains.compose.resources.painterResource
 import snag.lib.design.fe.generated.resources.ic_chevron_right
@@ -34,6 +35,7 @@ internal fun ClientListItem(
     ListItem(
         modifier =
             modifier
+                .clip(shape = MaterialTheme.shapes.large)
                 .clickable(onClick = onClick),
         leadingContent = {
             Icon(

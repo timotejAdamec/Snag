@@ -53,28 +53,6 @@ internal fun ClientsContent(
             )
         },
     ) { paddingValues ->
-//        LazyColumn(
-//            modifier =
-//                modifier
-//                    .padding(paddingValues)
-//                    .consumeWindowInsets(paddingValues),
-//            contentPadding =
-//                PaddingValues(
-//                    bottom = 48.dp,
-//                ),
-//        ) {
-//            items(
-//                items = state.clients,
-//                key = { it.id },
-//            ) { client ->
-//                ClientListItem(
-//                    onClick = { onClientClick(client.id) },
-//                    client = client,
-//                )
-//            }
-//        }
-//    }
-//}
         LazyVerticalGrid(
             modifier =
                 modifier
