@@ -131,6 +131,10 @@ The following features are new compared to the original analysis (which had no r
 ### NP13 — Role-based authorisation
 - [x] **Backend**: authorization framework implemented — `CallCurrentUserPlugin` extracts user from `X-User-Id` header; all project routes fully authorized (`CanCreateProjectRule`, `CanCloseProjectRule`, `CanAccessProjectRule`, `CanAssignUserToProjectRule`); `GET /projects` filtered by user access; `ForbiddenException` → 403. *(remaining feature endpoints — clients, sub-entities, users, reports — not yet wired)*
 - [ ] **Frontend**: hide/show UI elements based on role; do not rely solely on frontend gating.
+  - Current state: **zero role-based UI gating**. Current user is a hardcoded UUID (`GetCurrentUserUseCaseImpl`) with TODO to replace with EntraID. FE does not know the current user's role.
+  - All buttons (create project, close/reopen, edit, delete, report download) are visible unconditionally — only gated by project state (`isClosed`), not user role or access.
+  - Shared KMP rules (`CanCreateProjectRule`, `CanCloseProjectRule`, `CanAccessProjectRule`, `CanAssignUserToProjectRule`) exist but are unused on FE.
+  - **Stale data issue**: when a user's role changes or they are unassigned, the local DB retains all previously synced data (projects, structures, findings, photos). Backend stops serving new updates, but old data remains readable offline. Backend blocks unauthorized writes (403), so no data corruption, but user can still read data they should no longer access. Inherent to offline-first architecture — possible fix: detect projects no longer returned by backend sync and purge local copies.
 
 ### Detailed Permission Matrix
 
