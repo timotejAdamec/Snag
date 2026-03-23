@@ -12,7 +12,6 @@
 
 package cz.adamec.timotej.snag.findings.fe.app.impl.di
 
-import cz.adamec.timotej.snag.findings.fe.app.api.AddFindingPhotoUseCase
 import cz.adamec.timotej.snag.findings.fe.app.api.CascadeDeleteLocalFindingPhotosByFindingIdUseCase
 import cz.adamec.timotej.snag.findings.fe.app.api.CascadeDeleteLocalFindingsByStructureIdUseCase
 import cz.adamec.timotej.snag.findings.fe.app.api.CascadeRestoreLocalFindingsByStructureIdUseCase
@@ -24,7 +23,6 @@ import cz.adamec.timotej.snag.findings.fe.app.api.GetFindingsUseCase
 import cz.adamec.timotej.snag.findings.fe.app.api.SaveFindingCoordinatesUseCase
 import cz.adamec.timotej.snag.findings.fe.app.api.SaveFindingDetailsUseCase
 import cz.adamec.timotej.snag.findings.fe.app.api.SaveNewFindingUseCase
-import cz.adamec.timotej.snag.findings.fe.app.impl.internal.AddFindingPhotoUseCaseImpl
 import cz.adamec.timotej.snag.findings.fe.app.impl.internal.CascadeDeleteLocalFindingPhotosByFindingIdUseCaseImpl
 import cz.adamec.timotej.snag.findings.fe.app.impl.internal.CascadeDeleteLocalFindingsByStructureIdUseCaseImpl
 import cz.adamec.timotej.snag.findings.fe.app.impl.internal.CascadeRestoreLocalFindingsByStructureIdUseCaseImpl
@@ -42,12 +40,14 @@ import cz.adamec.timotej.snag.findings.fe.app.impl.internal.sync.FindingPullSync
 import cz.adamec.timotej.snag.findings.fe.app.impl.internal.sync.FindingSyncHandler
 import cz.adamec.timotej.snag.sync.fe.app.api.handler.PullSyncOperationHandler
 import cz.adamec.timotej.snag.sync.fe.app.api.handler.PushSyncOperationHandler
+import org.koin.core.module.Module
 import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
 val findingsAppModule =
     module {
+        includes(findingsAppPlatformModule)
         factoryOf(::DeleteFindingUseCaseImpl) bind DeleteFindingUseCase::class
         factoryOf(::CascadeDeleteLocalFindingsByStructureIdUseCaseImpl) bind CascadeDeleteLocalFindingsByStructureIdUseCase::class
         factoryOf(::CascadeDeleteLocalFindingPhotosByFindingIdUseCaseImpl) bind CascadeDeleteLocalFindingPhotosByFindingIdUseCase::class
@@ -59,9 +59,10 @@ val findingsAppModule =
         factoryOf(::SaveFindingCoordinatesUseCaseImpl) bind SaveFindingCoordinatesUseCase::class
         factoryOf(::FindingSyncHandler) bind PushSyncOperationHandler::class
         factoryOf(::FindingPullSyncHandler) bind PullSyncOperationHandler::class
-        factoryOf(::AddFindingPhotoUseCaseImpl) bind AddFindingPhotoUseCase::class
         factoryOf(::DeleteFindingPhotoUseCaseImpl) bind DeleteFindingPhotoUseCase::class
         factoryOf(::GetFindingPhotosUseCaseImpl) bind GetFindingPhotosUseCase::class
         factoryOf(::FindingPhotoSyncHandler) bind PushSyncOperationHandler::class
         factoryOf(::FindingPhotoPullSyncHandler) bind PullSyncOperationHandler::class
     }
+
+internal expect val findingsAppPlatformModule: Module

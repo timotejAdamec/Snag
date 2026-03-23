@@ -20,7 +20,7 @@ import cz.adamec.timotej.snag.core.network.fe.map
 import cz.adamec.timotej.snag.core.storage.fe.LocalFileStorage
 import cz.adamec.timotej.snag.feat.findings.app.model.AppFindingPhotoData
 import cz.adamec.timotej.snag.findings.fe.app.api.AddFindingPhotoRequest
-import cz.adamec.timotej.snag.findings.fe.app.api.AddFindingPhotoUseCase
+import cz.adamec.timotej.snag.findings.fe.app.api.NonWebAddFindingPhotoUseCase
 import cz.adamec.timotej.snag.findings.fe.app.impl.internal.LH.logger
 import cz.adamec.timotej.snag.findings.fe.app.impl.internal.sync.FINDING_PHOTO_SYNC_ENTITY_TYPE
 import cz.adamec.timotej.snag.findings.fe.ports.FindingPhotosDb
@@ -28,13 +28,13 @@ import cz.adamec.timotej.snag.sync.fe.app.api.EnqueueSyncSaveUseCase
 import cz.adamec.timotej.snag.sync.fe.app.api.model.EnqueueSyncSaveRequest
 import kotlin.uuid.Uuid
 
-internal class AddFindingPhotoUseCaseImpl(
+internal class NonWebAddFindingPhotoUseCaseImpl(
     private val findingPhotosDb: FindingPhotosDb,
     private val localFileStorage: LocalFileStorage,
     private val enqueueSyncSaveUseCase: EnqueueSyncSaveUseCase,
     private val timestampProvider: TimestampProvider,
     private val uuidProvider: UuidProvider,
-) : AddFindingPhotoUseCase {
+) : NonWebAddFindingPhotoUseCase {
     override suspend operator fun invoke(request: AddFindingPhotoRequest): OfflineFirstDataResult<Uuid> {
         val photoId = uuidProvider.getUuid()
         val extension = request.fileName.substringAfterLast(delimiter = ".", missingDelimiterValue = "")
@@ -57,7 +57,7 @@ internal class AddFindingPhotoUseCaseImpl(
             .also {
                 logger.log(
                     offlineFirstDataResult = it,
-                    additionalInfo = "AddFindingPhotoUseCase, findingPhotosDb.savePhoto($photo)",
+                    additionalInfo = "NonWebAddFindingPhotoUseCase, findingPhotosDb.savePhoto($photo)",
                 )
                 if (it is OfflineFirstDataResult.Success) {
                     enqueueSyncSaveUseCase(

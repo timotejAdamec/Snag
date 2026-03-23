@@ -16,8 +16,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cz.adamec.timotej.snag.core.foundation.common.mapState
 import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
-import cz.adamec.timotej.snag.findings.fe.app.api.AddFindingPhotoRequest
-import cz.adamec.timotej.snag.findings.fe.app.api.AddFindingPhotoUseCase
 import cz.adamec.timotej.snag.findings.fe.app.api.DeleteFindingPhotoUseCase
 import cz.adamec.timotej.snag.findings.fe.app.api.DeleteFindingUseCase
 import cz.adamec.timotej.snag.findings.fe.app.api.GetFindingPhotosUseCase
@@ -31,25 +29,23 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.koin.core.annotation.InjectedParam
 import kotlin.uuid.Uuid
 
-internal class FindingDetailViewModel(
-    @InjectedParam private val findingId: Uuid,
-    @InjectedParam private val projectId: Uuid,
+internal abstract class FindingDetailViewModel(
+    protected val findingId: Uuid,
+    protected val projectId: Uuid,
     private val getFindingUseCase: GetFindingUseCase,
     private val deleteFindingUseCase: DeleteFindingUseCase,
     private val canEditProjectEntitiesUseCase: CanEditProjectEntitiesUseCase,
     private val getFindingPhotosUseCase: GetFindingPhotosUseCase,
-    private val addFindingPhotoUseCase: AddFindingPhotoUseCase,
     private val deleteFindingPhotoUseCase: DeleteFindingPhotoUseCase,
 ) : ViewModel() {
-    private val vmState: MutableStateFlow<FindingDetailVmState> =
+    protected val vmState: MutableStateFlow<FindingDetailVmState> =
         MutableStateFlow(FindingDetailVmState())
     val state: StateFlow<FindingDetailUiState> =
         vmState.mapState { it.toUiState() }
 
-    private val errorEventsChannel = Channel<UiError>()
+    protected val errorEventsChannel = Channel<UiError>()
     val errorsFlow = errorEventsChannel.receiveAsFlow()
 
     private val deletedSuccessfullyEventChannel = Channel<Unit>()
@@ -109,29 +105,10 @@ internal class FindingDetailViewModel(
         }
     }
 
-    fun onAddPhoto(
+    abstract fun onAddPhoto(
         bytes: ByteArray,
         fileName: String,
-    ) = viewModelScope.launch {
-        vmState.update { it.copy(isAddingPhoto = true) }
-        val request =
-            AddFindingPhotoRequest(
-                bytes = bytes,
-                fileName = fileName,
-                findingId = findingId,
-                projectId = projectId,
-            )
-        when (addFindingPhotoUseCase(request)) {
-            is OfflineFirstDataResult.ProgrammerError -> {
-                errorEventsChannel.send(Unknown)
-            }
-
-            is OfflineFirstDataResult.Success -> {
-                // Photo will appear via flow
-            }
-        }
-        vmState.update { it.copy(isAddingPhoto = false) }
-    }
+    )
 
     fun onDeletePhoto(photoId: Uuid) =
         viewModelScope.launch {

@@ -10,8 +10,11 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.lib.storage.fe.impl.di
+package cz.adamec.timotej.snag.findings.fe.app.api
 
-import org.koin.dsl.module
+import cz.adamec.timotej.snag.core.network.fe.OnlineDataResult
+import kotlin.uuid.Uuid
 
-internal actual val localFileStoragePlatformModule = module {}
+interface WebAddFindingPhotoUseCase {
+    suspend operator fun invoke(request: AddFindingPhotoRequest): OnlineDataResult<Uuid>
+}

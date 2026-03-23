@@ -26,7 +26,6 @@ import cz.adamec.timotej.snag.feat.findings.fe.driving.api.FindingEditRouteFacto
 import cz.adamec.timotej.snag.feat.findings.fe.driving.api.FindingsListRoute
 import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureDetailBackStack
 import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetail.ui.FindingDetailScreen
-import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetail.vm.FindingDetailViewModel
 import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetailsEdit.ui.FindingDetailsEditScreen
 import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetailsEdit.vm.FindingDetailsEditViewModel
 import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingsList.ui.FindingsListScreen
@@ -159,18 +158,6 @@ val findingsDrivingImplModule =
             FindingsListViewModel(
                 structureId = structureId,
                 getFindingsUseCase = get(),
-            )
-        }
-        viewModel { (findingId: Uuid, projectId: Uuid) ->
-            FindingDetailViewModel(
-                findingId = findingId,
-                projectId = projectId,
-                getFindingUseCase = get(),
-                deleteFindingUseCase = get(),
-                canEditProjectEntitiesUseCase = get(),
-                getFindingPhotosUseCase = get(),
-                addFindingPhotoUseCase = get(),
-                deleteFindingPhotoUseCase = get(),
             )
         }
         @Suppress("DestructuringDeclarationWithTooManyEntries")

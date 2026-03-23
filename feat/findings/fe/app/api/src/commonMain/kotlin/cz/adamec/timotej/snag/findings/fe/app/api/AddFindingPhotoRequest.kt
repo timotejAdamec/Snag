@@ -12,7 +12,6 @@
 
 package cz.adamec.timotej.snag.findings.fe.app.api
 
-import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
 import kotlin.uuid.Uuid
 
 data class AddFindingPhotoRequest(
@@ -21,7 +20,3 @@ data class AddFindingPhotoRequest(
     val findingId: Uuid,
     val projectId: Uuid,
 )
-
-interface AddFindingPhotoUseCase {
-    suspend operator fun invoke(request: AddFindingPhotoRequest): OfflineFirstDataResult<Uuid>
-}
