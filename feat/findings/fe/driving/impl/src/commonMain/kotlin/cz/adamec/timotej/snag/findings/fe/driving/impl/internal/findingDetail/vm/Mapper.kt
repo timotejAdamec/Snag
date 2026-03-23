@@ -19,4 +19,5 @@ internal fun FindingDetailVmState.toUiState(): FindingDetailUiState =
         canEdit = status == FindingDetailUiStatus.LOADED && !isBeingDeleted && canEditFinding,
         photos = photos,
         isAddingPhoto = isAddingPhoto,
+        canModifyPhotos = canModifyPhotos,
     )

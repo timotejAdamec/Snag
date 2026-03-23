@@ -12,7 +12,9 @@
 
 package cz.adamec.timotej.snag.findings.fe.app.impl.di
 
+import cz.adamec.timotej.snag.findings.fe.app.api.CanModifyFindingPhotosUseCase
 import cz.adamec.timotej.snag.findings.fe.app.api.WebAddFindingPhotoUseCase
+import cz.adamec.timotej.snag.findings.fe.app.impl.internal.CanModifyFindingPhotosUseCaseImpl
 import cz.adamec.timotej.snag.findings.fe.app.impl.internal.WebAddFindingPhotoUseCaseImpl
 import cz.adamec.timotej.snag.findings.fe.app.impl.internal.sync.WebFindingPhotoSyncHandler
 import cz.adamec.timotej.snag.sync.fe.app.api.handler.PushSyncOperationHandler
@@ -23,6 +25,7 @@ import org.koin.dsl.module
 
 internal actual val findingsAppPlatformModule: Module =
     module {
+        factoryOf(::CanModifyFindingPhotosUseCaseImpl) bind CanModifyFindingPhotosUseCase::class
         factoryOf(::WebAddFindingPhotoUseCaseImpl) bind WebAddFindingPhotoUseCase::class
         factoryOf(::WebFindingPhotoSyncHandler) bind PushSyncOperationHandler::class
     }

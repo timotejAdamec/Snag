@@ -28,7 +28,7 @@ import io.ktor.http.Headers
 import io.ktor.http.HttpHeaders
 import io.ktor.http.encodeURLParameter
 
-internal class RealFileApi(
+internal class RealRemoteFileStorage(
     private val httpClient: SnagNetworkHttpClient,
     private val config: FileApiConfig,
 ) : RemoteFileStorage {

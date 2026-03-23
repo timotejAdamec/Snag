@@ -229,6 +229,7 @@ internal fun FindingDetailContent(
                         FindingPhotoSection(
                             photos = state.photos,
                             canEdit = state.canEdit,
+                            canModifyPhotos = state.canModifyPhotos,
                             isAddingPhoto = state.isAddingPhoto,
                             onAddPhoto = onAddPhoto,
                             onDeletePhoto = onDeletePhoto,

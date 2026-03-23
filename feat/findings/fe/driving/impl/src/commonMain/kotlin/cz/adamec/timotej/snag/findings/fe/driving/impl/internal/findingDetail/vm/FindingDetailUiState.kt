@@ -21,6 +21,7 @@ internal data class FindingDetailUiState(
     val canEdit: Boolean = false,
     val photos: List<AppFindingPhoto> = emptyList(),
     val isAddingPhoto: Boolean = false,
+    val canModifyPhotos: Boolean = true,
 )
 
 internal enum class FindingDetailUiStatus {

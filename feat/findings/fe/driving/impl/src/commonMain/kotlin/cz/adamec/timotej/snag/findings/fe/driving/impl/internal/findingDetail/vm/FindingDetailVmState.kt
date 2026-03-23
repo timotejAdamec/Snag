@@ -22,4 +22,5 @@ internal data class FindingDetailVmState(
     val canEditFinding: Boolean = true,
     val photos: List<AppFindingPhoto> = emptyList(),
     val isAddingPhoto: Boolean = false,
+    val canModifyPhotos: Boolean = true,
 )

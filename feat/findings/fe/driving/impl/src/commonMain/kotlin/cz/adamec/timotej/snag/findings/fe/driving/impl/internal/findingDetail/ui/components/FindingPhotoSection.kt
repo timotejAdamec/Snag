@@ -62,6 +62,7 @@ private val ThumbnailSize = 80.dp
 internal fun FindingPhotoSection(
     photos: List<AppFindingPhoto>,
     canEdit: Boolean,
+    canModifyPhotos: Boolean,
     isAddingPhoto: Boolean,
     onAddPhoto: (bytes: ByteArray, fileName: String) -> Unit,
     onDeletePhoto: (Uuid) -> Unit,
@@ -92,7 +93,7 @@ internal fun FindingPhotoSection(
                 text = stringResource(Res.string.photos_section_title),
                 style = MaterialTheme.typography.titleSmall,
             )
-            if (canEdit) {
+            if (canEdit && canModifyPhotos) {
                 IconButton(
                     onClick = { pickerLauncher.launch() },
                     enabled = !isAddingPhoto,
@@ -111,7 +112,7 @@ internal fun FindingPhotoSection(
             photos.forEach { photo ->
                 FindingPhotoThumbnail(
                     photo = photo,
-                    canEdit = canEdit,
+                    canEdit = canEdit && canModifyPhotos,
                     onDeletePhoto = onDeletePhoto,
                 )
             }

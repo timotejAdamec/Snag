@@ -15,6 +15,7 @@ package cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetail.v
 import androidx.lifecycle.viewModelScope
 import cz.adamec.timotej.snag.core.network.fe.OnlineDataResult
 import cz.adamec.timotej.snag.findings.fe.app.api.AddFindingPhotoRequest
+import cz.adamec.timotej.snag.findings.fe.app.api.CanModifyFindingPhotosUseCase
 import cz.adamec.timotej.snag.findings.fe.app.api.DeleteFindingPhotoUseCase
 import cz.adamec.timotej.snag.findings.fe.app.api.DeleteFindingUseCase
 import cz.adamec.timotej.snag.findings.fe.app.api.GetFindingPhotosUseCase
@@ -35,6 +36,7 @@ internal class WebFindingDetailViewModel(
     getFindingPhotosUseCase: GetFindingPhotosUseCase,
     deleteFindingPhotoUseCase: DeleteFindingPhotoUseCase,
     private val webAddFindingPhotoUseCase: WebAddFindingPhotoUseCase,
+    private val canModifyFindingPhotosUseCase: CanModifyFindingPhotosUseCase,
 ) : FindingDetailViewModel(
     findingId = findingId,
     projectId = projectId,
@@ -44,6 +46,18 @@ internal class WebFindingDetailViewModel(
     getFindingPhotosUseCase = getFindingPhotosUseCase,
     deleteFindingPhotoUseCase = deleteFindingPhotoUseCase,
 ) {
+    init {
+        collectCanModifyPhotos()
+    }
+
+    private fun collectCanModifyPhotos() {
+        viewModelScope.launch {
+            canModifyFindingPhotosUseCase().collect { canModify ->
+                vmState.update { it.copy(canModifyPhotos = canModify) }
+            }
+        }
+    }
+
     override fun onAddPhoto(
         bytes: ByteArray,
         fileName: String,

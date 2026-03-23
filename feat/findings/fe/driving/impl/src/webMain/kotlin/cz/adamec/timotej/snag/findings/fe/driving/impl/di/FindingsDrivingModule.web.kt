@@ -38,6 +38,7 @@ internal actual val platformModule =
                 getFindingPhotosUseCase = get(),
                 deleteFindingPhotoUseCase = get(),
                 webAddFindingPhotoUseCase = get(),
+                canModifyFindingPhotosUseCase = get(),
             )
         }
     }

@@ -24,7 +24,7 @@ import cz.adamec.timotej.snag.findings.fe.app.impl.internal.LH
 import cz.adamec.timotej.snag.findings.fe.ports.FindingPhotosApi
 import cz.adamec.timotej.snag.findings.fe.ports.FindingPhotosDb
 import cz.adamec.timotej.snag.findings.fe.ports.FindingsDb
-import cz.adamec.timotej.snag.structures.fe.ports.StructuresDb
+import cz.adamec.timotej.snag.structures.fe.app.api.GetStructureUseCase
 import cz.adamec.timotej.snag.sync.fe.app.api.handler.DbApiPushSyncHandler
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -36,7 +36,7 @@ internal class FindingPhotoSyncHandler(
     private val localFileStorage: LocalFileStorage,
     private val remoteFileStorage: RemoteFileStorage,
     private val findingsDb: FindingsDb,
-    private val structuresDb: StructuresDb,
+    private val getStructureUseCase: GetStructureUseCase,
     timestampProvider: TimestampProvider,
 ) : DbApiPushSyncHandler<AppFindingPhoto>(LH.logger, timestampProvider) {
     override val entityTypeId: String = FINDING_PHOTO_SYNC_ENTITY_TYPE
@@ -97,7 +97,7 @@ internal class FindingPhotoSyncHandler(
                 is OfflineFirstDataResult.ProgrammerError -> return null
             }
 
-        val structureResult = structuresDb.getStructureFlow(finding.structureId).first()
+        val structureResult = getStructureUseCase(finding.structureId).first()
         val structure =
             when (structureResult) {
                 is OfflineFirstDataResult.Success -> structureResult.data ?: return null
