@@ -14,6 +14,7 @@ package cz.adamec.timotej.snag.findings.fe.app.impl.internal
 
 import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.core.network.fe.log
+import cz.adamec.timotej.snag.findings.fe.app.api.CascadeDeleteLocalFindingPhotosByFindingIdUseCase
 import cz.adamec.timotej.snag.findings.fe.app.api.DeleteFindingUseCase
 import cz.adamec.timotej.snag.findings.fe.app.impl.internal.LH.logger
 import cz.adamec.timotej.snag.findings.fe.app.impl.internal.sync.FINDING_SYNC_ENTITY_TYPE
@@ -25,9 +26,11 @@ import kotlin.uuid.Uuid
 class DeleteFindingUseCaseImpl(
     private val findingsDb: FindingsDb,
     private val enqueueSyncDeleteUseCase: EnqueueSyncDeleteUseCase,
+    private val cascadeDeleteLocalFindingPhotosByFindingIdUseCase: CascadeDeleteLocalFindingPhotosByFindingIdUseCase,
 ) : DeleteFindingUseCase {
-    override suspend operator fun invoke(findingId: Uuid): OfflineFirstDataResult<Unit> =
-        findingsDb
+    override suspend operator fun invoke(findingId: Uuid): OfflineFirstDataResult<Unit> {
+        cascadeDeleteLocalFindingPhotosByFindingIdUseCase(findingId)
+        return findingsDb
             .deleteFinding(findingId)
             .also {
                 logger.log(
@@ -43,4 +46,5 @@ class DeleteFindingUseCaseImpl(
                     )
                 }
             }
+    }
 }

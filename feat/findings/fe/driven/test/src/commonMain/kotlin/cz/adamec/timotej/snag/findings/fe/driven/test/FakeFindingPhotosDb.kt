@@ -37,6 +37,9 @@ class FakeFindingPhotosDb : FindingPhotosDb {
 
     override suspend fun deletePhoto(id: Uuid): OfflineFirstDataResult<Unit> = ops.deleteItem(id)
 
+    override suspend fun deletePhotosByFindingId(findingId: Uuid): OfflineFirstDataResult<Unit> =
+        ops.deleteItemsWhere { it.findingId != findingId }
+
     fun setPhoto(photo: AppFindingPhoto) = ops.setItem(photo)
 
     fun setPhotos(photos: List<AppFindingPhoto>) = ops.setItems(photos)

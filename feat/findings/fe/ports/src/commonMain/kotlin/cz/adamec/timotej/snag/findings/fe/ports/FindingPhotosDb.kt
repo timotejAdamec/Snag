@@ -25,4 +25,6 @@ interface FindingPhotosDb {
     suspend fun savePhoto(photo: AppFindingPhoto): OfflineFirstDataResult<Unit>
 
     suspend fun deletePhoto(id: Uuid): OfflineFirstDataResult<Unit>
+
+    suspend fun deletePhotosByFindingId(findingId: Uuid): OfflineFirstDataResult<Unit>
 }

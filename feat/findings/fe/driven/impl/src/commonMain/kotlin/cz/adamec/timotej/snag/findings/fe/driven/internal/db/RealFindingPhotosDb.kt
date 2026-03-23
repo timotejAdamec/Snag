@@ -76,6 +76,11 @@ internal class RealFindingPhotosDb(
         safeDbWrite(ioDispatcher = ioDispatcher, logger = LH.logger, errorMessage = "Error deleting photo $id from DB.") {
             findingPhotoEntityQueries.deleteById(id.toString())
         }
+
+    override suspend fun deletePhotosByFindingId(findingId: Uuid): OfflineFirstDataResult<Unit> =
+        safeDbWrite(ioDispatcher = ioDispatcher, logger = LH.logger, errorMessage = "Error deleting photos for finding $findingId from DB.") {
+            findingPhotoEntityQueries.deleteByFindingId(findingId.toString())
+        }
 }
 
 private fun FindingPhotoEntity.toModel() =
