@@ -1,0 +1,14 @@
+CREATE TABLE IF NOT EXISTS ProjectAssignmentEntity (
+    projectId TEXT NOT NULL,
+    userId TEXT NOT NULL,
+    PRIMARY KEY (projectId, userId)
+);
+
+selectByProjectId:
+SELECT userId FROM ProjectAssignmentEntity WHERE projectId = :projectId;
+
+deleteByProjectId:
+DELETE FROM ProjectAssignmentEntity WHERE projectId = :projectId;
+
+insert:
+INSERT OR IGNORE INTO ProjectAssignmentEntity(projectId, userId) VALUES (?, ?);

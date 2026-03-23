@@ -14,19 +14,26 @@ package cz.adamec.timotej.snag.projects.fe.app.impl.di
 
 import cz.adamec.timotej.snag.projects.business.CanEditProjectEntitiesRule
 import cz.adamec.timotej.snag.projects.fe.app.api.CanEditProjectEntitiesUseCase
+import cz.adamec.timotej.snag.projects.fe.app.api.CascadeDeleteLocalAssignmentsByProjectIdUseCase
+import cz.adamec.timotej.snag.projects.fe.app.api.CascadeRestoreLocalAssignmentsByProjectIdUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.DeleteProjectUseCase
+import cz.adamec.timotej.snag.projects.fe.app.api.GetProjectAssignmentsUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.GetProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.GetProjectsUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.IsClientReferencedByProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.SaveProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.SetProjectClosedUseCase
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.CanEditProjectEntitiesUseCaseImpl
+import cz.adamec.timotej.snag.projects.fe.app.impl.internal.CascadeDeleteLocalAssignmentsByProjectIdUseCaseImpl
+import cz.adamec.timotej.snag.projects.fe.app.impl.internal.CascadeRestoreLocalAssignmentsByProjectIdUseCaseImpl
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.DeleteProjectUseCaseImpl
+import cz.adamec.timotej.snag.projects.fe.app.impl.internal.GetProjectAssignmentsUseCaseImpl
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.GetProjectUseCaseImpl
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.GetProjectsUseCaseImpl
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.IsClientReferencedByProjectUseCaseImpl
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.SaveProjectUseCaseImpl
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.SetProjectClosedUseCaseImpl
+import cz.adamec.timotej.snag.projects.fe.app.impl.internal.sync.ProjectAssignmentsPullSyncHandler
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.sync.ProjectPullSyncHandler
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.sync.ProjectSyncHandler
 import cz.adamec.timotej.snag.sync.fe.app.api.handler.PullSyncOperationHandler
@@ -45,6 +52,10 @@ val projectsAppModule =
         factoryOf(::CanEditProjectEntitiesUseCaseImpl) bind CanEditProjectEntitiesUseCase::class
         factoryOf(::IsClientReferencedByProjectUseCaseImpl) bind IsClientReferencedByProjectUseCase::class
         factoryOf(::CanEditProjectEntitiesRule)
+        factoryOf(::GetProjectAssignmentsUseCaseImpl) bind GetProjectAssignmentsUseCase::class
+        factoryOf(::CascadeDeleteLocalAssignmentsByProjectIdUseCaseImpl) bind CascadeDeleteLocalAssignmentsByProjectIdUseCase::class
+        factoryOf(::CascadeRestoreLocalAssignmentsByProjectIdUseCaseImpl) bind CascadeRestoreLocalAssignmentsByProjectIdUseCase::class
         factoryOf(::ProjectSyncHandler) bind PushSyncOperationHandler::class
         factoryOf(::ProjectPullSyncHandler) bind PullSyncOperationHandler::class
+        factoryOf(::ProjectAssignmentsPullSyncHandler) bind PullSyncOperationHandler::class
     }

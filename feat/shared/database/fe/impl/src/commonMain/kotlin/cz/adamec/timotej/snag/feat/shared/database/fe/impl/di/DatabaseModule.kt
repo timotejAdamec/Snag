@@ -17,6 +17,7 @@ import cz.adamec.timotej.snag.feat.shared.database.fe.db.ClientEntityQueries
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.FindingCoordinateEntityQueries
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.FindingEntityQueries
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.InspectionEntityQueries
+import cz.adamec.timotej.snag.feat.shared.database.fe.db.ProjectAssignmentEntityQueries
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.ProjectEntityQueries
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.SnagDatabase
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.StructureEntityQueries
@@ -41,6 +42,7 @@ val databaseModule =
 
         factory { get<SnagDatabase>().clientEntityQueries } bind ClientEntityQueries::class
         factory { get<SnagDatabase>().projectEntityQueries } bind ProjectEntityQueries::class
+        factory { get<SnagDatabase>().projectAssignmentEntityQueries } bind ProjectAssignmentEntityQueries::class
         factory { get<SnagDatabase>().structureEntityQueries } bind StructureEntityQueries::class
         factory { get<SnagDatabase>().findingEntityQueries } bind FindingEntityQueries::class
         factory { get<SnagDatabase>().findingCoordinateEntityQueries } bind FindingCoordinateEntityQueries::class
