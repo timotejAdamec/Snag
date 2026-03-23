@@ -35,7 +35,6 @@ import cz.adamec.timotej.snag.findings.fe.app.impl.internal.SaveFindingCoordinat
 import cz.adamec.timotej.snag.findings.fe.app.impl.internal.SaveFindingDetailsUseCaseImpl
 import cz.adamec.timotej.snag.findings.fe.app.impl.internal.SaveNewFindingUseCaseImpl
 import cz.adamec.timotej.snag.findings.fe.app.impl.internal.sync.FindingPhotoPullSyncHandler
-import cz.adamec.timotej.snag.findings.fe.app.impl.internal.sync.FindingPhotoSyncHandler
 import cz.adamec.timotej.snag.findings.fe.app.impl.internal.sync.FindingPullSyncHandler
 import cz.adamec.timotej.snag.findings.fe.app.impl.internal.sync.FindingSyncHandler
 import cz.adamec.timotej.snag.sync.fe.app.api.handler.PullSyncOperationHandler
@@ -61,7 +60,6 @@ val findingsAppModule =
         factoryOf(::FindingPullSyncHandler) bind PullSyncOperationHandler::class
         factoryOf(::DeleteFindingPhotoUseCaseImpl) bind DeleteFindingPhotoUseCase::class
         factoryOf(::GetFindingPhotosUseCaseImpl) bind GetFindingPhotosUseCase::class
-        factoryOf(::FindingPhotoSyncHandler) bind PushSyncOperationHandler::class
         factoryOf(::FindingPhotoPullSyncHandler) bind PullSyncOperationHandler::class
     }
 

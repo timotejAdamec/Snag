@@ -21,7 +21,7 @@ import platform.Foundation.NSDocumentDirectory
 import platform.Foundation.NSSearchPathForDirectoriesInDomains
 import platform.Foundation.NSUserDomainMask
 
-internal actual val localFileStoragePlatformModule =
+internal actual val fileStoragePlatformModule =
     module {
         factory {
             val paths = NSSearchPathForDirectoriesInDomains(

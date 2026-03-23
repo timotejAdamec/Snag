@@ -19,7 +19,7 @@ import cz.adamec.timotej.snag.lib.storage.fe.impl.internal.RealLocalFileStorage
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
-internal actual val localFileStoragePlatformModule =
+internal actual val fileStoragePlatformModule =
     module {
         factory {
             RealLocalFileStorage(

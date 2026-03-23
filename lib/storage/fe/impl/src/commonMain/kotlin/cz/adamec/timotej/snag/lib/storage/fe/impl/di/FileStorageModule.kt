@@ -12,20 +12,19 @@
 
 package cz.adamec.timotej.snag.lib.storage.fe.impl.di
 
-import cz.adamec.timotej.snag.core.storage.fe.LocalFileStorage
 import cz.adamec.timotej.snag.core.storage.fe.RemoteFileStorage
 import cz.adamec.timotej.snag.lib.storage.fe.api.FileApi
 import cz.adamec.timotej.snag.lib.storage.fe.impl.internal.RealFileApi
-import cz.adamec.timotej.snag.lib.storage.fe.impl.internal.RealLocalFileStorage
+import org.koin.core.module.Module
 import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
 val fileStorageModule =
     module {
-        includes(localFileStoragePlatformModule)
+        includes(fileStoragePlatformModule)
         factoryOf(::RealFileApi) bind FileApi::class
         factory<RemoteFileStorage> { get<FileApi>() as RemoteFileStorage }
     }
 
-internal expect val localFileStoragePlatformModule: org.koin.core.module.Module
+internal expect val fileStoragePlatformModule: Module
