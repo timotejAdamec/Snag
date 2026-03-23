@@ -24,12 +24,6 @@ import cz.adamec.timotej.snag.sync.fe.app.api.handler.DbApiPushSyncHandler
 import kotlinx.coroutines.flow.Flow
 import kotlin.uuid.Uuid
 
-/**
- * Web-specific push sync handler for finding photos.
- *
- * On web, photos are uploaded directly to remote storage at creation time,
- * so [saveEntityToApi] simply pushes the metadata — no local file upload needed.
- */
 internal class WebFindingPhotoSyncHandler(
     private val findingPhotosApi: FindingPhotosApi,
     private val findingPhotosDb: FindingPhotosDb,
