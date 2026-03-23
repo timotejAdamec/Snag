@@ -32,13 +32,13 @@ This document is a reference for the implementation team. It describes what the 
 
 ### On project close
 - [x] The project state is set to "closed".
-- [ ] Only the creator retains access; other users no longer see the project in their list. *(creator-only close/reopen enforced via `CanCloseProjectRule`; visibility filtering not yet implemented)*
+- [x] Only the creator retains access; other users no longer see the project in their list. *(BE: `CanCloseProjectRule` enforces creator-only close/reopen; `GET /projects` filters by `CanAccessProjectRule` — creator/assigned/admin; sub-entity route authorization not yet wired)*
 - [x] All project data is preserved — **no data is deleted**.
 - [x] Pending synchronisation queue entries for this project should be discarded / ignored. *(backend returns server entity instead of 403, frontend treats as success — queue unblocks)*
 
 ### On project reopen
 - [x] The project state is set back to "open".
-- [ ] Previously assigned users can access the project again. *(creator-only reopen enforced; visibility filtering not yet implemented)*
+- [x] Previously assigned users can access the project again. *(BE: creator-only reopen enforced via `CanCloseProjectRule`; `GET /projects` filters by access — reopened project visible again to assigned users)*
 
 ---
 
@@ -64,7 +64,7 @@ Both the **creator** and any **assigned user** of an open project have **full CR
 When a project is **closed**, only the creator retains access. Assigned users lose all access immediately.
 
 - [x] Backend rejects sub-entity save/delete on closed projects (returns server entity for sync compatibility).
-- [ ] Creator-only access enforcement — `creatorId` tracked on projects; close/reopen authorization enforced; full visibility filtering not yet implemented.
+- [x] Creator-only access enforcement — `creatorId` tracked on projects; close/reopen authorization enforced; project visibility filtering enforced on all project routes via `CanAccessProjectRule`. *(sub-entity routes not yet wired)*
 
 ---
 
@@ -92,8 +92,8 @@ When a project is **closed**, only the creator retains access. Assigned users lo
 
 The following features are new compared to the original analysis (which had no roles):
 
-1. - [ ] **Project closure and reopening** — projects can be closed and reopened; access is determined by project state and roles. *(close/reopen mechanism done; creator-only close/reopen authorization enforced on BE via `CanCloseProjectRule`; project visibility filtering not yet enforced)*
-2. - [ ] **User assignment to / removal from project** — leads can add/remove technicians or service workers. *(BE API + DB done; role-restricted access not enforced)*
+1. - [ ] **Project closure and reopening** — projects can be closed and reopened; access is determined by project state and roles. *(BE: close/reopen mechanism + `CanCloseProjectRule` + `CanAccessProjectRule` visibility filtering all done on project routes; sub-entity route authorization not yet wired)*
+2. - [ ] **User assignment to / removal from project** — leads can add/remove technicians or service workers. *(BE: API + DB + role-restricted access enforced via `CanAssignUserToProjectRule` — Admin/VP/VS allowed; TP/Ser/None denied)*
 3. - [ ] **Authentication (EntraID)** — mandatory Microsoft EntraID login (standalone mechanism, not a UC).
 4. - [ ] **Role management (UC7)** — admin manages all roles; passport lead delegates technician role; service lead delegates service worker role. *(BE API done: role set via PUT /users/{id}; authorization enforcement missing)*
 5. - [x] **Inspection deletion** — UC5 Scenario E. *(full-stack: BE API + DB soft delete + sync, FE use case + local delete + sync enqueue, FE UI delete button + confirmation dialog)*
@@ -106,11 +106,11 @@ The following features are new compared to the original analysis (which had no r
 
 | FP | Description | UC | Status |
 |---|---|---|---|
-| FP4 | Close project — restrict access to creator, preserve data | UC1 | - [ ] Close mechanism done; creator-only close authorization enforced on BE (`CanCloseProjectRule`); project visibility filtering not yet enforced |
-| FP4b | Reopen project — reopen a closed project | UC1 | - [ ] Reopen mechanism done; creator-only reopen authorization enforced on BE (`CanCloseProjectRule`); project visibility filtering not yet enforced |
-| FP4c | Assign user to project | UC1 | - [ ] BE API + DB done; role-restricted access not enforced |
-| FP4d | Remove user from project | UC1 | - [ ] BE API + DB done; role-restricted access not enforced |
-| FP4e | Close project — creator access: only creator retains access to closed project | UC1 | - [ ] Sub-entity editing blocked on closed projects; `creatorId` tracked on projects; creator-only close/reopen enforced; full visibility filtering not yet enforced |
+| FP4 | Close project — restrict access to creator, preserve data | UC1 | - [ ] Close mechanism done; creator-only close authorization enforced on BE; project visibility filtering enforced on project routes. *(sub-entity routes not yet wired)* |
+| FP4b | Reopen project — reopen a closed project | UC1 | - [ ] Reopen mechanism done; creator-only reopen authorization enforced on BE; project visibility filtering enforced on project routes. *(sub-entity routes not yet wired)* |
+| FP4c | Assign user to project | UC1 | - [x] BE API + DB + role-restricted access enforced via `CanAssignUserToProjectRule` |
+| FP4d | Remove user from project | UC1 | - [x] BE API + DB + role-restricted access enforced via `CanAssignUserToProjectRule` |
+| FP4e | Close project — creator access: only creator retains access to closed project | UC1 | - [ ] Sub-entity editing blocked on closed projects; `creatorId` tracked; creator-only close/reopen enforced; project visibility filtering enforced on project routes. *(sub-entity routes not yet wired)* |
 | FP10 | Delete client — only if not referenced by any project | UC2 | - [x] Done |
 | FP31 | Delete inspection | UC5 | - [x] Done |
 | FP32b | Generate service protocol — PDF with work description and signature fields | UC6 | - [ ] Not started |
@@ -129,8 +129,12 @@ The following features are new compared to the original analysis (which had no r
 - [ ] **Frontend**: implement OAuth2 / OIDC flow with EntraID; store tokens securely; refresh tokens before expiry.
 
 ### NP13 — Role-based authorisation
-- [x] **Backend**: authorization framework implemented — `CallCurrentUserPlugin` extracts user from `X-User-Id` header, `CanCreateProjectRule`/`CanCloseProjectRule` enforce permissions on project PUT endpoint, `ForbiddenException` → 403. *(proof of concept on project CRUD; remaining endpoints need wiring)*
+- [x] **Backend**: authorization framework implemented — `CallCurrentUserPlugin` extracts user from `X-User-Id` header; all project routes fully authorized (`CanCreateProjectRule`, `CanCloseProjectRule`, `CanAccessProjectRule`, `CanAssignUserToProjectRule`); `GET /projects` filtered by user access; `ForbiddenException` → 403. *(remaining feature endpoints — clients, sub-entities, users, reports — not yet wired)*
 - [ ] **Frontend**: hide/show UI elements based on role; do not rely solely on frontend gating.
+  - Current state: **zero role-based UI gating**. Current user is a hardcoded UUID (`GetCurrentUserUseCaseImpl`) with TODO to replace with EntraID. FE does not know the current user's role.
+  - All buttons (create project, close/reopen, edit, delete, report download) are visible unconditionally — only gated by project state (`isClosed`), not user role or access.
+  - Shared KMP rules (`CanCreateProjectRule`, `CanCloseProjectRule`, `CanAccessProjectRule`, `CanAssignUserToProjectRule`) exist but are unused on FE.
+  - **Stale data issue**: when a user's role changes or they are unassigned, the local DB retains all previously synced data (projects, structures, findings, photos). Backend stops serving new updates, but old data remains readable offline. Backend blocks unauthorized writes (403), so no data corruption, but user can still read data they should no longer access. Inherent to offline-first architecture — possible fix: detect projects no longer returned by backend sync and purge local copies.
 
 ### Detailed Permission Matrix
 

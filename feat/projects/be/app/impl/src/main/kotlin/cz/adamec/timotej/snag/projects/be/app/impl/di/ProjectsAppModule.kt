@@ -13,6 +13,8 @@
 package cz.adamec.timotej.snag.projects.be.app.impl.di
 
 import cz.adamec.timotej.snag.projects.be.app.api.AssignUserToProjectUseCase
+import cz.adamec.timotej.snag.projects.be.app.api.CanAccessProjectUseCase
+import cz.adamec.timotej.snag.projects.be.app.api.CanAssignUserToProjectUseCase
 import cz.adamec.timotej.snag.projects.be.app.api.CanCloseProjectUseCase
 import cz.adamec.timotej.snag.projects.be.app.api.CanCreateProjectUseCase
 import cz.adamec.timotej.snag.projects.be.app.api.DeleteProjectUseCase
@@ -24,6 +26,8 @@ import cz.adamec.timotej.snag.projects.be.app.api.IsClientReferencedByProjectUse
 import cz.adamec.timotej.snag.projects.be.app.api.RemoveUserFromProjectUseCase
 import cz.adamec.timotej.snag.projects.be.app.api.SaveProjectUseCase
 import cz.adamec.timotej.snag.projects.be.app.impl.internal.AssignUserToProjectUseCaseImpl
+import cz.adamec.timotej.snag.projects.be.app.impl.internal.CanAccessProjectUseCaseImpl
+import cz.adamec.timotej.snag.projects.be.app.impl.internal.CanAssignUserToProjectUseCaseImpl
 import cz.adamec.timotej.snag.projects.be.app.impl.internal.CanCloseProjectUseCaseImpl
 import cz.adamec.timotej.snag.projects.be.app.impl.internal.CanCreateProjectUseCaseImpl
 import cz.adamec.timotej.snag.projects.be.app.impl.internal.DeleteProjectUseCaseImpl
@@ -34,6 +38,8 @@ import cz.adamec.timotej.snag.projects.be.app.impl.internal.GetProjectsUseCaseIm
 import cz.adamec.timotej.snag.projects.be.app.impl.internal.IsClientReferencedByProjectUseCaseImpl
 import cz.adamec.timotej.snag.projects.be.app.impl.internal.RemoveUserFromProjectUseCaseImpl
 import cz.adamec.timotej.snag.projects.be.app.impl.internal.SaveProjectUseCaseImpl
+import cz.adamec.timotej.snag.projects.business.CanAccessProjectRule
+import cz.adamec.timotej.snag.projects.business.CanAssignUserToProjectRule
 import cz.adamec.timotej.snag.projects.business.CanCloseProjectRule
 import cz.adamec.timotej.snag.projects.business.CanCreateProjectRule
 import cz.adamec.timotej.snag.projects.business.CanEditProjectEntitiesRule
@@ -53,8 +59,12 @@ val projectsAppModule =
         factoryOf(::RemoveUserFromProjectUseCaseImpl) bind RemoveUserFromProjectUseCase::class
         factoryOf(::IsClientReferencedByProjectUseCaseImpl) bind IsClientReferencedByProjectUseCase::class
         factoryOf(::CanEditProjectEntitiesRule)
+        factoryOf(::CanAccessProjectRule)
+        factoryOf(::CanAssignUserToProjectRule)
         factoryOf(::CanCreateProjectRule)
         factoryOf(::CanCloseProjectRule)
+        factoryOf(::CanAccessProjectUseCaseImpl) bind CanAccessProjectUseCase::class
+        factoryOf(::CanAssignUserToProjectUseCaseImpl) bind CanAssignUserToProjectUseCase::class
         factoryOf(::CanCreateProjectUseCaseImpl) bind CanCreateProjectUseCase::class
         factoryOf(::CanCloseProjectUseCaseImpl) bind CanCloseProjectUseCase::class
     }

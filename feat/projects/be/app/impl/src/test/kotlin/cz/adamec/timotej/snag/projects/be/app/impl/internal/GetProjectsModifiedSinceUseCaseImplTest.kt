@@ -35,7 +35,9 @@ class GetProjectsModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
     @Test
     fun `returns empty list when no projects exist`() =
         runTest(testDispatcher) {
-            val result = useCase(since = Timestamp(100L))
+            usersDb.seedTestUser()
+
+            val result = useCase(userId = TEST_USER_ID, since = Timestamp(100L))
 
             assertTrue(result.isEmpty())
         }
@@ -54,7 +56,7 @@ class GetProjectsModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
                 )
             dataSource.saveProject(project)
 
-            val result = useCase(since = Timestamp(100L))
+            val result = useCase(userId = TEST_USER_ID, since = Timestamp(100L))
 
             assertEquals(listOf(project), result)
         }
@@ -73,7 +75,7 @@ class GetProjectsModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
                 )
             dataSource.saveProject(project)
 
-            val result = useCase(since = Timestamp(100L))
+            val result = useCase(userId = TEST_USER_ID, since = Timestamp(100L))
 
             assertTrue(result.isEmpty())
         }
@@ -93,7 +95,7 @@ class GetProjectsModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
                 )
             dataSource.saveProject(project)
 
-            val result = useCase(since = Timestamp(100L))
+            val result = useCase(userId = TEST_USER_ID, since = Timestamp(100L))
 
             assertEquals(listOf(project), result)
         }
@@ -113,7 +115,7 @@ class GetProjectsModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
                 )
             dataSource.saveProject(project)
 
-            val result = useCase(since = Timestamp(100L))
+            val result = useCase(userId = TEST_USER_ID, since = Timestamp(100L))
 
             assertTrue(result.isEmpty())
         }
