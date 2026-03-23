@@ -14,7 +14,7 @@ package cz.adamec.timotej.snag.structures.be.app.impl.internal
 
 import cz.adamec.timotej.snag.feat.structures.be.model.BackendStructure
 import cz.adamec.timotej.snag.projects.be.app.api.GetProjectUseCase
-import cz.adamec.timotej.snag.projects.business.CanEditProjectEntitiesRule
+import cz.adamec.timotej.snag.projects.business.AreProjectEntitiesEditableRule
 import cz.adamec.timotej.snag.structures.be.app.api.DeleteStructureUseCase
 import cz.adamec.timotej.snag.structures.be.app.api.model.DeleteStructureRequest
 import cz.adamec.timotej.snag.structures.be.app.impl.internal.LH.logger
@@ -23,13 +23,13 @@ import cz.adamec.timotej.snag.structures.be.ports.StructuresDb
 internal class DeleteStructureUseCaseImpl(
     private val structuresDb: StructuresDb,
     private val getProjectUseCase: GetProjectUseCase,
-    private val canEditProjectEntitiesRule: CanEditProjectEntitiesRule,
+    private val areProjectEntitiesEditableRule: AreProjectEntitiesEditableRule,
 ) : DeleteStructureUseCase {
     override suspend operator fun invoke(request: DeleteStructureRequest): BackendStructure? {
         val structure = structuresDb.getStructure(request.structureId)
         if (structure != null) {
             val project = getProjectUseCase(structure.projectId)
-            if (project != null && !canEditProjectEntitiesRule(project)) {
+            if (project != null && !areProjectEntitiesEditableRule(project)) {
                 return structure
             }
         }

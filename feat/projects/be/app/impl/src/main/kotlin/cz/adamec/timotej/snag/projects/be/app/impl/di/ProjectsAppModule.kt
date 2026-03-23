@@ -42,7 +42,7 @@ import cz.adamec.timotej.snag.projects.business.CanAccessProjectRule
 import cz.adamec.timotej.snag.projects.business.CanAssignUserToProjectRule
 import cz.adamec.timotej.snag.projects.business.CanCloseProjectRule
 import cz.adamec.timotej.snag.projects.business.CanCreateProjectRule
-import cz.adamec.timotej.snag.projects.business.CanEditProjectEntitiesRule
+import cz.adamec.timotej.snag.projects.business.AreProjectEntitiesEditableRule
 import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
@@ -58,7 +58,7 @@ val projectsAppModule =
         factoryOf(::AssignUserToProjectUseCaseImpl) bind AssignUserToProjectUseCase::class
         factoryOf(::RemoveUserFromProjectUseCaseImpl) bind RemoveUserFromProjectUseCase::class
         factoryOf(::IsClientReferencedByProjectUseCaseImpl) bind IsClientReferencedByProjectUseCase::class
-        factoryOf(::CanEditProjectEntitiesRule)
+        factoryOf(::AreProjectEntitiesEditableRule)
         factoryOf(::CanAccessProjectRule)
         factoryOf(::CanAssignUserToProjectRule)
         factoryOf(::CanCreateProjectRule)
