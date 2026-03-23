@@ -21,20 +21,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
-import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
-import androidx.navigation3.scene.DialogSceneStrategy
-import androidx.navigation3.ui.NavDisplay
 import cz.adamec.timotej.snag.clients.fe.driving.api.ClientCreationRouteFactory
 import cz.adamec.timotej.snag.clients.fe.driving.api.ClientEditRouteFactory
 import cz.adamec.timotej.snag.clients.fe.driving.api.ClientsRoute
 import cz.adamec.timotej.snag.clients.fe.driving.api.ClientsRouteFactory
-import cz.adamec.timotej.snag.lib.navigation.fe.SnagNavRoute
+import cz.adamec.timotej.snag.lib.navigation.fe.SnagNavDisplay
 import cz.adamec.timotej.snag.users.fe.driving.api.UsersRoute
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
-import org.koin.compose.navigation3.koinEntryProvider
 import snag.composeapp.generated.resources.Res
 import snag.composeapp.generated.resources.clients_tab_title
 import snag.composeapp.generated.resources.users_tab_title
@@ -130,19 +125,9 @@ internal fun DirectoryScreen(modifier: Modifier = Modifier) {
             )
         }
 
-        val entryProvider = koinEntryProvider<SnagNavRoute>()
-        NavDisplay(
+        SnagNavDisplay(
             backStack = backStackEntriesState.value,
-            entryProvider = entryProvider,
-            sceneStrategies =
-                listOf(
-                    DialogSceneStrategy(),
-                ),
-            entryDecorators =
-                listOf(
-                    rememberSaveableStateHolderNavEntryDecorator(),
-                    rememberViewModelStoreNavEntryDecorator(),
-                ),
+            modifier = modifier,
         )
     }
 }
