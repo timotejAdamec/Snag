@@ -92,4 +92,27 @@ internal class RealProjectsApi(
             }
         }.also { if (it is OnlineDataResult.Success) LH.logger.d { "Fetched ${it.data.size} modified projects." } }
     }
+
+    override suspend fun getProjectAssignments(projectId: Uuid): OnlineDataResult<Set<Uuid>> {
+        LH.logger.d { "Fetching assignments for project $projectId..." }
+        return safeApiCall(
+            logger = LH.logger,
+            errorContext = "Error fetching assignments for project $projectId.",
+        ) {
+            httpClient.get("/projects/$projectId/assignments")
+                .body<List<AssignedUserApiDto>>()
+                .map { Uuid.parse(it.id) }
+                .toSet()
+        }.also {
+            if (it is OnlineDataResult.Success) {
+                LH.logger.d { "Fetched ${it.data.size} assignments for project $projectId." }
+            }
+        }
+    }
 }
+
+@kotlinx.serialization.Serializable
+private data class AssignedUserApiDto(
+    val id: String,
+)
+

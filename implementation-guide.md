@@ -93,7 +93,7 @@ When a project is **closed**, only the creator retains access. Assigned users lo
 The following features are new compared to the original analysis (which had no roles):
 
 1. - [ ] **Project closure and reopening** — projects can be closed and reopened; access is determined by project state and roles. *(BE: close/reopen mechanism + `CanCloseProjectRule` + `CanAccessProjectRule` visibility filtering all done on project routes; sub-entity route authorization not yet wired)*
-2. - [ ] **User assignment to / removal from project** — leads can add/remove technicians or service workers. *(BE: API + DB + role-restricted access enforced via `CanAssignUserToProjectRule` — Admin/VP/VS allowed; TP/Ser/None denied)*
+2. - [ ] **User assignment to / removal from project** — leads can add/remove technicians or service workers. *(BE: API + DB + role-restricted access enforced via `CanAssignUserToProjectRule` — Admin/VP/VS allowed; TP/Ser/None denied. FE: local assignment cache with full-replacement pull sync, cascade delete/restore on project deletion, query use case. FE assign/unassign use cases + UI not yet implemented.)*
 3. - [ ] **Authentication (EntraID)** — mandatory Microsoft EntraID login (standalone mechanism, not a UC).
 4. - [ ] **Role management (UC7)** — admin manages all roles; passport lead delegates technician role; service lead delegates service worker role. *(BE API done: role set via PUT /users/{id}; authorization enforcement missing)*
 5. - [x] **Inspection deletion** — UC5 Scenario E. *(full-stack: BE API + DB soft delete + sync, FE use case + local delete + sync enqueue, FE UI delete button + confirmation dialog)*
@@ -108,8 +108,8 @@ The following features are new compared to the original analysis (which had no r
 |---|---|---|---|
 | FP4 | Close project — restrict access to creator, preserve data | UC1 | - [ ] Close mechanism done; creator-only close authorization enforced on BE; project visibility filtering enforced on project routes. *(sub-entity routes not yet wired)* |
 | FP4b | Reopen project — reopen a closed project | UC1 | - [ ] Reopen mechanism done; creator-only reopen authorization enforced on BE; project visibility filtering enforced on project routes. *(sub-entity routes not yet wired)* |
-| FP4c | Assign user to project | UC1 | - [x] BE API + DB + role-restricted access enforced via `CanAssignUserToProjectRule` |
-| FP4d | Remove user from project | UC1 | - [x] BE API + DB + role-restricted access enforced via `CanAssignUserToProjectRule` |
+| FP4c | Assign user to project | UC1 | - [x] BE API + DB + role-restricted access enforced via `CanAssignUserToProjectRule`. FE: local assignment cache synced from BE (full-replacement pull sync). *(FE assign/unassign use cases + UI not yet implemented)* |
+| FP4d | Remove user from project | UC1 | - [x] BE API + DB + role-restricted access enforced via `CanAssignUserToProjectRule`. FE: cascade delete on project deletion. *(FE remove use case + UI not yet implemented)* |
 | FP4e | Close project — creator access: only creator retains access to closed project | UC1 | - [ ] Sub-entity editing blocked on closed projects; `creatorId` tracked; creator-only close/reopen enforced; project visibility filtering enforced on project routes. *(sub-entity routes not yet wired)* |
 | FP10 | Delete client — only if not referenced by any project | UC2 | - [x] Done |
 | FP31 | Delete inspection | UC5 | - [x] Done |

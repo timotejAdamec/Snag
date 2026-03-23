@@ -40,4 +40,6 @@ interface ProjectsApi {
     ): OnlineDataResult<AppProject?>
 
     suspend fun getProjectsModifiedSince(since: Timestamp): OnlineDataResult<List<ProjectSyncResult>>
+
+    suspend fun getProjectAssignments(projectId: Uuid): OnlineDataResult<Set<Uuid>>
 }

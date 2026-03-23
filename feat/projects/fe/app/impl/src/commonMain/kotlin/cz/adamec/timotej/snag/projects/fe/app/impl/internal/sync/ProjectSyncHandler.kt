@@ -18,6 +18,7 @@ import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.core.network.fe.OnlineDataResult
 import cz.adamec.timotej.snag.feat.inspections.fe.app.api.CascadeRestoreLocalInspectionsByProjectIdUseCase
 import cz.adamec.timotej.snag.projects.app.model.AppProject
+import cz.adamec.timotej.snag.projects.fe.app.api.CascadeRestoreLocalAssignmentsByProjectIdUseCase
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.LH
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsApi
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsDb
@@ -33,6 +34,7 @@ internal class ProjectSyncHandler(
     private val projectsDb: ProjectsDb,
     private val cascadeRestoreLocalStructuresByProjectIdUseCase: CascadeRestoreLocalStructuresByProjectIdUseCase,
     private val cascadeRestoreLocalInspectionsByProjectIdUseCase: CascadeRestoreLocalInspectionsByProjectIdUseCase,
+    private val cascadeRestoreLocalAssignmentsByProjectIdUseCase: CascadeRestoreLocalAssignmentsByProjectIdUseCase,
     timestampProvider: TimestampProvider,
 ) : DbApiPushSyncHandler<AppProject>(LH.logger, timestampProvider) {
     override val entityTypeId: String = PROJECT_SYNC_ENTITY_TYPE
@@ -53,6 +55,7 @@ internal class ProjectSyncHandler(
         coroutineScope {
             launch { cascadeRestoreLocalStructuresByProjectIdUseCase(entityId) }
             launch { cascadeRestoreLocalInspectionsByProjectIdUseCase(entityId) }
+            launch { cascadeRestoreLocalAssignmentsByProjectIdUseCase(entityId) }
         }
     }
 }

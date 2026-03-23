@@ -15,7 +15,9 @@ package cz.adamec.timotej.snag.projects.fe.driven.di
 import cz.adamec.timotej.snag.core.foundation.common.di.getIoDispatcher
 import cz.adamec.timotej.snag.projects.fe.driven.internal.api.RealProjectsApi
 import cz.adamec.timotej.snag.projects.fe.driven.internal.db.ProjectsSqlDelightDbOps
+import cz.adamec.timotej.snag.projects.fe.driven.internal.db.RealProjectAssignmentsDb
 import cz.adamec.timotej.snag.projects.fe.driven.internal.db.RealProjectsDb
+import cz.adamec.timotej.snag.projects.fe.ports.ProjectAssignmentsDb
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsApi
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsDb
 import org.koin.core.module.dsl.factoryOf
@@ -32,4 +34,10 @@ val projectsDrivenModule =
         }
         factory { RealProjectsDb(ops = get()) } bind ProjectsDb::class
         factoryOf(::RealProjectsApi) bind ProjectsApi::class
+        factory {
+            RealProjectAssignmentsDb(
+                queries = get(),
+                ioDispatcher = getIoDispatcher(),
+            )
+        } bind ProjectAssignmentsDb::class
     }

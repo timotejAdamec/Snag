@@ -16,6 +16,7 @@ import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.core.foundation.common.TimestampProvider
 import cz.adamec.timotej.snag.core.network.fe.OnlineDataResult
 import cz.adamec.timotej.snag.feat.inspections.fe.app.api.CascadeDeleteLocalInspectionsByProjectIdUseCase
+import cz.adamec.timotej.snag.projects.fe.app.api.CascadeDeleteLocalAssignmentsByProjectIdUseCase
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.LH
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectSyncResult
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsApi
@@ -31,6 +32,7 @@ internal class ProjectPullSyncHandler(
     private val projectsDb: ProjectsDb,
     private val cascadeDeleteLocalStructuresByProjectIdUseCase: CascadeDeleteLocalStructuresByProjectIdUseCase,
     private val cascadeDeleteLocalInspectionsByProjectIdUseCase: CascadeDeleteLocalInspectionsByProjectIdUseCase,
+    private val cascadeDeleteLocalAssignmentsByProjectIdUseCase: CascadeDeleteLocalAssignmentsByProjectIdUseCase,
     getLastPullSyncedAtTimestampUseCase: GetLastPullSyncedAtTimestampUseCase,
     setLastPullSyncedAtTimestampUseCase: SetLastPullSyncedAtTimestampUseCase,
     timestampProvider: TimestampProvider,
@@ -54,6 +56,7 @@ internal class ProjectPullSyncHandler(
                 LH.logger.d { "Processing deleted project ${change.id}." }
                 cascadeDeleteLocalStructuresByProjectIdUseCase(change.id)
                 cascadeDeleteLocalInspectionsByProjectIdUseCase(change.id)
+                cascadeDeleteLocalAssignmentsByProjectIdUseCase(change.id)
                 projectsDb.deleteProject(change.id)
             }
             is ProjectSyncResult.Updated -> {

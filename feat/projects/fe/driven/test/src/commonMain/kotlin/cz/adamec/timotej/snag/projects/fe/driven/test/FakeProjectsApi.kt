@@ -54,5 +54,12 @@ class FakeProjectsApi : ProjectsApi {
 
     override suspend fun getProjectsModifiedSince(since: Timestamp): OnlineDataResult<List<ProjectSyncResult>> = ops.getModifiedSinceItems()
 
+    var projectAssignments: MutableMap<Uuid, Set<Uuid>> = mutableMapOf()
+
+    override suspend fun getProjectAssignments(projectId: Uuid): OnlineDataResult<Set<Uuid>> {
+        forcedFailure?.let { return it }
+        return OnlineDataResult.Success(projectAssignments[projectId] ?: emptySet())
+    }
+
     fun setProject(project: AppProject) = ops.setItem(project)
 }

@@ -15,6 +15,7 @@ package cz.adamec.timotej.snag.projects.fe.app.impl.internal
 import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.core.network.fe.log
 import cz.adamec.timotej.snag.feat.inspections.fe.app.api.CascadeDeleteLocalInspectionsByProjectIdUseCase
+import cz.adamec.timotej.snag.projects.fe.app.api.CascadeDeleteLocalAssignmentsByProjectIdUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.DeleteProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.LH.logger
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.sync.PROJECT_SYNC_ENTITY_TYPE
@@ -29,10 +30,12 @@ class DeleteProjectUseCaseImpl(
     private val enqueueSyncDeleteUseCase: EnqueueSyncDeleteUseCase,
     private val cascadeDeleteLocalStructuresByProjectIdUseCase: CascadeDeleteLocalStructuresByProjectIdUseCase,
     private val cascadeDeleteLocalInspectionsByProjectIdUseCase: CascadeDeleteLocalInspectionsByProjectIdUseCase,
+    private val cascadeDeleteLocalAssignmentsByProjectIdUseCase: CascadeDeleteLocalAssignmentsByProjectIdUseCase,
 ) : DeleteProjectUseCase {
     override suspend operator fun invoke(projectId: Uuid): OfflineFirstDataResult<Unit> {
         cascadeDeleteLocalStructuresByProjectIdUseCase(projectId)
         cascadeDeleteLocalInspectionsByProjectIdUseCase(projectId)
+        cascadeDeleteLocalAssignmentsByProjectIdUseCase(projectId)
         return projectsDb
             .deleteProject(projectId)
             .also {
