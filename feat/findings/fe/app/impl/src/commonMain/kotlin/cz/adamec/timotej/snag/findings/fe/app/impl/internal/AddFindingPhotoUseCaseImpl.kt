@@ -42,7 +42,7 @@ internal class AddFindingPhotoUseCaseImpl(
             localFileStorage.saveFile(
                 bytes = request.bytes,
                 fileName = "$photoId.$extension",
-                subdirectory = "photos/findings/${request.findingId}",
+                subdirectory = "projects/${request.projectId}/findings/${request.findingId}/photos",
             )
         val photo =
             AppFindingPhotoData(

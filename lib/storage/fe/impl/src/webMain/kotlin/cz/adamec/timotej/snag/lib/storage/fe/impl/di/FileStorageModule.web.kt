@@ -12,6 +12,13 @@
 
 package cz.adamec.timotej.snag.lib.storage.fe.impl.di
 
+import cz.adamec.timotej.snag.core.storage.fe.LocalFileStorage
+import cz.adamec.timotej.snag.lib.storage.fe.impl.internal.OnlineOnlyLocalFileStorage
+import org.koin.core.module.dsl.factoryOf
+import org.koin.dsl.bind
 import org.koin.dsl.module
 
-internal actual val localFileStoragePlatformModule = module {}
+internal actual val localFileStoragePlatformModule =
+    module {
+        factoryOf(::OnlineOnlyLocalFileStorage) bind LocalFileStorage::class
+    }

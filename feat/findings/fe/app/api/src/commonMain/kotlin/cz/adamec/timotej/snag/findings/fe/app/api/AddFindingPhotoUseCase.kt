@@ -19,6 +19,7 @@ data class AddFindingPhotoRequest(
     val bytes: ByteArray,
     val fileName: String,
     val findingId: Uuid,
+    val projectId: Uuid,
 )
 
 interface AddFindingPhotoUseCase {

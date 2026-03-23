@@ -119,6 +119,7 @@ internal class FindingDetailViewModel(
                 bytes = bytes,
                 fileName = fileName,
                 findingId = findingId,
+                projectId = projectId,
             )
         when (addFindingPhotoUseCase(request)) {
             is OfflineFirstDataResult.ProgrammerError -> {
