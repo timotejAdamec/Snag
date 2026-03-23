@@ -99,6 +99,16 @@ internal fun Project.configureKotlinMultiplatformModule() {
                 dependsOn(nonAndroidMain)
             }
 
+            val nonWebTest = create("nonWebTest") {
+                dependsOn(commonTest.get())
+            }
+            jvmTest {
+                dependsOn(nonWebTest)
+            }
+
+            val webTest = sourceSets.maybeCreate("webTest")
+            webTest.dependsOn(commonTest.get())
+
             val nonJvmMain = create("nonJvmMain") {
                 dependsOn(commonMain.get())
             }
