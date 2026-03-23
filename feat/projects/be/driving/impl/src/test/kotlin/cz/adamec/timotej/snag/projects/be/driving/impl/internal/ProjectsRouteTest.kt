@@ -44,6 +44,7 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.uuid.Uuid
 
+@Suppress("LargeClass")
 class ProjectsRouteTest : BackendKoinInitializedTest() {
     private val dataSource: ProjectsDb by inject()
     private val usersDb: UsersDb by inject()
@@ -68,14 +69,17 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
             seedAdminUser()
             val client = jsonClient()
 
-            val response = client.get("/projects")
+            val response =
+                client.get("/projects") {
+                    header(USER_ID_HEADER, ADMIN_USER_ID.toString())
+                }
 
             assertEquals(HttpStatusCode.OK, response.status)
             assertEquals(emptyList<ProjectApiDto>(), response.body<List<ProjectApiDto>>())
         }
 
     @Test
-    fun `GET projects returns all projects`() =
+    fun `GET projects returns all projects for admin`() =
         testApplication {
             configureApp()
             seedAdminUser()
@@ -99,11 +103,72 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
             )
             val client = jsonClient()
 
-            val response = client.get("/projects")
+            val response =
+                client.get("/projects") {
+                    header(USER_ID_HEADER, ADMIN_USER_ID.toString())
+                }
 
             assertEquals(HttpStatusCode.OK, response.status)
             val body = response.body<List<ProjectApiDto>>()
             assertEquals(2, body.size)
+        }
+
+    @Test
+    fun `GET projects without X-User-Id header returns 401`() =
+        testApplication {
+            configureApp()
+            seedAdminUser()
+            val client = jsonClient()
+
+            val response = client.get("/projects")
+
+            assertEquals(HttpStatusCode.Unauthorized, response.status)
+        }
+
+    @Test
+    fun `GET projects returns only accessible projects for non-admin`() =
+        testApplication {
+            configureApp()
+            seedAdminUser()
+            val leadId = Uuid.parse("00000000-0000-0000-0000-000000000098")
+            usersDb.saveUser(
+                BackendUserData(
+                    id = leadId,
+                    entraId = "lead-entra",
+                    email = "lead@example.com",
+                    role = UserRole.PASSPORT_LEAD,
+                    updatedAt = Timestamp(1L),
+                ),
+            )
+            dataSource.saveProject(
+                BackendProjectData(
+                    id = TEST_ID_1,
+                    name = "Lead's Project",
+                    address = "Addr",
+                    creatorId = leadId,
+                    updatedAt = Timestamp(100L),
+                ),
+            )
+            dataSource.saveProject(
+                BackendProjectData(
+                    id = TEST_ID_2,
+                    name = "Admin's Project",
+                    address = "Addr",
+                    creatorId = ADMIN_USER_ID,
+                    updatedAt = Timestamp(200L),
+                ),
+            )
+            val client = jsonClient()
+
+            val response =
+                client.get("/projects") {
+                    header(USER_ID_HEADER, leadId.toString())
+                }
+
+            assertEquals(HttpStatusCode.OK, response.status)
+            val body = response.body<List<ProjectApiDto>>()
+            assertEquals(1, body.size)
+            assertEquals("Lead's Project", body[0].name)
         }
 
     @Test
@@ -132,7 +197,10 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
             )
             val client = jsonClient()
 
-            val response = client.get("/projects")
+            val response =
+                client.get("/projects") {
+                    header(USER_ID_HEADER, ADMIN_USER_ID.toString())
+                }
 
             assertEquals(HttpStatusCode.OK, response.status)
             val body = response.body<List<ProjectApiDto>>()
@@ -168,7 +236,10 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
             )
             val client = jsonClient()
 
-            val response = client.get("/projects?since=100")
+            val response =
+                client.get("/projects?since=100") {
+                    header(USER_ID_HEADER, ADMIN_USER_ID.toString())
+                }
 
             assertEquals(HttpStatusCode.OK, response.status)
             val body = response.body<List<ProjectApiDto>>()
@@ -193,7 +264,10 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
             )
             val client = jsonClient()
 
-            val response = client.get("/projects?since=100")
+            val response =
+                client.get("/projects?since=100") {
+                    header(USER_ID_HEADER, ADMIN_USER_ID.toString())
+                }
 
             assertEquals(HttpStatusCode.OK, response.status)
             val body = response.body<List<ProjectApiDto>>()
@@ -217,12 +291,49 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
             )
             val client = jsonClient()
 
-            val response = client.get("/projects/$TEST_ID_1")
+            val response =
+                client.get("/projects/$TEST_ID_1") {
+                    header(USER_ID_HEADER, ADMIN_USER_ID.toString())
+                }
 
             assertEquals(HttpStatusCode.OK, response.status)
             val body = response.body<ProjectApiDto>()
             assertEquals("Found Project", body.name)
             assertEquals(TEST_ID_1, body.id)
+        }
+
+    @Test
+    fun `GET project by id returns 403 for non-accessible project`() =
+        testApplication {
+            configureApp()
+            seedAdminUser()
+            val technicianId = Uuid.parse("00000000-0000-0000-0000-000000000099")
+            usersDb.saveUser(
+                BackendUserData(
+                    id = technicianId,
+                    entraId = "tech-entra",
+                    email = "tech@example.com",
+                    role = UserRole.PASSPORT_TECHNICIAN,
+                    updatedAt = Timestamp(1L),
+                ),
+            )
+            dataSource.saveProject(
+                BackendProjectData(
+                    id = TEST_ID_1,
+                    name = "Admin's Project",
+                    address = "Addr",
+                    creatorId = ADMIN_USER_ID,
+                    updatedAt = Timestamp(100L),
+                ),
+            )
+            val client = jsonClient()
+
+            val response =
+                client.get("/projects/$TEST_ID_1") {
+                    header(USER_ID_HEADER, technicianId.toString())
+                }
+
+            assertEquals(HttpStatusCode.Forbidden, response.status)
         }
 
     @Test
@@ -242,7 +353,10 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
             )
             val client = jsonClient()
 
-            val response = client.get("/projects/$TEST_ID_1")
+            val response =
+                client.get("/projects/$TEST_ID_1") {
+                    header(USER_ID_HEADER, ADMIN_USER_ID.toString())
+                }
 
             assertEquals(HttpStatusCode.OK, response.status)
             val body = response.body<ProjectApiDto>()
@@ -251,15 +365,18 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
         }
 
     @Test
-    fun `GET project by id returns 404 when not found`() =
+    fun `GET project by id returns 403 when project does not exist`() =
         testApplication {
             configureApp()
             seedAdminUser()
             val client = jsonClient()
 
-            val response = client.get("/projects/$TEST_ID_1")
+            val response =
+                client.get("/projects/$TEST_ID_1") {
+                    header(USER_ID_HEADER, ADMIN_USER_ID.toString())
+                }
 
-            assertEquals(HttpStatusCode.NotFound, response.status)
+            assertEquals(HttpStatusCode.Forbidden, response.status)
         }
 
     @Test
@@ -269,7 +386,10 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
             seedAdminUser()
             val client = jsonClient()
 
-            val response = client.get("/projects/not-a-uuid")
+            val response =
+                client.get("/projects/not-a-uuid") {
+                    header(USER_ID_HEADER, ADMIN_USER_ID.toString())
+                }
 
             assertEquals(HttpStatusCode.BadRequest, response.status)
         }
@@ -514,6 +634,49 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
         }
 
     @Test
+    fun `PUT existing project by non-creator non-admin returns 403`() =
+        testApplication {
+            configureApp()
+            seedAdminUser()
+            val technicianId = Uuid.parse("00000000-0000-0000-0000-000000000099")
+            usersDb.saveUser(
+                BackendUserData(
+                    id = technicianId,
+                    entraId = "tech-entra",
+                    email = "tech@example.com",
+                    role = UserRole.PASSPORT_TECHNICIAN,
+                    updatedAt = Timestamp(1L),
+                ),
+            )
+            dataSource.saveProject(
+                BackendProjectData(
+                    id = TEST_ID_1,
+                    name = "Admin's Project",
+                    address = "Addr",
+                    creatorId = ADMIN_USER_ID,
+                    updatedAt = Timestamp(100L),
+                ),
+            )
+            val client = jsonClient()
+
+            val response =
+                client.put("/projects/$TEST_ID_1") {
+                    contentType(ContentType.Application.Json)
+                    header(USER_ID_HEADER, technicianId.toString())
+                    setBody(
+                        PutProjectApiDto(
+                            name = "Admin's Project",
+                            address = "Addr",
+                            creatorId = ADMIN_USER_ID,
+                            updatedAt = Timestamp(200L),
+                        ),
+                    )
+                }
+
+            assertEquals(HttpStatusCode.Forbidden, response.status)
+        }
+
+    @Test
     fun `PATCH soft-delete project returns 204 when successfully deleted`() =
         testApplication {
             configureApp()
@@ -532,6 +695,7 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
             val response =
                 client.patch("/projects/$TEST_ID_1") {
                     contentType(ContentType.Application.Json)
+                    header(USER_ID_HEADER, ADMIN_USER_ID.toString())
                     setBody(DeleteProjectApiDto(deletedAt = Timestamp(200L)))
                 }
 
@@ -556,10 +720,14 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
 
             client.patch("/projects/$TEST_ID_1") {
                 contentType(ContentType.Application.Json)
+                header(USER_ID_HEADER, ADMIN_USER_ID.toString())
                 setBody(DeleteProjectApiDto(deletedAt = Timestamp(200L)))
             }
 
-            val getResponse = client.get("/projects/$TEST_ID_1")
+            val getResponse =
+                client.get("/projects/$TEST_ID_1") {
+                    header(USER_ID_HEADER, ADMIN_USER_ID.toString())
+                }
             assertEquals(HttpStatusCode.OK, getResponse.status)
             val body = getResponse.body<ProjectApiDto>()
             assertNotNull(body.deletedAt)
@@ -585,12 +753,38 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
             val response =
                 client.patch("/projects/$TEST_ID_1") {
                     contentType(ContentType.Application.Json)
+                    header(USER_ID_HEADER, ADMIN_USER_ID.toString())
                     setBody(DeleteProjectApiDto(deletedAt = Timestamp(200L)))
                 }
 
             assertEquals(HttpStatusCode.OK, response.status)
             val body = response.body<ProjectApiDto>()
             assertEquals("Existing", body.name)
+        }
+
+    @Test
+    fun `PATCH soft-delete project without X-User-Id returns 401`() =
+        testApplication {
+            configureApp()
+            seedAdminUser()
+            dataSource.saveProject(
+                BackendProjectData(
+                    id = TEST_ID_1,
+                    name = "To Delete",
+                    address = "Addr",
+                    creatorId = ADMIN_USER_ID,
+                    updatedAt = Timestamp(100L),
+                ),
+            )
+            val client = jsonClient()
+
+            val response =
+                client.patch("/projects/$TEST_ID_1") {
+                    contentType(ContentType.Application.Json)
+                    setBody(DeleteProjectApiDto(deletedAt = Timestamp(200L)))
+                }
+
+            assertEquals(HttpStatusCode.Unauthorized, response.status)
         }
 
     @Test
@@ -603,6 +797,7 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
             val response =
                 client.patch("/projects/not-a-uuid") {
                     contentType(ContentType.Application.Json)
+                    header(USER_ID_HEADER, ADMIN_USER_ID.toString())
                     setBody(DeleteProjectApiDto(deletedAt = Timestamp(200L)))
                 }
 
@@ -614,11 +809,21 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
         testApplication {
             configureApp()
             seedAdminUser()
+            dataSource.saveProject(
+                BackendProjectData(
+                    id = TEST_ID_1,
+                    name = "Project",
+                    address = "Addr",
+                    creatorId = ADMIN_USER_ID,
+                    updatedAt = Timestamp(100L),
+                ),
+            )
             val client = jsonClient()
 
             val response =
                 client.patch("/projects/$TEST_ID_1") {
                     contentType(ContentType.Application.Json)
+                    header(USER_ID_HEADER, ADMIN_USER_ID.toString())
                     setBody("{\"invalid\": true}")
                 }
 

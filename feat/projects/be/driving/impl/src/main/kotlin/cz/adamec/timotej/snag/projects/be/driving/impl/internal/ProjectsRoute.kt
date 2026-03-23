@@ -16,6 +16,8 @@ import cz.adamec.timotej.snag.authentication.be.driving.api.currentUser
 import cz.adamec.timotej.snag.authorization.be.driving.api.ForbiddenException
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.projects.be.app.api.AssignUserToProjectUseCase
+import cz.adamec.timotej.snag.projects.be.app.api.CanAccessProjectUseCase
+import cz.adamec.timotej.snag.projects.be.app.api.CanAssignUserToProjectUseCase
 import cz.adamec.timotej.snag.projects.be.app.api.CanCloseProjectUseCase
 import cz.adamec.timotej.snag.projects.be.app.api.CanCreateProjectUseCase
 import cz.adamec.timotej.snag.projects.be.app.api.DeleteProjectUseCase
@@ -56,23 +58,32 @@ internal class ProjectsRoute(
     private val removeUserFromProjectUseCase: RemoveUserFromProjectUseCase,
     private val canCreateProjectUseCase: CanCreateProjectUseCase,
     private val canCloseProjectUseCase: CanCloseProjectUseCase,
+    private val canAccessProjectUseCase: CanAccessProjectUseCase,
+    private val canAssignUserToProjectUseCase: CanAssignUserToProjectUseCase,
 ) : AppRoute {
     override fun Route.setup() {
         route("/projects") {
             get {
+                val userId = currentUser().userId
                 val sinceParam = call.request.queryParameters["since"]
                 if (sinceParam != null) {
                     val since = Timestamp(sinceParam.toLong())
-                    val modified = getProjectsModifiedSinceUseCase(since).map { it.toDto() }
+                    val modified =
+                        getProjectsModifiedSinceUseCase(
+                            userId = userId,
+                            since = since,
+                        ).map { it.toDto() }
                     call.respond(modified)
                 } else {
-                    val dtoProjects = getProjectsUseCase().map { it.toDto() }
+                    val dtoProjects = getProjectsUseCase(userId).map { it.toDto() }
                     call.respond(dtoProjects)
                 }
             }
 
             get("/{id}") {
                 val id = getIdFromParameters()
+                val userId = currentUser().userId
+                requireProjectAccess(userId = userId, projectId = id)
 
                 val dtoProject =
                     getProjectUseCase(id)
@@ -84,59 +95,75 @@ internal class ProjectsRoute(
                 call.respond(dtoProject.toDto())
             }
 
-            put("/{id}") {
-                val id = getIdFromParameters()
-                val user = currentUser()
-                val putProjectDto = getDtoFromBody<PutProjectApiDto>()
-
-                authorizeProjectSave(
-                    userId = user.userId,
-                    projectId = id,
-                    incomingIsClosed = putProjectDto.isClosed,
-                )
-
-                val updatedProject = saveProjectUseCase(putProjectDto.toModel(id))
-
-                updatedProject?.let {
-                    call.respond(it.toDto())
-                } ?: call.respond(HttpStatusCode.NoContent)
-            }
-
-            patch("/{id}") {
-                val id = getIdFromParameters()
-                val deleteProjectDto = getDtoFromBody<DeleteProjectApiDto>()
-
-                val newerProject =
-                    deleteProjectUseCase(
-                        DeleteProjectRequest(
-                            projectId = id,
-                            deletedAt = deleteProjectDto.deletedAt,
-                        ),
-                    )
-
-                newerProject?.let {
-                    call.respond(it.toDto())
-                } ?: call.respond(HttpStatusCode.NoContent)
-            }
+            setupPutRoute()
+            setupPatchRoute()
         }
 
         setupAssignmentsRoute()
+    }
+
+    private fun Route.setupPutRoute() {
+        put("/{id}") {
+            val id = getIdFromParameters()
+            val user = currentUser()
+            val putProjectDto = getDtoFromBody<PutProjectApiDto>()
+
+            authorizeProjectSave(
+                userId = user.userId,
+                projectId = id,
+                incomingIsClosed = putProjectDto.isClosed,
+            )
+
+            val updatedProject = saveProjectUseCase(putProjectDto.toModel(id))
+
+            updatedProject?.let {
+                call.respond(it.toDto())
+            } ?: call.respond(HttpStatusCode.NoContent)
+        }
+    }
+
+    private fun Route.setupPatchRoute() {
+        patch("/{id}") {
+            val id = getIdFromParameters()
+            val userId = currentUser().userId
+            requireCloseAccess(userId = userId, projectId = id)
+
+            val deleteProjectDto = getDtoFromBody<DeleteProjectApiDto>()
+
+            val newerProject =
+                deleteProjectUseCase(
+                    DeleteProjectRequest(
+                        projectId = id,
+                        deletedAt = deleteProjectDto.deletedAt,
+                    ),
+                )
+
+            newerProject?.let {
+                call.respond(it.toDto())
+            } ?: call.respond(HttpStatusCode.NoContent)
+        }
     }
 
     private fun Route.setupAssignmentsRoute() {
         route("/projects/{projectId}/assignments") {
             get {
                 val projectId = getIdFromParameters("projectId")
+                val userId = currentUser().userId
+                requireProjectAccess(userId = userId, projectId = projectId)
+
                 val dtoUsers = getProjectAssignmentsUseCase(projectId).map { it.toDto() }
                 call.respond(dtoUsers)
             }
 
             put("/{userId}") {
                 val projectId = getIdFromParameters("projectId")
-                val userId = getIdFromParameters("userId")
+                val targetUserId = getIdFromParameters("userId")
+                val actingUserId = currentUser().userId
+                requireAssignmentAccess(actingUserId)
+
                 assignUserToProjectUseCase(
                     AssignUserToProjectRequest(
-                        userId = userId,
+                        userId = targetUserId,
                         projectId = projectId,
                     ),
                 )
@@ -145,15 +172,42 @@ internal class ProjectsRoute(
 
             delete("/{userId}") {
                 val projectId = getIdFromParameters("projectId")
-                val userId = getIdFromParameters("userId")
+                val targetUserId = getIdFromParameters("userId")
+                val actingUserId = currentUser().userId
+                requireAssignmentAccess(actingUserId)
+
                 removeUserFromProjectUseCase(
                     RemoveUserFromProjectRequest(
-                        userId = userId,
+                        userId = targetUserId,
                         projectId = projectId,
                     ),
                 )
                 call.respond(HttpStatusCode.NoContent)
             }
+        }
+    }
+
+    private suspend fun requireProjectAccess(
+        userId: Uuid,
+        projectId: Uuid,
+    ) {
+        if (!canAccessProjectUseCase(userId = userId, projectId = projectId)) {
+            throw ForbiddenException()
+        }
+    }
+
+    private suspend fun requireCloseAccess(
+        userId: Uuid,
+        projectId: Uuid,
+    ) {
+        if (!canCloseProjectUseCase(userId = userId, projectId = projectId)) {
+            throw ForbiddenException()
+        }
+    }
+
+    private suspend fun requireAssignmentAccess(userId: Uuid) {
+        if (!canAssignUserToProjectUseCase(userId)) {
+            throw ForbiddenException()
         }
     }
 
@@ -164,15 +218,15 @@ internal class ProjectsRoute(
     ) {
         val existingProject = getProjectUseCase(projectId)
 
-        if (existingProject == null && !canCreateProjectUseCase(userId)) {
-            throw ForbiddenException()
+        if (existingProject == null) {
+            if (!canCreateProjectUseCase(userId)) throw ForbiddenException()
+            return
         }
 
-        if (existingProject != null &&
-            incomingIsClosed != existingProject.isClosed &&
-            !canCloseProjectUseCase(userId = userId, projectId = projectId)
-        ) {
-            throw ForbiddenException()
+        requireProjectAccess(userId = userId, projectId = projectId)
+
+        if (incomingIsClosed != existingProject.isClosed) {
+            requireCloseAccess(userId = userId, projectId = projectId)
         }
     }
 }
