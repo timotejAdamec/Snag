@@ -15,15 +15,15 @@ package cz.adamec.timotej.snag.findings.be.app.impl.internal
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.feat.findings.be.model.BackendFindingData
 import cz.adamec.timotej.snag.feat.findings.business.FindingType
-import cz.adamec.timotej.snag.feat.structures.be.model.BackendStructureData
 import cz.adamec.timotej.snag.findings.be.app.api.GetFindingsModifiedSinceUseCase
 import cz.adamec.timotej.snag.findings.be.app.api.model.GetFindingsModifiedSinceRequest
 import cz.adamec.timotej.snag.findings.be.ports.FindingsDb
-import cz.adamec.timotej.snag.projects.be.model.BackendProjectData
+import cz.adamec.timotej.snag.projects.be.driven.test.TEST_PROJECT_ID
+import cz.adamec.timotej.snag.projects.be.driven.test.seedTestProject
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
+import cz.adamec.timotej.snag.structures.be.driven.test.seedTestStructure
 import cz.adamec.timotej.snag.structures.be.ports.StructuresDb
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
-import cz.adamec.timotej.snag.users.be.driven.test.TEST_USER_ID
 import cz.adamec.timotej.snag.users.be.driven.test.seedTestUser
 import cz.adamec.timotej.snag.users.be.ports.UsersDb
 import kotlinx.coroutines.test.runTest
@@ -40,38 +40,20 @@ class GetFindingsModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
     private val usersDb: UsersDb by inject()
     private val useCase: GetFindingsModifiedSinceUseCase by inject()
 
-    private val projectId = Uuid.parse("00000000-0000-0000-0000-000000000001")
     private val structureId = Uuid.parse("00000000-0000-0000-0001-000000000001")
     private val otherStructureId = Uuid.parse("00000000-0000-0000-0001-000000000002")
 
     private suspend fun seedParentEntities() {
         usersDb.seedTestUser()
-        projectsDb.saveProject(
-            BackendProjectData(
-                id = projectId,
-                name = "Test Project",
-                address = "Test Address",
-                creatorId = TEST_USER_ID,
-                updatedAt = Timestamp(1L),
-            ),
+        projectsDb.seedTestProject()
+        structuresDb.seedTestStructure(
+            id = structureId,
+            projectId = TEST_PROJECT_ID,
         )
-        structuresDb.saveStructure(
-            BackendStructureData(
-                id = structureId,
-                projectId = projectId,
-                name = "Test Structure",
-                floorPlanUrl = null,
-                updatedAt = Timestamp(1L),
-            ),
-        )
-        structuresDb.saveStructure(
-            BackendStructureData(
-                id = otherStructureId,
-                projectId = projectId,
-                name = "Other Structure",
-                floorPlanUrl = null,
-                updatedAt = Timestamp(1L),
-            ),
+        structuresDb.seedTestStructure(
+            id = otherStructureId,
+            projectId = TEST_PROJECT_ID,
+            name = "Other Structure",
         )
     }
 

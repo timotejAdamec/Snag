@@ -19,13 +19,12 @@ import cz.adamec.timotej.snag.feat.findings.business.FindingType
 import cz.adamec.timotej.snag.feat.findings.business.Importance
 import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
 import cz.adamec.timotej.snag.feat.findings.business.Term
-import cz.adamec.timotej.snag.feat.structures.be.model.BackendStructureData
 import cz.adamec.timotej.snag.findings.be.ports.FindingsDb
-import cz.adamec.timotej.snag.projects.be.model.BackendProjectData
+import cz.adamec.timotej.snag.projects.be.driven.test.seedTestProject
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
+import cz.adamec.timotej.snag.structures.be.driven.test.seedTestStructure
 import cz.adamec.timotej.snag.structures.be.ports.StructuresDb
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
-import cz.adamec.timotej.snag.users.be.driven.test.TEST_USER_ID
 import cz.adamec.timotej.snag.users.be.driven.test.seedTestUser
 import cz.adamec.timotej.snag.users.be.ports.UsersDb
 import kotlinx.coroutines.test.runTest
@@ -43,23 +42,10 @@ class RealFindingsDbFindingTypesTest : BackendKoinInitializedTest() {
 
     private suspend fun seedParentEntities() {
         usersDb.seedTestUser()
-        projectsDb.saveProject(
-            BackendProjectData(
-                id = PROJECT_ID,
-                name = "Test Project",
-                address = "Test Address",
-                creatorId = TEST_USER_ID,
-                updatedAt = Timestamp(1L),
-            ),
-        )
-        structuresDb.saveStructure(
-            BackendStructureData(
-                id = STRUCTURE_ID,
-                projectId = PROJECT_ID,
-                name = "Test Structure",
-                floorPlanUrl = null,
-                updatedAt = Timestamp(1L),
-            ),
+        projectsDb.seedTestProject(id = PROJECT_ID)
+        structuresDb.seedTestStructure(
+            id = STRUCTURE_ID,
+            projectId = PROJECT_ID,
         )
     }
 

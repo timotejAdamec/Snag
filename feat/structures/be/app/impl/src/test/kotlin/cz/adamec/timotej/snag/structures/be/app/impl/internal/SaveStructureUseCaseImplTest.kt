@@ -14,12 +14,12 @@ package cz.adamec.timotej.snag.structures.be.app.impl.internal
 
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.feat.structures.be.model.BackendStructureData
-import cz.adamec.timotej.snag.projects.be.model.BackendProjectData
+import cz.adamec.timotej.snag.projects.be.driven.test.TEST_PROJECT_ID
+import cz.adamec.timotej.snag.projects.be.driven.test.seedTestProject
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
 import cz.adamec.timotej.snag.structures.be.app.api.SaveStructureUseCase
 import cz.adamec.timotej.snag.structures.be.ports.StructuresDb
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
-import cz.adamec.timotej.snag.users.be.driven.test.TEST_USER_ID
 import cz.adamec.timotej.snag.users.be.driven.test.seedTestUser
 import cz.adamec.timotej.snag.users.be.ports.UsersDb
 import kotlinx.coroutines.test.runTest
@@ -35,11 +35,10 @@ class SaveStructureUseCaseImplTest : BackendKoinInitializedTest() {
     private val usersDb: UsersDb by inject()
     private val useCase: SaveStructureUseCase by inject()
 
-    private val projectId = Uuid.parse("00000000-0000-0000-0000-000000000001")
     private val backendStructure =
         BackendStructureData(
             id = Uuid.parse("00000000-0000-0000-0001-000000000001"),
-            projectId = projectId,
+            projectId = TEST_PROJECT_ID,
             name = "Ground Floor",
             floorPlanUrl = null,
             updatedAt = Timestamp(value = 10L),
@@ -48,15 +47,7 @@ class SaveStructureUseCaseImplTest : BackendKoinInitializedTest() {
     private fun createProject() =
         runTest(testDispatcher) {
             usersDb.seedTestUser()
-            projectsDb.saveProject(
-                BackendProjectData(
-                    id = projectId,
-                    name = "Test Project",
-                    address = "Test Address",
-                    creatorId = TEST_USER_ID,
-                    updatedAt = Timestamp(1L),
-                ),
-            )
+            projectsDb.seedTestProject()
         }
 
     @Test
@@ -65,7 +56,7 @@ class SaveStructureUseCaseImplTest : BackendKoinInitializedTest() {
             createProject()
             useCase(backendStructure)
 
-            assertEquals(listOf(backendStructure), dataSource.getStructures(projectId))
+            assertEquals(listOf(backendStructure), dataSource.getStructures(TEST_PROJECT_ID))
         }
 
     @Test
@@ -80,7 +71,7 @@ class SaveStructureUseCaseImplTest : BackendKoinInitializedTest() {
 
             useCase(backendStructure)
 
-            assertEquals(listOf(savedStructure), dataSource.getStructures(projectId))
+            assertEquals(listOf(savedStructure), dataSource.getStructures(TEST_PROJECT_ID))
         }
 
     @Test
@@ -127,16 +118,7 @@ class SaveStructureUseCaseImplTest : BackendKoinInitializedTest() {
     private fun createClosedProject() =
         runTest(testDispatcher) {
             usersDb.seedTestUser()
-            projectsDb.saveProject(
-                BackendProjectData(
-                    id = projectId,
-                    name = "Test Project",
-                    address = "Test Address",
-                    creatorId = TEST_USER_ID,
-                    isClosed = true,
-                    updatedAt = Timestamp(1L),
-                ),
-            )
+            projectsDb.seedTestProject(isClosed = true)
         }
 
     @Test
@@ -154,7 +136,7 @@ class SaveStructureUseCaseImplTest : BackendKoinInitializedTest() {
             val result = useCase(newStructure)
 
             assertEquals(backendStructure, result)
-            assertEquals(listOf(backendStructure), dataSource.getStructures(projectId))
+            assertEquals(listOf(backendStructure), dataSource.getStructures(TEST_PROJECT_ID))
         }
 
     @Test

@@ -19,18 +19,18 @@ import cz.adamec.timotej.snag.feat.findings.business.FindingType
 import cz.adamec.timotej.snag.feat.findings.business.Importance
 import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
 import cz.adamec.timotej.snag.feat.findings.business.Term
-import cz.adamec.timotej.snag.feat.structures.be.model.BackendStructureData
+import cz.adamec.timotej.snag.findings.be.driven.test.seedTestFinding
 import cz.adamec.timotej.snag.findings.be.driving.contract.DeleteFindingApiDto
 import cz.adamec.timotej.snag.findings.be.driving.contract.FindingApiDto
 import cz.adamec.timotej.snag.findings.be.driving.contract.PutFindingApiDto
 import cz.adamec.timotej.snag.findings.be.driving.contract.RelativeCoordinateApiDto
 import cz.adamec.timotej.snag.findings.be.ports.FindingsDb
 import cz.adamec.timotej.snag.network.be.test.jsonClient
-import cz.adamec.timotej.snag.projects.be.model.BackendProjectData
+import cz.adamec.timotej.snag.projects.be.driven.test.seedTestProject
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
+import cz.adamec.timotej.snag.structures.be.driven.test.seedTestStructure
 import cz.adamec.timotej.snag.structures.be.ports.StructuresDb
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
-import cz.adamec.timotej.snag.users.be.driven.test.TEST_USER_ID
 import cz.adamec.timotej.snag.users.be.driven.test.seedTestUser
 import cz.adamec.timotej.snag.users.be.ports.UsersDb
 import io.ktor.client.call.body
@@ -58,23 +58,10 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
 
     private suspend fun seedParentEntities() {
         usersDb.seedTestUser()
-        projectsDb.saveProject(
-            BackendProjectData(
-                id = PROJECT_ID,
-                name = "Test Project",
-                address = "Test Address",
-                creatorId = TEST_USER_ID,
-                updatedAt = Timestamp(1L),
-            ),
-        )
-        structuresDb.saveStructure(
-            BackendStructureData(
-                id = STRUCTURE_ID,
-                projectId = PROJECT_ID,
-                name = "Test Structure",
-                floorPlanUrl = null,
-                updatedAt = Timestamp(1L),
-            ),
+        projectsDb.seedTestProject(id = PROJECT_ID)
+        structuresDb.seedTestStructure(
+            id = STRUCTURE_ID,
+            projectId = PROJECT_ID,
         )
     }
 
@@ -94,16 +81,14 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
         testApplication {
             configureApp()
             seedParentEntities()
-            dataSource.saveFinding(
-                BackendFindingData(
-                    id = TEST_ID_1,
-                    structureId = STRUCTURE_ID,
-                    name = "To Delete",
-                    description = "Desc",
-                    type = FindingType.Classic(importance = Importance.MEDIUM, term = Term.T1),
-                    coordinates = setOf(RelativeCoordinate(0.5f, 0.5f)),
-                    updatedAt = Timestamp(100L),
-                ),
+            dataSource.seedTestFinding(
+                id = TEST_ID_1,
+                structureId = STRUCTURE_ID,
+                name = "To Delete",
+                description = "Desc",
+                type = FindingType.Classic(importance = Importance.MEDIUM, term = Term.T1),
+                coordinates = setOf(RelativeCoordinate(0.5f, 0.5f)),
+                updatedAt = Timestamp(100L),
             )
             val client = jsonClient()
 
@@ -121,16 +106,12 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
         testApplication {
             configureApp()
             seedParentEntities()
-            dataSource.saveFinding(
-                BackendFindingData(
-                    id = TEST_ID_1,
-                    structureId = STRUCTURE_ID,
-                    name = "To Delete",
-                    description = null,
-                    type = FindingType.Classic(importance = Importance.MEDIUM, term = Term.T1),
-                    coordinates = emptySet(),
-                    updatedAt = Timestamp(100L),
-                ),
+            dataSource.seedTestFinding(
+                id = TEST_ID_1,
+                structureId = STRUCTURE_ID,
+                name = "To Delete",
+                type = FindingType.Classic(importance = Importance.MEDIUM, term = Term.T1),
+                updatedAt = Timestamp(100L),
             )
             val client = jsonClient()
 
@@ -152,16 +133,14 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
         testApplication {
             configureApp()
             seedParentEntities()
-            dataSource.saveFinding(
-                BackendFindingData(
-                    id = TEST_ID_1,
-                    structureId = STRUCTURE_ID,
-                    name = "Existing",
-                    description = "Desc",
-                    type = FindingType.Classic(importance = Importance.MEDIUM, term = Term.T1),
-                    coordinates = setOf(RelativeCoordinate(0.5f, 0.5f)),
-                    updatedAt = Timestamp(300L),
-                ),
+            dataSource.seedTestFinding(
+                id = TEST_ID_1,
+                structureId = STRUCTURE_ID,
+                name = "Existing",
+                description = "Desc",
+                type = FindingType.Classic(importance = Importance.MEDIUM, term = Term.T1),
+                coordinates = setOf(RelativeCoordinate(0.5f, 0.5f)),
+                updatedAt = Timestamp(300L),
             )
             val client = jsonClient()
 
@@ -227,27 +206,21 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
         testApplication {
             configureApp()
             seedParentEntities()
-            dataSource.saveFinding(
-                BackendFindingData(
-                    id = TEST_ID_1,
-                    structureId = STRUCTURE_ID,
-                    name = "Finding 1",
-                    description = "Description 1",
-                    type = FindingType.Classic(importance = Importance.MEDIUM, term = Term.T1),
-                    coordinates = setOf(RelativeCoordinate(0.1f, 0.2f)),
-                    updatedAt = Timestamp(100L),
-                ),
+            dataSource.seedTestFinding(
+                id = TEST_ID_1,
+                structureId = STRUCTURE_ID,
+                name = "Finding 1",
+                description = "Description 1",
+                type = FindingType.Classic(importance = Importance.MEDIUM, term = Term.T1),
+                coordinates = setOf(RelativeCoordinate(0.1f, 0.2f)),
+                updatedAt = Timestamp(100L),
             )
-            dataSource.saveFinding(
-                BackendFindingData(
-                    id = TEST_ID_2,
-                    structureId = STRUCTURE_ID,
-                    name = "Finding 2",
-                    description = null,
-                    type = FindingType.Classic(importance = Importance.MEDIUM, term = Term.T1),
-                    coordinates = emptySet(),
-                    updatedAt = Timestamp(200L),
-                ),
+            dataSource.seedTestFinding(
+                id = TEST_ID_2,
+                structureId = STRUCTURE_ID,
+                name = "Finding 2",
+                type = FindingType.Classic(importance = Importance.MEDIUM, term = Term.T1),
+                updatedAt = Timestamp(200L),
             )
             val client = jsonClient()
 
@@ -263,16 +236,12 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
         testApplication {
             configureApp()
             seedParentEntities()
-            dataSource.saveFinding(
-                BackendFindingData(
-                    id = TEST_ID_1,
-                    structureId = STRUCTURE_ID,
-                    name = "Active",
-                    description = null,
-                    type = FindingType.Classic(importance = Importance.MEDIUM, term = Term.T1),
-                    coordinates = emptySet(),
-                    updatedAt = Timestamp(100L),
-                ),
+            dataSource.seedTestFinding(
+                id = TEST_ID_1,
+                structureId = STRUCTURE_ID,
+                name = "Active",
+                type = FindingType.Classic(importance = Importance.MEDIUM, term = Term.T1),
+                updatedAt = Timestamp(100L),
             )
             dataSource.saveFinding(
                 BackendFindingData(
@@ -331,27 +300,19 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
         testApplication {
             configureApp()
             seedParentEntities()
-            dataSource.saveFinding(
-                BackendFindingData(
-                    id = TEST_ID_1,
-                    structureId = STRUCTURE_ID,
-                    name = "Old",
-                    description = null,
-                    type = FindingType.Classic(importance = Importance.MEDIUM, term = Term.T1),
-                    coordinates = emptySet(),
-                    updatedAt = Timestamp(50L),
-                ),
+            dataSource.seedTestFinding(
+                id = TEST_ID_1,
+                structureId = STRUCTURE_ID,
+                name = "Old",
+                type = FindingType.Classic(importance = Importance.MEDIUM, term = Term.T1),
+                updatedAt = Timestamp(50L),
             )
-            dataSource.saveFinding(
-                BackendFindingData(
-                    id = TEST_ID_2,
-                    structureId = STRUCTURE_ID,
-                    name = "Modified",
-                    description = null,
-                    type = FindingType.Classic(importance = Importance.MEDIUM, term = Term.T1),
-                    coordinates = emptySet(),
-                    updatedAt = Timestamp(150L),
-                ),
+            dataSource.seedTestFinding(
+                id = TEST_ID_2,
+                structureId = STRUCTURE_ID,
+                name = "Modified",
+                type = FindingType.Classic(importance = Importance.MEDIUM, term = Term.T1),
+                updatedAt = Timestamp(150L),
             )
             val client = jsonClient()
 
@@ -410,16 +371,12 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
         testApplication {
             configureApp()
             seedParentEntities()
-            dataSource.saveFinding(
-                BackendFindingData(
-                    id = TEST_ID_1,
-                    structureId = STRUCTURE_ID,
-                    name = "Existing",
-                    description = null,
-                    type = FindingType.Classic(importance = Importance.MEDIUM, term = Term.T1),
-                    coordinates = emptySet(),
-                    updatedAt = Timestamp(200L),
-                ),
+            dataSource.seedTestFinding(
+                id = TEST_ID_1,
+                structureId = STRUCTURE_ID,
+                name = "Existing",
+                type = FindingType.Classic(importance = Importance.MEDIUM, term = Term.T1),
+                updatedAt = Timestamp(200L),
             )
             val client = jsonClient()
 
