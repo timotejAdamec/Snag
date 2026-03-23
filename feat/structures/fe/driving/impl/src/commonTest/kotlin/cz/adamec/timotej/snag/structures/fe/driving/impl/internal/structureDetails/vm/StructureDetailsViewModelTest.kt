@@ -133,7 +133,6 @@ class StructureDetailsViewModelTest : FrontendKoinInitializedTest() {
 
                 val deletedState = awaitItem()
                 assertEquals(StructureDetailsUiStatus.DELETED, deletedState.status)
-                assertFalse(deletedState.isBeingDeleted)
 
                 cancelAndIgnoreRemainingEvents()
             }

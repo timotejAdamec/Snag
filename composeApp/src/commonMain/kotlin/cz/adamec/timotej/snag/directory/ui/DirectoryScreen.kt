@@ -47,10 +47,9 @@ import snag.lib.design.fe.generated.resources.Res as DesignRes
 private const val USERS_TAB_INDEX = 0
 private const val CLIENTS_TAB_INDEX = 1
 
+@Suppress("CognitiveComplexMethod")
 @Composable
-internal fun DirectoryScreen(
-    modifier: Modifier = Modifier,
-) {
+internal fun DirectoryScreen(modifier: Modifier = Modifier) {
     val backStack: DirectoryBackStack = koinInject()
     val backStackEntriesState = remember { mutableStateOf(backStack.value) }
     val clientsRouteFactory = koinInject<ClientsRouteFactory>()
@@ -133,7 +132,6 @@ internal fun DirectoryScreen(
 
         val entryProvider = koinEntryProvider<SnagNavRoute>()
         NavDisplay(
-            modifier = modifier,
             backStack = backStackEntriesState.value,
             entryProvider = entryProvider,
             sceneStrategies =

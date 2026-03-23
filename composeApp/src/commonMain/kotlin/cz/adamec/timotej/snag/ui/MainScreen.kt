@@ -42,9 +42,7 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(FlowPreview::class)
 @Composable
-internal fun MainScreen(
-    mainViewModel: MainViewModel = koinViewModel(),
-) {
+internal fun MainScreen(mainViewModel: MainViewModel = koinViewModel()) {
     val syncStatus by mainViewModel.syncStatus.collectAsStateWithLifecycle()
     SnagTheme {
         val outerContainerColor =
@@ -124,8 +122,8 @@ private fun MainScreenContent(
                                 DirectoryNavRoute(
                                     onExit = {
                                         mainBackStack.removeLastSafely()
-                                    }
-                                )
+                                    },
+                                ),
                             )
                         }
                     },

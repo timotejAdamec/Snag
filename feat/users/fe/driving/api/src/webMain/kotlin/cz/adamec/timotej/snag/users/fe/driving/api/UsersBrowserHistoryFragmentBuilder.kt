@@ -20,8 +20,9 @@ internal class UsersBrowserHistoryFragmentBuilder : BrowserHistoryFragmentBuilde
     override fun handles(route: SnagNavRoute): Boolean = route is WebUsersRoute
 
     override fun build(route: SnagNavRoute): String =
-        when (route) {
-            is WebUsersRoute -> buildBrowserHistoryFragment(WebUsersRoute.URL_NAME)
-            else -> error("UsersBrowserHistoryFragmentBuilder cannot handle $route")
+        if (route is WebUsersRoute) {
+            buildBrowserHistoryFragment(WebUsersRoute.URL_NAME)
+        } else {
+            error("UsersBrowserHistoryFragmentBuilder cannot handle $route")
         }
 }

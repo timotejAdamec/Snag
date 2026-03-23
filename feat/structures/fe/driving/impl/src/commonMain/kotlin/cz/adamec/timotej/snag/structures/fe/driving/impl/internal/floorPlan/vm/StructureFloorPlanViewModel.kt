@@ -58,8 +58,7 @@ internal class StructureFloorPlanViewModel(
                     collectFindings(newStructureId)
                 }
                 new
-            }
-            .map { it.toUiState() }
+            }.map { it.toUiState() }
             .stateIn(
                 scope = viewModelScope,
                 started =

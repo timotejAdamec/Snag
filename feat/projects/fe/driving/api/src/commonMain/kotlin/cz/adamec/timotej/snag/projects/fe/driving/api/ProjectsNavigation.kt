@@ -26,9 +26,7 @@ import org.koin.compose.koinInject
 import org.koin.compose.navigation3.koinEntryProvider
 
 @Composable
-fun ProjectsNavigation(
-    modifier: Modifier = Modifier,
-) {
+fun ProjectsNavigation(modifier: Modifier = Modifier) {
     val injectedBackStack: ProjectsBackStack = koinInject()
     val backStack = remember { mutableStateOf(injectedBackStack.value) }
     val entryProvider = koinEntryProvider<SnagNavRoute>()
@@ -36,10 +34,11 @@ fun ProjectsNavigation(
         modifier = modifier,
         backStack = backStack.value,
         entryProvider = entryProvider,
-        sceneStrategies = listOf(
-            DialogSceneStrategy(),
-            ContentPaneSceneStrategy(),
-        ),
+        sceneStrategies =
+            listOf(
+                DialogSceneStrategy(),
+                ContentPaneSceneStrategy(),
+            ),
         entryDecorators =
             listOf(
                 rememberSaveableStateHolderNavEntryDecorator(),

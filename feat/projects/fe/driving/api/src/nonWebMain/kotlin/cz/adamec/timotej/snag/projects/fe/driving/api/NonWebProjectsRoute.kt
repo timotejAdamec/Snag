@@ -13,7 +13,6 @@
 package cz.adamec.timotej.snag.projects.fe.driving.api
 
 import androidx.compose.runtime.Immutable
-import cz.adamec.timotej.snag.lib.navigation.fe.SnagNavRoute
 import kotlinx.serialization.Serializable
 import kotlin.uuid.Uuid
 
