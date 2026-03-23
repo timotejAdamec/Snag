@@ -18,18 +18,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.snapshotFlow
-import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
-import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
-import androidx.navigation3.scene.DialogSceneStrategy
-import androidx.navigation3.ui.NavDisplay
 import cz.adamec.timotej.snag.feat.findings.fe.driving.api.FindingsListRouteFactory
 import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureDetailBackStack
 import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureDetailNavRoute
 import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureFloorPlanRouteFactory
 import cz.adamec.timotej.snag.lib.design.fe.scenes.MapListDetailSceneStrategy
-import cz.adamec.timotej.snag.lib.navigation.fe.SnagNavRoute
+import cz.adamec.timotej.snag.lib.navigation.fe.SnagNavDisplay
 import org.koin.compose.koinInject
-import org.koin.compose.navigation3.koinEntryProvider
 import kotlin.uuid.Uuid
 
 @Composable
@@ -42,7 +37,6 @@ internal fun StructureDetailNestedNav(
     val backStack = remember { mutableStateOf(injectedInnerBackStack.value) }
     val structureFloorPlanRouteFactory = koinInject<StructureFloorPlanRouteFactory>()
     val findingsListRouteFactory = koinInject<FindingsListRouteFactory>()
-    val koinEntryProvider = koinEntryProvider<SnagNavRoute>()
     val currentOnExit = rememberUpdatedState(onExit)
 
     LaunchedEffect(Unit) {
@@ -89,17 +83,11 @@ internal fun StructureDetailNestedNav(
         )
     }
 
-    NavDisplay(
+    SnagNavDisplay(
         backStack = backStack.value,
-        entryProvider = koinEntryProvider,
-        sceneStrategies = listOf(
-            DialogSceneStrategy(),
-            MapListDetailSceneStrategy(),
-        ),
-        entryDecorators =
+        additionalSceneStrategies =
             listOf(
-                rememberSaveableStateHolderNavEntryDecorator(),
-                rememberViewModelStoreNavEntryDecorator(),
+                MapListDetailSceneStrategy(),
             ),
     )
 }
