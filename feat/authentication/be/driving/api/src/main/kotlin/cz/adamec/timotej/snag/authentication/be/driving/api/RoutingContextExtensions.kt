@@ -17,5 +17,4 @@ import io.ktor.util.AttributeKey
 
 val CallCurrentUserKey = AttributeKey<CallCurrentUser>("CallCurrentUser")
 
-fun RoutingContext.currentUser(): CallCurrentUser =
-    call.attributes.getOrNull(CallCurrentUserKey) ?: throw UnauthenticatedException()
+fun RoutingContext.currentUser(): CallCurrentUser = call.attributes.getOrNull(CallCurrentUserKey) ?: throw UnauthenticatedException()

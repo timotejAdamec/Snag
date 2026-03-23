@@ -21,9 +21,7 @@ import cz.adamec.timotej.snag.lib.navigation.fe.SnagNavDisplay
 import org.koin.compose.koinInject
 
 @Composable
-fun ProjectsNavigation(
-    modifier: Modifier = Modifier,
-) {
+fun ProjectsNavigation(modifier: Modifier = Modifier) {
     val injectedBackStack: ProjectsBackStack = koinInject()
     val backStack = remember { mutableStateOf(injectedBackStack.value) }
     SnagNavDisplay(

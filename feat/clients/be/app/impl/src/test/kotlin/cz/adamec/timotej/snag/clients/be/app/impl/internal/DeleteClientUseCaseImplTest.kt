@@ -20,6 +20,9 @@ import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.projects.be.model.BackendProjectData
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
+import cz.adamec.timotej.snag.users.be.driven.test.TEST_USER_ID
+import cz.adamec.timotej.snag.users.be.driven.test.seedTestUser
+import cz.adamec.timotej.snag.users.be.ports.UsersDb
 import kotlinx.coroutines.test.runTest
 import org.koin.test.inject
 import kotlin.test.Test
@@ -31,6 +34,7 @@ import kotlin.uuid.Uuid
 class DeleteClientUseCaseImplTest : BackendKoinInitializedTest() {
     private val dataSource: ClientsDb by inject()
     private val projectsDb: ProjectsDb by inject()
+    private val usersDb: UsersDb by inject()
     private val useCase: DeleteClientUseCase by inject()
 
     private val clientId = Uuid.parse("00000000-0000-0000-0000-000000000001")
@@ -106,6 +110,7 @@ class DeleteClientUseCaseImplTest : BackendKoinInitializedTest() {
     @Test
     fun `rejects deletion when client is referenced by project`() =
         runTest(testDispatcher) {
+            usersDb.seedTestUser()
             dataSource.saveClient(client)
             projectsDb.saveProject(
                 BackendProjectData(
@@ -113,6 +118,7 @@ class DeleteClientUseCaseImplTest : BackendKoinInitializedTest() {
                     name = "Test Project",
                     address = "Test Address",
                     clientId = clientId,
+                    creatorId = TEST_USER_ID,
                     updatedAt = Timestamp(5L),
                 ),
             )

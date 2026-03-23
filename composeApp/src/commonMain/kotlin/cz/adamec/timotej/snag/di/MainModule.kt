@@ -12,8 +12,8 @@
 
 package cz.adamec.timotej.snag.di
 
-import cz.adamec.timotej.snag.directory.di.directoryModule
 import androidx.compose.runtime.mutableStateListOf
+import cz.adamec.timotej.snag.directory.di.directoryModule
 import cz.adamec.timotej.snag.lib.navigation.fe.SnagBackStack
 import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectsNavRoute
 import cz.adamec.timotej.snag.ui.MainBackStack
@@ -26,13 +26,14 @@ internal val mainModule =
     module {
         single {
             MainBackStack(
-                value = mutableStateListOf(
-                    ProjectsNavRoute(
-                        onExit = {
-                            get<MainBackStack>().removeLastSafely()
-                        },
+                value =
+                    mutableStateListOf(
+                        ProjectsNavRoute(
+                            onExit = {
+                                get<MainBackStack>().removeLastSafely()
+                            },
+                        ),
                     ),
-                ),
             )
         } bind SnagBackStack::class
         includes(directoryModule)

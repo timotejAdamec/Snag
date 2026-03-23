@@ -328,6 +328,7 @@ class ClientDetailsEditViewModelTest : FrontendKoinInitializedTest() {
                     name = "Test Project",
                     address = "Test Address",
                     clientId = clientId,
+                    creatorId = Uuid.random(),
                     updatedAt = Timestamp(100L),
                 ),
             )

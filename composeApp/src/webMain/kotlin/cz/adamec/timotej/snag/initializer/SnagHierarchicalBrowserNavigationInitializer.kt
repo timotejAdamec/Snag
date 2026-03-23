@@ -28,9 +28,10 @@ internal class SnagHierarchicalBrowserNavigationInitializer : ComposeInitializer
     @Composable
     override fun init() {
         val allBackStacks = getKoin().getAll<SnagBackStack>()
-        val lastRoute = remember {
-            mutableStateOf(allBackStacks.first().value.last())
-        }
+        val lastRoute =
+            remember {
+                mutableStateOf(allBackStacks.first().value.last())
+            }
         allBackStacks.forEach { backStack ->
             LaunchedEffect(backStack) {
                 snapshotFlow { backStack.value.lastOrNull() }

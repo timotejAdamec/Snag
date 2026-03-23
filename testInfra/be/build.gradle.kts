@@ -17,6 +17,11 @@ plugins {
 dependencies {
     api(projects.testInfra.common)
     api(projects.feat.users.be.driven.test)
+    api(projects.feat.projects.be.driven.test)
+    api(projects.feat.structures.be.driven.test)
+    api(projects.feat.findings.be.driven.test)
+    api(projects.feat.inspections.be.driven.test)
+    api(projects.feat.clients.be.driven.test)
     implementation(projects.koinModulesAggregate.be)
     implementation(projects.feat.shared.database.be.test)
     implementation(projects.lib.storage.be.test)

@@ -16,6 +16,7 @@ import cz.adamec.timotej.snag.authorization.business.UserRole
 import cz.adamec.timotej.snag.configuration.be.AppConfiguration
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.network.be.test.jsonClient
+import cz.adamec.timotej.snag.projects.be.driven.test.seedTestProject
 import cz.adamec.timotej.snag.projects.be.driving.contract.DeleteProjectApiDto
 import cz.adamec.timotej.snag.projects.be.driving.contract.ProjectApiDto
 import cz.adamec.timotej.snag.projects.be.driving.contract.PutProjectApiDto
@@ -83,23 +84,19 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
         testApplication {
             configureApp()
             seedAdminUser()
-            dataSource.saveProject(
-                BackendProjectData(
-                    id = TEST_ID_1,
-                    name = "Project 1",
-                    address = "Address 1",
-                    creatorId = ADMIN_USER_ID,
-                    updatedAt = Timestamp(100L),
-                ),
+            dataSource.seedTestProject(
+                id = TEST_ID_1,
+                name = "Project 1",
+                address = "Address 1",
+                creatorId = ADMIN_USER_ID,
+                updatedAt = Timestamp(100L),
             )
-            dataSource.saveProject(
-                BackendProjectData(
-                    id = TEST_ID_2,
-                    name = "Project 2",
-                    address = "Address 2",
-                    creatorId = ADMIN_USER_ID,
-                    updatedAt = Timestamp(200L),
-                ),
+            dataSource.seedTestProject(
+                id = TEST_ID_2,
+                name = "Project 2",
+                address = "Address 2",
+                creatorId = ADMIN_USER_ID,
+                updatedAt = Timestamp(200L),
             )
             val client = jsonClient()
 
@@ -176,14 +173,12 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
         testApplication {
             configureApp()
             seedAdminUser()
-            dataSource.saveProject(
-                BackendProjectData(
-                    id = TEST_ID_1,
-                    name = "Active",
-                    address = "Addr",
-                    creatorId = ADMIN_USER_ID,
-                    updatedAt = Timestamp(100L),
-                ),
+            dataSource.seedTestProject(
+                id = TEST_ID_1,
+                name = "Active",
+                address = "Addr",
+                creatorId = ADMIN_USER_ID,
+                updatedAt = Timestamp(100L),
             )
             dataSource.saveProject(
                 BackendProjectData(
@@ -216,23 +211,19 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
         testApplication {
             configureApp()
             seedAdminUser()
-            dataSource.saveProject(
-                BackendProjectData(
-                    id = TEST_ID_1,
-                    name = "Old",
-                    address = "Addr",
-                    creatorId = ADMIN_USER_ID,
-                    updatedAt = Timestamp(50L),
-                ),
+            dataSource.seedTestProject(
+                id = TEST_ID_1,
+                name = "Old",
+                address = "Addr",
+                creatorId = ADMIN_USER_ID,
+                updatedAt = Timestamp(50L),
             )
-            dataSource.saveProject(
-                BackendProjectData(
-                    id = TEST_ID_2,
-                    name = "Modified",
-                    address = "Addr",
-                    creatorId = ADMIN_USER_ID,
-                    updatedAt = Timestamp(150L),
-                ),
+            dataSource.seedTestProject(
+                id = TEST_ID_2,
+                name = "Modified",
+                address = "Addr",
+                creatorId = ADMIN_USER_ID,
+                updatedAt = Timestamp(150L),
             )
             val client = jsonClient()
 
@@ -280,14 +271,12 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
         testApplication {
             configureApp()
             seedAdminUser()
-            dataSource.saveProject(
-                BackendProjectData(
-                    id = TEST_ID_1,
-                    name = "Found Project",
-                    address = "Found Address",
-                    creatorId = ADMIN_USER_ID,
-                    updatedAt = Timestamp(100L),
-                ),
+            dataSource.seedTestProject(
+                id = TEST_ID_1,
+                name = "Found Project",
+                address = "Found Address",
+                creatorId = ADMIN_USER_ID,
+                updatedAt = Timestamp(100L),
             )
             val client = jsonClient()
 
@@ -423,14 +412,12 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
         testApplication {
             configureApp()
             seedAdminUser()
-            dataSource.saveProject(
-                BackendProjectData(
-                    id = TEST_ID_1,
-                    name = "Existing",
-                    address = "Addr",
-                    creatorId = ADMIN_USER_ID,
-                    updatedAt = Timestamp(200L),
-                ),
+            dataSource.seedTestProject(
+                id = TEST_ID_1,
+                name = "Existing",
+                address = "Addr",
+                creatorId = ADMIN_USER_ID,
+                updatedAt = Timestamp(200L),
             )
             val client = jsonClient()
 
@@ -604,14 +591,12 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
                     updatedAt = Timestamp(1L),
                 ),
             )
-            dataSource.saveProject(
-                BackendProjectData(
-                    id = TEST_ID_1,
-                    name = "Open Project",
-                    address = "Addr",
-                    creatorId = ADMIN_USER_ID,
-                    updatedAt = Timestamp(100L),
-                ),
+            dataSource.seedTestProject(
+                id = TEST_ID_1,
+                name = "Open Project",
+                address = "Addr",
+                creatorId = ADMIN_USER_ID,
+                updatedAt = Timestamp(100L),
             )
             val client = jsonClient()
 
@@ -681,14 +666,12 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
         testApplication {
             configureApp()
             seedAdminUser()
-            dataSource.saveProject(
-                BackendProjectData(
-                    id = TEST_ID_1,
-                    name = "To Delete",
-                    address = "Addr",
-                    creatorId = ADMIN_USER_ID,
-                    updatedAt = Timestamp(100L),
-                ),
+            dataSource.seedTestProject(
+                id = TEST_ID_1,
+                name = "To Delete",
+                address = "Addr",
+                creatorId = ADMIN_USER_ID,
+                updatedAt = Timestamp(100L),
             )
             val client = jsonClient()
 
@@ -707,14 +690,12 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
         testApplication {
             configureApp()
             seedAdminUser()
-            dataSource.saveProject(
-                BackendProjectData(
-                    id = TEST_ID_1,
-                    name = "To Delete",
-                    address = "Addr",
-                    creatorId = ADMIN_USER_ID,
-                    updatedAt = Timestamp(100L),
-                ),
+            dataSource.seedTestProject(
+                id = TEST_ID_1,
+                name = "To Delete",
+                address = "Addr",
+                creatorId = ADMIN_USER_ID,
+                updatedAt = Timestamp(100L),
             )
             val client = jsonClient()
 
@@ -739,14 +720,12 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
         testApplication {
             configureApp()
             seedAdminUser()
-            dataSource.saveProject(
-                BackendProjectData(
-                    id = TEST_ID_1,
-                    name = "Existing",
-                    address = "Addr",
-                    creatorId = ADMIN_USER_ID,
-                    updatedAt = Timestamp(300L),
-                ),
+            dataSource.seedTestProject(
+                id = TEST_ID_1,
+                name = "Existing",
+                address = "Addr",
+                creatorId = ADMIN_USER_ID,
+                updatedAt = Timestamp(300L),
             )
             val client = jsonClient()
 

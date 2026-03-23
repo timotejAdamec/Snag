@@ -16,14 +16,14 @@ import cz.adamec.timotej.snag.configuration.be.AppConfiguration
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.feat.structures.be.model.BackendStructureData
 import cz.adamec.timotej.snag.network.be.test.jsonClient
-import cz.adamec.timotej.snag.projects.be.model.BackendProjectData
+import cz.adamec.timotej.snag.projects.be.driven.test.seedTestProject
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
+import cz.adamec.timotej.snag.structures.be.driven.test.seedTestStructure
 import cz.adamec.timotej.snag.structures.be.driving.contract.DeleteStructureApiDto
 import cz.adamec.timotej.snag.structures.be.driving.contract.PutStructureApiDto
 import cz.adamec.timotej.snag.structures.be.driving.contract.StructureApiDto
 import cz.adamec.timotej.snag.structures.be.ports.StructuresDb
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
-import cz.adamec.timotej.snag.users.be.driven.test.TEST_USER_ID
 import cz.adamec.timotej.snag.users.be.driven.test.seedTestUser
 import cz.adamec.timotej.snag.users.be.ports.UsersDb
 import io.ktor.client.call.body
@@ -50,15 +50,7 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
 
     private suspend fun createParentProject() {
         usersDb.seedTestUser()
-        projectsDb.saveProject(
-            BackendProjectData(
-                id = PROJECT_ID,
-                name = "Test Project",
-                address = "Test Address",
-                creatorId = TEST_USER_ID,
-                updatedAt = Timestamp(1L),
-            ),
-        )
+        projectsDb.seedTestProject(id = PROJECT_ID)
     }
 
     private fun ApplicationTestBuilder.configureApp() {
@@ -77,14 +69,11 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
         testApplication {
             configureApp()
             createParentProject()
-            dataSource.saveStructure(
-                BackendStructureData(
-                    id = TEST_ID_1,
-                    projectId = PROJECT_ID,
-                    name = "To Delete",
-                    floorPlanUrl = null,
-                    updatedAt = Timestamp(100L),
-                ),
+            dataSource.seedTestStructure(
+                id = TEST_ID_1,
+                projectId = PROJECT_ID,
+                name = "To Delete",
+                updatedAt = Timestamp(100L),
             )
             val client = jsonClient()
 
@@ -102,14 +91,11 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
         testApplication {
             configureApp()
             createParentProject()
-            dataSource.saveStructure(
-                BackendStructureData(
-                    id = TEST_ID_1,
-                    projectId = PROJECT_ID,
-                    name = "To Delete",
-                    floorPlanUrl = null,
-                    updatedAt = Timestamp(100L),
-                ),
+            dataSource.seedTestStructure(
+                id = TEST_ID_1,
+                projectId = PROJECT_ID,
+                name = "To Delete",
+                updatedAt = Timestamp(100L),
             )
             val client = jsonClient()
 
@@ -131,14 +117,11 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
         testApplication {
             configureApp()
             createParentProject()
-            dataSource.saveStructure(
-                BackendStructureData(
-                    id = TEST_ID_1,
-                    projectId = PROJECT_ID,
-                    name = "Existing",
-                    floorPlanUrl = null,
-                    updatedAt = Timestamp(300L),
-                ),
+            dataSource.seedTestStructure(
+                id = TEST_ID_1,
+                projectId = PROJECT_ID,
+                name = "Existing",
+                updatedAt = Timestamp(300L),
             )
             val client = jsonClient()
 
@@ -204,23 +187,18 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
         testApplication {
             configureApp()
             createParentProject()
-            dataSource.saveStructure(
-                BackendStructureData(
-                    id = TEST_ID_1,
-                    projectId = PROJECT_ID,
-                    name = "Structure 1",
-                    floorPlanUrl = "http://example.com/plan.png",
-                    updatedAt = Timestamp(100L),
-                ),
+            dataSource.seedTestStructure(
+                id = TEST_ID_1,
+                projectId = PROJECT_ID,
+                name = "Structure 1",
+                floorPlanUrl = "http://example.com/plan.png",
+                updatedAt = Timestamp(100L),
             )
-            dataSource.saveStructure(
-                BackendStructureData(
-                    id = TEST_ID_2,
-                    projectId = PROJECT_ID,
-                    name = "Structure 2",
-                    floorPlanUrl = null,
-                    updatedAt = Timestamp(200L),
-                ),
+            dataSource.seedTestStructure(
+                id = TEST_ID_2,
+                projectId = PROJECT_ID,
+                name = "Structure 2",
+                updatedAt = Timestamp(200L),
             )
             val client = jsonClient()
 
@@ -238,14 +216,11 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
         testApplication {
             configureApp()
             createParentProject()
-            dataSource.saveStructure(
-                BackendStructureData(
-                    id = TEST_ID_1,
-                    projectId = PROJECT_ID,
-                    name = "Active",
-                    floorPlanUrl = null,
-                    updatedAt = Timestamp(100L),
-                ),
+            dataSource.seedTestStructure(
+                id = TEST_ID_1,
+                projectId = PROJECT_ID,
+                name = "Active",
+                updatedAt = Timestamp(100L),
             )
             dataSource.saveStructure(
                 BackendStructureData(
@@ -300,23 +275,17 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
         testApplication {
             configureApp()
             createParentProject()
-            dataSource.saveStructure(
-                BackendStructureData(
-                    id = TEST_ID_1,
-                    projectId = PROJECT_ID,
-                    name = "Old",
-                    floorPlanUrl = null,
-                    updatedAt = Timestamp(50L),
-                ),
+            dataSource.seedTestStructure(
+                id = TEST_ID_1,
+                projectId = PROJECT_ID,
+                name = "Old",
+                updatedAt = Timestamp(50L),
             )
-            dataSource.saveStructure(
-                BackendStructureData(
-                    id = TEST_ID_2,
-                    projectId = PROJECT_ID,
-                    name = "Modified",
-                    floorPlanUrl = null,
-                    updatedAt = Timestamp(150L),
-                ),
+            dataSource.seedTestStructure(
+                id = TEST_ID_2,
+                projectId = PROJECT_ID,
+                name = "Modified",
+                updatedAt = Timestamp(150L),
             )
             val client = jsonClient()
 
@@ -371,14 +340,11 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
         testApplication {
             configureApp()
             createParentProject()
-            dataSource.saveStructure(
-                BackendStructureData(
-                    id = TEST_ID_1,
-                    projectId = PROJECT_ID,
-                    name = "Existing",
-                    floorPlanUrl = null,
-                    updatedAt = Timestamp(200L),
-                ),
+            dataSource.seedTestStructure(
+                id = TEST_ID_1,
+                projectId = PROJECT_ID,
+                name = "Existing",
+                updatedAt = Timestamp(200L),
             )
             val client = jsonClient()
 

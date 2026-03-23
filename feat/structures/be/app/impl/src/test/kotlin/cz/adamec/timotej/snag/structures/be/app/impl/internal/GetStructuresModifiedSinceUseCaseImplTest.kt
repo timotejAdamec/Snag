@@ -14,13 +14,13 @@ package cz.adamec.timotej.snag.structures.be.app.impl.internal
 
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.feat.structures.be.model.BackendStructureData
-import cz.adamec.timotej.snag.projects.be.model.BackendProjectData
+import cz.adamec.timotej.snag.projects.be.driven.test.TEST_PROJECT_ID
+import cz.adamec.timotej.snag.projects.be.driven.test.seedTestProject
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
 import cz.adamec.timotej.snag.structures.be.app.api.GetStructuresModifiedSinceUseCase
 import cz.adamec.timotej.snag.structures.be.app.api.model.GetStructuresModifiedSinceRequest
 import cz.adamec.timotej.snag.structures.be.ports.StructuresDb
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
-import cz.adamec.timotej.snag.users.be.driven.test.TEST_USER_ID
 import cz.adamec.timotej.snag.users.be.driven.test.seedTestUser
 import cz.adamec.timotej.snag.users.be.ports.UsersDb
 import kotlinx.coroutines.test.runTest
@@ -36,13 +36,12 @@ class GetStructuresModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
     private val usersDb: UsersDb by inject()
     private val useCase: GetStructuresModifiedSinceUseCase by inject()
 
-    private val projectId = Uuid.parse("00000000-0000-0000-0000-000000000001")
     private val otherProjectId = Uuid.parse("00000000-0000-0000-0000-000000000002")
 
     @Test
     fun `returns empty list when no structures exist`() =
         runTest(testDispatcher) {
-            val result = useCase(GetStructuresModifiedSinceRequest(projectId = projectId, since = Timestamp(100L)))
+            val result = useCase(GetStructuresModifiedSinceRequest(projectId = TEST_PROJECT_ID, since = Timestamp(100L)))
 
             assertTrue(result.isEmpty())
         }
@@ -51,26 +50,18 @@ class GetStructuresModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
     fun `returns structures with updatedAt after since`() =
         runTest(testDispatcher) {
             usersDb.seedTestUser()
-            projectsDb.saveProject(
-                BackendProjectData(
-                    id = projectId,
-                    name = "Test Project",
-                    address = "Test Address",
-                    creatorId = TEST_USER_ID,
-                    updatedAt = Timestamp(1L),
-                ),
-            )
+            projectsDb.seedTestProject()
             val structure =
                 BackendStructureData(
                     id = Uuid.parse("00000000-0000-0000-0001-000000000001"),
-                    projectId = projectId,
+                    projectId = TEST_PROJECT_ID,
                     name = "Ground Floor",
                     floorPlanUrl = null,
                     updatedAt = Timestamp(200L),
                 )
             dataSource.saveStructure(structure)
 
-            val result = useCase(GetStructuresModifiedSinceRequest(projectId = projectId, since = Timestamp(100L)))
+            val result = useCase(GetStructuresModifiedSinceRequest(projectId = TEST_PROJECT_ID, since = Timestamp(100L)))
 
             assertEquals(listOf(structure), result)
         }
@@ -79,14 +70,10 @@ class GetStructuresModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
     fun `excludes structures from different project`() =
         runTest(testDispatcher) {
             usersDb.seedTestUser()
-            projectsDb.saveProject(
-                BackendProjectData(
-                    id = otherProjectId,
-                    name = "Other Project",
-                    address = "Other Address",
-                    creatorId = TEST_USER_ID,
-                    updatedAt = Timestamp(1L),
-                ),
+            projectsDb.seedTestProject(
+                id = otherProjectId,
+                name = "Other Project",
+                address = "Other Address",
             )
             val structure =
                 BackendStructureData(
@@ -98,7 +85,7 @@ class GetStructuresModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
                 )
             dataSource.saveStructure(structure)
 
-            val result = useCase(GetStructuresModifiedSinceRequest(projectId = projectId, since = Timestamp(100L)))
+            val result = useCase(GetStructuresModifiedSinceRequest(projectId = TEST_PROJECT_ID, since = Timestamp(100L)))
 
             assertTrue(result.isEmpty())
         }
@@ -107,19 +94,11 @@ class GetStructuresModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
     fun `returns deleted structures when deletedAt is after since`() =
         runTest(testDispatcher) {
             usersDb.seedTestUser()
-            projectsDb.saveProject(
-                BackendProjectData(
-                    id = projectId,
-                    name = "Test Project",
-                    address = "Test Address",
-                    creatorId = TEST_USER_ID,
-                    updatedAt = Timestamp(1L),
-                ),
-            )
+            projectsDb.seedTestProject()
             val structure =
                 BackendStructureData(
                     id = Uuid.parse("00000000-0000-0000-0001-000000000001"),
-                    projectId = projectId,
+                    projectId = TEST_PROJECT_ID,
                     name = "Ground Floor",
                     floorPlanUrl = null,
                     updatedAt = Timestamp(50L),
@@ -127,7 +106,7 @@ class GetStructuresModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
                 )
             dataSource.saveStructure(structure)
 
-            val result = useCase(GetStructuresModifiedSinceRequest(projectId = projectId, since = Timestamp(100L)))
+            val result = useCase(GetStructuresModifiedSinceRequest(projectId = TEST_PROJECT_ID, since = Timestamp(100L)))
 
             assertEquals(listOf(structure), result)
         }
@@ -136,26 +115,18 @@ class GetStructuresModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
     fun `excludes unchanged structures`() =
         runTest(testDispatcher) {
             usersDb.seedTestUser()
-            projectsDb.saveProject(
-                BackendProjectData(
-                    id = projectId,
-                    name = "Test Project",
-                    address = "Test Address",
-                    creatorId = TEST_USER_ID,
-                    updatedAt = Timestamp(1L),
-                ),
-            )
+            projectsDb.seedTestProject()
             val structure =
                 BackendStructureData(
                     id = Uuid.parse("00000000-0000-0000-0001-000000000001"),
-                    projectId = projectId,
+                    projectId = TEST_PROJECT_ID,
                     name = "Ground Floor",
                     floorPlanUrl = null,
                     updatedAt = Timestamp(50L),
                 )
             dataSource.saveStructure(structure)
 
-            val result = useCase(GetStructuresModifiedSinceRequest(projectId = projectId, since = Timestamp(100L)))
+            val result = useCase(GetStructuresModifiedSinceRequest(projectId = TEST_PROJECT_ID, since = Timestamp(100L)))
 
             assertTrue(result.isEmpty())
         }

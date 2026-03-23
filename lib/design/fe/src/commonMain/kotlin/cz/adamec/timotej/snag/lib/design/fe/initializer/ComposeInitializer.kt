@@ -18,7 +18,7 @@ import androidx.compose.runtime.Composable
  * Things that need to be initialized before the app starts with Compose context.
  */
 interface ComposeInitializer {
-
+    @Suppress("ComposableNaming")
     @Composable
     fun init()
 }

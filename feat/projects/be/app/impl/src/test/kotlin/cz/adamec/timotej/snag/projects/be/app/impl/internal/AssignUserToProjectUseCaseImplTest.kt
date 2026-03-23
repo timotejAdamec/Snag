@@ -15,11 +15,11 @@ package cz.adamec.timotej.snag.projects.be.app.impl.internal
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.projects.be.app.api.AssignUserToProjectUseCase
 import cz.adamec.timotej.snag.projects.be.app.api.model.AssignUserToProjectRequest
-import cz.adamec.timotej.snag.projects.be.model.BackendProjectData
+import cz.adamec.timotej.snag.projects.be.driven.test.TEST_PROJECT_ID
+import cz.adamec.timotej.snag.projects.be.driven.test.seedTestProject
 import cz.adamec.timotej.snag.projects.be.ports.ProjectAssignmentsDb
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
-import cz.adamec.timotej.snag.users.be.driven.test.TEST_USER_ID
 import cz.adamec.timotej.snag.users.be.driven.test.seedTestUser
 import cz.adamec.timotej.snag.users.be.model.BackendUserData
 import cz.adamec.timotej.snag.users.be.ports.UsersDb
@@ -36,25 +36,12 @@ class AssignUserToProjectUseCaseImplTest : BackendKoinInitializedTest() {
     private val useCase: AssignUserToProjectUseCase by inject()
 
     private val userId = Uuid.parse("00000000-0000-0000-0000-000000000010")
-    private val projectId = Uuid.parse("00000000-0000-0000-0000-000000000001")
-
-    private suspend fun createProject() {
-        usersDb.seedTestUser()
-        projectsDb.saveProject(
-            BackendProjectData(
-                id = projectId,
-                name = "Test Project",
-                address = "Test Address",
-                creatorId = TEST_USER_ID,
-                updatedAt = Timestamp(10L),
-            ),
-        )
-    }
 
     @Test
     fun `assigns user to project`() =
         runTest(testDispatcher) {
-            createProject()
+            usersDb.seedTestUser()
+            projectsDb.seedTestProject()
             val user =
                 BackendUserData(
                     id = userId,
@@ -64,9 +51,9 @@ class AssignUserToProjectUseCaseImplTest : BackendKoinInitializedTest() {
                 )
             usersDb.saveUser(user)
 
-            useCase(AssignUserToProjectRequest(userId = userId, projectId = projectId))
+            useCase(AssignUserToProjectRequest(userId = userId, projectId = TEST_PROJECT_ID))
 
-            val assigned = assignmentsDb.getAssignedUsers(projectId)
+            val assigned = assignmentsDb.getAssignedUsers(TEST_PROJECT_ID)
             assertEquals(1, assigned.size)
             assertEquals(userId, assigned[0].id)
         }
@@ -74,7 +61,8 @@ class AssignUserToProjectUseCaseImplTest : BackendKoinInitializedTest() {
     @Test
     fun `idempotent re-assignment does not duplicate`() =
         runTest(testDispatcher) {
-            createProject()
+            usersDb.seedTestUser()
+            projectsDb.seedTestProject()
             val user =
                 BackendUserData(
                     id = userId,
@@ -84,10 +72,10 @@ class AssignUserToProjectUseCaseImplTest : BackendKoinInitializedTest() {
                 )
             usersDb.saveUser(user)
 
-            useCase(AssignUserToProjectRequest(userId = userId, projectId = projectId))
-            useCase(AssignUserToProjectRequest(userId = userId, projectId = projectId))
+            useCase(AssignUserToProjectRequest(userId = userId, projectId = TEST_PROJECT_ID))
+            useCase(AssignUserToProjectRequest(userId = userId, projectId = TEST_PROJECT_ID))
 
-            val assigned = assignmentsDb.getAssignedUsers(projectId)
+            val assigned = assignmentsDb.getAssignedUsers(TEST_PROJECT_ID)
             assertEquals(1, assigned.size)
         }
 }

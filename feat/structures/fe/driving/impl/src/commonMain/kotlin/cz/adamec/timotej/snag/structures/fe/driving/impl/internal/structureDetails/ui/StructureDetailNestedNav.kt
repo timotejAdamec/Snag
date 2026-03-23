@@ -51,20 +51,21 @@ internal fun StructureDetailNestedNav(
             backStack.value
                 .filterIsInstance<StructureDetailNavRoute>()
                 .any { it.structureId == structureId }
-        if (isAlreadyInitialized) return@LaunchedEffect
-        backStack.value.clear()
-        backStack.value.addAll(
-            listOf(
-                structureFloorPlanRouteFactory.create(
-                    projectId = projectId,
-                    structureId = structureId,
+        if (!isAlreadyInitialized) {
+            backStack.value.clear()
+            backStack.value.addAll(
+                listOf(
+                    structureFloorPlanRouteFactory.create(
+                        projectId = projectId,
+                        structureId = structureId,
+                    ),
+                    findingsListRouteFactory.create(
+                        projectId = projectId,
+                        structureId = structureId,
+                    ),
                 ),
-                findingsListRouteFactory.create(
-                    projectId = projectId,
-                    structureId = structureId,
-                ),
-            ),
-        )
+            )
+        }
     }
 
     if (backStack.value.size <= 1) {

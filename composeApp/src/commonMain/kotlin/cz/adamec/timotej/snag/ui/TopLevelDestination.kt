@@ -19,9 +19,9 @@ import snag.composeapp.generated.resources.directory_tab_title
 import snag.composeapp.generated.resources.projects_tab_title
 import snag.lib.design.fe.generated.resources.ic_contacts
 import snag.lib.design.fe.generated.resources.ic_contacts_filled
-import snag.lib.design.fe.generated.resources.Res as DesignRes
 import snag.lib.design.fe.generated.resources.ic_home
 import snag.lib.design.fe.generated.resources.ic_home_filled
+import snag.lib.design.fe.generated.resources.Res as DesignRes
 
 internal sealed interface TopLevelDestination {
     val tabIcon: DrawableResource
@@ -34,7 +34,7 @@ internal sealed interface TopLevelDestination {
         override val tabLabel: StringResource get() = Res.string.projects_tab_title
     }
 
-    object Directory: TopLevelDestination {
+    object Directory : TopLevelDestination {
         override val tabIcon: DrawableResource get() = DesignRes.drawable.ic_contacts
         override val tabIconSelected: DrawableResource get() = DesignRes.drawable.ic_contacts_filled
         override val tabLabel: StringResource get() = Res.string.directory_tab_title

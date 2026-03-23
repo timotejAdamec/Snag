@@ -14,15 +14,14 @@ package cz.adamec.timotej.snag.feat.inspections.be.driving.impl.internal
 
 import cz.adamec.timotej.snag.configuration.be.AppConfiguration
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
+import cz.adamec.timotej.snag.feat.inspections.be.driven.test.seedTestInspection
 import cz.adamec.timotej.snag.feat.inspections.be.driving.contract.DeleteInspectionApiDto
 import cz.adamec.timotej.snag.feat.inspections.be.driving.contract.InspectionApiDto
-import cz.adamec.timotej.snag.feat.inspections.be.model.BackendInspectionData
 import cz.adamec.timotej.snag.feat.inspections.be.ports.InspectionsDb
 import cz.adamec.timotej.snag.network.be.test.jsonClient
-import cz.adamec.timotej.snag.projects.be.model.BackendProjectData
+import cz.adamec.timotej.snag.projects.be.driven.test.seedTestProject
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
-import cz.adamec.timotej.snag.users.be.driven.test.TEST_USER_ID
 import cz.adamec.timotej.snag.users.be.driven.test.seedTestUser
 import cz.adamec.timotej.snag.users.be.ports.UsersDb
 import io.ktor.client.call.body
@@ -45,15 +44,7 @@ class InspectionsRouteTest : BackendKoinInitializedTest() {
 
     private suspend fun seedProject() {
         usersDb.seedTestUser()
-        projectsDb.saveProject(
-            BackendProjectData(
-                id = PROJECT_ID,
-                name = "Test Project",
-                address = "Test Address",
-                creatorId = TEST_USER_ID,
-                updatedAt = Timestamp(1L),
-            ),
-        )
+        projectsDb.seedTestProject(id = PROJECT_ID)
     }
 
     private fun ApplicationTestBuilder.configureApp() {
@@ -72,17 +63,12 @@ class InspectionsRouteTest : BackendKoinInitializedTest() {
         testApplication {
             configureApp()
             seedProject()
-            inspectionsDb.saveInspection(
-                BackendInspectionData(
-                    id = TEST_ID_1,
-                    projectId = PROJECT_ID,
-                    startedAt = Timestamp(50L),
-                    endedAt = null,
-                    participants = "John Doe",
-                    climate = null,
-                    note = null,
-                    updatedAt = Timestamp(100L),
-                ),
+            inspectionsDb.seedTestInspection(
+                id = TEST_ID_1,
+                projectId = PROJECT_ID,
+                startedAt = Timestamp(50L),
+                participants = "John Doe",
+                updatedAt = Timestamp(100L),
             )
             val client = jsonClient()
 
@@ -100,17 +86,11 @@ class InspectionsRouteTest : BackendKoinInitializedTest() {
         testApplication {
             configureApp()
             seedProject()
-            inspectionsDb.saveInspection(
-                BackendInspectionData(
-                    id = TEST_ID_1,
-                    projectId = PROJECT_ID,
-                    startedAt = null,
-                    endedAt = null,
-                    participants = "Existing",
-                    climate = null,
-                    note = null,
-                    updatedAt = Timestamp(300L),
-                ),
+            inspectionsDb.seedTestInspection(
+                id = TEST_ID_1,
+                projectId = PROJECT_ID,
+                participants = "Existing",
+                updatedAt = Timestamp(300L),
             )
             val client = jsonClient()
 
