@@ -13,9 +13,9 @@
 package cz.adamec.timotej.snag.lib.storage.fe.test
 
 import cz.adamec.timotej.snag.core.network.fe.OnlineDataResult
-import cz.adamec.timotej.snag.lib.storage.fe.api.FileApi
+import cz.adamec.timotej.snag.core.storage.fe.RemoteFileStorage
 
-class FakeFileApi : FileApi {
+class FakeFileApi : RemoteFileStorage {
     private var uploadCounter = 0
     val uploadedFiles = mutableListOf<Triple<ByteArray, String, String>>()
     val deletedUrls = mutableListOf<String>()

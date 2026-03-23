@@ -13,7 +13,6 @@
 package cz.adamec.timotej.snag.lib.storage.fe.impl.di
 
 import cz.adamec.timotej.snag.core.storage.fe.RemoteFileStorage
-import cz.adamec.timotej.snag.lib.storage.fe.api.FileApi
 import cz.adamec.timotej.snag.lib.storage.fe.impl.internal.RealFileApi
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.factoryOf
@@ -23,8 +22,7 @@ import org.koin.dsl.module
 val fileStorageModule =
     module {
         includes(fileStoragePlatformModule)
-        factoryOf(::RealFileApi) bind FileApi::class
-        factory<RemoteFileStorage> { get<FileApi>() as RemoteFileStorage }
+        factoryOf(::RealFileApi) bind RemoteFileStorage::class
     }
 
 internal expect val fileStoragePlatformModule: Module

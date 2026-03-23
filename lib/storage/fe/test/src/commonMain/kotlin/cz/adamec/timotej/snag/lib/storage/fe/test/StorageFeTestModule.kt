@@ -12,12 +12,12 @@
 
 package cz.adamec.timotej.snag.lib.storage.fe.test
 
-import cz.adamec.timotej.snag.lib.storage.fe.api.FileApi
+import cz.adamec.timotej.snag.core.storage.fe.RemoteFileStorage
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
 val storageFeTestModule =
     module {
-        singleOf(::FakeFileApi) bind FileApi::class
+        singleOf(::FakeFileApi) bind RemoteFileStorage::class
     }

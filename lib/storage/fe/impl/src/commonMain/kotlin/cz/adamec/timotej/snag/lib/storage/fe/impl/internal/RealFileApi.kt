@@ -17,7 +17,6 @@ import cz.adamec.timotej.snag.core.network.fe.safeApiCall
 import cz.adamec.timotej.snag.core.storage.fe.RemoteFileStorage
 import cz.adamec.timotej.snag.lib.storage.contract.FileUploadFormFields
 import cz.adamec.timotej.snag.lib.storage.contract.FileUploadResponseDto
-import cz.adamec.timotej.snag.lib.storage.fe.api.FileApi
 import cz.adamec.timotej.snag.lib.storage.fe.api.FileApiConfig
 import cz.adamec.timotej.snag.network.fe.SnagNetworkHttpClient
 import io.ktor.client.call.body
@@ -32,8 +31,7 @@ import io.ktor.http.encodeURLParameter
 internal class RealFileApi(
     private val httpClient: SnagNetworkHttpClient,
     private val config: FileApiConfig,
-) : FileApi,
-    RemoteFileStorage {
+) : RemoteFileStorage {
     override suspend fun uploadFile(
         bytes: ByteArray,
         fileName: String,
