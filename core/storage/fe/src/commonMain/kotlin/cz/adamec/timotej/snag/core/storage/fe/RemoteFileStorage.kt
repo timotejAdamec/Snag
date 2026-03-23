@@ -10,11 +10,11 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.structures.fe.ports
+package cz.adamec.timotej.snag.core.storage.fe
 
 import cz.adamec.timotej.snag.core.network.fe.OnlineDataResult
 
-interface StructuresFileStorage {
+interface RemoteFileStorage {
     suspend fun uploadFile(
         bytes: ByteArray,
         fileName: String,

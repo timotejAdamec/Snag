@@ -24,6 +24,7 @@ internal fun Project.configureFrontendMultiplatformModule() {
                 if (!path.contains("core")) {
                     implementation(project(":core:foundation:fe"))
                     implementation(project(":core:network:fe"))
+                    implementation(project(":core:storage:fe"))
                 }
                 implementation(library("kermit"))
                 implementation(library("kermit-koin"))

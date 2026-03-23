@@ -23,6 +23,7 @@ val allTables: Array<Table> =
         ProjectAssignmentsTable,
         StructuresTable,
         FindingsTable,
+        FindingPhotosTable,
         FindingCoordinatesTable,
         ClassicFindingTable,
         InspectionsTable,

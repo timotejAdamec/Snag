@@ -45,5 +45,7 @@ internal fun FindingDetailScreen(
         onBack = onBack,
         onEditClick = onEditClick,
         onDelete = viewModel::onDelete,
+        onAddPhoto = viewModel::onAddPhoto,
+        onDeletePhoto = viewModel::onDeletePhoto,
     )
 }

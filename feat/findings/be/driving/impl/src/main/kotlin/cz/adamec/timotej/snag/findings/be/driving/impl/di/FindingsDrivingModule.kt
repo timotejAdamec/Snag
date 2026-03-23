@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.findings.be.driving.impl.di
 
+import cz.adamec.timotej.snag.findings.be.driving.impl.internal.FindingPhotosRoute
 import cz.adamec.timotej.snag.findings.be.driving.impl.internal.FindingsRoute
 import cz.adamec.timotej.snag.routing.be.AppRoute
 import org.koin.core.module.dsl.singleOf
@@ -21,4 +22,5 @@ import org.koin.dsl.module
 val findingsDrivingModule =
     module {
         singleOf(::FindingsRoute) bind AppRoute::class
+        singleOf(::FindingPhotosRoute) bind AppRoute::class
     }

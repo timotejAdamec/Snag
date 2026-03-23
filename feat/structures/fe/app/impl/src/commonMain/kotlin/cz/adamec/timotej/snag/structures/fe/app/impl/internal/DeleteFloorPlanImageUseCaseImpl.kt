@@ -14,10 +14,10 @@ package cz.adamec.timotej.snag.structures.fe.app.impl.internal
 
 import cz.adamec.timotej.snag.core.network.fe.OnlineDataResult
 import cz.adamec.timotej.snag.structures.fe.app.api.DeleteFloorPlanImageUseCase
-import cz.adamec.timotej.snag.structures.fe.ports.StructuresFileStorage
+import cz.adamec.timotej.snag.core.storage.fe.RemoteFileStorage
 
 class DeleteFloorPlanImageUseCaseImpl(
-    private val structuresFileStorage: StructuresFileStorage,
+    private val remoteFileStorage: RemoteFileStorage,
 ) : DeleteFloorPlanImageUseCase {
-    override suspend fun invoke(url: String): OnlineDataResult<Unit> = structuresFileStorage.deleteFile(url)
+    override suspend fun invoke(url: String): OnlineDataResult<Unit> = remoteFileStorage.deleteFile(url)
 }

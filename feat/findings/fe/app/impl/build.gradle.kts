@@ -5,6 +5,8 @@ plugins {
 kotlin {
     sourceSets {
         commonMain.dependencies {
+            implementation(project(":core:storage:fe"))
+            implementation(project(":feat:structures:fe:ports"))
             implementation(project(":feat:sync:fe:app:api"))
             implementation(project(":feat:sync:fe:model"))
         }

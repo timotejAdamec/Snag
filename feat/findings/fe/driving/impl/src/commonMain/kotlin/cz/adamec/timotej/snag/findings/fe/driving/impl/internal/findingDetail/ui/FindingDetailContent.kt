@@ -54,6 +54,7 @@ import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
 import cz.adamec.timotej.snag.feat.findings.business.Term
 import cz.adamec.timotej.snag.feat.findings.fe.driving.api.visuals
 import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetail.ui.components.FindingDeletionAlertDialog
+import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetail.ui.components.FindingPhotoSection
 import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetail.ui.components.ImportanceLabel
 import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetail.ui.components.TermLabel
 import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetail.vm.FindingDetailUiState
@@ -83,6 +84,8 @@ internal fun FindingDetailContent(
     onBack: () -> Unit,
     onEditClick: () -> Unit,
     onDelete: () -> Unit,
+    onAddPhoto: (ByteArray, String) -> Unit,
+    onDeletePhoto: (Uuid) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     when (state.status) {
@@ -223,6 +226,13 @@ internal fun FindingDetailContent(
                                 style = MaterialTheme.typography.bodyLarge,
                             )
                         }
+                        FindingPhotoSection(
+                            photos = state.photos,
+                            canEdit = state.canEdit,
+                            isAddingPhoto = state.isAddingPhoto,
+                            onAddPhoto = onAddPhoto,
+                            onDeletePhoto = onDeletePhoto,
+                        )
                         val coordinateCount = finding.coordinates.size
                         Text(
                             text =
@@ -300,6 +310,8 @@ private fun FindingDetailContentLoadedPreview() {
             onBack = {},
             onEditClick = {},
             onDelete = {},
+            onAddPhoto = { _, _ -> },
+            onDeletePhoto = {},
         )
     }
 }
@@ -326,6 +338,8 @@ private fun FindingDetailContentNotePreview() {
             onBack = {},
             onEditClick = {},
             onDelete = {},
+            onAddPhoto = { _, _ -> },
+            onDeletePhoto = {},
         )
     }
 }
@@ -339,6 +353,8 @@ private fun FindingDetailContentLoadingPreview() {
             onBack = {},
             onEditClick = {},
             onDelete = {},
+            onAddPhoto = { _, _ -> },
+            onDeletePhoto = {},
         )
     }
 }
@@ -352,6 +368,8 @@ private fun FindingDetailContentNotFoundPreview() {
             onBack = {},
             onEditClick = {},
             onDelete = {},
+            onAddPhoto = { _, _ -> },
+            onDeletePhoto = {},
         )
     }
 }

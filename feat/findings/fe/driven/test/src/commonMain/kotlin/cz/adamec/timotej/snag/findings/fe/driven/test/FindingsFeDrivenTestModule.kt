@@ -12,6 +12,8 @@
 
 package cz.adamec.timotej.snag.findings.fe.driven.test
 
+import cz.adamec.timotej.snag.findings.fe.ports.FindingPhotosApi
+import cz.adamec.timotej.snag.findings.fe.ports.FindingPhotosDb
 import cz.adamec.timotej.snag.findings.fe.ports.FindingsApi
 import cz.adamec.timotej.snag.findings.fe.ports.FindingsDb
 import org.koin.core.module.dsl.singleOf
@@ -22,4 +24,6 @@ val findingsFeDrivenTestModule =
     module {
         singleOf(::FakeFindingsDb) bind FindingsDb::class
         singleOf(::FakeFindingsApi) bind FindingsApi::class
+        singleOf(::FakeFindingPhotosDb) bind FindingPhotosDb::class
+        singleOf(::FakeFindingPhotosApi) bind FindingPhotosApi::class
     }

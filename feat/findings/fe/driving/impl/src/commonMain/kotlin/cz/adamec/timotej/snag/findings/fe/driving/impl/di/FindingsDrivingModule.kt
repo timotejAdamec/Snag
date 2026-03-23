@@ -168,6 +168,9 @@ val findingsDrivingImplModule =
                 getFindingUseCase = get(),
                 deleteFindingUseCase = get(),
                 canEditProjectEntitiesUseCase = get(),
+                getFindingPhotosUseCase = get(),
+                addFindingPhotoUseCase = get(),
+                deleteFindingPhotoUseCase = get(),
             )
         }
         @Suppress("DestructuringDeclarationWithTooManyEntries")

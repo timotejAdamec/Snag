@@ -14,12 +14,16 @@ package cz.adamec.timotej.snag.findings.be.driving.impl.internal
 
 import cz.adamec.timotej.snag.feat.findings.be.model.BackendFinding
 import cz.adamec.timotej.snag.feat.findings.be.model.BackendFindingData
+import cz.adamec.timotej.snag.feat.findings.be.model.BackendFindingPhoto
+import cz.adamec.timotej.snag.feat.findings.be.model.BackendFindingPhotoData
 import cz.adamec.timotej.snag.feat.findings.business.FindingType
 import cz.adamec.timotej.snag.feat.findings.business.Importance
 import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
 import cz.adamec.timotej.snag.feat.findings.business.Term
 import cz.adamec.timotej.snag.findings.be.driving.contract.FindingApiDto
+import cz.adamec.timotej.snag.findings.be.driving.contract.FindingPhotoApiDto
 import cz.adamec.timotej.snag.findings.be.driving.contract.PutFindingApiDto
+import cz.adamec.timotej.snag.findings.be.driving.contract.PutFindingPhotoApiDto
 import cz.adamec.timotej.snag.findings.be.driving.contract.RelativeCoordinateApiDto
 import kotlin.uuid.Uuid
 
@@ -93,4 +97,24 @@ internal fun RelativeCoordinateApiDto.toBusiness() =
     RelativeCoordinate(
         x = x,
         y = y,
+    )
+
+internal fun BackendFindingPhoto.toDto() =
+    FindingPhotoApiDto(
+        id = id,
+        findingId = findingId,
+        url = url,
+        updatedAt = updatedAt,
+        deletedAt = deletedAt,
+    )
+
+internal fun PutFindingPhotoApiDto.toModel(
+    id: Uuid,
+    findingId: Uuid,
+): BackendFindingPhoto =
+    BackendFindingPhotoData(
+        id = id,
+        findingId = findingId,
+        url = url,
+        updatedAt = updatedAt,
     )

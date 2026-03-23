@@ -17,17 +17,17 @@ import cz.adamec.timotej.snag.core.network.fe.onFailure
 import cz.adamec.timotej.snag.core.network.fe.onSuccess
 import cz.adamec.timotej.snag.structures.fe.app.api.UploadFloorPlanImageUseCase
 import cz.adamec.timotej.snag.structures.fe.app.api.model.UploadFloorPlanImageRequest
-import cz.adamec.timotej.snag.structures.fe.ports.StructuresFileStorage
+import cz.adamec.timotej.snag.core.storage.fe.RemoteFileStorage
 
 class UploadFloorPlanImageUseCaseImpl(
-    private val structuresFileStorage: StructuresFileStorage,
+    private val remoteFileStorage: RemoteFileStorage,
 ) : UploadFloorPlanImageUseCase {
     override suspend fun invoke(request: UploadFloorPlanImageRequest): OnlineDataResult<String> {
         LH.logger.d {
             "Uploading floor plan image ${request.fileName} for structure ${request.structureId}" +
                 " in project ${request.projectId}."
         }
-        return structuresFileStorage
+        return remoteFileStorage
             .uploadFile(
                 bytes = request.bytes,
                 fileName = request.fileName,

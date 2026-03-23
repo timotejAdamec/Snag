@@ -16,6 +16,7 @@ import cz.adamec.timotej.snag.feat.shared.database.fe.db.ClassicFindingEntityQue
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.ClientEntityQueries
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.FindingCoordinateEntityQueries
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.FindingEntityQueries
+import cz.adamec.timotej.snag.feat.shared.database.fe.db.FindingPhotoEntityQueries
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.InspectionEntityQueries
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.ProjectEntityQueries
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.SnagDatabase
@@ -45,6 +46,7 @@ val databaseModule =
         factory { get<SnagDatabase>().findingEntityQueries } bind FindingEntityQueries::class
         factory { get<SnagDatabase>().findingCoordinateEntityQueries } bind FindingCoordinateEntityQueries::class
         factory { get<SnagDatabase>().classicFindingEntityQueries } bind ClassicFindingEntityQueries::class
+        factory { get<SnagDatabase>().findingPhotoEntityQueries } bind FindingPhotoEntityQueries::class
         factory { get<SnagDatabase>().inspectionEntityQueries } bind InspectionEntityQueries::class
         factory { get<SnagDatabase>().userEntityQueries } bind UserEntityQueries::class
     }

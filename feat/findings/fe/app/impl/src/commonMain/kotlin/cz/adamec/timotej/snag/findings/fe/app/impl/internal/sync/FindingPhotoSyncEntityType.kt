@@ -1,0 +1,15 @@
+/*
+ * Copyright (c) 2026 Timotej Adamec
+ * SPDX-License-Identifier: MIT
+ *
+ * This file is part of the thesis:
+ * "Multiplatform snagging system with code sharing maximisation"
+ *
+ * Czech Technical University in Prague
+ * Faculty of Information Technology
+ * Department of Software Engineering
+ */
+
+package cz.adamec.timotej.snag.findings.fe.app.impl.internal.sync
+
+internal const val FINDING_PHOTO_SYNC_ENTITY_TYPE = "finding_photo"

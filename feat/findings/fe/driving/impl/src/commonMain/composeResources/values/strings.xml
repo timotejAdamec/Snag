@@ -29,6 +29,11 @@
     <string name="term_t2">T2</string>
     <string name="term_t3">T3</string>
     <string name="term_con">CON</string>
+    <string name="photos_section_title">Photos</string>
+    <string name="add_photo">Add photo</string>
+    <string name="delete_photo">Delete photo</string>
+    <string name="delete_photo_confirmation_title">Delete photo?</string>
+    <string name="delete_photo_confirmation_text">This photo will be permanently deleted. This action cannot be undone.</string>
     <plurals name="coordinate_count">
         <item quantity="one">%1$d coordinate</item>
         <item quantity="other">%1$d coordinates</item>

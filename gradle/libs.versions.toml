@@ -155,6 +155,8 @@ exposed-jdbc = { module = "org.jetbrains.exposed:exposed-jdbc", version.ref = "e
 h2 = { module = "com.h2database:h2", version.ref = "h2" }
 konnection = { module = "dev.tmapps:konnection", version.ref = "konnection" }
 google-cloud-storage = { module = "com.google.cloud:google-cloud-storage", version.ref = "gcs" }
+filekit-core = { module = "io.github.vinceglb:filekit-core", version.ref = "filekit" }
+kotlinx-io-core = { module = "org.jetbrains.kotlinx:kotlinx-io-core", version = "0.7.0" }
 filekit-dialogs-compose = { module = "io.github.vinceglb:filekit-dialogs-compose", version.ref = "filekit" }
 openpdf = { module = "com.github.librepdf:openpdf", version.ref = "openpdf" }
 

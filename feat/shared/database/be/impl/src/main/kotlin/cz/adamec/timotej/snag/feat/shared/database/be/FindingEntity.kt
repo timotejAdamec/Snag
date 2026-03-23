@@ -43,6 +43,17 @@ class ClassicFindingEntity(
     companion object : UuidEntityClass<ClassicFindingEntity>(ClassicFindingTable)
 }
 
+class FindingPhotoEntity(
+    id: EntityID<Uuid>,
+) : UuidEntity(id) {
+    var finding by FindingEntity referencedOn FindingPhotosTable.finding
+    var url by FindingPhotosTable.url
+    var updatedAt by FindingPhotosTable.updatedAt
+    var deletedAt by FindingPhotosTable.deletedAt
+
+    companion object : UuidEntityClass<FindingPhotoEntity>(FindingPhotosTable)
+}
+
 class FindingCoordinateEntity(
     id: EntityID<Int>,
 ) : IntEntity(id) {

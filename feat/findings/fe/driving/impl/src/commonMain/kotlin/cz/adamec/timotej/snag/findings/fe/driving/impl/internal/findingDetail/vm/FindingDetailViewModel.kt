@@ -16,7 +16,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cz.adamec.timotej.snag.core.foundation.common.mapState
 import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
+import cz.adamec.timotej.snag.findings.fe.app.api.AddFindingPhotoRequest
+import cz.adamec.timotej.snag.findings.fe.app.api.AddFindingPhotoUseCase
+import cz.adamec.timotej.snag.findings.fe.app.api.DeleteFindingPhotoUseCase
 import cz.adamec.timotej.snag.findings.fe.app.api.DeleteFindingUseCase
+import cz.adamec.timotej.snag.findings.fe.app.api.GetFindingPhotosUseCase
 import cz.adamec.timotej.snag.findings.fe.app.api.GetFindingUseCase
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError.Unknown
@@ -36,6 +40,9 @@ internal class FindingDetailViewModel(
     private val getFindingUseCase: GetFindingUseCase,
     private val deleteFindingUseCase: DeleteFindingUseCase,
     private val canEditProjectEntitiesUseCase: CanEditProjectEntitiesUseCase,
+    private val getFindingPhotosUseCase: GetFindingPhotosUseCase,
+    private val addFindingPhotoUseCase: AddFindingPhotoUseCase,
+    private val deleteFindingPhotoUseCase: DeleteFindingPhotoUseCase,
 ) : ViewModel() {
     private val vmState: MutableStateFlow<FindingDetailVmState> =
         MutableStateFlow(FindingDetailVmState())
@@ -51,6 +58,7 @@ internal class FindingDetailViewModel(
     init {
         collectFinding()
         collectCanEditFinding()
+        collectPhotos()
     }
 
     private fun collectCanEditFinding() =
@@ -81,6 +89,58 @@ internal class FindingDetailViewModel(
                         )
                     }
                     deletedSuccessfullyEventChannel.send(Unit)
+                }
+            }
+        }
+
+    private fun collectPhotos() {
+        viewModelScope.launch {
+            getFindingPhotosUseCase(findingId).collect { result ->
+                when (result) {
+                    is OfflineFirstDataResult.Success -> {
+                        vmState.update { it.copy(photos = result.data) }
+                    }
+
+                    is OfflineFirstDataResult.ProgrammerError -> {
+                        // Don't fail the whole screen for photo errors
+                    }
+                }
+            }
+        }
+    }
+
+    fun onAddPhoto(
+        bytes: ByteArray,
+        fileName: String,
+    ) = viewModelScope.launch {
+        vmState.update { it.copy(isAddingPhoto = true) }
+        val request =
+            AddFindingPhotoRequest(
+                bytes = bytes,
+                fileName = fileName,
+                findingId = findingId,
+            )
+        when (addFindingPhotoUseCase(request)) {
+            is OfflineFirstDataResult.ProgrammerError -> {
+                errorEventsChannel.send(Unknown)
+            }
+
+            is OfflineFirstDataResult.Success -> {
+                // Photo will appear via flow
+            }
+        }
+        vmState.update { it.copy(isAddingPhoto = false) }
+    }
+
+    fun onDeletePhoto(photoId: Uuid) =
+        viewModelScope.launch {
+            when (deleteFindingPhotoUseCase(photoId)) {
+                is OfflineFirstDataResult.ProgrammerError -> {
+                    errorEventsChannel.send(Unknown)
+                }
+
+                is OfflineFirstDataResult.Success -> {
+                    // Photo will disappear via flow
                 }
             }
         }
