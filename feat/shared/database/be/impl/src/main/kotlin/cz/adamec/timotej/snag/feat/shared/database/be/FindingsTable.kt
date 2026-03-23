@@ -45,7 +45,7 @@ private const val URL_MAX_LENGTH = 2048
 object FindingPhotosTable : UuidTable("finding_photos") {
     val finding = reference("finding_id", FindingsTable).index()
     val url = varchar("url", URL_MAX_LENGTH)
-    val updatedAt = long("updated_at").index()
+    val createdAt = long("created_at").index()
     val deletedAt = long("deleted_at").nullable().index()
 }
 

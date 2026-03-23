@@ -98,7 +98,7 @@ internal abstract class FindingDetailViewModel(
                     }
 
                     is OfflineFirstDataResult.ProgrammerError -> {
-                        // Don't fail the whole screen for photo errors
+                        errorEventsChannel.send(Unknown)
                     }
                 }
             }

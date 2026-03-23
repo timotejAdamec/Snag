@@ -2,12 +2,14 @@ package cz.adamec.timotej.snag.projects.be.model
 
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.projects.app.model.AppProject
-import cz.adamec.timotej.snag.sync.be.model.Syncable
+import cz.adamec.timotej.snag.sync.be.model.SoftDeletable
+import cz.adamec.timotej.snag.sync.model.MutableVersioned
 import kotlin.uuid.Uuid
 
 interface BackendProject :
     AppProject,
-    Syncable
+    MutableVersioned,
+    SoftDeletable
 
 data class BackendProjectData(
     override val id: Uuid,

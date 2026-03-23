@@ -58,6 +58,22 @@ internal class FindingPhotosRoute(
         }
 
         route("/findings/{findingId}/photos") {
+            put("/{id}") {
+                val id = getIdFromParameters()
+                val findingId = getIdFromParameters("findingId")
+
+                val putPhotoDto = getDtoFromBody<PutFindingPhotoApiDto>()
+
+                val updatedPhoto =
+                    saveFindingPhotoUseCase(
+                        putPhotoDto.toModel(id = id, findingId = findingId),
+                    )
+
+                updatedPhoto?.let {
+                    call.respond(it.toDto())
+                } ?: call.respond(HttpStatusCode.NoContent)
+            }
+
             get {
                 val findingId = getIdFromParameters("findingId")
                 val sinceParam = call.request.queryParameters["since"]
@@ -74,22 +90,6 @@ internal class FindingPhotosRoute(
                 } else {
                     call.respond(HttpStatusCode.BadRequest)
                 }
-            }
-
-            put("/{id}") {
-                val id = getIdFromParameters()
-                val findingId = getIdFromParameters("findingId")
-
-                val putPhotoDto = getDtoFromBody<PutFindingPhotoApiDto>()
-
-                val updatedPhoto =
-                    saveFindingPhotoUseCase(
-                        putPhotoDto.toModel(id = id, findingId = findingId),
-                    )
-
-                updatedPhoto?.let {
-                    call.respond(it.toDto())
-                } ?: call.respond(HttpStatusCode.NoContent)
             }
         }
     }

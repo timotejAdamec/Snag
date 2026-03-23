@@ -81,7 +81,7 @@ internal class FindingPhotoSyncHandler(
                         id = entity.id,
                         findingId = entity.findingId,
                         url = uploadResult.data,
-                        updatedAt = entity.updatedAt,
+                        createdAt = entity.createdAt,
                     )
                 findingPhotosDb.savePhoto(updatedPhoto)
                 findingPhotosApi.savePhoto(updatedPhoto)

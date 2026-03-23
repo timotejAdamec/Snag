@@ -49,7 +49,7 @@ internal class NonWebAddFindingPhotoUseCaseImpl(
                 id = photoId,
                 findingId = request.findingId,
                 url = localPath,
-                updatedAt = timestampProvider.getNowTimestamp(),
+                createdAt = timestampProvider.getNowTimestamp(),
             )
 
         return findingPhotosDb

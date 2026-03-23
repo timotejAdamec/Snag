@@ -63,7 +63,7 @@ internal class WebAddFindingPhotoUseCaseImpl(
                         id = photoId,
                         findingId = request.findingId,
                         url = remoteUrl,
-                        updatedAt = timestampProvider.getNowTimestamp(),
+                        createdAt = timestampProvider.getNowTimestamp(),
                     )
 
                 findingPhotosDb.savePhoto(photo)

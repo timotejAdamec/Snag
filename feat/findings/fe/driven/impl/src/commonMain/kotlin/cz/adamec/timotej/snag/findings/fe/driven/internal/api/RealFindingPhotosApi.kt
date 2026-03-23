@@ -84,7 +84,7 @@ internal fun AppFindingPhoto.toPutApiDto() =
     PutFindingPhotoApiDto(
         findingId = findingId,
         url = url,
-        updatedAt = updatedAt,
+        createdAt = createdAt,
     )
 
 internal fun FindingPhotoApiDto.toModel(): AppFindingPhoto =
@@ -92,7 +92,7 @@ internal fun FindingPhotoApiDto.toModel(): AppFindingPhoto =
         id = id,
         findingId = findingId,
         url = url,
-        updatedAt = updatedAt,
+        createdAt = createdAt,
     )
 
 internal fun FindingPhotoApiDto.toSyncResult(): FindingPhotoSyncResult =

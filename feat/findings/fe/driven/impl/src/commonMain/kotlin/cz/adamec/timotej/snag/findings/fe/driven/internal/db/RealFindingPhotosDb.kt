@@ -67,7 +67,7 @@ internal class RealFindingPhotosDb(
                     id = photo.id.toString(),
                     findingId = photo.findingId.toString(),
                     url = photo.url,
-                    updatedAt = photo.updatedAt.value,
+                    createdAt = photo.createdAt.value,
                 ),
             )
         }
@@ -88,5 +88,5 @@ private fun FindingPhotoEntity.toModel() =
         id = Uuid.parse(id),
         findingId = Uuid.parse(findingId),
         url = url,
-        updatedAt = Timestamp(updatedAt),
+        createdAt = Timestamp(createdAt),
     )

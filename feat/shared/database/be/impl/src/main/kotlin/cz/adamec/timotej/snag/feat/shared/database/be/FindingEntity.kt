@@ -48,7 +48,7 @@ class FindingPhotoEntity(
 ) : UuidEntity(id) {
     var finding by FindingEntity referencedOn FindingPhotosTable.finding
     var url by FindingPhotosTable.url
-    var updatedAt by FindingPhotosTable.updatedAt
+    var createdAt by FindingPhotosTable.createdAt
     var deletedAt by FindingPhotosTable.deletedAt
 
     companion object : UuidEntityClass<FindingPhotoEntity>(FindingPhotosTable)

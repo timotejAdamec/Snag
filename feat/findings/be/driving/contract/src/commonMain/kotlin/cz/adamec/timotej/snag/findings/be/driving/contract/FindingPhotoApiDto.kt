@@ -21,7 +21,7 @@ data class FindingPhotoApiDto(
     val id: Uuid,
     val findingId: Uuid,
     val url: String,
-    val updatedAt: Timestamp,
+    val createdAt: Timestamp,
     val deletedAt: Timestamp? = null,
 )
 
@@ -29,7 +29,7 @@ data class FindingPhotoApiDto(
 data class PutFindingPhotoApiDto(
     val findingId: Uuid,
     val url: String,
-    val updatedAt: Timestamp,
+    val createdAt: Timestamp,
 )
 
 @Serializable

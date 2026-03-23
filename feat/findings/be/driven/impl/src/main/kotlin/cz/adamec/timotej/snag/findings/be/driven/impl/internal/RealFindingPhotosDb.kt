@@ -19,12 +19,6 @@ import cz.adamec.timotej.snag.feat.shared.database.be.FindingEntity
 import cz.adamec.timotej.snag.feat.shared.database.be.FindingPhotoEntity
 import cz.adamec.timotej.snag.feat.shared.database.be.FindingPhotosTable
 import cz.adamec.timotej.snag.findings.be.ports.FindingPhotosDb
-import cz.adamec.timotej.snag.sync.be.DeleteConflictResult
-import cz.adamec.timotej.snag.sync.be.ResolveConflictForDeleteUseCase
-import cz.adamec.timotej.snag.sync.be.ResolveConflictForSaveUseCase
-import cz.adamec.timotej.snag.sync.be.SaveConflictResult
-import cz.adamec.timotej.snag.sync.be.model.ResolveConflictForDeleteRequest
-import cz.adamec.timotej.snag.sync.be.model.ResolveConflictForSaveRequest
 import org.jetbrains.exposed.v1.core.and
 import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.core.greater
@@ -35,41 +29,20 @@ import kotlin.uuid.Uuid
 
 internal class RealFindingPhotosDb(
     private val database: Database,
-    private val resolveConflictForSave: ResolveConflictForSaveUseCase,
-    private val resolveConflictForDelete: ResolveConflictForDeleteUseCase,
 ) : FindingPhotosDb {
     override suspend fun savePhoto(photo: BackendFindingPhoto): BackendFindingPhoto? =
         transaction(database) {
+            // Photos are immutable — if exists, reject (return existing)
             val existing = FindingPhotoEntity.findById(photo.id)
-            when (
-                val result =
-                    resolveConflictForSave(
-                        ResolveConflictForSaveRequest(
-                            existing = existing?.toModel(),
-                            incoming = photo,
-                        ),
-                    )
-            ) {
-                is SaveConflictResult.Proceed -> {
-                    if (existing != null) {
-                        existing.finding = FindingEntity[photo.findingId]
-                        existing.url = photo.url
-                        existing.updatedAt = photo.updatedAt.value
-                        existing.deletedAt = photo.deletedAt?.value
-                    } else {
-                        FindingPhotoEntity.new(photo.id) {
-                            finding = FindingEntity[photo.findingId]
-                            url = photo.url
-                            updatedAt = photo.updatedAt.value
-                            deletedAt = photo.deletedAt?.value
-                        }
-                    }
-                    null
-                }
-                is SaveConflictResult.Rejected -> {
-                    result.serverVersion
-                }
+            if (existing != null) return@transaction existing.toModel()
+            // Otherwise create new
+            FindingPhotoEntity.new(photo.id) {
+                finding = FindingEntity[photo.findingId]
+                url = photo.url
+                createdAt = photo.createdAt.value
+                deletedAt = photo.deletedAt?.value
             }
+            null
         }
 
     override suspend fun deletePhoto(
@@ -77,30 +50,10 @@ internal class RealFindingPhotosDb(
         deletedAt: Timestamp,
     ): BackendFindingPhoto? =
         transaction(database) {
-            val existing = FindingPhotoEntity.findById(id)
-            when (
-                val result =
-                    resolveConflictForDelete(
-                        ResolveConflictForDeleteRequest(
-                            existing = existing?.toModel(),
-                            deletedAt = deletedAt,
-                        ),
-                    )
-            ) {
-                is DeleteConflictResult.Proceed -> {
-                    existing!!.deletedAt = deletedAt.value
-                    null
-                }
-                is DeleteConflictResult.NotFound -> {
-                    null
-                }
-                is DeleteConflictResult.AlreadyDeleted -> {
-                    null
-                }
-                is DeleteConflictResult.Rejected -> {
-                    result.serverVersion
-                }
-            }
+            val existing = FindingPhotoEntity.findById(id) ?: return@transaction null
+            if (existing.deletedAt != null) return@transaction null
+            existing.deletedAt = deletedAt.value
+            null
         }
 
     override suspend fun getPhotosModifiedSince(
@@ -113,7 +66,7 @@ internal class RealFindingPhotosDb(
                 .find {
                     (FindingPhotosTable.finding eq findingId) and
                         (
-                            (FindingPhotosTable.updatedAt greater since.value) or
+                            (FindingPhotosTable.createdAt greater since.value) or
                                 (FindingPhotosTable.deletedAt greater since.value)
                         )
                 }.map { it.toModel() }
@@ -125,6 +78,6 @@ internal fun FindingPhotoEntity.toModel(): BackendFindingPhoto =
         id = id.value,
         findingId = finding.id.value,
         url = url,
-        updatedAt = Timestamp(updatedAt),
+        createdAt = Timestamp(createdAt),
         deletedAt = deletedAt?.let { Timestamp(it) },
     )

@@ -13,8 +13,9 @@
 package cz.adamec.timotej.snag.sync.be.model
 
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
+import cz.adamec.timotej.snag.sync.model.MutableVersioned
 
-data class ResolveConflictForDeleteRequest<T : Syncable>(
+data class ResolveConflictForDeleteRequest<T>(
     val existing: T?,
     val deletedAt: Timestamp,
-)
+) where T : MutableVersioned, T : SoftDeletable

@@ -104,7 +104,7 @@ internal fun BackendFindingPhoto.toDto() =
         id = id,
         findingId = findingId,
         url = url,
-        updatedAt = updatedAt,
+        createdAt = createdAt,
         deletedAt = deletedAt,
     )
 
@@ -116,5 +116,5 @@ internal fun PutFindingPhotoApiDto.toModel(
         id = id,
         findingId = findingId,
         url = url,
-        updatedAt = updatedAt,
+        createdAt = createdAt,
     )
