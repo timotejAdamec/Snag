@@ -2,17 +2,19 @@ CREATE TABLE IF NOT EXISTS SyncOperationEntity (
     id TEXT NOT NULL PRIMARY KEY,
     entityType TEXT NOT NULL,
     entityId TEXT NOT NULL,
-    operationType TEXT NOT NULL
+    operationType TEXT NOT NULL,
+    scopeId TEXT
 );
 
 CREATE UNIQUE INDEX IF NOT EXISTS idx_sync_entity
     ON SyncOperationEntity(entityType, entityId);
 
 enqueue:
-INSERT INTO SyncOperationEntity(id, entityType, entityId, operationType)
-VALUES (?, ?, ?, ?)
+INSERT INTO SyncOperationEntity(id, entityType, entityId, operationType, scopeId)
+VALUES (?, ?, ?, ?, ?)
 ON CONFLICT(entityType, entityId) DO UPDATE SET
-    operationType = excluded.operationType;
+    operationType = excluded.operationType,
+    scopeId = excluded.scopeId;
 
 selectAllPending:
 SELECT * FROM SyncOperationEntity ORDER BY rowid ASC;

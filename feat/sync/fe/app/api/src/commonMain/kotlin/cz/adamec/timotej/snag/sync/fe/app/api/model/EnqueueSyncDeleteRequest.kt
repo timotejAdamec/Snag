@@ -17,4 +17,5 @@ import kotlin.uuid.Uuid
 data class EnqueueSyncDeleteRequest(
     val entityTypeId: String,
     val entityId: Uuid,
+    val scopeId: Uuid? = null,
 )

@@ -256,6 +256,7 @@ class GetSyncStatusUseCaseImplTest : FrontendKoinInitializedTest() {
         override suspend fun execute(
             entityId: Uuid,
             operationType: SyncOperationType,
+            scopeId: Uuid?,
         ): PushSyncOperationResult = result
     }
 
@@ -266,6 +267,7 @@ class GetSyncStatusUseCaseImplTest : FrontendKoinInitializedTest() {
         override suspend fun execute(
             entityId: Uuid,
             operationType: SyncOperationType,
+            scopeId: Uuid?,
         ): PushSyncOperationResult = deferred.await()
     }
 

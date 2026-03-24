@@ -20,5 +20,6 @@ internal interface EnqueueSyncOperationUseCase {
         entityTypeId: String,
         entityId: Uuid,
         operationType: SyncOperationType,
+        scopeId: Uuid? = null,
     )
 }

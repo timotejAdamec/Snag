@@ -38,6 +38,7 @@ abstract class DbApiPushSyncHandler<T>(
     protected abstract suspend fun deleteEntityFromApi(
         entityId: Uuid,
         deletedAt: Timestamp,
+        scopeId: Uuid? = null,
     ): OnlineDataResult<T?>
 
     protected abstract suspend fun saveEntityToDb(entity: T): OfflineFirstDataResult<Unit>
@@ -47,10 +48,11 @@ abstract class DbApiPushSyncHandler<T>(
     override suspend fun execute(
         entityId: Uuid,
         operationType: SyncOperationType,
+        scopeId: Uuid?,
     ): PushSyncOperationResult =
         when (operationType) {
             SyncOperationType.UPSERT -> executeUpsert(entityId)
-            SyncOperationType.DELETE -> executeDelete(entityId)
+            SyncOperationType.DELETE -> executeDelete(entityId, scopeId)
         }
 
     @Suppress("ReturnCount")
@@ -90,8 +92,11 @@ abstract class DbApiPushSyncHandler<T>(
         }
     }
 
-    private suspend fun executeDelete(entityId: Uuid): PushSyncOperationResult =
-        when (val result = deleteEntityFromApi(entityId, timestampProvider.getNowTimestamp())) {
+    private suspend fun executeDelete(
+        entityId: Uuid,
+        scopeId: Uuid?,
+    ): PushSyncOperationResult =
+        when (val result = deleteEntityFromApi(entityId, timestampProvider.getNowTimestamp(), scopeId)) {
             is OnlineDataResult.Success -> {
                 result.data?.let { updatedEntity ->
                     logger.d { "Delete of $entityName $entityId rejected by API. Saving fresher $updatedEntity to DB." }

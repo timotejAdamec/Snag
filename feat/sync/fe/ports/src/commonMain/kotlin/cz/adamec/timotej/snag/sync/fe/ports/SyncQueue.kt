@@ -20,6 +20,7 @@ interface SyncQueue {
         entityTypeId: String,
         entityId: Uuid,
         operationType: SyncOperationType,
+        scopeId: Uuid? = null,
     )
 
     suspend fun getAllPending(): List<SyncOperation>

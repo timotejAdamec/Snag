@@ -133,6 +133,7 @@ class PushSyncEngineTest : FrontendKoinInitializedTest() {
                     override suspend fun execute(
                         entityId: Uuid,
                         operationType: SyncOperationType,
+                        scopeId: Uuid?,
                     ): PushSyncOperationResult {
                         executedOperations.add(entityId to operationType)
                         return if (shouldFail) PushSyncOperationResult.Failure else PushSyncOperationResult.Success
@@ -217,6 +218,7 @@ class PushSyncEngineTest : FrontendKoinInitializedTest() {
                     override suspend fun execute(
                         entityId: Uuid,
                         operationType: SyncOperationType,
+                        scopeId: Uuid?,
                     ): PushSyncOperationResult =
                         when (++callCount) {
                             1 -> deferred1.await()
@@ -254,6 +256,7 @@ class PushSyncEngineTest : FrontendKoinInitializedTest() {
         override suspend fun execute(
             entityId: Uuid,
             operationType: SyncOperationType,
+            scopeId: Uuid?,
         ): PushSyncOperationResult = deferred.await()
     }
 
@@ -266,6 +269,7 @@ class PushSyncEngineTest : FrontendKoinInitializedTest() {
         override suspend fun execute(
             entityId: Uuid,
             operationType: SyncOperationType,
+            scopeId: Uuid?,
         ): PushSyncOperationResult {
             executedOperations.add(entityId to operationType)
             return result

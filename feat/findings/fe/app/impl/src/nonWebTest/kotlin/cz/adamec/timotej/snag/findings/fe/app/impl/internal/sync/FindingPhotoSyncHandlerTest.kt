@@ -36,7 +36,6 @@ import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
-import kotlin.test.assertNull
 import kotlin.test.assertTrue
 import kotlin.uuid.Uuid
 
@@ -266,34 +265,27 @@ class FindingPhotoSyncHandlerTest : FrontendKoinInitializedTest() {
         }
 
     @Test
-    fun `delete operation calls API and removes from local DB`() =
+    fun `delete operation calls API with scopeId as findingId`() =
         runTest(testDispatcher) {
-            val photo = createLocalPhoto()
-            fakeFindingPhotosDb.setPhoto(photo)
-
             val result = handler.execute(
                 entityId = photoId,
                 operationType = SyncOperationType.DELETE,
+                scopeId = findingId,
             )
 
             assertEquals(PushSyncOperationResult.Success, result)
-
-            val photoAfter =
-                (fakeFindingPhotosDb.getPhotoFlow(photoId).first() as OfflineFirstDataResult.Success).data
-            assertNull(photoAfter)
         }
 
     @Test
     fun `delete operation returns failure when API fails`() =
         runTest(testDispatcher) {
-            val photo = createLocalPhoto()
-            fakeFindingPhotosDb.setPhoto(photo)
             fakeFindingPhotosApi.forcedFailure =
                 OnlineDataResult.Failure.ProgrammerError(RuntimeException("API error"))
 
             val result = handler.execute(
                 entityId = photoId,
                 operationType = SyncOperationType.DELETE,
+                scopeId = findingId,
             )
 
             assertEquals(PushSyncOperationResult.Failure, result)

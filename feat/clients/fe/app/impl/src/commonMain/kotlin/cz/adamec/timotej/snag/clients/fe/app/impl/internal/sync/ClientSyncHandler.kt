@@ -36,6 +36,7 @@ internal class ClientSyncHandler(
     override suspend fun deleteEntityFromApi(
         entityId: Uuid,
         deletedAt: Timestamp,
+        scopeId: Uuid?,
     ) = clientsApi.deleteClient(entityId, deletedAt)
 
     override suspend fun saveEntityToDb(entity: AppClient) = clientsDb.saveClient(entity)

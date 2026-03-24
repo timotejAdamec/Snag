@@ -20,6 +20,7 @@ import cz.adamec.timotej.snag.findings.fe.app.impl.internal.sync.FINDING_PHOTO_S
 import cz.adamec.timotej.snag.findings.fe.ports.FindingPhotosDb
 import cz.adamec.timotej.snag.sync.fe.app.api.EnqueueSyncDeleteUseCase
 import cz.adamec.timotej.snag.sync.fe.app.api.model.EnqueueSyncDeleteRequest
+import kotlinx.coroutines.flow.first
 import kotlin.uuid.Uuid
 
 internal class DeleteFindingPhotoUseCaseImpl(
@@ -27,13 +28,28 @@ internal class DeleteFindingPhotoUseCaseImpl(
     private val enqueueSyncDeleteUseCase: EnqueueSyncDeleteUseCase,
 ) : DeleteFindingPhotoUseCase {
     override suspend operator fun invoke(photoId: Uuid): OfflineFirstDataResult<Unit> {
-        enqueueSyncDeleteUseCase(
-            EnqueueSyncDeleteRequest(
-                entityTypeId = FINDING_PHOTO_SYNC_ENTITY_TYPE,
-                entityId = photoId,
-            ),
-        )
-        logger.d { "Enqueued sync delete for photo $photoId. Photo will be removed from local DB after successful sync." }
+        val photoResult = findingPhotosDb.getPhotoFlow(photoId).first()
+        val findingId =
+            when (photoResult) {
+                is OfflineFirstDataResult.Success -> photoResult.data?.findingId
+                is OfflineFirstDataResult.ProgrammerError -> {
+                    logger.log(offlineFirstDataResult = photoResult)
+                    return photoResult
+                }
+            }
+
+        findingPhotosDb.deletePhoto(photoId)
+
+        if (findingId != null) {
+            enqueueSyncDeleteUseCase(
+                EnqueueSyncDeleteRequest(
+                    entityTypeId = FINDING_PHOTO_SYNC_ENTITY_TYPE,
+                    entityId = photoId,
+                    scopeId = findingId,
+                ),
+            )
+        }
+
         return OfflineFirstDataResult.Success(Unit)
     }
 }

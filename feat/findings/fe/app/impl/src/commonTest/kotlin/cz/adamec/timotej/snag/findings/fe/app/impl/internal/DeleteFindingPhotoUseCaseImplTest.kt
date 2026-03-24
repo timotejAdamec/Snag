@@ -29,6 +29,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
 import kotlin.test.assertNull
+import kotlin.test.assertTrue
 import kotlin.uuid.Uuid
 
 class DeleteFindingPhotoUseCaseImplTest : FrontendKoinInitializedTest() {
@@ -51,7 +52,7 @@ class DeleteFindingPhotoUseCaseImplTest : FrontendKoinInitializedTest() {
     )
 
     @Test
-    fun `keeps photo in database for sync handler to delete`() =
+    fun `deletes photo from database`() =
         runTest(testDispatcher) {
             val photo = createPhoto(id = photoId, findingId = findingId)
             fakeFindingPhotosDb.setPhoto(photo)
@@ -60,11 +61,11 @@ class DeleteFindingPhotoUseCaseImplTest : FrontendKoinInitializedTest() {
 
             val flowResult = fakeFindingPhotosDb.getPhotoFlow(photoId).first()
             assertIs<OfflineFirstDataResult.Success<AppFindingPhoto?>>(flowResult)
-            assertEquals(photo, flowResult.data)
+            assertNull(flowResult.data)
         }
 
     @Test
-    fun `enqueues sync delete operation`() =
+    fun `enqueues sync delete operation with findingId as scopeId`() =
         runTest(testDispatcher) {
             val photo = createPhoto(id = photoId, findingId = findingId)
             fakeFindingPhotosDb.setPhoto(photo)
@@ -76,6 +77,7 @@ class DeleteFindingPhotoUseCaseImplTest : FrontendKoinInitializedTest() {
             assertEquals(FINDING_PHOTO_SYNC_ENTITY_TYPE, pending[0].entityTypeId)
             assertEquals(photoId, pending[0].entityId)
             assertEquals(SyncOperationType.DELETE, pending[0].operationType)
+            assertEquals(findingId, pending[0].scopeId)
         }
 
     @Test
@@ -90,12 +92,13 @@ class DeleteFindingPhotoUseCaseImplTest : FrontendKoinInitializedTest() {
         }
 
     @Test
-    fun `returns success even when photo does not exist`() =
+    fun `returns success and does not enqueue sync when photo does not exist`() =
         runTest(testDispatcher) {
             val nonExistentId = Uuid.parse("00000000-0000-0000-0099-000000000099")
 
             val result = useCase(nonExistentId)
 
             assertIs<OfflineFirstDataResult.Success<Unit>>(result)
+            assertTrue(fakeSyncQueue.getAllPending().isEmpty())
         }
 }

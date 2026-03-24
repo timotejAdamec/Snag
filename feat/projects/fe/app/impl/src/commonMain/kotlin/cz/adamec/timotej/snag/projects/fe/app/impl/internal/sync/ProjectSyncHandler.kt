@@ -45,6 +45,7 @@ internal class ProjectSyncHandler(
     override suspend fun deleteEntityFromApi(
         entityId: Uuid,
         deletedAt: Timestamp,
+        scopeId: Uuid?,
     ): OnlineDataResult<AppProject?> = projectsApi.deleteProject(entityId, deletedAt)
 
     override suspend fun saveEntityToDb(entity: AppProject): OfflineFirstDataResult<Unit> = projectsDb.saveProject(entity)

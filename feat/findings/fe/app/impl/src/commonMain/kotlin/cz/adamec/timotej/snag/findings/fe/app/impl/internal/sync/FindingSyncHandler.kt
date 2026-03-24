@@ -39,6 +39,7 @@ internal class FindingSyncHandler(
     override suspend fun deleteEntityFromApi(
         entityId: Uuid,
         deletedAt: Timestamp,
+        scopeId: Uuid?,
     ): OnlineDataResult<AppFinding?> = findingsApi.deleteFinding(entityId, deletedAt)
 
     override suspend fun saveEntityToDb(entity: AppFinding): OfflineFirstDataResult<Unit> = findingsDb.saveFinding(entity)
