@@ -14,22 +14,21 @@ package cz.adamec.timotej.snag.findings.fe.app.impl.internal
 
 import cz.adamec.timotej.snag.core.network.fe.ConnectionStatusProvider
 import cz.adamec.timotej.snag.findings.fe.app.api.CanModifyFindingPhotosUseCase
+import cz.adamec.timotej.snag.projects.fe.app.api.CanEditProjectEntitiesUseCase
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.onEach
+import kotlin.uuid.Uuid
 
 internal class CanModifyFindingPhotosUseCaseImpl(
     private val connectionStatusProvider: ConnectionStatusProvider,
+    private val canEditProjectEntitiesUseCase: CanEditProjectEntitiesUseCase,
 ) : CanModifyFindingPhotosUseCase {
-    override fun invoke(): Flow<Boolean> =
-        connectionStatusProvider
-            .isConnectedFlow()
-            .distinctUntilChanged()
-            .onEach {
-                if (it) {
-                    LH.logger.v("Can modify finding photos: internet connection is available")
-                } else {
-                    LH.logger.v("Cannot modify finding photos: internet connection is unavailable")
-                }
-            }
+    override fun invoke(projectId: Uuid): Flow<Boolean> =
+        combine(
+            connectionStatusProvider.isConnectedFlow(),
+            canEditProjectEntitiesUseCase(projectId),
+        ) { isConnected, canEdit ->
+            isConnected && canEdit
+        }.distinctUntilChanged()
 }

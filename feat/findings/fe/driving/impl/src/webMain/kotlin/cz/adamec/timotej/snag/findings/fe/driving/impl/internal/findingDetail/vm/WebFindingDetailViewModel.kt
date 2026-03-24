@@ -52,7 +52,7 @@ internal class WebFindingDetailViewModel(
 
     private fun collectCanModifyPhotos() {
         viewModelScope.launch {
-            canModifyFindingPhotosUseCase().collect { canModify ->
+            canModifyFindingPhotosUseCase(projectId).collect { canModify ->
                 vmState.update { it.copy(canModifyPhotos = canModify) }
             }
         }

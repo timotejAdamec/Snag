@@ -13,7 +13,8 @@
 package cz.adamec.timotej.snag.findings.fe.app.api
 
 import kotlinx.coroutines.flow.Flow
+import kotlin.uuid.Uuid
 
 interface CanModifyFindingPhotosUseCase {
-    operator fun invoke(): Flow<Boolean>
+    operator fun invoke(projectId: Uuid): Flow<Boolean>
 }
