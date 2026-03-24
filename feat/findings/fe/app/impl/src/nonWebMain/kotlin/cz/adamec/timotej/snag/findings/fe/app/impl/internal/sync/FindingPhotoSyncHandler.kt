@@ -51,7 +51,25 @@ internal class FindingPhotoSyncHandler(
     override suspend fun deleteEntityFromApi(
         entityId: Uuid,
         deletedAt: Timestamp,
-    ): OnlineDataResult<AppFindingPhoto?> = findingPhotosApi.deletePhoto(id = entityId, deletedAt = deletedAt)
+    ): OnlineDataResult<AppFindingPhoto?> {
+        val photoResult = findingPhotosDb.getPhotoFlow(entityId).first()
+        val findingId =
+            (photoResult as? OfflineFirstDataResult.Success)?.data?.findingId
+                ?: return OnlineDataResult.Failure.NetworkUnavailable
+
+        val result =
+            findingPhotosApi.deletePhoto(
+                id = entityId,
+                findingId = findingId,
+                deletedAt = deletedAt,
+            )
+
+        if (result is OnlineDataResult.Success && result.data == null) {
+            findingPhotosDb.deletePhoto(entityId)
+        }
+
+        return result
+    }
 
     @Suppress("ReturnCount")
     override suspend fun saveEntityToApi(entity: AppFindingPhoto): OnlineDataResult<AppFindingPhoto?> {

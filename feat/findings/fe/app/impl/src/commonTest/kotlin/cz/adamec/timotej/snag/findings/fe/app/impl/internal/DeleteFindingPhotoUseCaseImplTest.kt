@@ -51,7 +51,7 @@ class DeleteFindingPhotoUseCaseImplTest : FrontendKoinInitializedTest() {
     )
 
     @Test
-    fun `deletes photo from database`() =
+    fun `keeps photo in database for sync handler to delete`() =
         runTest(testDispatcher) {
             val photo = createPhoto(id = photoId, findingId = findingId)
             fakeFindingPhotosDb.setPhoto(photo)
@@ -60,7 +60,7 @@ class DeleteFindingPhotoUseCaseImplTest : FrontendKoinInitializedTest() {
 
             val flowResult = fakeFindingPhotosDb.getPhotoFlow(photoId).first()
             assertIs<OfflineFirstDataResult.Success<AppFindingPhoto?>>(flowResult)
-            assertNull(flowResult.data)
+            assertEquals(photo, flowResult.data)
         }
 
     @Test

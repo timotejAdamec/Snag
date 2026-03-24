@@ -49,12 +49,13 @@ internal class RealFindingPhotosApi(
 
     override suspend fun deletePhoto(
         id: Uuid,
+        findingId: Uuid,
         deletedAt: Timestamp,
     ): OnlineDataResult<AppFindingPhoto?> {
         LH.logger.d { "Deleting photo $id from API..." }
         return safeApiCall(logger = LH.logger, errorContext = "Error deleting photo $id from API.") {
             val response =
-                httpClient.patch("/findings/_/photos/$id") {
+                httpClient.patch("/findings/$findingId/photos/$id") {
                     setBody(DeleteFindingPhotoApiDto(deletedAt = deletedAt))
                 }
             if (response.status != HttpStatusCode.NoContent) {

@@ -36,6 +36,7 @@ import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 import kotlin.uuid.Uuid
 
@@ -182,6 +183,76 @@ class FindingPhotoSyncHandlerTest : FrontendKoinInitializedTest() {
         }
 
     @Test
+    fun `does not delete local file when remote upload fails`() =
+        runTest(testDispatcher) {
+            val localPhoto = createLocalPhoto()
+            fakeFindingPhotosDb.setPhoto(localPhoto)
+            setupFindingAndStructure()
+            fakeFileApi.forcedFailure =
+                OnlineDataResult.Failure.NetworkUnavailable
+
+            handler.execute(
+                entityId = photoId,
+                operationType = SyncOperationType.UPSERT,
+            )
+
+            // Local file should NOT have been deleted
+            assertTrue(
+                fakeLocalFileStorage.deletedPaths.isEmpty(),
+                "Local file should not be deleted when upload fails",
+            )
+
+            // Photo should still have local URL in DB
+            val photoAfter =
+                (fakeFindingPhotosDb.getPhotoFlow(photoId).first() as OfflineFirstDataResult.Success).data!!
+            assertEquals(localPhoto.url, photoAfter.url)
+        }
+
+    @Test
+    fun `upload failure followed by API failure keeps local file intact`() =
+        runTest(testDispatcher) {
+            val localPhoto = createLocalPhoto()
+            fakeFindingPhotosDb.setPhoto(localPhoto)
+            setupFindingAndStructure()
+
+            // First: remote upload fails
+            fakeFileApi.forcedFailure =
+                OnlineDataResult.Failure.NetworkUnavailable
+
+            val result1 = handler.execute(
+                entityId = photoId,
+                operationType = SyncOperationType.UPSERT,
+            )
+            assertEquals(PushSyncOperationResult.Failure, result1)
+            assertTrue(fakeLocalFileStorage.deletedPaths.isEmpty())
+
+            // Second: upload succeeds but API fails
+            fakeFileApi.forcedFailure = null
+            fakeFindingPhotosApi.forcedFailure =
+                OnlineDataResult.Failure.NetworkUnavailable
+
+            val result2 = handler.execute(
+                entityId = photoId,
+                operationType = SyncOperationType.UPSERT,
+            )
+            assertEquals(PushSyncOperationResult.Failure, result2)
+
+            // Third: both succeed
+            fakeFindingPhotosApi.forcedFailure = null
+
+            val result3 = handler.execute(
+                entityId = photoId,
+                operationType = SyncOperationType.UPSERT,
+            )
+            assertEquals(PushSyncOperationResult.Success, result3)
+
+            // Photo should now have remote URL
+            val photoAfter =
+                (fakeFindingPhotosDb.getPhotoFlow(photoId).first() as OfflineFirstDataResult.Success).data!!
+            assertTrue(photoAfter.url.startsWith("http"))
+        }
+
+    @Test
     fun `returns entity not found when photo is not in database`() =
         runTest(testDispatcher) {
             val missingId = Uuid.parse("00000000-0000-0000-0000-000000000099")
@@ -195,19 +266,28 @@ class FindingPhotoSyncHandlerTest : FrontendKoinInitializedTest() {
         }
 
     @Test
-    fun `delete operation calls API and returns success`() =
+    fun `delete operation calls API and removes from local DB`() =
         runTest(testDispatcher) {
+            val photo = createLocalPhoto()
+            fakeFindingPhotosDb.setPhoto(photo)
+
             val result = handler.execute(
                 entityId = photoId,
                 operationType = SyncOperationType.DELETE,
             )
 
             assertEquals(PushSyncOperationResult.Success, result)
+
+            val photoAfter =
+                (fakeFindingPhotosDb.getPhotoFlow(photoId).first() as OfflineFirstDataResult.Success).data
+            assertNull(photoAfter)
         }
 
     @Test
     fun `delete operation returns failure when API fails`() =
         runTest(testDispatcher) {
+            val photo = createLocalPhoto()
+            fakeFindingPhotosDb.setPhoto(photo)
             fakeFindingPhotosApi.forcedFailure =
                 OnlineDataResult.Failure.ProgrammerError(RuntimeException("API error"))
 

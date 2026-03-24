@@ -26,21 +26,14 @@ internal class DeleteFindingPhotoUseCaseImpl(
     private val findingPhotosDb: FindingPhotosDb,
     private val enqueueSyncDeleteUseCase: EnqueueSyncDeleteUseCase,
 ) : DeleteFindingPhotoUseCase {
-    override suspend operator fun invoke(photoId: Uuid): OfflineFirstDataResult<Unit> =
-        findingPhotosDb
-            .deletePhoto(photoId)
-            .also {
-                logger.log(
-                    offlineFirstDataResult = it,
-                    additionalInfo = "DeleteFindingPhotoUseCase, findingPhotosDb.deletePhoto($photoId)",
-                )
-                if (it is OfflineFirstDataResult.Success) {
-                    enqueueSyncDeleteUseCase(
-                        EnqueueSyncDeleteRequest(
-                            entityTypeId = FINDING_PHOTO_SYNC_ENTITY_TYPE,
-                            entityId = photoId,
-                        ),
-                    )
-                }
-            }
+    override suspend operator fun invoke(photoId: Uuid): OfflineFirstDataResult<Unit> {
+        enqueueSyncDeleteUseCase(
+            EnqueueSyncDeleteRequest(
+                entityTypeId = FINDING_PHOTO_SYNC_ENTITY_TYPE,
+                entityId = photoId,
+            ),
+        )
+        logger.d { "Enqueued sync delete for photo $photoId. Photo will be removed from local DB after successful sync." }
+        return OfflineFirstDataResult.Success(Unit)
+    }
 }

@@ -28,6 +28,7 @@ interface FindingPhotosApi {
 
     suspend fun deletePhoto(
         id: Uuid,
+        findingId: Uuid,
         deletedAt: Timestamp,
     ): OnlineDataResult<AppFindingPhoto?>
 

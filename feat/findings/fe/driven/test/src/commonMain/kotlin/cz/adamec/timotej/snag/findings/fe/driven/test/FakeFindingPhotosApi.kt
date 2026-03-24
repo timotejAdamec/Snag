@@ -46,6 +46,7 @@ class FakeFindingPhotosApi : FindingPhotosApi {
 
     override suspend fun deletePhoto(
         id: Uuid,
+        findingId: Uuid,
         deletedAt: Timestamp,
     ): OnlineDataResult<AppFindingPhoto?> = ops.deleteItemById(id)
 

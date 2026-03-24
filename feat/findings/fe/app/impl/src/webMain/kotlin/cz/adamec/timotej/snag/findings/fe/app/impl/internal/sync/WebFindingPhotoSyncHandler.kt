@@ -22,6 +22,7 @@ import cz.adamec.timotej.snag.findings.fe.ports.FindingPhotosApi
 import cz.adamec.timotej.snag.findings.fe.ports.FindingPhotosDb
 import cz.adamec.timotej.snag.sync.fe.app.api.handler.DbApiPushSyncHandler
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlin.uuid.Uuid
 
 internal class WebFindingPhotoSyncHandler(
@@ -41,8 +42,25 @@ internal class WebFindingPhotoSyncHandler(
     override suspend fun deleteEntityFromApi(
         entityId: Uuid,
         deletedAt: Timestamp,
-    ): OnlineDataResult<AppFindingPhoto?> =
-        findingPhotosApi.deletePhoto(id = entityId, deletedAt = deletedAt)
+    ): OnlineDataResult<AppFindingPhoto?> {
+        val photoResult = findingPhotosDb.getPhotoFlow(entityId).first()
+        val findingId =
+            (photoResult as? OfflineFirstDataResult.Success)?.data?.findingId
+                ?: return OnlineDataResult.Failure.NetworkUnavailable
+
+        val result =
+            findingPhotosApi.deletePhoto(
+                id = entityId,
+                findingId = findingId,
+                deletedAt = deletedAt,
+            )
+
+        if (result is OnlineDataResult.Success && result.data == null) {
+            findingPhotosDb.deletePhoto(entityId)
+        }
+
+        return result
+    }
 
     override suspend fun saveEntityToApi(entity: AppFindingPhoto): OnlineDataResult<AppFindingPhoto?> =
         findingPhotosApi.savePhoto(entity)
