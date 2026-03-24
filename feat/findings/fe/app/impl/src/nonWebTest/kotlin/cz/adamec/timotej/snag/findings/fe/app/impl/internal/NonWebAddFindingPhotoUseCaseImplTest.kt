@@ -13,21 +13,17 @@
 package cz.adamec.timotej.snag.findings.fe.app.impl.internal
 
 import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
-import cz.adamec.timotej.snag.core.storage.fe.LocalFileStorage
 import cz.adamec.timotej.snag.feat.findings.app.model.AppFindingPhoto
 import cz.adamec.timotej.snag.findings.fe.app.api.AddFindingPhotoRequest
 import cz.adamec.timotej.snag.findings.fe.app.api.NonWebAddFindingPhotoUseCase
 import cz.adamec.timotej.snag.findings.fe.app.impl.internal.sync.FINDING_PHOTO_SYNC_ENTITY_TYPE
 import cz.adamec.timotej.snag.findings.fe.driven.test.FakeFindingPhotosDb
+import cz.adamec.timotej.snag.lib.storage.fe.test.FakeLocalFileStorage
 import cz.adamec.timotej.snag.sync.fe.driven.test.FakeSyncQueue
 import cz.adamec.timotej.snag.sync.fe.model.SyncOperationType
 import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
-import org.koin.core.module.Module
-import org.koin.dsl.bind
-import org.koin.dsl.module
-import org.koin.mp.KoinPlatform.getKoin
 import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -38,19 +34,13 @@ import kotlin.uuid.Uuid
 class NonWebAddFindingPhotoUseCaseImplTest : FrontendKoinInitializedTest() {
     private val fakeFindingPhotosDb: FakeFindingPhotosDb by inject()
     private val fakeSyncQueue: FakeSyncQueue by inject()
+    private val fakeLocalFileStorage: FakeLocalFileStorage by inject()
 
     private val useCase: NonWebAddFindingPhotoUseCase by inject()
 
     private val projectId = Uuid.parse("00000000-0000-0000-0000-000000000001")
     private val findingId = Uuid.parse("00000000-0000-0000-0000-000000000002")
     private val photoBytes = byteArrayOf(1, 2, 3, 4)
-
-    override fun additionalKoinModules(): List<Module> =
-        listOf(
-            module {
-                factory { FakeLocalFileStorage() } bind LocalFileStorage::class
-            },
-        )
 
     @Test
     fun `saves photo to database and returns photo id`() =
@@ -132,12 +122,7 @@ class NonWebAddFindingPhotoUseCaseImplTest : FrontendKoinInitializedTest() {
     @Test
     fun `returns error when local file storage fails`() =
         runTest(testDispatcher) {
-            val failingModule =
-                module {
-                    factory { FailingLocalFileStorage() } bind LocalFileStorage::class
-                }
-            getKoin().loadModules(listOf(failingModule))
-            val failingUseCase: NonWebAddFindingPhotoUseCase = getKoin().get()
+            fakeLocalFileStorage.forcedFailure = RuntimeException("Storage failure")
 
             val request =
                 AddFindingPhotoRequest(
@@ -147,7 +132,7 @@ class NonWebAddFindingPhotoUseCaseImplTest : FrontendKoinInitializedTest() {
                     projectId = projectId,
                 )
 
-            val result = failingUseCase(request)
+            val result = useCase(request)
 
             assertIs<OfflineFirstDataResult.ProgrammerError>(result)
         }
@@ -184,30 +169,4 @@ class NonWebAddFindingPhotoUseCaseImplTest : FrontendKoinInitializedTest() {
         val result = fakeFindingPhotosDb.getPhotoFlow(id).first()
         return (result as OfflineFirstDataResult.Success).data!!
     }
-}
-
-private class FakeLocalFileStorage : LocalFileStorage {
-    override suspend fun saveFile(
-        bytes: ByteArray,
-        fileName: String,
-        subdirectory: String,
-    ): String = "$subdirectory/$fileName"
-
-    override suspend fun readFileBytes(path: String): ByteArray = byteArrayOf()
-
-    override suspend fun deleteFile(path: String) = Unit
-}
-
-private class FailingLocalFileStorage : LocalFileStorage {
-    override suspend fun saveFile(
-        bytes: ByteArray,
-        fileName: String,
-        subdirectory: String,
-    ): String = throw RuntimeException("Storage failure")
-
-    override suspend fun readFileBytes(path: String): ByteArray =
-        throw RuntimeException("Storage failure")
-
-    override suspend fun deleteFile(path: String) =
-        throw RuntimeException("Storage failure")
 }

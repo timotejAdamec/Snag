@@ -14,7 +14,9 @@ kotlin {
         commonTest {
             dependencies {
                 implementation(project(":feat:findings:fe:driven:test"))
+                implementation(project(":feat:structures:fe:driven:test"))
                 implementation(project(":feat:sync:fe:driven:test"))
+                implementation(project(":lib:storage:fe:test"))
             }
         }
     }

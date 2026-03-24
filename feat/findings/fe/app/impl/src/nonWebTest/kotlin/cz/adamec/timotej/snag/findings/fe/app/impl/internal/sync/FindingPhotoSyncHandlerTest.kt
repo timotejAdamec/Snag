@@ -15,7 +15,6 @@ package cz.adamec.timotej.snag.findings.fe.app.impl.internal.sync
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.core.network.fe.OnlineDataResult
-import cz.adamec.timotej.snag.core.storage.fe.LocalFileStorage
 import cz.adamec.timotej.snag.feat.findings.app.model.AppFindingData
 import cz.adamec.timotej.snag.feat.findings.app.model.AppFindingPhotoData
 import cz.adamec.timotej.snag.feat.findings.business.FindingType
@@ -24,6 +23,7 @@ import cz.adamec.timotej.snag.findings.fe.driven.test.FakeFindingPhotosApi
 import cz.adamec.timotej.snag.findings.fe.driven.test.FakeFindingPhotosDb
 import cz.adamec.timotej.snag.findings.fe.driven.test.FakeFindingsDb
 import cz.adamec.timotej.snag.lib.storage.fe.test.FakeFileApi
+import cz.adamec.timotej.snag.lib.storage.fe.test.FakeLocalFileStorage
 import cz.adamec.timotej.snag.structures.fe.driven.test.FakeStructuresDb
 import cz.adamec.timotej.snag.sync.fe.app.api.handler.PushSyncOperationHandler
 import cz.adamec.timotej.snag.sync.fe.app.api.handler.PushSyncOperationResult
@@ -31,9 +31,6 @@ import cz.adamec.timotej.snag.sync.fe.model.SyncOperationType
 import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
-import org.koin.core.module.Module
-import org.koin.dsl.bind
-import org.koin.dsl.module
 import org.koin.mp.KoinPlatform.getKoin
 import org.koin.test.inject
 import kotlin.test.Test
@@ -48,7 +45,7 @@ class FindingPhotoSyncHandlerTest : FrontendKoinInitializedTest() {
     private val fakeFindingsDb: FakeFindingsDb by inject()
     private val fakeStructuresDb: FakeStructuresDb by inject()
     private val fakeFileApi: FakeFileApi by inject()
-    private val fakeLocalFileStorage = FakeLocalFileStorage()
+    private val fakeLocalFileStorage: FakeLocalFileStorage by inject()
 
     private val handler: PushSyncOperationHandler by lazy {
         getKoin().getAll<PushSyncOperationHandler>()
@@ -60,13 +57,6 @@ class FindingPhotoSyncHandlerTest : FrontendKoinInitializedTest() {
     private val findingId = Uuid.parse("00000000-0000-0000-0000-000000000003")
     private val photoId = Uuid.parse("00000000-0000-0000-0000-000000000004")
     private val nowTimestamp = Timestamp(1000L)
-
-    override fun additionalKoinModules(): List<Module> =
-        listOf(
-            module {
-                factory { fakeLocalFileStorage } bind LocalFileStorage::class
-            },
-        )
 
     private fun setupFindingAndStructure() {
         fakeFindingsDb.setFinding(
@@ -259,21 +249,47 @@ class FindingPhotoSyncHandlerTest : FrontendKoinInitializedTest() {
             assertIs<PushSyncOperationResult>(result)
             assertEquals(PushSyncOperationResult.Failure, result)
         }
-}
 
-private class FakeLocalFileStorage : LocalFileStorage {
-    val readCalls = mutableListOf<String>()
+    @Test
+    fun `succeeds on third attempt after two API failures`() =
+        runTest(testDispatcher) {
+            val localPhoto = createLocalPhoto()
+            fakeFindingPhotosDb.setPhoto(localPhoto)
+            setupFindingAndStructure()
+            fakeFindingPhotosApi.forcedFailure =
+                OnlineDataResult.Failure.NetworkUnavailable
 
-    override suspend fun saveFile(
-        bytes: ByteArray,
-        fileName: String,
-        subdirectory: String,
-    ): String = "$subdirectory/$fileName"
+            // First attempt — file uploads to GCS but API push fails
+            val result1 = handler.execute(
+                entityId = photoId,
+                operationType = SyncOperationType.UPSERT,
+            )
+            assertEquals(PushSyncOperationResult.Failure, result1)
 
-    override suspend fun readFileBytes(path: String): ByteArray {
-        readCalls.add(path)
-        return byteArrayOf(1, 2, 3, 4)
-    }
+            // File was uploaded to GCS and URL was swapped to remote in DB,
+            // but the API push failed — so sync is not complete
+            val photoAfterFirst =
+                (fakeFindingPhotosDb.getPhotoFlow(photoId).first() as OfflineFirstDataResult.Success).data!!
+            assertTrue(photoAfterFirst.url.startsWith("http"))
 
-    override suspend fun deleteFile(path: String) = Unit
+            // Second attempt — URL is now remote, handler retries API push but still fails
+            val result2 = handler.execute(
+                entityId = photoId,
+                operationType = SyncOperationType.UPSERT,
+            )
+            assertEquals(PushSyncOperationResult.Failure, result2)
+
+            // Third attempt — API succeeds
+            fakeFindingPhotosApi.forcedFailure = null
+            val result3 = handler.execute(
+                entityId = photoId,
+                operationType = SyncOperationType.UPSERT,
+            )
+            assertEquals(PushSyncOperationResult.Success, result3)
+
+            // Photo still has remote URL
+            val photoAfterThird =
+                (fakeFindingPhotosDb.getPhotoFlow(photoId).first() as OfflineFirstDataResult.Success).data!!
+            assertTrue(photoAfterThird.url.startsWith("http"))
+        }
 }

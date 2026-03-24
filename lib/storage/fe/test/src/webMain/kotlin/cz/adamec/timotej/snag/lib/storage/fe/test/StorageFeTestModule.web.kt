@@ -12,16 +12,6 @@
 
 package cz.adamec.timotej.snag.lib.storage.fe.test
 
-import cz.adamec.timotej.snag.core.storage.fe.RemoteFileStorage
-import org.koin.core.module.Module
-import org.koin.core.module.dsl.singleOf
-import org.koin.dsl.bind
 import org.koin.dsl.module
 
-val storageFeTestModule =
-    module {
-        includes(storageFeTestPlatformModule)
-        singleOf(::FakeFileApi) bind RemoteFileStorage::class
-    }
-
-internal expect val storageFeTestPlatformModule: Module
+internal actual val storageFeTestPlatformModule = module {}
