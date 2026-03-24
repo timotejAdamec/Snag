@@ -1,0 +1,9 @@
+# Android SDK (auto-configured by Android Studio)
+# sdk.dir=/path/to/android/sdk
+
+# Release signing configuration
+# Generate keystore: ./scripts/generate-release-keystore.sh
+# snag.release.storeFile=keystore/release.jks
+# snag.release.storePassword=
+# snag.release.keyAlias=snag-release
+# snag.release.keyPassword=

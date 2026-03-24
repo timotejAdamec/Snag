@@ -1,4 +1,5 @@
 [versions]
+snag-app = "0.1.0"
 agp = "9.0.1"
 android-compileSdk = "36"
 android-minSdk = "24"

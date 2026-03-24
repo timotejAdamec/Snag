@@ -69,7 +69,7 @@ compose.desktop {
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = SNAG_NAMESPACE
-            packageVersion = "1.0.0"
+            packageVersion = libs.versions.snag.app.get()
         }
     }
 }
