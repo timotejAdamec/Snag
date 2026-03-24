@@ -63,9 +63,24 @@ The APK will be at `androidApp/build/outputs/apk/release/`.
 
 ## Build Types
 
-| Build type | Application ID suffix | Minified | Debuggable |
-|------------|----------------------|----------|------------|
-| `debug`    | `.debug`             | No       | Yes        |
-| `release`  | (none)               | Yes      | No         |
+| Build type | Application ID suffix | Minified | Debuggable | Server target |
+|------------|----------------------|----------|------------|---------------|
+| `debug`    | `.debug`             | No       | Yes        | `localhost`   |
+| `release`  | (none)               | Yes      | No         | `dev`         |
 
 Debug and release builds can coexist on the same device thanks to the `.debug` application ID suffix.
+
+## Server Target Configuration
+
+Server target is determined at compile time via `buildkonfig` and applies to all platforms (Android, iOS, desktop, web).
+
+**Config files** in `config/`:
+- `config/debug.properties` — used for debug builds (default: `localhost`)
+- `config/release.properties` — used for release builds (default: `dev`)
+
+Detection is automatic based on Gradle task names (e.g., `assembleRelease`, `linkReleaseFramework`).
+
+**Override** with `-P` flag (takes precedence over config files):
+```bash
+./gradlew :androidApp:assembleRelease -Psnag.serverTarget=demo
+```

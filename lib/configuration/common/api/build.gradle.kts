@@ -11,6 +11,7 @@
  */
 
 import cz.adamec.timotej.snag.buildsrc.consts.SNAG_NAMESPACE
+import java.util.Properties
 
 plugins {
     alias(libs.plugins.snagMultiplatformModule)
@@ -22,6 +23,19 @@ configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
         exclude { it.file.path.contains("buildkonfig") }
     }
 }
+
+val isRelease = gradle.startParameter.taskNames.any {
+    it.contains("release", ignoreCase = true)
+}
+val buildProfileFile = rootProject.file(
+    if (isRelease) "config/release.properties" else "config/debug.properties",
+)
+val buildProfile = Properties().apply {
+    if (buildProfileFile.exists()) buildProfileFile.inputStream().use { load(it) }
+}
+val serverTarget = findProperty("snag.serverTarget")?.toString()
+    ?: buildProfile.getProperty("snag.serverTarget")
+    ?: "localhost"
 
 buildkonfig {
     packageName = "cz.adamec.timotej.snag.configuration.common"
@@ -37,7 +51,7 @@ buildkonfig {
         buildConfigField(
             com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING,
             "SERVER_TARGET",
-            findProperty("snag.serverTarget")?.toString() ?: "localhost",
+            serverTarget,
             const = true,
         )
     }
