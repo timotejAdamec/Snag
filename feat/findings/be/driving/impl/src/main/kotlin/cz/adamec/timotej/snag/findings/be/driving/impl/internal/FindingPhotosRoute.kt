@@ -38,25 +38,6 @@ internal class FindingPhotosRoute(
     private val getFindingPhotosModifiedSinceUseCase: GetFindingPhotosModifiedSinceUseCase,
 ) : AppRoute {
     override fun Route.setup() {
-        route("/findings/photos") {
-            patch("/{id}") {
-                val id = getIdFromParameters()
-                val deleteDto = getDtoFromBody<DeleteFindingPhotoApiDto>()
-
-                val newerPhoto =
-                    deleteFindingPhotoUseCase(
-                        DeleteFindingPhotoRequest(
-                            photoId = id,
-                            deletedAt = deleteDto.deletedAt,
-                        ),
-                    )
-
-                newerPhoto?.let {
-                    call.respond(it.toDto())
-                } ?: call.respond(HttpStatusCode.NoContent)
-            }
-        }
-
         route("/findings/{findingId}/photos") {
             put("/{id}") {
                 val id = getIdFromParameters()
@@ -70,6 +51,23 @@ internal class FindingPhotosRoute(
                     )
 
                 updatedPhoto?.let {
+                    call.respond(it.toDto())
+                } ?: call.respond(HttpStatusCode.NoContent)
+            }
+
+            patch("/{id}") {
+                val id = getIdFromParameters()
+                val deleteDto = getDtoFromBody<DeleteFindingPhotoApiDto>()
+
+                val newerPhoto =
+                    deleteFindingPhotoUseCase(
+                        DeleteFindingPhotoRequest(
+                            photoId = id,
+                            deletedAt = deleteDto.deletedAt,
+                        ),
+                    )
+
+                newerPhoto?.let {
                     call.respond(it.toDto())
                 } ?: call.respond(HttpStatusCode.NoContent)
             }

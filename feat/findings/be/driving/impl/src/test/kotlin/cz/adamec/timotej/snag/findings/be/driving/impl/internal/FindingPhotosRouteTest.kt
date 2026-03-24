@@ -98,7 +98,7 @@ class FindingPhotosRouteTest : BackendKoinInitializedTest() {
 
     // endregion
 
-    // region PATCH /findings/photos/{id}
+    // region PATCH /findings/{findingId}/photos/{id}
 
     @Test
     fun `PATCH deletes photo and returns 204`() =
@@ -119,7 +119,7 @@ class FindingPhotosRouteTest : BackendKoinInitializedTest() {
             }
 
             val response =
-                client.patch("/findings/photos/$PHOTO_ID_1") {
+                client.patch("/findings/$FINDING_ID/photos/$PHOTO_ID_1") {
                     contentType(ContentType.Application.Json)
                     setBody(DeleteFindingPhotoApiDto(deletedAt = Timestamp(200L)))
                 }

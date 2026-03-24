@@ -54,7 +54,7 @@ internal class RealFindingPhotosApi(
         LH.logger.d { "Deleting photo $id from API..." }
         return safeApiCall(logger = LH.logger, errorContext = "Error deleting photo $id from API.") {
             val response =
-                httpClient.patch("/findings/photos/$id") {
+                httpClient.patch("/findings/_/photos/$id") {
                     setBody(DeleteFindingPhotoApiDto(deletedAt = deletedAt))
                 }
             if (response.status != HttpStatusCode.NoContent) {
