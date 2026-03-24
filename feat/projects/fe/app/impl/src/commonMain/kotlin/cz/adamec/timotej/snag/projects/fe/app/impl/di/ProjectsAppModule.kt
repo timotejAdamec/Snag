@@ -12,7 +12,8 @@
 
 package cz.adamec.timotej.snag.projects.fe.app.impl.di
 
-import cz.adamec.timotej.snag.projects.business.CanEditProjectEntitiesRule
+import cz.adamec.timotej.snag.projects.business.AreProjectEntitiesEditableRule
+import cz.adamec.timotej.snag.projects.business.CanAccessProjectRule
 import cz.adamec.timotej.snag.projects.fe.app.api.CanEditProjectEntitiesUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.CascadeDeleteLocalAssignmentsByProjectIdUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.CascadeRestoreLocalAssignmentsByProjectIdUseCase
@@ -51,7 +52,8 @@ val projectsAppModule =
         factoryOf(::SetProjectClosedUseCaseImpl) bind SetProjectClosedUseCase::class
         factoryOf(::CanEditProjectEntitiesUseCaseImpl) bind CanEditProjectEntitiesUseCase::class
         factoryOf(::IsClientReferencedByProjectUseCaseImpl) bind IsClientReferencedByProjectUseCase::class
-        factoryOf(::CanEditProjectEntitiesRule)
+        factoryOf(::AreProjectEntitiesEditableRule)
+        factoryOf(::CanAccessProjectRule)
         factoryOf(::GetProjectAssignmentsUseCaseImpl) bind GetProjectAssignmentsUseCase::class
         factoryOf(::CascadeDeleteLocalAssignmentsByProjectIdUseCaseImpl) bind CascadeDeleteLocalAssignmentsByProjectIdUseCase::class
         factoryOf(::CascadeRestoreLocalAssignmentsByProjectIdUseCaseImpl) bind CascadeRestoreLocalAssignmentsByProjectIdUseCase::class

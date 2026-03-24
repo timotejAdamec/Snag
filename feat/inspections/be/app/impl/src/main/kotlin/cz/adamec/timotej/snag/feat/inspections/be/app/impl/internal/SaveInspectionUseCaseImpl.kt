@@ -17,16 +17,16 @@ import cz.adamec.timotej.snag.feat.inspections.be.app.impl.internal.LH.logger
 import cz.adamec.timotej.snag.feat.inspections.be.model.BackendInspection
 import cz.adamec.timotej.snag.feat.inspections.be.ports.InspectionsDb
 import cz.adamec.timotej.snag.projects.be.app.api.GetProjectUseCase
-import cz.adamec.timotej.snag.projects.business.CanEditProjectEntitiesRule
+import cz.adamec.timotej.snag.projects.business.AreProjectEntitiesEditableRule
 
 internal class SaveInspectionUseCaseImpl(
     private val inspectionsDb: InspectionsDb,
     private val getProjectUseCase: GetProjectUseCase,
-    private val canEditProjectEntitiesRule: CanEditProjectEntitiesRule,
+    private val areProjectEntitiesEditableRule: AreProjectEntitiesEditableRule,
 ) : SaveInspectionUseCase {
     override suspend operator fun invoke(backendInspection: BackendInspection): BackendInspection? {
         val project = getProjectUseCase(backendInspection.projectId)
-        if (project != null && !canEditProjectEntitiesRule(project)) {
+        if (project != null && !areProjectEntitiesEditableRule(project)) {
             return inspectionsDb.getInspection(backendInspection.id)
         }
         logger.debug("Saving inspection {} to local storage.", backendInspection)

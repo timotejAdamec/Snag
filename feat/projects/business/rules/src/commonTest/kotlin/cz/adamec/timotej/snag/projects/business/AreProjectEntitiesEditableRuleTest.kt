@@ -18,8 +18,8 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 import kotlin.uuid.Uuid
 
-class CanEditProjectEntitiesRuleTest {
-    private val rule = CanEditProjectEntitiesRule()
+class AreProjectEntitiesEditableRuleTest {
+    private val rule = AreProjectEntitiesEditableRule()
 
     private fun createProject(isClosed: Boolean) =
         object : Project {

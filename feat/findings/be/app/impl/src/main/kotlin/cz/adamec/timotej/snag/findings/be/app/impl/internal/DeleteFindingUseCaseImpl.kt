@@ -18,14 +18,14 @@ import cz.adamec.timotej.snag.findings.be.app.api.model.DeleteFindingRequest
 import cz.adamec.timotej.snag.findings.be.app.impl.internal.LH.logger
 import cz.adamec.timotej.snag.findings.be.ports.FindingsDb
 import cz.adamec.timotej.snag.projects.be.app.api.GetProjectUseCase
-import cz.adamec.timotej.snag.projects.business.CanEditProjectEntitiesRule
+import cz.adamec.timotej.snag.projects.business.AreProjectEntitiesEditableRule
 import cz.adamec.timotej.snag.structures.be.ports.StructuresDb
 
 internal class DeleteFindingUseCaseImpl(
     private val findingsDb: FindingsDb,
     private val structuresDb: StructuresDb,
     private val getProjectUseCase: GetProjectUseCase,
-    private val canEditProjectEntitiesRule: CanEditProjectEntitiesRule,
+    private val areProjectEntitiesEditableRule: AreProjectEntitiesEditableRule,
 ) : DeleteFindingUseCase {
     override suspend operator fun invoke(request: DeleteFindingRequest): BackendFinding? {
         val finding = findingsDb.getFinding(request.findingId)
@@ -33,7 +33,7 @@ internal class DeleteFindingUseCaseImpl(
             val structure = structuresDb.getStructure(finding.structureId)
             if (structure != null) {
                 val project = getProjectUseCase(structure.projectId)
-                if (project != null && !canEditProjectEntitiesRule(project)) {
+                if (project != null && !areProjectEntitiesEditableRule(project)) {
                     return finding
                 }
             }
