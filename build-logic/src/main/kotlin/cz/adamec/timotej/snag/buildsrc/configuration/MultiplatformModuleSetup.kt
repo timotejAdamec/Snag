@@ -20,7 +20,9 @@ import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.invoke
 import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.gradle.api.NamedDomainObjectContainer
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 internal fun Project.configureKotlinMultiplatformModule() {
@@ -70,57 +72,8 @@ internal fun Project.configureKotlinMultiplatformModule() {
         applyDefaultHierarchyTemplate()
 
         sourceSets {
-            val nonWebMain = create("nonWebMain") {
-                dependsOn(commonMain.get())
-            }
-            androidMain {
-                dependsOn(nonWebMain)
-            }
-            iosMain {
-                dependsOn(nonWebMain)
-            }
-            jvmMain {
-                dependsOn(nonWebMain)
-            }
-
-            // awkward because of upgrade to AGP 9.0.0
-            val webMain = sourceSets.maybeCreate("webMain")
-
-            val nonAndroidMain = create("nonAndroidMain") {
-                dependsOn(commonMain.get())
-            }
-            iosMain {
-                dependsOn(nonAndroidMain)
-            }
-            jvmMain {
-                dependsOn(nonAndroidMain)
-            }
-            getByName("webMain") {
-                dependsOn(nonAndroidMain)
-            }
-
-            val nonWebTest = create("nonWebTest") {
-                dependsOn(commonTest.get())
-            }
-            jvmTest {
-                dependsOn(nonWebTest)
-            }
-
-            val webTest = sourceSets.maybeCreate("webTest")
-            webTest.dependsOn(commonTest.get())
-
-            val nonJvmMain = create("nonJvmMain") {
-                dependsOn(commonMain.get())
-            }
-            androidMain {
-                dependsOn(nonJvmMain)
-            }
-            iosMain {
-                dependsOn(nonJvmMain)
-            }
-            getByName("webMain") {
-                dependsOn(nonJvmMain)
-            }
+            configureIntermediateSourceSets(isTest = false)
+            configureIntermediateSourceSets(isTest = true)
 
             commonMain.dependencies {
                 for (dep in this@configureKotlinMultiplatformModule.resolveHexagonalDependencies()) {
@@ -155,5 +108,37 @@ internal fun Project.configureKotlinMultiplatformModule() {
             }
         }
     }
+}
 
+private fun NamedDomainObjectContainer<KotlinSourceSet>.configureIntermediateSourceSets(
+    isTest: Boolean,
+) {
+    val suffix = if (isTest) "Test" else "Main"
+    val common = getByName("common$suffix")
+
+    fun getOrCreate(name: String) = maybeCreate("$name$suffix")
+
+    val nonWeb = create("nonWeb$suffix") {
+        dependsOn(common)
+    }
+    getOrCreate("android").dependsOn(nonWeb)
+    getOrCreate("ios").dependsOn(nonWeb)
+    getOrCreate("jvm").dependsOn(nonWeb)
+
+    // awkward because of upgrade to AGP 9.0.0
+    getOrCreate("web")
+
+    val nonAndroid = create("nonAndroid$suffix") {
+        dependsOn(common)
+    }
+    getOrCreate("ios").dependsOn(nonAndroid)
+    getOrCreate("jvm").dependsOn(nonAndroid)
+    getOrCreate("web").dependsOn(nonAndroid)
+
+    val nonJvm = create("nonJvm$suffix") {
+        dependsOn(common)
+    }
+    getOrCreate("android").dependsOn(nonJvm)
+    getOrCreate("ios").dependsOn(nonJvm)
+    getOrCreate("web").dependsOn(nonJvm)
 }
