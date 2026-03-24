@@ -12,6 +12,8 @@
 
 package cz.adamec.timotej.snag.findings.be.driving.impl.internal
 
+import cz.adamec.timotej.snag.authentication.be.driving.api.currentUser
+import cz.adamec.timotej.snag.authorization.be.driving.api.ForbiddenException
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.findings.be.app.api.DeleteFindingUseCase
 import cz.adamec.timotej.snag.findings.be.app.api.GetFindingsModifiedSinceUseCase
@@ -21,9 +23,12 @@ import cz.adamec.timotej.snag.findings.be.app.api.model.DeleteFindingRequest
 import cz.adamec.timotej.snag.findings.be.app.api.model.GetFindingsModifiedSinceRequest
 import cz.adamec.timotej.snag.findings.be.driving.contract.DeleteFindingApiDto
 import cz.adamec.timotej.snag.findings.be.driving.contract.PutFindingApiDto
+import cz.adamec.timotej.snag.findings.be.ports.FindingsDb
+import cz.adamec.timotej.snag.projects.be.app.api.CanAccessProjectUseCase
 import cz.adamec.timotej.snag.routing.be.AppRoute
 import cz.adamec.timotej.snag.routing.be.getDtoFromBody
 import cz.adamec.timotej.snag.routing.be.getIdFromParameters
+import cz.adamec.timotej.snag.structures.be.ports.StructuresDb
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
@@ -31,6 +36,7 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.patch
 import io.ktor.server.routing.put
 import io.ktor.server.routing.route
+import kotlin.uuid.Uuid
 
 @Suppress("LabeledExpression")
 internal class FindingsRoute(
@@ -38,11 +44,17 @@ internal class FindingsRoute(
     private val getFindingsUseCase: GetFindingsUseCase,
     private val getFindingsModifiedSinceUseCase: GetFindingsModifiedSinceUseCase,
     private val saveFindingUseCase: SaveFindingUseCase,
+    private val canAccessProjectUseCase: CanAccessProjectUseCase,
+    private val structuresDb: StructuresDb,
+    private val findingsDb: FindingsDb,
 ) : AppRoute {
     override fun Route.setup() {
         route("/findings") {
             patch("/{id}") {
+                val userId = currentUser().userId
                 val id = getIdFromParameters()
+                val projectId = resolveProjectIdFromFinding(id)
+                requireProjectAccess(userId = userId, projectId = projectId)
                 val deleteFindingDto = getDtoFromBody<DeleteFindingApiDto>()
 
                 val newerFinding =
@@ -61,7 +73,9 @@ internal class FindingsRoute(
 
         route("/structures/{structureId}/findings") {
             get {
+                val userId = currentUser().userId
                 val structureId = getIdFromParameters("structureId")
+                resolveAndRequireProjectAccess(userId = userId, structureId = structureId)
                 val sinceParam = call.request.queryParameters["since"]
                 if (sinceParam != null) {
                     val since = Timestamp(sinceParam.toLong())
@@ -80,8 +94,10 @@ internal class FindingsRoute(
             }
 
             put("/{id}") {
+                val userId = currentUser().userId
+                val structureId = getIdFromParameters("structureId")
+                resolveAndRequireProjectAccess(userId = userId, structureId = structureId)
                 val id = getIdFromParameters()
-
                 val putFindingDto = getDtoFromBody<PutFindingApiDto>()
 
                 val updatedFinding = saveFindingUseCase(putFindingDto.toModel(id))
@@ -90,6 +106,30 @@ internal class FindingsRoute(
                     call.respond(it.toDto())
                 } ?: call.respond(HttpStatusCode.NoContent)
             }
+        }
+    }
+
+    private suspend fun resolveProjectIdFromFinding(findingId: Uuid): Uuid {
+        val finding = findingsDb.getFinding(findingId) ?: throw ForbiddenException()
+        return structuresDb.getStructure(finding.structureId)?.projectId
+            ?: throw ForbiddenException()
+    }
+
+    private suspend fun resolveAndRequireProjectAccess(
+        userId: Uuid,
+        structureId: Uuid,
+    ) {
+        val projectId = structuresDb.getStructure(structureId)?.projectId
+            ?: throw ForbiddenException()
+        requireProjectAccess(userId = userId, projectId = projectId)
+    }
+
+    private suspend fun requireProjectAccess(
+        userId: Uuid,
+        projectId: Uuid,
+    ) {
+        if (!canAccessProjectUseCase(userId = userId, projectId = projectId)) {
+            throw ForbiddenException()
         }
     }
 }

@@ -12,7 +12,10 @@
 
 package cz.adamec.timotej.snag.structures.be.driving.impl.internal
 
+import cz.adamec.timotej.snag.authentication.be.driving.api.currentUser
+import cz.adamec.timotej.snag.authorization.be.driving.api.ForbiddenException
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
+import cz.adamec.timotej.snag.projects.be.app.api.CanAccessProjectUseCase
 import cz.adamec.timotej.snag.routing.be.AppRoute
 import cz.adamec.timotej.snag.routing.be.getDtoFromBody
 import cz.adamec.timotej.snag.routing.be.getIdFromParameters
@@ -24,6 +27,7 @@ import cz.adamec.timotej.snag.structures.be.app.api.model.DeleteStructureRequest
 import cz.adamec.timotej.snag.structures.be.app.api.model.GetStructuresModifiedSinceRequest
 import cz.adamec.timotej.snag.structures.be.driving.contract.DeleteStructureApiDto
 import cz.adamec.timotej.snag.structures.be.driving.contract.PutStructureApiDto
+import cz.adamec.timotej.snag.structures.be.ports.StructuresDb
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
@@ -31,6 +35,7 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.patch
 import io.ktor.server.routing.put
 import io.ktor.server.routing.route
+import kotlin.uuid.Uuid
 
 @Suppress("LabeledExpression")
 internal class StructuresRoute(
@@ -38,11 +43,17 @@ internal class StructuresRoute(
     private val getStructuresUseCase: GetStructuresUseCase,
     private val getStructuresModifiedSinceUseCase: GetStructuresModifiedSinceUseCase,
     private val saveStructureUseCase: SaveStructureUseCase,
+    private val canAccessProjectUseCase: CanAccessProjectUseCase,
+    private val structuresDb: StructuresDb,
 ) : AppRoute {
     override fun Route.setup() {
         route("/structures") {
             patch("/{id}") {
+                val userId = currentUser().userId
                 val id = getIdFromParameters()
+                val projectId = structuresDb.getStructure(id)?.projectId
+                    ?: throw ForbiddenException()
+                requireProjectAccess(userId = userId, projectId = projectId)
                 val deleteStructureDto = getDtoFromBody<DeleteStructureApiDto>()
 
                 val newerStructure =
@@ -61,7 +72,9 @@ internal class StructuresRoute(
 
         route("/projects/{projectId}/structures") {
             get {
+                val userId = currentUser().userId
                 val projectId = getIdFromParameters("projectId")
+                requireProjectAccess(userId = userId, projectId = projectId)
                 val sinceParam = call.request.queryParameters["since"]
                 if (sinceParam != null) {
                     val since = Timestamp(sinceParam.toLong())
@@ -80,6 +93,9 @@ internal class StructuresRoute(
             }
 
             put("/{id}") {
+                val userId = currentUser().userId
+                val projectId = getIdFromParameters("projectId")
+                requireProjectAccess(userId = userId, projectId = projectId)
                 val id = getIdFromParameters()
                 val putStructureDto = getDtoFromBody<PutStructureApiDto>()
 
@@ -89,6 +105,15 @@ internal class StructuresRoute(
                     call.respond(it.toDto())
                 } ?: call.respond(HttpStatusCode.NoContent)
             }
+        }
+    }
+
+    private suspend fun requireProjectAccess(
+        userId: Uuid,
+        projectId: Uuid,
+    ) {
+        if (!canAccessProjectUseCase(userId = userId, projectId = projectId)) {
+            throw ForbiddenException()
         }
     }
 }

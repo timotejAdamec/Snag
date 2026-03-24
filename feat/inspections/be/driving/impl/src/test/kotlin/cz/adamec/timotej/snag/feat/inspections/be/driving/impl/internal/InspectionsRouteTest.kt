@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.feat.inspections.be.driving.impl.internal
 
+import cz.adamec.timotej.snag.authorization.business.UserRole
 import cz.adamec.timotej.snag.configuration.be.AppConfiguration
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.feat.inspections.be.driven.test.seedTestInspection
@@ -21,11 +22,16 @@ import cz.adamec.timotej.snag.feat.inspections.be.ports.InspectionsDb
 import cz.adamec.timotej.snag.network.be.test.jsonClient
 import cz.adamec.timotej.snag.projects.be.driven.test.seedTestProject
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
+import cz.adamec.timotej.snag.routing.be.USER_ID_HEADER
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
+import cz.adamec.timotej.snag.users.be.driven.test.TEST_USER_ID
 import cz.adamec.timotej.snag.users.be.driven.test.seedTestUser
+import cz.adamec.timotej.snag.users.be.model.BackendUserData
 import cz.adamec.timotej.snag.users.be.ports.UsersDb
 import io.ktor.client.call.body
 import io.ktor.client.request.delete
+import io.ktor.client.request.get
+import io.ktor.client.request.header
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
@@ -56,6 +62,49 @@ class InspectionsRouteTest : BackendKoinInitializedTest() {
         }
     }
 
+    // region Auth
+
+    @Test
+    fun `DELETE inspection returns 401 without user header`() =
+        testApplication {
+            configureApp()
+            val client = jsonClient()
+
+            val response =
+                client.delete("/inspections/$TEST_ID_1") {
+                    contentType(ContentType.Application.Json)
+                    setBody(DeleteInspectionApiDto(deletedAt = Timestamp(200L)))
+                }
+
+            assertEquals(HttpStatusCode.Unauthorized, response.status)
+        }
+
+    @Test
+    fun `GET inspections returns 403 for user without project access`() =
+        testApplication {
+            configureApp()
+            seedProject()
+            usersDb.saveUser(
+                BackendUserData(
+                    id = TECH_USER_ID,
+                    entraId = "tech-entra",
+                    email = "tech@example.com",
+                    role = UserRole.PASSPORT_TECHNICIAN,
+                    updatedAt = Timestamp(1L),
+                ),
+            )
+            val client = jsonClient()
+
+            val response =
+                client.get("/projects/$PROJECT_ID/inspections") {
+                    header(USER_ID_HEADER, TECH_USER_ID.toString())
+                }
+
+            assertEquals(HttpStatusCode.Forbidden, response.status)
+        }
+
+    // endregion
+
     // region DELETE /inspections/{id}
 
     @Test
@@ -75,6 +124,7 @@ class InspectionsRouteTest : BackendKoinInitializedTest() {
             val response =
                 client.delete("/inspections/$TEST_ID_1") {
                     contentType(ContentType.Application.Json)
+                    header(USER_ID_HEADER, TEST_USER_ID.toString())
                     setBody(DeleteInspectionApiDto(deletedAt = Timestamp(200L)))
                 }
 
@@ -97,6 +147,7 @@ class InspectionsRouteTest : BackendKoinInitializedTest() {
             val response =
                 client.delete("/inspections/$TEST_ID_1") {
                     contentType(ContentType.Application.Json)
+                    header(USER_ID_HEADER, TEST_USER_ID.toString())
                     setBody(DeleteInspectionApiDto(deletedAt = Timestamp(200L)))
                 }
 
@@ -114,6 +165,7 @@ class InspectionsRouteTest : BackendKoinInitializedTest() {
             val response =
                 client.delete("/inspections/not-a-uuid") {
                     contentType(ContentType.Application.Json)
+                    header(USER_ID_HEADER, TEST_USER_ID.toString())
                     setBody(DeleteInspectionApiDto(deletedAt = Timestamp(200L)))
                 }
 
@@ -129,6 +181,7 @@ class InspectionsRouteTest : BackendKoinInitializedTest() {
             val response =
                 client.delete("/inspections/$TEST_ID_1") {
                     contentType(ContentType.Application.Json)
+                    header(USER_ID_HEADER, TEST_USER_ID.toString())
                     setBody("{\"invalid\": true}")
                 }
 
@@ -140,5 +193,6 @@ class InspectionsRouteTest : BackendKoinInitializedTest() {
     companion object {
         private val PROJECT_ID = Uuid.parse("00000000-0000-0000-0000-000000000020")
         private val TEST_ID_1 = Uuid.parse("00000000-0000-0000-0000-000000000001")
+        private val TECH_USER_ID = Uuid.parse("00000000-0000-0000-0000-000000000099")
     }
 }

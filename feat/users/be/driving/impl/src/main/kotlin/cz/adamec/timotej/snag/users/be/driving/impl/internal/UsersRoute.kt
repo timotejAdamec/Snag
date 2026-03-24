@@ -12,10 +12,14 @@
 
 package cz.adamec.timotej.snag.users.be.driving.impl.internal
 
+import cz.adamec.timotej.snag.authentication.be.driving.api.currentUser
+import cz.adamec.timotej.snag.authorization.be.driving.api.ForbiddenException
+import cz.adamec.timotej.snag.authorization.business.UserRole
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.routing.be.AppRoute
 import cz.adamec.timotej.snag.routing.be.getDtoFromBody
 import cz.adamec.timotej.snag.routing.be.getIdFromParameters
+import cz.adamec.timotej.snag.users.be.app.api.CanSetUserRoleUseCase
 import cz.adamec.timotej.snag.users.be.app.api.GetUserUseCase
 import cz.adamec.timotej.snag.users.be.app.api.GetUsersModifiedSinceUseCase
 import cz.adamec.timotej.snag.users.be.app.api.GetUsersUseCase
@@ -28,6 +32,7 @@ import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
 import io.ktor.server.routing.put
 import io.ktor.server.routing.route
+import kotlin.uuid.Uuid
 
 @Suppress("LabeledExpression")
 internal class UsersRoute(
@@ -35,6 +40,7 @@ internal class UsersRoute(
     private val getUsersModifiedSinceUseCase: GetUsersModifiedSinceUseCase,
     private val getUserUseCase: GetUserUseCase,
     private val saveUserUseCase: SaveUserUseCase,
+    private val canSetUserRoleUseCase: CanSetUserRoleUseCase,
 ) : AppRoute {
     override fun Route.setup() {
         route("/users") {
@@ -64,11 +70,33 @@ internal class UsersRoute(
             }
 
             put("/{id}") {
-                val id = getIdFromParameters()
+                val actingUserId = currentUser().userId
+                val targetUserId = getIdFromParameters()
                 val putUserDto = getDtoFromBody<PutUserApiDto>()
-                val savedUser = saveUserUseCase(putUserDto.toModel(id))
+                val newRole = putUserDto.role?.let { UserRole.valueOf(it) }
+                requireCanSetUserRole(
+                    actingUserId = actingUserId,
+                    targetUserId = targetUserId,
+                    newRole = newRole,
+                )
+                val savedUser = saveUserUseCase(putUserDto.toModel(targetUserId))
                 call.respond(savedUser.toDto())
             }
+        }
+    }
+
+    private suspend fun requireCanSetUserRole(
+        actingUserId: Uuid,
+        targetUserId: Uuid,
+        newRole: UserRole?,
+    ) {
+        if (!canSetUserRoleUseCase(
+                actingUserId = actingUserId,
+                targetUserId = targetUserId,
+                newRole = newRole,
+            )
+        ) {
+            throw ForbiddenException()
         }
     }
 }

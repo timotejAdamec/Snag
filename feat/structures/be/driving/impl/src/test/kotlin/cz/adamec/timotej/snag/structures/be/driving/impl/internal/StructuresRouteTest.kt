@@ -12,22 +12,27 @@
 
 package cz.adamec.timotej.snag.structures.be.driving.impl.internal
 
+import cz.adamec.timotej.snag.authorization.business.UserRole
 import cz.adamec.timotej.snag.configuration.be.AppConfiguration
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.feat.structures.be.model.BackendStructureData
 import cz.adamec.timotej.snag.network.be.test.jsonClient
 import cz.adamec.timotej.snag.projects.be.driven.test.seedTestProject
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
+import cz.adamec.timotej.snag.routing.be.USER_ID_HEADER
 import cz.adamec.timotej.snag.structures.be.driven.test.seedTestStructure
 import cz.adamec.timotej.snag.structures.be.driving.contract.DeleteStructureApiDto
 import cz.adamec.timotej.snag.structures.be.driving.contract.PutStructureApiDto
 import cz.adamec.timotej.snag.structures.be.driving.contract.StructureApiDto
 import cz.adamec.timotej.snag.structures.be.ports.StructuresDb
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
+import cz.adamec.timotej.snag.users.be.driven.test.TEST_USER_ID
 import cz.adamec.timotej.snag.users.be.driven.test.seedTestUser
+import cz.adamec.timotej.snag.users.be.model.BackendUserData
 import cz.adamec.timotej.snag.users.be.ports.UsersDb
 import io.ktor.client.call.body
 import io.ktor.client.request.get
+import io.ktor.client.request.header
 import io.ktor.client.request.patch
 import io.ktor.client.request.put
 import io.ktor.client.request.setBody
@@ -62,6 +67,45 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
         }
     }
 
+    // region Auth
+
+    @Test
+    fun `GET structures returns 401 without user header`() =
+        testApplication {
+            configureApp()
+            val client = jsonClient()
+
+            val response = client.get("/projects/$PROJECT_ID/structures")
+
+            assertEquals(HttpStatusCode.Unauthorized, response.status)
+        }
+
+    @Test
+    fun `GET structures returns 403 for user without project access`() =
+        testApplication {
+            configureApp()
+            createParentProject()
+            usersDb.saveUser(
+                BackendUserData(
+                    id = TECH_USER_ID,
+                    entraId = "tech-entra",
+                    email = "tech@example.com",
+                    role = UserRole.PASSPORT_TECHNICIAN,
+                    updatedAt = Timestamp(1L),
+                ),
+            )
+            val client = jsonClient()
+
+            val response =
+                client.get("/projects/$PROJECT_ID/structures") {
+                    header(USER_ID_HEADER, TECH_USER_ID.toString())
+                }
+
+            assertEquals(HttpStatusCode.Forbidden, response.status)
+        }
+
+    // endregion
+
     // region PATCH /structures/{id}
 
     @Test
@@ -80,6 +124,7 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
             val response =
                 client.patch("/structures/$TEST_ID_1") {
                     contentType(ContentType.Application.Json)
+                    header(USER_ID_HEADER, TEST_USER_ID.toString())
                     setBody(DeleteStructureApiDto(deletedAt = Timestamp(200L)))
                 }
 
@@ -101,10 +146,14 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
 
             client.patch("/structures/$TEST_ID_1") {
                 contentType(ContentType.Application.Json)
+                header(USER_ID_HEADER, TEST_USER_ID.toString())
                 setBody(DeleteStructureApiDto(deletedAt = Timestamp(200L)))
             }
 
-            val getResponse = client.get("/projects/$PROJECT_ID/structures")
+            val getResponse =
+                client.get("/projects/$PROJECT_ID/structures") {
+                    header(USER_ID_HEADER, TEST_USER_ID.toString())
+                }
             assertEquals(HttpStatusCode.OK, getResponse.status)
             val body = getResponse.body<List<StructureApiDto>>()
             assertEquals(1, body.size)
@@ -128,6 +177,7 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
             val response =
                 client.patch("/structures/$TEST_ID_1") {
                     contentType(ContentType.Application.Json)
+                    header(USER_ID_HEADER, TEST_USER_ID.toString())
                     setBody(DeleteStructureApiDto(deletedAt = Timestamp(200L)))
                 }
 
@@ -145,6 +195,7 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
             val response =
                 client.patch("/structures/not-a-uuid") {
                     contentType(ContentType.Application.Json)
+                    header(USER_ID_HEADER, TEST_USER_ID.toString())
                     setBody(DeleteStructureApiDto(deletedAt = Timestamp(200L)))
                 }
 
@@ -160,6 +211,7 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
             val response =
                 client.patch("/structures/$TEST_ID_1") {
                     contentType(ContentType.Application.Json)
+                    header(USER_ID_HEADER, TEST_USER_ID.toString())
                     setBody("{\"invalid\": true}")
                 }
 
@@ -176,7 +228,10 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
             configureApp()
             val client = jsonClient()
 
-            val response = client.get("/projects/$PROJECT_ID/structures")
+            val response =
+                client.get("/projects/$PROJECT_ID/structures") {
+                    header(USER_ID_HEADER, TEST_USER_ID.toString())
+                }
 
             assertEquals(HttpStatusCode.OK, response.status)
             assertEquals(emptyList<StructureApiDto>(), response.body<List<StructureApiDto>>())
@@ -202,7 +257,10 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
             )
             val client = jsonClient()
 
-            val response = client.get("/projects/$PROJECT_ID/structures")
+            val response =
+                client.get("/projects/$PROJECT_ID/structures") {
+                    header(USER_ID_HEADER, TEST_USER_ID.toString())
+                }
 
             assertEquals(HttpStatusCode.OK, response.status)
             val body = response.body<List<StructureApiDto>>()
@@ -234,7 +292,10 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
             )
             val client = jsonClient()
 
-            val response = client.get("/projects/$PROJECT_ID/structures")
+            val response =
+                client.get("/projects/$PROJECT_ID/structures") {
+                    header(USER_ID_HEADER, TEST_USER_ID.toString())
+                }
 
             assertEquals(HttpStatusCode.OK, response.status)
             val body = response.body<List<StructureApiDto>>()
@@ -262,7 +323,10 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
             )
             val client = jsonClient()
 
-            val response = client.get("/projects/$PROJECT_ID/structures?since=100")
+            val response =
+                client.get("/projects/$PROJECT_ID/structures?since=100") {
+                    header(USER_ID_HEADER, TEST_USER_ID.toString())
+                }
 
             assertEquals(HttpStatusCode.OK, response.status)
             val body = response.body<List<StructureApiDto>>()
@@ -289,7 +353,10 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
             )
             val client = jsonClient()
 
-            val response = client.get("/projects/$PROJECT_ID/structures?since=100")
+            val response =
+                client.get("/projects/$PROJECT_ID/structures?since=100") {
+                    header(USER_ID_HEADER, TEST_USER_ID.toString())
+                }
 
             assertEquals(HttpStatusCode.OK, response.status)
             val body = response.body<List<StructureApiDto>>()
@@ -303,7 +370,10 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
             configureApp()
             val client = jsonClient()
 
-            val response = client.get("/projects/not-a-uuid/structures")
+            val response =
+                client.get("/projects/not-a-uuid/structures") {
+                    header(USER_ID_HEADER, TEST_USER_ID.toString())
+                }
 
             assertEquals(HttpStatusCode.BadRequest, response.status)
         }
@@ -322,6 +392,7 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
             val response =
                 client.put("/projects/$PROJECT_ID/structures/$TEST_ID_1") {
                     contentType(ContentType.Application.Json)
+                    header(USER_ID_HEADER, TEST_USER_ID.toString())
                     setBody(
                         PutStructureApiDto(
                             projectId = PROJECT_ID,
@@ -351,6 +422,7 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
             val response =
                 client.put("/projects/$PROJECT_ID/structures/$TEST_ID_1") {
                     contentType(ContentType.Application.Json)
+                    header(USER_ID_HEADER, TEST_USER_ID.toString())
                     setBody(
                         PutStructureApiDto(
                             projectId = PROJECT_ID,
@@ -387,6 +459,7 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
             val response =
                 client.put("/projects/$PROJECT_ID/structures/$TEST_ID_1") {
                     contentType(ContentType.Application.Json)
+                    header(USER_ID_HEADER, TEST_USER_ID.toString())
                     setBody(
                         PutStructureApiDto(
                             projectId = PROJECT_ID,
@@ -412,6 +485,7 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
             val response =
                 client.put("/projects/$PROJECT_ID/structures/not-a-uuid") {
                     contentType(ContentType.Application.Json)
+                    header(USER_ID_HEADER, TEST_USER_ID.toString())
                     setBody(
                         PutStructureApiDto(
                             projectId = PROJECT_ID,
@@ -434,6 +508,7 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
             val response =
                 client.put("/projects/$PROJECT_ID/structures/$TEST_ID_1") {
                     contentType(ContentType.Application.Json)
+                    header(USER_ID_HEADER, TEST_USER_ID.toString())
                     setBody("{\"invalid\": true}")
                 }
 
@@ -446,5 +521,6 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
         private val PROJECT_ID = Uuid.parse("00000000-0000-0000-0000-000000000010")
         private val TEST_ID_1 = Uuid.parse("00000000-0000-0000-0000-000000000001")
         private val TEST_ID_2 = Uuid.parse("00000000-0000-0000-0000-000000000002")
+        private val TECH_USER_ID = Uuid.parse("00000000-0000-0000-0000-000000000099")
     }
 }

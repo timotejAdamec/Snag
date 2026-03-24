@@ -12,6 +12,9 @@
 
 package cz.adamec.timotej.snag.reports.be.driving.impl.internal
 
+import cz.adamec.timotej.snag.authentication.be.driving.api.currentUser
+import cz.adamec.timotej.snag.authorization.be.driving.api.ForbiddenException
+import cz.adamec.timotej.snag.projects.be.app.api.CanAccessProjectUseCase
 import cz.adamec.timotej.snag.reports.be.app.api.GenerateProjectReportUseCase
 import cz.adamec.timotej.snag.routing.be.AppRoute
 import cz.adamec.timotej.snag.routing.be.getIdFromParameters
@@ -25,15 +28,19 @@ import io.ktor.server.response.respondBytes
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
 import io.ktor.server.routing.route
+import kotlin.uuid.Uuid
 
 @Suppress("LabeledExpression")
 internal class ReportRoute(
     private val generateProjectReportUseCase: GenerateProjectReportUseCase,
+    private val canAccessProjectUseCase: CanAccessProjectUseCase,
 ) : AppRoute {
     override fun Route.setup() {
         route("/projects/{projectId}/report") {
             get {
+                val userId = currentUser().userId
                 val projectId = getIdFromParameters("projectId")
+                requireProjectAccess(userId = userId, projectId = projectId)
                 val report = generateProjectReportUseCase(projectId)
 
                 if (report != null) {
@@ -51,6 +58,15 @@ internal class ReportRoute(
                     call.respond(HttpStatusCode.NotFound)
                 }
             }
+        }
+    }
+
+    private suspend fun requireProjectAccess(
+        userId: Uuid,
+        projectId: Uuid,
+    ) {
+        if (!canAccessProjectUseCase(userId = userId, projectId = projectId)) {
+            throw ForbiddenException()
         }
     }
 }
