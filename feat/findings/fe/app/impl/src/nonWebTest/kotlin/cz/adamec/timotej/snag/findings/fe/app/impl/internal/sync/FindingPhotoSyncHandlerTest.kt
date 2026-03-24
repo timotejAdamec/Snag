@@ -13,35 +13,47 @@
 package cz.adamec.timotej.snag.findings.fe.app.impl.internal.sync
 
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
-import cz.adamec.timotej.snag.core.foundation.common.TimestampProvider
 import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.core.network.fe.OnlineDataResult
 import cz.adamec.timotej.snag.core.storage.fe.LocalFileStorage
-import cz.adamec.timotej.snag.core.storage.fe.RemoteFileStorage
 import cz.adamec.timotej.snag.feat.findings.app.model.AppFindingData
 import cz.adamec.timotej.snag.feat.findings.app.model.AppFindingPhotoData
 import cz.adamec.timotej.snag.feat.findings.business.FindingType
-import cz.adamec.timotej.snag.feat.structures.app.model.AppStructure
 import cz.adamec.timotej.snag.feat.structures.app.model.AppStructureData
 import cz.adamec.timotej.snag.findings.fe.driven.test.FakeFindingPhotosApi
 import cz.adamec.timotej.snag.findings.fe.driven.test.FakeFindingPhotosDb
 import cz.adamec.timotej.snag.findings.fe.driven.test.FakeFindingsDb
-import cz.adamec.timotej.snag.structures.fe.app.api.GetStructureUseCase
+import cz.adamec.timotej.snag.lib.storage.fe.test.FakeFileApi
+import cz.adamec.timotej.snag.structures.fe.driven.test.FakeStructuresDb
+import cz.adamec.timotej.snag.sync.fe.app.api.handler.PushSyncOperationHandler
 import cz.adamec.timotej.snag.sync.fe.app.api.handler.PushSyncOperationResult
 import cz.adamec.timotej.snag.sync.fe.model.SyncOperationType
-import kotlinx.coroutines.flow.Flow
+import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
+import org.koin.core.module.Module
+import org.koin.dsl.bind
+import org.koin.dsl.module
+import org.koin.mp.KoinPlatform.getKoin
+import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
 import kotlin.test.assertTrue
 import kotlin.uuid.Uuid
 
-class FindingPhotoSyncHandlerTest {
-    private val testDispatcher = StandardTestDispatcher()
+class FindingPhotoSyncHandlerTest : FrontendKoinInitializedTest() {
+    private val fakeFindingPhotosDb: FakeFindingPhotosDb by inject()
+    private val fakeFindingPhotosApi: FakeFindingPhotosApi by inject()
+    private val fakeFindingsDb: FakeFindingsDb by inject()
+    private val fakeStructuresDb: FakeStructuresDb by inject()
+    private val fakeFileApi: FakeFileApi by inject()
+    private val fakeLocalFileStorage = FakeLocalFileStorage()
+
+    private val handler: PushSyncOperationHandler by lazy {
+        getKoin().getAll<PushSyncOperationHandler>()
+            .first { it.entityTypeId == FINDING_PHOTO_SYNC_ENTITY_TYPE }
+    }
 
     private val projectId = Uuid.parse("00000000-0000-0000-0000-000000000001")
     private val structureId = Uuid.parse("00000000-0000-0000-0000-000000000002")
@@ -49,27 +61,11 @@ class FindingPhotoSyncHandlerTest {
     private val photoId = Uuid.parse("00000000-0000-0000-0000-000000000004")
     private val nowTimestamp = Timestamp(1000L)
 
-    private val fakeFindingPhotosDb = FakeFindingPhotosDb()
-    private val fakeFindingPhotosApi = FakeFindingPhotosApi()
-    private val fakeFindingsDb = FakeFindingsDb()
-    private val fakeLocalFileStorage = FakeLocalFileStorage()
-    private val fakeRemoteFileStorage = FakeRemoteFileStorage()
-    private val fakeGetStructureUseCase = FakeGetStructureUseCase()
-
-    private val fakeTimestampProvider =
-        object : TimestampProvider {
-            override fun getNowTimestamp(): Timestamp = nowTimestamp
-        }
-
-    private val handler =
-        FindingPhotoSyncHandler(
-            findingPhotosApi = fakeFindingPhotosApi,
-            findingPhotosDb = fakeFindingPhotosDb,
-            localFileStorage = fakeLocalFileStorage,
-            remoteFileStorage = fakeRemoteFileStorage,
-            findingsDb = fakeFindingsDb,
-            getStructureUseCase = fakeGetStructureUseCase,
-            timestampProvider = fakeTimestampProvider,
+    override fun additionalKoinModules(): List<Module> =
+        listOf(
+            module {
+                factory { fakeLocalFileStorage } bind LocalFileStorage::class
+            },
         )
 
     private fun setupFindingAndStructure() {
@@ -84,14 +80,15 @@ class FindingPhotoSyncHandlerTest {
                 updatedAt = nowTimestamp,
             ),
         )
-        fakeGetStructureUseCase.structures[structureId] =
+        fakeStructuresDb.setStructure(
             AppStructureData(
                 id = structureId,
                 projectId = projectId,
                 name = "Test Structure",
                 floorPlanUrl = null,
                 updatedAt = nowTimestamp,
-            )
+            ),
+        )
     }
 
     private fun createLocalPhoto(
@@ -150,7 +147,7 @@ class FindingPhotoSyncHandlerTest {
 
             assertEquals(PushSyncOperationResult.Success, result)
             assertTrue(
-                fakeRemoteFileStorage.uploadedFiles.isEmpty(),
+                fakeFileApi.uploadedFiles.isEmpty(),
                 "Should not upload when URL is already remote",
             )
             assertTrue(
@@ -172,7 +169,7 @@ class FindingPhotoSyncHandlerTest {
             )
 
             assertTrue(
-                fakeRemoteFileStorage.uploadedFiles.isNotEmpty(),
+                fakeFileApi.uploadedFiles.isNotEmpty(),
                 "Should have uploaded file to remote storage",
             )
         }
@@ -183,7 +180,7 @@ class FindingPhotoSyncHandlerTest {
             val localPhoto = createLocalPhoto()
             fakeFindingPhotosDb.setPhoto(localPhoto)
             setupFindingAndStructure()
-            fakeRemoteFileStorage.forcedFailure =
+            fakeFileApi.forcedFailure =
                 OnlineDataResult.Failure.ProgrammerError(RuntimeException("Upload failed"))
 
             val result = handler.execute(
@@ -279,35 +276,4 @@ private class FakeLocalFileStorage : LocalFileStorage {
     }
 
     override suspend fun deleteFile(path: String) = Unit
-}
-
-private class FakeRemoteFileStorage : RemoteFileStorage {
-    val uploadedFiles = mutableListOf<Triple<ByteArray, String, String>>()
-    val deletedUrls = mutableListOf<String>()
-    var forcedFailure: OnlineDataResult.Failure? = null
-
-    override suspend fun uploadFile(
-        bytes: ByteArray,
-        fileName: String,
-        directory: String,
-    ): OnlineDataResult<String> {
-        val failure = forcedFailure
-        if (failure != null) return failure
-        uploadedFiles.add(Triple(bytes, fileName, directory))
-        return OnlineDataResult.Success("https://storage.test/$directory/$fileName")
-    }
-
-    override suspend fun deleteFile(url: String): OnlineDataResult<Unit> {
-        val failure = forcedFailure
-        if (failure != null) return failure
-        deletedUrls.add(url)
-        return OnlineDataResult.Success(Unit)
-    }
-}
-
-private class FakeGetStructureUseCase : GetStructureUseCase {
-    val structures = mutableMapOf<Uuid, AppStructure>()
-
-    override fun invoke(structureId: Uuid): Flow<OfflineFirstDataResult<AppStructure?>> =
-        flowOf(OfflineFirstDataResult.Success(structures[structureId]))
 }
