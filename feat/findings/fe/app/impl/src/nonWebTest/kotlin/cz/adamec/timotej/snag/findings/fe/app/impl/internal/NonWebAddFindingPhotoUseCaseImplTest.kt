@@ -27,6 +27,7 @@ import kotlinx.coroutines.test.runTest
 import org.koin.core.module.Module
 import org.koin.dsl.bind
 import org.koin.dsl.module
+import org.koin.mp.KoinPlatform.getKoin
 import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -128,6 +129,56 @@ class NonWebAddFindingPhotoUseCaseImplTest : FrontendKoinInitializedTest() {
             assertTrue(savedPhoto.url.endsWith(".jpg"))
         }
 
+    @Test
+    fun `returns error when local file storage fails`() =
+        runTest(testDispatcher) {
+            val failingModule =
+                module {
+                    factory { FailingLocalFileStorage() } bind LocalFileStorage::class
+                }
+            getKoin().loadModules(listOf(failingModule))
+            val failingUseCase: NonWebAddFindingPhotoUseCase = getKoin().get()
+
+            val request =
+                AddFindingPhotoRequest(
+                    bytes = photoBytes,
+                    fileName = "photo.jpg",
+                    findingId = findingId,
+                    projectId = projectId,
+                )
+
+            val result = failingUseCase(request)
+
+            assertIs<OfflineFirstDataResult.ProgrammerError>(result)
+        }
+
+    @Test
+    fun `repeated invocations create separate photos`() =
+        runTest(testDispatcher) {
+            val request =
+                AddFindingPhotoRequest(
+                    bytes = photoBytes,
+                    fileName = "photo.jpg",
+                    findingId = findingId,
+                    projectId = projectId,
+                )
+
+            val result1 = useCase(request)
+            val result2 = useCase(request)
+
+            assertIs<OfflineFirstDataResult.Success<Uuid>>(result1)
+            assertIs<OfflineFirstDataResult.Success<Uuid>>(result2)
+            assertTrue(result1.data != result2.data, "Each invocation should create a unique photo ID")
+
+            val photo1 = getSavedPhoto(result1.data)
+            val photo2 = getSavedPhoto(result2.data)
+            assertEquals(findingId, photo1.findingId)
+            assertEquals(findingId, photo2.findingId)
+
+            val pending = fakeSyncQueue.getAllPending()
+            assertEquals(2, pending.size)
+        }
+
     private suspend fun getSavedPhoto(id: Uuid): AppFindingPhoto {
         fakeFindingPhotosDb.forcedFailure = null
         val result = fakeFindingPhotosDb.getPhotoFlow(id).first()
@@ -145,4 +196,18 @@ private class FakeLocalFileStorage : LocalFileStorage {
     override suspend fun readFileBytes(path: String): ByteArray = byteArrayOf()
 
     override suspend fun deleteFile(path: String) = Unit
+}
+
+private class FailingLocalFileStorage : LocalFileStorage {
+    override suspend fun saveFile(
+        bytes: ByteArray,
+        fileName: String,
+        subdirectory: String,
+    ): String = throw RuntimeException("Storage failure")
+
+    override suspend fun readFileBytes(path: String): ByteArray =
+        throw RuntimeException("Storage failure")
+
+    override suspend fun deleteFile(path: String) =
+        throw RuntimeException("Storage failure")
 }
