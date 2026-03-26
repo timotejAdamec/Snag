@@ -2,10 +2,13 @@
 
 ## Versioning Scheme
 
-- **`versionCode`** = `YYMMDD000 + (commitCount % 1000)` — auto-computed at build time
-  - Example: 2026-03-24, 42 commits → `260324042`
-- **`versionName`** = `<semantic>.<versionCode>` — e.g., `0.1.0.260324042`
-- **Semantic version** stored in `gradle/libs.versions.toml` as `snag-app`
+All version computation is centralized in `build-logic/.../consts/SnagVersioning.kt` and shared across all platforms via `buildkonfig`.
+
+- **Semantic version** (`0.2.0`) — derived from the latest git tag (`v0.2.0`) using `git describe --tags --abbrev=0`. Falls back to `0.0.0` when no tags exist.
+- **Version code** (`260324042`) — `YYMMDD * 1000 + (commitCount % 1000)`, auto-computed at build time. Example: 2026-03-24, 42 commits → `260324042`
+- **Version name** (`0.2.0.260324042`) — composite of semantic version and version code
+
+All three values are exposed to every platform (Android, iOS, Web, Desktop) as compile-time constants via `buildkonfig` (`SEMANTIC_VERSION`, `VERSION_CODE`, `VERSION_NAME`). Android additionally uses version code and version name natively for `versionCode`/`versionName`. Desktop native distributions use only the semantic version (OS package managers require X.Y.Z format).
 
 ## One-Time Setup (Android Signing)
 
@@ -41,15 +44,15 @@ For the CI release workflow, add these repository secrets:
 
 ## Making a Release
 
-1. Bump `snag-app` version in `gradle/libs.versions.toml` (e.g., `0.1.0` → `0.2.0`)
-2. Commit: `Release 0.2.0`
-3. Tag and push:
+1. Tag and push:
    ```bash
    git tag v0.2.0
    git push origin v0.2.0
    ```
-4. GitHub Actions automatically builds all platform artifacts and creates a GitHub Release with them attached
-5. Artifacts are downloadable from the [Releases](../../releases) page
+2. GitHub Actions automatically builds all platform artifacts and creates a GitHub Release with them attached
+3. Artifacts are downloadable from the [Releases](../../releases) page
+
+The version is derived entirely from the git tag — no manual version bumps needed anywhere.
 
 ## Platform Artifacts
 

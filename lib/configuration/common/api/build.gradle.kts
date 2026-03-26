@@ -11,6 +11,7 @@
  */
 
 import cz.adamec.timotej.snag.buildsrc.consts.SNAG_NAMESPACE
+import cz.adamec.timotej.snag.buildsrc.consts.SnagVersioning
 import java.util.Properties
 
 plugins {
@@ -52,6 +53,24 @@ buildkonfig {
             com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING,
             "SERVER_TARGET",
             serverTarget,
+            const = true,
+        )
+        buildConfigField(
+            com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING,
+            "SEMANTIC_VERSION",
+            SnagVersioning.semanticVersion(project).get(),
+            const = true,
+        )
+        buildConfigField(
+            com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING,
+            "VERSION_CODE",
+            SnagVersioning.versionCode(project).get().toString(),
+            const = true,
+        )
+        buildConfigField(
+            com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING,
+            "VERSION_NAME",
+            SnagVersioning.versionName(project).get(),
             const = true,
         )
     }

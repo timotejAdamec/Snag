@@ -11,23 +11,12 @@
  */
 
 import cz.adamec.timotej.snag.buildsrc.consts.SNAG_NAMESPACE
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
+import cz.adamec.timotej.snag.buildsrc.consts.SnagVersioning
 import java.util.Properties
 
 plugins {
     id("com.android.application")
     alias(libs.plugins.composeCompiler)
-}
-
-val gitCommitCount: Provider<Int> = providers.exec {
-    commandLine("git", "rev-list", "--count", "HEAD")
-}.standardOutput.asText.map { it.trim().toInt() }
-
-val computedVersionCode: Provider<Int> = gitCommitCount.map { commitCount ->
-    val date = LocalDate.now()
-    val datePart = date.format(DateTimeFormatter.ofPattern("yyMMdd")).toInt()
-    datePart * 1000 + (commitCount % 1000)
 }
 
 val signingProps = Properties().apply {
@@ -41,8 +30,6 @@ fun signingProp(key: String): String? =
     signingProps.getProperty(key)
         ?: System.getenv(key.uppercase().replace(".", "_"))
 
-val semanticVersion: String = libs.versions.snag.app.get()
-
 android {
     namespace = "cz.adamec.timotej.snag.android"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
@@ -51,8 +38,8 @@ android {
         applicationId = SNAG_NAMESPACE
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = computedVersionCode.get()
-        versionName = "$semanticVersion.${computedVersionCode.get()}"
+        versionCode = SnagVersioning.versionCode(project).get()
+        versionName = SnagVersioning.versionName(project).get()
     }
 
     signingConfigs {

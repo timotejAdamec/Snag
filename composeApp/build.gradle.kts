@@ -11,6 +11,7 @@
  */
 
 import cz.adamec.timotej.snag.buildsrc.consts.SNAG_NAMESPACE
+import cz.adamec.timotej.snag.buildsrc.consts.SnagVersioning
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 
@@ -69,7 +70,7 @@ compose.desktop {
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = SNAG_NAMESPACE
-            packageVersion = libs.versions.snag.app.get()
+            packageVersion = SnagVersioning.semanticVersion(project).get()
         }
     }
 }
