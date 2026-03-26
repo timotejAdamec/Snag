@@ -14,7 +14,7 @@ package cz.adamec.timotej.snag.authentication.be.driving.impl.internal
 
 import cz.adamec.timotej.snag.authentication.be.driving.api.CallCurrentUser
 import cz.adamec.timotej.snag.authentication.be.driving.api.CallCurrentUserKey
-import cz.adamec.timotej.snag.routing.be.USER_ID_HEADER
+import cz.adamec.timotej.snag.routing.common.USER_ID_HEADER
 import cz.adamec.timotej.snag.users.be.app.api.GetUserUseCase
 import io.ktor.server.application.createApplicationPlugin
 import kotlin.uuid.Uuid
