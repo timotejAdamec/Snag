@@ -117,17 +117,21 @@ private fun NamedDomainObjectContainer<KotlinSourceSet>.configureIntermediateSou
     val common = getByName("common$suffix")
 
     fun getOrCreate(name: String): KotlinSourceSet {
-        val resolvedName = if (name == "android" && isTest) "androidUnitTest" else "$name$suffix"
+        val resolvedName = "$name$suffix"
         return maybeCreate(resolvedName)
     }
 
-    fun androidInstrumented() = if (isTest) maybeCreate("androidInstrumentedTest") else null
+    fun findAndroid(): KotlinSourceSet? =
+        if (isTest) findByName("androidUnitTest") else maybeCreate("android$suffix")
+
+    fun findAndroidInstrumented(): KotlinSourceSet? =
+        if (isTest) findByName("androidInstrumentedTest") else null
 
     val nonWeb = create("nonWeb$suffix") {
         dependsOn(common)
     }
-    getOrCreate("android").dependsOn(nonWeb)
-    androidInstrumented()?.dependsOn(nonWeb)
+    findAndroid()?.dependsOn(nonWeb)
+    findAndroidInstrumented()?.dependsOn(nonWeb)
     getOrCreate("ios").dependsOn(nonWeb)
     getOrCreate("jvm").dependsOn(nonWeb)
 
@@ -144,8 +148,8 @@ private fun NamedDomainObjectContainer<KotlinSourceSet>.configureIntermediateSou
     val nonJvm = create("nonJvm$suffix") {
         dependsOn(common)
     }
-    getOrCreate("android").dependsOn(nonJvm)
-    androidInstrumented()?.dependsOn(nonJvm)
+    findAndroid()?.dependsOn(nonJvm)
+    findAndroidInstrumented()?.dependsOn(nonJvm)
     getOrCreate("ios").dependsOn(nonJvm)
     getOrCreate("web").dependsOn(nonJvm)
 }
