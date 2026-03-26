@@ -18,6 +18,7 @@ import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.core.network.fe.log
 import cz.adamec.timotej.snag.core.network.fe.map
 import cz.adamec.timotej.snag.core.storage.fe.LocalFileStorage
+import kotlinx.coroutines.CancellationException
 import cz.adamec.timotej.snag.feat.findings.app.model.AppFindingPhotoData
 import cz.adamec.timotej.snag.findings.fe.app.api.AddFindingPhotoRequest
 import cz.adamec.timotej.snag.findings.fe.app.api.NonWebAddFindingPhotoUseCase
@@ -46,6 +47,8 @@ internal class NonWebAddFindingPhotoUseCaseImpl(
                     fileName = "$photoId.$extension",
                     subdirectory = "projects/${request.projectId}/findings/${request.findingId}/photos",
                 )
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
                 logger.e(throwable = e) { "Failed to save photo to local storage." }
                 return OfflineFirstDataResult.ProgrammerError(throwable = e)

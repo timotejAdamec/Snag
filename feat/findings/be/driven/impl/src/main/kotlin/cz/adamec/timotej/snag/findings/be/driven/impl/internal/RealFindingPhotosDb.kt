@@ -14,7 +14,6 @@ package cz.adamec.timotej.snag.findings.be.driven.impl.internal
 
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.feat.findings.be.model.BackendFindingPhoto
-import cz.adamec.timotej.snag.feat.findings.be.model.BackendFindingPhotoData
 import cz.adamec.timotej.snag.feat.shared.database.be.FindingEntity
 import cz.adamec.timotej.snag.feat.shared.database.be.FindingPhotoEntity
 import cz.adamec.timotej.snag.feat.shared.database.be.FindingPhotosTable
@@ -72,12 +71,3 @@ internal class RealFindingPhotosDb(
                 }.map { it.toModel() }
         }
 }
-
-internal fun FindingPhotoEntity.toModel(): BackendFindingPhoto =
-    BackendFindingPhotoData(
-        id = id.value,
-        findingId = finding.id.value,
-        url = url,
-        createdAt = Timestamp(createdAt),
-        deletedAt = deletedAt?.let { Timestamp(it) },
-    )

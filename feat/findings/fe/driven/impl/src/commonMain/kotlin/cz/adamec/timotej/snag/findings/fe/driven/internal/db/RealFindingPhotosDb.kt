@@ -15,10 +15,8 @@ package cz.adamec.timotej.snag.findings.fe.driven.internal.db
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import app.cash.sqldelight.coroutines.mapToOneOrNull
-import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.feat.findings.app.model.AppFindingPhoto
-import cz.adamec.timotej.snag.feat.findings.app.model.AppFindingPhotoData
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.FindingPhotoEntity
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.FindingPhotoEntityQueries
 import cz.adamec.timotej.snag.findings.fe.driven.internal.LH
@@ -82,11 +80,3 @@ internal class RealFindingPhotosDb(
             findingPhotoEntityQueries.deleteByFindingId(findingId.toString())
         }
 }
-
-private fun FindingPhotoEntity.toModel() =
-    AppFindingPhotoData(
-        id = Uuid.parse(id),
-        findingId = Uuid.parse(findingId),
-        url = url,
-        createdAt = Timestamp(createdAt),
-    )

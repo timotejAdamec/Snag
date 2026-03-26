@@ -14,7 +14,7 @@ package cz.adamec.timotej.snag.findings.fe.app.impl.di
 
 import cz.adamec.timotej.snag.findings.fe.app.api.NonWebAddFindingPhotoUseCase
 import cz.adamec.timotej.snag.findings.fe.app.impl.internal.NonWebAddFindingPhotoUseCaseImpl
-import cz.adamec.timotej.snag.findings.fe.app.impl.internal.sync.FindingPhotoSyncHandler
+import cz.adamec.timotej.snag.findings.fe.app.impl.internal.sync.NonWebFindingPhotoSyncHandler
 import cz.adamec.timotej.snag.sync.fe.app.api.handler.PushSyncOperationHandler
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.factoryOf
@@ -24,5 +24,5 @@ import org.koin.dsl.module
 internal actual val findingsAppPlatformModule: Module =
     module {
         factoryOf(::NonWebAddFindingPhotoUseCaseImpl) bind NonWebAddFindingPhotoUseCase::class
-        factoryOf(::FindingPhotoSyncHandler) bind PushSyncOperationHandler::class
+        factoryOf(::NonWebFindingPhotoSyncHandler) bind PushSyncOperationHandler::class
     }

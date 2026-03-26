@@ -30,7 +30,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlin.uuid.Uuid
 
-internal class FindingPhotoSyncHandler(
+internal class NonWebFindingPhotoSyncHandler(
     private val findingPhotosApi: FindingPhotosApi,
     private val findingPhotosDb: FindingPhotosDb,
     private val localFileStorage: LocalFileStorage,

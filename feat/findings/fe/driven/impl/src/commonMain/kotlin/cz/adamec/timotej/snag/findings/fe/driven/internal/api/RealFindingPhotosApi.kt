@@ -16,10 +16,8 @@ import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.core.network.fe.OnlineDataResult
 import cz.adamec.timotej.snag.core.network.fe.safeApiCall
 import cz.adamec.timotej.snag.feat.findings.app.model.AppFindingPhoto
-import cz.adamec.timotej.snag.feat.findings.app.model.AppFindingPhotoData
 import cz.adamec.timotej.snag.findings.be.driving.contract.DeleteFindingPhotoApiDto
 import cz.adamec.timotej.snag.findings.be.driving.contract.FindingPhotoApiDto
-import cz.adamec.timotej.snag.findings.be.driving.contract.PutFindingPhotoApiDto
 import cz.adamec.timotej.snag.findings.fe.driven.internal.LH
 import cz.adamec.timotej.snag.findings.fe.ports.FindingPhotoSyncResult
 import cz.adamec.timotej.snag.findings.fe.ports.FindingPhotosApi
@@ -80,25 +78,3 @@ internal class RealFindingPhotosApi(
         }
     }
 }
-
-internal fun AppFindingPhoto.toPutApiDto() =
-    PutFindingPhotoApiDto(
-        findingId = findingId,
-        url = url,
-        createdAt = createdAt,
-    )
-
-internal fun FindingPhotoApiDto.toModel(): AppFindingPhoto =
-    AppFindingPhotoData(
-        id = id,
-        findingId = findingId,
-        url = url,
-        createdAt = createdAt,
-    )
-
-internal fun FindingPhotoApiDto.toSyncResult(): FindingPhotoSyncResult =
-    if (deletedAt != null) {
-        FindingPhotoSyncResult.Deleted(id = id)
-    } else {
-        FindingPhotoSyncResult.Updated(photo = toModel())
-    }
