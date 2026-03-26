@@ -14,6 +14,7 @@ package cz.adamec.timotej.snag.directory.ui
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
@@ -101,6 +102,7 @@ internal fun DirectoryScreen(modifier: Modifier = Modifier) {
                         contentDescription = null,
                     )
                 },
+                unselectedContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             Tab(
                 selected = selectedTab == CLIENTS_TAB_INDEX,
@@ -122,6 +124,7 @@ internal fun DirectoryScreen(modifier: Modifier = Modifier) {
                         contentDescription = null,
                     )
                 },
+                unselectedContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
 
