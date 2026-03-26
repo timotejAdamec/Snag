@@ -5,5 +5,5 @@ plugins {
 dependencies {
     api(libs.ktor.server.core)
     api(libs.ktor.server.status.pages)
-    implementation(projects.lib.configuration.common.api)
+    api(projects.lib.configuration.common.api)
 }
