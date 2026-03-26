@@ -18,7 +18,7 @@ import cz.adamec.timotej.snag.findings.be.app.impl.internal.LH.logger
 import cz.adamec.timotej.snag.findings.be.ports.FindingPhotosDb
 import cz.adamec.timotej.snag.findings.be.ports.FindingsDb
 import cz.adamec.timotej.snag.projects.be.app.api.GetProjectUseCase
-import cz.adamec.timotej.snag.projects.business.CanEditProjectEntitiesRule
+import cz.adamec.timotej.snag.projects.business.AreProjectEntitiesEditableRule
 import cz.adamec.timotej.snag.structures.be.ports.StructuresDb
 
 internal class SaveFindingPhotoUseCaseImpl(
@@ -26,7 +26,7 @@ internal class SaveFindingPhotoUseCaseImpl(
     private val findingsDb: FindingsDb,
     private val structuresDb: StructuresDb,
     private val getProjectUseCase: GetProjectUseCase,
-    private val canEditProjectEntitiesRule: CanEditProjectEntitiesRule,
+    private val areProjectEntitiesEditableRule: AreProjectEntitiesEditableRule,
 ) : SaveFindingPhotoUseCase {
     override suspend operator fun invoke(photo: BackendFindingPhoto): BackendFindingPhoto? {
         val finding = findingsDb.getFinding(photo.findingId)
@@ -34,7 +34,7 @@ internal class SaveFindingPhotoUseCaseImpl(
             val structure = structuresDb.getStructure(finding.structureId)
             if (structure != null) {
                 val project = getProjectUseCase(structure.projectId)
-                if (project != null && !canEditProjectEntitiesRule(project)) {
+                if (project != null && !areProjectEntitiesEditableRule(project)) {
                     return photo
                 }
             }
