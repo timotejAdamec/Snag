@@ -16,7 +16,11 @@ import cz.adamec.timotej.snag.feat.findings.fe.driving.api.WebFindingCreationRou
 import cz.adamec.timotej.snag.feat.findings.fe.driving.api.WebFindingDetailRoute
 import cz.adamec.timotej.snag.feat.findings.fe.driving.api.WebFindingEditRoute
 import cz.adamec.timotej.snag.feat.findings.fe.driving.api.WebFindingsListRoute
+import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetail.vm.FindingDetailViewModel
+import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetail.vm.WebFindingDetailViewModel
+import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
+import kotlin.uuid.Uuid
 
 internal actual val platformModule =
     module {
@@ -24,4 +28,17 @@ internal actual val platformModule =
         findingDetailScreenNav<WebFindingDetailRoute>()
         findingEditScreenNav<WebFindingEditRoute>()
         findingCreationScreenNav<WebFindingCreationRoute>()
+        viewModel<FindingDetailViewModel> { (findingId: Uuid, projectId: Uuid) ->
+            WebFindingDetailViewModel(
+                findingId = findingId,
+                projectId = projectId,
+                getFindingUseCase = get(),
+                deleteFindingUseCase = get(),
+                canEditProjectEntitiesUseCase = get(),
+                getFindingPhotosUseCase = get(),
+                deleteFindingPhotoUseCase = get(),
+                webAddFindingPhotoUseCase = get(),
+                canModifyFindingPhotosUseCase = get(),
+            )
+        }
     }

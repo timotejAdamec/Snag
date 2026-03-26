@@ -2,12 +2,12 @@ package cz.adamec.timotej.snag.projects.app.model
 
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.projects.business.Project
-import cz.adamec.timotej.snag.sync.model.Versioned
+import cz.adamec.timotej.snag.sync.model.MutableVersioned
 import kotlin.uuid.Uuid
 
 interface AppProject :
     Project,
-    Versioned
+    MutableVersioned
 
 data class AppProjectData(
     override val id: Uuid,

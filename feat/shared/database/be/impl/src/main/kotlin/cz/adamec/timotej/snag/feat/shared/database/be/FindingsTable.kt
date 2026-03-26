@@ -40,6 +40,15 @@ object ClassicFindingTable : IdTable<Uuid>("classic_findings") {
     override val primaryKey = PrimaryKey(id)
 }
 
+private const val URL_MAX_LENGTH = 2048
+
+object FindingPhotosTable : UuidTable("finding_photos") {
+    val finding = reference("finding_id", FindingsTable).index()
+    val url = varchar("url", URL_MAX_LENGTH)
+    val createdAt = long("created_at").index()
+    val deletedAt = long("deleted_at").nullable().index()
+}
+
 object FindingCoordinatesTable : IntIdTable("finding_coordinates") {
     val finding = reference("finding_id", FindingsTable)
     val x = float("x")

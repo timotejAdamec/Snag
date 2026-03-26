@@ -14,14 +14,19 @@ package cz.adamec.timotej.snag.findings.fe.driven.internal.api
 
 import cz.adamec.timotej.snag.feat.findings.app.model.AppFinding
 import cz.adamec.timotej.snag.feat.findings.app.model.AppFindingData
+import cz.adamec.timotej.snag.feat.findings.app.model.AppFindingPhoto
+import cz.adamec.timotej.snag.feat.findings.app.model.AppFindingPhotoData
 import cz.adamec.timotej.snag.feat.findings.business.FindingType
 import cz.adamec.timotej.snag.feat.findings.business.Importance
 import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
 import cz.adamec.timotej.snag.feat.findings.business.Term
 import cz.adamec.timotej.snag.findings.be.driving.contract.FindingApiDto
+import cz.adamec.timotej.snag.findings.be.driving.contract.FindingPhotoApiDto
 import cz.adamec.timotej.snag.findings.be.driving.contract.PutFindingApiDto
+import cz.adamec.timotej.snag.findings.be.driving.contract.PutFindingPhotoApiDto
 import cz.adamec.timotej.snag.findings.be.driving.contract.RelativeCoordinateApiDto
 import cz.adamec.timotej.snag.findings.fe.driven.internal.LH
+import cz.adamec.timotej.snag.findings.fe.ports.FindingPhotoSyncResult
 
 internal fun FindingApiDto.toModel(): AppFinding {
     val apiKey =
@@ -80,3 +85,25 @@ internal fun AppFinding.toPutApiDto(): PutFindingApiDto {
         updatedAt = updatedAt,
     )
 }
+
+internal fun AppFindingPhoto.toPutApiDto() =
+    PutFindingPhotoApiDto(
+        findingId = findingId,
+        url = url,
+        createdAt = createdAt,
+    )
+
+internal fun FindingPhotoApiDto.toModel(): AppFindingPhoto =
+    AppFindingPhotoData(
+        id = id,
+        findingId = findingId,
+        url = url,
+        createdAt = createdAt,
+    )
+
+internal fun FindingPhotoApiDto.toSyncResult(): FindingPhotoSyncResult =
+    if (deletedAt != null) {
+        FindingPhotoSyncResult.Deleted(id = id)
+    } else {
+        FindingPhotoSyncResult.Updated(photo = toModel())
+    }

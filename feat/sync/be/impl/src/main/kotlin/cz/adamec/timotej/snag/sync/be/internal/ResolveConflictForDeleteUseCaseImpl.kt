@@ -15,10 +15,13 @@ package cz.adamec.timotej.snag.sync.be.internal
 import cz.adamec.timotej.snag.sync.be.DeleteConflictResult
 import cz.adamec.timotej.snag.sync.be.ResolveConflictForDeleteUseCase
 import cz.adamec.timotej.snag.sync.be.model.ResolveConflictForDeleteRequest
-import cz.adamec.timotej.snag.sync.be.model.Syncable
+import cz.adamec.timotej.snag.sync.be.model.SoftDeletable
+import cz.adamec.timotej.snag.sync.model.MutableVersioned
 
 internal class ResolveConflictForDeleteUseCaseImpl : ResolveConflictForDeleteUseCase {
-    override operator fun <T : Syncable> invoke(request: ResolveConflictForDeleteRequest<T>): DeleteConflictResult<T> {
+    override operator fun <T> invoke(
+        request: ResolveConflictForDeleteRequest<T>,
+    ): DeleteConflictResult<T> where T : MutableVersioned, T : SoftDeletable {
         val existing = request.existing
         if (existing == null) return DeleteConflictResult.NotFound
         return when {

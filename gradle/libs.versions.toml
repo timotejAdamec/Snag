@@ -45,6 +45,7 @@ h2 = "2.4.240"
 konnection = "1.4.5"
 gcs = "2.64.0"
 filekit = "0.13.0"
+kotlinx-io = "0.7.0"
 buildkonfig = "0.17.1"
 openpdf = "3.0.3"
 
@@ -155,6 +156,8 @@ exposed-jdbc = { module = "org.jetbrains.exposed:exposed-jdbc", version.ref = "e
 h2 = { module = "com.h2database:h2", version.ref = "h2" }
 konnection = { module = "dev.tmapps:konnection", version.ref = "konnection" }
 google-cloud-storage = { module = "com.google.cloud:google-cloud-storage", version.ref = "gcs" }
+filekit-core = { module = "io.github.vinceglb:filekit-core", version.ref = "filekit" }
+kotlinx-io-core = { module = "org.jetbrains.kotlinx:kotlinx-io-core", version.ref = "kotlinx-io" }
 filekit-dialogs-compose = { module = "io.github.vinceglb:filekit-dialogs-compose", version.ref = "filekit" }
 openpdf = { module = "com.github.librepdf:openpdf", version.ref = "openpdf" }
 

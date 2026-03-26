@@ -39,6 +39,7 @@ internal class InspectionSyncHandler(
     override suspend fun deleteEntityFromApi(
         entityId: Uuid,
         deletedAt: Timestamp,
+        scopeId: Uuid?,
     ): OnlineDataResult<AppInspection?> = inspectionsApi.deleteInspection(entityId, deletedAt)
 
     override suspend fun saveEntityToDb(entity: AppInspection): OfflineFirstDataResult<Unit> = inspectionsDb.saveInspection(entity)

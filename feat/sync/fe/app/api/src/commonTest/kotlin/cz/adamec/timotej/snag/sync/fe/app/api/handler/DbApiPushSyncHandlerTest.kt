@@ -68,6 +68,7 @@ class DbApiPushSyncHandlerTest {
         override suspend fun deleteEntityFromApi(
             entityId: Uuid,
             deletedAt: Timestamp,
+            scopeId: Uuid?,
         ): OnlineDataResult<TestEntity?> {
             lastDeletedFromApiId = entityId
             apiForcedFailure?.let { return it }

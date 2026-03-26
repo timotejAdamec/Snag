@@ -16,10 +16,13 @@ import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.sync.be.ResolveConflictForSaveUseCase
 import cz.adamec.timotej.snag.sync.be.SaveConflictResult
 import cz.adamec.timotej.snag.sync.be.model.ResolveConflictForSaveRequest
-import cz.adamec.timotej.snag.sync.be.model.Syncable
+import cz.adamec.timotej.snag.sync.be.model.SoftDeletable
+import cz.adamec.timotej.snag.sync.model.MutableVersioned
 
 internal class ResolveConflictForSaveUseCaseImpl : ResolveConflictForSaveUseCase {
-    override operator fun <T : Syncable> invoke(request: ResolveConflictForSaveRequest<T>): SaveConflictResult<T> {
+    override operator fun <T> invoke(
+        request: ResolveConflictForSaveRequest<T>,
+    ): SaveConflictResult<T> where T : MutableVersioned, T : SoftDeletable {
         val existing = request.existing
         if (existing == null) return SaveConflictResult.Proceed
         val serverTimestamp =

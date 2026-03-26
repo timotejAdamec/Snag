@@ -12,7 +12,9 @@
 
 package cz.adamec.timotej.snag.findings.be.driven.impl.di
 
+import cz.adamec.timotej.snag.findings.be.driven.impl.internal.RealFindingPhotosDb
 import cz.adamec.timotej.snag.findings.be.driven.impl.internal.RealFindingsDb
+import cz.adamec.timotej.snag.findings.be.ports.FindingPhotosDb
 import cz.adamec.timotej.snag.findings.be.ports.FindingsDb
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
@@ -21,4 +23,5 @@ import org.koin.dsl.module
 val findingsDrivenModule =
     module {
         singleOf(::RealFindingsDb) bind FindingsDb::class
+        singleOf(::RealFindingPhotosDb) bind FindingPhotosDb::class
     }

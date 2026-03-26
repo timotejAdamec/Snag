@@ -2,12 +2,14 @@ package cz.adamec.timotej.snag.feat.inspections.be.model
 
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.feat.inspections.app.model.AppInspection
-import cz.adamec.timotej.snag.sync.be.model.Syncable
+import cz.adamec.timotej.snag.sync.be.model.SoftDeletable
+import cz.adamec.timotej.snag.sync.model.MutableVersioned
 import kotlin.uuid.Uuid
 
 interface BackendInspection :
     AppInspection,
-    Syncable
+    MutableVersioned,
+    SoftDeletable
 
 data class BackendInspectionData(
     override val id: Uuid,

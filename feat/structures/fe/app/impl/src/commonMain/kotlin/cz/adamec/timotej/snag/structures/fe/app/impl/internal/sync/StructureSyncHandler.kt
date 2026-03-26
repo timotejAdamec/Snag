@@ -41,6 +41,7 @@ internal class StructureSyncHandler(
     override suspend fun deleteEntityFromApi(
         entityId: Uuid,
         deletedAt: Timestamp,
+        scopeId: Uuid?,
     ): OnlineDataResult<AppStructure?> = structuresApi.deleteStructure(entityId, deletedAt)
 
     override suspend fun saveEntityToDb(entity: AppStructure): OfflineFirstDataResult<Unit> = structuresDb.saveStructure(entity)

@@ -12,7 +12,9 @@
 
 package cz.adamec.timotej.snag.sync.be.model
 
-data class ResolveConflictForSaveRequest<T : Syncable>(
+import cz.adamec.timotej.snag.sync.model.MutableVersioned
+
+data class ResolveConflictForSaveRequest<T>(
     val existing: T?,
     val incoming: T,
-)
+) where T : MutableVersioned, T : SoftDeletable

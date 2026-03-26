@@ -1,0 +1,26 @@
+CREATE TABLE IF NOT EXISTS FindingPhotoEntity (
+    id TEXT NOT NULL PRIMARY KEY,
+    findingId TEXT NOT NULL,
+    url TEXT NOT NULL,
+    createdAt INTEGER NOT NULL
+);
+
+save:
+INSERT INTO FindingPhotoEntity(id, findingId, url, createdAt)
+VALUES ?
+ON CONFLICT(id) DO UPDATE SET
+    findingId = excluded.findingId,
+    url = excluded.url,
+    createdAt = excluded.createdAt;
+
+selectByFindingId:
+SELECT * FROM FindingPhotoEntity WHERE findingId = :findingId;
+
+selectById:
+SELECT * FROM FindingPhotoEntity WHERE id = :id;
+
+deleteById:
+DELETE FROM FindingPhotoEntity WHERE id = :id;
+
+deleteByFindingId:
+DELETE FROM FindingPhotoEntity WHERE findingId = :findingId;

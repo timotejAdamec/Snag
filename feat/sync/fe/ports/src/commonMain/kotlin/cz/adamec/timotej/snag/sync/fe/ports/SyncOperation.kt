@@ -20,4 +20,5 @@ data class SyncOperation(
     val entityTypeId: String,
     val entityId: Uuid,
     val operationType: SyncOperationType,
+    val scopeId: Uuid? = null,
 )

@@ -20,6 +20,11 @@ internal class EnqueueSyncSaveUseCaseImpl(
     private val enqueueSyncOperationUseCase: EnqueueSyncOperationUseCase,
 ) : EnqueueSyncSaveUseCase {
     override suspend fun invoke(request: EnqueueSyncSaveRequest) {
-        enqueueSyncOperationUseCase(request.entityTypeId, request.entityId, SyncOperationType.UPSERT)
+        enqueueSyncOperationUseCase(
+            entityTypeId = request.entityTypeId,
+            entityId = request.entityId,
+            operationType = SyncOperationType.UPSERT,
+            scopeId = request.scopeId,
+        )
     }
 }

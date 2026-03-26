@@ -2,12 +2,12 @@ package cz.adamec.timotej.snag.feat.structures.app.model
 
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.feat.structures.business.Structure
-import cz.adamec.timotej.snag.sync.model.Versioned
+import cz.adamec.timotej.snag.sync.model.MutableVersioned
 import kotlin.uuid.Uuid
 
 interface AppStructure :
     Structure,
-    Versioned
+    MutableVersioned
 
 data class AppStructureData(
     override val id: Uuid,

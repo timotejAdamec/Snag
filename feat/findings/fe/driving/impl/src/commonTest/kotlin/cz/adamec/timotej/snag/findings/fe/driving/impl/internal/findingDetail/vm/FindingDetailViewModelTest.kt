@@ -17,7 +17,9 @@ import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.feat.findings.app.model.AppFindingData
 import cz.adamec.timotej.snag.feat.findings.business.FindingType
+import cz.adamec.timotej.snag.findings.fe.app.api.DeleteFindingPhotoUseCase
 import cz.adamec.timotej.snag.findings.fe.app.api.DeleteFindingUseCase
+import cz.adamec.timotej.snag.findings.fe.app.api.GetFindingPhotosUseCase
 import cz.adamec.timotej.snag.findings.fe.app.api.GetFindingUseCase
 import cz.adamec.timotej.snag.findings.fe.driven.test.FakeFindingsDb
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
@@ -43,6 +45,8 @@ class FindingDetailViewModelTest : FrontendKoinInitializedTest() {
     private val getFindingUseCase: GetFindingUseCase by inject()
     private val deleteFindingUseCase: DeleteFindingUseCase by inject()
     private val canEditProjectEntitiesUseCase: CanEditProjectEntitiesUseCase by inject()
+    private val getFindingPhotosUseCase: GetFindingPhotosUseCase by inject()
+    private val deleteFindingPhotoUseCase: DeleteFindingPhotoUseCase by inject()
 
     private val projectId = Uuid.parse("00000000-0000-0000-0000-000000000002")
     private val structureId = Uuid.parse("00000000-0000-0000-0000-000000000001")
@@ -59,12 +63,14 @@ class FindingDetailViewModelTest : FrontendKoinInitializedTest() {
         )
 
     private fun createViewModel(): FindingDetailViewModel =
-        FindingDetailViewModel(
+        TestFindingDetailViewModel(
             findingId = findingId,
             projectId = projectId,
             getFindingUseCase = getFindingUseCase,
             deleteFindingUseCase = deleteFindingUseCase,
             canEditProjectEntitiesUseCase = canEditProjectEntitiesUseCase,
+            getFindingPhotosUseCase = getFindingPhotosUseCase,
+            deleteFindingPhotoUseCase = deleteFindingPhotoUseCase,
         )
 
     @Test
@@ -153,4 +159,29 @@ class FindingDetailViewModelTest : FrontendKoinInitializedTest() {
             assertEquals(FindingDetailUiStatus.LOADING, viewModel.state.value.status)
             assertFalse(viewModel.state.value.canEdit)
         }
+}
+
+private class TestFindingDetailViewModel(
+    findingId: Uuid,
+    projectId: Uuid,
+    getFindingUseCase: GetFindingUseCase,
+    deleteFindingUseCase: DeleteFindingUseCase,
+    canEditProjectEntitiesUseCase: CanEditProjectEntitiesUseCase,
+    getFindingPhotosUseCase: GetFindingPhotosUseCase,
+    deleteFindingPhotoUseCase: DeleteFindingPhotoUseCase,
+) : FindingDetailViewModel(
+    findingId = findingId,
+    projectId = projectId,
+    getFindingUseCase = getFindingUseCase,
+    deleteFindingUseCase = deleteFindingUseCase,
+    canEditProjectEntitiesUseCase = canEditProjectEntitiesUseCase,
+    getFindingPhotosUseCase = getFindingPhotosUseCase,
+    deleteFindingPhotoUseCase = deleteFindingPhotoUseCase,
+) {
+    override fun onAddPhoto(
+        bytes: ByteArray,
+        fileName: String,
+    ) {
+        // No-op for testing base class functionality
+    }
 }

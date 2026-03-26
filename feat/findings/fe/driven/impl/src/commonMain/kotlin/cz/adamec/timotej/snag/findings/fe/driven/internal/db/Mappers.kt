@@ -17,11 +17,14 @@ package cz.adamec.timotej.snag.findings.fe.driven.internal.db
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.feat.findings.app.model.AppFinding
 import cz.adamec.timotej.snag.feat.findings.app.model.AppFindingData
+import cz.adamec.timotej.snag.feat.findings.app.model.AppFindingPhoto
+import cz.adamec.timotej.snag.feat.findings.app.model.AppFindingPhotoData
 import cz.adamec.timotej.snag.feat.findings.business.FindingType
 import cz.adamec.timotej.snag.feat.findings.business.Importance
 import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
 import cz.adamec.timotej.snag.feat.findings.business.Term
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.FindingEntity
+import cz.adamec.timotej.snag.feat.shared.database.fe.db.FindingPhotoEntity
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.SelectById
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.SelectByStructureId
 import cz.adamec.timotej.snag.findings.fe.driven.internal.LH
@@ -89,3 +92,11 @@ internal fun FindingType.toEntityKey(): FindingTypeEntityKey =
         is FindingType.Unvisited -> FindingTypeEntityKey.UNVISITED
         is FindingType.Note -> FindingTypeEntityKey.NOTE
     }
+
+internal fun FindingPhotoEntity.toModel(): AppFindingPhoto =
+    AppFindingPhotoData(
+        id = Uuid.parse(id),
+        findingId = Uuid.parse(findingId),
+        url = url,
+        createdAt = Timestamp(createdAt),
+    )

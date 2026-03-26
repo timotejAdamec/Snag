@@ -21,5 +21,6 @@ interface PushSyncOperationHandler {
     suspend fun execute(
         entityId: Uuid,
         operationType: SyncOperationType,
+        scopeId: Uuid? = null,
     ): PushSyncOperationResult
 }

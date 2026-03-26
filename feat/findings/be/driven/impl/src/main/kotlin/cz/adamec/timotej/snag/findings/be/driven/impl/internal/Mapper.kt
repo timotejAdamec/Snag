@@ -19,8 +19,11 @@ import cz.adamec.timotej.snag.feat.findings.business.FindingType
 import cz.adamec.timotej.snag.feat.findings.business.Importance
 import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
 import cz.adamec.timotej.snag.feat.findings.business.Term
+import cz.adamec.timotej.snag.feat.findings.be.model.BackendFindingPhoto
+import cz.adamec.timotej.snag.feat.findings.be.model.BackendFindingPhotoData
 import cz.adamec.timotej.snag.feat.shared.database.be.ClassicFindingEntity
 import cz.adamec.timotej.snag.feat.shared.database.be.FindingEntity
+import cz.adamec.timotej.snag.feat.shared.database.be.FindingPhotoEntity
 
 internal fun FindingType.toEntityKey(): FindingTypeEntityKey =
     when (this) {
@@ -28,6 +31,15 @@ internal fun FindingType.toEntityKey(): FindingTypeEntityKey =
         is FindingType.Unvisited -> FindingTypeEntityKey.UNVISITED
         is FindingType.Note -> FindingTypeEntityKey.NOTE
     }
+
+internal fun FindingPhotoEntity.toModel(): BackendFindingPhoto =
+    BackendFindingPhotoData(
+        id = id.value,
+        findingId = finding.id.value,
+        url = url,
+        createdAt = Timestamp(createdAt),
+        deletedAt = deletedAt?.let { Timestamp(it) },
+    )
 
 internal fun FindingEntity.toModel(): BackendFinding {
     val dbKey =

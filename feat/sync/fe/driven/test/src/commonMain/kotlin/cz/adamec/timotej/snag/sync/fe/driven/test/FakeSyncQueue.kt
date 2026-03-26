@@ -24,10 +24,15 @@ class FakeSyncQueue : SyncQueue {
         entityTypeId: String,
         entityId: Uuid,
         operationType: SyncOperationType,
+        scopeId: Uuid?,
     ) {
         val existing = operations.indexOfFirst { it.entityTypeId == entityTypeId && it.entityId == entityId }
         if (existing >= 0) {
-            operations[existing] = operations[existing].copy(operationType = operationType)
+            operations[existing] =
+                operations[existing].copy(
+                    operationType = operationType,
+                    scopeId = scopeId,
+                )
         } else {
             operations.add(
                 SyncOperation(
@@ -35,6 +40,7 @@ class FakeSyncQueue : SyncQueue {
                     entityTypeId = entityTypeId,
                     entityId = entityId,
                     operationType = operationType,
+                    scopeId = scopeId,
                 ),
             )
         }

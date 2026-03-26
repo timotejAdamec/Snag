@@ -41,11 +41,17 @@ internal class PushSyncEngine(
         entityTypeId: String,
         entityId: Uuid,
         operationType: SyncOperationType,
+        scopeId: Uuid?,
     ) {
         require(handlers.any { it.entityTypeId == entityTypeId }) {
             "No PushSyncOperationHandler registered for entityTypeId='$entityTypeId'"
         }
-        syncQueue.enqueue(entityTypeId, entityId, operationType)
+        syncQueue.enqueue(
+            entityTypeId = entityTypeId,
+            entityId = entityId,
+            operationType = operationType,
+            scopeId = scopeId,
+        )
         applicationScope.launch {
             processAll()
         }
@@ -82,7 +88,13 @@ internal class PushSyncEngine(
                     ?: error(
                         "No PushSyncOperationHandler registered for entityTypeId='${operation.entityTypeId}'",
                     )
-            when (handler.execute(operation.entityId, operation.operationType)) {
+            when (
+                handler.execute(
+                    entityId = operation.entityId,
+                    operationType = operation.operationType,
+                    scopeId = operation.scopeId,
+                )
+            ) {
                 PushSyncOperationResult.Success -> {
                     LH.logger.d { "Sync operation ${operation.id} succeeded, removing from queue." }
                     syncQueue.remove(operation.id)
