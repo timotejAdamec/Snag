@@ -18,8 +18,8 @@ enum class ServerTarget {
     DEMO,
     ;
 
-    companion object {
-        val current: ServerTarget =
+    internal companion object {
+        fun fromBuildConfig(): ServerTarget =
             when (SnagBuildConfig.SERVER_TARGET) {
                 "dev" -> DEV
                 "demo" -> DEMO

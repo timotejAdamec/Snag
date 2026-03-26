@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.network.fe.impl.internal
 
+import cz.adamec.timotej.snag.configuration.common.CommonConfiguration
 import cz.adamec.timotej.snag.configuration.common.ServerTarget
 import cz.adamec.timotej.snag.network.fe.ServerUrlFactory
 import cz.adamec.timotej.snag.server.api.Host
@@ -20,7 +21,7 @@ internal class ServerUrlFactoryImpl(
     private val localhostAddress: String,
 ) : ServerUrlFactory {
     override fun createUrl(): String =
-        when (ServerTarget.current) {
+        when (CommonConfiguration.serverTarget) {
             ServerTarget.LOCALHOST -> "http://$localhostAddress:${Host.Localhost.PORT}"
             ServerTarget.DEV -> Host.DevRemote.URL
             ServerTarget.DEMO -> Host.DemoRemote.URL
