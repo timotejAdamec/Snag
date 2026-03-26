@@ -82,7 +82,7 @@ internal class FileRoute(
                 bytes = bytes,
                 contentType = contentType ?: "application/octet-stream",
                 fileExtension = extension,
-                directory = directory!!,
+                directory = directory,
             )
         logger.info("File uploaded: {}", url)
         call.respond(HttpStatusCode.OK, FileUploadResponseDto(url = url))

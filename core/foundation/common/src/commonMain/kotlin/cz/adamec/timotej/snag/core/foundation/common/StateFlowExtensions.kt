@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.core.foundation.common
 
+import kotlinx.coroutines.ExperimentalForInheritanceCoroutinesApi
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.StateFlow
 
@@ -19,6 +20,7 @@ import kotlinx.coroutines.flow.StateFlow
  * Synchronous [StateFlow] mapping — [value] always returns the current
  * mapped value of the upstream flow without requiring a coroutine scope.
  */
+@OptIn(ExperimentalForInheritanceCoroutinesApi::class)
 fun <T, R> StateFlow<T>.mapState(transform: (T) -> R): StateFlow<R> =
     object : StateFlow<R> {
         override val value: R get() = transform(this@mapState.value)
