@@ -141,6 +141,7 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
             fakeReportsApi.reportFileName = "Test_Project_Report.pdf"
 
             val viewModel = createViewModel(projectId)
+            val subscriber = launch { viewModel.state.collect { } }
             advanceUntilIdle()
 
             viewModel.onDownloadReport()
@@ -149,6 +150,7 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
             assertTrue(report.bytes.contentEquals(samplePdfBytes))
             assertEquals("Test_Project_Report.pdf", report.fileName)
             assertFalse(viewModel.state.value.isDownloadingReport)
+            subscriber.cancel()
         }
 
     @Test
@@ -159,6 +161,7 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
             fakeReportsApi.forcedFailure = OnlineDataResult.Failure.NetworkUnavailable
 
             val viewModel = createViewModel(projectId)
+            val subscriber = launch { viewModel.state.collect { } }
             advanceUntilIdle()
 
             viewModel.onDownloadReport()
@@ -166,6 +169,7 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
             val error = viewModel.errorsFlow.first()
             assertIs<UiError.NetworkUnavailable>(error)
             assertFalse(viewModel.state.value.isDownloadingReport)
+            subscriber.cancel()
         }
 
     @Test
@@ -177,6 +181,7 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
                 OnlineDataResult.Failure.ProgrammerError(RuntimeException("fail"))
 
             val viewModel = createViewModel(projectId)
+            val subscriber = launch { viewModel.state.collect { } }
             advanceUntilIdle()
 
             viewModel.onDownloadReport()
@@ -184,6 +189,7 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
             val error = viewModel.errorsFlow.first()
             assertIs<UiError.Unknown>(error)
             assertFalse(viewModel.state.value.isDownloadingReport)
+            subscriber.cancel()
         }
 
     @Test
@@ -193,12 +199,14 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
             seedProject(projectId)
 
             val viewModel = createViewModel(projectId)
+            val subscriber = launch { viewModel.state.collect { } }
             advanceUntilIdle()
 
             viewModel.onDownloadReport()
             advanceUntilIdle()
 
             assertEquals(listOf(projectId), fakeReportsApi.downloadedProjectIds)
+            subscriber.cancel()
         }
 
     @Test
@@ -208,10 +216,12 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
             seedProject(projectId)
 
             val viewModel = createViewModel(projectId)
+            val subscriber = launch { viewModel.state.collect { } }
             advanceUntilIdle()
 
             assertTrue(viewModel.state.value.canDownloadReport)
             assertEquals(ProjectDetailsUiStatus.LOADED, viewModel.state.value.projectStatus)
+            subscriber.cancel()
         }
 
     @Test
@@ -233,6 +243,7 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
             fakeReportsApi.downloadDeferred = deferred
 
             val viewModel = createViewModel(projectId)
+            val subscriber = launch { viewModel.state.collect { } }
             advanceUntilIdle()
             assertTrue(viewModel.state.value.canDownloadReport)
 
@@ -249,6 +260,7 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
             assertTrue(viewModel.state.value.canDownloadReport)
             assertFalse(viewModel.state.value.isDownloadingReport)
             reportCollector.cancel()
+            subscriber.cancel()
         }
 
     @Test
@@ -260,6 +272,7 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
             seedInspection(projectId = projectId, inspectionId = inspectionId)
 
             val viewModel = createViewModel(projectId)
+            val subscriber = launch { viewModel.state.collect { } }
             advanceUntilIdle()
 
             viewModel.onStartInspection(inspectionId)
@@ -269,6 +282,7 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
                 viewModel.state.value.inspections
                     .find { it.id == inspectionId }
             assertEquals(fixedNow, saved?.startedAt)
+            subscriber.cancel()
         }
 
     @Test
@@ -287,6 +301,7 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
             )
 
             val viewModel = createViewModel(projectId)
+            val subscriber = launch { viewModel.state.collect { } }
             advanceUntilIdle()
 
             viewModel.onStartInspection(inspectionId)
@@ -300,6 +315,7 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
             assertEquals("Bob", saved?.participants)
             assertEquals("rainy", saved?.climate)
             assertEquals("my note", saved?.note)
+            subscriber.cancel()
         }
 
     @Test
@@ -311,6 +327,7 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
             seedInspection(projectId = projectId, inspectionId = inspectionId, startedAt = Timestamp(1L))
 
             val viewModel = createViewModel(projectId)
+            val subscriber = launch { viewModel.state.collect { } }
             advanceUntilIdle()
 
             viewModel.onEndInspection(inspectionId)
@@ -320,6 +337,7 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
                 viewModel.state.value.inspections
                     .find { it.id == inspectionId }
             assertEquals(fixedNow, saved?.endedAt)
+            subscriber.cancel()
         }
 
     @Test
@@ -336,6 +354,7 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
             )
 
             val viewModel = createViewModel(projectId)
+            val subscriber = launch { viewModel.state.collect { } }
             advanceUntilIdle()
 
             viewModel.onEndInspection(inspectionId)
@@ -345,6 +364,7 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
                 viewModel.state.value.inspections
                     .find { it.id == inspectionId }
             assertEquals(existingStartedAt, saved?.startedAt)
+            subscriber.cancel()
         }
 
     @Test
@@ -354,12 +374,14 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
             seedProject(projectId)
 
             val viewModel = createViewModel(projectId)
+            val subscriber = launch { viewModel.state.collect { } }
             advanceUntilIdle()
 
             viewModel.onStartInspection(Uuid.random())
             advanceUntilIdle()
 
             assertTrue(fakeSyncQueue.getAllPending().isEmpty())
+            subscriber.cancel()
         }
 
     @Test
@@ -369,12 +391,14 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
             seedProject(projectId)
 
             val viewModel = createViewModel(projectId)
+            val subscriber = launch { viewModel.state.collect { } }
             advanceUntilIdle()
 
             viewModel.onEndInspection(Uuid.random())
             advanceUntilIdle()
 
             assertTrue(fakeSyncQueue.getAllPending().isEmpty())
+            subscriber.cancel()
         }
 
     @Test
@@ -386,6 +410,7 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
             seedInspection(projectId = projectId, inspectionId = inspectionId)
 
             val viewModel = createViewModel(projectId)
+            val subscriber = launch { viewModel.state.collect { } }
             advanceUntilIdle()
 
             viewModel.onStartInspection(inspectionId)
@@ -396,6 +421,7 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
             assertIs<OnlineDataResult.Success<List<AppInspection>>>(apiResult)
             val synced = apiResult.data.find { it.id == inspectionId }
             assertEquals(fixedNow, synced?.startedAt)
+            subscriber.cancel()
         }
 
     @Test
@@ -407,6 +433,7 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
             seedInspection(projectId = projectId, inspectionId = inspectionId, startedAt = Timestamp(1L))
 
             val viewModel = createViewModel(projectId)
+            val subscriber = launch { viewModel.state.collect { } }
             advanceUntilIdle()
 
             viewModel.onEndInspection(inspectionId)
@@ -417,6 +444,7 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
             assertIs<OnlineDataResult.Success<List<AppInspection>>>(apiResult)
             val synced = apiResult.data.find { it.id == inspectionId }
             assertEquals(fixedNow, synced?.endedAt)
+            subscriber.cancel()
         }
 
     private fun seedClosedProject(projectId: Uuid): AppProject {
@@ -440,6 +468,7 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
             seedProject(projectId)
 
             val viewModel = createViewModel(projectId)
+            val subscriber = launch { viewModel.state.collect { } }
             advanceUntilIdle()
 
             assertFalse(viewModel.state.value.isClosed)
@@ -448,6 +477,7 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
             advanceUntilIdle()
 
             assertTrue(viewModel.state.value.isClosed)
+            subscriber.cancel()
         }
 
     @Test
@@ -457,6 +487,7 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
             seedClosedProject(projectId)
 
             val viewModel = createViewModel(projectId)
+            val subscriber = launch { viewModel.state.collect { } }
             advanceUntilIdle()
 
             assertTrue(viewModel.state.value.isClosed)
@@ -465,6 +496,7 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
             advanceUntilIdle()
 
             assertFalse(viewModel.state.value.isClosed)
+            subscriber.cancel()
         }
 
     @Test
@@ -476,12 +508,14 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
             fakeProjectsApi.forcedFailure = OnlineDataResult.Failure.NetworkUnavailable
 
             val viewModel = createViewModel(projectId)
+            val subscriber = launch { viewModel.state.collect { } }
             advanceUntilIdle()
 
             viewModel.onToggleClose()
 
             val error = viewModel.errorsFlow.first()
             assertIs<UiError.NetworkUnavailable>(error)
+            subscriber.cancel()
         }
 
     @Test

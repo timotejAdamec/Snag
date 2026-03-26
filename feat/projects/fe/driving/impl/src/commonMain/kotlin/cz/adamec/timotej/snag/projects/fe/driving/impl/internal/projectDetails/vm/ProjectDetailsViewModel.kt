@@ -30,6 +30,7 @@ import cz.adamec.timotej.snag.projects.fe.app.api.SetProjectClosedUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.model.SetProjectClosedRequest
 import cz.adamec.timotej.snag.reports.business.Report
 import cz.adamec.timotej.snag.structures.fe.app.api.GetStructuresUseCase
+import cz.adamec.timotej.snag.lib.design.fe.state.launchWhileSubscribed
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -53,6 +54,13 @@ internal class ProjectDetailsViewModel(
 ) : ViewModel() {
     private val vmState: MutableStateFlow<ProjectDetailsVmState> =
         MutableStateFlow(ProjectDetailsVmState())
+            .launchWhileSubscribed(scope = viewModelScope) {
+                listOf(
+                    collectProject(projectId),
+                    collectStructures(projectId),
+                    collectInspections(projectId),
+                )
+            }
     val state: StateFlow<ProjectDetailsUiState> =
         vmState.mapState { it.toUiState() }
 
@@ -64,12 +72,6 @@ internal class ProjectDetailsViewModel(
 
     private val reportReadyChannel = Channel<Report>()
     val reportReadyFlow = reportReadyChannel.receiveAsFlow()
-
-    init {
-        collectProject(projectId)
-        collectStructures(projectId)
-        collectInspections(projectId)
-    }
 
     private fun collectProject(projectId: Uuid) =
         viewModelScope.launch {

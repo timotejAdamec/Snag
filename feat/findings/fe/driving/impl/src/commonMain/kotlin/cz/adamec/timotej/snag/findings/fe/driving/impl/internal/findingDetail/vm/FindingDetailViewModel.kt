@@ -22,7 +22,9 @@ import cz.adamec.timotej.snag.findings.fe.app.api.GetFindingPhotosUseCase
 import cz.adamec.timotej.snag.findings.fe.app.api.GetFindingUseCase
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError.Unknown
+import cz.adamec.timotej.snag.lib.design.fe.state.launchWhileSubscribed
 import cz.adamec.timotej.snag.projects.fe.app.api.CanEditProjectEntitiesUseCase
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -42,6 +44,9 @@ internal abstract class FindingDetailViewModel(
 ) : ViewModel() {
     protected val vmState: MutableStateFlow<FindingDetailVmState> =
         MutableStateFlow(FindingDetailVmState())
+            .launchWhileSubscribed(scope = viewModelScope) {
+                collectJobs()
+            }
     val state: StateFlow<FindingDetailUiState> =
         vmState.mapState { it.toUiState() }
 
@@ -51,11 +56,12 @@ internal abstract class FindingDetailViewModel(
     private val deletedSuccessfullyEventChannel = Channel<Unit>()
     val deletedSuccessfullyEventFlow = deletedSuccessfullyEventChannel.receiveAsFlow()
 
-    init {
-        collectFinding()
-        collectCanEditFinding()
-        collectPhotos()
-    }
+    protected open fun collectJobs(): List<Job> =
+        listOf(
+            collectFinding(),
+            collectCanEditFinding(),
+            collectPhotos(),
+        )
 
     private fun collectCanEditFinding() =
         viewModelScope.launch {
@@ -89,7 +95,7 @@ internal abstract class FindingDetailViewModel(
             }
         }
 
-    private fun collectPhotos() {
+    private fun collectPhotos(): Job =
         viewModelScope.launch {
             getFindingPhotosUseCase(findingId).collect { result ->
                 when (result) {
@@ -103,7 +109,6 @@ internal abstract class FindingDetailViewModel(
                 }
             }
         }
-    }
 
     abstract fun onAddPhoto(
         bytes: ByteArray,
@@ -123,7 +128,7 @@ internal abstract class FindingDetailViewModel(
             }
         }
 
-    private fun collectFinding() {
+    private fun collectFinding(): Job =
         viewModelScope.launch {
             getFindingUseCase(findingId).collect { result ->
                 when (result) {
@@ -153,5 +158,4 @@ internal abstract class FindingDetailViewModel(
                 }
             }
         }
-    }
 }
