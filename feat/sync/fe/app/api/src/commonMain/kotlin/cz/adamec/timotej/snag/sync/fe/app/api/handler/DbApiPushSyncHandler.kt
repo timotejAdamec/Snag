@@ -52,7 +52,7 @@ abstract class DbApiPushSyncHandler<T>(
     ): PushSyncOperationResult =
         when (operationType) {
             SyncOperationType.UPSERT -> executeUpsert(entityId)
-            SyncOperationType.DELETE -> executeDelete(entityId, scopeId)
+            SyncOperationType.DELETE -> executeDelete(entityId = entityId, scopeId = scopeId)
         }
 
     @Suppress("ReturnCount")

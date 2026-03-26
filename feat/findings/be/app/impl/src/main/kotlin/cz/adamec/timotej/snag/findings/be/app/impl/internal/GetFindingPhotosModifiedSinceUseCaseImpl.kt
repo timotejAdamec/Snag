@@ -29,7 +29,10 @@ internal class GetFindingPhotosModifiedSinceUseCaseImpl(
             request.since,
             request.findingId,
         )
-        return findingPhotosDb.getPhotosModifiedSince(request.findingId, request.since).also {
+        return findingPhotosDb.getPhotosModifiedSince(
+            findingId = request.findingId,
+            since = request.since,
+        ).also {
             logger.debug(
                 "Got {} finding photos modified since {} for finding {} from local storage.",
                 it.size,
