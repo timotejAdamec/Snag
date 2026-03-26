@@ -1,4 +1,4 @@
-# Android Release Process
+# Release Process
 
 ## Versioning Scheme
 
@@ -7,7 +7,7 @@
 - **`versionName`** = `<semantic>.<versionCode>` — e.g., `0.1.0.260324042`
 - **Semantic version** stored in `gradle/libs.versions.toml` as `snag-app`
 
-## One-Time Setup
+## One-Time Setup (Android Signing)
 
 ### 1. Generate a release keystore
 
@@ -33,7 +33,7 @@ snag.release.keyPassword=<your-key-password>
 For the CI release workflow, add these repository secrets:
 
 | Secret                       | Value                                      |
-|------------------------------|--------------------------------------------|
+|------------------------------|-------------------------------------------|
 | `RELEASE_KEYSTORE_BASE64`   | `base64 -i androidApp/keystore/release.jks \| pbcopy` |
 | `RELEASE_STORE_PASSWORD`    | Keystore password                          |
 | `RELEASE_KEY_ALIAS`         | `snag-release`                             |
@@ -48,18 +48,37 @@ For the CI release workflow, add these repository secrets:
    git tag v0.2.0
    git push origin v0.2.0
    ```
-4. GitHub Actions automatically builds a signed release APK and creates a GitHub Release with the APK attached
-5. The APK is downloadable from the [Releases](../../releases) page
+4. GitHub Actions automatically builds all platform artifacts and creates a GitHub Release with them attached
+5. Artifacts are downloadable from the [Releases](../../releases) page
 
-## Local Release Build
+## Platform Artifacts
 
-For testing a release build locally:
+| Platform | Gradle task | Output |
+|----------|------------|--------|
+| Android  | `:androidApp:assembleRelease` | APK |
+| Linux    | `:composeApp:packageReleaseDeb` | DEB |
+| macOS    | `:composeApp:packageReleaseDmg` | DMG |
+| Windows  | `:composeApp:packageReleaseMsi` | MSI |
+| Web (JS) | `:composeApp:jsBrowserDistribution` | JS bundle |
+| Web (Wasm) | `:composeApp:wasmJsBrowserDistribution` | WasmJS bundle |
+| iOS      | `:composeApp:linkReleaseFrameworkIosArm64` | Framework |
+
+## Local Release Builds
 
 ```bash
+# Android APK
 ./gradlew :androidApp:assembleRelease
-```
 
-The APK will be at `androidApp/build/outputs/apk/release/`.
+# Desktop (current OS)
+./gradlew :composeApp:packageReleaseDistributionForCurrentOS
+
+# Web
+./gradlew :composeApp:jsBrowserDistribution
+./gradlew :composeApp:wasmJsBrowserDistribution
+
+# iOS framework
+./gradlew :composeApp:linkReleaseFrameworkIosArm64
+```
 
 ## Build Types
 
