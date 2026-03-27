@@ -26,6 +26,9 @@ kotlin {
             implementation(projects.feat.shared.storage.fe)
             implementation(projects.core.business.rules.impl)
 
+            // Authentication
+            implementation(projects.feat.authentication.fe.driving.impl)
+
             // Sync layer
             implementation(projects.feat.sync.fe.driven.impl)
             implementation(projects.feat.sync.fe.app.impl)

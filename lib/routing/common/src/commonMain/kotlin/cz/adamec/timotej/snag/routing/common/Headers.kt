@@ -10,7 +10,7 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.routing.be
+package cz.adamec.timotej.snag.routing.common
 
 // TODO Replace with EntraID JWT token-based authentication
 const val USER_ID_HEADER = "X-User-Id"
