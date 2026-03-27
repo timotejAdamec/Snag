@@ -16,10 +16,12 @@ import cz.adamec.timotej.snag.clients.app.model.AppClient
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import org.jetbrains.compose.resources.StringResource
+import kotlin.uuid.Uuid
 
-internal data class ProjectDetailsEditUiState(
+internal data class ProjectDetailsEditVmState(
     val projectName: String = "",
     val projectAddress: String = "",
+    val selectedClientId: Uuid? = null,
     val selectedClientName: String = "",
     val availableClients: ImmutableList<AppClient> = persistentListOf(),
     val projectNameError: StringResource? = null,

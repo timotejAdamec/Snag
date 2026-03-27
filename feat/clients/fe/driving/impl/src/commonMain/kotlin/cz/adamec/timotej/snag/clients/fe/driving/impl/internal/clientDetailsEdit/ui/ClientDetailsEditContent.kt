@@ -80,7 +80,7 @@ internal fun ClientDetailsEditContent(
 
     if (isShowingDeleteConfirmation) {
         ClientDeletionAlertDialog(
-            areButtonsEnabled = !state.isBeingDeleted,
+            areButtonsEnabled = state.areDeleteDialogButtonsEnabled,
             onDelete = onDeleteClick,
             onDismiss = { isShowingDeleteConfirmation = false },
         )
@@ -123,7 +123,7 @@ internal fun ClientDetailsEditContent(
                 actions = {
                     if (clientId != null) {
                         IconButton(
-                            enabled = state.canDelete && !state.isBeingDeleted,
+                            enabled = state.canDelete,
                             onClick = { isShowingDeleteConfirmation = true },
                         ) {
                             Icon(

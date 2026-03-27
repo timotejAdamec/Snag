@@ -10,14 +10,12 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.clients.fe.driving.impl.internal.clients.vm
+package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projects.vm
 
-import androidx.compose.runtime.Immutable
-import cz.adamec.timotej.snag.clients.app.model.AppClient
+import cz.adamec.timotej.snag.projects.app.model.AppProject
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
-@Immutable
-internal data class ClientsUiState(
-    val clients: ImmutableList<AppClient> = persistentListOf(),
+internal data class ProjectsVmState(
+    val projects: ImmutableList<AppProject> = persistentListOf(),
 )

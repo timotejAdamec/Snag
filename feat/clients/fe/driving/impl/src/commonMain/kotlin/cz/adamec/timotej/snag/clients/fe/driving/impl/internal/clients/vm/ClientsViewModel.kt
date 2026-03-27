@@ -15,6 +15,7 @@ package cz.adamec.timotej.snag.clients.fe.driving.impl.internal.clients.vm
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cz.adamec.timotej.snag.clients.fe.app.api.GetClientsUseCase
+import cz.adamec.timotej.snag.core.foundation.common.mapState
 import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import kotlinx.collections.immutable.toPersistentList
@@ -29,8 +30,9 @@ import kotlinx.coroutines.flow.update
 internal class ClientsViewModel(
     private val getClientsUseCase: GetClientsUseCase,
 ) : ViewModel() {
-    private val _state: MutableStateFlow<ClientsUiState> = MutableStateFlow(ClientsUiState())
-    val state: StateFlow<ClientsUiState> = _state
+    private val vmState: MutableStateFlow<ClientsVmState> = MutableStateFlow(ClientsVmState())
+    val state: StateFlow<ClientsUiState> =
+        vmState.mapState { it.toUiState() }
 
     private val errorEventsChannel = Channel<UiError>()
     val errorsFlow = errorEventsChannel.receiveAsFlow()
@@ -48,7 +50,7 @@ internal class ClientsViewModel(
                     }
 
                     is OfflineFirstDataResult.Success -> {
-                        _state.update {
+                        vmState.update {
                             it.copy(
                                 clients = clientsDataResult.data.toPersistentList(),
                             )

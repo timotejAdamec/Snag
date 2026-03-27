@@ -12,22 +12,19 @@
 
 package cz.adamec.timotej.snag.users.fe.driving.impl.internal.userManagement.vm
 
-import androidx.compose.runtime.Immutable
 import cz.adamec.timotej.snag.authorization.business.UserRole
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlin.uuid.Uuid
 
-@Immutable
-internal data class UserManagementUiState(
-    val users: ImmutableList<UserItem> = persistentListOf(),
+internal data class UserManagementVmState(
+    val users: ImmutableList<UserVmItem> = persistentListOf(),
     val isLoading: Boolean = true,
 )
 
-@Immutable
-internal data class UserItem(
+internal data class UserVmItem(
     val id: Uuid,
     val email: String,
     val role: UserRole?,
-    val isRoleChangeEnabled: Boolean = true,
+    val isUpdatingRole: Boolean = false,
 )

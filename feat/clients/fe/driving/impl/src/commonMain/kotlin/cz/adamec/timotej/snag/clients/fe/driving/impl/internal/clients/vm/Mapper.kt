@@ -12,12 +12,5 @@
 
 package cz.adamec.timotej.snag.clients.fe.driving.impl.internal.clients.vm
 
-import androidx.compose.runtime.Immutable
-import cz.adamec.timotej.snag.clients.app.model.AppClient
-import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.persistentListOf
-
-@Immutable
-internal data class ClientsUiState(
-    val clients: ImmutableList<AppClient> = persistentListOf(),
-)
+internal fun ClientsVmState.toUiState(): ClientsUiState =
+    ClientsUiState(clients = clients)

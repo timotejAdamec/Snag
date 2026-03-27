@@ -15,6 +15,7 @@ package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cz.adamec.timotej.snag.core.foundation.common.TimestampProvider
+import cz.adamec.timotej.snag.core.foundation.common.mapState
 import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.core.network.fe.OnlineDataResult
 import cz.adamec.timotej.snag.feat.inspections.fe.app.api.GetInspectionsUseCase
@@ -50,9 +51,10 @@ internal class ProjectDetailsViewModel(
     private val setProjectClosedUseCase: SetProjectClosedUseCase,
     private val timestampProvider: TimestampProvider,
 ) : ViewModel() {
-    private val _state: MutableStateFlow<ProjectDetailsUiState> =
-        MutableStateFlow(ProjectDetailsUiState())
-    val state: StateFlow<ProjectDetailsUiState> = _state
+    private val vmState: MutableStateFlow<ProjectDetailsVmState> =
+        MutableStateFlow(ProjectDetailsVmState())
+    val state: StateFlow<ProjectDetailsUiState> =
+        vmState.mapState { it.toUiState() }
 
     private val errorEventsChannel = Channel<UiError>()
     val errorsFlow = errorEventsChannel.receiveAsFlow()
@@ -74,7 +76,7 @@ internal class ProjectDetailsViewModel(
             getProjectUseCase(projectId).collect { result ->
                 when (result) {
                     is OfflineFirstDataResult.ProgrammerError -> {
-                        _state.update {
+                        vmState.update {
                             it.copy(
                                 projectStatus = ProjectDetailsUiStatus.ERROR,
                             )
@@ -83,14 +85,14 @@ internal class ProjectDetailsViewModel(
                     }
                     is OfflineFirstDataResult.Success -> {
                         result.data?.let { project ->
-                            _state.update {
+                            vmState.update {
                                 it.copy(
                                     projectStatus = ProjectDetailsUiStatus.LOADED,
                                     project = project,
                                 )
                             }
-                        } ?: if (state.value.projectStatus != ProjectDetailsUiStatus.DELETED) {
-                            _state.update {
+                        } ?: if (vmState.value.projectStatus != ProjectDetailsUiStatus.DELETED) {
+                            vmState.update {
                                 it.copy(
                                     projectStatus = ProjectDetailsUiStatus.NOT_FOUND,
                                 )
@@ -108,7 +110,7 @@ internal class ProjectDetailsViewModel(
             getStructuresUseCase(projectId).collect { result ->
                 when (result) {
                     is OfflineFirstDataResult.ProgrammerError -> {
-                        _state.update {
+                        vmState.update {
                             it.copy(
                                 structureStatus = StructuresUiStatus.ERROR,
                             )
@@ -116,7 +118,7 @@ internal class ProjectDetailsViewModel(
                         errorEventsChannel.send(UiError.Unknown)
                     }
                     is OfflineFirstDataResult.Success -> {
-                        _state.update {
+                        vmState.update {
                             it.copy(
                                 structures = result.data.toImmutableList(),
                             )
@@ -131,7 +133,7 @@ internal class ProjectDetailsViewModel(
             getInspectionsUseCase(projectId).collect { result ->
                 when (result) {
                     is OfflineFirstDataResult.ProgrammerError -> {
-                        _state.update {
+                        vmState.update {
                             it.copy(
                                 inspectionStatus = InspectionsUiStatus.ERROR,
                             )
@@ -139,7 +141,7 @@ internal class ProjectDetailsViewModel(
                         errorEventsChannel.send(UiError.Unknown)
                     }
                     is OfflineFirstDataResult.Success -> {
-                        _state.update {
+                        vmState.update {
                             it.copy(
                                 inspections = result.data.toImmutableList(),
                             )
@@ -151,12 +153,12 @@ internal class ProjectDetailsViewModel(
 
     fun onDelete() =
         viewModelScope.launch {
-            _state.update {
+            vmState.update {
                 it.copy(isBeingDeleted = true)
             }
             when (deleteProjectUseCase(projectId)) {
                 is OfflineFirstDataResult.ProgrammerError -> {
-                    _state.update {
+                    vmState.update {
                         it.copy(
                             isBeingDeleted = false,
                         )
@@ -165,7 +167,7 @@ internal class ProjectDetailsViewModel(
                 }
 
                 is OfflineFirstDataResult.Success -> {
-                    _state.update {
+                    vmState.update {
                         it.copy(
                             projectStatus = ProjectDetailsUiStatus.DELETED,
                             isBeingDeleted = false,
@@ -178,7 +180,7 @@ internal class ProjectDetailsViewModel(
 
     fun onStartInspection(inspectionId: Uuid) =
         viewModelScope.launch {
-            state.value.inspections
+            vmState.value.inspections
                 .find { it.id == inspectionId }
                 ?.let { insp ->
                     saveInspectionUseCase(
@@ -197,7 +199,7 @@ internal class ProjectDetailsViewModel(
 
     fun onEndInspection(inspectionId: Uuid) =
         viewModelScope.launch {
-            state.value.inspections
+            vmState.value.inspections
                 .find { it.id == inspectionId }
                 ?.let { insp ->
                     saveInspectionUseCase(
@@ -216,23 +218,23 @@ internal class ProjectDetailsViewModel(
 
     fun onToggleClose() =
         viewModelScope.launch {
-            _state.update { it.copy(isClosingOrReopening = true) }
+            vmState.update { it.copy(isClosingOrReopening = true) }
             val result =
                 setProjectClosedUseCase(
                     SetProjectClosedRequest(
                         projectId = projectId,
-                        isClosed = !state.value.isClosed,
+                        isClosed = !(vmState.value.project?.isClosed == true),
                     ),
                 )
             if (result is OnlineDataResult.Failure) {
                 errorEventsChannel.send(result.toUiError())
             }
-            _state.update { it.copy(isClosingOrReopening = false) }
+            vmState.update { it.copy(isClosingOrReopening = false) }
         }
 
     fun onDownloadReport() =
         viewModelScope.launch {
-            _state.update { it.copy(isDownloadingReport = true) }
+            vmState.update { it.copy(isDownloadingReport = true) }
             when (val result = downloadReportUseCase(projectId)) {
                 is OnlineDataResult.Success -> {
                     reportReadyChannel.send(result.data)
@@ -241,6 +243,6 @@ internal class ProjectDetailsViewModel(
                     errorEventsChannel.send(result.toUiError())
                 }
             }
-            _state.update { it.copy(isDownloadingReport = false) }
+            vmState.update { it.copy(isDownloadingReport = false) }
         }
 }
