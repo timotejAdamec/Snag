@@ -12,12 +12,5 @@
 
 package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projects.vm
 
-import androidx.compose.runtime.Immutable
-import cz.adamec.timotej.snag.projects.app.model.AppProject
-import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.persistentListOf
-
-@Immutable
-internal data class ProjectsUiState(
-    val projects: ImmutableList<AppProject> = persistentListOf(),
-)
+internal fun ProjectsVmState.toUiState(): ProjectsUiState =
+    ProjectsUiState(projects = projects)

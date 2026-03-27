@@ -18,34 +18,14 @@ import cz.adamec.timotej.snag.projects.app.model.AppProject
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
-internal data class ProjectDetailsUiState(
+internal data class ProjectDetailsVmState(
     val projectStatus: ProjectDetailsUiStatus = ProjectDetailsUiStatus.LOADING,
+    val structureStatus: StructuresUiStatus = StructuresUiStatus.LOADED,
+    val inspectionStatus: InspectionsUiStatus = InspectionsUiStatus.LOADED,
+    val isBeingDeleted: Boolean = false,
     val isDownloadingReport: Boolean = false,
     val isClosingOrReopening: Boolean = false,
     val project: AppProject? = null,
     val structures: ImmutableList<AppStructure> = persistentListOf(),
     val inspections: ImmutableList<AppInspection> = persistentListOf(),
-    val isClosed: Boolean = false,
-    val isProjectEditable: Boolean = false,
-    val canInvokeDeletion: Boolean = false,
-    val canDownloadReport: Boolean = false,
-    val canToggleClosed: Boolean = false,
 )
-
-internal enum class ProjectDetailsUiStatus {
-    ERROR,
-    NOT_FOUND,
-    LOADING,
-    LOADED,
-    DELETED,
-}
-
-internal enum class StructuresUiStatus {
-    ERROR,
-    LOADED,
-}
-
-internal enum class InspectionsUiStatus {
-    ERROR,
-    LOADED,
-}

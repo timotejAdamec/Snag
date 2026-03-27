@@ -14,6 +14,7 @@ package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projects.vm
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cz.adamec.timotej.snag.core.foundation.common.mapState
 import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.projects.fe.app.api.GetProjectsUseCase
@@ -29,8 +30,9 @@ import kotlinx.coroutines.flow.update
 internal class ProjectsViewModel(
     private val getProjectsUseCase: GetProjectsUseCase,
 ) : ViewModel() {
-    private val _state: MutableStateFlow<ProjectsUiState> = MutableStateFlow(ProjectsUiState())
-    val state: StateFlow<ProjectsUiState> = _state
+    private val vmState: MutableStateFlow<ProjectsVmState> = MutableStateFlow(ProjectsVmState())
+    val state: StateFlow<ProjectsUiState> =
+        vmState.mapState { it.toUiState() }
 
     private val errorEventsChannel = Channel<UiError>()
     val errorsFlow = errorEventsChannel.receiveAsFlow()
@@ -48,7 +50,7 @@ internal class ProjectsViewModel(
                     }
 
                     is OfflineFirstDataResult.Success -> {
-                        _state.update {
+                        vmState.update {
                             it.copy(
                                 projects = projectsDataResult.data.toPersistentList(),
                             )

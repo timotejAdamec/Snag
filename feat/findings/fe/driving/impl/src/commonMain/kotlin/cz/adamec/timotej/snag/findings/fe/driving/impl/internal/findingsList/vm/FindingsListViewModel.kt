@@ -14,6 +14,7 @@ package cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingsList.vm
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cz.adamec.timotej.snag.core.foundation.common.mapState
 import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.findings.fe.app.api.GetFindingsUseCase
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
@@ -30,9 +31,10 @@ internal class FindingsListViewModel(
     @InjectedParam private val structureId: Uuid,
     private val getFindingsUseCase: GetFindingsUseCase,
 ) : ViewModel() {
-    private val _state: MutableStateFlow<FindingsListUiState> =
-        MutableStateFlow(FindingsListUiState())
-    val state: StateFlow<FindingsListUiState> = _state
+    private val vmState: MutableStateFlow<FindingsListVmState> =
+        MutableStateFlow(FindingsListVmState())
+    val state: StateFlow<FindingsListUiState> =
+        vmState.mapState { it.toUiState() }
 
     private val errorEventsChannel = Channel<UiError>()
     val errorsFlow = errorEventsChannel.receiveAsFlow()
@@ -46,13 +48,13 @@ internal class FindingsListViewModel(
             getFindingsUseCase(structureId).collect { result ->
                 when (result) {
                     is OfflineFirstDataResult.ProgrammerError -> {
-                        _state.update {
+                        vmState.update {
                             it.copy(status = FindingsListUiStatus.ERROR)
                         }
                     }
 
                     is OfflineFirstDataResult.Success -> {
-                        _state.update {
+                        vmState.update {
                             it.copy(
                                 findings = result.data,
                             )

@@ -14,7 +14,7 @@ package cz.adamec.timotej.snag.clients.fe.driving.impl.internal.clientDetailsEdi
 
 import org.jetbrains.compose.resources.StringResource
 
-internal data class ClientDetailsEditUiState(
+internal data class ClientDetailsEditVmState(
     val clientName: String = "",
     val clientAddress: String = "",
     val clientPhoneNumber: String = "",
@@ -23,5 +23,5 @@ internal data class ClientDetailsEditUiState(
     val clientPhoneNumberError: StringResource? = null,
     val clientEmailError: StringResource? = null,
     val canDelete: Boolean = false,
-    val areDeleteDialogButtonsEnabled: Boolean = true,
+    val isBeingDeleted: Boolean = false,
 )
