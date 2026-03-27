@@ -99,6 +99,7 @@ internal fun ProjectDetailsEditContent(
                 },
                 actions = {
                     Button(
+                        enabled = state.canSave,
                         onClick = onSaveClick,
                     ) {
                         Text(

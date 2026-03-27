@@ -26,4 +26,5 @@ internal data class ProjectDetailsEditUiState(
     val availableClients: ImmutableList<AppClient> = persistentListOf(),
     val projectNameError: StringResource? = null,
     val projectAddressError: StringResource? = null,
+    val canSave: Boolean = false,
 )

@@ -14,6 +14,7 @@ package cz.adamec.timotej.snag.clients.fe.driving.impl.internal.clients.vm
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cz.adamec.timotej.snag.clients.fe.app.api.CanManageClientsUseCase
 import cz.adamec.timotej.snag.clients.fe.app.api.GetClientsUseCase
 import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
@@ -28,6 +29,7 @@ import kotlinx.coroutines.flow.update
 
 internal class ClientsViewModel(
     private val getClientsUseCase: GetClientsUseCase,
+    private val canManageClientsUseCase: CanManageClientsUseCase,
 ) : ViewModel() {
     private val _state: MutableStateFlow<ClientsUiState> = MutableStateFlow(ClientsUiState())
     val state: StateFlow<ClientsUiState> = _state
@@ -37,6 +39,7 @@ internal class ClientsViewModel(
 
     init {
         collectClients()
+        collectCanManageClients()
     }
 
     private fun collectClients() =
@@ -55,5 +58,11 @@ internal class ClientsViewModel(
                         }
                     }
                 }
+            }.launchIn(viewModelScope)
+
+    private fun collectCanManageClients() =
+        canManageClientsUseCase()
+            .map { canManage ->
+                _state.update { it.copy(canManageClients = canManage) }
             }.launchIn(viewModelScope)
 }

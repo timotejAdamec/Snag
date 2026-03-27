@@ -24,4 +24,5 @@ internal data class ClientDetailsEditUiState(
     val clientEmailError: StringResource? = null,
     val canDelete: Boolean = false,
     val isBeingDeleted: Boolean = false,
+    val canManageClients: Boolean = false,
 )

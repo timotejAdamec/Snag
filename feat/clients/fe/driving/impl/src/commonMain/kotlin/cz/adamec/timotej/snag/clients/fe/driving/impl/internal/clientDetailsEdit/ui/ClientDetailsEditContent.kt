@@ -123,7 +123,7 @@ internal fun ClientDetailsEditContent(
                 actions = {
                     if (clientId != null) {
                         IconButton(
-                            enabled = state.canDelete && !state.isBeingDeleted,
+                            enabled = state.canDelete && state.canManageClients && !state.isBeingDeleted,
                             onClick = { isShowingDeleteConfirmation = true },
                         ) {
                             Icon(
@@ -133,6 +133,7 @@ internal fun ClientDetailsEditContent(
                         }
                     }
                     Button(
+                        enabled = state.canManageClients,
                         onClick = onSaveClick,
                     ) {
                         Text(

@@ -28,12 +28,14 @@ internal data class ProjectDetailsUiState(
     val project: AppProject? = null,
     val structures: ImmutableList<AppStructure> = persistentListOf(),
     val inspections: ImmutableList<AppInspection> = persistentListOf(),
+    val canEditEntities: Boolean = false,
+    val canCloseProject: Boolean = false,
 ) {
     val isClosed: Boolean get() = project?.isClosed == true
-    val isProjectEditable: Boolean get() = projectStatus == ProjectDetailsUiStatus.LOADED && !isClosed
+    val isProjectEditable: Boolean get() = projectStatus == ProjectDetailsUiStatus.LOADED && !isClosed && canEditEntities
     val canInvokeDeletion = isProjectEditable && !isBeingDeleted
     val canDownloadReport = projectStatus == ProjectDetailsUiStatus.LOADED && !isDownloadingReport
-    val canToggleClosed = projectStatus == ProjectDetailsUiStatus.LOADED && !isClosingOrReopening
+    val canToggleClosed = projectStatus == ProjectDetailsUiStatus.LOADED && !isClosingOrReopening && canCloseProject
 }
 
 internal enum class ProjectDetailsUiStatus {

@@ -30,4 +30,5 @@ data class UserItem(
     val email: String,
     val role: UserRole?,
     val isUpdatingRole: Boolean = false,
+    val allowedRoleOptions: Set<UserRole?> = emptySet(),
 )

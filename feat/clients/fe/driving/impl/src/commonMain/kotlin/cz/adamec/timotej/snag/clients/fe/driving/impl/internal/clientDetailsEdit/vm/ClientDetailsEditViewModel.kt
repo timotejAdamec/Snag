@@ -15,6 +15,7 @@ package cz.adamec.timotej.snag.clients.fe.driving.impl.internal.clientDetailsEdi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cz.adamec.timotej.snag.clients.fe.app.api.CanDeleteClientUseCase
+import cz.adamec.timotej.snag.clients.fe.app.api.CanManageClientsUseCase
 import cz.adamec.timotej.snag.clients.fe.app.api.DeleteClientUseCase
 import cz.adamec.timotej.snag.clients.fe.app.api.GetClientUseCase
 import cz.adamec.timotej.snag.clients.fe.app.api.SaveClientUseCase
@@ -44,6 +45,7 @@ internal class ClientDetailsEditViewModel(
     private val saveClientUseCase: SaveClientUseCase,
     private val deleteClientUseCase: DeleteClientUseCase,
     private val canDeleteClientUseCase: CanDeleteClientUseCase,
+    private val canManageClientsUseCase: CanManageClientsUseCase,
     private val emailFormatRule: EmailFormatRule,
     private val phoneNumberRule: PhoneNumberRule,
 ) : ViewModel() {
@@ -65,6 +67,7 @@ internal class ClientDetailsEditViewModel(
             collectClient(it)
             checkCanDelete(it)
         }
+        collectCanManageClients()
     }
 
     private fun collectClient(clientId: Uuid) =
@@ -103,6 +106,13 @@ internal class ClientDetailsEditViewModel(
             }
         }
 
+    private fun collectCanManageClients() =
+        viewModelScope.launch {
+            canManageClientsUseCase().collect { canManage ->
+                _state.update { it.copy(canManageClients = canManage) }
+            }
+        }
+
     fun onClientNameChange(updatedName: String) {
         _state.update { it.copy(clientName = updatedName, clientNameError = null) }
     }
@@ -120,6 +130,7 @@ internal class ClientDetailsEditViewModel(
     }
 
     fun onDelete() {
+        if (!state.value.canManageClients) return
         val id = clientId ?: return
         viewModelScope.launch {
             _state.update { it.copy(isBeingDeleted = true) }
@@ -138,6 +149,7 @@ internal class ClientDetailsEditViewModel(
 
     fun onSaveClient() =
         viewModelScope.launch {
+            if (!state.value.canManageClients) return@launch
             val current = state.value
             val nameError = if (current.clientName.isBlank()) Res.string.error_field_required else null
             val phoneError =

@@ -16,6 +16,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
+import cz.adamec.timotej.snag.projects.fe.app.api.CanCreateProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.GetProjectsUseCase
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.channels.Channel
@@ -28,6 +29,7 @@ import kotlinx.coroutines.flow.update
 
 internal class ProjectsViewModel(
     private val getProjectsUseCase: GetProjectsUseCase,
+    private val canCreateProjectUseCase: CanCreateProjectUseCase,
 ) : ViewModel() {
     private val _state: MutableStateFlow<ProjectsUiState> = MutableStateFlow(ProjectsUiState())
     val state: StateFlow<ProjectsUiState> = _state
@@ -37,6 +39,7 @@ internal class ProjectsViewModel(
 
     init {
         collectProjects()
+        collectCanCreateProject()
     }
 
     private fun collectProjects() =
@@ -55,5 +58,11 @@ internal class ProjectsViewModel(
                         }
                     }
                 }
+            }.launchIn(viewModelScope)
+
+    private fun collectCanCreateProject() =
+        canCreateProjectUseCase()
+            .map { canCreate ->
+                _state.update { it.copy(canCreateProject = canCreate) }
             }.launchIn(viewModelScope)
 }

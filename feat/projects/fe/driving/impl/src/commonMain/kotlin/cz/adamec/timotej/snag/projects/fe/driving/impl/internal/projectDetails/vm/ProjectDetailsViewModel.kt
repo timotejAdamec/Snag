@@ -23,6 +23,8 @@ import cz.adamec.timotej.snag.feat.inspections.fe.app.api.model.SaveInspectionRe
 import cz.adamec.timotej.snag.feat.reports.fe.app.api.DownloadReportUseCase
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.lib.design.fe.error.toUiError
+import cz.adamec.timotej.snag.projects.fe.app.api.CanCloseProjectUseCase
+import cz.adamec.timotej.snag.projects.fe.app.api.CanEditProjectEntitiesUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.DeleteProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.GetProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.SetProjectClosedUseCase
@@ -48,6 +50,8 @@ internal class ProjectDetailsViewModel(
     private val downloadReportUseCase: DownloadReportUseCase,
     private val saveInspectionUseCase: SaveInspectionUseCase,
     private val setProjectClosedUseCase: SetProjectClosedUseCase,
+    private val canEditProjectEntitiesUseCase: CanEditProjectEntitiesUseCase,
+    private val canCloseProjectUseCase: CanCloseProjectUseCase,
     private val timestampProvider: TimestampProvider,
 ) : ViewModel() {
     private val _state: MutableStateFlow<ProjectDetailsUiState> =
@@ -67,6 +71,8 @@ internal class ProjectDetailsViewModel(
         collectProject(projectId)
         collectStructures(projectId)
         collectInspections(projectId)
+        collectCanEditEntities(projectId)
+        collectCanCloseProject(projectId)
     }
 
     private fun collectProject(projectId: Uuid) =
@@ -146,6 +152,20 @@ internal class ProjectDetailsViewModel(
                         }
                     }
                 }
+            }
+        }
+
+    private fun collectCanEditEntities(projectId: Uuid) =
+        viewModelScope.launch {
+            canEditProjectEntitiesUseCase(projectId).collect { canEdit ->
+                _state.update { it.copy(canEditEntities = canEdit) }
+            }
+        }
+
+    private fun collectCanCloseProject(projectId: Uuid) =
+        viewModelScope.launch {
+            canCloseProjectUseCase(projectId).collect { canClose ->
+                _state.update { it.copy(canCloseProject = canClose) }
             }
         }
 

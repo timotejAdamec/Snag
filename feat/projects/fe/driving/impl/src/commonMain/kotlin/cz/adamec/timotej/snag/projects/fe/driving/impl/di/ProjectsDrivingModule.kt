@@ -189,6 +189,8 @@ val projectsDrivingImplModule =
                 getProjectUseCase = get(),
                 saveProjectUseCase = get(),
                 getClientsUseCase = get(),
+                canCreateProjectUseCase = get(),
+                canEditProjectEntitiesUseCase = get(),
             )
         }
         viewModel { (projectId: Uuid) ->
@@ -201,6 +203,8 @@ val projectsDrivingImplModule =
                 downloadReportUseCase = get(),
                 saveInspectionUseCase = get(),
                 setProjectClosedUseCase = get(),
+                canEditProjectEntitiesUseCase = get(),
+                canCloseProjectUseCase = get(),
                 timestampProvider = get(),
             )
         }
