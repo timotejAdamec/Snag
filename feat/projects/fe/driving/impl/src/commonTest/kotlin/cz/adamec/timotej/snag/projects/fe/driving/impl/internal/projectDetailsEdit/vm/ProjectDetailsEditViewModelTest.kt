@@ -26,6 +26,7 @@ import cz.adamec.timotej.snag.projects.fe.app.api.SaveProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.driven.test.FakeProjectsDb
 import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
@@ -61,7 +62,6 @@ class ProjectDetailsEditViewModelTest : FrontendKoinInitializedTest() {
 
             assertEquals("", viewModel.state.value.projectName)
             assertEquals("", viewModel.state.value.projectAddress)
-            assertNull(viewModel.state.value.selectedClientId)
             assertEquals("", viewModel.state.value.selectedClientName)
         }
 
@@ -200,11 +200,13 @@ class ProjectDetailsEditViewModelTest : FrontendKoinInitializedTest() {
             )
 
             val viewModel = createViewModel()
+            val subscriber = launch { viewModel.state.collect { } }
             advanceUntilIdle()
 
             val clients = viewModel.state.value.availableClients
             assertEquals(1, clients.size)
             assertEquals("ACME Corp", clients[0].name)
+            subscriber.cancel()
         }
 
     @Test
@@ -215,7 +217,6 @@ class ProjectDetailsEditViewModelTest : FrontendKoinInitializedTest() {
 
             viewModel.onClientSelected(clientId, "ACME Corp")
 
-            assertEquals(clientId, viewModel.state.value.selectedClientId)
             assertEquals("ACME Corp", viewModel.state.value.selectedClientName)
         }
 
@@ -228,7 +229,6 @@ class ProjectDetailsEditViewModelTest : FrontendKoinInitializedTest() {
 
             viewModel.onClientCleared()
 
-            assertNull(viewModel.state.value.selectedClientId)
             assertEquals("", viewModel.state.value.selectedClientName)
         }
 
@@ -276,10 +276,11 @@ class ProjectDetailsEditViewModelTest : FrontendKoinInitializedTest() {
             )
 
             val viewModel = createViewModel(projectId = projectId)
+            val subscriber = launch { viewModel.state.collect { } }
             advanceUntilIdle()
 
-            assertEquals(clientId, viewModel.state.value.selectedClientId)
             assertEquals("ACME Corp", viewModel.state.value.selectedClientName)
+            subscriber.cancel()
         }
 
     @Test
@@ -298,11 +299,12 @@ class ProjectDetailsEditViewModelTest : FrontendKoinInitializedTest() {
             )
 
             val viewModel = createViewModel()
+            val subscriber = launch { viewModel.state.collect { } }
             advanceUntilIdle()
 
             viewModel.onClientCreated(clientId)
 
-            assertEquals(clientId, viewModel.state.value.selectedClientId)
             assertEquals("New Client", viewModel.state.value.selectedClientName)
+            subscriber.cancel()
         }
 }

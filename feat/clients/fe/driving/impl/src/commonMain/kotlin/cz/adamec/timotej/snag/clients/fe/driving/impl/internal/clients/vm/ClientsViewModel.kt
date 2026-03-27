@@ -19,6 +19,7 @@ import cz.adamec.timotej.snag.core.foundation.common.mapState
 import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import kotlinx.collections.immutable.toPersistentList
+import cz.adamec.timotej.snag.lib.design.fe.state.launchWhileSubscribed
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -30,16 +31,16 @@ import kotlinx.coroutines.flow.update
 internal class ClientsViewModel(
     private val getClientsUseCase: GetClientsUseCase,
 ) : ViewModel() {
-    private val vmState: MutableStateFlow<ClientsVmState> = MutableStateFlow(ClientsVmState())
+    private val vmState: MutableStateFlow<ClientsVmState> =
+        MutableStateFlow(ClientsVmState())
+            .launchWhileSubscribed(scope = viewModelScope) {
+                listOf(collectClients())
+            }
     val state: StateFlow<ClientsUiState> =
         vmState.mapState { it.toUiState() }
 
     private val errorEventsChannel = Channel<UiError>()
     val errorsFlow = errorEventsChannel.receiveAsFlow()
-
-    init {
-        collectClients()
-    }
 
     private fun collectClients() =
         getClientsUseCase()

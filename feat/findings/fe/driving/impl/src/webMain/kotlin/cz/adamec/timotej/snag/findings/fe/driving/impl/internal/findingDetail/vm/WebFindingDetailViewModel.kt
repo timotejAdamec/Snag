@@ -23,6 +23,7 @@ import cz.adamec.timotej.snag.findings.fe.app.api.GetFindingUseCase
 import cz.adamec.timotej.snag.findings.fe.app.api.WebAddFindingPhotoUseCase
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.projects.fe.app.api.CanEditProjectEntitiesUseCase
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlin.uuid.Uuid
@@ -46,17 +47,15 @@ internal class WebFindingDetailViewModel(
     getFindingPhotosUseCase = getFindingPhotosUseCase,
     deleteFindingPhotoUseCase = deleteFindingPhotoUseCase,
 ) {
-    init {
-        collectCanModifyPhotos()
-    }
+    override fun collectJobs(): List<Job> =
+        super.collectJobs() + listOf(collectCanModifyPhotos())
 
-    private fun collectCanModifyPhotos() {
+    private fun collectCanModifyPhotos(): Job =
         viewModelScope.launch {
             canModifyFindingPhotosUseCase(projectId).collect { canModify ->
                 vmState.update { it.copy(canModifyPhotos = canModify) }
             }
         }
-    }
 
     override fun onAddPhoto(
         bytes: ByteArray,

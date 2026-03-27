@@ -18,6 +18,7 @@ import cz.adamec.timotej.snag.clients.fe.driven.test.FakeClientsDb
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.koin.test.inject
@@ -62,10 +63,12 @@ class ClientsViewModelTest : FrontendKoinInitializedTest() {
 
             val viewModel = createViewModel()
 
+            val subscriber = launch { viewModel.state.collect { } }
             advanceUntilIdle()
 
             val clients = viewModel.state.value.clients
             assertEquals(1, clients.size)
             assertEquals("Test Client", clients.first().name)
+            subscriber.cancel()
         }
 }

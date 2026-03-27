@@ -18,6 +18,8 @@ import cz.adamec.timotej.snag.core.foundation.common.mapState
 import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.findings.fe.app.api.GetFindingsUseCase
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
+import cz.adamec.timotej.snag.lib.design.fe.state.launchWhileSubscribed
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -33,17 +35,16 @@ internal class FindingsListViewModel(
 ) : ViewModel() {
     private val vmState: MutableStateFlow<FindingsListVmState> =
         MutableStateFlow(FindingsListVmState())
+            .launchWhileSubscribed(scope = viewModelScope) {
+                listOf(collectFindings())
+            }
     val state: StateFlow<FindingsListUiState> =
         vmState.mapState { it.toUiState() }
 
     private val errorEventsChannel = Channel<UiError>()
     val errorsFlow = errorEventsChannel.receiveAsFlow()
 
-    init {
-        collectFindings()
-    }
-
-    private fun collectFindings() {
+    private fun collectFindings(): Job =
         viewModelScope.launch {
             getFindingsUseCase(structureId).collect { result ->
                 when (result) {
@@ -63,5 +64,4 @@ internal class FindingsListViewModel(
                 }
             }
         }
-    }
 }

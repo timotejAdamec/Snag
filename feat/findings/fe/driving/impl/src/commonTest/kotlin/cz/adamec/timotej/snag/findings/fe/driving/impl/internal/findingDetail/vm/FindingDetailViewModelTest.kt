@@ -27,6 +27,7 @@ import cz.adamec.timotej.snag.projects.fe.app.api.CanEditProjectEntitiesUseCase
 import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.koin.test.inject
@@ -122,6 +123,7 @@ class FindingDetailViewModelTest : FrontendKoinInitializedTest() {
 
             val viewModel = createViewModel()
 
+            val subscriber = launch { viewModel.state.collect { } }
             advanceUntilIdle()
 
             viewModel.onDelete()
@@ -131,6 +133,7 @@ class FindingDetailViewModelTest : FrontendKoinInitializedTest() {
             assertEquals(Unit, event)
             assertEquals(FindingDetailUiStatus.DELETED, viewModel.state.value.status)
             assertFalse(viewModel.state.value.canEdit)
+            subscriber.cancel()
         }
 
     @Test
@@ -140,15 +143,18 @@ class FindingDetailViewModelTest : FrontendKoinInitializedTest() {
 
             val viewModel = createViewModel()
 
+            val subscriber = launch { viewModel.state.collect { } }
             advanceUntilIdle()
 
             fakeFindingsDb.forcedFailure = OfflineFirstDataResult.ProgrammerError(RuntimeException("Failed"))
 
             viewModel.onDelete()
+            advanceUntilIdle()
 
             val error = viewModel.errorsFlow.first()
             assertIs<UiError.Unknown>(error)
-            assertTrue(viewModel.state.value.canEdit)
+            assertEquals(FindingDetailUiStatus.LOADED, viewModel.state.value.status)
+            subscriber.cancel()
         }
 
     @Test

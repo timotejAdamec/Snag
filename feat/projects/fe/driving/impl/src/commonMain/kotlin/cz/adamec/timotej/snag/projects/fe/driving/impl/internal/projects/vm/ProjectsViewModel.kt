@@ -18,6 +18,7 @@ import cz.adamec.timotej.snag.core.foundation.common.mapState
 import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.projects.fe.app.api.GetProjectsUseCase
+import cz.adamec.timotej.snag.lib.design.fe.state.launchWhileSubscribed
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -30,16 +31,16 @@ import kotlinx.coroutines.flow.update
 internal class ProjectsViewModel(
     private val getProjectsUseCase: GetProjectsUseCase,
 ) : ViewModel() {
-    private val vmState: MutableStateFlow<ProjectsVmState> = MutableStateFlow(ProjectsVmState())
+    private val vmState: MutableStateFlow<ProjectsVmState> =
+        MutableStateFlow(ProjectsVmState())
+            .launchWhileSubscribed(scope = viewModelScope) {
+                listOf(collectProjects())
+            }
     val state: StateFlow<ProjectsUiState> =
         vmState.mapState { it.toUiState() }
 
     private val errorEventsChannel = Channel<UiError>()
     val errorsFlow = errorEventsChannel.receiveAsFlow()
-
-    init {
-        collectProjects()
-    }
 
     private fun collectProjects() =
         getProjectsUseCase()

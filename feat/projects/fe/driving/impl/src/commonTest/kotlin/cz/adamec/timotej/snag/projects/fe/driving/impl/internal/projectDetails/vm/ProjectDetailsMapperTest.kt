@@ -12,6 +12,8 @@
 
 package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.vm
 
+import cz.adamec.timotej.snag.core.foundation.common.Timestamp
+import cz.adamec.timotej.snag.core.foundation.common.UuidProvider
 import cz.adamec.timotej.snag.projects.app.model.AppProjectData
 import kotlin.test.Test
 import kotlin.test.assertFalse
@@ -25,6 +27,8 @@ class ProjectDetailsMapperTest {
             id = Uuid.random(),
             name = "Test",
             address = "Address",
+            creatorId = UuidProvider.getUuid(),
+            updatedAt = Timestamp(0L),
             isClosed = false,
         )
 
@@ -33,6 +37,8 @@ class ProjectDetailsMapperTest {
             id = Uuid.random(),
             name = "Test",
             address = "Address",
+            creatorId = UuidProvider.getUuid(),
+            updatedAt = Timestamp(0L),
             isClosed = true,
         )
 

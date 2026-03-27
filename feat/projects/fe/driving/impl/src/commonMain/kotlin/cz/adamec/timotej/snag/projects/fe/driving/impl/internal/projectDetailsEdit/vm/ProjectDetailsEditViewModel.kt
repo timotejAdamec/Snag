@@ -19,6 +19,7 @@ import cz.adamec.timotej.snag.core.foundation.common.mapState
 import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError.Unknown
+import cz.adamec.timotej.snag.lib.design.fe.state.launchWhileSubscribed
 import cz.adamec.timotej.snag.projects.fe.app.api.GetProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.SaveProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.model.SaveProjectRequest
@@ -43,6 +44,9 @@ internal class ProjectDetailsEditViewModel(
 ) : ViewModel() {
     private val vmState: MutableStateFlow<ProjectDetailsEditVmState> =
         MutableStateFlow(ProjectDetailsEditVmState())
+            .launchWhileSubscribed(scope = viewModelScope) {
+                listOf(collectClients())
+            }
     val state: StateFlow<ProjectDetailsEditUiState> =
         vmState.mapState { it.toUiState() }
 
@@ -54,7 +58,6 @@ internal class ProjectDetailsEditViewModel(
 
     init {
         projectId?.let { collectProject(it) }
-        collectClients()
     }
 
     private fun collectProject(projectId: Uuid) =

@@ -23,6 +23,7 @@ import cz.adamec.timotej.snag.lib.design.fe.error.toUiError
 import cz.adamec.timotej.snag.users.fe.app.api.ChangeUserRoleUseCase
 import cz.adamec.timotej.snag.users.fe.app.api.GetUsersUseCase
 import cz.adamec.timotej.snag.users.fe.app.api.model.ChangeUserRoleRequest
+import cz.adamec.timotej.snag.lib.design.fe.state.launchWhileSubscribed
 import cz.adamec.timotej.snag.users.fe.driving.impl.internal.userManagement.toUserVmItem
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.channels.Channel
@@ -41,15 +42,14 @@ internal class UserManagementViewModel(
 ) : ViewModel() {
     private val vmState: MutableStateFlow<UserManagementVmState> =
         MutableStateFlow(UserManagementVmState())
+            .launchWhileSubscribed(scope = viewModelScope) {
+                listOf(collectUsers())
+            }
     val state: StateFlow<UserManagementUiState> =
         vmState.mapState { it.toUiState() }
 
     private val errorEventsChannel = Channel<UiError>()
     val errorsFlow = errorEventsChannel.receiveAsFlow()
-
-    init {
-        collectUsers()
-    }
 
     private fun collectUsers() =
         getUsersUseCase()

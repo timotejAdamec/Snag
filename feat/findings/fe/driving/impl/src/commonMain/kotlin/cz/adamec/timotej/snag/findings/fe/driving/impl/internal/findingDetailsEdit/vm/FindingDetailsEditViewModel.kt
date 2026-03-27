@@ -30,6 +30,7 @@ import cz.adamec.timotej.snag.findings.fe.app.api.model.SaveFindingDetailsReques
 import cz.adamec.timotej.snag.findings.fe.app.api.model.SaveNewFindingRequest
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError.Unknown
+import cz.adamec.timotej.snag.lib.design.fe.state.launchWhileSubscribed
 import cz.adamec.timotej.snag.projects.fe.app.api.CanEditProjectEntitiesUseCase
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
@@ -59,7 +60,9 @@ internal class FindingDetailsEditViewModel(
             FindingDetailsEditVmState(
                 findingType = findingTypeKey?.toDefaultFindingType() ?: FindingType.Classic(),
             ),
-        )
+        ).launchWhileSubscribed(scope = viewModelScope) {
+            listOf(collectCanEditFinding())
+        }
     val state: StateFlow<FindingDetailsEditUiState> =
         vmState.mapState { it.toUiState() }
 
@@ -74,7 +77,6 @@ internal class FindingDetailsEditViewModel(
             "Either findingId or structureId must be provided"
         }
         findingId?.let { collectFinding(it) }
-        collectCanEditFinding()
     }
 
     private fun collectCanEditFinding() =
