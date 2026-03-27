@@ -13,7 +13,7 @@ This document is a reference for the implementation team. It describes what the 
 3. **EntraID authentication** — Not started. BE: validate EntraID JWT (currently mock `X-User-Id` header). FE: OAuth2/OIDC flow, token storage, refresh. *(§4, FP34, FP35, NP12)*
 4. **Service protocol PDF** — Not started. Second report type with work description and signature fields. *(§5, FP32b)*
 5. **FE: Role management UI** — BE API + authorization done; FE UI for managing roles not yet implemented. *(§6 #4)*
-6. **Closed-project access gap** — `CanAccessProjectRule` does not check `isClosed`; assigned users still pass access checks on closed projects. Needs design decision on where the check should live. *(NP13 known gap)*
+6. **Closed-project access gap** — `CanAccessProjectRule` does not check `isClosed`; `AreProjectEntitiesEditableRule` does; both have to be checked on FE.*
 
 ### Partially done (BE complete, FE incomplete)
 
@@ -151,7 +151,7 @@ The following features are new compared to the original analysis (which had no r
 
 ### NP13 — Role-based authorisation
 - [x] **Backend**: authorization fully wired across all routes. Project routes: `CanCreateProjectRule`, `CanCloseProjectRule`, `CanAccessProjectRule`, `CanAssignUserToProjectRule`. Sub-entity routes (structures, findings, inspections, finding photos): `CanAccessProjectUseCase` with project resolution from URL path or entity lookup (three-hop for finding photos: finding → structure → project). Client routes: `CanManageClientsRule` (role-based, denies Passport Technician and None). User routes: `CanSetUserRoleRule` (delegation scoping — Admin: any, Passport Lead: None↔Passport Technician, Service Lead: None↔Service Worker). Report route: `CanAccessProjectUseCase`.
-  - **Known gap**: `CanAccessProjectRule` does not check `isClosed` — it grants access to admin/creator/assigned users regardless of project state. Per spec (§3), assigned users should lose access when a project is closed (only creator retains it). This check may belong in `CanAccessProjectRule` itself, in a separate composition (like `CanEditProjectEntitiesUseCaseImpl` does on FE with `AreProjectEntitiesEditableRule`), or in the route-level use case. Decision pending.
+  - **Known gap**: `CanAccessProjectRule` does not check `isClosed` — it grants access to admin/creator/assigned users regardless of project state. Per spec (§3), assigned users should lose access when a project is closed (only creator retains it). This check may belong in `CanAccessProjectRule` itself, in a separate composition (like `CanEditProjectEntitiesUseCaseImpl` does on FE with `AreProjectEntitiesEditableRule`), or in the route-level use case. It may also stay as it is, because checking if project is closed is not that hard authorization check as checking user role and the BE might respond differntly, depends on implementation decision. Decision pending.
 - [ ] **Frontend**: hide/show UI elements based on role; do not rely solely on frontend gating.
   - Current state: **zero role-based UI gating**. Current user is a hardcoded UUID (`GetCurrentUserUseCaseImpl`) with TODO to replace with EntraID. FE does not know the current user's role.
   - All buttons (create project, close/reopen, edit, delete, report download) are visible unconditionally — only gated by project state (`isClosed`), not user role or access.
