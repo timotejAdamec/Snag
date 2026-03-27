@@ -29,16 +29,15 @@ class GetAllowedRoleOptionsUseCaseImpl(
     override operator fun invoke(targetCurrentRole: UserRole?): Flow<Set<UserRole?>> =
         getCurrentUserFlowUseCase()
             .map { userResult ->
-                val user =
-                    (userResult as? OfflineFirstDataResult.Success)?.data
-                        ?: return@map emptySet()
-                ALL_ROLE_CANDIDATES.filterTo(mutableSetOf()) { candidate ->
-                    canSetUserRoleRule(
-                        actingUser = user,
-                        targetCurrentRole = targetCurrentRole,
-                        newRole = candidate,
-                    )
-                }
+                (userResult as? OfflineFirstDataResult.Success)?.data?.let { user ->
+                    ALL_ROLE_CANDIDATES.filterTo(mutableSetOf()) { candidate ->
+                        canSetUserRoleRule(
+                            actingUser = user,
+                            targetCurrentRole = targetCurrentRole,
+                            newRole = candidate,
+                        )
+                    }
+                } ?: emptySet()
             }.catch { emit(emptySet()) }
             .distinctUntilChanged()
 

@@ -16,7 +16,5 @@ import cz.adamec.timotej.snag.feat.findings.be.model.BackendFindingPhoto
 import cz.adamec.timotej.snag.findings.be.app.api.model.GetFindingPhotosModifiedSinceRequest
 
 interface GetFindingPhotosModifiedSinceUseCase {
-    suspend operator fun invoke(
-        request: GetFindingPhotosModifiedSinceRequest,
-    ): List<BackendFindingPhoto>
+    suspend operator fun invoke(request: GetFindingPhotosModifiedSinceRequest): List<BackendFindingPhoto>
 }

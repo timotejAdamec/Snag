@@ -22,6 +22,7 @@ import cz.adamec.timotej.snag.feat.inspections.fe.app.api.GetInspectionUseCase
 import cz.adamec.timotej.snag.feat.inspections.fe.app.api.SaveInspectionUseCase
 import cz.adamec.timotej.snag.feat.inspections.fe.app.api.model.SaveInspectionRequest
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
+import cz.adamec.timotej.snag.lib.design.fe.state.launchWhileSubscribed
 import cz.adamec.timotej.snag.projects.fe.app.api.CanEditProjectEntitiesUseCase
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
@@ -43,6 +44,11 @@ internal class InspectionEditViewModel(
 ) : ViewModel() {
     private val vmState: MutableStateFlow<InspectionEditVmState> =
         MutableStateFlow(InspectionEditVmState(projectId = projectId))
+            .launchWhileSubscribed(scope = viewModelScope) {
+                listOfNotNull(
+                    projectId?.let { collectCanEditInspection(it) },
+                )
+            }
     val state: StateFlow<InspectionEditUiState> =
         vmState.mapState { it.toUiState() }
 
@@ -60,7 +66,6 @@ internal class InspectionEditViewModel(
             "Either inspectionId or projectId must be provided"
         }
         inspectionId?.let { collectInspection(it) }
-        projectId?.let { collectCanEditInspection(it) }
     }
 
     private fun collectCanEditInspection(projectId: Uuid) =

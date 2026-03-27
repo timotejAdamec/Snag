@@ -42,11 +42,9 @@ internal class NonWebFindingPhotoSyncHandler(
     override val entityTypeId: String = FINDING_PHOTO_SYNC_ENTITY_TYPE
     override val entityName: String = "finding_photo"
 
-    override fun getEntityFlow(entityId: Uuid): Flow<OfflineFirstDataResult<AppFindingPhoto?>> =
-        findingPhotosDb.getPhotoFlow(entityId)
+    override fun getEntityFlow(entityId: Uuid): Flow<OfflineFirstDataResult<AppFindingPhoto?>> = findingPhotosDb.getPhotoFlow(entityId)
 
-    override suspend fun saveEntityToDb(entity: AppFindingPhoto): OfflineFirstDataResult<Unit> =
-        findingPhotosDb.savePhoto(entity)
+    override suspend fun saveEntityToDb(entity: AppFindingPhoto): OfflineFirstDataResult<Unit> = findingPhotosDb.savePhoto(entity)
 
     override suspend fun deleteEntityFromApi(
         entityId: Uuid,
@@ -79,7 +77,9 @@ internal class NonWebFindingPhotoSyncHandler(
             )
 
         return when (uploadResult) {
-            is OnlineDataResult.Failure -> uploadResult
+            is OnlineDataResult.Failure -> {
+                uploadResult
+            }
             is OnlineDataResult.Success -> {
                 localFileStorage.deleteFile(entity.url)
                 val updatedPhoto =
@@ -96,20 +96,11 @@ internal class NonWebFindingPhotoSyncHandler(
     }
 
     private suspend fun resolveProjectId(findingId: Uuid): Uuid? {
-        val findingResult = findingsDb.getFindingFlow(findingId).first()
         val finding =
-            when (findingResult) {
-                is OfflineFirstDataResult.Success -> findingResult.data ?: return null
-                is OfflineFirstDataResult.ProgrammerError -> return null
-            }
-
-        val structureResult = getStructureUseCase(finding.structureId).first()
-        val structure =
-            when (structureResult) {
-                is OfflineFirstDataResult.Success -> structureResult.data ?: return null
-                is OfflineFirstDataResult.ProgrammerError -> return null
-            }
-
-        return structure.projectId
+            (findingsDb.getFindingFlow(findingId).first() as? OfflineFirstDataResult.Success)?.data
+                ?: return null
+        return (getStructureUseCase(finding.structureId).first() as? OfflineFirstDataResult.Success)
+            ?.data
+            ?.projectId
     }
 }

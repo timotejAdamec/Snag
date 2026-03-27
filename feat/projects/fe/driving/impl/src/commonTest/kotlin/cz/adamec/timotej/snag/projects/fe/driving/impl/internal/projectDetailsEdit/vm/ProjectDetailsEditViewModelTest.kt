@@ -21,14 +21,20 @@ import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.projects.app.model.AppProject
 import cz.adamec.timotej.snag.projects.app.model.AppProjectData
+import cz.adamec.timotej.snag.projects.fe.app.api.CanCreateProjectUseCase
+import cz.adamec.timotej.snag.projects.fe.app.api.CanEditProjectEntitiesUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.GetProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.SaveProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.driven.test.FakeProjectsDb
 import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
+import org.koin.core.module.Module
+import org.koin.dsl.module
 import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -45,6 +51,24 @@ class ProjectDetailsEditViewModelTest : FrontendKoinInitializedTest() {
     private val getProjectUseCase: GetProjectUseCase by inject()
     private val saveProjectUseCase: SaveProjectUseCase by inject()
     private val getClientsUseCase: GetClientsUseCase by inject()
+    private val canCreateProjectUseCase: CanCreateProjectUseCase by inject()
+    private val canEditProjectEntitiesUseCase: CanEditProjectEntitiesUseCase by inject()
+
+    override fun additionalKoinModules(): List<Module> =
+        listOf(
+            module {
+                factory<CanCreateProjectUseCase> {
+                    object : CanCreateProjectUseCase {
+                        override fun invoke() = flowOf(true)
+                    }
+                }
+                factory<CanEditProjectEntitiesUseCase> {
+                    object : CanEditProjectEntitiesUseCase {
+                        override fun invoke(projectId: Uuid) = flowOf(true)
+                    }
+                }
+            },
+        )
 
     private fun createViewModel(projectId: Uuid? = null) =
         ProjectDetailsEditViewModel(
@@ -52,6 +76,8 @@ class ProjectDetailsEditViewModelTest : FrontendKoinInitializedTest() {
             getProjectUseCase = getProjectUseCase,
             saveProjectUseCase = saveProjectUseCase,
             getClientsUseCase = getClientsUseCase,
+            canCreateProjectUseCase = canCreateProjectUseCase,
+            canEditProjectEntitiesUseCase = canEditProjectEntitiesUseCase,
         )
 
     @Test
@@ -61,7 +87,6 @@ class ProjectDetailsEditViewModelTest : FrontendKoinInitializedTest() {
 
             assertEquals("", viewModel.state.value.projectName)
             assertEquals("", viewModel.state.value.projectAddress)
-            assertNull(viewModel.state.value.selectedClientId)
             assertEquals("", viewModel.state.value.selectedClientName)
         }
 
@@ -111,6 +136,8 @@ class ProjectDetailsEditViewModelTest : FrontendKoinInitializedTest() {
     fun `onSaveProject with empty name shows inline error`() =
         runTest(testDispatcher) {
             val viewModel = createViewModel()
+            val subscriber = launch { viewModel.state.collect { } }
+            advanceUntilIdle()
             viewModel.onProjectAddressChange("Address")
 
             viewModel.onSaveProject()
@@ -118,12 +145,15 @@ class ProjectDetailsEditViewModelTest : FrontendKoinInitializedTest() {
 
             assertNotNull(viewModel.state.value.projectNameError)
             assertNull(viewModel.state.value.projectAddressError)
+            subscriber.cancel()
         }
 
     @Test
     fun `onSaveProject with empty address shows inline error`() =
         runTest(testDispatcher) {
             val viewModel = createViewModel()
+            val subscriber = launch { viewModel.state.collect { } }
+            advanceUntilIdle()
             viewModel.onProjectNameChange("Name")
 
             viewModel.onSaveProject()
@@ -131,12 +161,15 @@ class ProjectDetailsEditViewModelTest : FrontendKoinInitializedTest() {
 
             assertNotNull(viewModel.state.value.projectAddressError)
             assertNull(viewModel.state.value.projectNameError)
+            subscriber.cancel()
         }
 
     @Test
     fun `editing field clears its error`() =
         runTest(testDispatcher) {
             val viewModel = createViewModel()
+            val subscriber = launch { viewModel.state.collect { } }
+            advanceUntilIdle()
 
             viewModel.onSaveProject()
             advanceUntilIdle()
@@ -148,12 +181,15 @@ class ProjectDetailsEditViewModelTest : FrontendKoinInitializedTest() {
 
             viewModel.onProjectAddressChange("A")
             assertNull(viewModel.state.value.projectAddressError)
+            subscriber.cancel()
         }
 
     @Test
     fun `onSaveProject successful sends save event`() =
         runTest(testDispatcher) {
             val viewModel = createViewModel()
+            val subscriber = launch { viewModel.state.collect { } }
+            advanceUntilIdle()
             viewModel.onProjectNameChange("Name")
             viewModel.onProjectAddressChange("Address")
 
@@ -167,12 +203,15 @@ class ProjectDetailsEditViewModelTest : FrontendKoinInitializedTest() {
             val savedProject = savedProjectResult.data
             assertEquals("Name", savedProject?.name)
             assertEquals("Address", savedProject?.address)
+            subscriber.cancel()
         }
 
     @Test
     fun `onSaveProject failure sends error`() =
         runTest(testDispatcher) {
             val viewModel = createViewModel()
+            val subscriber = launch { viewModel.state.collect { } }
+            advanceUntilIdle()
             viewModel.onProjectNameChange("Name")
             viewModel.onProjectAddressChange("Address")
 
@@ -182,6 +221,7 @@ class ProjectDetailsEditViewModelTest : FrontendKoinInitializedTest() {
 
             val error = viewModel.errorsFlow.first()
             assertIs<UiError.Unknown>(error)
+            subscriber.cancel()
         }
 
     @Test
@@ -200,11 +240,13 @@ class ProjectDetailsEditViewModelTest : FrontendKoinInitializedTest() {
             )
 
             val viewModel = createViewModel()
+            val subscriber = launch { viewModel.state.collect { } }
             advanceUntilIdle()
 
             val clients = viewModel.state.value.availableClients
             assertEquals(1, clients.size)
             assertEquals("ACME Corp", clients[0].name)
+            subscriber.cancel()
         }
 
     @Test
@@ -215,7 +257,6 @@ class ProjectDetailsEditViewModelTest : FrontendKoinInitializedTest() {
 
             viewModel.onClientSelected(clientId, "ACME Corp")
 
-            assertEquals(clientId, viewModel.state.value.selectedClientId)
             assertEquals("ACME Corp", viewModel.state.value.selectedClientName)
         }
 
@@ -228,7 +269,6 @@ class ProjectDetailsEditViewModelTest : FrontendKoinInitializedTest() {
 
             viewModel.onClientCleared()
 
-            assertNull(viewModel.state.value.selectedClientId)
             assertEquals("", viewModel.state.value.selectedClientName)
         }
 
@@ -237,6 +277,8 @@ class ProjectDetailsEditViewModelTest : FrontendKoinInitializedTest() {
         runTest(testDispatcher) {
             val clientId = Uuid.random()
             val viewModel = createViewModel()
+            val subscriber = launch { viewModel.state.collect { } }
+            advanceUntilIdle()
             viewModel.onProjectNameChange("Name")
             viewModel.onProjectAddressChange("Address")
             viewModel.onClientSelected(clientId, "ACME Corp")
@@ -247,6 +289,7 @@ class ProjectDetailsEditViewModelTest : FrontendKoinInitializedTest() {
             val savedProjectResult = fakeProjectsDb.getProjectFlow(savedId).first()
             assertIs<OfflineFirstDataResult.Success<AppProject?>>(savedProjectResult)
             assertEquals(clientId, savedProjectResult.data?.clientId)
+            subscriber.cancel()
         }
 
     @Test
@@ -276,10 +319,11 @@ class ProjectDetailsEditViewModelTest : FrontendKoinInitializedTest() {
             )
 
             val viewModel = createViewModel(projectId = projectId)
+            val subscriber = launch { viewModel.state.collect { } }
             advanceUntilIdle()
 
-            assertEquals(clientId, viewModel.state.value.selectedClientId)
             assertEquals("ACME Corp", viewModel.state.value.selectedClientName)
+            subscriber.cancel()
         }
 
     @Test
@@ -298,11 +342,12 @@ class ProjectDetailsEditViewModelTest : FrontendKoinInitializedTest() {
             )
 
             val viewModel = createViewModel()
+            val subscriber = launch { viewModel.state.collect { } }
             advanceUntilIdle()
 
             viewModel.onClientCreated(clientId)
 
-            assertEquals(clientId, viewModel.state.value.selectedClientId)
             assertEquals("New Client", viewModel.state.value.selectedClientName)
+            subscriber.cancel()
         }
 }

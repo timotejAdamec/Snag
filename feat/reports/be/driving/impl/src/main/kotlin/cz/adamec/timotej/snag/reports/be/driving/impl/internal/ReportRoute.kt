@@ -15,6 +15,7 @@ package cz.adamec.timotej.snag.reports.be.driving.impl.internal
 import cz.adamec.timotej.snag.authentication.be.driving.api.currentUser
 import cz.adamec.timotej.snag.authorization.be.driving.api.ForbiddenException
 import cz.adamec.timotej.snag.projects.be.app.api.CanAccessProjectUseCase
+import cz.adamec.timotej.snag.projects.be.app.api.GetProjectUseCase
 import cz.adamec.timotej.snag.reports.be.app.api.GenerateProjectReportUseCase
 import cz.adamec.timotej.snag.routing.be.AppRoute
 import cz.adamec.timotej.snag.routing.be.getIdFromParameters
@@ -34,12 +35,17 @@ import kotlin.uuid.Uuid
 internal class ReportRoute(
     private val generateProjectReportUseCase: GenerateProjectReportUseCase,
     private val canAccessProjectUseCase: CanAccessProjectUseCase,
+    private val getProjectUseCase: GetProjectUseCase,
 ) : AppRoute {
     override fun Route.setup() {
         route("/projects/{projectId}/report") {
             get {
                 val userId = currentUser().userId
                 val projectId = getIdFromParameters("projectId")
+                if (getProjectUseCase(projectId) == null) {
+                    call.respond(HttpStatusCode.NotFound)
+                    return@get
+                }
                 requireProjectAccess(userId = userId, projectId = projectId)
                 val report = generateProjectReportUseCase(projectId)
 

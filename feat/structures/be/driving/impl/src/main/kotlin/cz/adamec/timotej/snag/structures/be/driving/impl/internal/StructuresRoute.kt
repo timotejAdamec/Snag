@@ -51,8 +51,9 @@ internal class StructuresRoute(
             patch("/{id}") {
                 val userId = currentUser().userId
                 val id = getIdFromParameters()
-                val projectId = structuresDb.getStructure(id)?.projectId
-                    ?: throw ForbiddenException()
+                val projectId =
+                    structuresDb.getStructure(id)?.projectId
+                        ?: throw ForbiddenException()
                 requireProjectAccess(userId = userId, projectId = projectId)
                 val deleteStructureDto = getDtoFromBody<DeleteStructureApiDto>()
 

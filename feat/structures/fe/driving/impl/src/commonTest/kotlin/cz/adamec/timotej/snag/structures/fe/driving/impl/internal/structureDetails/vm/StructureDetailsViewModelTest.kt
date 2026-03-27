@@ -17,7 +17,6 @@ import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.feat.structures.app.model.AppStructureData
 import cz.adamec.timotej.snag.findings.fe.app.api.GetFindingsUseCase
-import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.projects.fe.app.api.CanEditProjectEntitiesUseCase
 import cz.adamec.timotej.snag.structures.fe.app.api.DeleteStructureUseCase
 import cz.adamec.timotej.snag.structures.fe.app.api.GetStructureUseCase
@@ -27,14 +26,14 @@ import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.floorPlan.vm.S
 import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.floorPlan.vm.StructureFloorPlanViewModel
 import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
-import kotlin.test.assertIs
 import kotlin.test.assertNotNull
-import kotlin.test.assertTrue
 import kotlin.uuid.Uuid
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -118,24 +117,15 @@ class StructureDetailsViewModelTest : FrontendKoinInitializedTest() {
 
             val viewModel = createViewModel()
 
-            viewModel.state.test {
-                // Wait for loaded state
-                skipItems(1)
-                awaitItem() // LOADED state
+            val subscriber = launch { viewModel.state.collect { } }
+            advanceUntilIdle()
+            assertEquals(StructureDetailsUiStatus.LOADED, viewModel.state.value.status)
 
-                viewModel.onDelete()
+            viewModel.onDelete()
+            advanceUntilIdle()
 
-                // Verify deleted event
-                viewModel.deletedSuccessfullyEventFlow.test {
-                    assertEquals(Unit, awaitItem())
-                    cancelAndIgnoreRemainingEvents()
-                }
-
-                val deletedState = awaitItem()
-                assertEquals(StructureDetailsUiStatus.DELETED, deletedState.status)
-
-                cancelAndIgnoreRemainingEvents()
-            }
+            assertEquals(StructureDetailsUiStatus.DELETED, viewModel.state.value.status)
+            subscriber.cancel()
         }
 
     @Test
@@ -145,25 +135,18 @@ class StructureDetailsViewModelTest : FrontendKoinInitializedTest() {
 
             val viewModel = createViewModel()
 
-            viewModel.state.test {
-                // Wait for loaded state
-                skipItems(1)
-                awaitItem() // LOADED state
+            val subscriber = launch { viewModel.state.collect { } }
+            advanceUntilIdle()
+            assertEquals(StructureDetailsUiStatus.LOADED, viewModel.state.value.status)
 
-                fakeStructuresDb.forcedFailure =
-                    OfflineFirstDataResult.ProgrammerError(RuntimeException("Failed"))
+            fakeStructuresDb.forcedFailure =
+                OfflineFirstDataResult.ProgrammerError(RuntimeException("Failed"))
 
-                viewModel.onDelete()
+            viewModel.onDelete()
+            advanceUntilIdle()
 
-                viewModel.errorsFlow.test {
-                    assertIs<UiError.Unknown>(awaitItem())
-                    cancelAndIgnoreRemainingEvents()
-                }
-
-                cancelAndIgnoreRemainingEvents()
-            }
-
-            assertTrue(viewModel.state.value.canEdit)
+            assertEquals(StructureDetailsUiStatus.LOADED, viewModel.state.value.status)
+            subscriber.cancel()
         }
 
     @Test

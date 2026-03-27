@@ -13,13 +13,12 @@
 package cz.adamec.timotej.snag.clients.be.driving.impl.internal
 
 import cz.adamec.timotej.snag.authorization.business.UserRole
-import cz.adamec.timotej.snag.clients.be.driven.test.seedTestClient
 import cz.adamec.timotej.snag.clients.be.driving.contract.PutClientApiDto
 import cz.adamec.timotej.snag.clients.be.ports.ClientsDb
 import cz.adamec.timotej.snag.configuration.be.AppConfiguration
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.network.be.test.jsonClient
-import cz.adamec.timotej.snag.routing.be.USER_ID_HEADER
+import cz.adamec.timotej.snag.routing.common.USER_ID_HEADER
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
 import cz.adamec.timotej.snag.users.be.driven.test.TEST_USER_ID
 import cz.adamec.timotej.snag.users.be.driven.test.seedTestUser

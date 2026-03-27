@@ -38,11 +38,11 @@ import cz.adamec.timotej.snag.projects.be.app.impl.internal.GetProjectsUseCaseIm
 import cz.adamec.timotej.snag.projects.be.app.impl.internal.IsClientReferencedByProjectUseCaseImpl
 import cz.adamec.timotej.snag.projects.be.app.impl.internal.RemoveUserFromProjectUseCaseImpl
 import cz.adamec.timotej.snag.projects.be.app.impl.internal.SaveProjectUseCaseImpl
+import cz.adamec.timotej.snag.projects.business.AreProjectEntitiesEditableRule
 import cz.adamec.timotej.snag.projects.business.CanAccessProjectRule
 import cz.adamec.timotej.snag.projects.business.CanAssignUserToProjectRule
 import cz.adamec.timotej.snag.projects.business.CanCloseProjectRule
 import cz.adamec.timotej.snag.projects.business.CanCreateProjectRule
-import cz.adamec.timotej.snag.projects.business.AreProjectEntitiesEditableRule
 import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.bind
 import org.koin.dsl.module

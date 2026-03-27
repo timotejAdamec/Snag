@@ -24,11 +24,12 @@ import platform.Foundation.NSUserDomainMask
 internal actual val fileStoragePlatformModule =
     module {
         factory {
-            val paths = NSSearchPathForDirectoriesInDomains(
-                NSDocumentDirectory,
-                NSUserDomainMask,
-                true,
-            )
+            val paths =
+                NSSearchPathForDirectoriesInDomains(
+                    NSDocumentDirectory,
+                    NSUserDomainMask,
+                    true,
+                )
             RealLocalFileStorage(
                 baseDirectory = paths.first() as String,
                 ioDispatcher = getIoDispatcher(),

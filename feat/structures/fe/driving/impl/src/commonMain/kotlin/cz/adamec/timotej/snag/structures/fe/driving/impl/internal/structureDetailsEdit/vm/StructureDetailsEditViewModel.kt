@@ -20,6 +20,7 @@ import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.core.network.fe.OnlineDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError.Unknown
+import cz.adamec.timotej.snag.lib.design.fe.state.launchWhileSubscribed
 import cz.adamec.timotej.snag.projects.fe.app.api.CanEditProjectEntitiesUseCase
 import cz.adamec.timotej.snag.structures.fe.app.api.CanModifyFloorPlanImageUseCase
 import cz.adamec.timotej.snag.structures.fe.app.api.DeleteFloorPlanImageUseCase
@@ -58,7 +59,12 @@ internal class StructureDetailsEditViewModel(
                 isCreatingNew = structureId == null,
                 projectId = projectId,
             ),
-        )
+        ).launchWhileSubscribed(scope = viewModelScope) {
+            listOf(
+                collectCanModifyFloorPlanImage(),
+                collectCanEditStructure(),
+            )
+        }
     val state: StateFlow<StructureDetailsEditUiState> =
         vmState.mapState { it.toUiState() }
 
@@ -72,8 +78,6 @@ internal class StructureDetailsEditViewModel(
 
     init {
         structureId?.let { collectStructure(it) }
-        collectCanModifyFloorPlanImage()
-        collectCanEditStructure()
     }
 
     private fun collectStructure(structureId: Uuid) =

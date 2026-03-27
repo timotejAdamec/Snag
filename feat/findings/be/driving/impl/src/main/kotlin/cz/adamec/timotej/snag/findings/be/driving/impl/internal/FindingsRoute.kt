@@ -119,8 +119,9 @@ internal class FindingsRoute(
         userId: Uuid,
         structureId: Uuid,
     ) {
-        val projectId = structuresDb.getStructure(structureId)?.projectId
-            ?: throw ForbiddenException()
+        val projectId =
+            structuresDb.getStructure(structureId)?.projectId
+                ?: throw ForbiddenException()
         requireProjectAccess(userId = userId, projectId = projectId)
     }
 

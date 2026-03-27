@@ -25,6 +25,5 @@ sealed interface SaveConflictResult<out T> where T : MutableVersioned, T : SoftD
 }
 
 interface ResolveConflictForSaveUseCase {
-    operator fun <T> invoke(request: ResolveConflictForSaveRequest<T>): SaveConflictResult<T>
-        where T : MutableVersioned, T : SoftDeletable
+    operator fun <T> invoke(request: ResolveConflictForSaveRequest<T>): SaveConflictResult<T> where T : MutableVersioned, T : SoftDeletable
 }

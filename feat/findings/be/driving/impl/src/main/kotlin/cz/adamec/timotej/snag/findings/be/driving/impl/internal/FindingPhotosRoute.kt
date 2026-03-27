@@ -37,7 +37,6 @@ import io.ktor.server.routing.put
 import io.ktor.server.routing.route
 import kotlin.uuid.Uuid
 
-@Suppress("LabeledExpression")
 internal class FindingPhotosRoute(
     private val saveFindingPhotoUseCase: SaveFindingPhotoUseCase,
     private val deleteFindingPhotoUseCase: DeleteFindingPhotoUseCase,
@@ -50,8 +49,8 @@ internal class FindingPhotosRoute(
         route("/findings/{findingId}/photos") {
             put("/{id}") {
                 val userId = currentUser().userId
-                val findingId = getIdFromParameters("findingId")
-                requireProjectAccessFromFinding(userId = userId, findingId = findingId)
+                val findingId = getIdFromParameters(FINDING_ID_PARAM)
+                requireFindingProjectAccess(userId = userId, findingId = findingId)
                 val id = getIdFromParameters()
 
                 val putPhotoDto = getDtoFromBody<PutFindingPhotoApiDto>()
@@ -68,8 +67,8 @@ internal class FindingPhotosRoute(
 
             patch("/{id}") {
                 val userId = currentUser().userId
-                val findingId = getIdFromParameters("findingId")
-                requireProjectAccessFromFinding(userId = userId, findingId = findingId)
+                val findingId = getIdFromParameters(FINDING_ID_PARAM)
+                requireFindingProjectAccess(userId = userId, findingId = findingId)
                 val id = getIdFromParameters()
                 val deleteDto = getDtoFromBody<DeleteFindingPhotoApiDto>()
 
@@ -88,8 +87,8 @@ internal class FindingPhotosRoute(
 
             get {
                 val userId = currentUser().userId
-                val findingId = getIdFromParameters("findingId")
-                requireProjectAccessFromFinding(userId = userId, findingId = findingId)
+                val findingId = getIdFromParameters(FINDING_ID_PARAM)
+                requireFindingProjectAccess(userId = userId, findingId = findingId)
                 val sinceParam = call.request.queryParameters["since"]
                 if (sinceParam != null) {
                     val since = Timestamp(sinceParam.toLong())
@@ -108,15 +107,23 @@ internal class FindingPhotosRoute(
         }
     }
 
-    private suspend fun requireProjectAccessFromFinding(
+    private suspend fun requireFindingProjectAccess(
         userId: Uuid,
         findingId: Uuid,
     ) {
-        val finding = findingsDb.getFinding(findingId) ?: throw ForbiddenException()
-        val projectId = structuresDb.getStructure(finding.structureId)?.projectId
-            ?: throw ForbiddenException()
+        val projectId = resolveProjectIdFromFinding(findingId)
         if (!canAccessProjectUseCase(userId = userId, projectId = projectId)) {
             throw ForbiddenException()
         }
+    }
+
+    private suspend fun resolveProjectIdFromFinding(findingId: Uuid): Uuid {
+        val finding = findingsDb.getFinding(findingId) ?: throw ForbiddenException()
+        return structuresDb.getStructure(finding.structureId)?.projectId
+            ?: throw ForbiddenException()
+    }
+
+    private companion object {
+        const val FINDING_ID_PARAM = "findingId"
     }
 }

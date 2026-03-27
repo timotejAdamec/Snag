@@ -22,7 +22,7 @@ import snag.feat.findings.fe.driving.impl.generated.resources.delete_photo_confi
 import snag.feat.findings.fe.driving.impl.generated.resources.delete_photo_confirmation_title
 
 @Composable
-internal fun FindingPhotoDeletionAlertDialog(
+internal fun FindingPhotoDeletionDialog(
     onDelete: () -> Unit,
     onDismiss: () -> Unit,
 ) {

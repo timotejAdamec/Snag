@@ -16,9 +16,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cz.adamec.timotej.snag.clients.fe.app.api.CanManageClientsUseCase
 import cz.adamec.timotej.snag.clients.fe.app.api.GetClientsUseCase
+import cz.adamec.timotej.snag.core.foundation.common.mapState
 import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
+import cz.adamec.timotej.snag.lib.design.fe.state.launchWhileSubscribed
 import kotlinx.collections.immutable.toPersistentList
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -31,18 +34,18 @@ internal class ClientsViewModel(
     private val getClientsUseCase: GetClientsUseCase,
     private val canManageClientsUseCase: CanManageClientsUseCase,
 ) : ViewModel() {
-    private val _state: MutableStateFlow<ClientsUiState> = MutableStateFlow(ClientsUiState())
-    val state: StateFlow<ClientsUiState> = _state
+    private val vmState: MutableStateFlow<ClientsVmState> =
+        MutableStateFlow(ClientsVmState())
+            .launchWhileSubscribed(scope = viewModelScope) {
+                listOf(collectClients(), collectCanManageClients())
+            }
+    val state: StateFlow<ClientsUiState> =
+        vmState.mapState { it.toUiState() }
 
     private val errorEventsChannel = Channel<UiError>()
     val errorsFlow = errorEventsChannel.receiveAsFlow()
 
-    init {
-        collectClients()
-        collectCanManageClients()
-    }
-
-    private fun collectClients() =
+    private fun collectClients(): Job =
         getClientsUseCase()
             .map { clientsDataResult ->
                 when (clientsDataResult) {
@@ -51,7 +54,7 @@ internal class ClientsViewModel(
                     }
 
                     is OfflineFirstDataResult.Success -> {
-                        _state.update {
+                        vmState.update {
                             it.copy(
                                 clients = clientsDataResult.data.toPersistentList(),
                             )
@@ -60,9 +63,9 @@ internal class ClientsViewModel(
                 }
             }.launchIn(viewModelScope)
 
-    private fun collectCanManageClients() =
+    private fun collectCanManageClients(): Job =
         canManageClientsUseCase()
             .map { canManage ->
-                _state.update { it.copy(canManageClients = canManage) }
+                vmState.update { it.copy(canManageClients = canManage) }
             }.launchIn(viewModelScope)
 }

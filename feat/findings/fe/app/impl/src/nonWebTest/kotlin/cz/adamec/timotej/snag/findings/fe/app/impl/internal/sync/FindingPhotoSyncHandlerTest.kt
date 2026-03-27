@@ -48,7 +48,8 @@ class FindingPhotoSyncHandlerTest : FrontendKoinInitializedTest() {
     private val fakeLocalFileStorage: FakeLocalFileStorage by inject()
 
     private val handler: PushSyncOperationHandler by lazy {
-        getKoin().getAll<PushSyncOperationHandler>()
+        getKoin()
+            .getAll<PushSyncOperationHandler>()
             .first { it.entityTypeId == FINDING_PHOTO_SYNC_ENTITY_TYPE }
     }
 
@@ -108,10 +109,11 @@ class FindingPhotoSyncHandlerTest : FrontendKoinInitializedTest() {
             fakeFindingPhotosDb.setPhoto(localPhoto)
             setupFindingAndStructure()
 
-            val result = handler.execute(
-                entityId = photoId,
-                operationType = SyncOperationType.UPSERT,
-            )
+            val result =
+                handler.execute(
+                    entityId = photoId,
+                    operationType = SyncOperationType.UPSERT,
+                )
 
             assertEquals(PushSyncOperationResult.Success, result)
 
@@ -130,10 +132,11 @@ class FindingPhotoSyncHandlerTest : FrontendKoinInitializedTest() {
             fakeFindingPhotosDb.setPhoto(remotePhoto)
             setupFindingAndStructure()
 
-            val result = handler.execute(
-                entityId = photoId,
-                operationType = SyncOperationType.UPSERT,
-            )
+            val result =
+                handler.execute(
+                    entityId = photoId,
+                    operationType = SyncOperationType.UPSERT,
+                )
 
             assertEquals(PushSyncOperationResult.Success, result)
             assertTrue(
@@ -173,10 +176,11 @@ class FindingPhotoSyncHandlerTest : FrontendKoinInitializedTest() {
             fakeFileApi.forcedFailure =
                 OnlineDataResult.Failure.ProgrammerError(RuntimeException("Upload failed"))
 
-            val result = handler.execute(
-                entityId = photoId,
-                operationType = SyncOperationType.UPSERT,
-            )
+            val result =
+                handler.execute(
+                    entityId = photoId,
+                    operationType = SyncOperationType.UPSERT,
+                )
 
             assertEquals(PushSyncOperationResult.Failure, result)
         }
@@ -218,10 +222,11 @@ class FindingPhotoSyncHandlerTest : FrontendKoinInitializedTest() {
             fakeFileApi.forcedFailure =
                 OnlineDataResult.Failure.NetworkUnavailable
 
-            val result1 = handler.execute(
-                entityId = photoId,
-                operationType = SyncOperationType.UPSERT,
-            )
+            val result1 =
+                handler.execute(
+                    entityId = photoId,
+                    operationType = SyncOperationType.UPSERT,
+                )
             assertEquals(PushSyncOperationResult.Failure, result1)
             assertTrue(fakeLocalFileStorage.deletedPaths.isEmpty())
 
@@ -230,19 +235,21 @@ class FindingPhotoSyncHandlerTest : FrontendKoinInitializedTest() {
             fakeFindingPhotosApi.forcedFailure =
                 OnlineDataResult.Failure.NetworkUnavailable
 
-            val result2 = handler.execute(
-                entityId = photoId,
-                operationType = SyncOperationType.UPSERT,
-            )
+            val result2 =
+                handler.execute(
+                    entityId = photoId,
+                    operationType = SyncOperationType.UPSERT,
+                )
             assertEquals(PushSyncOperationResult.Failure, result2)
 
             // Third: both succeed
             fakeFindingPhotosApi.forcedFailure = null
 
-            val result3 = handler.execute(
-                entityId = photoId,
-                operationType = SyncOperationType.UPSERT,
-            )
+            val result3 =
+                handler.execute(
+                    entityId = photoId,
+                    operationType = SyncOperationType.UPSERT,
+                )
             assertEquals(PushSyncOperationResult.Success, result3)
 
             // Photo should now have remote URL
@@ -256,10 +263,11 @@ class FindingPhotoSyncHandlerTest : FrontendKoinInitializedTest() {
         runTest(testDispatcher) {
             val missingId = Uuid.parse("00000000-0000-0000-0000-000000000099")
 
-            val result = handler.execute(
-                entityId = missingId,
-                operationType = SyncOperationType.UPSERT,
-            )
+            val result =
+                handler.execute(
+                    entityId = missingId,
+                    operationType = SyncOperationType.UPSERT,
+                )
 
             assertEquals(PushSyncOperationResult.EntityNotFound, result)
         }
@@ -267,11 +275,12 @@ class FindingPhotoSyncHandlerTest : FrontendKoinInitializedTest() {
     @Test
     fun `delete operation calls API with scopeId as findingId`() =
         runTest(testDispatcher) {
-            val result = handler.execute(
-                entityId = photoId,
-                operationType = SyncOperationType.DELETE,
-                scopeId = findingId,
-            )
+            val result =
+                handler.execute(
+                    entityId = photoId,
+                    operationType = SyncOperationType.DELETE,
+                    scopeId = findingId,
+                )
 
             assertEquals(PushSyncOperationResult.Success, result)
         }
@@ -282,11 +291,12 @@ class FindingPhotoSyncHandlerTest : FrontendKoinInitializedTest() {
             fakeFindingPhotosApi.forcedFailure =
                 OnlineDataResult.Failure.ProgrammerError(RuntimeException("API error"))
 
-            val result = handler.execute(
-                entityId = photoId,
-                operationType = SyncOperationType.DELETE,
-                scopeId = findingId,
-            )
+            val result =
+                handler.execute(
+                    entityId = photoId,
+                    operationType = SyncOperationType.DELETE,
+                    scopeId = findingId,
+                )
 
             assertEquals(PushSyncOperationResult.Failure, result)
         }
@@ -298,10 +308,11 @@ class FindingPhotoSyncHandlerTest : FrontendKoinInitializedTest() {
             fakeFindingPhotosDb.setPhoto(remotePhoto)
             setupFindingAndStructure()
 
-            val result = handler.execute(
-                entityId = photoId,
-                operationType = SyncOperationType.UPSERT,
-            )
+            val result =
+                handler.execute(
+                    entityId = photoId,
+                    operationType = SyncOperationType.UPSERT,
+                )
 
             assertEquals(PushSyncOperationResult.Success, result)
         }
@@ -313,10 +324,11 @@ class FindingPhotoSyncHandlerTest : FrontendKoinInitializedTest() {
             fakeFindingPhotosDb.setPhoto(localPhoto)
             // Do not set up finding/structure, so resolveProjectId returns null
 
-            val result = handler.execute(
-                entityId = photoId,
-                operationType = SyncOperationType.UPSERT,
-            )
+            val result =
+                handler.execute(
+                    entityId = photoId,
+                    operationType = SyncOperationType.UPSERT,
+                )
 
             assertIs<PushSyncOperationResult>(result)
             assertEquals(PushSyncOperationResult.Failure, result)
@@ -332,10 +344,11 @@ class FindingPhotoSyncHandlerTest : FrontendKoinInitializedTest() {
                 OnlineDataResult.Failure.NetworkUnavailable
 
             // First attempt — file uploads to GCS but API push fails
-            val result1 = handler.execute(
-                entityId = photoId,
-                operationType = SyncOperationType.UPSERT,
-            )
+            val result1 =
+                handler.execute(
+                    entityId = photoId,
+                    operationType = SyncOperationType.UPSERT,
+                )
             assertEquals(PushSyncOperationResult.Failure, result1)
 
             // File was uploaded to GCS and URL was swapped to remote in DB,
@@ -345,18 +358,20 @@ class FindingPhotoSyncHandlerTest : FrontendKoinInitializedTest() {
             assertTrue(photoAfterFirst.url.startsWith("http"))
 
             // Second attempt — URL is now remote, handler retries API push but still fails
-            val result2 = handler.execute(
-                entityId = photoId,
-                operationType = SyncOperationType.UPSERT,
-            )
+            val result2 =
+                handler.execute(
+                    entityId = photoId,
+                    operationType = SyncOperationType.UPSERT,
+                )
             assertEquals(PushSyncOperationResult.Failure, result2)
 
             // Third attempt — API succeeds
             fakeFindingPhotosApi.forcedFailure = null
-            val result3 = handler.execute(
-                entityId = photoId,
-                operationType = SyncOperationType.UPSERT,
-            )
+            val result3 =
+                handler.execute(
+                    entityId = photoId,
+                    operationType = SyncOperationType.UPSERT,
+                )
             assertEquals(PushSyncOperationResult.Success, result3)
 
             // Photo still has remote URL

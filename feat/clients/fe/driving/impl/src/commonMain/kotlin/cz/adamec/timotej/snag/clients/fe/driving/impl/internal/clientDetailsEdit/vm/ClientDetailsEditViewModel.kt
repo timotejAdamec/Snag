@@ -22,6 +22,7 @@ import cz.adamec.timotej.snag.clients.fe.app.api.SaveClientUseCase
 import cz.adamec.timotej.snag.clients.fe.app.api.model.SaveClientRequest
 import cz.adamec.timotej.snag.core.business.rules.api.EmailFormatRule
 import cz.adamec.timotej.snag.core.business.rules.api.PhoneNumberRule
+import cz.adamec.timotej.snag.core.foundation.common.mapState
 import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError.Unknown
@@ -49,9 +50,10 @@ internal class ClientDetailsEditViewModel(
     private val emailFormatRule: EmailFormatRule,
     private val phoneNumberRule: PhoneNumberRule,
 ) : ViewModel() {
-    private val _state: MutableStateFlow<ClientDetailsEditUiState> =
-        MutableStateFlow(ClientDetailsEditUiState())
-    val state: StateFlow<ClientDetailsEditUiState> = _state
+    private val vmState: MutableStateFlow<ClientDetailsEditVmState> =
+        MutableStateFlow(ClientDetailsEditVmState())
+    val state: StateFlow<ClientDetailsEditUiState> =
+        vmState.mapState { it.toUiState() }
 
     private val errorEventsChannel = Channel<UiError>()
     val errorsFlow = errorEventsChannel.receiveAsFlow()
@@ -79,7 +81,7 @@ internal class ClientDetailsEditViewModel(
                     }
                     is OfflineFirstDataResult.Success -> {
                         result.data?.let { data ->
-                            _state.update {
+                            vmState.update {
                                 it.copy(
                                     clientName = data.name,
                                     clientAddress = data.address.orEmpty(),
@@ -98,10 +100,10 @@ internal class ClientDetailsEditViewModel(
         viewModelScope.launch {
             when (val result = canDeleteClientUseCase(clientId)) {
                 is OfflineFirstDataResult.ProgrammerError -> {
-                    _state.update { it.copy(canDelete = false) }
+                    vmState.update { it.copy(canDelete = false) }
                 }
                 is OfflineFirstDataResult.Success -> {
-                    _state.update { it.copy(canDelete = result.data) }
+                    vmState.update { it.copy(canDelete = result.data) }
                 }
             }
         }
@@ -109,85 +111,84 @@ internal class ClientDetailsEditViewModel(
     private fun collectCanManageClients() =
         viewModelScope.launch {
             canManageClientsUseCase().collect { canManage ->
-                _state.update { it.copy(canManageClients = canManage) }
+                vmState.update { it.copy(canManageClients = canManage) }
             }
         }
 
     fun onClientNameChange(updatedName: String) {
-        _state.update { it.copy(clientName = updatedName, clientNameError = null) }
+        vmState.update { it.copy(clientName = updatedName, clientNameError = null) }
     }
 
     fun onClientAddressChange(updatedAddress: String) {
-        _state.update { it.copy(clientAddress = updatedAddress) }
+        vmState.update { it.copy(clientAddress = updatedAddress) }
     }
 
     fun onClientPhoneNumberChange(updatedPhoneNumber: String) {
-        _state.update { it.copy(clientPhoneNumber = updatedPhoneNumber, clientPhoneNumberError = null) }
+        vmState.update { it.copy(clientPhoneNumber = updatedPhoneNumber, clientPhoneNumberError = null) }
     }
 
     fun onClientEmailChange(updatedEmail: String) {
-        _state.update { it.copy(clientEmail = updatedEmail, clientEmailError = null) }
+        vmState.update { it.copy(clientEmail = updatedEmail, clientEmailError = null) }
     }
 
     fun onDelete() {
-        if (!state.value.canManageClients) return
+        if (!vmState.value.canManageClients) return
         val id = clientId ?: return
         viewModelScope.launch {
-            _state.update { it.copy(isBeingDeleted = true) }
+            vmState.update { it.copy(isBeingDeleted = true) }
             when (deleteClientUseCase(id)) {
                 is OfflineFirstDataResult.ProgrammerError -> {
-                    _state.update { it.copy(isBeingDeleted = false) }
+                    vmState.update { it.copy(isBeingDeleted = false) }
                     errorEventsChannel.send(Unknown)
                 }
                 is OfflineFirstDataResult.Success -> {
-                    _state.update { it.copy(isBeingDeleted = false) }
+                    vmState.update { it.copy(isBeingDeleted = false) }
                     deletedSuccessfullyEventChannel.send(Unit)
                 }
             }
         }
     }
 
-    fun onSaveClient() =
-        viewModelScope.launch {
-            if (!state.value.canManageClients) return@launch
-            val current = state.value
-            val nameError = if (current.clientName.isBlank()) Res.string.error_field_required else null
-            val phoneError =
-                if (current.clientPhoneNumber.isNotBlank() && !phoneNumberRule(current.clientPhoneNumber)) {
-                    Res.string.error_invalid_phone
-                } else {
-                    null
-                }
-            val emailError =
-                if (current.clientEmail.isNotBlank() && !emailFormatRule(current.clientEmail)) {
-                    Res.string.error_invalid_email
-                } else {
-                    null
-                }
-
-            if (nameError != null || phoneError != null || emailError != null) {
-                _state.update {
-                    it.copy(
-                        clientNameError = nameError,
-                        clientPhoneNumberError = phoneError,
-                        clientEmailError = emailError,
-                    )
-                }
+    fun onSaveClient() {
+        if (!vmState.value.canManageClients) return
+        val current = vmState.value
+        val nameError = if (current.clientName.isBlank()) Res.string.error_field_required else null
+        val phoneError =
+            if (current.clientPhoneNumber.isNotBlank() && !phoneNumberRule(current.clientPhoneNumber)) {
+                Res.string.error_invalid_phone
             } else {
-                saveClient()
+                null
             }
+        val emailError =
+            if (current.clientEmail.isNotBlank() && !emailFormatRule(current.clientEmail)) {
+                Res.string.error_invalid_email
+            } else {
+                null
+            }
+        if (nameError != null || phoneError != null || emailError != null) {
+            vmState.update {
+                it.copy(
+                    clientNameError = nameError,
+                    clientPhoneNumberError = phoneError,
+                    clientEmailError = emailError,
+                )
+            }
+        } else {
+            viewModelScope.launch { saveClient() }
         }
+    }
 
     private suspend fun saveClient() {
+        val current = vmState.value
         val result =
             saveClientUseCase(
                 request =
                     SaveClientRequest(
                         id = clientId,
-                        name = state.value.clientName,
-                        address = state.value.clientAddress.ifBlank { null },
-                        phoneNumber = state.value.clientPhoneNumber.ifBlank { null },
-                        email = state.value.clientEmail.ifBlank { null },
+                        name = current.clientName,
+                        address = current.clientAddress.ifBlank { null },
+                        phoneNumber = current.clientPhoneNumber.ifBlank { null },
+                        email = current.clientEmail.ifBlank { null },
                     ),
             )
         when (result) {

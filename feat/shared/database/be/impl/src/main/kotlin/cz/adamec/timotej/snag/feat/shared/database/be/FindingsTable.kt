@@ -17,6 +17,7 @@ import org.jetbrains.exposed.v1.core.dao.id.IntIdTable
 import org.jetbrains.exposed.v1.core.dao.id.UuidTable
 import kotlin.uuid.Uuid
 
+private const val FINDING_ID_COLUMN = "finding_id"
 private const val NAME_MAX_LENGTH = 255
 private const val TYPE_MAX_LENGTH = 9
 private const val IMPORTANCE_MAX_LENGTH = 6
@@ -34,7 +35,7 @@ object FindingsTable : UuidTable("findings") {
 }
 
 object ClassicFindingTable : IdTable<Uuid>("classic_findings") {
-    override val id = reference("finding_id", FindingsTable)
+    override val id = reference(FINDING_ID_COLUMN, FindingsTable)
     val importance = varchar("importance", IMPORTANCE_MAX_LENGTH)
     val term = varchar("term", TERM_MAX_LENGTH)
     override val primaryKey = PrimaryKey(id)
@@ -43,14 +44,14 @@ object ClassicFindingTable : IdTable<Uuid>("classic_findings") {
 private const val URL_MAX_LENGTH = 2048
 
 object FindingPhotosTable : UuidTable("finding_photos") {
-    val finding = reference("finding_id", FindingsTable).index()
+    val finding = reference(FINDING_ID_COLUMN, FindingsTable).index()
     val url = varchar("url", URL_MAX_LENGTH)
     val createdAt = long("created_at").index()
     val deletedAt = long("deleted_at").nullable().index()
 }
 
 object FindingCoordinatesTable : IntIdTable("finding_coordinates") {
-    val finding = reference("finding_id", FindingsTable)
+    val finding = reference(FINDING_ID_COLUMN, FindingsTable)
     val x = float("x")
     val y = float("y")
 }

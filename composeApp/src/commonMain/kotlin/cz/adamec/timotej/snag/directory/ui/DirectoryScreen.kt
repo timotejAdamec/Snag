@@ -130,7 +130,6 @@ internal fun DirectoryScreen(modifier: Modifier = Modifier) {
 
         SnagNavDisplay(
             backStack = backStackEntriesState.value,
-            modifier = modifier,
         )
     }
 }

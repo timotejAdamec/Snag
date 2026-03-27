@@ -15,15 +15,17 @@ package cz.adamec.timotej.snag.users.fe.driving.impl.internal.userManagement.vm
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cz.adamec.timotej.snag.authorization.business.UserRole
+import cz.adamec.timotej.snag.core.foundation.common.mapState
 import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.core.network.fe.OnlineDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.lib.design.fe.error.toUiError
+import cz.adamec.timotej.snag.lib.design.fe.state.launchWhileSubscribed
 import cz.adamec.timotej.snag.users.fe.app.api.ChangeUserRoleUseCase
 import cz.adamec.timotej.snag.users.fe.app.api.GetAllowedRoleOptionsUseCase
 import cz.adamec.timotej.snag.users.fe.app.api.GetUsersUseCase
 import cz.adamec.timotej.snag.users.fe.app.api.model.ChangeUserRoleRequest
-import cz.adamec.timotej.snag.users.fe.driving.impl.internal.userManagement.toUserItem
+import cz.adamec.timotej.snag.users.fe.driving.impl.internal.userManagement.toUserVmItem
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -41,87 +43,92 @@ internal class UserManagementViewModel(
     private val changeUserRoleUseCase: ChangeUserRoleUseCase,
     private val getAllowedRoleOptionsUseCase: GetAllowedRoleOptionsUseCase,
 ) : ViewModel() {
-    private val _state: MutableStateFlow<UserManagementUiState> =
-        MutableStateFlow(UserManagementUiState())
-    val state: StateFlow<UserManagementUiState> = _state
+    private val vmState: MutableStateFlow<UserManagementVmState> =
+        MutableStateFlow(UserManagementVmState())
+            .launchWhileSubscribed(scope = viewModelScope) {
+                listOf(collectUsers(), collectAllowedRoleOptions())
+            }
+    val state: StateFlow<UserManagementUiState> =
+        vmState.mapState { it.toUiState() }
 
     private val errorEventsChannel = Channel<UiError>()
     val errorsFlow = errorEventsChannel.receiveAsFlow()
 
-    private val roleOptionsMap = MutableStateFlow<Map<UserRole?, Set<UserRole?>>>(emptyMap())
-
-    init {
-        collectUsers()
-        collectAllowedRoleOptions()
-    }
-
     private fun collectUsers() =
-        combine(
-            getUsersUseCase(),
-            roleOptionsMap,
-        ) { usersDataResult, optionsMap ->
-            when (usersDataResult) {
-                is OfflineFirstDataResult.ProgrammerError -> {
-                    _state.update { it.copy(isLoading = false) }
-                    errorEventsChannel.send(UiError.Unknown)
-                }
-                is OfflineFirstDataResult.Success -> {
-                    _state.update { currentState ->
-                        currentState.copy(
-                            users =
-                                usersDataResult.data
-                                    .map { user ->
-                                        val existing = currentState.users.find { it.id == user.id }
-                                        user.toUserItem().copy(
-                                            isUpdatingRole = existing?.isUpdatingRole ?: false,
-                                            allowedRoleOptions = optionsMap[user.role] ?: emptySet(),
-                                        )
-                                    }.toPersistentList(),
-                            isLoading = false,
-                        )
+        getUsersUseCase()
+            .map { usersDataResult ->
+                when (usersDataResult) {
+                    is OfflineFirstDataResult.ProgrammerError -> {
+                        vmState.update { it.copy(isLoading = false) }
+                        errorEventsChannel.send(UiError.Unknown)
+                    }
+                    is OfflineFirstDataResult.Success -> {
+                        vmState.update { currentState ->
+                            currentState.copy(
+                                users =
+                                    usersDataResult.data
+                                        .map { user ->
+                                            val existing = currentState.users.find { it.id == user.id }
+                                            user.toUserVmItem().copy(
+                                                isUpdatingRole = existing?.isUpdatingRole ?: false,
+                                                allowedRoleOptions = existing?.allowedRoleOptions ?: emptySet(),
+                                            )
+                                        }.toPersistentList(),
+                                isLoading = false,
+                            )
+                        }
                     }
                 }
-            }
-        }.launchIn(viewModelScope)
+            }.launchIn(viewModelScope)
 
-    private fun collectAllowedRoleOptions() {
-        val allCurrentRoles: List<UserRole?> = UserRole.entries + null
-        val flows = allCurrentRoles.map { currentRole ->
-            getAllowedRoleOptionsUseCase(targetCurrentRole = currentRole)
-                .map { options -> currentRole to options }
+    private fun collectAllowedRoleOptions() =
+        viewModelScope.launch {
+            val allCurrentRoles: List<UserRole?> = UserRole.entries + null
+            val flows =
+                allCurrentRoles.map { currentRole ->
+                    getAllowedRoleOptionsUseCase(targetCurrentRole = currentRole)
+                        .map { options -> currentRole to options }
+                }
+            combine(flows) { results ->
+                results.toMap()
+            }.collect { optionsMap ->
+                vmState.update { currentState ->
+                    currentState.copy(
+                        users =
+                            currentState.users
+                                .map { user ->
+                                    user.copy(allowedRoleOptions = optionsMap[user.role] ?: emptySet())
+                                }.toPersistentList(),
+                    )
+                }
+            }
         }
-        combine(flows) { results ->
-            results.toMap()
-        }.map { optionsMap ->
-            roleOptionsMap.value = optionsMap
-        }.launchIn(viewModelScope)
-    }
 
     fun onRoleChanged(
         userId: Uuid,
         newRole: UserRole?,
     ) {
-        val user = state.value.users.find { it.id == userId } ?: return
+        val user = vmState.value.users.find { it.id == userId } ?: return
         if (newRole !in user.allowedRoleOptions) return
         viewModelScope.launch {
-            updateUserItem(userId) { it.copy(isUpdatingRole = true) }
+            updateUserVmItem(userId) { it.copy(isUpdatingRole = true) }
             when (val result = changeUserRoleUseCase(ChangeUserRoleRequest(userId, newRole))) {
                 is OnlineDataResult.Success -> {
-                    updateUserItem(userId) { it.copy(isUpdatingRole = false) }
+                    updateUserVmItem(userId) { it.copy(isUpdatingRole = false) }
                 }
                 is OnlineDataResult.Failure -> {
-                    updateUserItem(userId) { it.copy(isUpdatingRole = false) }
+                    updateUserVmItem(userId) { it.copy(isUpdatingRole = false) }
                     errorEventsChannel.send(result.toUiError())
                 }
             }
         }
     }
 
-    private fun updateUserItem(
+    private fun updateUserVmItem(
         userId: Uuid,
-        transform: (UserItem) -> UserItem,
+        transform: (UserVmItem) -> UserVmItem,
     ) {
-        _state.update { state ->
+        vmState.update { state ->
             state.copy(
                 users =
                     state.users

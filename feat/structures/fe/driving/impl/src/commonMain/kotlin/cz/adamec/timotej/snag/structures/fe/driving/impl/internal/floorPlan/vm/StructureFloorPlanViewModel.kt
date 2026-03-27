@@ -19,6 +19,7 @@ import cz.adamec.timotej.snag.findings.fe.app.api.GetFindingsUseCase
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError.Unknown
 import cz.adamec.timotej.snag.lib.design.fe.state.DEFAULT_NO_STATE_SUBSCRIBER_TIMEOUT
+import cz.adamec.timotej.snag.lib.design.fe.state.launchWhileSubscribed
 import cz.adamec.timotej.snag.projects.fe.app.api.CanEditProjectEntitiesUseCase
 import cz.adamec.timotej.snag.structures.fe.app.api.DeleteStructureUseCase
 import cz.adamec.timotej.snag.structures.fe.app.api.GetStructureUseCase
@@ -47,6 +48,12 @@ internal class StructureFloorPlanViewModel(
 ) : ViewModel() {
     private val vmState: MutableStateFlow<StructureDetailsVmState> =
         MutableStateFlow(StructureDetailsVmState())
+            .launchWhileSubscribed(scope = viewModelScope) {
+                listOf(
+                    collectStructure(),
+                    collectCanEditStructure(),
+                )
+            }
     val state: StateFlow<StructureDetailsUiState> =
         vmState
             .scan(
@@ -75,11 +82,6 @@ internal class StructureFloorPlanViewModel(
     val deletedSuccessfullyEventFlow = deletedSuccessfullyEventChannel.receiveAsFlow()
 
     private var collectFindingsJob: Job? = null
-
-    init {
-        collectStructure()
-        collectCanEditStructure()
-    }
 
     private fun collectStructure() =
         viewModelScope.launch {

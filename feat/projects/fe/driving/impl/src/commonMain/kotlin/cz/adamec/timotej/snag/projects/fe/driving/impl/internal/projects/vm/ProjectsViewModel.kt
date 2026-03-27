@@ -14,11 +14,14 @@ package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projects.vm
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cz.adamec.timotej.snag.core.foundation.common.mapState
 import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
+import cz.adamec.timotej.snag.lib.design.fe.state.launchWhileSubscribed
 import cz.adamec.timotej.snag.projects.fe.app.api.CanCreateProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.GetProjectsUseCase
 import kotlinx.collections.immutable.toPersistentList
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -31,18 +34,18 @@ internal class ProjectsViewModel(
     private val getProjectsUseCase: GetProjectsUseCase,
     private val canCreateProjectUseCase: CanCreateProjectUseCase,
 ) : ViewModel() {
-    private val _state: MutableStateFlow<ProjectsUiState> = MutableStateFlow(ProjectsUiState())
-    val state: StateFlow<ProjectsUiState> = _state
+    private val vmState: MutableStateFlow<ProjectsVmState> =
+        MutableStateFlow(ProjectsVmState())
+            .launchWhileSubscribed(scope = viewModelScope) {
+                listOf(collectProjects(), collectCanCreateProject())
+            }
+    val state: StateFlow<ProjectsUiState> =
+        vmState.mapState { it.toUiState() }
 
     private val errorEventsChannel = Channel<UiError>()
     val errorsFlow = errorEventsChannel.receiveAsFlow()
 
-    init {
-        collectProjects()
-        collectCanCreateProject()
-    }
-
-    private fun collectProjects() =
+    private fun collectProjects(): Job =
         getProjectsUseCase()
             .map { projectsDataResult ->
                 when (projectsDataResult) {
@@ -51,7 +54,7 @@ internal class ProjectsViewModel(
                     }
 
                     is OfflineFirstDataResult.Success -> {
-                        _state.update {
+                        vmState.update {
                             it.copy(
                                 projects = projectsDataResult.data.toPersistentList(),
                             )
@@ -60,9 +63,9 @@ internal class ProjectsViewModel(
                 }
             }.launchIn(viewModelScope)
 
-    private fun collectCanCreateProject() =
+    private fun collectCanCreateProject(): Job =
         canCreateProjectUseCase()
             .map { canCreate ->
-                _state.update { it.copy(canCreateProject = canCreate) }
+                vmState.update { it.copy(canCreateProject = canCreate) }
             }.launchIn(viewModelScope)
 }

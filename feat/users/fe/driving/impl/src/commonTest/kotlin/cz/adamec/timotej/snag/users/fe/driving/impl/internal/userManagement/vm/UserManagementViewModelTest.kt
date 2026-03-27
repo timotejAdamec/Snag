@@ -19,18 +19,23 @@ import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
 import cz.adamec.timotej.snag.users.app.model.AppUserData
 import cz.adamec.timotej.snag.users.fe.app.api.ChangeUserRoleUseCase
+import cz.adamec.timotej.snag.users.fe.app.api.GetAllowedRoleOptionsUseCase
 import cz.adamec.timotej.snag.users.fe.app.api.GetUsersUseCase
 import cz.adamec.timotej.snag.users.fe.driven.test.FakeUsersApi
 import cz.adamec.timotej.snag.users.fe.driven.test.FakeUsersDb
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
+import org.koin.core.module.Module
+import org.koin.dsl.module
 import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFalse
 import kotlin.test.assertIs
+import kotlin.test.assertTrue
 import kotlin.uuid.Uuid
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -39,6 +44,7 @@ class UserManagementViewModelTest : FrontendKoinInitializedTest() {
     private val fakeUsersApi: FakeUsersApi by inject()
     private val getUsersUseCase: GetUsersUseCase by inject()
     private val changeUserRoleUseCase: ChangeUserRoleUseCase by inject()
+    private val getAllowedRoleOptionsUseCase: GetAllowedRoleOptionsUseCase by inject()
 
     private val testUser =
         AppUserData(
@@ -49,10 +55,31 @@ class UserManagementViewModelTest : FrontendKoinInitializedTest() {
             updatedAt = Timestamp(100L),
         )
 
+    override fun additionalKoinModules(): List<Module> =
+        listOf(
+            module {
+                factory<GetAllowedRoleOptionsUseCase> {
+                    object : GetAllowedRoleOptionsUseCase {
+                        override fun invoke(targetCurrentRole: UserRole?) =
+                            flowOf(
+                                setOf(
+                                    UserRole.ADMINISTRATOR,
+                                    UserRole.SERVICE_LEAD,
+                                    UserRole.SERVICE_WORKER,
+                                    UserRole.PASSPORT_LEAD,
+                                    UserRole.PASSPORT_TECHNICIAN,
+                                ),
+                            )
+                    }
+                }
+            },
+        )
+
     private fun createViewModel() =
         UserManagementViewModel(
             getUsersUseCase = getUsersUseCase,
             changeUserRoleUseCase = changeUserRoleUseCase,
+            getAllowedRoleOptionsUseCase = getAllowedRoleOptionsUseCase,
         )
 
     @Test
@@ -61,6 +88,7 @@ class UserManagementViewModelTest : FrontendKoinInitializedTest() {
             fakeUsersDb.setUser(testUser)
 
             val viewModel = createViewModel()
+            val subscriber = launch { viewModel.state.collect { } }
             advanceUntilIdle()
 
             val state = viewModel.state.value
@@ -68,17 +96,20 @@ class UserManagementViewModelTest : FrontendKoinInitializedTest() {
             assertEquals(1, state.users.size)
             assertEquals(testUser.email, state.users[0].email)
             assertEquals(null, state.users[0].role)
+            subscriber.cancel()
         }
 
     @Test
     fun `shows empty list when no users`() =
         runTest(testDispatcher) {
             val viewModel = createViewModel()
+            val subscriber = launch { viewModel.state.collect { } }
             advanceUntilIdle()
 
             val state = viewModel.state.value
             assertEquals(false, state.isLoading)
             assertEquals(0, state.users.size)
+            subscriber.cancel()
         }
 
     @Test
@@ -88,6 +119,7 @@ class UserManagementViewModelTest : FrontendKoinInitializedTest() {
             fakeUsersApi.setUser(testUser)
 
             val viewModel = createViewModel()
+            val subscriber = launch { viewModel.state.collect { } }
             advanceUntilIdle()
 
             fakeUsersApi.forcedFailure = OnlineDataResult.Failure.NetworkUnavailable
@@ -97,6 +129,7 @@ class UserManagementViewModelTest : FrontendKoinInitializedTest() {
 
             val error = viewModel.errorsFlow.first()
             assertIs<UiError.NetworkUnavailable>(error)
+            subscriber.cancel()
         }
 
     @Test
@@ -106,6 +139,7 @@ class UserManagementViewModelTest : FrontendKoinInitializedTest() {
             fakeUsersApi.setUser(testUser)
 
             val viewModel = createViewModel()
+            val subscriber = launch { viewModel.state.collect { } }
             advanceUntilIdle()
 
             viewModel.onRoleChanged(testUser.id, UserRole.SERVICE_WORKER)
@@ -113,6 +147,7 @@ class UserManagementViewModelTest : FrontendKoinInitializedTest() {
 
             val state = viewModel.state.value
             assertEquals(UserRole.SERVICE_WORKER, state.users[0].role)
+            subscriber.cancel()
         }
 
     @Test
@@ -122,13 +157,15 @@ class UserManagementViewModelTest : FrontendKoinInitializedTest() {
             fakeUsersApi.setUser(testUser)
 
             val viewModel = createViewModel()
+            val subscriber = launch { viewModel.state.collect { } }
             advanceUntilIdle()
 
             viewModel.onRoleChanged(testUser.id, UserRole.SERVICE_LEAD)
             advanceUntilIdle()
 
             val userItem = viewModel.state.value.users[0]
-            assertFalse(userItem.isUpdatingRole)
+            assertTrue(userItem.isRoleChangeEnabled)
+            subscriber.cancel()
         }
 
     @Test
@@ -138,6 +175,7 @@ class UserManagementViewModelTest : FrontendKoinInitializedTest() {
             fakeUsersApi.setUser(testUser)
 
             val viewModel = createViewModel()
+            val subscriber = launch { viewModel.state.collect { } }
             advanceUntilIdle()
 
             fakeUsersApi.forcedFailure = OnlineDataResult.Failure.NetworkUnavailable
@@ -146,6 +184,7 @@ class UserManagementViewModelTest : FrontendKoinInitializedTest() {
             advanceUntilIdle()
 
             val userItem = viewModel.state.value.users[0]
-            assertFalse(userItem.isUpdatingRole)
+            assertTrue(userItem.isRoleChangeEnabled)
+            subscriber.cancel()
         }
 }

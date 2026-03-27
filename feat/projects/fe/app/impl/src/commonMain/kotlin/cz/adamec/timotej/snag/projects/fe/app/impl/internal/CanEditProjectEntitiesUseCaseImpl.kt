@@ -41,14 +41,16 @@ class CanEditProjectEntitiesUseCaseImpl(
             val user = (userResult as? OfflineFirstDataResult.Success)?.data
             val project = (projectResult as? OfflineFirstDataResult.Success)?.data
             val assignedUserIds = (assignmentsResult as? OfflineFirstDataResult.Success)?.data
-
-            if (user == null || project == null || assignedUserIds == null) return@combine false
-
-            canAccessProjectRule(
-                user = user,
-                project = project,
-                assignedUserIds = assignedUserIds,
-            ) && areProjectEntitiesEditableRule(project)
+            if (user != null && project != null && assignedUserIds != null) {
+                canAccessProjectRule(
+                    user = user,
+                    project = project,
+                    assignedUserIds = assignedUserIds,
+                ) &&
+                    areProjectEntitiesEditableRule(project)
+            } else {
+                false
+            }
         }.catch { emit(false) }
             .distinctUntilChanged()
 }

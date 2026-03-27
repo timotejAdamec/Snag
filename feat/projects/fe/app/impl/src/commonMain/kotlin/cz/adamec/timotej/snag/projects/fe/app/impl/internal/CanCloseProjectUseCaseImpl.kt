@@ -33,16 +33,16 @@ class CanCloseProjectUseCaseImpl(
             getCurrentUserFlowUseCase(),
             projectsDb.getProjectFlow(projectId),
         ) { userResult, projectResult ->
-            val user =
-                (userResult as? OfflineFirstDataResult.Success)?.data
-                    ?: return@combine false
-            val project =
-                (projectResult as? OfflineFirstDataResult.Success)?.data
-                    ?: return@combine false
-            canCloseProjectRule(
-                user = user,
-                project = project,
-            )
+            val user = (userResult as? OfflineFirstDataResult.Success)?.data
+            val project = (projectResult as? OfflineFirstDataResult.Success)?.data
+            if (user != null && project != null) {
+                canCloseProjectRule(
+                    user = user,
+                    project = project,
+                )
+            } else {
+                false
+            }
         }.catch { emit(false) }
             .distinctUntilChanged()
 }

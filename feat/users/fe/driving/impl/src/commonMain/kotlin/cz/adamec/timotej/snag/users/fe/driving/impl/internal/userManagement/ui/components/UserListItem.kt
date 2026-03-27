@@ -49,7 +49,7 @@ internal fun UserListItem(
                 selectedRole = userItem.role,
                 allowedRoleOptions = userItem.allowedRoleOptions,
                 onRoleSelect = onRoleSelect,
-                enabled = !userItem.isUpdatingRole && userItem.allowedRoleOptions.isNotEmpty(),
+                enabled = userItem.isRoleChangeEnabled,
             )
         },
     )

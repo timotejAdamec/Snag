@@ -18,7 +18,7 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
 @Immutable
-data class ProjectsUiState(
+internal data class ProjectsUiState(
     val projects: ImmutableList<AppProject> = persistentListOf(),
     val canCreateProject: Boolean = false,
 )

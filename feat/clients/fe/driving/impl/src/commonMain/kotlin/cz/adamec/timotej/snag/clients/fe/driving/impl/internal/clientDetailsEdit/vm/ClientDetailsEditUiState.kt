@@ -23,6 +23,6 @@ internal data class ClientDetailsEditUiState(
     val clientPhoneNumberError: StringResource? = null,
     val clientEmailError: StringResource? = null,
     val canDelete: Boolean = false,
-    val isBeingDeleted: Boolean = false,
+    val areDeleteDialogButtonsEnabled: Boolean = true,
     val canManageClients: Boolean = false,
 )

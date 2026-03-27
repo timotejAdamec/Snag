@@ -28,10 +28,9 @@ class CanCreateProjectUseCaseImpl(
     override operator fun invoke(): Flow<Boolean> =
         getCurrentUserFlowUseCase()
             .map { userResult ->
-                val user =
-                    (userResult as? OfflineFirstDataResult.Success)?.data
-                        ?: return@map false
-                canCreateProjectRule(user)
+                (userResult as? OfflineFirstDataResult.Success)?.data?.let { user ->
+                    canCreateProjectRule(user)
+                } ?: false
             }.catch { emit(false) }
             .distinctUntilChanged()
 }

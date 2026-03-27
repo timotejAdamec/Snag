@@ -29,6 +29,7 @@ sealed interface DeleteConflictResult<out T> where T : MutableVersioned, T : Sof
 }
 
 interface ResolveConflictForDeleteUseCase {
-    operator fun <T> invoke(request: ResolveConflictForDeleteRequest<T>): DeleteConflictResult<T>
-        where T : MutableVersioned, T : SoftDeletable
+    operator fun <T> invoke(
+        request: ResolveConflictForDeleteRequest<T>,
+    ): DeleteConflictResult<T> where T : MutableVersioned, T : SoftDeletable
 }

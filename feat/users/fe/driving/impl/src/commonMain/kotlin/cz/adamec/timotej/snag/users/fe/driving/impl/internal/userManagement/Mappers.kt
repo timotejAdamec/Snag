@@ -13,10 +13,10 @@
 package cz.adamec.timotej.snag.users.fe.driving.impl.internal.userManagement
 
 import cz.adamec.timotej.snag.users.app.model.AppUser
-import cz.adamec.timotej.snag.users.fe.driving.impl.internal.userManagement.vm.UserItem
+import cz.adamec.timotej.snag.users.fe.driving.impl.internal.userManagement.vm.UserVmItem
 
-internal fun AppUser.toUserItem() =
-    UserItem(
+internal fun AppUser.toUserVmItem() =
+    UserVmItem(
         id = id,
         email = email,
         role = role,

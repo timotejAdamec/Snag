@@ -51,8 +51,9 @@ internal class InspectionsRoute(
             delete("/{id}") {
                 val userId = currentUser().userId
                 val id = getIdFromParameters()
-                val projectId = inspectionsDb.getInspection(id)?.projectId
-                    ?: throw ForbiddenException()
+                val projectId =
+                    inspectionsDb.getInspection(id)?.projectId
+                        ?: throw ForbiddenException()
                 requireProjectAccess(userId = userId, projectId = projectId)
                 val deleteInspectionDto = getDtoFromBody<DeleteInspectionApiDto>()
 

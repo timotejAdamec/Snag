@@ -19,16 +19,16 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlin.uuid.Uuid
 
 @Immutable
-data class UserManagementUiState(
+internal data class UserManagementUiState(
     val users: ImmutableList<UserItem> = persistentListOf(),
     val isLoading: Boolean = true,
 )
 
 @Immutable
-data class UserItem(
+internal data class UserItem(
     val id: Uuid,
     val email: String,
     val role: UserRole?,
-    val isUpdatingRole: Boolean = false,
+    val isRoleChangeEnabled: Boolean = true,
     val allowedRoleOptions: Set<UserRole?> = emptySet(),
 )

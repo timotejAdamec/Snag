@@ -25,6 +25,7 @@ import cz.adamec.timotej.snag.projects.fe.ports.ProjectsApi
 import io.ktor.client.call.body
 import io.ktor.client.request.setBody
 import io.ktor.http.HttpStatusCode
+import kotlinx.serialization.Serializable
 import kotlin.uuid.Uuid
 
 internal class RealProjectsApi(
@@ -99,7 +100,8 @@ internal class RealProjectsApi(
             logger = LH.logger,
             errorContext = "Error fetching assignments for project $projectId.",
         ) {
-            httpClient.get("/projects/$projectId/assignments")
+            httpClient
+                .get("/projects/$projectId/assignments")
                 .body<List<AssignedUserApiDto>>()
                 .map { Uuid.parse(it.id) }
                 .toSet()
@@ -111,8 +113,7 @@ internal class RealProjectsApi(
     }
 }
 
-@kotlinx.serialization.Serializable
+@Serializable
 private data class AssignedUserApiDto(
     val id: String,
 )
-

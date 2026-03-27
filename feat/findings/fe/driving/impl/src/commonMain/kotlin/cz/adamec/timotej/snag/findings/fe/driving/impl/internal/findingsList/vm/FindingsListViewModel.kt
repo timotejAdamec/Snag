@@ -14,9 +14,12 @@ package cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingsList.vm
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cz.adamec.timotej.snag.core.foundation.common.mapState
 import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.findings.fe.app.api.GetFindingsUseCase
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
+import cz.adamec.timotej.snag.lib.design.fe.state.launchWhileSubscribed
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -30,29 +33,29 @@ internal class FindingsListViewModel(
     @InjectedParam private val structureId: Uuid,
     private val getFindingsUseCase: GetFindingsUseCase,
 ) : ViewModel() {
-    private val _state: MutableStateFlow<FindingsListUiState> =
-        MutableStateFlow(FindingsListUiState())
-    val state: StateFlow<FindingsListUiState> = _state
+    private val vmState: MutableStateFlow<FindingsListVmState> =
+        MutableStateFlow(FindingsListVmState())
+            .launchWhileSubscribed(scope = viewModelScope) {
+                listOf(collectFindings())
+            }
+    val state: StateFlow<FindingsListUiState> =
+        vmState.mapState { it.toUiState() }
 
     private val errorEventsChannel = Channel<UiError>()
     val errorsFlow = errorEventsChannel.receiveAsFlow()
 
-    init {
-        collectFindings()
-    }
-
-    private fun collectFindings() {
+    private fun collectFindings(): Job =
         viewModelScope.launch {
             getFindingsUseCase(structureId).collect { result ->
                 when (result) {
                     is OfflineFirstDataResult.ProgrammerError -> {
-                        _state.update {
+                        vmState.update {
                             it.copy(status = FindingsListUiStatus.ERROR)
                         }
                     }
 
                     is OfflineFirstDataResult.Success -> {
-                        _state.update {
+                        vmState.update {
                             it.copy(
                                 findings = result.data,
                             )
@@ -61,5 +64,4 @@ internal class FindingsListViewModel(
                 }
             }
         }
-    }
 }

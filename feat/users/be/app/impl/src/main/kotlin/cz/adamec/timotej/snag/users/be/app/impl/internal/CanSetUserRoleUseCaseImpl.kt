@@ -28,10 +28,10 @@ internal class CanSetUserRoleUseCaseImpl(
         newRole: UserRole?,
     ): Boolean {
         val actingUser = getUserUseCase(actingUserId) ?: return false
-        val targetUser = getUserUseCase(targetUserId) ?: return false
+        val targetCurrentRole = getUserUseCase(targetUserId)?.role
         return canSetUserRoleRule(
             actingUser = actingUser,
-            targetCurrentRole = targetUser.role,
+            targetCurrentRole = targetCurrentRole,
             newRole = newRole,
         )
     }

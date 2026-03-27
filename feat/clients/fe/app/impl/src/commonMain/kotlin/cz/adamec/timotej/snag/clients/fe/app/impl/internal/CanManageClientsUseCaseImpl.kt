@@ -28,10 +28,9 @@ class CanManageClientsUseCaseImpl(
     override operator fun invoke(): Flow<Boolean> =
         getCurrentUserFlowUseCase()
             .map { userResult ->
-                val user =
-                    (userResult as? OfflineFirstDataResult.Success)?.data
-                        ?: return@map false
-                canManageClientsRule(user)
+                (userResult as? OfflineFirstDataResult.Success)?.data?.let { user ->
+                    canManageClientsRule(user)
+                } ?: false
             }.catch { emit(false) }
             .distinctUntilChanged()
 }

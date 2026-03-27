@@ -15,9 +15,11 @@ package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetailsE
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cz.adamec.timotej.snag.clients.fe.app.api.GetClientsUseCase
+import cz.adamec.timotej.snag.core.foundation.common.mapState
 import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError.Unknown
+import cz.adamec.timotej.snag.lib.design.fe.state.launchWhileSubscribed
 import cz.adamec.timotej.snag.projects.fe.app.api.CanCreateProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.CanEditProjectEntitiesUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.GetProjectUseCase
@@ -44,9 +46,13 @@ internal class ProjectDetailsEditViewModel(
     private val canCreateProjectUseCase: CanCreateProjectUseCase,
     private val canEditProjectEntitiesUseCase: CanEditProjectEntitiesUseCase,
 ) : ViewModel() {
-    private val _state: MutableStateFlow<ProjectDetailsEditUiState> =
-        MutableStateFlow(ProjectDetailsEditUiState())
-    val state: StateFlow<ProjectDetailsEditUiState> = _state
+    private val vmState: MutableStateFlow<ProjectDetailsEditVmState> =
+        MutableStateFlow(ProjectDetailsEditVmState())
+            .launchWhileSubscribed(scope = viewModelScope) {
+                listOf(collectClients(), collectCanSave())
+            }
+    val state: StateFlow<ProjectDetailsEditUiState> =
+        vmState.mapState { it.toUiState() }
 
     private val errorEventsChannel = Channel<UiError>()
     val errorsFlow = errorEventsChannel.receiveAsFlow()
@@ -56,8 +62,6 @@ internal class ProjectDetailsEditViewModel(
 
     init {
         projectId?.let { collectProject(it) }
-        collectClients()
-        collectCanSave()
     }
 
     private fun collectProject(projectId: Uuid) =
@@ -69,7 +73,7 @@ internal class ProjectDetailsEditViewModel(
                     }
                     is OfflineFirstDataResult.Success -> {
                         result.data?.let { data ->
-                            _state.update {
+                            vmState.update {
                                 it.copy(
                                     projectName = data.name,
                                     projectAddress = data.address,
@@ -96,7 +100,7 @@ internal class ProjectDetailsEditViewModel(
                     }
                     is OfflineFirstDataResult.Success -> {
                         val clients = result.data.toImmutableList()
-                        _state.update { current ->
+                        vmState.update { current ->
                             val resolvedName =
                                 if (current.selectedClientId != null && current.selectedClientName.isEmpty()) {
                                     val matchingClient =
@@ -117,7 +121,7 @@ internal class ProjectDetailsEditViewModel(
 
     private fun resolveClientName(clientId: Uuid): String {
         val matchingClient =
-            _state.value.availableClients.firstOrNull { it.id == clientId }
+            vmState.value.availableClients.firstOrNull { it.id == clientId }
         return matchingClient?.name ?: ""
     }
 
@@ -125,7 +129,7 @@ internal class ProjectDetailsEditViewModel(
         clientId: Uuid,
         clientName: String,
     ) {
-        _state.update {
+        vmState.update {
             it.copy(
                 selectedClientId = clientId,
                 selectedClientName = clientName,
@@ -134,7 +138,7 @@ internal class ProjectDetailsEditViewModel(
     }
 
     fun onClientCleared() {
-        _state.update {
+        vmState.update {
             it.copy(
                 selectedClientId = null,
                 selectedClientName = "",
@@ -143,7 +147,7 @@ internal class ProjectDetailsEditViewModel(
     }
 
     fun onClientCreated(clientId: Uuid) {
-        _state.update {
+        vmState.update {
             it.copy(
                 selectedClientId = clientId,
                 selectedClientName = resolveClientName(clientId),
@@ -160,27 +164,26 @@ internal class ProjectDetailsEditViewModel(
                     canCreateProjectUseCase()
                 }
             flow.collect { canSave ->
-                _state.update { it.copy(canSave = canSave) }
+                vmState.update { it.copy(canSave = canSave) }
             }
         }
 
     fun onProjectNameChange(updatedName: String) {
-        _state.update { it.copy(projectName = updatedName, projectNameError = null) }
+        vmState.update { it.copy(projectName = updatedName, projectNameError = null) }
     }
 
     fun onProjectAddressChange(updatedAddress: String) {
-        _state.update { it.copy(projectAddress = updatedAddress, projectAddressError = null) }
+        vmState.update { it.copy(projectAddress = updatedAddress, projectAddressError = null) }
     }
 
-    fun onSaveProject() =
+    fun onSaveProject() {
+        if (!vmState.value.canSave) return
         viewModelScope.launch {
-            if (!state.value.canSave) return@launch
-            val current = state.value
+            val current = vmState.value
             val nameError = if (current.projectName.isBlank()) Res.string.error_field_required else null
             val addressError = if (current.projectAddress.isBlank()) Res.string.error_field_required else null
-
             if (nameError != null || addressError != null) {
-                _state.update {
+                vmState.update {
                     it.copy(
                         projectNameError = nameError,
                         projectAddressError = addressError,
@@ -190,16 +193,18 @@ internal class ProjectDetailsEditViewModel(
                 saveProject()
             }
         }
+    }
 
     private suspend fun saveProject() {
+        val current = vmState.value
         val result =
             saveProjectUseCase(
                 request =
                     SaveProjectRequest(
                         id = projectId,
-                        name = state.value.projectName,
-                        address = state.value.projectAddress,
-                        clientId = state.value.selectedClientId,
+                        name = current.projectName,
+                        address = current.projectAddress,
+                        clientId = current.selectedClientId,
                     ),
             )
         when (result) {
