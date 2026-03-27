@@ -4,6 +4,27 @@ This document is a reference for the implementation team. It describes what the 
 
 ---
 
+## Remaining Work
+
+### Must do
+
+1. **FE: User assignment UI** — FE assign/unassign use cases + UI not yet implemented. Local assignment cache, pull sync, cascade delete/restore, and query use case are done. *(§6 #2, FP4c, FP4d)*
+2. **FE: Role-based UI gating** — Zero role-based UI gating exists. Current user is a hardcoded UUID. All buttons visible unconditionally. Shared KMP rules exist but are unused on FE driving layer. *(NP13 FE)*
+3. **EntraID authentication** — Not started. BE: validate EntraID JWT (currently mock `X-User-Id` header). FE: OAuth2/OIDC flow, token storage, refresh. *(§4, FP34, FP35, NP12)*
+4. **Service protocol PDF** — Not started. Second report type with work description and signature fields. *(§5, FP32b)*
+5. **FE: Role management UI** — BE API + authorization done; FE UI for managing roles not yet implemented. *(§6 #4)*
+6. **Closed-project access gap** — `CanAccessProjectRule` does not check `isClosed`; assigned users still pass access checks on closed projects. Needs design decision on where the check should live. *(NP13 known gap)*
+
+### Partially done (BE complete, FE incomplete)
+
+| Feature | BE | FE |
+|---|---|---|
+| Project close/reopen | Done (mechanism + authorization + visibility filtering on all routes) | Close/reopen UI exists but no role gating |
+| User assignment | Done (API + DB + `CanAssignUserToProjectRule`) | Local cache + sync done; assign/unassign use cases + UI missing |
+| Role management (UC7) | Done (`CanSetUserRoleRule`) | UI for role delegation missing |
+
+---
+
 ## 1. Roles and Permissions
 
 | Role | Can create project | Can close/reopen project | Access to other projects | Can assign users | Manages clients | Delegates/removes roles | Generates report |
