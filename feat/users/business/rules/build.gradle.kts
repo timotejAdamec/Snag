@@ -6,7 +6,6 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(project(":feat:authorization:business:model"))
-            implementation(project(":feat:users:business:model"))
         }
     }
 }

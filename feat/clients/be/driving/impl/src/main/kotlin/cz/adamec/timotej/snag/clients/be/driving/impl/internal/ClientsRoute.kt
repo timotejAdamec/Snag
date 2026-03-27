@@ -12,6 +12,9 @@
 
 package cz.adamec.timotej.snag.clients.be.driving.impl.internal
 
+import cz.adamec.timotej.snag.authentication.be.driving.api.currentUser
+import cz.adamec.timotej.snag.authorization.be.driving.api.ForbiddenException
+import cz.adamec.timotej.snag.clients.be.app.api.CanManageClientsUseCase
 import cz.adamec.timotej.snag.clients.be.app.api.DeleteClientUseCase
 import cz.adamec.timotej.snag.clients.be.app.api.GetClientUseCase
 import cz.adamec.timotej.snag.clients.be.app.api.GetClientsModifiedSinceUseCase
@@ -31,6 +34,7 @@ import io.ktor.server.routing.delete
 import io.ktor.server.routing.get
 import io.ktor.server.routing.put
 import io.ktor.server.routing.route
+import kotlin.uuid.Uuid
 
 @Suppress("LabeledExpression", "StringLiteralDuplication")
 internal class ClientsRoute(
@@ -39,6 +43,7 @@ internal class ClientsRoute(
     private val getClientUseCase: GetClientUseCase,
     private val saveClientUseCase: SaveClientUseCase,
     private val deleteClientUseCase: DeleteClientUseCase,
+    private val canManageClientsUseCase: CanManageClientsUseCase,
 ) : AppRoute {
     override fun Route.setup() {
         route("/clients") {
@@ -68,8 +73,9 @@ internal class ClientsRoute(
             }
 
             put("/{id}") {
+                val userId = currentUser().userId
+                requireCanManageClients(userId)
                 val id = getIdFromParameters()
-
                 val putClientDto = getDtoFromBody<PutClientApiDto>()
 
                 val updatedClient = saveClientUseCase(putClientDto.toModel(id))
@@ -80,6 +86,8 @@ internal class ClientsRoute(
             }
 
             delete("/{id}") {
+                val userId = currentUser().userId
+                requireCanManageClients(userId)
                 val id = getIdFromParameters()
                 val deleteClientDto = getDtoFromBody<DeleteClientApiDto>()
 
@@ -95,6 +103,12 @@ internal class ClientsRoute(
                     call.respond(it.toDto())
                 } ?: call.respond(HttpStatusCode.NoContent)
             }
+        }
+    }
+
+    private suspend fun requireCanManageClients(userId: Uuid) {
+        if (!canManageClientsUseCase(userId)) {
+            throw ForbiddenException()
         }
     }
 }

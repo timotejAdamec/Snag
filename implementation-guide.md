@@ -116,9 +116,9 @@ The following features are new compared to the original analysis (which had no r
 | FP32b | Generate service protocol — PDF with work description and signature fields | UC6 | - [ ] Not started |
 | FP34 | Authentication via Microsoft EntraID | — | - [ ] Not started |
 | FP35 | Deny access without authentication | — | - [ ] Not started |
-| FP36 | Role management by administrator | UC7 | - [ ] BE API done (PUT /users/{id} with role); authorization enforcement missing |
-| FP37 | Delegate and remove passport technician role | UC7 | - [ ] BE API done (PUT /users/{id} with role); authorization enforcement missing |
-| FP38 | Delegate and remove service worker role | UC7 | - [ ] BE API done (PUT /users/{id} with role); authorization enforcement missing |
+| FP36 | Role management by administrator | UC7 | - [x] BE API done + authorization enforced via `CanSetUserRoleRule` (Admin: any role change) |
+| FP37 | Delegate and remove passport technician role | UC7 | - [x] BE API done + authorization enforced via `CanSetUserRoleRule` (Passport Lead: None↔Passport Technician) |
+| FP38 | Delegate and remove service worker role | UC7 | - [x] BE API done + authorization enforced via `CanSetUserRoleRule` (Service Lead: None↔Service Worker) |
 
 ---
 
@@ -129,7 +129,7 @@ The following features are new compared to the original analysis (which had no r
 - [ ] **Frontend**: implement OAuth2 / OIDC flow with EntraID; store tokens securely; refresh tokens before expiry.
 
 ### NP13 — Role-based authorisation
-- [x] **Backend**: authorization framework implemented — `CallCurrentUserPlugin` extracts user from `X-User-Id` header; all project routes fully authorized (`CanCreateProjectRule`, `CanCloseProjectRule`, `CanAccessProjectRule`, `CanAssignUserToProjectRule`); `GET /projects` filtered by user access; `ForbiddenException` → 403. *(remaining feature endpoints — clients, sub-entities, users, reports — not yet wired)*
+- [x] **Backend**: authorization fully wired across all routes. Project routes: `CanCreateProjectRule`, `CanCloseProjectRule`, `CanAccessProjectRule`, `CanAssignUserToProjectRule`. Sub-entity routes (structures, findings, inspections, finding photos): `CanAccessProjectUseCase` with project resolution from URL path or entity lookup (three-hop for finding photos: finding → structure → project). Client routes: `CanManageClientsRule` (role-based, denies Passport Technician and None). User routes: `CanSetUserRoleRule` (delegation scoping — Admin: any, Passport Lead: None↔Passport Technician, Service Lead: None↔Service Worker). Report route: `CanAccessProjectUseCase`.
 - [ ] **Frontend**: hide/show UI elements based on role; do not rely solely on frontend gating.
   - Current state: **zero role-based UI gating**. Current user is a hardcoded UUID (`GetCurrentUserUseCaseImpl`) with TODO to replace with EntraID. FE does not know the current user's role.
   - All buttons (create project, close/reopen, edit, delete, report download) are visible unconditionally — only gated by project state (`isClosed`), not user role or access.

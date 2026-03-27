@@ -12,6 +12,8 @@
 
 package cz.adamec.timotej.snag.findings.be.driving.impl.internal
 
+import cz.adamec.timotej.snag.authentication.be.driving.api.currentUser
+import cz.adamec.timotej.snag.authorization.be.driving.api.ForbiddenException
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.findings.be.app.api.DeleteFindingPhotoUseCase
 import cz.adamec.timotej.snag.findings.be.app.api.GetFindingPhotosModifiedSinceUseCase
@@ -20,9 +22,12 @@ import cz.adamec.timotej.snag.findings.be.app.api.model.DeleteFindingPhotoReques
 import cz.adamec.timotej.snag.findings.be.app.api.model.GetFindingPhotosModifiedSinceRequest
 import cz.adamec.timotej.snag.findings.be.driving.contract.DeleteFindingPhotoApiDto
 import cz.adamec.timotej.snag.findings.be.driving.contract.PutFindingPhotoApiDto
+import cz.adamec.timotej.snag.findings.be.ports.FindingsDb
+import cz.adamec.timotej.snag.projects.be.app.api.CanAccessProjectUseCase
 import cz.adamec.timotej.snag.routing.be.AppRoute
 import cz.adamec.timotej.snag.routing.be.getDtoFromBody
 import cz.adamec.timotej.snag.routing.be.getIdFromParameters
+import cz.adamec.timotej.snag.structures.be.ports.StructuresDb
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
@@ -30,18 +35,24 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.patch
 import io.ktor.server.routing.put
 import io.ktor.server.routing.route
+import kotlin.uuid.Uuid
 
 @Suppress("LabeledExpression")
 internal class FindingPhotosRoute(
     private val saveFindingPhotoUseCase: SaveFindingPhotoUseCase,
     private val deleteFindingPhotoUseCase: DeleteFindingPhotoUseCase,
     private val getFindingPhotosModifiedSinceUseCase: GetFindingPhotosModifiedSinceUseCase,
+    private val canAccessProjectUseCase: CanAccessProjectUseCase,
+    private val structuresDb: StructuresDb,
+    private val findingsDb: FindingsDb,
 ) : AppRoute {
     override fun Route.setup() {
         route("/findings/{findingId}/photos") {
             put("/{id}") {
-                val id = getIdFromParameters()
+                val userId = currentUser().userId
                 val findingId = getIdFromParameters("findingId")
+                requireProjectAccessFromFinding(userId = userId, findingId = findingId)
+                val id = getIdFromParameters()
 
                 val putPhotoDto = getDtoFromBody<PutFindingPhotoApiDto>()
 
@@ -56,6 +67,9 @@ internal class FindingPhotosRoute(
             }
 
             patch("/{id}") {
+                val userId = currentUser().userId
+                val findingId = getIdFromParameters("findingId")
+                requireProjectAccessFromFinding(userId = userId, findingId = findingId)
                 val id = getIdFromParameters()
                 val deleteDto = getDtoFromBody<DeleteFindingPhotoApiDto>()
 
@@ -73,7 +87,9 @@ internal class FindingPhotosRoute(
             }
 
             get {
+                val userId = currentUser().userId
                 val findingId = getIdFromParameters("findingId")
+                requireProjectAccessFromFinding(userId = userId, findingId = findingId)
                 val sinceParam = call.request.queryParameters["since"]
                 if (sinceParam != null) {
                     val since = Timestamp(sinceParam.toLong())
@@ -89,6 +105,18 @@ internal class FindingPhotosRoute(
                     call.respond(HttpStatusCode.BadRequest)
                 }
             }
+        }
+    }
+
+    private suspend fun requireProjectAccessFromFinding(
+        userId: Uuid,
+        findingId: Uuid,
+    ) {
+        val finding = findingsDb.getFinding(findingId) ?: throw ForbiddenException()
+        val projectId = structuresDb.getStructure(finding.structureId)?.projectId
+            ?: throw ForbiddenException()
+        if (!canAccessProjectUseCase(userId = userId, projectId = projectId)) {
+            throw ForbiddenException()
         }
     }
 }

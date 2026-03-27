@@ -12,17 +12,20 @@
 
 package cz.adamec.timotej.snag.clients.be.app.impl.di
 
+import cz.adamec.timotej.snag.clients.be.app.api.CanManageClientsUseCase
 import cz.adamec.timotej.snag.clients.be.app.api.DeleteClientUseCase
 import cz.adamec.timotej.snag.clients.be.app.api.GetClientUseCase
 import cz.adamec.timotej.snag.clients.be.app.api.GetClientsModifiedSinceUseCase
 import cz.adamec.timotej.snag.clients.be.app.api.GetClientsUseCase
 import cz.adamec.timotej.snag.clients.be.app.api.SaveClientUseCase
+import cz.adamec.timotej.snag.clients.be.app.impl.internal.CanManageClientsUseCaseImpl
 import cz.adamec.timotej.snag.clients.be.app.impl.internal.DeleteClientUseCaseImpl
 import cz.adamec.timotej.snag.clients.be.app.impl.internal.GetClientUseCaseImpl
 import cz.adamec.timotej.snag.clients.be.app.impl.internal.GetClientsModifiedSinceUseCaseImpl
 import cz.adamec.timotej.snag.clients.be.app.impl.internal.GetClientsUseCaseImpl
 import cz.adamec.timotej.snag.clients.be.app.impl.internal.SaveClientUseCaseImpl
 import cz.adamec.timotej.snag.clients.business.CanDeleteClientRule
+import cz.adamec.timotej.snag.clients.business.CanManageClientsRule
 import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
@@ -34,5 +37,7 @@ val clientsAppModule =
         factoryOf(::SaveClientUseCaseImpl) bind SaveClientUseCase::class
         factoryOf(::DeleteClientUseCaseImpl) bind DeleteClientUseCase::class
         factoryOf(::CanDeleteClientRule)
+        factoryOf(::CanManageClientsRule)
+        factoryOf(::CanManageClientsUseCaseImpl) bind CanManageClientsUseCase::class
         factoryOf(::GetClientsModifiedSinceUseCaseImpl) bind GetClientsModifiedSinceUseCase::class
     }

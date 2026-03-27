@@ -14,22 +14,27 @@ package cz.adamec.timotej.snag.findings.be.driving.impl.internal
 
 import cz.adamec.timotej.snag.configuration.be.AppConfiguration
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
+import cz.adamec.timotej.snag.authorization.business.UserRole
+import cz.adamec.timotej.snag.findings.be.driven.test.seedTestFinding
 import cz.adamec.timotej.snag.findings.be.driving.contract.DeleteFindingPhotoApiDto
 import cz.adamec.timotej.snag.findings.be.driving.contract.FindingPhotoApiDto
 import cz.adamec.timotej.snag.findings.be.driving.contract.PutFindingPhotoApiDto
 import cz.adamec.timotej.snag.findings.be.ports.FindingPhotosDb
-import cz.adamec.timotej.snag.findings.be.driven.test.seedTestFinding
 import cz.adamec.timotej.snag.findings.be.ports.FindingsDb
 import cz.adamec.timotej.snag.network.be.test.jsonClient
 import cz.adamec.timotej.snag.projects.be.driven.test.seedTestProject
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
+import cz.adamec.timotej.snag.routing.be.USER_ID_HEADER
 import cz.adamec.timotej.snag.structures.be.driven.test.seedTestStructure
 import cz.adamec.timotej.snag.structures.be.ports.StructuresDb
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
+import cz.adamec.timotej.snag.users.be.driven.test.TEST_USER_ID
 import cz.adamec.timotej.snag.users.be.driven.test.seedTestUser
+import cz.adamec.timotej.snag.users.be.model.BackendUserData
 import cz.adamec.timotej.snag.users.be.ports.UsersDb
 import io.ktor.client.call.body
 import io.ktor.client.request.get
+import io.ktor.client.request.header
 import io.ktor.client.request.patch
 import io.ktor.client.request.put
 import io.ktor.client.request.setBody
@@ -72,6 +77,45 @@ class FindingPhotosRouteTest : BackendKoinInitializedTest() {
         }
     }
 
+    // region Auth
+
+    @Test
+    fun `GET photos returns 401 without user header`() =
+        testApplication {
+            configureApp()
+            val client = jsonClient()
+
+            val response = client.get("/findings/$FINDING_ID/photos?since=100")
+
+            assertEquals(HttpStatusCode.Unauthorized, response.status)
+        }
+
+    @Test
+    fun `GET photos returns 403 for user without project access`() =
+        testApplication {
+            configureApp()
+            seedParentEntities()
+            usersDb.saveUser(
+                BackendUserData(
+                    id = TECH_USER_ID,
+                    entraId = "tech-entra",
+                    email = "tech@example.com",
+                    role = UserRole.PASSPORT_TECHNICIAN,
+                    updatedAt = Timestamp(1L),
+                ),
+            )
+            val client = jsonClient()
+
+            val response =
+                client.get("/findings/$FINDING_ID/photos?since=100") {
+                    header(USER_ID_HEADER, TECH_USER_ID.toString())
+                }
+
+            assertEquals(HttpStatusCode.Forbidden, response.status)
+        }
+
+    // endregion
+
     // region PUT /findings/{findingId}/photos/{id}
 
     @Test
@@ -84,6 +128,7 @@ class FindingPhotosRouteTest : BackendKoinInitializedTest() {
             val response =
                 client.put("/findings/$FINDING_ID/photos/$PHOTO_ID_1") {
                     contentType(ContentType.Application.Json)
+                    header(USER_ID_HEADER, TEST_USER_ID.toString())
                     setBody(
                         PutFindingPhotoApiDto(
                             findingId = FINDING_ID,
@@ -109,6 +154,7 @@ class FindingPhotosRouteTest : BackendKoinInitializedTest() {
 
             client.put("/findings/$FINDING_ID/photos/$PHOTO_ID_1") {
                 contentType(ContentType.Application.Json)
+                header(USER_ID_HEADER, TEST_USER_ID.toString())
                 setBody(
                     PutFindingPhotoApiDto(
                         findingId = FINDING_ID,
@@ -121,6 +167,7 @@ class FindingPhotosRouteTest : BackendKoinInitializedTest() {
             val response =
                 client.patch("/findings/$FINDING_ID/photos/$PHOTO_ID_1") {
                     contentType(ContentType.Application.Json)
+                    header(USER_ID_HEADER, TEST_USER_ID.toString())
                     setBody(DeleteFindingPhotoApiDto(deletedAt = Timestamp(200L)))
                 }
 
@@ -140,6 +187,7 @@ class FindingPhotosRouteTest : BackendKoinInitializedTest() {
 
             client.put("/findings/$FINDING_ID/photos/$PHOTO_ID_1") {
                 contentType(ContentType.Application.Json)
+                header(USER_ID_HEADER, TEST_USER_ID.toString())
                 setBody(
                     PutFindingPhotoApiDto(
                         findingId = FINDING_ID,
@@ -150,6 +198,7 @@ class FindingPhotosRouteTest : BackendKoinInitializedTest() {
             }
             client.put("/findings/$FINDING_ID/photos/$PHOTO_ID_2") {
                 contentType(ContentType.Application.Json)
+                header(USER_ID_HEADER, TEST_USER_ID.toString())
                 setBody(
                     PutFindingPhotoApiDto(
                         findingId = FINDING_ID,
@@ -159,7 +208,10 @@ class FindingPhotosRouteTest : BackendKoinInitializedTest() {
                 )
             }
 
-            val response = client.get("/findings/$FINDING_ID/photos?since=100")
+            val response =
+                client.get("/findings/$FINDING_ID/photos?since=100") {
+                    header(USER_ID_HEADER, TEST_USER_ID.toString())
+                }
 
             assertEquals(HttpStatusCode.OK, response.status)
             val body = response.body<List<FindingPhotoApiDto>>()
@@ -175,5 +227,6 @@ class FindingPhotosRouteTest : BackendKoinInitializedTest() {
         private val FINDING_ID = Uuid.parse("00000000-0000-0000-0000-000000000001")
         private val PHOTO_ID_1 = Uuid.parse("00000000-0000-0000-0001-000000000001")
         private val PHOTO_ID_2 = Uuid.parse("00000000-0000-0000-0001-000000000002")
+        private val TECH_USER_ID = Uuid.parse("00000000-0000-0000-0000-000000000099")
     }
 }

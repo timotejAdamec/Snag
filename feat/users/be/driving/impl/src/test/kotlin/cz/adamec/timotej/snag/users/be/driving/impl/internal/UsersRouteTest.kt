@@ -16,13 +16,17 @@ import cz.adamec.timotej.snag.authorization.business.UserRole
 import cz.adamec.timotej.snag.configuration.be.AppConfiguration
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.network.be.test.jsonClient
+import cz.adamec.timotej.snag.routing.be.USER_ID_HEADER
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
+import cz.adamec.timotej.snag.users.be.driven.test.TEST_USER_ID
+import cz.adamec.timotej.snag.users.be.driven.test.seedTestUser
 import cz.adamec.timotej.snag.users.be.driving.contract.PutUserApiDto
 import cz.adamec.timotej.snag.users.be.driving.contract.UserApiDto
 import cz.adamec.timotej.snag.users.be.model.BackendUserData
 import cz.adamec.timotej.snag.users.be.ports.UsersDb
 import io.ktor.client.call.body
 import io.ktor.client.request.get
+import io.ktor.client.request.header
 import io.ktor.client.request.put
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
@@ -47,6 +51,32 @@ class UsersRouteTest : BackendKoinInitializedTest() {
             }
         }
     }
+
+    // region Auth
+
+    @Test
+    fun `PUT user returns 401 without user header`() =
+        testApplication {
+            configureApp()
+            val client = jsonClient()
+
+            val response =
+                client.put("/users/$TEST_USER_1") {
+                    contentType(ContentType.Application.Json)
+                    setBody(
+                        PutUserApiDto(
+                            entraId = "entra-1",
+                            email = "user@example.com",
+                            role = "ADMINISTRATOR",
+                            updatedAt = 100L,
+                        ),
+                    )
+                }
+
+            assertEquals(HttpStatusCode.Unauthorized, response.status)
+        }
+
+    // endregion
 
     @Test
     fun `GET users returns empty list when no users exist`() =
@@ -190,11 +220,13 @@ class UsersRouteTest : BackendKoinInitializedTest() {
     fun `PUT user creates user`() =
         testApplication {
             configureApp()
+            usersDb.seedTestUser()
             val client = jsonClient()
 
             val response =
                 client.put("/users/$TEST_USER_1") {
                     contentType(ContentType.Application.Json)
+                    header(USER_ID_HEADER, TEST_USER_ID.toString())
                     setBody(
                         PutUserApiDto(
                             entraId = "entra-1",
@@ -216,11 +248,13 @@ class UsersRouteTest : BackendKoinInitializedTest() {
     fun `PUT user with null role`() =
         testApplication {
             configureApp()
+            usersDb.seedTestUser()
             val client = jsonClient()
 
             val response =
                 client.put("/users/$TEST_USER_1") {
                     contentType(ContentType.Application.Json)
+                    header(USER_ID_HEADER, TEST_USER_ID.toString())
                     setBody(
                         PutUserApiDto(
                             entraId = "entra-1",
@@ -240,6 +274,7 @@ class UsersRouteTest : BackendKoinInitializedTest() {
     fun `PUT user updates existing user`() =
         testApplication {
             configureApp()
+            usersDb.seedTestUser()
             usersDb.saveUser(
                 BackendUserData(
                     id = TEST_USER_1,
@@ -253,6 +288,7 @@ class UsersRouteTest : BackendKoinInitializedTest() {
             val response =
                 client.put("/users/$TEST_USER_1") {
                     contentType(ContentType.Application.Json)
+                    header(USER_ID_HEADER, TEST_USER_ID.toString())
                     setBody(
                         PutUserApiDto(
                             entraId = "entra-1",
@@ -273,11 +309,13 @@ class UsersRouteTest : BackendKoinInitializedTest() {
     fun `PUT user with invalid id returns 400`() =
         testApplication {
             configureApp()
+            usersDb.seedTestUser()
             val client = jsonClient()
 
             val response =
                 client.put("/users/not-a-uuid") {
                     contentType(ContentType.Application.Json)
+                    header(USER_ID_HEADER, TEST_USER_ID.toString())
                     setBody(
                         PutUserApiDto(
                             entraId = "entra-1",
