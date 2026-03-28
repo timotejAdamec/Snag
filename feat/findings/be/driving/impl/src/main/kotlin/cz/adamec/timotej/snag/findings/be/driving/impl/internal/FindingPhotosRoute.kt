@@ -17,17 +17,17 @@ import cz.adamec.timotej.snag.authorization.be.driving.api.ForbiddenException
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.findings.be.app.api.DeleteFindingPhotoUseCase
 import cz.adamec.timotej.snag.findings.be.app.api.GetFindingPhotosModifiedSinceUseCase
+import cz.adamec.timotej.snag.findings.be.app.api.GetFindingUseCase
 import cz.adamec.timotej.snag.findings.be.app.api.SaveFindingPhotoUseCase
 import cz.adamec.timotej.snag.findings.be.app.api.model.DeleteFindingPhotoRequest
 import cz.adamec.timotej.snag.findings.be.app.api.model.GetFindingPhotosModifiedSinceRequest
 import cz.adamec.timotej.snag.findings.be.driving.contract.DeleteFindingPhotoApiDto
 import cz.adamec.timotej.snag.findings.be.driving.contract.PutFindingPhotoApiDto
-import cz.adamec.timotej.snag.findings.be.ports.FindingsDb
 import cz.adamec.timotej.snag.projects.be.app.api.CanAccessProjectUseCase
 import cz.adamec.timotej.snag.routing.be.AppRoute
 import cz.adamec.timotej.snag.routing.be.getDtoFromBody
 import cz.adamec.timotej.snag.routing.be.getIdFromParameters
-import cz.adamec.timotej.snag.structures.be.ports.StructuresDb
+import cz.adamec.timotej.snag.structures.be.app.api.GetStructureUseCase
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
@@ -42,8 +42,8 @@ internal class FindingPhotosRoute(
     private val deleteFindingPhotoUseCase: DeleteFindingPhotoUseCase,
     private val getFindingPhotosModifiedSinceUseCase: GetFindingPhotosModifiedSinceUseCase,
     private val canAccessProjectUseCase: CanAccessProjectUseCase,
-    private val structuresDb: StructuresDb,
-    private val findingsDb: FindingsDb,
+    private val getFindingUseCase: GetFindingUseCase,
+    private val getStructureUseCase: GetStructureUseCase,
 ) : AppRoute {
     override fun Route.setup() {
         route("/findings/{findingId}/photos") {
@@ -118,8 +118,8 @@ internal class FindingPhotosRoute(
     }
 
     private suspend fun resolveProjectIdFromFinding(findingId: Uuid): Uuid {
-        val finding = findingsDb.getFinding(findingId) ?: throw ForbiddenException()
-        return structuresDb.getStructure(finding.structureId)?.projectId
+        val finding = getFindingUseCase(findingId) ?: throw ForbiddenException()
+        return getStructureUseCase(finding.structureId)?.projectId
             ?: throw ForbiddenException()
     }
 

@@ -176,9 +176,13 @@ internal class ProjectDetailsEditViewModel(
         vmState.update { it.copy(projectAddress = updatedAddress, projectAddressError = null) }
     }
 
-    fun onSaveProject() {
-        if (!vmState.value.canSave) return
+    @Suppress("LabeledExpression")
+    fun onSaveProject() =
         viewModelScope.launch {
+            if (!vmState.value.canSave) {
+                errorEventsChannel.send(Unknown)
+                return@launch
+            }
             val current = vmState.value
             val nameError = if (current.projectName.isBlank()) Res.string.error_field_required else null
             val addressError = if (current.projectAddress.isBlank()) Res.string.error_field_required else null
@@ -193,7 +197,6 @@ internal class ProjectDetailsEditViewModel(
                 saveProject()
             }
         }
-    }
 
     private suspend fun saveProject() {
         val current = vmState.value

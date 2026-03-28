@@ -16,6 +16,7 @@ import cz.adamec.timotej.snag.authentication.be.driving.api.currentUser
 import cz.adamec.timotej.snag.authorization.be.driving.api.ForbiddenException
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.feat.inspections.be.app.api.DeleteInspectionUseCase
+import cz.adamec.timotej.snag.feat.inspections.be.app.api.GetInspectionUseCase
 import cz.adamec.timotej.snag.feat.inspections.be.app.api.GetInspectionsModifiedSinceUseCase
 import cz.adamec.timotej.snag.feat.inspections.be.app.api.GetInspectionsUseCase
 import cz.adamec.timotej.snag.feat.inspections.be.app.api.SaveInspectionUseCase
@@ -23,7 +24,6 @@ import cz.adamec.timotej.snag.feat.inspections.be.app.api.model.DeleteInspection
 import cz.adamec.timotej.snag.feat.inspections.be.app.api.model.GetInspectionsModifiedSinceRequest
 import cz.adamec.timotej.snag.feat.inspections.be.driving.contract.DeleteInspectionApiDto
 import cz.adamec.timotej.snag.feat.inspections.be.driving.contract.PutInspectionApiDto
-import cz.adamec.timotej.snag.feat.inspections.be.ports.InspectionsDb
 import cz.adamec.timotej.snag.projects.be.app.api.CanAccessProjectUseCase
 import cz.adamec.timotej.snag.routing.be.AppRoute
 import cz.adamec.timotej.snag.routing.be.getDtoFromBody
@@ -44,7 +44,7 @@ internal class InspectionsRoute(
     private val getInspectionsModifiedSinceUseCase: GetInspectionsModifiedSinceUseCase,
     private val saveInspectionUseCase: SaveInspectionUseCase,
     private val canAccessProjectUseCase: CanAccessProjectUseCase,
-    private val inspectionsDb: InspectionsDb,
+    private val getInspectionUseCase: GetInspectionUseCase,
 ) : AppRoute {
     override fun Route.setup() {
         route("/inspections") {
@@ -52,7 +52,7 @@ internal class InspectionsRoute(
                 val userId = currentUser().userId
                 val id = getIdFromParameters()
                 val projectId =
-                    inspectionsDb.getInspection(id)?.projectId
+                    getInspectionUseCase(id)?.projectId
                         ?: throw ForbiddenException()
                 requireProjectAccess(userId = userId, projectId = projectId)
                 val deleteInspectionDto = getDtoFromBody<DeleteInspectionApiDto>()

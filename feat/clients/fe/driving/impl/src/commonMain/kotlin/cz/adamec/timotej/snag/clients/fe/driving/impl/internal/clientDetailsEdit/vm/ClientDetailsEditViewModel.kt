@@ -131,10 +131,14 @@ internal class ClientDetailsEditViewModel(
         vmState.update { it.copy(clientEmail = updatedEmail, clientEmailError = null) }
     }
 
-    fun onDelete() {
-        if (!vmState.value.canManageClients) return
-        val id = clientId ?: return
+    @Suppress("LabeledExpression")
+    fun onDelete() =
         viewModelScope.launch {
+            if (!vmState.value.canManageClients) {
+                errorEventsChannel.send(Unknown)
+                return@launch
+            }
+            val id = clientId ?: return@launch
             vmState.update { it.copy(isBeingDeleted = true) }
             when (deleteClientUseCase(id)) {
                 is OfflineFirstDataResult.ProgrammerError -> {
@@ -147,36 +151,40 @@ internal class ClientDetailsEditViewModel(
                 }
             }
         }
-    }
 
-    fun onSaveClient() {
-        if (!vmState.value.canManageClients) return
-        val current = vmState.value
-        val nameError = if (current.clientName.isBlank()) Res.string.error_field_required else null
-        val phoneError =
-            if (current.clientPhoneNumber.isNotBlank() && !phoneNumberRule(current.clientPhoneNumber)) {
-                Res.string.error_invalid_phone
+    @Suppress("LabeledExpression", "CognitiveComplexMethod")
+    fun onSaveClient() =
+        viewModelScope.launch {
+            if (!vmState.value.canManageClients) {
+                errorEventsChannel.send(Unknown)
+                return@launch
+            }
+            val current = vmState.value
+            val nameError = if (current.clientName.isBlank()) Res.string.error_field_required else null
+            val phoneError =
+                if (current.clientPhoneNumber.isNotBlank() && !phoneNumberRule(current.clientPhoneNumber)) {
+                    Res.string.error_invalid_phone
+                } else {
+                    null
+                }
+            val emailError =
+                if (current.clientEmail.isNotBlank() && !emailFormatRule(current.clientEmail)) {
+                    Res.string.error_invalid_email
+                } else {
+                    null
+                }
+            if (nameError != null || phoneError != null || emailError != null) {
+                vmState.update {
+                    it.copy(
+                        clientNameError = nameError,
+                        clientPhoneNumberError = phoneError,
+                        clientEmailError = emailError,
+                    )
+                }
             } else {
-                null
+                saveClient()
             }
-        val emailError =
-            if (current.clientEmail.isNotBlank() && !emailFormatRule(current.clientEmail)) {
-                Res.string.error_invalid_email
-            } else {
-                null
-            }
-        if (nameError != null || phoneError != null || emailError != null) {
-            vmState.update {
-                it.copy(
-                    clientNameError = nameError,
-                    clientPhoneNumberError = phoneError,
-                    clientEmailError = emailError,
-                )
-            }
-        } else {
-            viewModelScope.launch { saveClient() }
         }
-    }
 
     private suspend fun saveClient() {
         val current = vmState.value

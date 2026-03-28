@@ -20,6 +20,7 @@ import cz.adamec.timotej.snag.routing.be.AppRoute
 import cz.adamec.timotej.snag.routing.be.getDtoFromBody
 import cz.adamec.timotej.snag.routing.be.getIdFromParameters
 import cz.adamec.timotej.snag.structures.be.app.api.DeleteStructureUseCase
+import cz.adamec.timotej.snag.structures.be.app.api.GetStructureUseCase
 import cz.adamec.timotej.snag.structures.be.app.api.GetStructuresModifiedSinceUseCase
 import cz.adamec.timotej.snag.structures.be.app.api.GetStructuresUseCase
 import cz.adamec.timotej.snag.structures.be.app.api.SaveStructureUseCase
@@ -27,7 +28,6 @@ import cz.adamec.timotej.snag.structures.be.app.api.model.DeleteStructureRequest
 import cz.adamec.timotej.snag.structures.be.app.api.model.GetStructuresModifiedSinceRequest
 import cz.adamec.timotej.snag.structures.be.driving.contract.DeleteStructureApiDto
 import cz.adamec.timotej.snag.structures.be.driving.contract.PutStructureApiDto
-import cz.adamec.timotej.snag.structures.be.ports.StructuresDb
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
@@ -44,7 +44,7 @@ internal class StructuresRoute(
     private val getStructuresModifiedSinceUseCase: GetStructuresModifiedSinceUseCase,
     private val saveStructureUseCase: SaveStructureUseCase,
     private val canAccessProjectUseCase: CanAccessProjectUseCase,
-    private val structuresDb: StructuresDb,
+    private val getStructureUseCase: GetStructureUseCase,
 ) : AppRoute {
     override fun Route.setup() {
         route("/structures") {
@@ -52,7 +52,7 @@ internal class StructuresRoute(
                 val userId = currentUser().userId
                 val id = getIdFromParameters()
                 val projectId =
-                    structuresDb.getStructure(id)?.projectId
+                    getStructureUseCase(id)?.projectId
                         ?: throw ForbiddenException()
                 requireProjectAccess(userId = userId, projectId = projectId)
                 val deleteStructureDto = getDtoFromBody<DeleteStructureApiDto>()

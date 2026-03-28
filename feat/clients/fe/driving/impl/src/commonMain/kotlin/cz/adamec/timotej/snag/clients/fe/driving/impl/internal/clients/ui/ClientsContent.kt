@@ -45,7 +45,7 @@ internal fun ClientsContent(
     CollapsableTopAppBarScaffold(
         title = stringResource(Res.string.clients_title),
         topAppBarActions = {
-            if (state.canManageClients) {
+            if (state.canCreateClient) {
                 AdaptiveTonalButton(
                     onClick = onNewClientClick,
                     icon = DesignRes.drawable.ic_add,

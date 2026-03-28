@@ -20,5 +20,5 @@ import kotlinx.collections.immutable.persistentListOf
 @Immutable
 internal data class ClientsUiState(
     val clients: ImmutableList<AppClient> = persistentListOf(),
-    val canManageClients: Boolean = false,
+    val canCreateClient: Boolean = false,
 )

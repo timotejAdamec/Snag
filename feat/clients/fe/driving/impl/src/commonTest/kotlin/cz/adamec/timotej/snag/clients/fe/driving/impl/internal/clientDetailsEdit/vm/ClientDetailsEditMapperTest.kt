@@ -86,8 +86,12 @@ class ClientDetailsEditMapperTest {
     }
 
     @Test
-    fun `canManageClients is passed through to UiState`() {
-        assertTrue(ClientDetailsEditVmState(canManageClients = true).toUiState().canManageClients)
-        assertFalse(ClientDetailsEditVmState(canManageClients = false).toUiState().canManageClients)
+    fun `canSave is true when canManageClients is true`() {
+        assertTrue(ClientDetailsEditVmState(canManageClients = true).toUiState().canSave)
+    }
+
+    @Test
+    fun `canSave is false when canManageClients is false`() {
+        assertFalse(ClientDetailsEditVmState(canManageClients = false).toUiState().canSave)
     }
 }

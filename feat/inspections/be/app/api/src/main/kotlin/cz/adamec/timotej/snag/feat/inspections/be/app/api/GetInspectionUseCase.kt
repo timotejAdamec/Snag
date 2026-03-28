@@ -10,10 +10,11 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.clients.fe.driving.impl.internal.clients.vm
+package cz.adamec.timotej.snag.feat.inspections.be.app.api
 
-internal fun ClientsVmState.toUiState(): ClientsUiState =
-    ClientsUiState(
-        clients = clients,
-        canCreateClient = canManageClients,
-    )
+import cz.adamec.timotej.snag.feat.inspections.be.model.BackendInspection
+import kotlin.uuid.Uuid
+
+interface GetInspectionUseCase {
+    suspend operator fun invoke(id: Uuid): BackendInspection?
+}

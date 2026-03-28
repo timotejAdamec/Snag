@@ -15,6 +15,7 @@ package cz.adamec.timotej.snag.findings.be.app.impl.di
 import cz.adamec.timotej.snag.findings.be.app.api.DeleteFindingPhotoUseCase
 import cz.adamec.timotej.snag.findings.be.app.api.DeleteFindingUseCase
 import cz.adamec.timotej.snag.findings.be.app.api.GetFindingPhotosModifiedSinceUseCase
+import cz.adamec.timotej.snag.findings.be.app.api.GetFindingUseCase
 import cz.adamec.timotej.snag.findings.be.app.api.GetFindingsModifiedSinceUseCase
 import cz.adamec.timotej.snag.findings.be.app.api.GetFindingsUseCase
 import cz.adamec.timotej.snag.findings.be.app.api.SaveFindingPhotoUseCase
@@ -22,6 +23,7 @@ import cz.adamec.timotej.snag.findings.be.app.api.SaveFindingUseCase
 import cz.adamec.timotej.snag.findings.be.app.impl.internal.DeleteFindingPhotoUseCaseImpl
 import cz.adamec.timotej.snag.findings.be.app.impl.internal.DeleteFindingUseCaseImpl
 import cz.adamec.timotej.snag.findings.be.app.impl.internal.GetFindingPhotosModifiedSinceUseCaseImpl
+import cz.adamec.timotej.snag.findings.be.app.impl.internal.GetFindingUseCaseImpl
 import cz.adamec.timotej.snag.findings.be.app.impl.internal.GetFindingsModifiedSinceUseCaseImpl
 import cz.adamec.timotej.snag.findings.be.app.impl.internal.GetFindingsUseCaseImpl
 import cz.adamec.timotej.snag.findings.be.app.impl.internal.SaveFindingPhotoUseCaseImpl
@@ -33,6 +35,7 @@ import org.koin.dsl.module
 val findingsAppModule =
     module {
         factoryOf(::DeleteFindingUseCaseImpl) bind DeleteFindingUseCase::class
+        factoryOf(::GetFindingUseCaseImpl) bind GetFindingUseCase::class
         factoryOf(::GetFindingsUseCaseImpl) bind GetFindingsUseCase::class
         factoryOf(::SaveFindingUseCaseImpl) bind SaveFindingUseCase::class
         factoryOf(::GetFindingsModifiedSinceUseCaseImpl) bind GetFindingsModifiedSinceUseCase::class

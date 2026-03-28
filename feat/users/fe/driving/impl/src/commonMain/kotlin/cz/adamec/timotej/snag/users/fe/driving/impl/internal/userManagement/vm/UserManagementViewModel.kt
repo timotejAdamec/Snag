@@ -104,13 +104,17 @@ internal class UserManagementViewModel(
             }
         }
 
+    @Suppress("LabeledExpression")
     fun onRoleChanged(
         userId: Uuid,
         newRole: UserRole?,
     ) {
-        val user = vmState.value.users.find { it.id == userId } ?: return
-        if (newRole !in user.allowedRoleOptions) return
         viewModelScope.launch {
+            val user = vmState.value.users.find { it.id == userId } ?: return@launch
+            if (newRole !in user.allowedRoleOptions) {
+                errorEventsChannel.send(UiError.Unknown)
+                return@launch
+            }
             updateUserVmItem(userId) { it.copy(isUpdatingRole = true) }
             when (val result = changeUserRoleUseCase(ChangeUserRoleRequest(userId, newRole))) {
                 is OnlineDataResult.Success -> {

@@ -16,6 +16,7 @@ import cz.adamec.timotej.snag.authentication.be.driving.api.currentUser
 import cz.adamec.timotej.snag.authorization.be.driving.api.ForbiddenException
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.findings.be.app.api.DeleteFindingUseCase
+import cz.adamec.timotej.snag.findings.be.app.api.GetFindingUseCase
 import cz.adamec.timotej.snag.findings.be.app.api.GetFindingsModifiedSinceUseCase
 import cz.adamec.timotej.snag.findings.be.app.api.GetFindingsUseCase
 import cz.adamec.timotej.snag.findings.be.app.api.SaveFindingUseCase
@@ -23,12 +24,11 @@ import cz.adamec.timotej.snag.findings.be.app.api.model.DeleteFindingRequest
 import cz.adamec.timotej.snag.findings.be.app.api.model.GetFindingsModifiedSinceRequest
 import cz.adamec.timotej.snag.findings.be.driving.contract.DeleteFindingApiDto
 import cz.adamec.timotej.snag.findings.be.driving.contract.PutFindingApiDto
-import cz.adamec.timotej.snag.findings.be.ports.FindingsDb
 import cz.adamec.timotej.snag.projects.be.app.api.CanAccessProjectUseCase
 import cz.adamec.timotej.snag.routing.be.AppRoute
 import cz.adamec.timotej.snag.routing.be.getDtoFromBody
 import cz.adamec.timotej.snag.routing.be.getIdFromParameters
-import cz.adamec.timotej.snag.structures.be.ports.StructuresDb
+import cz.adamec.timotej.snag.structures.be.app.api.GetStructureUseCase
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
@@ -45,8 +45,8 @@ internal class FindingsRoute(
     private val getFindingsModifiedSinceUseCase: GetFindingsModifiedSinceUseCase,
     private val saveFindingUseCase: SaveFindingUseCase,
     private val canAccessProjectUseCase: CanAccessProjectUseCase,
-    private val structuresDb: StructuresDb,
-    private val findingsDb: FindingsDb,
+    private val getFindingUseCase: GetFindingUseCase,
+    private val getStructureUseCase: GetStructureUseCase,
 ) : AppRoute {
     override fun Route.setup() {
         route("/findings") {
@@ -110,8 +110,8 @@ internal class FindingsRoute(
     }
 
     private suspend fun resolveProjectIdFromFinding(findingId: Uuid): Uuid {
-        val finding = findingsDb.getFinding(findingId) ?: throw ForbiddenException()
-        return structuresDb.getStructure(finding.structureId)?.projectId
+        val finding = getFindingUseCase(findingId) ?: throw ForbiddenException()
+        return getStructureUseCase(finding.structureId)?.projectId
             ?: throw ForbiddenException()
     }
 
@@ -120,7 +120,7 @@ internal class FindingsRoute(
         structureId: Uuid,
     ) {
         val projectId =
-            structuresDb.getStructure(structureId)?.projectId
+            getStructureUseCase(structureId)?.projectId
                 ?: throw ForbiddenException()
         requireProjectAccess(userId = userId, projectId = projectId)
     }

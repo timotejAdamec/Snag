@@ -133,7 +133,7 @@ internal fun ClientDetailsEditContent(
                         }
                     }
                     Button(
-                        enabled = state.canManageClients,
+                        enabled = state.canSave,
                         onClick = onSaveClick,
                     ) {
                         Text(

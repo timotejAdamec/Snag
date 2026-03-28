@@ -23,5 +23,5 @@ internal fun ClientDetailsEditVmState.toUiState(): ClientDetailsEditUiState =
         clientEmailError = clientEmailError,
         canDelete = canDelete && canManageClients && !isBeingDeleted,
         areDeleteDialogButtonsEnabled = !isBeingDeleted,
-        canManageClients = canManageClients,
+        canSave = canManageClients,
     )
