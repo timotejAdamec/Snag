@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.users.fe.app.impl.di
 
+import cz.adamec.timotej.snag.core.foundation.fe.Initializer
 import cz.adamec.timotej.snag.sync.fe.app.api.handler.PullSyncOperationHandler
 import cz.adamec.timotej.snag.users.business.CanSetUserRoleRule
 import cz.adamec.timotej.snag.users.fe.app.api.ChangeUserRoleUseCase
@@ -24,6 +25,7 @@ import cz.adamec.timotej.snag.users.fe.app.impl.internal.GetAllowedRoleOptionsUs
 import cz.adamec.timotej.snag.users.fe.app.impl.internal.GetCurrentUserFlowUseCaseImpl
 import cz.adamec.timotej.snag.users.fe.app.impl.internal.GetCurrentUserUseCaseImpl
 import cz.adamec.timotej.snag.users.fe.app.impl.internal.GetUsersUseCaseImpl
+import cz.adamec.timotej.snag.users.fe.app.impl.internal.sync.FreshUsersInitializer
 import cz.adamec.timotej.snag.users.fe.app.impl.internal.sync.UserPullSyncHandler
 import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.bind
@@ -37,5 +39,6 @@ val usersAppModule =
         factoryOf(::ChangeUserRoleUseCaseImpl) bind ChangeUserRoleUseCase::class
         factoryOf(::GetAllowedRoleOptionsUseCaseImpl) bind GetAllowedRoleOptionsUseCase::class
         factoryOf(::CanSetUserRoleRule)
+        factoryOf(::FreshUsersInitializer) bind Initializer::class
         factoryOf(::UserPullSyncHandler) bind PullSyncOperationHandler::class
     }
