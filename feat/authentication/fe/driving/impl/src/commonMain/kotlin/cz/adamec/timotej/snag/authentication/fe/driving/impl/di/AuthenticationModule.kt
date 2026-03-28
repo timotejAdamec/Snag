@@ -12,10 +12,10 @@
 
 package cz.adamec.timotej.snag.authentication.fe.driving.impl.di
 
-import cz.adamec.timotej.snag.authentication.fe.app.api.AuthenticatedUserProvider
+import cz.adamec.timotej.snag.authentication.fe.app.api.GetAuthenticatedUserIdUseCase
 import cz.adamec.timotej.snag.authentication.fe.driving.impl.internal.AuthTokenProvider
-import cz.adamec.timotej.snag.authentication.fe.driving.impl.internal.AuthenticatedUserProviderImpl
 import cz.adamec.timotej.snag.authentication.fe.driving.impl.internal.CallCurrentUserConfiguration
+import cz.adamec.timotej.snag.authentication.fe.driving.impl.internal.GetAuthenticatedUserIdUseCaseImpl
 import cz.adamec.timotej.snag.authentication.fe.driving.impl.internal.MockAuthTokenProvider
 import cz.adamec.timotej.snag.authentication.fe.driving.impl.internal.OAuthTokenProvider
 import cz.adamec.timotej.snag.configuration.common.CommonConfiguration
@@ -33,8 +33,8 @@ val authenticationModule =
                 OAuthTokenProvider()
             }
         }
-        single<AuthenticatedUserProvider>(createdAtStart = true) {
-            AuthenticatedUserProviderImpl(
+        single<GetAuthenticatedUserIdUseCase> {
+            GetAuthenticatedUserIdUseCaseImpl(
                 userId = MockAuthTokenProvider.MOCK_USER_UUID,
             )
         }

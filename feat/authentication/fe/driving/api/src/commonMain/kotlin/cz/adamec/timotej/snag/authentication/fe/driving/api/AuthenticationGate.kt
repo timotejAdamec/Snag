@@ -27,13 +27,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import cz.adamec.timotej.snag.authentication.fe.app.api.AuthenticatedUserProvider
+import cz.adamec.timotej.snag.authentication.fe.app.api.GetAuthenticatedUserIdUseCase
 import org.koin.compose.getKoin
 
 @Composable
 fun AuthenticationGate(authenticatedContent: @Composable () -> Unit) {
-    val authenticatedUserProvider = getKoin().get<AuthenticatedUserProvider>()
-    val currentUserId by authenticatedUserProvider.currentUserId.collectAsStateWithLifecycle()
+    val getAuthenticatedUserIdUseCase = getKoin().get<GetAuthenticatedUserIdUseCase>()
+    val currentUserId by getAuthenticatedUserIdUseCase.currentUserId.collectAsStateWithLifecycle()
 
     if (currentUserId != null) {
         authenticatedContent()

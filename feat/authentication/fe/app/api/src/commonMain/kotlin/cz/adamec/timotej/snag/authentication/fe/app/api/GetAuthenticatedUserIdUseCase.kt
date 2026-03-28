@@ -15,7 +15,7 @@ package cz.adamec.timotej.snag.authentication.fe.app.api
 import kotlinx.coroutines.flow.StateFlow
 import kotlin.uuid.Uuid
 
-interface AuthenticatedUserProvider {
+interface GetAuthenticatedUserIdUseCase {
     val currentUserId: StateFlow<Uuid?>
 
     fun requireCurrentUserId(): Uuid

@@ -65,7 +65,7 @@ Same as backend — set in `config/release.properties` (see section 2). Values a
 
 ### Key files
 
-- `feat/authentication/fe/app/api/.../AuthenticatedUserProvider.kt` — cross-feature interface for current user identity
+- `feat/authentication/fe/app/api/.../GetAuthenticatedUserIdUseCase.kt` — cross-feature interface for current user identity
 - `feat/authentication/fe/driving/impl/.../AuthTokenProvider.kt` — internal interface for token management
 - `feat/authentication/fe/driving/impl/.../MockAuthTokenProvider.kt` — dev mode (hardcoded user)
 - `feat/authentication/fe/driving/impl/.../OAuthTokenProvider.kt` — production mode (OAuth2 token storage)
@@ -81,7 +81,7 @@ The architecture is fully implemented across all platforms. The following steps 
 1. **Register app in Azure Portal** and obtain tenant/client IDs (section 1 above).
 2. **Set config values** in `config/release.properties` (section 2 above).
 3. **Implement OAuth2 browser flow in `OAuthTokenProvider`** — open browser to EntraID authorize endpoint, handle redirect with auth code, exchange for tokens. The `OAuthTokenProvider` class is in place with token storage; the interactive sign-in flow needs platform-specific browser launching.
-4. **Resolve `AuthenticatedUserProvider` user ID after login** — after OAuth2 login + first sync, resolve the current user's UUID from the local DB by matching the `oid` JWT claim to `entraId` in the users table.
+4. **Resolve `GetAuthenticatedUserIdUseCase` user ID after login** — after OAuth2 login + first sync, resolve the current user's UUID from the local DB by matching the `oid` JWT claim to `entraId` in the users table.
 5. **Connect `LoginScreen` sign-in button** to `OAuthTokenProvider`'s sign-in flow.
 
 ---

@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.users.fe.app.impl.internal
 
-import cz.adamec.timotej.snag.authentication.fe.app.api.AuthenticatedUserProvider
+import cz.adamec.timotej.snag.authentication.fe.app.api.GetAuthenticatedUserIdUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlin.test.Test
@@ -21,7 +21,7 @@ import kotlin.test.assertFailsWith
 import kotlin.uuid.Uuid
 
 class GetCurrentUserUseCaseImplTest {
-    private val fakeProvider = FakeAuthenticatedUserProvider()
+    private val fakeProvider = FakeGetAuthenticatedUserIdUseCase()
     private val useCase = GetCurrentUserUseCaseImpl(fakeProvider)
 
     @Test
@@ -42,7 +42,7 @@ class GetCurrentUserUseCaseImplTest {
     }
 }
 
-private class FakeAuthenticatedUserProvider : AuthenticatedUserProvider {
+private class FakeGetAuthenticatedUserIdUseCase : GetAuthenticatedUserIdUseCase {
     private val _currentUserId = MutableStateFlow<Uuid?>(null)
     override val currentUserId: StateFlow<Uuid?> = _currentUserId
 

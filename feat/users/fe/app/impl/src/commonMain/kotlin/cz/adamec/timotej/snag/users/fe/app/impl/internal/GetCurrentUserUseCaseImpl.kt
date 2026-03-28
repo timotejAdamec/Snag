@@ -12,12 +12,12 @@
 
 package cz.adamec.timotej.snag.users.fe.app.impl.internal
 
-import cz.adamec.timotej.snag.authentication.fe.app.api.AuthenticatedUserProvider
+import cz.adamec.timotej.snag.authentication.fe.app.api.GetAuthenticatedUserIdUseCase
 import cz.adamec.timotej.snag.users.fe.app.api.GetCurrentUserUseCase
 import kotlin.uuid.Uuid
 
 internal class GetCurrentUserUseCaseImpl(
-    private val authenticatedUserProvider: AuthenticatedUserProvider,
+    private val getAuthenticatedUserIdUseCase: GetAuthenticatedUserIdUseCase,
 ) : GetCurrentUserUseCase {
-    override operator fun invoke(): Uuid = authenticatedUserProvider.requireCurrentUserId()
+    override operator fun invoke(): Uuid = getAuthenticatedUserIdUseCase.requireCurrentUserId()
 }

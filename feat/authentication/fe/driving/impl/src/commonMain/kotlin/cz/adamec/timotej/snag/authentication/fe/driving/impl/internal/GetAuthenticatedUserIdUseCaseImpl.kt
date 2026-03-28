@@ -12,14 +12,14 @@
 
 package cz.adamec.timotej.snag.authentication.fe.driving.impl.internal
 
-import cz.adamec.timotej.snag.authentication.fe.app.api.AuthenticatedUserProvider
+import cz.adamec.timotej.snag.authentication.fe.app.api.GetAuthenticatedUserIdUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlin.uuid.Uuid
 
-internal class AuthenticatedUserProviderImpl(
+internal class GetAuthenticatedUserIdUseCaseImpl(
     userId: Uuid,
-) : AuthenticatedUserProvider {
+) : GetAuthenticatedUserIdUseCase {
     private val _currentUserId = MutableStateFlow<Uuid?>(userId)
     override val currentUserId: StateFlow<Uuid?> = _currentUserId
 
