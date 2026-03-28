@@ -90,7 +90,7 @@ internal fun FullscreenPhotoViewer(
                                     pagerState.currentPage + 1,
                                     photos.size,
                                 ),
-                            color = MaterialTheme.colorScheme.inverseOnSurface,
+                            color = MaterialTheme.colorScheme.onSurface,
                         )
                     }
                 },
@@ -99,7 +99,7 @@ internal fun FullscreenPhotoViewer(
                         onClick = onDismiss,
                         colors =
                             IconButtonDefaults.iconButtonColors(
-                                contentColor = MaterialTheme.colorScheme.inverseOnSurface,
+                                contentColor = MaterialTheme.colorScheme.onSurface,
                             ),
                     ) {
                         Icon(
