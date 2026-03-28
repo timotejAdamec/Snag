@@ -37,9 +37,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.BackNavigationIcon
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.CollapsableTopAppBarScaffold
+import cz.adamec.timotej.snag.lib.design.fe.theme.SnagPreview
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectAssignments.ui.components.AssignedUserListItem
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectAssignments.vm.AssignedUserItem
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectAssignments.vm.ProjectAssignmentsUiState
@@ -150,7 +153,11 @@ private fun AddUserBottomSheetContent(
             key = { it.id },
         ) { userItem ->
             ListItem(
-                modifier = Modifier.clickable { onUserClick(userItem.id) },
+                modifier =
+                    Modifier
+                        .padding(horizontal = 8.dp, vertical = 2.dp)
+                        .clip(MaterialTheme.shapes.small)
+                        .clickable { onUserClick(userItem.id) },
                 leadingContent = {
                     Icon(
                         painter = painterResource(DesignRes.drawable.ic_person),
