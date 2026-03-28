@@ -20,12 +20,12 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.window.Dialog
@@ -58,7 +58,7 @@ internal fun FullscreenPhotoViewer(
             modifier =
                 Modifier
                     .fillMaxSize()
-                    .background(Color.Black),
+                    .background(MaterialTheme.colorScheme.scrim),
         ) {
             val pagerState =
                 rememberPagerState(
@@ -90,7 +90,7 @@ internal fun FullscreenPhotoViewer(
                                     pagerState.currentPage + 1,
                                     photos.size,
                                 ),
-                            color = Color.White,
+                            color = MaterialTheme.colorScheme.inverseOnSurface,
                         )
                     }
                 },
@@ -99,7 +99,7 @@ internal fun FullscreenPhotoViewer(
                         onClick = onDismiss,
                         colors =
                             IconButtonDefaults.iconButtonColors(
-                                contentColor = Color.White,
+                                contentColor = MaterialTheme.colorScheme.inverseOnSurface,
                             ),
                     ) {
                         Icon(
@@ -110,7 +110,7 @@ internal fun FullscreenPhotoViewer(
                 },
                 colors =
                     TopAppBarDefaults.topAppBarColors(
-                        containerColor = Color.Black.copy(alpha = 0.5f),
+                        containerColor = MaterialTheme.colorScheme.scrim.copy(alpha = 0.5f),
                     ),
             )
         }
