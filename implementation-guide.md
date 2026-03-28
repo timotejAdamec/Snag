@@ -10,7 +10,7 @@ This document is a reference for the implementation team. It describes what the 
 
 1. **FE: User assignment UI** — FE assign/unassign use cases + UI not yet implemented. Local assignment cache, pull sync, cascade delete/restore, and query use case are done. *(§6 #2, FP4c, FP4d)*
 2. ~~**FE: Role-based UI gating**~~ — **Done.** FE use cases (`CanCreateProjectUseCase`, `CanCloseProjectUseCase`, `CanManageClientsUseCase`, `GetAllowedRoleOptionsUseCase`) wrap shared KMP rules with `GetCurrentUserFlowUseCase`, emitting reactive `Flow<Boolean>`. All ViewModels collect these into state booleans (deny-first defaults: `false` until confirmed). UI buttons hidden/disabled based on authorization. *(NP13 FE)*
-3. **EntraID authentication** — Not started. BE: validate EntraID JWT (currently mock `X-User-Id` header). FE: OAuth2/OIDC flow, token storage, refresh. *(§4, FP34, FP35, NP12)*
+3. ~~**EntraID authentication**~~ — **Done.** BE: dual-mode `CallCurrentUserPlugin` validates EntraID JWT via `EntraIdJwtVerifier` in production, retains mock header for dev. Auto-creates user on first login. FE: `AuthTokenProvider` with mock/MSAL implementations, login screen gate, `CurrentUserIdStore`. Build-time config via BuildKonfig (`MOCK_AUTH`, `ENTRA_ID_TENANT_ID`, `ENTRA_ID_CLIENT_ID`). *(§4, FP34, FP35, NP12)*
 4. **Service protocol PDF** — Not started. Second report type with work description and signature fields. *(§5, FP32b)*
 5. ~~**FE: Role management UI**~~ — **Done.** `GetAllowedRoleOptionsUseCase` computes allowed role transitions per target user; `UserManagementViewModel` collects into `allowedRoleOptions` per `UserItem`; `RoleDropdown` filters options accordingly. *(§6 #4)*
 6. ~~**Closed-project access gap**~~ — **Not a gap.** `CanAccessProjectRule` intentionally does not check `isClosed`; `AreProjectEntitiesEditableRule` handles it separately. Both rules are composed at the use case layer: FE via `CanEditProjectEntitiesUseCaseImpl`, BE via sub-entity route use cases. Separation by design — access and editability are orthogonal concerns.
@@ -91,10 +91,10 @@ When a project is **closed**, only the creator retains access. Assigned users lo
 
 ## 4. Authentication
 
-- [ ] Login exclusively via **corporate Microsoft EntraID**.
+- [x] Login exclusively via **corporate Microsoft EntraID**. *(BE: `CallCurrentUserPlugin` dual-mode — validates EntraID JWT via `EntraIdJwtVerifier` in production, retains `X-User-Id` header mock mode for dev/testing via `SnagConfig.mockAuth`. JWT verification uses `auth0/java-jwt` + `auth0/jwks-rsa` against EntraID JWKS endpoint with key caching. FE: `AuthTokenProvider` interface with `MockAuthTokenProvider` for dev and `MsalAuthTokenProvider` for Android MSAL OAuth2/OIDC. `CallCurrentUserConfiguration` uses Ktor client plugin to inject `Authorization: Bearer` header in production or `X-User-Id` in mock mode. Login screen gates app entry via `CurrentUserIdStore`. Build-time config: `MOCK_AUTH`, `ENTRA_ID_TENANT_ID`, `ENTRA_ID_CLIENT_ID` in BuildKonfig.)*
 - [x] No invite flow, no password management in the system.
-- [ ] A user without a valid EntraID token has no access whatsoever.
-- [x] After successful authentication the system maps the EntraID identity to a role stored in the system. *(infrastructure done: `CallCurrentUserPlugin` resolves user from `X-User-Id` header and maps to `CallCurrentUser` with `UserRole`; EntraID JWT validation not yet implemented)*
+- [x] A user without a valid EntraID token has no access whatsoever. *(BE: `CallCurrentUserPlugin` only sets `CallCurrentUser` attribute on valid JWT or valid mock header; routes call `currentUser()` which throws `UnauthenticatedException` → 401 when attribute is missing. FE: `CurrentUserIdStore` must be set before `MainScreen` loads — login screen shown otherwise.)*
+- [x] After successful authentication the system maps the EntraID identity to a role stored in the system. *(BE: `CallCurrentUserPlugin` extracts `oid` claim from JWT, resolves user via `UsersDb.getUserByEntraId()`, auto-creates user with `role=null` on first login. User's role is stored in DB and synced to FE.)*
 
 ---
 
@@ -115,7 +115,7 @@ The following features are new compared to the original analysis (which had no r
 
 1. - [x] **Project closure and reopening** — projects can be closed and reopened; access is determined by project state and roles. *(BE: close/reopen mechanism + `CanCloseProjectRule` + `CanAccessProjectRule` visibility filtering all done on project routes; sub-entity routes wired via `CanAccessProjectUseCase`. FE: close/reopen button gated via `CanCloseProjectUseCase`; entity editing gated via `CanEditProjectEntitiesUseCase`.)*
 2. - [ ] **User assignment to / removal from project** — leads can add/remove technicians or service workers. *(BE: API + DB + role-restricted access enforced via `CanAssignUserToProjectRule` — Admin/VP/VS allowed; TP/Ser/None denied. FE: local assignment cache with full-replacement pull sync, cascade delete/restore on project deletion, query use case. FE assign/unassign use cases + UI not yet implemented.)*
-3. - [ ] **Authentication (EntraID)** — mandatory Microsoft EntraID login (standalone mechanism, not a UC).
+3. - [x] **Authentication (EntraID)** — mandatory Microsoft EntraID login (standalone mechanism, not a UC). *(BE: dual-mode `CallCurrentUserPlugin` with JWT validation via `EntraIdJwtVerifier` + mock header fallback. FE: `AuthTokenProvider` with mock/MSAL implementations, login screen gate, `CurrentUserIdStore` for current user resolution. Build-time config via BuildKonfig.)*
 4. - [x] **Role management (UC7)** — admin manages all roles; passport lead delegates technician role; service lead delegates service worker role. *(BE API done: role set via PUT /users/{id}; authorization enforced via `CanSetUserRoleRule`. FE: `GetAllowedRoleOptionsUseCase` computes allowed transitions; `UserManagementViewModel` populates `allowedRoleOptions` per user; `RoleDropdown` filters visible options.)*
 5. - [x] **Inspection deletion** — UC5 Scenario E. *(full-stack: BE API + DB soft delete + sync, FE use case + local delete + sync enqueue, FE UI delete button + confirmation dialog)*
 6. - [x] **Client deletion** — UC2 Scenario F. A client can only be deleted if no project references it. *(full-stack: CanDeleteClientRule in business/rules, FE CanDeleteClientUseCase + delete guard in BE DeleteClientUseCaseImpl, FE UI delete button + confirmation dialog in client edit screen)*
@@ -135,8 +135,8 @@ The following features are new compared to the original analysis (which had no r
 | FP10 | Delete client — only if not referenced by any project | UC2 | - [x] Done |
 | FP31 | Delete inspection | UC5 | - [x] Done |
 | FP32b | Generate service protocol — PDF with work description and signature fields | UC6 | - [ ] Not started |
-| FP34 | Authentication via Microsoft EntraID | — | - [ ] Not started |
-| FP35 | Deny access without authentication | — | - [ ] Not started |
+| FP34 | Authentication via Microsoft EntraID | — | - [x] BE: dual-mode `CallCurrentUserPlugin` (JWT via `EntraIdJwtVerifier` + mock header). FE: `AuthTokenProvider` with mock/MSAL, login gate. |
+| FP35 | Deny access without authentication | — | - [x] BE: unauthenticated requests get no `CallCurrentUser` → `currentUser()` throws → 401. FE: login screen gates app entry. |
 | FP36 | Role management by administrator | UC7 | - [x] BE API done + authorization enforced via `CanSetUserRoleRule` (Admin: any role change) |
 | FP37 | Delegate and remove passport technician role | UC7 | - [x] BE API done + authorization enforced via `CanSetUserRoleRule` (Passport Lead: None↔Passport Technician) |
 | FP38 | Delegate and remove service worker role | UC7 | - [x] BE API done + authorization enforced via `CanSetUserRoleRule` (Service Lead: None↔Service Worker) |
@@ -146,8 +146,8 @@ The following features are new compared to the original analysis (which had no r
 ## 8. Non-Functional Requirements for Implementation
 
 ### NP12 — Authentication via EntraID
-- [ ] **Backend**: validate EntraID JWT on every protected endpoint; reject requests without valid token.
-- [ ] **Frontend**: implement OAuth2 / OIDC flow with EntraID; store tokens securely; refresh tokens before expiry.
+- [x] **Backend**: validate EntraID JWT on every protected endpoint; reject requests without valid token. *(Dual-mode `CallCurrentUserPlugin`: production validates JWT via `EntraIdJwtVerifier` using `auth0/java-jwt` + `auth0/jwks-rsa` against EntraID JWKS; dev uses `X-User-Id` header via `SnagConfig.mockAuth`. Auto-creates user on first login.)*
+- [x] **Frontend**: implement OAuth2 / OIDC flow with EntraID; store tokens securely; refresh tokens before expiry. *(`AuthTokenProvider` interface with `MockAuthTokenProvider` for dev and `MsalAuthTokenProvider` for Android. MSAL handles token caching and refresh via `acquireTokenSilently`. `CallCurrentUserConfiguration` injects Bearer token via Ktor client plugin. Login screen gates app via `CurrentUserIdStore`.)*
 
 ### NP13 — Role-based authorisation
 - [x] **Backend**: authorization fully wired across all routes. Project routes: `CanCreateProjectRule`, `CanCloseProjectRule`, `CanAccessProjectRule`, `CanAssignUserToProjectRule`. Sub-entity routes (structures, findings, inspections, finding photos): `CanAccessProjectUseCase` with project resolution from URL path or entity lookup (three-hop for finding photos: finding → structure → project). Client routes: `CanManageClientsRule` (role-based, denies Passport Technician and None). User routes: `CanSetUserRoleRule` (delegation scoping — Admin: any, Passport Lead: None↔Passport Technician, Service Lead: None↔Service Worker). Report route: `CanAccessProjectUseCase`.
@@ -158,7 +158,7 @@ The following features are new compared to the original analysis (which had no r
   - `CanEditProjectEntitiesUseCase` — gates entity editing (access + project-not-closed via `CanAccessProjectRule` + `AreProjectEntitiesEditableRule`); feeds into `ProjectDetailsUiState.isProjectEditable` which cascades to edit, delete, new structure/inspection buttons
   - `CanManageClientsUseCase` — gates client create/edit/delete (role-based via `CanManageClientsRule`)
   - `GetAllowedRoleOptionsUseCase` — returns `Flow<Set<UserRole?>>` of assignable roles per target; filters `RoleDropdown` options
-  - Current user is still a hardcoded UUID (`GetCurrentUserUseCaseImpl`) — will be replaced when EntraID authentication is implemented. The reactive `GetCurrentUserFlowUseCase` reads user data (including role) from local DB, so gating works correctly once the user entity exists.
+  - Current user is resolved via `CurrentUserIdStore` (set by `AuthTokenProvider` during initialization). `GetCurrentUserUseCaseImpl` reads from the store; `GetCurrentUserFlowUseCaseImpl` uses this to query user data (including role) from local DB. In mock mode, the store is set eagerly at startup. In production, it will be set after MSAL login + user sync.
   - **Stale data issue**: when a user's role changes or they are unassigned, the local DB retains all previously synced data (projects, structures, findings, photos). Backend stops serving new updates, but old data remains readable offline. Backend blocks unauthorized writes (403), so no data corruption, but user can still read data they should no longer access. Inherent to offline-first architecture — possible fix: detect projects no longer returned by backend sync and purge local copies.
 
 ### Detailed Permission Matrix

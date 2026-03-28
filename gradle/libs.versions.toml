@@ -48,6 +48,9 @@ filekit = "0.13.0"
 kotlinx-io = "0.7.0"
 buildkonfig = "0.17.1"
 openpdf = "3.0.3"
+java-jwt = "4.5.0"
+jwks-rsa = "0.22.1"
+msal = "5.6.0"
 
 [libraries]
 kotlin-gradle = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlinGradlePlugin" }
@@ -160,6 +163,11 @@ filekit-core = { module = "io.github.vinceglb:filekit-core", version.ref = "file
 kotlinx-io-core = { module = "org.jetbrains.kotlinx:kotlinx-io-core", version.ref = "kotlinx-io" }
 filekit-dialogs-compose = { module = "io.github.vinceglb:filekit-dialogs-compose", version.ref = "filekit" }
 openpdf = { module = "com.github.librepdf:openpdf", version.ref = "openpdf" }
+ktor-server-auth = { module = "io.ktor:ktor-server-auth-jvm", version.ref = "ktor" }
+ktor-server-auth-jwt = { module = "io.ktor:ktor-server-auth-jwt-jvm", version.ref = "ktor" }
+java-jwt = { module = "com.auth0:java-jwt", version.ref = "java-jwt" }
+jwks-rsa = { module = "com.auth0:jwks-rsa", version.ref = "jwks-rsa" }
+msal = { module = "com.microsoft.identity.client:msal", version.ref = "msal" }
 
 [plugins]
 snagMultiplatformModule = { id = "libs.plugins.snag.multiplatform.module" }

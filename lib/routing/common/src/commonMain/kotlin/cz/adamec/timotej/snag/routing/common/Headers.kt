@@ -12,5 +12,7 @@
 
 package cz.adamec.timotej.snag.routing.common
 
-// TODO Replace with EntraID JWT token-based authentication
+/** Used only in mock-auth mode (dev/testing). Production uses Authorization Bearer token. */
 const val USER_ID_HEADER = "X-User-Id"
+
+const val AUTHORIZATION_HEADER = "Authorization"

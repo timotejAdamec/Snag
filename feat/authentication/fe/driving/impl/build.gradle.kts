@@ -21,5 +21,8 @@ kotlin {
             implementation(projects.lib.routing.common)
             implementation(libs.ktor.client.core)
         }
+        androidMain.dependencies {
+            implementation(libs.msal)
+        }
     }
 }

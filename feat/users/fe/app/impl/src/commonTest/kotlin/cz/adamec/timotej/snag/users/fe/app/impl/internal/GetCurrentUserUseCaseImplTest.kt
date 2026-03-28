@@ -12,16 +12,30 @@
 
 package cz.adamec.timotej.snag.users.fe.app.impl.internal
 
+import cz.adamec.timotej.snag.core.foundation.fe.CurrentUserIdStore
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.uuid.Uuid
 
 class GetCurrentUserUseCaseImplTest {
-    private val useCase = GetCurrentUserUseCaseImpl()
+    private val currentUserIdStore = CurrentUserIdStore()
+    private val useCase = GetCurrentUserUseCaseImpl(currentUserIdStore)
 
     @Test
-    fun `returns hardcoded user id`() {
+    fun `returns current user id when set`() {
+        val expectedId = Uuid.parse("00000000-0000-0000-0000-000000000001")
+        currentUserIdStore.set(expectedId)
+
         val result = useCase()
-        assertEquals(Uuid.parse("00000000-0000-0000-0005-000000000001"), result)
+
+        assertEquals(expectedId, result)
+    }
+
+    @Test
+    fun `throws when current user id not set`() {
+        assertFailsWith<IllegalStateException> {
+            useCase()
+        }
     }
 }

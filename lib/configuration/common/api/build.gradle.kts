@@ -41,6 +41,18 @@ val serverTarget =
     findProperty("snag.serverTarget")?.toString()
         ?: buildProfile.getProperty("snag.serverTarget")
         ?: "localhost"
+val mockAuth =
+    findProperty("snag.mockAuth")?.toString()
+        ?: buildProfile.getProperty("snag.mockAuth")
+        ?: "true"
+val entraIdTenantId =
+    findProperty("snag.entraIdTenantId")?.toString()
+        ?: buildProfile.getProperty("snag.entraIdTenantId")
+        ?: ""
+val entraIdClientId =
+    findProperty("snag.entraIdClientId")?.toString()
+        ?: buildProfile.getProperty("snag.entraIdClientId")
+        ?: ""
 
 buildkonfig {
     packageName = "cz.adamec.timotej.snag.configuration.common"
@@ -75,6 +87,24 @@ buildkonfig {
             com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING,
             "VERSION_NAME",
             SnagVersioning.versionName(project).get(),
+            const = true,
+        )
+        buildConfigField(
+            com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING,
+            "MOCK_AUTH",
+            mockAuth,
+            const = true,
+        )
+        buildConfigField(
+            com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING,
+            "ENTRA_ID_TENANT_ID",
+            entraIdTenantId,
+            const = true,
+        )
+        buildConfigField(
+            com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING,
+            "ENTRA_ID_CLIENT_ID",
+            entraIdClientId,
             const = true,
         )
     }

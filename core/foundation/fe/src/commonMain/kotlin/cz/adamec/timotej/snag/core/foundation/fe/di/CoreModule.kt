@@ -13,9 +13,12 @@
 package cz.adamec.timotej.snag.core.foundation.fe.di
 
 import cz.adamec.timotej.snag.core.foundation.common.di.commonCoreModule
+import cz.adamec.timotej.snag.core.foundation.fe.CurrentUserIdStore
+import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 
 val frontendCoreModule =
     module {
         includes(commonCoreModule)
+        singleOf(::CurrentUserIdStore)
     }

@@ -12,24 +12,29 @@
 
 package cz.adamec.timotej.snag.authentication.fe.driving.impl.internal
 
+import cz.adamec.timotej.snag.configuration.common.CommonConfiguration
 import cz.adamec.timotej.snag.network.fe.HttpClientConfiguration
+import cz.adamec.timotej.snag.routing.common.AUTHORIZATION_HEADER
 import cz.adamec.timotej.snag.routing.common.USER_ID_HEADER
 import io.ktor.client.HttpClientConfig
-import io.ktor.client.plugins.defaultRequest
-import io.ktor.client.request.header
+import io.ktor.client.plugins.api.createClientPlugin
 
-// TODO Replace with EntraID JWT token-based authentication
-internal class CallCurrentUserConfiguration : HttpClientConfiguration {
+@Suppress("LabeledExpression")
+internal class CallCurrentUserConfiguration(
+    private val authTokenProvider: AuthTokenProvider,
+) : HttpClientConfiguration {
     override fun HttpClientConfig<*>.setup() {
-        defaultRequest {
-            header(
-                key = USER_ID_HEADER,
-                value = DUMMY_USER_ID,
-            )
-        }
-    }
-
-    private companion object {
-        const val DUMMY_USER_ID = "00000000-0000-0000-0005-000000000001"
+        install(
+            createClientPlugin("AuthHeaderPlugin") {
+                onRequest { request, _ ->
+                    val token = authTokenProvider.getAccessToken() ?: return@onRequest
+                    if (CommonConfiguration.mockAuth) {
+                        request.headers.append(USER_ID_HEADER, token)
+                    } else {
+                        request.headers.append(AUTHORIZATION_HEADER, "Bearer $token")
+                    }
+                }
+            },
+        )
     }
 }

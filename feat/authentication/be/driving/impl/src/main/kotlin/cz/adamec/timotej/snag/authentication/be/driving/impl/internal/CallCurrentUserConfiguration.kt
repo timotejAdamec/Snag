@@ -13,14 +13,34 @@
 package cz.adamec.timotej.snag.authentication.be.driving.impl.internal
 
 import cz.adamec.timotej.snag.configuration.be.AppConfiguration
+import cz.adamec.timotej.snag.configuration.be.SnagConfig
 import cz.adamec.timotej.snag.users.be.app.api.GetUserUseCase
+import cz.adamec.timotej.snag.users.be.ports.UsersDb
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
 
 internal class CallCurrentUserConfiguration(
     private val getUserUseCase: GetUserUseCase,
+    private val usersDb: UsersDb,
 ) : AppConfiguration {
     override fun Application.setup() {
-        install(callCurrentUserPlugin(getUserUseCase))
+        val entraIdJwtVerifier =
+            if (!SnagConfig.mockAuth) {
+                EntraIdJwtVerifier(
+                    tenantId = SnagConfig.entraIdTenantId,
+                    clientId = SnagConfig.entraIdClientId,
+                )
+            } else {
+                null
+            }
+
+        install(
+            callCurrentUserPlugin(
+                getUserUseCase = getUserUseCase,
+                usersDb = usersDb,
+                mockAuth = SnagConfig.mockAuth,
+                entraIdJwtVerifier = entraIdJwtVerifier,
+            ),
+        )
     }
 }

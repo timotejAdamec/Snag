@@ -12,14 +12,12 @@
 
 package cz.adamec.timotej.snag.users.fe.app.impl.internal
 
+import cz.adamec.timotej.snag.core.foundation.fe.CurrentUserIdStore
 import cz.adamec.timotej.snag.users.fe.app.api.GetCurrentUserUseCase
 import kotlin.uuid.Uuid
 
-// TODO Replace hardcoded user ID with real authentication (e.g., EntraID token resolution)
-internal class GetCurrentUserUseCaseImpl : GetCurrentUserUseCase {
-    override operator fun invoke(): Uuid = Uuid.parse(HARDCODED_CURRENT_USER_ID)
-
-    private companion object {
-        const val HARDCODED_CURRENT_USER_ID = "00000000-0000-0000-0005-000000000001"
-    }
+internal class GetCurrentUserUseCaseImpl(
+    private val currentUserIdStore: CurrentUserIdStore,
+) : GetCurrentUserUseCase {
+    override operator fun invoke(): Uuid = currentUserIdStore.requireCurrentUserId()
 }
