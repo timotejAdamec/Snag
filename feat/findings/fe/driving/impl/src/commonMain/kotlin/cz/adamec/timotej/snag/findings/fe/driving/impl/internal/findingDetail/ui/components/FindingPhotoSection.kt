@@ -68,6 +68,16 @@ internal fun FindingPhotoSection(
     onDeletePhoto: (Uuid) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    var fullscreenPhotoIndex by remember { mutableStateOf<Int?>(null) }
+
+    fullscreenPhotoIndex?.let { index ->
+        FullscreenPhotoViewer(
+            photos = photos,
+            initialPhotoIndex = index,
+            onDismiss = { fullscreenPhotoIndex = null },
+        )
+    }
+
     val scope = rememberCoroutineScope()
     val pickerLauncher =
         rememberFilePickerLauncher(
@@ -109,11 +119,12 @@ internal fun FindingPhotoSection(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            photos.forEach { photo ->
+            photos.forEachIndexed { index, photo ->
                 FindingPhotoThumbnail(
                     photo = photo,
                     canEdit = canEdit && canModifyPhotos,
                     onDeletePhoto = onDeletePhoto,
+                    onClick = { fullscreenPhotoIndex = index },
                 )
             }
             if (isAddingPhoto) {
@@ -139,6 +150,7 @@ private fun FindingPhotoThumbnail(
     photo: AppFindingPhoto,
     canEdit: Boolean,
     onDeletePhoto: (Uuid) -> Unit,
+    onClick: () -> Unit,
 ) {
     var isShowingDeleteConfirmation by remember { mutableStateOf(false) }
 
@@ -159,6 +171,7 @@ private fun FindingPhotoThumbnail(
     ) {
         Surface(
             modifier = Modifier.fillMaxSize(),
+            onClick = onClick,
             shape = MaterialTheme.shapes.medium,
             color = MaterialTheme.colorScheme.surfaceContainerLow,
         ) {
