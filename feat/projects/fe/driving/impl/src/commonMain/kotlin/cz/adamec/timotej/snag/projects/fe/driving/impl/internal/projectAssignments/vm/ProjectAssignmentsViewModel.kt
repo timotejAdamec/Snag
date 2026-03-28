@@ -103,16 +103,26 @@ internal class ProjectAssignmentsViewModel(
             }
         }
 
+    @Suppress("LabeledExpression")
     fun onAssignUser(userId: Uuid) =
         viewModelScope.launch {
+            if (!vmState.value.canManageAssignments) {
+                errorEventsChannel.send(UiError.Unknown)
+                return@launch
+            }
             assignUserToProjectUseCase(
                 projectId = projectId,
                 userId = userId,
             )
         }
 
+    @Suppress("LabeledExpression")
     fun onRemoveUser(userId: Uuid) =
         viewModelScope.launch {
+            if (!vmState.value.canManageAssignments) {
+                errorEventsChannel.send(UiError.Unknown)
+                return@launch
+            }
             removeUserFromProjectUseCase(
                 projectId = projectId,
                 userId = userId,
