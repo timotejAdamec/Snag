@@ -19,6 +19,7 @@ import cz.adamec.timotej.snag.configuration.be.AppConfiguration
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.core.foundation.common.TimestampProvider
 import cz.adamec.timotej.snag.feat.findings.be.model.BackendFindingData
+import cz.adamec.timotej.snag.feat.findings.be.model.BackendFindingPhotoData
 import cz.adamec.timotej.snag.feat.findings.business.FindingType
 import cz.adamec.timotej.snag.feat.findings.business.Importance
 import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
@@ -26,6 +27,7 @@ import cz.adamec.timotej.snag.feat.findings.business.Term
 import cz.adamec.timotej.snag.feat.inspections.be.model.BackendInspectionData
 import cz.adamec.timotej.snag.feat.inspections.be.ports.InspectionsDb
 import cz.adamec.timotej.snag.feat.structures.be.model.BackendStructureData
+import cz.adamec.timotej.snag.findings.be.ports.FindingPhotosDb
 import cz.adamec.timotej.snag.findings.be.ports.FindingsDb
 import cz.adamec.timotej.snag.projects.be.model.BackendProjectData
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
@@ -41,6 +43,7 @@ internal class DevDataSeederConfiguration(
     private val clientsDb: ClientsDb,
     private val structuresDb: StructuresDb,
     private val findingsDb: FindingsDb,
+    private val findingPhotosDb: FindingPhotosDb,
     private val inspectionsDb: InspectionsDb,
     private val usersDb: UsersDb,
     private val timestampProvider: TimestampProvider,
@@ -52,6 +55,7 @@ internal class DevDataSeederConfiguration(
             seedProjects()
             seedStructures()
             seedFindings()
+            seedFindingPhotos()
             seedInspections()
         }
     }
@@ -274,6 +278,49 @@ internal class DevDataSeederConfiguration(
     }
 
     @Suppress("MagicNumber", "UnderscoresInNumericLiterals")
+    private suspend fun seedFindingPhotos() {
+        val now = timestampProvider.getNowTimestamp()
+        listOf(
+            BackendFindingPhotoData(
+                id = Uuid.parse(FINDING_PHOTO_1),
+                findingId = Uuid.parse(FINDING_1),
+                url = "https://images.unsplash.com/photo-1607400201889-565b1ee75f8e?w=800",
+                createdAt = Timestamp(now.value - 3600000),
+            ),
+            BackendFindingPhotoData(
+                id = Uuid.parse(FINDING_PHOTO_2),
+                findingId = Uuid.parse(FINDING_1),
+                url = "https://images.unsplash.com/photo-1590274853856-f22d5ee3d228?w=800",
+                createdAt = Timestamp(now.value - 3500000),
+            ),
+            BackendFindingPhotoData(
+                id = Uuid.parse(FINDING_PHOTO_3),
+                findingId = Uuid.parse(FINDING_2),
+                url = "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800",
+                createdAt = Timestamp(now.value - 1800000),
+            ),
+            BackendFindingPhotoData(
+                id = Uuid.parse(FINDING_PHOTO_4),
+                findingId = Uuid.parse(FINDING_3),
+                url = "https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=800",
+                createdAt = Timestamp(now.value - 900000),
+            ),
+            BackendFindingPhotoData(
+                id = Uuid.parse(FINDING_PHOTO_5),
+                findingId = Uuid.parse(FINDING_3),
+                url = "https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=800",
+                createdAt = Timestamp(now.value - 800000),
+            ),
+            BackendFindingPhotoData(
+                id = Uuid.parse(FINDING_PHOTO_6),
+                findingId = Uuid.parse(FINDING_3),
+                url = "https://images.unsplash.com/photo-1513467535987-fd81bc7d62f8?w=800",
+                createdAt = Timestamp(now.value - 700000),
+            ),
+        ).forEach { findingPhotosDb.savePhoto(it) }
+    }
+
+    @Suppress("MagicNumber", "UnderscoresInNumericLiterals")
     private suspend fun seedInspections() {
         val now = timestampProvider.getNowTimestamp()
         listOf(
@@ -343,6 +390,12 @@ internal class DevDataSeederConfiguration(
         private const val FINDING_3 = "00000000-0000-0000-0002-000000000003"
         private const val FINDING_4 = "00000000-0000-0000-0002-000000000004"
         private const val FINDING_5 = "00000000-0000-0000-0002-000000000005"
+        private const val FINDING_PHOTO_1 = "00000000-0000-0000-0006-000000000001"
+        private const val FINDING_PHOTO_2 = "00000000-0000-0000-0006-000000000002"
+        private const val FINDING_PHOTO_3 = "00000000-0000-0000-0006-000000000003"
+        private const val FINDING_PHOTO_4 = "00000000-0000-0000-0006-000000000004"
+        private const val FINDING_PHOTO_5 = "00000000-0000-0000-0006-000000000005"
+        private const val FINDING_PHOTO_6 = "00000000-0000-0000-0006-000000000006"
         private const val INSPECTION_1 = "00000000-0000-0000-0004-000000000001"
         private const val INSPECTION_2 = "00000000-0000-0000-0004-000000000002"
         private const val INSPECTION_3 = "00000000-0000-0000-0004-000000000003"
