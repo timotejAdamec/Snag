@@ -251,7 +251,6 @@ internal fun FindingDetailContent(
                             Modifier
                                 .align(Alignment.BottomCenter),
                         expanded = true,
-                        colors = FloatingToolbarDefaults.vibrantFloatingToolbarColors(),
                     ) {
                         IconButton(
                             enabled = state.canEdit,
