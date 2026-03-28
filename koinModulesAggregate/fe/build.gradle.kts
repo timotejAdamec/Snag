@@ -27,6 +27,7 @@ kotlin {
             implementation(projects.core.business.rules.impl)
 
             // Authentication
+            implementation(projects.feat.authentication.fe.driving.api)
             implementation(projects.feat.authentication.fe.driving.impl)
 
             // Sync layer

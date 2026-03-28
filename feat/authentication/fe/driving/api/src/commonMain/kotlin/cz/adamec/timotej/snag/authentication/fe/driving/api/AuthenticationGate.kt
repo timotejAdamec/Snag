@@ -12,59 +12,22 @@
 
 package cz.adamec.timotej.snag.authentication.fe.driving.api
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import cz.adamec.timotej.snag.authentication.fe.app.api.GetAuthenticatedUserIdUseCase
-import org.koin.compose.getKoin
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun AuthenticationGate(authenticatedContent: @Composable () -> Unit) {
-    val getAuthenticatedUserIdUseCase = getKoin().get<GetAuthenticatedUserIdUseCase>()
-    val currentUserId by getAuthenticatedUserIdUseCase.currentUserId.collectAsStateWithLifecycle()
+fun AuthenticationGate(
+    loginContent: @Composable () -> Unit,
+    authenticatedContent: @Composable () -> Unit,
+) {
+    val viewModel: AuthenticationViewModel = koinViewModel()
+    val state by viewModel.state.collectAsStateWithLifecycle()
 
-    if (currentUserId != null) {
+    if (state.isAuthenticated) {
         authenticatedContent()
     } else {
-        LoginScreen()
-    }
-}
-
-@Composable
-private fun LoginScreen() {
-    Column(
-        modifier =
-            Modifier
-                .fillMaxSize()
-                .padding(32.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-    ) {
-        Text(
-            text = "Snag",
-            style = MaterialTheme.typography.displayMedium,
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(
-            text = "Sign in to continue",
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-        Spacer(modifier = Modifier.height(32.dp))
-        Button(onClick = { /* MSAL/OAuth sign-in flow */ }) {
-            Text("Sign in with Microsoft")
-        }
+        loginContent()
     }
 }
