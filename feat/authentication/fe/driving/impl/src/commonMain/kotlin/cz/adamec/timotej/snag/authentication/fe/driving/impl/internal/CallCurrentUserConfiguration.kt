@@ -30,6 +30,6 @@ internal class CallCurrentUserConfiguration : HttpClientConfiguration {
     }
 
     private companion object {
-        const val DUMMY_USER_ID = "00000000-0000-0000-0000-000000000001"
+        const val DUMMY_USER_ID = "00000000-0000-0000-0005-000000000001"
     }
 }
