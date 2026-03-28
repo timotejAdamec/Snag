@@ -26,6 +26,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -33,8 +34,11 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.window.Dialog
 import com.github.panpf.zoomimage.CoilZoomAsyncImage
 import com.github.panpf.zoomimage.rememberCoilZoomState
+import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.feat.findings.app.model.AppFindingPhoto
+import cz.adamec.timotej.snag.feat.findings.app.model.AppFindingPhotoData
 import cz.adamec.timotej.snag.lib.design.fe.dialog.fullscreenDialogProperties
+import kotlin.uuid.Uuid
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import snag.feat.findings.fe.driving.impl.generated.resources.Res
@@ -120,4 +124,40 @@ internal fun FullscreenPhotoViewer(
             )
         }
     }
+}
+
+@Preview
+@Composable
+private fun FullscreenPhotoViewerSinglePreview() {
+    FullscreenPhotoViewer(
+        photos =
+            listOf(
+                AppFindingPhotoData(
+                    id = Uuid.random(),
+                    findingId = Uuid.random(),
+                    url = "",
+                    createdAt = Timestamp(0L),
+                ),
+            ),
+        initialPhotoIndex = 0,
+        onDismiss = {},
+    )
+}
+
+@Preview
+@Composable
+private fun FullscreenPhotoViewerMultiplePreview() {
+    FullscreenPhotoViewer(
+        photos =
+            List(5) {
+                AppFindingPhotoData(
+                    id = Uuid.random(),
+                    findingId = Uuid.random(),
+                    url = "",
+                    createdAt = Timestamp(0L),
+                )
+            },
+        initialPhotoIndex = 2,
+        onDismiss = {},
+    )
 }
