@@ -55,7 +55,7 @@ import snag.lib.design.fe.generated.resources.ic_delete
 import kotlin.uuid.Uuid
 import snag.lib.design.fe.generated.resources.Res as DesignRes
 
-private val ThumbnailSize = 80.dp
+private val ThumbnailSize = 120.dp
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
