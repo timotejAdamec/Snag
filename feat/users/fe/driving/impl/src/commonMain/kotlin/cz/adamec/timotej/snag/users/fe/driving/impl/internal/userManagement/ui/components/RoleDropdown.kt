@@ -29,7 +29,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import cz.adamec.timotej.snag.authorization.business.UserRole
-import cz.adamec.timotej.snag.users.fe.driving.impl.internal.userManagement.ui.toDisplayName
+import cz.adamec.timotej.snag.users.fe.driving.api.toDisplayName
 import org.jetbrains.compose.resources.stringResource
 import snag.feat.users.fe.driving.impl.generated.resources.Res
 import snag.feat.users.fe.driving.impl.generated.resources.no_role

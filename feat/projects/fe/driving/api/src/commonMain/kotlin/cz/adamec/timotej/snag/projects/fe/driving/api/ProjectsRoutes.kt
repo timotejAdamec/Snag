@@ -34,3 +34,11 @@ interface ProjectEditRouteFactory {
 interface ProjectDetailRouteFactory {
     fun create(projectId: Uuid): ProjectDetailRoute
 }
+
+interface ProjectAssignmentsRoute : SnagNavRoute {
+    val projectId: Uuid
+}
+
+interface ProjectAssignmentsRouteFactory {
+    fun create(projectId: Uuid): ProjectAssignmentsRoute
+}

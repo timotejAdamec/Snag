@@ -30,4 +30,9 @@
     <string name="download_report">Download report</string>
     <string name="close_project">Close project</string>
     <string name="reopen_project">Reopen project</string>
+    <string name="manage_assignments">Manage assignments</string>
+    <string name="project_assignments_title">Assigned Users</string>
+    <string name="add_user_to_project">Add user</string>
+    <string name="remove_user_from_project">Remove</string>
+    <string name="no_assigned_users">No users assigned to this project</string>
 </resources>

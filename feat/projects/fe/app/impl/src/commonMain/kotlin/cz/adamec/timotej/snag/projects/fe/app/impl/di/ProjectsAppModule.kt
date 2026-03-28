@@ -14,8 +14,11 @@ package cz.adamec.timotej.snag.projects.fe.app.impl.di
 
 import cz.adamec.timotej.snag.projects.business.AreProjectEntitiesEditableRule
 import cz.adamec.timotej.snag.projects.business.CanAccessProjectRule
+import cz.adamec.timotej.snag.projects.business.CanAssignUserToProjectRule
 import cz.adamec.timotej.snag.projects.business.CanCloseProjectRule
 import cz.adamec.timotej.snag.projects.business.CanCreateProjectRule
+import cz.adamec.timotej.snag.projects.fe.app.api.AssignUserToProjectUseCase
+import cz.adamec.timotej.snag.projects.fe.app.api.CanAssignUserToProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.CanCloseProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.CanCreateProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.CanEditProjectEntitiesUseCase
@@ -26,8 +29,11 @@ import cz.adamec.timotej.snag.projects.fe.app.api.GetProjectAssignmentsUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.GetProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.GetProjectsUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.IsClientReferencedByProjectUseCase
+import cz.adamec.timotej.snag.projects.fe.app.api.RemoveUserFromProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.SaveProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.SetProjectClosedUseCase
+import cz.adamec.timotej.snag.projects.fe.app.impl.internal.AssignUserToProjectUseCaseImpl
+import cz.adamec.timotej.snag.projects.fe.app.impl.internal.CanAssignUserToProjectUseCaseImpl
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.CanCloseProjectUseCaseImpl
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.CanCreateProjectUseCaseImpl
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.CanEditProjectEntitiesUseCaseImpl
@@ -38,6 +44,7 @@ import cz.adamec.timotej.snag.projects.fe.app.impl.internal.GetProjectAssignment
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.GetProjectUseCaseImpl
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.GetProjectsUseCaseImpl
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.IsClientReferencedByProjectUseCaseImpl
+import cz.adamec.timotej.snag.projects.fe.app.impl.internal.RemoveUserFromProjectUseCaseImpl
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.SaveProjectUseCaseImpl
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.SetProjectClosedUseCaseImpl
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.sync.ProjectAssignmentsPullSyncHandler
@@ -60,8 +67,12 @@ val projectsAppModule =
         factoryOf(::CanCloseProjectUseCaseImpl) bind CanCloseProjectUseCase::class
         factoryOf(::CanEditProjectEntitiesUseCaseImpl) bind CanEditProjectEntitiesUseCase::class
         factoryOf(::IsClientReferencedByProjectUseCaseImpl) bind IsClientReferencedByProjectUseCase::class
+        factoryOf(::AssignUserToProjectUseCaseImpl) bind AssignUserToProjectUseCase::class
+        factoryOf(::RemoveUserFromProjectUseCaseImpl) bind RemoveUserFromProjectUseCase::class
+        factoryOf(::CanAssignUserToProjectUseCaseImpl) bind CanAssignUserToProjectUseCase::class
         factoryOf(::AreProjectEntitiesEditableRule)
         factoryOf(::CanAccessProjectRule)
+        factoryOf(::CanAssignUserToProjectRule)
         factoryOf(::CanCloseProjectRule)
         factoryOf(::CanCreateProjectRule)
         factoryOf(::GetProjectAssignmentsUseCaseImpl) bind GetProjectAssignmentsUseCase::class

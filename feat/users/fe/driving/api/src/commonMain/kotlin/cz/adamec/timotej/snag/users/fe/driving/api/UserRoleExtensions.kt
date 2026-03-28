@@ -10,20 +10,20 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.users.fe.driving.impl.internal.userManagement.ui
+package cz.adamec.timotej.snag.users.fe.driving.api
 
 import androidx.compose.runtime.Composable
 import cz.adamec.timotej.snag.authorization.business.UserRole
 import org.jetbrains.compose.resources.stringResource
-import snag.feat.users.fe.driving.impl.generated.resources.Res
-import snag.feat.users.fe.driving.impl.generated.resources.role_administrator
-import snag.feat.users.fe.driving.impl.generated.resources.role_passport_lead
-import snag.feat.users.fe.driving.impl.generated.resources.role_passport_technician
-import snag.feat.users.fe.driving.impl.generated.resources.role_service_lead
-import snag.feat.users.fe.driving.impl.generated.resources.role_service_worker
+import snag.feat.users.fe.driving.api.generated.resources.Res
+import snag.feat.users.fe.driving.api.generated.resources.role_administrator
+import snag.feat.users.fe.driving.api.generated.resources.role_passport_lead
+import snag.feat.users.fe.driving.api.generated.resources.role_passport_technician
+import snag.feat.users.fe.driving.api.generated.resources.role_service_lead
+import snag.feat.users.fe.driving.api.generated.resources.role_service_worker
 
 @Composable
-internal fun UserRole.toDisplayName(): String =
+fun UserRole.toDisplayName(): String =
     when (this) {
         UserRole.ADMINISTRATOR -> stringResource(Res.string.role_administrator)
         UserRole.PASSPORT_LEAD -> stringResource(Res.string.role_passport_lead)

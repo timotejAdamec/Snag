@@ -111,6 +111,42 @@ internal class RealProjectsApi(
             }
         }
     }
+
+    override suspend fun assignUserToProject(
+        projectId: Uuid,
+        userId: Uuid,
+    ): OnlineDataResult<Unit> {
+        LH.logger.d { "Assigning user $userId to project $projectId..." }
+        return safeApiCall(
+            logger = LH.logger,
+            errorContext = "Error assigning user $userId to project $projectId.",
+        ) {
+            httpClient.put("/projects/$projectId/assignments/$userId")
+            Unit
+        }.also {
+            if (it is OnlineDataResult.Success) {
+                LH.logger.d { "Assigned user $userId to project $projectId." }
+            }
+        }
+    }
+
+    override suspend fun removeUserFromProject(
+        projectId: Uuid,
+        userId: Uuid,
+    ): OnlineDataResult<Unit> {
+        LH.logger.d { "Removing user $userId from project $projectId..." }
+        return safeApiCall(
+            logger = LH.logger,
+            errorContext = "Error removing user $userId from project $projectId.",
+        ) {
+            httpClient.delete("/projects/$projectId/assignments/$userId")
+            Unit
+        }.also {
+            if (it is OnlineDataResult.Success) {
+                LH.logger.d { "Removed user $userId from project $projectId." }
+            }
+        }
+    }
 }
 
 @Serializable

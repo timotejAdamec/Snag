@@ -10,16 +10,13 @@
  * Department of Software Engineering
  */
 
-plugins {
-    alias(libs.plugins.snagDrivingFrontendMultiplatformModule)
-}
+package cz.adamec.timotej.snag.projects.fe.app.api
 
-kotlin {
-    sourceSets {
-        commonMain {
-            dependencies {
-                implementation(project(":feat:users:business:model"))
-            }
-        }
-    }
+import kotlin.uuid.Uuid
+
+interface AssignUserToProjectUseCase {
+    suspend operator fun invoke(
+        projectId: Uuid,
+        userId: Uuid,
+    )
 }

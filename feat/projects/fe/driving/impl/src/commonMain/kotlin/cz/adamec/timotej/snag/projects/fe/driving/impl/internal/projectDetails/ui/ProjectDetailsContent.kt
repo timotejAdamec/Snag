@@ -70,6 +70,7 @@ import snag.feat.projects.fe.driving.impl.generated.resources.delete_project_con
 import snag.feat.projects.fe.driving.impl.generated.resources.delete_project_confirmation_title
 import snag.feat.projects.fe.driving.impl.generated.resources.download_report
 import snag.feat.projects.fe.driving.impl.generated.resources.inspections_section_title
+import snag.feat.projects.fe.driving.impl.generated.resources.manage_assignments
 import snag.feat.projects.fe.driving.impl.generated.resources.new_inspection
 import snag.feat.projects.fe.driving.impl.generated.resources.new_structure
 import snag.feat.projects.fe.driving.impl.generated.resources.project_not_found
@@ -82,6 +83,7 @@ import snag.lib.design.fe.generated.resources.ic_delete
 import snag.lib.design.fe.generated.resources.ic_edit
 import snag.lib.design.fe.generated.resources.ic_event_note
 import snag.lib.design.fe.generated.resources.ic_file_export
+import snag.lib.design.fe.generated.resources.ic_group
 import snag.lib.design.fe.generated.resources.ic_lock
 import snag.lib.design.fe.generated.resources.ic_lock_open
 import snag.lib.design.fe.generated.resources.ic_space_dashboard
@@ -102,6 +104,7 @@ internal fun ProjectDetailsContent(
     onDelete: () -> Unit,
     onDownloadReportClick: () -> Unit,
     onToggleClose: () -> Unit,
+    onManageAssignmentsClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(
@@ -132,6 +135,7 @@ internal fun ProjectDetailsContent(
                     onDelete = onDelete,
                     onDownloadReportClick = onDownloadReportClick,
                     onToggleClose = onToggleClose,
+                    onManageAssignmentsClick = onManageAssignmentsClick,
                 )
             }
 
@@ -157,6 +161,7 @@ private fun LoadedProjectDetailsContent(
     onDelete: () -> Unit,
     onDownloadReportClick: () -> Unit,
     onToggleClose: () -> Unit,
+    onManageAssignmentsClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val projectName = state.project?.name.orEmpty()
@@ -333,6 +338,15 @@ private fun LoadedProjectDetailsContent(
                 expanded = true,
             ) {
                 IconButton(
+                    enabled = state.canAssignUsers,
+                    onClick = onManageAssignmentsClick,
+                ) {
+                    Icon(
+                        painter = painterResource(DesignRes.drawable.ic_group),
+                        contentDescription = stringResource(Res.string.manage_assignments),
+                    )
+                }
+                IconButton(
                     enabled = state.canToggleClosed,
                     onClick = onToggleClose,
                 ) {
@@ -466,6 +480,7 @@ private fun LoadedProjectDetailsContentPreview() {
             onDelete = {},
             onDownloadReportClick = {},
             onToggleClose = {},
+            onManageAssignmentsClick = {},
         )
     }
 }

@@ -27,6 +27,7 @@ import cz.adamec.timotej.snag.feat.reports.fe.driven.test.FakeReportsApi
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.projects.app.model.AppProject
 import cz.adamec.timotej.snag.projects.app.model.AppProjectData
+import cz.adamec.timotej.snag.projects.fe.app.api.CanAssignUserToProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.CanCloseProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.CanEditProjectEntitiesUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.DeleteProjectUseCase
@@ -73,6 +74,7 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
     private val setProjectClosedUseCase: SetProjectClosedUseCase by inject()
     private val canEditProjectEntitiesUseCase: CanEditProjectEntitiesUseCase by inject()
     private val canCloseProjectUseCase: CanCloseProjectUseCase by inject()
+    private val canAssignUserToProjectUseCase: CanAssignUserToProjectUseCase by inject()
     private val timestampProvider: TimestampProvider by inject()
 
     override fun additionalKoinModules(): List<Module> =
@@ -93,6 +95,11 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
                         override fun invoke(projectId: Uuid) = flowOf(true)
                     }
                 }
+                factory<CanAssignUserToProjectUseCase> {
+                    object : CanAssignUserToProjectUseCase {
+                        override fun invoke(projectId: Uuid) = flowOf(false)
+                    }
+                }
             },
         )
 
@@ -108,6 +115,7 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
             setProjectClosedUseCase = setProjectClosedUseCase,
             canEditProjectEntitiesUseCase = canEditProjectEntitiesUseCase,
             canCloseProjectUseCase = canCloseProjectUseCase,
+            canAssignUserToProjectUseCase = canAssignUserToProjectUseCase,
             timestampProvider = timestampProvider,
         )
 

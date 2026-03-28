@@ -43,3 +43,13 @@ class NonWebProjectEditRouteFactory : ProjectEditRouteFactory {
 class NonWebProjectDetailRouteFactory : ProjectDetailRouteFactory {
     override fun create(projectId: Uuid): ProjectDetailRoute = NonWebProjectDetailRoute(projectId)
 }
+
+@Serializable
+@Immutable
+data class NonWebProjectAssignmentsRoute(
+    override val projectId: Uuid,
+) : ProjectAssignmentsRoute
+
+class NonWebProjectAssignmentsRouteFactory : ProjectAssignmentsRouteFactory {
+    override fun create(projectId: Uuid): ProjectAssignmentsRoute = NonWebProjectAssignmentsRoute(projectId)
+}
