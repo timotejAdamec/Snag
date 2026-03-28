@@ -38,7 +38,7 @@ class CanEditProjectEntitiesUseCaseImplTest : FrontendKoinInitializedTest() {
     private val fakeProjectAssignmentsDb: FakeProjectAssignmentsDb by inject()
     private val useCase: CanEditProjectEntitiesUseCase by inject()
 
-    private val currentUserId = Uuid.parse("00000000-0000-0000-0000-000000000001")
+    private val currentUserId = Uuid.parse("00000000-0000-0000-0005-000000000001")
     private val projectId = UuidProvider.getUuid()
 
     private fun seedCurrentUser(role: UserRole? = UserRole.PASSPORT_LEAD) {

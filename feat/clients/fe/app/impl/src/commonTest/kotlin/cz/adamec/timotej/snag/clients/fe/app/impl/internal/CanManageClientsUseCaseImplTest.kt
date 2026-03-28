@@ -32,7 +32,7 @@ class CanManageClientsUseCaseImplTest : FrontendKoinInitializedTest() {
     private val fakeUsersDb: FakeUsersDb by inject()
     private val useCase: CanManageClientsUseCase by inject()
 
-    private val currentUserId = Uuid.parse("00000000-0000-0000-0000-000000000001")
+    private val currentUserId = Uuid.parse("00000000-0000-0000-0005-000000000001")
 
     private fun seedCurrentUser(role: UserRole?) {
         fakeUsersDb.setUser(

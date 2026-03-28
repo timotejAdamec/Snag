@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.projects.fe.app.impl.internal
 
+import cz.adamec.timotej.snag.core.network.fe.ConnectionStatusProvider
 import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.projects.business.CanAssignUserToProjectRule
 import cz.adamec.timotej.snag.projects.fe.app.api.CanAssignUserToProjectUseCase
@@ -27,15 +28,17 @@ internal class CanAssignUserToProjectUseCaseImpl(
     private val getCurrentUserFlowUseCase: GetCurrentUserFlowUseCase,
     private val projectsDb: ProjectsDb,
     private val canAssignUserToProjectRule: CanAssignUserToProjectRule,
+    private val connectionStatusProvider: ConnectionStatusProvider,
 ) : CanAssignUserToProjectUseCase {
     override operator fun invoke(projectId: Uuid): Flow<Boolean> =
         combine(
             getCurrentUserFlowUseCase(),
             projectsDb.getProjectFlow(projectId),
-        ) { userResult, projectResult ->
+            connectionStatusProvider.isConnectedFlow(),
+        ) { userResult, projectResult, isConnected ->
             val user = (userResult as? OfflineFirstDataResult.Success)?.data
             val project = (projectResult as? OfflineFirstDataResult.Success)?.data
-            if (user != null && project != null) {
+            if (user != null && project != null && isConnected) {
                 canAssignUserToProjectRule(user) && !project.isClosed
             } else {
                 false

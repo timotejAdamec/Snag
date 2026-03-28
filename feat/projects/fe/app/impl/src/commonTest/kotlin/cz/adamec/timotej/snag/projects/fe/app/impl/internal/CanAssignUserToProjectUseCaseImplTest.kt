@@ -15,6 +15,7 @@ package cz.adamec.timotej.snag.projects.fe.app.impl.internal
 import cz.adamec.timotej.snag.authorization.business.UserRole
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.core.foundation.common.UuidProvider
+import cz.adamec.timotej.snag.core.network.fe.ConnectionStatusProvider
 import cz.adamec.timotej.snag.projects.app.model.AppProjectData
 import cz.adamec.timotej.snag.projects.fe.app.api.CanAssignUserToProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.driven.test.FakeProjectsDb
@@ -22,8 +23,12 @@ import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
 import cz.adamec.timotej.snag.users.app.model.AppUserData
 import cz.adamec.timotej.snag.users.fe.driven.test.FakeUsersDb
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
+import org.koin.core.module.Module
+import org.koin.dsl.module
 import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertFalse
@@ -32,12 +37,25 @@ import kotlin.uuid.Uuid
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class CanAssignUserToProjectUseCaseImplTest : FrontendKoinInitializedTest() {
+    private val connectionFlow = MutableStateFlow(true)
+
     private val fakeUsersDb: FakeUsersDb by inject()
     private val fakeProjectsDb: FakeProjectsDb by inject()
     private val useCase: CanAssignUserToProjectUseCase by inject()
 
-    private val currentUserId = Uuid.parse("00000000-0000-0000-0000-000000000001")
+    private val currentUserId = Uuid.parse("00000000-0000-0000-0005-000000000001")
     private val projectId = UuidProvider.getUuid()
+
+    override fun additionalKoinModules(): List<Module> =
+        listOf(
+            module {
+                single<ConnectionStatusProvider> {
+                    object : ConnectionStatusProvider {
+                        override fun isConnectedFlow(): Flow<Boolean> = connectionFlow
+                    }
+                }
+            },
+        )
 
     private fun seedCurrentUser(role: UserRole?) {
         fakeUsersDb.setUser(
@@ -139,6 +157,16 @@ class CanAssignUserToProjectUseCaseImplTest : FrontendKoinInitializedTest() {
     fun `returns false when project not found`() =
         runTest(testDispatcher) {
             seedCurrentUser(role = UserRole.ADMINISTRATOR)
+
+            assertFalse(useCase(projectId).first())
+        }
+
+    @Test
+    fun `returns false when offline`() =
+        runTest(testDispatcher) {
+            seedCurrentUser(role = UserRole.ADMINISTRATOR)
+            seedProject()
+            connectionFlow.value = false
 
             assertFalse(useCase(projectId).first())
         }
