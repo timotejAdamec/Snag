@@ -10,7 +10,7 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.authentication.fe.driving.api
+package cz.adamec.timotej.snag.authentication.fe.driving.impl.internal
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -27,7 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun LoginScreen(
+internal fun LoginScreen(
     onSignIn: () -> Unit,
     modifier: Modifier = Modifier,
 ) {

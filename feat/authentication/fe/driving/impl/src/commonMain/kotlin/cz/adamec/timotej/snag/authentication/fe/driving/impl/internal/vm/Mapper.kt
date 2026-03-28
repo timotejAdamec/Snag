@@ -10,14 +10,6 @@
  * Department of Software Engineering
  */
 
-plugins {
-    alias(libs.plugins.snagDrivingFrontendMultiplatformModule)
-}
+package cz.adamec.timotej.snag.authentication.fe.driving.impl.internal.vm
 
-kotlin {
-    sourceSets {
-        commonMain.dependencies {
-            implementation(project(":feat:authentication:fe:app:api"))
-        }
-    }
-}
+internal fun AuthenticationVmState.toUiState() = AuthenticationUiState(isAuthenticated = currentUserId != null)

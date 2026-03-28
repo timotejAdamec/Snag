@@ -18,9 +18,11 @@ import cz.adamec.timotej.snag.authentication.fe.driving.impl.internal.CallCurren
 import cz.adamec.timotej.snag.authentication.fe.driving.impl.internal.GetAuthenticatedUserIdUseCaseImpl
 import cz.adamec.timotej.snag.authentication.fe.driving.impl.internal.MockAuthTokenProvider
 import cz.adamec.timotej.snag.authentication.fe.driving.impl.internal.OAuthTokenProvider
+import cz.adamec.timotej.snag.authentication.fe.driving.impl.internal.vm.AuthenticationViewModel
 import cz.adamec.timotej.snag.configuration.common.CommonConfiguration
 import cz.adamec.timotej.snag.network.fe.HttpClientConfiguration
 import org.koin.core.module.dsl.singleOf
+import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
@@ -39,4 +41,5 @@ val authenticationModule =
             )
         }
         singleOf(::CallCurrentUserConfiguration) bind HttpClientConfiguration::class
+        viewModelOf(::AuthenticationViewModel)
     }

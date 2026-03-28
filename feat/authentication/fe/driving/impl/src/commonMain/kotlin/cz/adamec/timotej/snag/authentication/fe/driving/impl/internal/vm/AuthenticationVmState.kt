@@ -10,11 +10,10 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.authentication.fe.driving.api
+package cz.adamec.timotej.snag.authentication.fe.driving.impl.internal.vm
 
-import androidx.compose.runtime.Immutable
+import kotlin.uuid.Uuid
 
-@Immutable
-data class AuthenticationUiState(
-    val isAuthenticated: Boolean = false,
+internal data class AuthenticationVmState(
+    val currentUserId: Uuid? = null,
 )

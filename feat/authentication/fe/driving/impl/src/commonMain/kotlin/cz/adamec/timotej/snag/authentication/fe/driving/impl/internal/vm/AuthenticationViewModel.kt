@@ -10,7 +10,7 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.authentication.fe.driving.api
+package cz.adamec.timotej.snag.authentication.fe.driving.impl.internal.vm
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -23,29 +23,22 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
-import kotlin.uuid.Uuid
 
-class AuthenticationViewModel(
+internal class AuthenticationViewModel(
     private val getAuthenticatedUserIdUseCase: GetAuthenticatedUserIdUseCase,
 ) : ViewModel() {
-    private val vmState: MutableStateFlow<VmState> =
-        MutableStateFlow(VmState())
+    private val vmState: MutableStateFlow<AuthenticationVmState> =
+        MutableStateFlow(AuthenticationVmState())
             .launchWhileSubscribed(scope = viewModelScope) {
                 listOf(collectAuthState())
             }
 
     val state: StateFlow<AuthenticationUiState> =
-        vmState.mapState {
-            AuthenticationUiState(isAuthenticated = it.currentUserId != null)
-        }
+        vmState.mapState { it.toUiState() }
 
     private fun collectAuthState(): Job =
         getAuthenticatedUserIdUseCase.currentUserId
             .map { userId ->
                 vmState.update { it.copy(currentUserId = userId) }
             }.launchIn(viewModelScope)
-
-    private data class VmState(
-        val currentUserId: Uuid? = null,
-    )
 }

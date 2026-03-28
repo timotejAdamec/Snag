@@ -11,7 +11,7 @@
  */
 
 plugins {
-    alias(libs.plugins.snagFrontendMultiplatformModule)
+    alias(libs.plugins.snagDrivingFrontendMultiplatformModule)
 }
 
 kotlin {

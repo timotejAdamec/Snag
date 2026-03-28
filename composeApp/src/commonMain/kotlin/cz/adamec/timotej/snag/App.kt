@@ -21,8 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import co.touchlab.kermit.Logger
 import co.touchlab.kermit.koin.KermitKoinLogger
-import cz.adamec.timotej.snag.authentication.fe.driving.api.AuthenticationGate
-import cz.adamec.timotej.snag.authentication.fe.driving.api.LoginScreen
+import cz.adamec.timotej.snag.authentication.fe.driving.impl.AuthenticationGate
 import cz.adamec.timotej.snag.core.foundation.fe.Initializer
 import cz.adamec.timotej.snag.di.appModule
 import cz.adamec.timotej.snag.lib.design.fe.initializer.ComposeInitializer
@@ -45,14 +44,9 @@ fun App() {
         InitializeInitializers(
             uninitializedContent = { ContainedLoadingIndicator() },
         ) {
-            AuthenticationGate(
-                loginContent = {
-                    LoginScreen(onSignIn = { /* OAuth sign-in flow */ })
-                },
-                authenticatedContent = {
-                    MainScreen()
-                },
-            )
+            AuthenticationGate {
+                MainScreen()
+            }
         }
     }
 }

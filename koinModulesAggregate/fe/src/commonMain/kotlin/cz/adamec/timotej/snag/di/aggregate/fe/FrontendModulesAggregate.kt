@@ -12,7 +12,6 @@
 
 package cz.adamec.timotej.snag.di.aggregate.fe
 
-import cz.adamec.timotej.snag.authentication.fe.driving.api.di.authenticationDrivingApiModule
 import cz.adamec.timotej.snag.authentication.fe.driving.impl.di.authenticationModule
 import cz.adamec.timotej.snag.clients.fe.app.impl.di.clientsAppModule
 import cz.adamec.timotej.snag.clients.fe.driven.di.clientsDrivenModule
@@ -58,7 +57,6 @@ val frontendModulesAggregate =
             designModule,
             networkModule,
             authenticationModule,
-            authenticationDrivingApiModule,
             databaseModule,
             sharedRulesModule,
             fileStorageModule,
