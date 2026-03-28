@@ -13,6 +13,7 @@
 package cz.adamec.timotej.snag.directory.ui
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PrimaryTabRow
@@ -80,7 +81,10 @@ internal fun DirectoryScreen(modifier: Modifier = Modifier) {
         )
     val usersRoute: UsersRoute = koinInject()
 
-    Column(modifier = modifier) {
+    Column(
+        modifier = modifier
+            .systemBarsPadding(),
+    ) {
         PrimaryTabRow(selectedTabIndex = selectedTab) {
             Tab(
                 selected = selectedTab == USERS_TAB_INDEX,
