@@ -30,6 +30,7 @@ import cz.adamec.timotej.snag.feat.structures.be.model.BackendStructureData
 import cz.adamec.timotej.snag.findings.be.ports.FindingPhotosDb
 import cz.adamec.timotej.snag.findings.be.ports.FindingsDb
 import cz.adamec.timotej.snag.projects.be.model.BackendProjectData
+import cz.adamec.timotej.snag.projects.be.ports.ProjectAssignmentsDb
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
 import cz.adamec.timotej.snag.structures.be.ports.StructuresDb
 import cz.adamec.timotej.snag.users.be.model.BackendUserData
@@ -40,6 +41,7 @@ import kotlin.uuid.Uuid
 
 internal class DevDataSeederConfiguration(
     private val projectsDb: ProjectsDb,
+    private val projectAssignmentsDb: ProjectAssignmentsDb,
     private val clientsDb: ClientsDb,
     private val structuresDb: StructuresDb,
     private val findingsDb: FindingsDb,
@@ -53,6 +55,7 @@ internal class DevDataSeederConfiguration(
             seedUsers()
             seedClients()
             seedProjects()
+            seedProjectAssignments()
             seedStructures()
             seedFindings()
             seedFindingPhotos()
@@ -159,6 +162,23 @@ internal class DevDataSeederConfiguration(
                 updatedAt = now,
             ),
         ).forEach { projectsDb.saveProject(it) }
+    }
+
+    private suspend fun seedProjectAssignments() {
+        // Project 1 (Strahov Dormitories): admin, lead, technician
+        projectAssignmentsDb.assignUser(userId = Uuid.parse(USER_1), projectId = Uuid.parse(PROJECT_1))
+        projectAssignmentsDb.assignUser(userId = Uuid.parse(USER_2), projectId = Uuid.parse(PROJECT_1))
+        projectAssignmentsDb.assignUser(userId = Uuid.parse(USER_3), projectId = Uuid.parse(PROJECT_1))
+
+        // Project 2 (FIT CTU): admin, service lead, service worker
+        projectAssignmentsDb.assignUser(userId = Uuid.parse(USER_1), projectId = Uuid.parse(PROJECT_2))
+        projectAssignmentsDb.assignUser(userId = Uuid.parse(USER_4), projectId = Uuid.parse(PROJECT_2))
+        projectAssignmentsDb.assignUser(userId = Uuid.parse(USER_5), projectId = Uuid.parse(PROJECT_2))
+
+        // Project 3 (National Library): lead, technician, service worker
+        projectAssignmentsDb.assignUser(userId = Uuid.parse(USER_2), projectId = Uuid.parse(PROJECT_3))
+        projectAssignmentsDb.assignUser(userId = Uuid.parse(USER_3), projectId = Uuid.parse(PROJECT_3))
+        projectAssignmentsDb.assignUser(userId = Uuid.parse(USER_5), projectId = Uuid.parse(PROJECT_3))
     }
 
     private suspend fun seedStructures() {
