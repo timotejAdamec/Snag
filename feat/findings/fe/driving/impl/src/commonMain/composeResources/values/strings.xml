@@ -34,6 +34,7 @@
     <string name="delete_photo">Delete photo</string>
     <string name="delete_photo_confirmation_title">Delete photo?</string>
     <string name="delete_photo_confirmation_text">This photo will be permanently deleted. This action cannot be undone.</string>
+    <string name="photo_counter">%1$d / %2$d</string>
     <plurals name="coordinate_count">
         <item quantity="one">%1$d coordinate</item>
         <item quantity="other">%1$d coordinates</item>

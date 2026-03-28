@@ -1,0 +1,123 @@
+/*
+ * Copyright (c) 2026 Timotej Adamec
+ * SPDX-License-Identifier: MIT
+ *
+ * This file is part of the thesis:
+ * "Multiplatform snagging system with code sharing maximisation"
+ *
+ * Czech Technical University in Prague
+ * Faculty of Information Technology
+ * Department of Software Engineering
+ */
+
+package cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetail.ui.components
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.window.Dialog
+import com.github.panpf.zoomimage.CoilZoomAsyncImage
+import com.github.panpf.zoomimage.rememberCoilZoomState
+import cz.adamec.timotej.snag.feat.findings.app.model.AppFindingPhoto
+import cz.adamec.timotej.snag.lib.design.fe.dialog.fullscreenDialogProperties
+import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
+import snag.feat.findings.fe.driving.impl.generated.resources.Res
+import snag.feat.findings.fe.driving.impl.generated.resources.photo_counter
+import snag.lib.design.fe.generated.resources.close
+import snag.lib.design.fe.generated.resources.ic_close
+import snag.lib.design.fe.generated.resources.Res as DesignRes
+
+@Composable
+internal fun FullscreenPhotoViewer(
+    photos: List<AppFindingPhoto>,
+    initialPhotoIndex: Int,
+    onDismiss: () -> Unit,
+) {
+    Dialog(
+        onDismissRequest = onDismiss,
+        properties = fullscreenDialogProperties(),
+    ) {
+        Box(
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .background(Color.Black),
+        ) {
+            val pagerState =
+                rememberPagerState(
+                    initialPage = initialPhotoIndex,
+                    pageCount = { photos.size },
+                )
+
+            HorizontalPager(
+                state = pagerState,
+                modifier = Modifier.fillMaxSize(),
+            ) { page ->
+                val zoomState = rememberCoilZoomState()
+                CoilZoomAsyncImage(
+                    modifier = Modifier.fillMaxSize(),
+                    zoomState = zoomState,
+                    model = photos[page].url,
+                    contentDescription = null,
+                    contentScale = ContentScale.Fit,
+                )
+            }
+
+            TopAppBar(
+                title = {
+                    if (photos.size > 1) {
+                        Row(
+                            modifier = Modifier.fillMaxSize(),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Text(
+                                text =
+                                    stringResource(
+                                        Res.string.photo_counter,
+                                        pagerState.currentPage + 1,
+                                        photos.size,
+                                    ),
+                                color = Color.White,
+                            )
+                        }
+                    }
+                },
+                navigationIcon = {
+                    IconButton(
+                        onClick = onDismiss,
+                        colors =
+                            IconButtonDefaults.iconButtonColors(
+                                contentColor = Color.White,
+                            ),
+                    ) {
+                        Icon(
+                            painter = painterResource(DesignRes.drawable.ic_close),
+                            contentDescription = stringResource(DesignRes.string.close),
+                        )
+                    }
+                },
+                colors =
+                    TopAppBarDefaults.topAppBarColors(
+                        containerColor = Color.Black.copy(alpha = 0.5f),
+                    ),
+                windowInsets = WindowInsets(0, 0, 0, 0),
+            )
+        }
+    }
+}
