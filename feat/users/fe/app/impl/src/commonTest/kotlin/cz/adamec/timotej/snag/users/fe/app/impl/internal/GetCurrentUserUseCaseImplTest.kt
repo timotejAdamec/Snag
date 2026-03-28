@@ -22,6 +22,6 @@ class GetCurrentUserUseCaseImplTest {
     @Test
     fun `returns hardcoded user id`() {
         val result = useCase()
-        assertEquals(Uuid.parse("00000000-0000-0000-0000-000000000001"), result)
+        assertEquals(Uuid.parse("00000000-0000-0000-0005-000000000001"), result)
     }
 }
