@@ -25,6 +25,7 @@ import cz.adamec.timotej.snag.feat.reports.fe.app.api.DownloadReportUseCase
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.lib.design.fe.error.toUiError
 import cz.adamec.timotej.snag.lib.design.fe.state.launchWhileSubscribed
+import cz.adamec.timotej.snag.projects.fe.app.api.CanAssignUserToProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.CanCloseProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.CanEditProjectEntitiesUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.DeleteProjectUseCase
@@ -54,6 +55,7 @@ internal class ProjectDetailsViewModel(
     private val setProjectClosedUseCase: SetProjectClosedUseCase,
     private val canEditProjectEntitiesUseCase: CanEditProjectEntitiesUseCase,
     private val canCloseProjectUseCase: CanCloseProjectUseCase,
+    private val canAssignUserToProjectUseCase: CanAssignUserToProjectUseCase,
     private val timestampProvider: TimestampProvider,
 ) : ViewModel() {
     private val vmState: MutableStateFlow<ProjectDetailsVmState> =
@@ -65,6 +67,7 @@ internal class ProjectDetailsViewModel(
                     collectInspections(projectId),
                     collectCanEditEntities(projectId),
                     collectCanCloseProject(projectId),
+                    collectCanAssignUsers(projectId),
                 )
             }
     val state: StateFlow<ProjectDetailsUiState> =
@@ -170,6 +173,13 @@ internal class ProjectDetailsViewModel(
         viewModelScope.launch {
             canCloseProjectUseCase(projectId).collect { canClose ->
                 vmState.update { it.copy(canCloseProject = canClose) }
+            }
+        }
+
+    private fun collectCanAssignUsers(projectId: Uuid) =
+        viewModelScope.launch {
+            canAssignUserToProjectUseCase(projectId).collect { canAssign ->
+                vmState.update { it.copy(canAssignUsers = canAssign) }
             }
         }
 

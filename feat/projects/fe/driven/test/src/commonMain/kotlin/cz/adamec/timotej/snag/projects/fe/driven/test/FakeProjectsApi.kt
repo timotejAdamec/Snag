@@ -61,5 +61,23 @@ class FakeProjectsApi : ProjectsApi {
         return OnlineDataResult.Success(projectAssignments[projectId] ?: emptySet())
     }
 
+    override suspend fun assignUserToProject(
+        projectId: Uuid,
+        userId: Uuid,
+    ): OnlineDataResult<Unit> {
+        forcedFailure?.let { return it }
+        projectAssignments[projectId] = (projectAssignments[projectId] ?: emptySet()) + userId
+        return OnlineDataResult.Success(Unit)
+    }
+
+    override suspend fun removeUserFromProject(
+        projectId: Uuid,
+        userId: Uuid,
+    ): OnlineDataResult<Unit> {
+        forcedFailure?.let { return it }
+        projectAssignments[projectId] = (projectAssignments[projectId] ?: emptySet()) - userId
+        return OnlineDataResult.Success(Unit)
+    }
+
     fun setProject(project: AppProject) = ops.setItem(project)
 }

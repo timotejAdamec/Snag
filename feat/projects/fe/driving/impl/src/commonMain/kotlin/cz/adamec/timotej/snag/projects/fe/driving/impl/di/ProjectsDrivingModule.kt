@@ -25,6 +25,8 @@ import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureDetailRout
 import cz.adamec.timotej.snag.lib.design.fe.dialog.fullscreenDialogProperties
 import cz.adamec.timotej.snag.lib.design.fe.scenes.ContentPaneSceneMetadata
 import cz.adamec.timotej.snag.lib.navigation.fe.SnagBackStack
+import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectAssignmentsRoute
+import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectAssignmentsRouteFactory
 import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectCreationRoute
 import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectDetailRoute
 import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectDetailRouteFactory
@@ -34,6 +36,8 @@ import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectsBackStack
 import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectsNavRoute
 import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectsNavigation
 import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectsRoute
+import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectAssignments.ui.ProjectAssignmentsScreen
+import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectAssignments.vm.ProjectAssignmentsViewModel
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.ui.ProjectDetailsScreen
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.vm.ProjectDetailsViewModel
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetailsEdit.ui.ProjectDetailsEditScreen
@@ -134,6 +138,7 @@ internal inline fun <reified T : ProjectDetailRoute> Module.projectDetailsScreen
         val projectEditRouteFactory = koinInject<ProjectEditRouteFactory>()
         val newInspectionRouteFactory = koinInject<InspectionCreationRouteFactory>()
         val inspectionEditRouteFactory = koinInject<InspectionEditRouteFactory>()
+        val projectAssignmentsRouteFactory = koinInject<ProjectAssignmentsRouteFactory>()
         ProjectDetailsScreen(
             projectId = route.projectId,
             onNewStructureClick = {
@@ -164,6 +169,21 @@ internal inline fun <reified T : ProjectDetailRoute> Module.projectDetailsScreen
             onEditClick = {
                 val backStack = get<ProjectsBackStack>()
                 backStack.value.add(projectEditRouteFactory.create(route.projectId))
+            },
+            onManageAssignmentsClick = {
+                val backStack = get<ProjectsBackStack>()
+                backStack.value.add(projectAssignmentsRouteFactory.create(route.projectId))
+            },
+        )
+    }
+
+internal inline fun <reified T : ProjectAssignmentsRoute> Module.projectAssignmentsNavigation() =
+    navigation<T> { route ->
+        ProjectAssignmentsScreen(
+            projectId = route.projectId,
+            onBack = {
+                val backStack = get<ProjectsBackStack>()
+                backStack.removeLastSafely()
             },
         )
     }
@@ -205,7 +225,18 @@ val projectsDrivingImplModule =
                 setProjectClosedUseCase = get(),
                 canEditProjectEntitiesUseCase = get(),
                 canCloseProjectUseCase = get(),
+                canAssignUserToProjectUseCase = get(),
                 timestampProvider = get(),
+            )
+        }
+        viewModel { (projectId: Uuid) ->
+            ProjectAssignmentsViewModel(
+                projectId = projectId,
+                getProjectAssignmentsUseCase = get(),
+                getUsersUseCase = get(),
+                canAssignUserToProjectUseCase = get(),
+                assignUserToProjectUseCase = get(),
+                removeUserFromProjectUseCase = get(),
             )
         }
     }

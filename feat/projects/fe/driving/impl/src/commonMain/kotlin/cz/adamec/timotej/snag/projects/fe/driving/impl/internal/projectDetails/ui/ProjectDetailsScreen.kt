@@ -31,6 +31,7 @@ internal fun ProjectDetailsScreen(
     onInspectionClick: (inspectionId: Uuid) -> Unit,
     onBack: () -> Unit,
     onEditClick: () -> Unit,
+    onManageAssignmentsClick: () -> Unit,
     viewModel: ProjectDetailsViewModel = koinViewModel { parametersOf(projectId) },
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -59,5 +60,6 @@ internal fun ProjectDetailsScreen(
         onDelete = viewModel::onDelete,
         onDownloadReportClick = viewModel::onDownloadReport,
         onToggleClose = viewModel::onToggleClose,
+        onManageAssignmentsClick = onManageAssignmentsClick,
     )
 }

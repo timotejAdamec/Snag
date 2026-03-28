@@ -27,5 +27,6 @@ internal fun ProjectDetailsVmState.toUiState(): ProjectDetailsUiState {
         canInvokeDeletion = isProjectEditable && !isBeingDeleted,
         canDownloadReport = projectStatus == ProjectDetailsUiStatus.LOADED && !isDownloadingReport,
         canToggleClosed = projectStatus == ProjectDetailsUiStatus.LOADED && !isClosingOrReopening && canCloseProject,
+        canAssignUsers = canAssignUsers,
     )
 }

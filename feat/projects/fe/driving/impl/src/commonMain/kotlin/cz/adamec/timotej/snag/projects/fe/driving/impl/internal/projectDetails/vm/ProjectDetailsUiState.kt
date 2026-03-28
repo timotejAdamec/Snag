@@ -30,6 +30,7 @@ internal data class ProjectDetailsUiState(
     val canInvokeDeletion: Boolean = false,
     val canDownloadReport: Boolean = false,
     val canToggleClosed: Boolean = false,
+    val canAssignUsers: Boolean = false,
 )
 
 internal enum class ProjectDetailsUiStatus {

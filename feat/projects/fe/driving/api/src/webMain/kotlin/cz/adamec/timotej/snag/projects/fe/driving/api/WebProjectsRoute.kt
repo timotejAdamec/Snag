@@ -55,3 +55,17 @@ class WebProjectEditRouteFactory : ProjectEditRouteFactory {
 class WebProjectDetailRouteFactory : ProjectDetailRouteFactory {
     override fun create(projectId: Uuid): ProjectDetailRoute = WebProjectDetailRoute(projectId)
 }
+
+@Serializable
+@Immutable
+data class WebProjectAssignmentsRoute(
+    override val projectId: Uuid,
+) : ProjectAssignmentsRoute {
+    companion object {
+        const val URL_NAME = "project-assignments"
+    }
+}
+
+class WebProjectAssignmentsRouteFactory : ProjectAssignmentsRouteFactory {
+    override fun create(projectId: Uuid): ProjectAssignmentsRoute = WebProjectAssignmentsRoute(projectId)
+}
