@@ -35,7 +35,7 @@ internal class SaveFindingPhotoUseCaseImpl(
             if (structure != null) {
                 val project = getProjectUseCase(structure.projectId)
                 if (project != null && !areProjectEntitiesEditableRule(project)) {
-                    return photo
+                    return null
                 }
             }
         }

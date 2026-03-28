@@ -18,7 +18,6 @@ import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.core.network.fe.log
 import cz.adamec.timotej.snag.core.network.fe.map
 import cz.adamec.timotej.snag.core.storage.fe.LocalFileStorage
-import kotlinx.coroutines.CancellationException
 import cz.adamec.timotej.snag.feat.findings.app.model.AppFindingPhotoData
 import cz.adamec.timotej.snag.findings.fe.app.api.AddFindingPhotoRequest
 import cz.adamec.timotej.snag.findings.fe.app.api.NonWebAddFindingPhotoUseCase
@@ -27,6 +26,7 @@ import cz.adamec.timotej.snag.findings.fe.app.impl.internal.sync.FINDING_PHOTO_S
 import cz.adamec.timotej.snag.findings.fe.ports.FindingPhotosDb
 import cz.adamec.timotej.snag.sync.fe.app.api.EnqueueSyncSaveUseCase
 import cz.adamec.timotej.snag.sync.fe.app.api.model.EnqueueSyncSaveRequest
+import kotlinx.coroutines.CancellationException
 import kotlin.uuid.Uuid
 
 internal class NonWebAddFindingPhotoUseCaseImpl(

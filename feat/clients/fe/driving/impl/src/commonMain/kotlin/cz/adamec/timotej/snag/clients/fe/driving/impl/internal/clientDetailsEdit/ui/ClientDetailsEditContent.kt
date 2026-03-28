@@ -133,6 +133,7 @@ internal fun ClientDetailsEditContent(
                         }
                     }
                     Button(
+                        enabled = state.canSave,
                         onClick = onSaveClick,
                     ) {
                         Text(

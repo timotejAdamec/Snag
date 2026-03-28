@@ -18,4 +18,5 @@ import kotlinx.collections.immutable.persistentListOf
 
 internal data class ProjectsVmState(
     val projects: ImmutableList<AppProject> = persistentListOf(),
+    val canCreateProject: Boolean = false,
 )

@@ -27,6 +27,8 @@ import cz.adamec.timotej.snag.feat.reports.fe.driven.test.FakeReportsApi
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.projects.app.model.AppProject
 import cz.adamec.timotej.snag.projects.app.model.AppProjectData
+import cz.adamec.timotej.snag.projects.fe.app.api.CanCloseProjectUseCase
+import cz.adamec.timotej.snag.projects.fe.app.api.CanEditProjectEntitiesUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.DeleteProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.GetProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.SetProjectClosedUseCase
@@ -38,6 +40,7 @@ import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
@@ -68,6 +71,8 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
     private val saveInspectionUseCase: SaveInspectionUseCase by inject()
     private val downloadReportUseCase: DownloadReportUseCase by inject()
     private val setProjectClosedUseCase: SetProjectClosedUseCase by inject()
+    private val canEditProjectEntitiesUseCase: CanEditProjectEntitiesUseCase by inject()
+    private val canCloseProjectUseCase: CanCloseProjectUseCase by inject()
     private val timestampProvider: TimestampProvider by inject()
 
     override fun additionalKoinModules(): List<Module> =
@@ -76,6 +81,16 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
                 single<TimestampProvider> {
                     object : TimestampProvider {
                         override fun getNowTimestamp() = fixedNow
+                    }
+                }
+                factory<CanEditProjectEntitiesUseCase> {
+                    object : CanEditProjectEntitiesUseCase {
+                        override fun invoke(projectId: Uuid) = flowOf(true)
+                    }
+                }
+                factory<CanCloseProjectUseCase> {
+                    object : CanCloseProjectUseCase {
+                        override fun invoke(projectId: Uuid) = flowOf(true)
                     }
                 }
             },
@@ -91,6 +106,8 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
             downloadReportUseCase = downloadReportUseCase,
             saveInspectionUseCase = saveInspectionUseCase,
             setProjectClosedUseCase = setProjectClosedUseCase,
+            canEditProjectEntitiesUseCase = canEditProjectEntitiesUseCase,
+            canCloseProjectUseCase = canCloseProjectUseCase,
             timestampProvider = timestampProvider,
         )
 

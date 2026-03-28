@@ -32,11 +32,9 @@ internal class WebFindingPhotoSyncHandler(
     override val entityTypeId: String = FINDING_PHOTO_SYNC_ENTITY_TYPE
     override val entityName: String = "finding_photo"
 
-    override fun getEntityFlow(entityId: Uuid): Flow<OfflineFirstDataResult<AppFindingPhoto?>> =
-        findingPhotosDb.getPhotoFlow(entityId)
+    override fun getEntityFlow(entityId: Uuid): Flow<OfflineFirstDataResult<AppFindingPhoto?>> = findingPhotosDb.getPhotoFlow(entityId)
 
-    override suspend fun saveEntityToDb(entity: AppFindingPhoto): OfflineFirstDataResult<Unit> =
-        findingPhotosDb.savePhoto(entity)
+    override suspend fun saveEntityToDb(entity: AppFindingPhoto): OfflineFirstDataResult<Unit> = findingPhotosDb.savePhoto(entity)
 
     override suspend fun deleteEntityFromApi(
         entityId: Uuid,
@@ -49,6 +47,5 @@ internal class WebFindingPhotoSyncHandler(
             deletedAt = deletedAt,
         )
 
-    override suspend fun saveEntityToApi(entity: AppFindingPhoto): OnlineDataResult<AppFindingPhoto?> =
-        findingPhotosApi.savePhoto(entity)
+    override suspend fun saveEntityToApi(entity: AppFindingPhoto): OnlineDataResult<AppFindingPhoto?> = findingPhotosApi.savePhoto(entity)
 }

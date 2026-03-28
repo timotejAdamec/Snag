@@ -39,16 +39,15 @@ internal class WebFindingDetailViewModel(
     private val webAddFindingPhotoUseCase: WebAddFindingPhotoUseCase,
     private val canModifyFindingPhotosUseCase: CanModifyFindingPhotosUseCase,
 ) : FindingDetailViewModel(
-    findingId = findingId,
-    projectId = projectId,
-    getFindingUseCase = getFindingUseCase,
-    deleteFindingUseCase = deleteFindingUseCase,
-    canEditProjectEntitiesUseCase = canEditProjectEntitiesUseCase,
-    getFindingPhotosUseCase = getFindingPhotosUseCase,
-    deleteFindingPhotoUseCase = deleteFindingPhotoUseCase,
-) {
-    override fun collectJobs(): List<Job> =
-        super.collectJobs() + listOf(collectCanModifyPhotos())
+        findingId = findingId,
+        projectId = projectId,
+        getFindingUseCase = getFindingUseCase,
+        deleteFindingUseCase = deleteFindingUseCase,
+        canEditProjectEntitiesUseCase = canEditProjectEntitiesUseCase,
+        getFindingPhotosUseCase = getFindingPhotosUseCase,
+        deleteFindingPhotoUseCase = deleteFindingPhotoUseCase,
+    ) {
+    override fun collectJobs(): List<Job> = super.collectJobs() + listOf(collectCanModifyPhotos())
 
     private fun collectCanModifyPhotos(): Job =
         viewModelScope.launch {

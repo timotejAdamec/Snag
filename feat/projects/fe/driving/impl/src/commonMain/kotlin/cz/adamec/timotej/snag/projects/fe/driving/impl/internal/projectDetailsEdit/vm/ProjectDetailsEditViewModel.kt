@@ -20,6 +20,8 @@ import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError.Unknown
 import cz.adamec.timotej.snag.lib.design.fe.state.launchWhileSubscribed
+import cz.adamec.timotej.snag.projects.fe.app.api.CanCreateProjectUseCase
+import cz.adamec.timotej.snag.projects.fe.app.api.CanEditProjectEntitiesUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.GetProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.SaveProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.model.SaveProjectRequest
@@ -41,11 +43,13 @@ internal class ProjectDetailsEditViewModel(
     private val getProjectUseCase: GetProjectUseCase,
     private val saveProjectUseCase: SaveProjectUseCase,
     private val getClientsUseCase: GetClientsUseCase,
+    private val canCreateProjectUseCase: CanCreateProjectUseCase,
+    private val canEditProjectEntitiesUseCase: CanEditProjectEntitiesUseCase,
 ) : ViewModel() {
     private val vmState: MutableStateFlow<ProjectDetailsEditVmState> =
         MutableStateFlow(ProjectDetailsEditVmState())
             .launchWhileSubscribed(scope = viewModelScope) {
-                listOf(collectClients())
+                listOf(collectClients(), collectCanSave())
             }
     val state: StateFlow<ProjectDetailsEditUiState> =
         vmState.mapState { it.toUiState() }
@@ -151,6 +155,19 @@ internal class ProjectDetailsEditViewModel(
         }
     }
 
+    private fun collectCanSave() =
+        viewModelScope.launch {
+            val flow =
+                if (projectId != null) {
+                    canEditProjectEntitiesUseCase(projectId)
+                } else {
+                    canCreateProjectUseCase()
+                }
+            flow.collect { canSave ->
+                vmState.update { it.copy(canSave = canSave) }
+            }
+        }
+
     fun onProjectNameChange(updatedName: String) {
         vmState.update { it.copy(projectName = updatedName, projectNameError = null) }
     }
@@ -159,12 +176,16 @@ internal class ProjectDetailsEditViewModel(
         vmState.update { it.copy(projectAddress = updatedAddress, projectAddressError = null) }
     }
 
+    @Suppress("LabeledExpression")
     fun onSaveProject() =
         viewModelScope.launch {
+            if (!vmState.value.canSave) {
+                errorEventsChannel.send(Unknown)
+                return@launch
+            }
             val current = vmState.value
             val nameError = if (current.projectName.isBlank()) Res.string.error_field_required else null
             val addressError = if (current.projectAddress.isBlank()) Res.string.error_field_required else null
-
             if (nameError != null || addressError != null) {
                 vmState.update {
                     it.copy(

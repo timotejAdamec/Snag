@@ -18,9 +18,13 @@ import cz.adamec.timotej.snag.feat.findings.app.model.AppFindingPhoto
 import kotlin.uuid.Uuid
 
 sealed interface FindingPhotoSyncResult {
-    data class Deleted(val id: Uuid) : FindingPhotoSyncResult
+    data class Deleted(
+        val id: Uuid,
+    ) : FindingPhotoSyncResult
 
-    data class Updated(val photo: AppFindingPhoto) : FindingPhotoSyncResult
+    data class Updated(
+        val photo: AppFindingPhoto,
+    ) : FindingPhotoSyncResult
 }
 
 interface FindingPhotosApi {

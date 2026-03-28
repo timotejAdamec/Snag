@@ -25,5 +25,6 @@ private fun UserVmItem.toUiItem(): UserItem =
         id = id,
         email = email,
         role = role,
-        isRoleChangeEnabled = !isUpdatingRole,
+        isRoleChangeEnabled = !isUpdatingRole && allowedRoleOptions.isNotEmpty(),
+        allowedRoleOptions = allowedRoleOptions,
     )

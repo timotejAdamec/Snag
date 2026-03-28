@@ -31,7 +31,9 @@ internal class DeleteFindingPhotoUseCaseImpl(
         val photoResult = findingPhotosDb.getPhotoFlow(photoId).first()
         val findingId =
             when (photoResult) {
-                is OfflineFirstDataResult.Success -> photoResult.data?.findingId
+                is OfflineFirstDataResult.Success -> {
+                    photoResult.data?.findingId
+                }
                 is OfflineFirstDataResult.ProgrammerError -> {
                     logger.log(offlineFirstDataResult = photoResult)
                     return photoResult

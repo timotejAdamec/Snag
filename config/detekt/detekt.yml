@@ -7,12 +7,14 @@ complexity:
     ignoreDefaultParameters: true
   TooManyFunctions:
     ignoreAnnotatedFunctions: [ 'Preview' ]
+    excludes: [ '**/test/**', '**/*Test.kt', '**/*Spec.kt', '**/commonTest/**', '**/nonWebTest/**', '**/webTest/**', '**/androidTest/**', '**/iosTest/**' ]
 
 naming:
   FunctionNaming:
     ignoreAnnotated: [ 'Composable' ]
+    excludes: [ '**/test/**', '**/*Test.kt', '**/*Spec.kt', '**/commonTest/**', '**/nonWebTest/**', '**/webTest/**', '**/androidTest/**', '**/iosTest/**' ]
   FunctionNameMaxLength:
-    excludes: [ '**/test/**', '**/*Test.kt', '**/*Spec.kt' ]
+    excludes: [ '**/test/**', '**/*Test.kt', '**/*Spec.kt', '**/commonTest/**', '**/nonWebTest/**', '**/webTest/**', '**/androidTest/**', '**/iosTest/**' ]
     ignoreAnnotated: ['Preview']
   TopLevelPropertyNaming:
     constantPattern: '[A-Z][A-Za-z0-9]*|[A-Z][_A-Z0-9]*'
@@ -24,6 +26,8 @@ style:
     ignoreAnnotated: [ 'Preview' ]
   CascadingCallWrapping:
     active: false
+  MagicNumber:
+    excludes: [ '**/test/**', '**/*Test.kt', '**/*Spec.kt', '**/commonTest/**', '**/nonWebTest/**', '**/webTest/**', '**/androidTest/**', '**/iosTest/**' ]
 
 comments:
   UndocumentedPublicProperty:

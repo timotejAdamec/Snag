@@ -15,4 +15,5 @@ plugins {
 }
 
 dependencies {
+    implementation(project(":feat:users:business:rules"))
 }

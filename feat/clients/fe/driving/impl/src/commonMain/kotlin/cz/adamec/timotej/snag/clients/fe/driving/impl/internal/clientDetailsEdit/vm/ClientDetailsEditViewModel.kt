@@ -15,6 +15,7 @@ package cz.adamec.timotej.snag.clients.fe.driving.impl.internal.clientDetailsEdi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cz.adamec.timotej.snag.clients.fe.app.api.CanDeleteClientUseCase
+import cz.adamec.timotej.snag.clients.fe.app.api.CanManageClientsUseCase
 import cz.adamec.timotej.snag.clients.fe.app.api.DeleteClientUseCase
 import cz.adamec.timotej.snag.clients.fe.app.api.GetClientUseCase
 import cz.adamec.timotej.snag.clients.fe.app.api.SaveClientUseCase
@@ -45,6 +46,7 @@ internal class ClientDetailsEditViewModel(
     private val saveClientUseCase: SaveClientUseCase,
     private val deleteClientUseCase: DeleteClientUseCase,
     private val canDeleteClientUseCase: CanDeleteClientUseCase,
+    private val canManageClientsUseCase: CanManageClientsUseCase,
     private val emailFormatRule: EmailFormatRule,
     private val phoneNumberRule: PhoneNumberRule,
 ) : ViewModel() {
@@ -67,6 +69,7 @@ internal class ClientDetailsEditViewModel(
             collectClient(it)
             checkCanDelete(it)
         }
+        collectCanManageClients()
     }
 
     private fun collectClient(clientId: Uuid) =
@@ -105,6 +108,13 @@ internal class ClientDetailsEditViewModel(
             }
         }
 
+    private fun collectCanManageClients() =
+        viewModelScope.launch {
+            canManageClientsUseCase().collect { canManage ->
+                vmState.update { it.copy(canManageClients = canManage) }
+            }
+        }
+
     fun onClientNameChange(updatedName: String) {
         vmState.update { it.copy(clientName = updatedName, clientNameError = null) }
     }
@@ -121,9 +131,14 @@ internal class ClientDetailsEditViewModel(
         vmState.update { it.copy(clientEmail = updatedEmail, clientEmailError = null) }
     }
 
-    fun onDelete() {
-        val id = clientId ?: return
+    @Suppress("LabeledExpression")
+    fun onDelete() =
         viewModelScope.launch {
+            if (!vmState.value.canManageClients) {
+                errorEventsChannel.send(Unknown)
+                return@launch
+            }
+            val id = clientId ?: return@launch
             vmState.update { it.copy(isBeingDeleted = true) }
             when (deleteClientUseCase(id)) {
                 is OfflineFirstDataResult.ProgrammerError -> {
@@ -136,10 +151,14 @@ internal class ClientDetailsEditViewModel(
                 }
             }
         }
-    }
 
+    @Suppress("LabeledExpression", "CognitiveComplexMethod")
     fun onSaveClient() =
         viewModelScope.launch {
+            if (!vmState.value.canManageClients) {
+                errorEventsChannel.send(Unknown)
+                return@launch
+            }
             val current = vmState.value
             val nameError = if (current.clientName.isBlank()) Res.string.error_field_required else null
             val phoneError =
@@ -154,7 +173,6 @@ internal class ClientDetailsEditViewModel(
                 } else {
                     null
                 }
-
             if (nameError != null || phoneError != null || emailError != null) {
                 vmState.update {
                     it.copy(

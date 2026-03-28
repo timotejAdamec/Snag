@@ -21,24 +21,23 @@ import cz.adamec.timotej.snag.findings.be.ports.FindingPhotosDb
 internal class GetFindingPhotosModifiedSinceUseCaseImpl(
     private val findingPhotosDb: FindingPhotosDb,
 ) : GetFindingPhotosModifiedSinceUseCase {
-    override suspend operator fun invoke(
-        request: GetFindingPhotosModifiedSinceRequest,
-    ): List<BackendFindingPhoto> {
+    override suspend operator fun invoke(request: GetFindingPhotosModifiedSinceRequest): List<BackendFindingPhoto> {
         logger.debug(
             "Getting finding photos modified since {} for finding {} from local storage.",
             request.since,
             request.findingId,
         )
-        return findingPhotosDb.getPhotosModifiedSince(
-            findingId = request.findingId,
-            since = request.since,
-        ).also {
-            logger.debug(
-                "Got {} finding photos modified since {} for finding {} from local storage.",
-                it.size,
-                request.since,
-                request.findingId,
+        val photos =
+            findingPhotosDb.getPhotosModifiedSince(
+                findingId = request.findingId,
+                since = request.since,
             )
-        }
+        logger.debug(
+            "Got {} finding photos modified since {} for finding {} from local storage.",
+            photos.size,
+            request.since,
+            request.findingId,
+        )
+        return photos
     }
 }

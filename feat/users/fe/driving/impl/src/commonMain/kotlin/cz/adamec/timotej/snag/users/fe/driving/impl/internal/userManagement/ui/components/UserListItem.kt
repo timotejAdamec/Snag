@@ -47,6 +47,7 @@ internal fun UserListItem(
         supportingContent = {
             RoleDropdown(
                 selectedRole = userItem.role,
+                allowedRoleOptions = userItem.allowedRoleOptions,
                 onRoleSelect = onRoleSelect,
                 enabled = userItem.isRoleChangeEnabled,
             )

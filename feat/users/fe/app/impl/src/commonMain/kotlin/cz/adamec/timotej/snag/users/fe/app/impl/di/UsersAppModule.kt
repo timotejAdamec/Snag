@@ -13,11 +13,14 @@
 package cz.adamec.timotej.snag.users.fe.app.impl.di
 
 import cz.adamec.timotej.snag.sync.fe.app.api.handler.PullSyncOperationHandler
+import cz.adamec.timotej.snag.users.business.CanSetUserRoleRule
 import cz.adamec.timotej.snag.users.fe.app.api.ChangeUserRoleUseCase
+import cz.adamec.timotej.snag.users.fe.app.api.GetAllowedRoleOptionsUseCase
 import cz.adamec.timotej.snag.users.fe.app.api.GetCurrentUserFlowUseCase
 import cz.adamec.timotej.snag.users.fe.app.api.GetCurrentUserUseCase
 import cz.adamec.timotej.snag.users.fe.app.api.GetUsersUseCase
 import cz.adamec.timotej.snag.users.fe.app.impl.internal.ChangeUserRoleUseCaseImpl
+import cz.adamec.timotej.snag.users.fe.app.impl.internal.GetAllowedRoleOptionsUseCaseImpl
 import cz.adamec.timotej.snag.users.fe.app.impl.internal.GetCurrentUserFlowUseCaseImpl
 import cz.adamec.timotej.snag.users.fe.app.impl.internal.GetCurrentUserUseCaseImpl
 import cz.adamec.timotej.snag.users.fe.app.impl.internal.GetUsersUseCaseImpl
@@ -32,5 +35,7 @@ val usersAppModule =
         factoryOf(::GetCurrentUserUseCaseImpl) bind GetCurrentUserUseCase::class
         factoryOf(::GetCurrentUserFlowUseCaseImpl) bind GetCurrentUserFlowUseCase::class
         factoryOf(::ChangeUserRoleUseCaseImpl) bind ChangeUserRoleUseCase::class
+        factoryOf(::GetAllowedRoleOptionsUseCaseImpl) bind GetAllowedRoleOptionsUseCase::class
+        factoryOf(::CanSetUserRoleRule)
         factoryOf(::UserPullSyncHandler) bind PullSyncOperationHandler::class
     }

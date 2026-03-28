@@ -36,7 +36,6 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertIs
 import kotlin.test.assertNotNull
-import kotlin.test.assertTrue
 import kotlin.uuid.Uuid
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -176,14 +175,14 @@ private class TestFindingDetailViewModel(
     getFindingPhotosUseCase: GetFindingPhotosUseCase,
     deleteFindingPhotoUseCase: DeleteFindingPhotoUseCase,
 ) : FindingDetailViewModel(
-    findingId = findingId,
-    projectId = projectId,
-    getFindingUseCase = getFindingUseCase,
-    deleteFindingUseCase = deleteFindingUseCase,
-    canEditProjectEntitiesUseCase = canEditProjectEntitiesUseCase,
-    getFindingPhotosUseCase = getFindingPhotosUseCase,
-    deleteFindingPhotoUseCase = deleteFindingPhotoUseCase,
-) {
+        findingId = findingId,
+        projectId = projectId,
+        getFindingUseCase = getFindingUseCase,
+        deleteFindingUseCase = deleteFindingUseCase,
+        canEditProjectEntitiesUseCase = canEditProjectEntitiesUseCase,
+        getFindingPhotosUseCase = getFindingPhotosUseCase,
+        deleteFindingPhotoUseCase = deleteFindingPhotoUseCase,
+    ) {
     override fun onAddPhoto(
         bytes: ByteArray,
         fileName: String,

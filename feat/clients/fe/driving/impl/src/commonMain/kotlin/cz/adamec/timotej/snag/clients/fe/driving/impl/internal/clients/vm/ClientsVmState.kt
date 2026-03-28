@@ -18,4 +18,5 @@ import kotlinx.collections.immutable.persistentListOf
 
 internal data class ClientsVmState(
     val clients: ImmutableList<AppClient> = persistentListOf(),
+    val canManageClients: Boolean = false,
 )

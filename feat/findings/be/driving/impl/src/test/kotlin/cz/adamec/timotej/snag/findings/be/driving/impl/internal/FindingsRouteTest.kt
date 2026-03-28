@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.findings.be.driving.impl.internal
 
+import cz.adamec.timotej.snag.authorization.business.UserRole
 import cz.adamec.timotej.snag.configuration.be.AppConfiguration
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.feat.findings.be.model.BackendFindingData
@@ -28,12 +29,11 @@ import cz.adamec.timotej.snag.findings.be.ports.FindingsDb
 import cz.adamec.timotej.snag.network.be.test.jsonClient
 import cz.adamec.timotej.snag.projects.be.driven.test.seedTestProject
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
-import cz.adamec.timotej.snag.routing.be.USER_ID_HEADER
+import cz.adamec.timotej.snag.routing.common.USER_ID_HEADER
 import cz.adamec.timotej.snag.structures.be.driven.test.seedTestStructure
 import cz.adamec.timotej.snag.structures.be.ports.StructuresDb
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
 import cz.adamec.timotej.snag.users.be.driven.test.TEST_USER_ID
-import cz.adamec.timotej.snag.authorization.business.UserRole
 import cz.adamec.timotej.snag.users.be.driven.test.seedTestUser
 import cz.adamec.timotej.snag.users.be.model.BackendUserData
 import cz.adamec.timotej.snag.users.be.ports.UsersDb
@@ -209,6 +209,7 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
     fun `PATCH soft-delete finding with invalid id returns 400`() =
         testApplication {
             configureApp()
+            usersDb.seedTestUser()
             val client = jsonClient()
 
             val response =
@@ -225,6 +226,14 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
     fun `PATCH soft-delete finding with invalid body returns 400`() =
         testApplication {
             configureApp()
+            seedParentEntities()
+            dataSource.seedTestFinding(
+                id = TEST_ID_1,
+                structureId = STRUCTURE_ID,
+                name = "Existing",
+                type = FindingType.Classic(importance = Importance.MEDIUM, term = Term.T1),
+                updatedAt = Timestamp(100L),
+            )
             val client = jsonClient()
 
             val response =
@@ -245,6 +254,7 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
     fun `GET findings returns empty list when none exist`() =
         testApplication {
             configureApp()
+            seedParentEntities()
             val client = jsonClient()
 
             val response =
@@ -395,6 +405,7 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
     fun `GET findings with invalid structure id returns 400`() =
         testApplication {
             configureApp()
+            usersDb.seedTestUser()
             val client = jsonClient()
 
             val response =
@@ -522,6 +533,7 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
     fun `PUT finding with invalid id returns 400`() =
         testApplication {
             configureApp()
+            seedParentEntities()
             val client = jsonClient()
 
             val response =
@@ -549,6 +561,7 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
     fun `PUT finding with invalid body returns 400`() =
         testApplication {
             configureApp()
+            seedParentEntities()
             val client = jsonClient()
 
             val response =

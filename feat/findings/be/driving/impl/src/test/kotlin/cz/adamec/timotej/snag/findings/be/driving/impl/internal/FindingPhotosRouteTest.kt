@@ -12,9 +12,9 @@
 
 package cz.adamec.timotej.snag.findings.be.driving.impl.internal
 
+import cz.adamec.timotej.snag.authorization.business.UserRole
 import cz.adamec.timotej.snag.configuration.be.AppConfiguration
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
-import cz.adamec.timotej.snag.authorization.business.UserRole
 import cz.adamec.timotej.snag.findings.be.driven.test.seedTestFinding
 import cz.adamec.timotej.snag.findings.be.driving.contract.DeleteFindingPhotoApiDto
 import cz.adamec.timotej.snag.findings.be.driving.contract.FindingPhotoApiDto
@@ -24,7 +24,7 @@ import cz.adamec.timotej.snag.findings.be.ports.FindingsDb
 import cz.adamec.timotej.snag.network.be.test.jsonClient
 import cz.adamec.timotej.snag.projects.be.driven.test.seedTestProject
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
-import cz.adamec.timotej.snag.routing.be.USER_ID_HEADER
+import cz.adamec.timotej.snag.routing.common.USER_ID_HEADER
 import cz.adamec.timotej.snag.structures.be.driven.test.seedTestStructure
 import cz.adamec.timotej.snag.structures.be.ports.StructuresDb
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest

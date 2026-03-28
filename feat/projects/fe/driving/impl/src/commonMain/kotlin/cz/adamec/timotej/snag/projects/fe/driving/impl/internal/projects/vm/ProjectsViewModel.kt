@@ -17,9 +17,11 @@ import androidx.lifecycle.viewModelScope
 import cz.adamec.timotej.snag.core.foundation.common.mapState
 import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
-import cz.adamec.timotej.snag.projects.fe.app.api.GetProjectsUseCase
 import cz.adamec.timotej.snag.lib.design.fe.state.launchWhileSubscribed
+import cz.adamec.timotej.snag.projects.fe.app.api.CanCreateProjectUseCase
+import cz.adamec.timotej.snag.projects.fe.app.api.GetProjectsUseCase
 import kotlinx.collections.immutable.toPersistentList
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -30,11 +32,12 @@ import kotlinx.coroutines.flow.update
 
 internal class ProjectsViewModel(
     private val getProjectsUseCase: GetProjectsUseCase,
+    private val canCreateProjectUseCase: CanCreateProjectUseCase,
 ) : ViewModel() {
     private val vmState: MutableStateFlow<ProjectsVmState> =
         MutableStateFlow(ProjectsVmState())
             .launchWhileSubscribed(scope = viewModelScope) {
-                listOf(collectProjects())
+                listOf(collectProjects(), collectCanCreateProject())
             }
     val state: StateFlow<ProjectsUiState> =
         vmState.mapState { it.toUiState() }
@@ -42,7 +45,7 @@ internal class ProjectsViewModel(
     private val errorEventsChannel = Channel<UiError>()
     val errorsFlow = errorEventsChannel.receiveAsFlow()
 
-    private fun collectProjects() =
+    private fun collectProjects(): Job =
         getProjectsUseCase()
             .map { projectsDataResult ->
                 when (projectsDataResult) {
@@ -58,5 +61,11 @@ internal class ProjectsViewModel(
                         }
                     }
                 }
+            }.launchIn(viewModelScope)
+
+    private fun collectCanCreateProject(): Job =
+        canCreateProjectUseCase()
+            .map { canCreate ->
+                vmState.update { it.copy(canCreateProject = canCreate) }
             }.launchIn(viewModelScope)
 }

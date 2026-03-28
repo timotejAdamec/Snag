@@ -21,7 +21,6 @@ import kotlin.test.assertTrue
 import kotlin.uuid.Uuid
 
 class ProjectDetailsMapperTest {
-
     private fun openProject() =
         AppProjectData(
             id = Uuid.random(),
@@ -70,11 +69,12 @@ class ProjectDetailsMapperTest {
     }
 
     @Test
-    fun `isProjectEditable is true when LOADED and not closed`() {
+    fun `isProjectEditable is true when LOADED and not closed and canEditEntities is true`() {
         val vmState =
             ProjectDetailsVmState(
                 projectStatus = ProjectDetailsUiStatus.LOADED,
                 project = openProject(),
+                canEditEntities = true,
             )
 
         assertTrue(vmState.toUiState().isProjectEditable)
@@ -86,6 +86,7 @@ class ProjectDetailsMapperTest {
             ProjectDetailsVmState(
                 projectStatus = ProjectDetailsUiStatus.LOADING,
                 project = openProject(),
+                canEditEntities = true,
             )
 
         assertFalse(vmState.toUiState().isProjectEditable)
@@ -97,6 +98,19 @@ class ProjectDetailsMapperTest {
             ProjectDetailsVmState(
                 projectStatus = ProjectDetailsUiStatus.LOADED,
                 project = closedProject(),
+                canEditEntities = true,
+            )
+
+        assertFalse(vmState.toUiState().isProjectEditable)
+    }
+
+    @Test
+    fun `isProjectEditable is false when canEditEntities is false`() {
+        val vmState =
+            ProjectDetailsVmState(
+                projectStatus = ProjectDetailsUiStatus.LOADED,
+                project = openProject(),
+                canEditEntities = false,
             )
 
         assertFalse(vmState.toUiState().isProjectEditable)
@@ -109,6 +123,7 @@ class ProjectDetailsMapperTest {
                 projectStatus = ProjectDetailsUiStatus.LOADED,
                 project = openProject(),
                 isBeingDeleted = false,
+                canEditEntities = true,
             )
 
         assertTrue(vmState.toUiState().canInvokeDeletion)
@@ -121,6 +136,7 @@ class ProjectDetailsMapperTest {
                 projectStatus = ProjectDetailsUiStatus.LOADED,
                 project = openProject(),
                 isBeingDeleted = true,
+                canEditEntities = true,
             )
 
         assertFalse(vmState.toUiState().canInvokeDeletion)
@@ -133,6 +149,20 @@ class ProjectDetailsMapperTest {
                 projectStatus = ProjectDetailsUiStatus.LOADED,
                 project = closedProject(),
                 isBeingDeleted = false,
+                canEditEntities = true,
+            )
+
+        assertFalse(vmState.toUiState().canInvokeDeletion)
+    }
+
+    @Test
+    fun `canInvokeDeletion is false when canEditEntities is false`() {
+        val vmState =
+            ProjectDetailsVmState(
+                projectStatus = ProjectDetailsUiStatus.LOADED,
+                project = openProject(),
+                isBeingDeleted = false,
+                canEditEntities = false,
             )
 
         assertFalse(vmState.toUiState().canInvokeDeletion)
@@ -172,11 +202,12 @@ class ProjectDetailsMapperTest {
     }
 
     @Test
-    fun `canToggleClosed is true when LOADED and not closing or reopening`() {
+    fun `canToggleClosed is true when LOADED and not closing or reopening and canCloseProject is true`() {
         val vmState =
             ProjectDetailsVmState(
                 projectStatus = ProjectDetailsUiStatus.LOADED,
                 isClosingOrReopening = false,
+                canCloseProject = true,
             )
 
         assertTrue(vmState.toUiState().canToggleClosed)
@@ -188,6 +219,7 @@ class ProjectDetailsMapperTest {
             ProjectDetailsVmState(
                 projectStatus = ProjectDetailsUiStatus.LOADED,
                 isClosingOrReopening = true,
+                canCloseProject = true,
             )
 
         assertFalse(vmState.toUiState().canToggleClosed)
@@ -199,6 +231,19 @@ class ProjectDetailsMapperTest {
             ProjectDetailsVmState(
                 projectStatus = ProjectDetailsUiStatus.ERROR,
                 isClosingOrReopening = false,
+                canCloseProject = true,
+            )
+
+        assertFalse(vmState.toUiState().canToggleClosed)
+    }
+
+    @Test
+    fun `canToggleClosed is false when canCloseProject is false`() {
+        val vmState =
+            ProjectDetailsVmState(
+                projectStatus = ProjectDetailsUiStatus.LOADED,
+                isClosingOrReopening = false,
+                canCloseProject = false,
             )
 
         assertFalse(vmState.toUiState().canToggleClosed)

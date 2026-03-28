@@ -13,8 +13,8 @@
 package cz.adamec.timotej.snag.structures.fe.app.impl.internal
 
 import cz.adamec.timotej.snag.core.network.fe.OnlineDataResult
-import cz.adamec.timotej.snag.structures.fe.app.api.DeleteFloorPlanImageUseCase
 import cz.adamec.timotej.snag.core.storage.fe.RemoteFileStorage
+import cz.adamec.timotej.snag.structures.fe.app.api.DeleteFloorPlanImageUseCase
 
 class DeleteFloorPlanImageUseCaseImpl(
     private val remoteFileStorage: RemoteFileStorage,

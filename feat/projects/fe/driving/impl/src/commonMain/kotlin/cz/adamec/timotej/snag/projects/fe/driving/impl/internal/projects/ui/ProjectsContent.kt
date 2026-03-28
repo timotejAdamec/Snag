@@ -46,14 +46,16 @@ internal fun ProjectsContent(
     CollapsableTopAppBarScaffold(
         title = stringResource(Res.string.projects_title),
         topAppBarActions = {
-            AdaptiveTonalButton(
-                onClick = onNewProjectClick,
-                icon = DesignRes.drawable.ic_add,
-                label = stringResource(Res.string.new_project),
-            )
-            Spacer(
-                modifier = Modifier.size(16.dp),
-            )
+            if (state.canCreateProject) {
+                AdaptiveTonalButton(
+                    onClick = onNewProjectClick,
+                    icon = DesignRes.drawable.ic_add,
+                    label = stringResource(Res.string.new_project),
+                )
+                Spacer(
+                    modifier = Modifier.size(16.dp),
+                )
+            }
         },
     ) { paddingValues ->
         LazyVerticalGrid(

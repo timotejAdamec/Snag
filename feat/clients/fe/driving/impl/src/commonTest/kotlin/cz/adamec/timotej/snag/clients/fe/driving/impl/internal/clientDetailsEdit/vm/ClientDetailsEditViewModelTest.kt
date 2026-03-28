@@ -15,6 +15,7 @@ package cz.adamec.timotej.snag.clients.fe.driving.impl.internal.clientDetailsEdi
 import cz.adamec.timotej.snag.clients.app.model.AppClient
 import cz.adamec.timotej.snag.clients.app.model.AppClientData
 import cz.adamec.timotej.snag.clients.fe.app.api.CanDeleteClientUseCase
+import cz.adamec.timotej.snag.clients.fe.app.api.CanManageClientsUseCase
 import cz.adamec.timotej.snag.clients.fe.app.api.DeleteClientUseCase
 import cz.adamec.timotej.snag.clients.fe.app.api.GetClientUseCase
 import cz.adamec.timotej.snag.clients.fe.app.api.SaveClientUseCase
@@ -27,8 +28,12 @@ import cz.adamec.timotej.snag.projects.fe.driven.test.FakeProjectsDb
 import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
+import org.koin.core.module.Module
+import org.koin.dsl.module
 import org.koin.test.get
 import org.koin.test.inject
 import kotlin.test.Test
@@ -49,6 +54,18 @@ class ClientDetailsEditViewModelTest : FrontendKoinInitializedTest() {
     private val saveClientUseCase: SaveClientUseCase by inject()
     private val deleteClientUseCase: DeleteClientUseCase by inject()
     private val canDeleteClientUseCase: CanDeleteClientUseCase by inject()
+    private val canManageClientsUseCase: CanManageClientsUseCase by inject()
+
+    override fun additionalKoinModules(): List<Module> =
+        listOf(
+            module {
+                factory<CanManageClientsUseCase> {
+                    object : CanManageClientsUseCase {
+                        override fun invoke() = flowOf(true)
+                    }
+                }
+            },
+        )
 
     private fun createViewModel(clientId: Uuid? = null) =
         ClientDetailsEditViewModel(
@@ -57,6 +74,7 @@ class ClientDetailsEditViewModelTest : FrontendKoinInitializedTest() {
             saveClientUseCase = saveClientUseCase,
             deleteClientUseCase = deleteClientUseCase,
             canDeleteClientUseCase = canDeleteClientUseCase,
+            canManageClientsUseCase = canManageClientsUseCase,
             emailFormatRule = get(),
             phoneNumberRule = get(),
         )
@@ -141,17 +159,22 @@ class ClientDetailsEditViewModelTest : FrontendKoinInitializedTest() {
     fun `onSaveClient with empty name shows inline error`() =
         runTest(testDispatcher) {
             val viewModel = createViewModel()
+            val subscriber = launch { viewModel.state.collect { } }
+            advanceUntilIdle()
 
             viewModel.onSaveClient()
             advanceUntilIdle()
 
             assertNotNull(viewModel.state.value.clientNameError)
+            subscriber.cancel()
         }
 
     @Test
     fun `onSaveClient with invalid email shows inline error`() =
         runTest(testDispatcher) {
             val viewModel = createViewModel()
+            val subscriber = launch { viewModel.state.collect { } }
+            advanceUntilIdle()
             viewModel.onClientNameChange("Name")
             viewModel.onClientEmailChange("invalid")
 
@@ -160,12 +183,15 @@ class ClientDetailsEditViewModelTest : FrontendKoinInitializedTest() {
 
             assertNotNull(viewModel.state.value.clientEmailError)
             assertNull(viewModel.state.value.clientNameError)
+            subscriber.cancel()
         }
 
     @Test
     fun `onSaveClient with invalid phone shows inline error`() =
         runTest(testDispatcher) {
             val viewModel = createViewModel()
+            val subscriber = launch { viewModel.state.collect { } }
+            advanceUntilIdle()
             viewModel.onClientNameChange("Name")
             viewModel.onClientPhoneNumberChange("abc")
 
@@ -174,12 +200,15 @@ class ClientDetailsEditViewModelTest : FrontendKoinInitializedTest() {
 
             assertNotNull(viewModel.state.value.clientPhoneNumberError)
             assertNull(viewModel.state.value.clientNameError)
+            subscriber.cancel()
         }
 
     @Test
     fun `onSaveClient with valid optional fields passes validation`() =
         runTest(testDispatcher) {
             val viewModel = createViewModel()
+            val subscriber = launch { viewModel.state.collect { } }
+            advanceUntilIdle()
             viewModel.onClientNameChange("Name")
             viewModel.onClientEmailChange("test@example.com")
             viewModel.onClientPhoneNumberChange("+420123456789")
@@ -191,12 +220,15 @@ class ClientDetailsEditViewModelTest : FrontendKoinInitializedTest() {
             assertNull(viewModel.state.value.clientNameError)
             assertNull(viewModel.state.value.clientEmailError)
             assertNull(viewModel.state.value.clientPhoneNumberError)
+            subscriber.cancel()
         }
 
     @Test
     fun `editing field clears its error`() =
         runTest(testDispatcher) {
             val viewModel = createViewModel()
+            val subscriber = launch { viewModel.state.collect { } }
+            advanceUntilIdle()
             viewModel.onSaveClient()
             advanceUntilIdle()
             assertNotNull(viewModel.state.value.clientNameError)
@@ -204,12 +236,15 @@ class ClientDetailsEditViewModelTest : FrontendKoinInitializedTest() {
             viewModel.onClientNameChange("N")
 
             assertNull(viewModel.state.value.clientNameError)
+            subscriber.cancel()
         }
 
     @Test
     fun `onSaveClient successful sends save event`() =
         runTest(testDispatcher) {
             val viewModel = createViewModel()
+            val subscriber = launch { viewModel.state.collect { } }
+            advanceUntilIdle()
             viewModel.onClientNameChange("Name")
 
             viewModel.onSaveClient()
@@ -220,12 +255,15 @@ class ClientDetailsEditViewModelTest : FrontendKoinInitializedTest() {
             assertIs<OfflineFirstDataResult.Success<AppClient?>>(savedClientResult)
             val savedClient = savedClientResult.data
             assertEquals("Name", savedClient?.name)
+            subscriber.cancel()
         }
 
     @Test
     fun `onSaveClient failure sends error`() =
         runTest(testDispatcher) {
             val viewModel = createViewModel()
+            val subscriber = launch { viewModel.state.collect { } }
+            advanceUntilIdle()
             viewModel.onClientNameChange("Name")
 
             fakeClientsDb.forcedFailure =
@@ -235,6 +273,7 @@ class ClientDetailsEditViewModelTest : FrontendKoinInitializedTest() {
 
             val error = viewModel.errorsFlow.first()
             assertIs<UiError.Unknown>(error)
+            subscriber.cancel()
         }
 
     @Test
@@ -253,11 +292,13 @@ class ClientDetailsEditViewModelTest : FrontendKoinInitializedTest() {
             fakeClientsDb.setClient(client)
 
             val viewModel = createViewModel(clientId = clientId)
+            val subscriber = launch { viewModel.state.collect { } }
             advanceUntilIdle()
 
             viewModel.onDelete()
 
             viewModel.deletedSuccessfullyEventFlow.first()
+            subscriber.cancel()
         }
 
     @Test
@@ -276,6 +317,7 @@ class ClientDetailsEditViewModelTest : FrontendKoinInitializedTest() {
             fakeClientsDb.setClient(client)
 
             val viewModel = createViewModel(clientId = clientId)
+            val subscriber = launch { viewModel.state.collect { } }
             advanceUntilIdle()
 
             fakeClientsDb.forcedFailure =
@@ -285,6 +327,7 @@ class ClientDetailsEditViewModelTest : FrontendKoinInitializedTest() {
 
             val error = viewModel.errorsFlow.first()
             assertIs<UiError.Unknown>(error)
+            subscriber.cancel()
         }
 
     @Test
@@ -303,9 +346,11 @@ class ClientDetailsEditViewModelTest : FrontendKoinInitializedTest() {
             fakeClientsDb.setClient(client)
 
             val viewModel = createViewModel(clientId = clientId)
+            val subscriber = launch { viewModel.state.collect { } }
             advanceUntilIdle()
 
             assertTrue(viewModel.state.value.canDelete)
+            subscriber.cancel()
         }
 
     @Test
@@ -334,8 +379,10 @@ class ClientDetailsEditViewModelTest : FrontendKoinInitializedTest() {
             )
 
             val viewModel = createViewModel(clientId = clientId)
+            val subscriber = launch { viewModel.state.collect { } }
             advanceUntilIdle()
 
             assertFalse(viewModel.state.value.canDelete)
+            subscriber.cancel()
         }
 }

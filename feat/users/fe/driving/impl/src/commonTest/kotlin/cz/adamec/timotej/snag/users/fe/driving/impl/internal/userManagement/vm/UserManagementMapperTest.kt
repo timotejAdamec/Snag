@@ -12,16 +12,17 @@
 
 package cz.adamec.timotej.snag.users.fe.driving.impl.internal.userManagement.vm
 
+import cz.adamec.timotej.snag.authorization.business.UserRole
 import kotlinx.collections.immutable.persistentListOf
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 import kotlin.uuid.Uuid
 
 class UserManagementMapperTest {
-
     @Test
-    fun `isRoleChangeEnabled is true when not updating role`() {
+    fun `isRoleChangeEnabled is true when not updating role and allowedRoleOptions is not empty`() {
         val vmState =
             UserManagementVmState(
                 users =
@@ -31,11 +32,18 @@ class UserManagementMapperTest {
                             email = "test@test.com",
                             role = null,
                             isUpdatingRole = false,
+                            allowedRoleOptions = setOf(UserRole.PASSPORT_TECHNICIAN),
                         ),
                     ),
             )
 
-        assertTrue(vmState.toUiState().users.first().isRoleChangeEnabled)
+        assertTrue(
+            vmState
+                .toUiState()
+                .users
+                .first()
+                .isRoleChangeEnabled,
+        )
     }
 
     @Test
@@ -49,11 +57,69 @@ class UserManagementMapperTest {
                             email = "test@test.com",
                             role = null,
                             isUpdatingRole = true,
+                            allowedRoleOptions = setOf(UserRole.PASSPORT_TECHNICIAN),
                         ),
                     ),
             )
 
-        assertFalse(vmState.toUiState().users.first().isRoleChangeEnabled)
+        assertFalse(
+            vmState
+                .toUiState()
+                .users
+                .first()
+                .isRoleChangeEnabled,
+        )
+    }
+
+    @Test
+    fun `isRoleChangeEnabled is false when allowedRoleOptions is empty`() {
+        val vmState =
+            UserManagementVmState(
+                users =
+                    persistentListOf(
+                        UserVmItem(
+                            id = Uuid.random(),
+                            email = "test@test.com",
+                            role = null,
+                            isUpdatingRole = false,
+                            allowedRoleOptions = emptySet(),
+                        ),
+                    ),
+            )
+
+        assertFalse(
+            vmState
+                .toUiState()
+                .users
+                .first()
+                .isRoleChangeEnabled,
+        )
+    }
+
+    @Test
+    fun `allowedRoleOptions passes through to UiState`() {
+        val options = setOf(UserRole.PASSPORT_TECHNICIAN, UserRole.SERVICE_WORKER)
+        val vmState =
+            UserManagementVmState(
+                users =
+                    persistentListOf(
+                        UserVmItem(
+                            id = Uuid.random(),
+                            email = "test@test.com",
+                            role = null,
+                            allowedRoleOptions = options,
+                        ),
+                    ),
+            )
+
+        assertEquals(
+            options,
+            vmState
+                .toUiState()
+                .users
+                .first()
+                .allowedRoleOptions,
+        )
     }
 
     @Test

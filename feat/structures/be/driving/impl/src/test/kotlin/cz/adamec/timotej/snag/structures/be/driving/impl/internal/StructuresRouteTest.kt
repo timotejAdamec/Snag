@@ -19,7 +19,7 @@ import cz.adamec.timotej.snag.feat.structures.be.model.BackendStructureData
 import cz.adamec.timotej.snag.network.be.test.jsonClient
 import cz.adamec.timotej.snag.projects.be.driven.test.seedTestProject
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
-import cz.adamec.timotej.snag.routing.be.USER_ID_HEADER
+import cz.adamec.timotej.snag.routing.common.USER_ID_HEADER
 import cz.adamec.timotej.snag.structures.be.driven.test.seedTestStructure
 import cz.adamec.timotej.snag.structures.be.driving.contract.DeleteStructureApiDto
 import cz.adamec.timotej.snag.structures.be.driving.contract.PutStructureApiDto
@@ -190,6 +190,7 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
     fun `PATCH soft-delete structure with invalid id returns 400`() =
         testApplication {
             configureApp()
+            usersDb.seedTestUser()
             val client = jsonClient()
 
             val response =
@@ -206,6 +207,13 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
     fun `PATCH soft-delete structure with invalid body returns 400`() =
         testApplication {
             configureApp()
+            createParentProject()
+            dataSource.seedTestStructure(
+                id = TEST_ID_1,
+                projectId = PROJECT_ID,
+                name = "Structure",
+                updatedAt = Timestamp(100L),
+            )
             val client = jsonClient()
 
             val response =
@@ -226,6 +234,7 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
     fun `GET structures returns empty list when none exist`() =
         testApplication {
             configureApp()
+            createParentProject()
             val client = jsonClient()
 
             val response =
@@ -368,6 +377,7 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
     fun `GET structures with invalid project id returns 400`() =
         testApplication {
             configureApp()
+            usersDb.seedTestUser()
             val client = jsonClient()
 
             val response =
@@ -480,6 +490,7 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
     fun `PUT structure with invalid id returns 400`() =
         testApplication {
             configureApp()
+            createParentProject()
             val client = jsonClient()
 
             val response =
@@ -503,6 +514,7 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
     fun `PUT structure with invalid body returns 400`() =
         testApplication {
             configureApp()
+            createParentProject()
             val client = jsonClient()
 
             val response =

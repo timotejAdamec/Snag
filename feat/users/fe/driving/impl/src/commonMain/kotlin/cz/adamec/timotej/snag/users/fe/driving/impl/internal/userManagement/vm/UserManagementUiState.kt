@@ -30,4 +30,5 @@ internal data class UserItem(
     val email: String,
     val role: UserRole?,
     val isRoleChangeEnabled: Boolean = true,
+    val allowedRoleOptions: Set<UserRole?> = emptySet(),
 )

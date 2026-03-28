@@ -13,10 +13,12 @@
 package cz.adamec.timotej.snag.feat.inspections.be.app.impl.di
 
 import cz.adamec.timotej.snag.feat.inspections.be.app.api.DeleteInspectionUseCase
+import cz.adamec.timotej.snag.feat.inspections.be.app.api.GetInspectionUseCase
 import cz.adamec.timotej.snag.feat.inspections.be.app.api.GetInspectionsModifiedSinceUseCase
 import cz.adamec.timotej.snag.feat.inspections.be.app.api.GetInspectionsUseCase
 import cz.adamec.timotej.snag.feat.inspections.be.app.api.SaveInspectionUseCase
 import cz.adamec.timotej.snag.feat.inspections.be.app.impl.internal.DeleteInspectionUseCaseImpl
+import cz.adamec.timotej.snag.feat.inspections.be.app.impl.internal.GetInspectionUseCaseImpl
 import cz.adamec.timotej.snag.feat.inspections.be.app.impl.internal.GetInspectionsModifiedSinceUseCaseImpl
 import cz.adamec.timotej.snag.feat.inspections.be.app.impl.internal.GetInspectionsUseCaseImpl
 import cz.adamec.timotej.snag.feat.inspections.be.app.impl.internal.SaveInspectionUseCaseImpl
@@ -27,6 +29,7 @@ import org.koin.dsl.module
 val inspectionsAppModule =
     module {
         factoryOf(::DeleteInspectionUseCaseImpl) bind DeleteInspectionUseCase::class
+        factoryOf(::GetInspectionUseCaseImpl) bind GetInspectionUseCase::class
         factoryOf(::GetInspectionsUseCaseImpl) bind GetInspectionsUseCase::class
         factoryOf(::SaveInspectionUseCaseImpl) bind SaveInspectionUseCase::class
         factoryOf(::GetInspectionsModifiedSinceUseCaseImpl) bind GetInspectionsModifiedSinceUseCase::class

@@ -18,7 +18,7 @@ import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.projects.be.model.BackendProjectData
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
 import cz.adamec.timotej.snag.reports.be.driven.test.FakePdfReportGenerator
-import cz.adamec.timotej.snag.routing.be.USER_ID_HEADER
+import cz.adamec.timotej.snag.routing.common.USER_ID_HEADER
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
 import cz.adamec.timotej.snag.users.be.driven.test.TEST_USER_ID
 import cz.adamec.timotej.snag.users.be.driven.test.seedTestUser
@@ -102,6 +102,7 @@ class ReportRouteTest : BackendKoinInitializedTest() {
     fun `GET report returns 404 when project does not exist`() =
         testApplication {
             configureApp()
+            usersDb.seedTestUser()
             val client = createClient { }
 
             val response =
@@ -145,6 +146,7 @@ class ReportRouteTest : BackendKoinInitializedTest() {
     fun `GET report with invalid id returns 400`() =
         testApplication {
             configureApp()
+            usersDb.seedTestUser()
             val client = createClient { }
 
             val response =

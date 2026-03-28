@@ -143,7 +143,7 @@ private fun FindingPhotoThumbnail(
     var isShowingDeleteConfirmation by remember { mutableStateOf(false) }
 
     if (isShowingDeleteConfirmation) {
-        FindingPhotoDeletionAlertDialog(
+        FindingPhotoDeletionDialog(
             onDelete = {
                 onDeletePhoto(photo.id)
                 isShowingDeleteConfirmation = false
@@ -171,9 +171,10 @@ private fun FindingPhotoThumbnail(
         }
         if (canEdit) {
             IconButton(
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .size(24.dp),
+                modifier =
+                    Modifier
+                        .align(Alignment.TopEnd)
+                        .size(24.dp),
                 onClick = {
                     isShowingDeleteConfirmation = true
                 },

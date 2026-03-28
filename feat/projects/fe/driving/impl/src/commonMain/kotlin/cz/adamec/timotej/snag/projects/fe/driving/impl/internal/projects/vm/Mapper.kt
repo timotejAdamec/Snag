@@ -13,4 +13,7 @@
 package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projects.vm
 
 internal fun ProjectsVmState.toUiState(): ProjectsUiState =
-    ProjectsUiState(projects = projects)
+    ProjectsUiState(
+        projects = projects,
+        canCreateProject = canCreateProject,
+    )

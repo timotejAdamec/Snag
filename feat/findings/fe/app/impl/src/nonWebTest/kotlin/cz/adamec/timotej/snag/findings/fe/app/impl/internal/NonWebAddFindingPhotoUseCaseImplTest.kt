@@ -48,7 +48,7 @@ class NonWebAddFindingPhotoUseCaseImplTest : FrontendKoinInitializedTest() {
             val request =
                 AddFindingPhotoRequest(
                     bytes = photoBytes,
-                    fileName = "photo.jpg",
+                    fileName = PHOTO_FILE_NAME,
                     findingId = findingId,
                     projectId = projectId,
                 )
@@ -67,7 +67,7 @@ class NonWebAddFindingPhotoUseCaseImplTest : FrontendKoinInitializedTest() {
             val request =
                 AddFindingPhotoRequest(
                     bytes = photoBytes,
-                    fileName = "photo.jpg",
+                    fileName = PHOTO_FILE_NAME,
                     findingId = findingId,
                     projectId = projectId,
                 )
@@ -88,7 +88,7 @@ class NonWebAddFindingPhotoUseCaseImplTest : FrontendKoinInitializedTest() {
             val request =
                 AddFindingPhotoRequest(
                     bytes = photoBytes,
-                    fileName = "photo.jpg",
+                    fileName = PHOTO_FILE_NAME,
                     findingId = findingId,
                     projectId = projectId,
                 )
@@ -107,7 +107,7 @@ class NonWebAddFindingPhotoUseCaseImplTest : FrontendKoinInitializedTest() {
             val request =
                 AddFindingPhotoRequest(
                     bytes = photoBytes,
-                    fileName = "photo.jpg",
+                    fileName = PHOTO_FILE_NAME,
                     findingId = findingId,
                     projectId = projectId,
                 )
@@ -127,7 +127,7 @@ class NonWebAddFindingPhotoUseCaseImplTest : FrontendKoinInitializedTest() {
             val request =
                 AddFindingPhotoRequest(
                     bytes = photoBytes,
-                    fileName = "photo.jpg",
+                    fileName = PHOTO_FILE_NAME,
                     findingId = findingId,
                     projectId = projectId,
                 )
@@ -143,7 +143,7 @@ class NonWebAddFindingPhotoUseCaseImplTest : FrontendKoinInitializedTest() {
             val request =
                 AddFindingPhotoRequest(
                     bytes = photoBytes,
-                    fileName = "photo.jpg",
+                    fileName = PHOTO_FILE_NAME,
                     findingId = findingId,
                     projectId = projectId,
                 )
@@ -168,5 +168,9 @@ class NonWebAddFindingPhotoUseCaseImplTest : FrontendKoinInitializedTest() {
         fakeFindingPhotosDb.forcedFailure = null
         val result = fakeFindingPhotosDb.getPhotoFlow(id).first()
         return (result as OfflineFirstDataResult.Success).data!!
+    }
+
+    companion object {
+        private const val PHOTO_FILE_NAME = "photo.jpg"
     }
 }

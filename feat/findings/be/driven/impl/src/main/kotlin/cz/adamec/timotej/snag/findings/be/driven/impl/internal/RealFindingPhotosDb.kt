@@ -33,15 +33,18 @@ internal class RealFindingPhotosDb(
         transaction(database) {
             // Photos are immutable — if exists, reject (return existing)
             val existing = FindingPhotoEntity.findById(photo.id)
-            if (existing != null) return@transaction existing.toModel()
-            // Otherwise create new
-            FindingPhotoEntity.new(photo.id) {
-                finding = FindingEntity[photo.findingId]
-                url = photo.url
-                createdAt = photo.createdAt.value
-                deletedAt = photo.deletedAt?.value
+            if (existing != null) {
+                existing.toModel()
+            } else {
+                // Otherwise create new
+                FindingPhotoEntity.new(photo.id) {
+                    finding = FindingEntity[photo.findingId]
+                    url = photo.url
+                    createdAt = photo.createdAt.value
+                    deletedAt = photo.deletedAt?.value
+                }
+                null
             }
-            null
         }
 
     override suspend fun deletePhoto(
@@ -49,9 +52,10 @@ internal class RealFindingPhotosDb(
         deletedAt: Timestamp,
     ): BackendFindingPhoto? =
         transaction(database) {
-            val existing = FindingPhotoEntity.findById(id) ?: return@transaction null
-            if (existing.deletedAt != null) return@transaction null
-            existing.deletedAt = deletedAt.value
+            val existing = FindingPhotoEntity.findById(id)
+            if (existing != null && existing.deletedAt == null) {
+                existing.deletedAt = deletedAt.value
+            }
             null
         }
 

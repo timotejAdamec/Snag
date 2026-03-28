@@ -22,7 +22,7 @@ import cz.adamec.timotej.snag.feat.inspections.be.ports.InspectionsDb
 import cz.adamec.timotej.snag.network.be.test.jsonClient
 import cz.adamec.timotej.snag.projects.be.driven.test.seedTestProject
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
-import cz.adamec.timotej.snag.routing.be.USER_ID_HEADER
+import cz.adamec.timotej.snag.routing.common.USER_ID_HEADER
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
 import cz.adamec.timotej.snag.users.be.driven.test.TEST_USER_ID
 import cz.adamec.timotej.snag.users.be.driven.test.seedTestUser
@@ -160,6 +160,7 @@ class InspectionsRouteTest : BackendKoinInitializedTest() {
     fun `DELETE inspection with invalid id returns 400`() =
         testApplication {
             configureApp()
+            usersDb.seedTestUser()
             val client = jsonClient()
 
             val response =
@@ -176,6 +177,14 @@ class InspectionsRouteTest : BackendKoinInitializedTest() {
     fun `DELETE inspection with invalid body returns 400`() =
         testApplication {
             configureApp()
+            seedProject()
+            inspectionsDb.seedTestInspection(
+                id = TEST_ID_1,
+                projectId = PROJECT_ID,
+                startedAt = Timestamp(50L),
+                participants = "John Doe",
+                updatedAt = Timestamp(100L),
+            )
             val client = jsonClient()
 
             val response =

@@ -17,13 +17,13 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class ClientDetailsEditMapperTest {
-
     @Test
-    fun `canDelete is true when canDelete is true and not being deleted`() {
+    fun `canDelete is true when canDelete is true and canManageClients is true and not being deleted`() {
         val vmState =
             ClientDetailsEditVmState(
                 canDelete = true,
                 isBeingDeleted = false,
+                canManageClients = true,
             )
 
         assertTrue(vmState.toUiState().canDelete)
@@ -35,6 +35,7 @@ class ClientDetailsEditMapperTest {
             ClientDetailsEditVmState(
                 canDelete = true,
                 isBeingDeleted = true,
+                canManageClients = true,
             )
 
         assertFalse(vmState.toUiState().canDelete)
@@ -46,6 +47,19 @@ class ClientDetailsEditMapperTest {
             ClientDetailsEditVmState(
                 canDelete = false,
                 isBeingDeleted = false,
+                canManageClients = true,
+            )
+
+        assertFalse(vmState.toUiState().canDelete)
+    }
+
+    @Test
+    fun `canDelete is false when canManageClients is false`() {
+        val vmState =
+            ClientDetailsEditVmState(
+                canDelete = true,
+                isBeingDeleted = false,
+                canManageClients = false,
             )
 
         assertFalse(vmState.toUiState().canDelete)
@@ -69,5 +83,15 @@ class ClientDetailsEditMapperTest {
             )
 
         assertFalse(vmState.toUiState().areDeleteDialogButtonsEnabled)
+    }
+
+    @Test
+    fun `canSave is true when canManageClients is true`() {
+        assertTrue(ClientDetailsEditVmState(canManageClients = true).toUiState().canSave)
+    }
+
+    @Test
+    fun `canSave is false when canManageClients is false`() {
+        assertFalse(ClientDetailsEditVmState(canManageClients = false).toUiState().canSave)
     }
 }

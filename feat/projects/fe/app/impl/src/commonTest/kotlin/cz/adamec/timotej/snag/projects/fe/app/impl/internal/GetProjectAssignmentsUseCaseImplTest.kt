@@ -26,6 +26,7 @@ import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
+import kotlin.test.assertTrue
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class GetProjectAssignmentsUseCaseImplTest : FrontendKoinInitializedTest() {
@@ -41,7 +42,7 @@ class GetProjectAssignmentsUseCaseImplTest : FrontendKoinInitializedTest() {
             val result = useCase(projectId).first()
 
             assertIs<OfflineFirstDataResult.Success<Set<*>>>(result)
-            assertEquals(emptySet(), result.data)
+            assertTrue { result.data.isEmpty() }
         }
 
     @Test
@@ -65,6 +66,6 @@ class GetProjectAssignmentsUseCaseImplTest : FrontendKoinInitializedTest() {
             val result = useCase(projectId).first()
 
             assertIs<OfflineFirstDataResult.Success<Set<*>>>(result)
-            assertEquals(emptySet(), result.data)
+            assertTrue { result.data.isEmpty() }
         }
 }

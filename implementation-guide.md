@@ -9,19 +9,19 @@ This document is a reference for the implementation team. It describes what the 
 ### Must do
 
 1. **FE: User assignment UI** — FE assign/unassign use cases + UI not yet implemented. Local assignment cache, pull sync, cascade delete/restore, and query use case are done. *(§6 #2, FP4c, FP4d)*
-2. **FE: Role-based UI gating** — Zero role-based UI gating exists. Current user is a hardcoded UUID. All buttons visible unconditionally. Shared KMP rules exist but are unused on FE driving layer. *(NP13 FE)*
+2. ~~**FE: Role-based UI gating**~~ — **Done.** FE use cases (`CanCreateProjectUseCase`, `CanCloseProjectUseCase`, `CanManageClientsUseCase`, `GetAllowedRoleOptionsUseCase`) wrap shared KMP rules with `GetCurrentUserFlowUseCase`, emitting reactive `Flow<Boolean>`. All ViewModels collect these into state booleans (deny-first defaults: `false` until confirmed). UI buttons hidden/disabled based on authorization. *(NP13 FE)*
 3. **EntraID authentication** — Not started. BE: validate EntraID JWT (currently mock `X-User-Id` header). FE: OAuth2/OIDC flow, token storage, refresh. *(§4, FP34, FP35, NP12)*
 4. **Service protocol PDF** — Not started. Second report type with work description and signature fields. *(§5, FP32b)*
-5. **FE: Role management UI** — BE API + authorization done; FE UI for managing roles not yet implemented. *(§6 #4)*
-6. **Closed-project access gap** — `CanAccessProjectRule` does not check `isClosed`; `AreProjectEntitiesEditableRule` does; both have to be checked on FE.*
+5. ~~**FE: Role management UI**~~ — **Done.** `GetAllowedRoleOptionsUseCase` computes allowed role transitions per target user; `UserManagementViewModel` collects into `allowedRoleOptions` per `UserItem`; `RoleDropdown` filters options accordingly. *(§6 #4)*
+6. ~~**Closed-project access gap**~~ — **Not a gap.** `CanAccessProjectRule` intentionally does not check `isClosed`; `AreProjectEntitiesEditableRule` handles it separately. Both rules are composed at the use case layer: FE via `CanEditProjectEntitiesUseCaseImpl`, BE via sub-entity route use cases. Separation by design — access and editability are orthogonal concerns.
 
 ### Partially done (BE complete, FE incomplete)
 
 | Feature | BE | FE |
 |---|---|---|
-| Project close/reopen | Done (mechanism + authorization + visibility filtering on all routes) | Close/reopen UI exists but no role gating |
+| Project close/reopen | Done (mechanism + authorization + visibility filtering on all routes) | Close/reopen UI exists; role gating done (`CanCloseProjectUseCase` gates button to admin/creator) |
 | User assignment | Done (API + DB + `CanAssignUserToProjectRule`) | Local cache + sync done; assign/unassign use cases + UI missing |
-| Role management (UC7) | Done (`CanSetUserRoleRule`) | UI for role delegation missing |
+| Role management (UC7) | Done (`CanSetUserRoleRule`) | **Done** — `GetAllowedRoleOptionsUseCase` + filtered `RoleDropdown` |
 
 ---
 
@@ -113,10 +113,10 @@ When a project is **closed**, only the creator retains access. Assigned users lo
 
 The following features are new compared to the original analysis (which had no roles):
 
-1. - [ ] **Project closure and reopening** — projects can be closed and reopened; access is determined by project state and roles. *(BE: close/reopen mechanism + `CanCloseProjectRule` + `CanAccessProjectRule` visibility filtering all done on project routes; sub-entity routes wired via `CanAccessProjectUseCase`)*
+1. - [x] **Project closure and reopening** — projects can be closed and reopened; access is determined by project state and roles. *(BE: close/reopen mechanism + `CanCloseProjectRule` + `CanAccessProjectRule` visibility filtering all done on project routes; sub-entity routes wired via `CanAccessProjectUseCase`. FE: close/reopen button gated via `CanCloseProjectUseCase`; entity editing gated via `CanEditProjectEntitiesUseCase`.)*
 2. - [ ] **User assignment to / removal from project** — leads can add/remove technicians or service workers. *(BE: API + DB + role-restricted access enforced via `CanAssignUserToProjectRule` — Admin/VP/VS allowed; TP/Ser/None denied. FE: local assignment cache with full-replacement pull sync, cascade delete/restore on project deletion, query use case. FE assign/unassign use cases + UI not yet implemented.)*
 3. - [ ] **Authentication (EntraID)** — mandatory Microsoft EntraID login (standalone mechanism, not a UC).
-4. - [ ] **Role management (UC7)** — admin manages all roles; passport lead delegates technician role; service lead delegates service worker role. *(BE API done: role set via PUT /users/{id}; authorization enforced via `CanSetUserRoleRule`)*
+4. - [x] **Role management (UC7)** — admin manages all roles; passport lead delegates technician role; service lead delegates service worker role. *(BE API done: role set via PUT /users/{id}; authorization enforced via `CanSetUserRoleRule`. FE: `GetAllowedRoleOptionsUseCase` computes allowed transitions; `UserManagementViewModel` populates `allowedRoleOptions` per user; `RoleDropdown` filters visible options.)*
 5. - [x] **Inspection deletion** — UC5 Scenario E. *(full-stack: BE API + DB soft delete + sync, FE use case + local delete + sync enqueue, FE UI delete button + confirmation dialog)*
 6. - [x] **Client deletion** — UC2 Scenario F. A client can only be deleted if no project references it. *(full-stack: CanDeleteClientRule in business/rules, FE CanDeleteClientUseCase + delete guard in BE DeleteClientUseCaseImpl, FE UI delete button + confirmation dialog in client edit screen)*
 7. - [ ] **Service protocol** — second PDF export format with signature fields.
@@ -127,11 +127,11 @@ The following features are new compared to the original analysis (which had no r
 
 | FP | Description | UC | Status |
 |---|---|---|---|
-| FP4 | Close project — restrict access to creator, preserve data | UC1 | - [ ] Close mechanism done; creator-only close authorization enforced on BE; project visibility filtering enforced on all routes including sub-entity routes. |
-| FP4b | Reopen project — reopen a closed project | UC1 | - [ ] Reopen mechanism done; creator-only reopen authorization enforced on BE; project visibility filtering enforced on all routes including sub-entity routes. |
+| FP4 | Close project — restrict access to creator, preserve data | UC1 | - [x] Close mechanism done; creator-only close authorization enforced on BE; project visibility filtering enforced on all routes including sub-entity routes. FE: close button gated via `CanCloseProjectUseCase` (admin/creator only). |
+| FP4b | Reopen project — reopen a closed project | UC1 | - [x] Reopen mechanism done; creator-only reopen authorization enforced on BE; project visibility filtering enforced on all routes including sub-entity routes. FE: reopen button gated via `CanCloseProjectUseCase` (admin/creator only). |
 | FP4c | Assign user to project | UC1 | - [x] BE API + DB + role-restricted access enforced via `CanAssignUserToProjectRule`. FE: local assignment cache synced from BE (full-replacement pull sync). *(FE assign/unassign use cases + UI not yet implemented)* |
 | FP4d | Remove user from project | UC1 | - [x] BE API + DB + role-restricted access enforced via `CanAssignUserToProjectRule`. FE: cascade delete on project deletion. *(FE remove use case + UI not yet implemented)* |
-| FP4e | Close project — creator access: only creator retains access to closed project | UC1 | - [ ] Sub-entity editing blocked on closed projects; `creatorId` tracked; creator-only close/reopen enforced; project visibility filtering enforced on all routes including sub-entity routes. |
+| FP4e | Close project — creator access: only creator retains access to closed project | UC1 | - [x] Sub-entity editing blocked on closed projects; `creatorId` tracked; creator-only close/reopen enforced; project visibility filtering enforced on all routes including sub-entity routes. FE: `CanEditProjectEntitiesUseCase` composes access + editability checks. |
 | FP10 | Delete client — only if not referenced by any project | UC2 | - [x] Done |
 | FP31 | Delete inspection | UC5 | - [x] Done |
 | FP32b | Generate service protocol — PDF with work description and signature fields | UC6 | - [ ] Not started |
@@ -151,11 +151,14 @@ The following features are new compared to the original analysis (which had no r
 
 ### NP13 — Role-based authorisation
 - [x] **Backend**: authorization fully wired across all routes. Project routes: `CanCreateProjectRule`, `CanCloseProjectRule`, `CanAccessProjectRule`, `CanAssignUserToProjectRule`. Sub-entity routes (structures, findings, inspections, finding photos): `CanAccessProjectUseCase` with project resolution from URL path or entity lookup (three-hop for finding photos: finding → structure → project). Client routes: `CanManageClientsRule` (role-based, denies Passport Technician and None). User routes: `CanSetUserRoleRule` (delegation scoping — Admin: any, Passport Lead: None↔Passport Technician, Service Lead: None↔Service Worker). Report route: `CanAccessProjectUseCase`.
-  - **Known gap**: `CanAccessProjectRule` does not check `isClosed` — it grants access to admin/creator/assigned users regardless of project state. Per spec (§3), assigned users should lose access when a project is closed (only creator retains it). This check may belong in `CanAccessProjectRule` itself, in a separate composition (like `CanEditProjectEntitiesUseCaseImpl` does on FE with `AreProjectEntitiesEditableRule`), or in the route-level use case. It may also stay as it is, because checking if project is closed is not that hard authorization check as checking user role and the BE might respond differntly, depends on implementation decision. Decision pending.
-- [ ] **Frontend**: hide/show UI elements based on role; do not rely solely on frontend gating.
-  - Current state: **zero role-based UI gating**. Current user is a hardcoded UUID (`GetCurrentUserUseCaseImpl`) with TODO to replace with EntraID. FE does not know the current user's role.
-  - All buttons (create project, close/reopen, edit, delete, report download) are visible unconditionally — only gated by project state (`isClosed`), not user role or access.
-  - Shared KMP rules (`CanCreateProjectRule`, `CanCloseProjectRule`, `CanAccessProjectRule`, `CanAssignUserToProjectRule`) exist. `CanAccessProjectRule` + `AreProjectEntitiesEditableRule` (renamed from `CanEditProjectEntitiesRule`) are now composed in `CanEditProjectEntitiesUseCaseImpl` to gate entity editing by both access and project state. Other rules still unused on FE.
+  - **Note**: `CanAccessProjectRule` intentionally does not check `isClosed` — access and editability are orthogonal concerns. Both are composed at the use case layer: FE via `CanEditProjectEntitiesUseCaseImpl` (combines `CanAccessProjectRule` + `AreProjectEntitiesEditableRule`), BE via sub-entity route use cases that check both.
+- [x] **Frontend**: FE authorization use cases wrap shared KMP rules with `GetCurrentUserFlowUseCase` and reactive DB queries, emitting `Flow<Boolean>` (deny-first: all default to `false`). ViewModels collect these into state booleans that gate UI elements.
+  - `CanCreateProjectUseCase` — gates "new project" button (role-based via `CanCreateProjectRule`)
+  - `CanCloseProjectUseCase` — gates close/reopen button (admin or creator via `CanCloseProjectRule`)
+  - `CanEditProjectEntitiesUseCase` — gates entity editing (access + project-not-closed via `CanAccessProjectRule` + `AreProjectEntitiesEditableRule`); feeds into `ProjectDetailsUiState.isProjectEditable` which cascades to edit, delete, new structure/inspection buttons
+  - `CanManageClientsUseCase` — gates client create/edit/delete (role-based via `CanManageClientsRule`)
+  - `GetAllowedRoleOptionsUseCase` — returns `Flow<Set<UserRole?>>` of assignable roles per target; filters `RoleDropdown` options
+  - Current user is still a hardcoded UUID (`GetCurrentUserUseCaseImpl`) — will be replaced when EntraID authentication is implemented. The reactive `GetCurrentUserFlowUseCase` reads user data (including role) from local DB, so gating works correctly once the user entity exists.
   - **Stale data issue**: when a user's role changes or they are unassigned, the local DB retains all previously synced data (projects, structures, findings, photos). Backend stops serving new updates, but old data remains readable offline. Backend blocks unauthorized writes (403), so no data corruption, but user can still read data they should no longer access. Inherent to offline-first architecture — possible fix: detect projects no longer returned by backend sync and purge local copies.
 
 ### Detailed Permission Matrix

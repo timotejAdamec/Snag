@@ -19,19 +19,23 @@ import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
 import cz.adamec.timotej.snag.users.app.model.AppUserData
 import cz.adamec.timotej.snag.users.fe.app.api.ChangeUserRoleUseCase
+import cz.adamec.timotej.snag.users.fe.app.api.GetAllowedRoleOptionsUseCase
 import cz.adamec.timotej.snag.users.fe.app.api.GetUsersUseCase
 import cz.adamec.timotej.snag.users.fe.driven.test.FakeUsersApi
 import cz.adamec.timotej.snag.users.fe.driven.test.FakeUsersDb
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
+import org.koin.core.module.Module
+import org.koin.dsl.module
 import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 import kotlin.test.assertIs
+import kotlin.test.assertTrue
 import kotlin.uuid.Uuid
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -40,6 +44,7 @@ class UserManagementViewModelTest : FrontendKoinInitializedTest() {
     private val fakeUsersApi: FakeUsersApi by inject()
     private val getUsersUseCase: GetUsersUseCase by inject()
     private val changeUserRoleUseCase: ChangeUserRoleUseCase by inject()
+    private val getAllowedRoleOptionsUseCase: GetAllowedRoleOptionsUseCase by inject()
 
     private val testUser =
         AppUserData(
@@ -50,10 +55,31 @@ class UserManagementViewModelTest : FrontendKoinInitializedTest() {
             updatedAt = Timestamp(100L),
         )
 
+    override fun additionalKoinModules(): List<Module> =
+        listOf(
+            module {
+                factory<GetAllowedRoleOptionsUseCase> {
+                    object : GetAllowedRoleOptionsUseCase {
+                        override fun invoke(targetCurrentRole: UserRole?) =
+                            flowOf(
+                                setOf(
+                                    UserRole.ADMINISTRATOR,
+                                    UserRole.SERVICE_LEAD,
+                                    UserRole.SERVICE_WORKER,
+                                    UserRole.PASSPORT_LEAD,
+                                    UserRole.PASSPORT_TECHNICIAN,
+                                ),
+                            )
+                    }
+                }
+            },
+        )
+
     private fun createViewModel() =
         UserManagementViewModel(
             getUsersUseCase = getUsersUseCase,
             changeUserRoleUseCase = changeUserRoleUseCase,
+            getAllowedRoleOptionsUseCase = getAllowedRoleOptionsUseCase,
         )
 
     @Test

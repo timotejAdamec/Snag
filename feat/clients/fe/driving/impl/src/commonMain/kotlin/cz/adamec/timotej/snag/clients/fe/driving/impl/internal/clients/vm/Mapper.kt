@@ -13,4 +13,7 @@
 package cz.adamec.timotej.snag.clients.fe.driving.impl.internal.clients.vm
 
 internal fun ClientsVmState.toUiState(): ClientsUiState =
-    ClientsUiState(clients = clients)
+    ClientsUiState(
+        clients = clients,
+        canCreateClient = canManageClients,
+    )

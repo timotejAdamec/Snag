@@ -14,6 +14,10 @@ package cz.adamec.timotej.snag.projects.fe.app.impl.di
 
 import cz.adamec.timotej.snag.projects.business.AreProjectEntitiesEditableRule
 import cz.adamec.timotej.snag.projects.business.CanAccessProjectRule
+import cz.adamec.timotej.snag.projects.business.CanCloseProjectRule
+import cz.adamec.timotej.snag.projects.business.CanCreateProjectRule
+import cz.adamec.timotej.snag.projects.fe.app.api.CanCloseProjectUseCase
+import cz.adamec.timotej.snag.projects.fe.app.api.CanCreateProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.CanEditProjectEntitiesUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.CascadeDeleteLocalAssignmentsByProjectIdUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.CascadeRestoreLocalAssignmentsByProjectIdUseCase
@@ -24,6 +28,8 @@ import cz.adamec.timotej.snag.projects.fe.app.api.GetProjectsUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.IsClientReferencedByProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.SaveProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.SetProjectClosedUseCase
+import cz.adamec.timotej.snag.projects.fe.app.impl.internal.CanCloseProjectUseCaseImpl
+import cz.adamec.timotej.snag.projects.fe.app.impl.internal.CanCreateProjectUseCaseImpl
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.CanEditProjectEntitiesUseCaseImpl
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.CascadeDeleteLocalAssignmentsByProjectIdUseCaseImpl
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.CascadeRestoreLocalAssignmentsByProjectIdUseCaseImpl
@@ -50,10 +56,14 @@ val projectsAppModule =
         factoryOf(::SaveProjectUseCaseImpl) bind SaveProjectUseCase::class
         factoryOf(::DeleteProjectUseCaseImpl) bind DeleteProjectUseCase::class
         factoryOf(::SetProjectClosedUseCaseImpl) bind SetProjectClosedUseCase::class
+        factoryOf(::CanCreateProjectUseCaseImpl) bind CanCreateProjectUseCase::class
+        factoryOf(::CanCloseProjectUseCaseImpl) bind CanCloseProjectUseCase::class
         factoryOf(::CanEditProjectEntitiesUseCaseImpl) bind CanEditProjectEntitiesUseCase::class
         factoryOf(::IsClientReferencedByProjectUseCaseImpl) bind IsClientReferencedByProjectUseCase::class
         factoryOf(::AreProjectEntitiesEditableRule)
         factoryOf(::CanAccessProjectRule)
+        factoryOf(::CanCloseProjectRule)
+        factoryOf(::CanCreateProjectRule)
         factoryOf(::GetProjectAssignmentsUseCaseImpl) bind GetProjectAssignmentsUseCase::class
         factoryOf(::CascadeDeleteLocalAssignmentsByProjectIdUseCaseImpl) bind CascadeDeleteLocalAssignmentsByProjectIdUseCase::class
         factoryOf(::CascadeRestoreLocalAssignmentsByProjectIdUseCaseImpl) bind CascadeRestoreLocalAssignmentsByProjectIdUseCase::class

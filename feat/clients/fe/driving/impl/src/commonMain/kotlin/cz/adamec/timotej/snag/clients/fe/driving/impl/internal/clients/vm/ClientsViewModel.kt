@@ -14,12 +14,14 @@ package cz.adamec.timotej.snag.clients.fe.driving.impl.internal.clients.vm
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cz.adamec.timotej.snag.clients.fe.app.api.CanManageClientsUseCase
 import cz.adamec.timotej.snag.clients.fe.app.api.GetClientsUseCase
 import cz.adamec.timotej.snag.core.foundation.common.mapState
 import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
-import kotlinx.collections.immutable.toPersistentList
 import cz.adamec.timotej.snag.lib.design.fe.state.launchWhileSubscribed
+import kotlinx.collections.immutable.toPersistentList
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -30,11 +32,12 @@ import kotlinx.coroutines.flow.update
 
 internal class ClientsViewModel(
     private val getClientsUseCase: GetClientsUseCase,
+    private val canManageClientsUseCase: CanManageClientsUseCase,
 ) : ViewModel() {
     private val vmState: MutableStateFlow<ClientsVmState> =
         MutableStateFlow(ClientsVmState())
             .launchWhileSubscribed(scope = viewModelScope) {
-                listOf(collectClients())
+                listOf(collectClients(), collectCanManageClients())
             }
     val state: StateFlow<ClientsUiState> =
         vmState.mapState { it.toUiState() }
@@ -42,7 +45,7 @@ internal class ClientsViewModel(
     private val errorEventsChannel = Channel<UiError>()
     val errorsFlow = errorEventsChannel.receiveAsFlow()
 
-    private fun collectClients() =
+    private fun collectClients(): Job =
         getClientsUseCase()
             .map { clientsDataResult ->
                 when (clientsDataResult) {
@@ -58,5 +61,11 @@ internal class ClientsViewModel(
                         }
                     }
                 }
+            }.launchIn(viewModelScope)
+
+    private fun collectCanManageClients(): Job =
+        canManageClientsUseCase()
+            .map { canManage ->
+                vmState.update { it.copy(canManageClients = canManage) }
             }.launchIn(viewModelScope)
 }

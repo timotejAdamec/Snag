@@ -20,4 +20,5 @@ internal fun ProjectDetailsEditVmState.toUiState(): ProjectDetailsEditUiState =
         availableClients = availableClients,
         projectNameError = projectNameError,
         projectAddressError = projectAddressError,
+        canSave = canSave,
     )

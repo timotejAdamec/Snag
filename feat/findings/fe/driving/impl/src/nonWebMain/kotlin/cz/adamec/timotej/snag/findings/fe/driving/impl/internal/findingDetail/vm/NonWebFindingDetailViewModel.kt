@@ -36,14 +36,14 @@ internal class NonWebFindingDetailViewModel(
     deleteFindingPhotoUseCase: DeleteFindingPhotoUseCase,
     private val nonWebAddFindingPhotoUseCase: NonWebAddFindingPhotoUseCase,
 ) : FindingDetailViewModel(
-    findingId = findingId,
-    projectId = projectId,
-    getFindingUseCase = getFindingUseCase,
-    deleteFindingUseCase = deleteFindingUseCase,
-    canEditProjectEntitiesUseCase = canEditProjectEntitiesUseCase,
-    getFindingPhotosUseCase = getFindingPhotosUseCase,
-    deleteFindingPhotoUseCase = deleteFindingPhotoUseCase,
-) {
+        findingId = findingId,
+        projectId = projectId,
+        getFindingUseCase = getFindingUseCase,
+        deleteFindingUseCase = deleteFindingUseCase,
+        canEditProjectEntitiesUseCase = canEditProjectEntitiesUseCase,
+        getFindingPhotosUseCase = getFindingPhotosUseCase,
+        deleteFindingPhotoUseCase = deleteFindingPhotoUseCase,
+    ) {
     override fun onAddPhoto(
         bytes: ByteArray,
         fileName: String,

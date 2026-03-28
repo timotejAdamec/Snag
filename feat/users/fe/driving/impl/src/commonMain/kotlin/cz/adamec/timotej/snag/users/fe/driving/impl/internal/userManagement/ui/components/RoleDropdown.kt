@@ -38,6 +38,7 @@ import snag.feat.users.fe.driving.impl.generated.resources.role_label
 @Composable
 internal fun RoleDropdown(
     selectedRole: UserRole?,
+    allowedRoleOptions: Set<UserRole?>,
     onRoleSelect: (UserRole?) -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
@@ -65,23 +66,27 @@ internal fun RoleDropdown(
             expanded = expanded,
             onDismissRequest = { expanded = false },
         ) {
-            DropdownMenuItem(
-                text = { Text(stringResource(Res.string.no_role)) },
-                onClick = {
-                    onRoleSelect(null)
-                    expanded = false
-                },
-            )
-            HorizontalDivider()
-            UserRole.entries.forEach { role ->
+            if (null in allowedRoleOptions) {
                 DropdownMenuItem(
-                    text = { Text(role.toDisplayName()) },
+                    text = { Text(stringResource(Res.string.no_role)) },
                     onClick = {
-                        onRoleSelect(role)
+                        onRoleSelect(null)
                         expanded = false
                     },
                 )
+                HorizontalDivider()
             }
+            UserRole.entries
+                .filter { it in allowedRoleOptions }
+                .forEach { role ->
+                    DropdownMenuItem(
+                        text = { Text(role.toDisplayName()) },
+                        onClick = {
+                            onRoleSelect(role)
+                            expanded = false
+                        },
+                    )
+                }
         }
     }
 }

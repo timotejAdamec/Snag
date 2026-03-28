@@ -20,15 +20,17 @@ import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.core.network.fe.OnlineDataResult
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.lib.design.fe.error.toUiError
+import cz.adamec.timotej.snag.lib.design.fe.state.launchWhileSubscribed
 import cz.adamec.timotej.snag.users.fe.app.api.ChangeUserRoleUseCase
+import cz.adamec.timotej.snag.users.fe.app.api.GetAllowedRoleOptionsUseCase
 import cz.adamec.timotej.snag.users.fe.app.api.GetUsersUseCase
 import cz.adamec.timotej.snag.users.fe.app.api.model.ChangeUserRoleRequest
-import cz.adamec.timotej.snag.lib.design.fe.state.launchWhileSubscribed
 import cz.adamec.timotej.snag.users.fe.driving.impl.internal.userManagement.toUserVmItem
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -39,11 +41,12 @@ import kotlin.uuid.Uuid
 internal class UserManagementViewModel(
     private val getUsersUseCase: GetUsersUseCase,
     private val changeUserRoleUseCase: ChangeUserRoleUseCase,
+    private val getAllowedRoleOptionsUseCase: GetAllowedRoleOptionsUseCase,
 ) : ViewModel() {
     private val vmState: MutableStateFlow<UserManagementVmState> =
         MutableStateFlow(UserManagementVmState())
             .launchWhileSubscribed(scope = viewModelScope) {
-                listOf(collectUsers())
+                listOf(collectUsers(), collectAllowedRoleOptions())
             }
     val state: StateFlow<UserManagementUiState> =
         vmState.mapState { it.toUiState() }
@@ -68,6 +71,7 @@ internal class UserManagementViewModel(
                                             val existing = currentState.users.find { it.id == user.id }
                                             user.toUserVmItem().copy(
                                                 isUpdatingRole = existing?.isUpdatingRole ?: false,
+                                                allowedRoleOptions = existing?.allowedRoleOptions ?: emptySet(),
                                             )
                                         }.toPersistentList(),
                                 isLoading = false,
@@ -77,11 +81,40 @@ internal class UserManagementViewModel(
                 }
             }.launchIn(viewModelScope)
 
+    private fun collectAllowedRoleOptions() =
+        viewModelScope.launch {
+            val allCurrentRoles: List<UserRole?> = UserRole.entries + null
+            val flows =
+                allCurrentRoles.map { currentRole ->
+                    getAllowedRoleOptionsUseCase(targetCurrentRole = currentRole)
+                        .map { options -> currentRole to options }
+                }
+            combine(flows) { results ->
+                results.toMap()
+            }.collect { optionsMap ->
+                vmState.update { currentState ->
+                    currentState.copy(
+                        users =
+                            currentState.users
+                                .map { user ->
+                                    user.copy(allowedRoleOptions = optionsMap[user.role] ?: emptySet())
+                                }.toPersistentList(),
+                    )
+                }
+            }
+        }
+
+    @Suppress("LabeledExpression")
     fun onRoleChanged(
         userId: Uuid,
         newRole: UserRole?,
     ) {
         viewModelScope.launch {
+            val user = vmState.value.users.find { it.id == userId } ?: return@launch
+            if (newRole !in user.allowedRoleOptions) {
+                errorEventsChannel.send(UiError.Unknown)
+                return@launch
+            }
             updateUserVmItem(userId) { it.copy(isUpdatingRole = true) }
             when (val result = changeUserRoleUseCase(ChangeUserRoleRequest(userId, newRole))) {
                 is OnlineDataResult.Success -> {

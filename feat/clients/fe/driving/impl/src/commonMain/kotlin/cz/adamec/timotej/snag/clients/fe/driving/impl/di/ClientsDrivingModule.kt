@@ -95,6 +95,7 @@ val clientsDrivingImplModule =
                 saveClientUseCase = get(),
                 deleteClientUseCase = get(),
                 canDeleteClientUseCase = get(),
+                canManageClientsUseCase = get(),
                 emailFormatRule = get(),
                 phoneNumberRule = get(),
             )

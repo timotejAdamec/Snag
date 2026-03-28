@@ -13,14 +13,18 @@
 package cz.adamec.timotej.snag.clients.fe.driving.impl.internal.clients.vm
 
 import cz.adamec.timotej.snag.clients.app.model.AppClientData
+import cz.adamec.timotej.snag.clients.fe.app.api.CanManageClientsUseCase
 import cz.adamec.timotej.snag.clients.fe.app.api.GetClientsUseCase
 import cz.adamec.timotej.snag.clients.fe.driven.test.FakeClientsDb
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
+import org.koin.core.module.Module
+import org.koin.dsl.module
 import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -32,10 +36,23 @@ class ClientsViewModelTest : FrontendKoinInitializedTest() {
     private val fakeClientsDb: FakeClientsDb by inject()
 
     private val getClientsUseCase: GetClientsUseCase by inject()
+    private val canManageClientsUseCase: CanManageClientsUseCase by inject()
+
+    override fun additionalKoinModules(): List<Module> =
+        listOf(
+            module {
+                factory<CanManageClientsUseCase> {
+                    object : CanManageClientsUseCase {
+                        override fun invoke() = flowOf(true)
+                    }
+                }
+            },
+        )
 
     private fun createViewModel() =
         ClientsViewModel(
             getClientsUseCase = getClientsUseCase,
+            canManageClientsUseCase = canManageClientsUseCase,
         )
 
     @Test

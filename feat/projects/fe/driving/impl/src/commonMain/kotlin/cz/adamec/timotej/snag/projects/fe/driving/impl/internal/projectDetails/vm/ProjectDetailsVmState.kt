@@ -28,4 +28,6 @@ internal data class ProjectDetailsVmState(
     val project: AppProject? = null,
     val structures: ImmutableList<AppStructure> = persistentListOf(),
     val inspections: ImmutableList<AppInspection> = persistentListOf(),
+    val canEditEntities: Boolean = false,
+    val canCloseProject: Boolean = false,
 )

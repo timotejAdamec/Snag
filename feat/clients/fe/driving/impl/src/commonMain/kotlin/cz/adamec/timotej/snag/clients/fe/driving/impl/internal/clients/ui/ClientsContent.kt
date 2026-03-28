@@ -45,11 +45,13 @@ internal fun ClientsContent(
     CollapsableTopAppBarScaffold(
         title = stringResource(Res.string.clients_title),
         topAppBarActions = {
-            AdaptiveTonalButton(
-                onClick = onNewClientClick,
-                icon = DesignRes.drawable.ic_add,
-                label = stringResource(Res.string.new_client),
-            )
+            if (state.canCreateClient) {
+                AdaptiveTonalButton(
+                    onClick = onNewClientClick,
+                    icon = DesignRes.drawable.ic_add,
+                    label = stringResource(Res.string.new_client),
+                )
+            }
         },
     ) { paddingValues ->
         LazyVerticalGrid(

@@ -24,13 +24,15 @@ import cz.adamec.timotej.snag.feat.inspections.fe.app.api.model.SaveInspectionRe
 import cz.adamec.timotej.snag.feat.reports.fe.app.api.DownloadReportUseCase
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.lib.design.fe.error.toUiError
+import cz.adamec.timotej.snag.lib.design.fe.state.launchWhileSubscribed
+import cz.adamec.timotej.snag.projects.fe.app.api.CanCloseProjectUseCase
+import cz.adamec.timotej.snag.projects.fe.app.api.CanEditProjectEntitiesUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.DeleteProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.GetProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.SetProjectClosedUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.model.SetProjectClosedRequest
 import cz.adamec.timotej.snag.reports.business.Report
 import cz.adamec.timotej.snag.structures.fe.app.api.GetStructuresUseCase
-import cz.adamec.timotej.snag.lib.design.fe.state.launchWhileSubscribed
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -50,6 +52,8 @@ internal class ProjectDetailsViewModel(
     private val downloadReportUseCase: DownloadReportUseCase,
     private val saveInspectionUseCase: SaveInspectionUseCase,
     private val setProjectClosedUseCase: SetProjectClosedUseCase,
+    private val canEditProjectEntitiesUseCase: CanEditProjectEntitiesUseCase,
+    private val canCloseProjectUseCase: CanCloseProjectUseCase,
     private val timestampProvider: TimestampProvider,
 ) : ViewModel() {
     private val vmState: MutableStateFlow<ProjectDetailsVmState> =
@@ -59,6 +63,8 @@ internal class ProjectDetailsViewModel(
                     collectProject(projectId),
                     collectStructures(projectId),
                     collectInspections(projectId),
+                    collectCanEditEntities(projectId),
+                    collectCanCloseProject(projectId),
                 )
             }
     val state: StateFlow<ProjectDetailsUiState> =
@@ -150,6 +156,20 @@ internal class ProjectDetailsViewModel(
                         }
                     }
                 }
+            }
+        }
+
+    private fun collectCanEditEntities(projectId: Uuid) =
+        viewModelScope.launch {
+            canEditProjectEntitiesUseCase(projectId).collect { canEdit ->
+                vmState.update { it.copy(canEditEntities = canEdit) }
+            }
+        }
+
+    private fun collectCanCloseProject(projectId: Uuid) =
+        viewModelScope.launch {
+            canCloseProjectUseCase(projectId).collect { canClose ->
+                vmState.update { it.copy(canCloseProject = canClose) }
             }
         }
 

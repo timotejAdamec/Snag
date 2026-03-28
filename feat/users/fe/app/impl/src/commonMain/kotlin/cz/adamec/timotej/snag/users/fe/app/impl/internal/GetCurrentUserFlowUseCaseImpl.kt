@@ -23,6 +23,5 @@ internal class GetCurrentUserFlowUseCaseImpl(
     private val getCurrentUserUseCase: GetCurrentUserUseCase,
     private val usersDb: UsersDb,
 ) : GetCurrentUserFlowUseCase {
-    override operator fun invoke(): Flow<OfflineFirstDataResult<AppUser?>> =
-        usersDb.getUserFlow(getCurrentUserUseCase())
+    override operator fun invoke(): Flow<OfflineFirstDataResult<AppUser?>> = usersDb.getUserFlow(getCurrentUserUseCase())
 }

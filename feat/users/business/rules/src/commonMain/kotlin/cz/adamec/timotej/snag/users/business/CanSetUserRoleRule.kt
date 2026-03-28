@@ -22,16 +22,18 @@ class CanSetUserRoleRule {
     ): Boolean =
         when (actingUser.role) {
             UserRole.ADMINISTRATOR -> true
-            UserRole.PASSPORT_LEAD -> isTransitionBetween(
-                targetCurrentRole = targetCurrentRole,
-                newRole = newRole,
-                delegatableRole = UserRole.PASSPORT_TECHNICIAN,
-            )
-            UserRole.SERVICE_LEAD -> isTransitionBetween(
-                targetCurrentRole = targetCurrentRole,
-                newRole = newRole,
-                delegatableRole = UserRole.SERVICE_WORKER,
-            )
+            UserRole.PASSPORT_LEAD ->
+                isTransitionBetween(
+                    targetCurrentRole = targetCurrentRole,
+                    newRole = newRole,
+                    delegatableRole = UserRole.PASSPORT_TECHNICIAN,
+                )
+            UserRole.SERVICE_LEAD ->
+                isTransitionBetween(
+                    targetCurrentRole = targetCurrentRole,
+                    newRole = newRole,
+                    delegatableRole = UserRole.SERVICE_WORKER,
+                )
             else -> false
         }
 
