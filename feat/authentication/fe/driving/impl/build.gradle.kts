@@ -19,10 +19,9 @@ kotlin {
         commonMain.dependencies {
             implementation(projects.lib.network.fe.api)
             implementation(projects.lib.routing.common)
+            implementation(projects.feat.authentication.fe.app.api)
             implementation(libs.ktor.client.core)
-        }
-        androidMain.dependencies {
-            implementation(libs.msal)
+            implementation(libs.ktor.client.auth)
         }
     }
 }

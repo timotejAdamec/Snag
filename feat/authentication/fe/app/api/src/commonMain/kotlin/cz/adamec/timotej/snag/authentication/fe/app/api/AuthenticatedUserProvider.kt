@@ -10,7 +10,13 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.routing.common
+package cz.adamec.timotej.snag.authentication.fe.app.api
 
-/** Used only in mock-auth mode (dev/testing). Production uses Authorization Bearer token via Ktor auth plugin. */
-const val USER_ID_HEADER = "X-User-Id"
+import kotlinx.coroutines.flow.StateFlow
+import kotlin.uuid.Uuid
+
+interface AuthenticatedUserProvider {
+    val currentUserId: StateFlow<Uuid?>
+
+    fun requireCurrentUserId(): Uuid
+}

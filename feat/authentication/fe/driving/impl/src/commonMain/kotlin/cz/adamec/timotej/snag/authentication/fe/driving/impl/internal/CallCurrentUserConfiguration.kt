@@ -14,27 +14,46 @@ package cz.adamec.timotej.snag.authentication.fe.driving.impl.internal
 
 import cz.adamec.timotej.snag.configuration.common.CommonConfiguration
 import cz.adamec.timotej.snag.network.fe.HttpClientConfiguration
-import cz.adamec.timotej.snag.routing.common.AUTHORIZATION_HEADER
 import cz.adamec.timotej.snag.routing.common.USER_ID_HEADER
 import io.ktor.client.HttpClientConfig
 import io.ktor.client.plugins.api.createClientPlugin
+import io.ktor.client.plugins.auth.Auth
+import io.ktor.client.plugins.auth.providers.BearerTokens
+import io.ktor.client.plugins.auth.providers.bearer
 
 @Suppress("LabeledExpression")
 internal class CallCurrentUserConfiguration(
     private val authTokenProvider: AuthTokenProvider,
 ) : HttpClientConfiguration {
     override fun HttpClientConfig<*>.setup() {
+        if (CommonConfiguration.mockAuth) {
+            installMockAuth()
+        } else {
+            installBearerAuth()
+        }
+    }
+
+    private fun HttpClientConfig<*>.installMockAuth() {
         install(
-            createClientPlugin("AuthHeaderPlugin") {
+            createClientPlugin("MockAuthPlugin") {
                 onRequest { request, _ ->
                     val token = authTokenProvider.getAccessToken() ?: return@onRequest
-                    if (CommonConfiguration.mockAuth) {
-                        request.headers.append(USER_ID_HEADER, token)
-                    } else {
-                        request.headers.append(AUTHORIZATION_HEADER, "Bearer $token")
-                    }
+                    request.headers.append(USER_ID_HEADER, token)
                 }
             },
         )
+    }
+
+    private fun HttpClientConfig<*>.installBearerAuth() {
+        install(Auth) {
+            bearer {
+                loadTokens {
+                    authTokenProvider
+                        .getAccessToken()
+                        ?.let { BearerTokens(accessToken = it, refreshToken = "") }
+                }
+                sendWithoutRequest { true }
+            }
+        }
     }
 }

@@ -12,20 +12,22 @@
 
 package cz.adamec.timotej.snag.users.fe.app.impl.internal
 
-import cz.adamec.timotej.snag.core.foundation.fe.CurrentUserIdStore
+import cz.adamec.timotej.snag.authentication.fe.app.api.AuthenticatedUserProvider
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.uuid.Uuid
 
 class GetCurrentUserUseCaseImplTest {
-    private val currentUserIdStore = CurrentUserIdStore()
-    private val useCase = GetCurrentUserUseCaseImpl(currentUserIdStore)
+    private val fakeProvider = FakeAuthenticatedUserProvider()
+    private val useCase = GetCurrentUserUseCaseImpl(fakeProvider)
 
     @Test
     fun `returns current user id when set`() {
         val expectedId = Uuid.parse("00000000-0000-0000-0000-000000000001")
-        currentUserIdStore.set(expectedId)
+        fakeProvider.setUserId(expectedId)
 
         val result = useCase()
 
@@ -38,4 +40,15 @@ class GetCurrentUserUseCaseImplTest {
             useCase()
         }
     }
+}
+
+private class FakeAuthenticatedUserProvider : AuthenticatedUserProvider {
+    private val _currentUserId = MutableStateFlow<Uuid?>(null)
+    override val currentUserId: StateFlow<Uuid?> = _currentUserId
+
+    fun setUserId(userId: Uuid) {
+        _currentUserId.value = userId
+    }
+
+    override fun requireCurrentUserId(): Uuid = _currentUserId.value ?: error("Not set")
 }

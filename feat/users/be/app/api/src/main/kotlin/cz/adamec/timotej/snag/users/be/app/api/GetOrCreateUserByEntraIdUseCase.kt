@@ -10,7 +10,13 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.routing.common
+package cz.adamec.timotej.snag.users.be.app.api
 
-/** Used only in mock-auth mode (dev/testing). Production uses Authorization Bearer token via Ktor auth plugin. */
-const val USER_ID_HEADER = "X-User-Id"
+import cz.adamec.timotej.snag.users.be.model.BackendUser
+
+interface GetOrCreateUserByEntraIdUseCase {
+    suspend operator fun invoke(
+        entraId: String,
+        email: String,
+    ): BackendUser
+}

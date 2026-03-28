@@ -10,7 +10,14 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.routing.common
+plugins {
+    alias(libs.plugins.snagDrivingFrontendMultiplatformModule)
+}
 
-/** Used only in mock-auth mode (dev/testing). Production uses Authorization Bearer token via Ktor auth plugin. */
-const val USER_ID_HEADER = "X-User-Id"
+kotlin {
+    sourceSets {
+        commonMain.dependencies {
+            implementation(project(":feat:authentication:fe:app:api"))
+        }
+    }
+}

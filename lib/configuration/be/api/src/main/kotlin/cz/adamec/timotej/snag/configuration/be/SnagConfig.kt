@@ -18,9 +18,6 @@ object SnagConfig {
     val gcsBucketName: String = System.getenv("GCS_BUCKET_NAME") ?: "snag-bucket-dev"
     val corsAllowedHosts: List<String> = parseCorsAllowedHosts()
     val seedData: Boolean = System.getenv("SEED_DATA")?.toBooleanStrictOrNull() ?: true
-    val mockAuth: Boolean = System.getenv("MOCK_AUTH")?.toBooleanStrictOrNull() ?: true
-    val entraIdTenantId: String = System.getenv("ENTRA_ID_TENANT_ID") ?: ""
-    val entraIdClientId: String = System.getenv("ENTRA_ID_CLIENT_ID") ?: ""
 
     private fun parseCorsAllowedHosts(): List<String> {
         val envValue = System.getenv("CORS_ALLOWED_HOSTS") ?: return listOf("localhost:8080")

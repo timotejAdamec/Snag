@@ -37,9 +37,6 @@ dependencyResolutionManagement {
             }
         }
         mavenCentral()
-        maven {
-            url = uri("https://pkgs.dev.azure.com/MicrosoftDeviceSDK/DuoSDK-Public/_packaging/Duo-SDK-Feed/maven/v1")
-        }
     }
 }
 
@@ -204,6 +201,8 @@ include(":feat:authorization:be:driving:api")
 include(":feat:authorization:be:driving:impl")
 include(":feat:authentication:be:driving:api")
 include(":feat:authentication:be:driving:impl")
+include(":feat:authentication:fe:app:api")
+include(":feat:authentication:fe:driving:api")
 include(":feat:authentication:fe:driving:impl")
 include(":feat:users:business:model")
 include(":feat:users:business:rules")

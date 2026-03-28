@@ -14,22 +14,19 @@ package cz.adamec.timotej.snag.authentication.be.driving.impl.internal
 
 import cz.adamec.timotej.snag.authentication.be.driving.api.CallCurrentUser
 import cz.adamec.timotej.snag.authentication.be.driving.api.CallCurrentUserKey
-import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.routing.common.USER_ID_HEADER
+import cz.adamec.timotej.snag.users.be.app.api.GetOrCreateUserByEntraIdUseCase
 import cz.adamec.timotej.snag.users.be.app.api.GetUserUseCase
-import cz.adamec.timotej.snag.users.be.model.BackendUser
-import cz.adamec.timotej.snag.users.be.model.BackendUserData
-import cz.adamec.timotej.snag.users.be.ports.UsersDb
 import io.ktor.server.application.createApplicationPlugin
-import org.slf4j.LoggerFactory
+import io.ktor.server.auth.jwt.JWTPrincipal
+import io.ktor.server.auth.principal
 import kotlin.uuid.Uuid
 
 @Suppress("LabeledExpression")
 internal fun callCurrentUserPlugin(
     getUserUseCase: GetUserUseCase,
-    usersDb: UsersDb,
+    getOrCreateUserByEntraIdUseCase: GetOrCreateUserByEntraIdUseCase,
     mockAuth: Boolean,
-    entraIdJwtVerifier: EntraIdJwtVerifier?,
 ) = createApplicationPlugin(name = "CallCurrentUserPlugin") {
     onCall { call ->
         val currentUser =
@@ -39,10 +36,9 @@ internal fun callCurrentUserPlugin(
                     getUserUseCase = getUserUseCase,
                 )
             } else {
-                resolveFromJwt(
-                    authorizationHeader = call.request.headers["Authorization"],
-                    entraIdJwtVerifier = requireNotNull(entraIdJwtVerifier),
-                    usersDb = usersDb,
+                resolveFromPrincipal(
+                    principal = call.principal<JWTPrincipal>(),
+                    getOrCreateUserByEntraIdUseCase = getOrCreateUserByEntraIdUseCase,
                 )
             }
         currentUser?.let { call.attributes.put(CallCurrentUserKey, it) }
@@ -59,47 +55,17 @@ private suspend fun resolveFromHeader(
 }
 
 @Suppress("ReturnCount")
-private suspend fun resolveFromJwt(
-    authorizationHeader: String?,
-    entraIdJwtVerifier: EntraIdJwtVerifier,
-    usersDb: UsersDb,
+private suspend fun resolveFromPrincipal(
+    principal: JWTPrincipal?,
+    getOrCreateUserByEntraIdUseCase: GetOrCreateUserByEntraIdUseCase,
 ): CallCurrentUser? {
-    val token =
-        authorizationHeader?.removePrefix("Bearer ")?.takeIf { it != authorizationHeader }
-            ?: return null
-
-    val decodedJwt = entraIdJwtVerifier.verify(token) ?: return null
-    val entraId = decodedJwt.getClaim("oid")?.asString() ?: return null
+    val payload = principal?.payload ?: return null
+    val entraId = payload.getClaim("oid")?.asString() ?: return null
     val email =
-        decodedJwt.getClaim("preferred_username")?.asString()
-            ?: decodedJwt.getClaim("email")?.asString()
+        payload.getClaim("preferred_username")?.asString()
+            ?: payload.getClaim("email")?.asString()
             ?: ""
 
-    val user =
-        usersDb.getUserByEntraId(entraId) ?: autoCreateUser(
-            entraId = entraId,
-            email = email,
-            usersDb = usersDb,
-        )
-
+    val user = getOrCreateUserByEntraIdUseCase(entraId = entraId, email = email)
     return CallCurrentUser(userId = user.id)
 }
-
-private suspend fun autoCreateUser(
-    entraId: String,
-    email: String,
-    usersDb: UsersDb,
-): BackendUser {
-    logger.info("Auto-creating user for EntraID oid={}, email={}", entraId, email)
-    return usersDb.saveUser(
-        BackendUserData(
-            id = Uuid.random(),
-            entraId = entraId,
-            email = email,
-            role = null,
-            updatedAt = Timestamp(System.currentTimeMillis()),
-        ),
-    )
-}
-
-private val logger = LoggerFactory.getLogger("feat-authentication-be-driving")

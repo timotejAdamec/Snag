@@ -12,11 +12,13 @@
 
 package cz.adamec.timotej.snag.authentication.fe.driving.impl.di
 
+import cz.adamec.timotej.snag.authentication.fe.app.api.AuthenticatedUserProvider
 import cz.adamec.timotej.snag.authentication.fe.driving.impl.internal.AuthTokenProvider
+import cz.adamec.timotej.snag.authentication.fe.driving.impl.internal.AuthenticatedUserProviderImpl
 import cz.adamec.timotej.snag.authentication.fe.driving.impl.internal.CallCurrentUserConfiguration
 import cz.adamec.timotej.snag.authentication.fe.driving.impl.internal.MockAuthTokenProvider
+import cz.adamec.timotej.snag.authentication.fe.driving.impl.internal.OAuthTokenProvider
 import cz.adamec.timotej.snag.configuration.common.CommonConfiguration
-import cz.adamec.timotej.snag.core.foundation.fe.CurrentUserIdStore
 import cz.adamec.timotej.snag.network.fe.HttpClientConfiguration
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
@@ -24,16 +26,17 @@ import org.koin.dsl.module
 
 val authenticationModule =
     module {
-        single<AuthTokenProvider>(createdAtStart = true) {
+        single<AuthTokenProvider> {
             if (CommonConfiguration.mockAuth) {
-                get<CurrentUserIdStore>().set(MockAuthTokenProvider.MOCK_USER_UUID)
                 MockAuthTokenProvider()
             } else {
-                error(
-                    "EntraID authentication requires a platform-specific AuthTokenProvider. " +
-                        "Override this binding in the platform DI module.",
-                )
+                OAuthTokenProvider()
             }
+        }
+        single<AuthenticatedUserProvider>(createdAtStart = true) {
+            AuthenticatedUserProviderImpl(
+                userId = MockAuthTokenProvider.MOCK_USER_UUID,
+            )
         }
         singleOf(::CallCurrentUserConfiguration) bind HttpClientConfiguration::class
     }

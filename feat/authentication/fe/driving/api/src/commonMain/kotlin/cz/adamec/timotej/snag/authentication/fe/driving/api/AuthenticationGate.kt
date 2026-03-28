@@ -10,7 +10,7 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.ui
+package cz.adamec.timotej.snag.authentication.fe.driving.api
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -22,12 +22,28 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import cz.adamec.timotej.snag.authentication.fe.app.api.AuthenticatedUserProvider
+import org.koin.compose.getKoin
 
 @Composable
-internal fun LoginScreen(onSignIn: () -> Unit) {
+fun AuthenticationGate(authenticatedContent: @Composable () -> Unit) {
+    val authenticatedUserProvider = getKoin().get<AuthenticatedUserProvider>()
+    val currentUserId by authenticatedUserProvider.currentUserId.collectAsStateWithLifecycle()
+
+    if (currentUserId != null) {
+        authenticatedContent()
+    } else {
+        LoginScreen()
+    }
+}
+
+@Composable
+private fun LoginScreen() {
     Column(
         modifier =
             Modifier
@@ -47,7 +63,7 @@ internal fun LoginScreen(onSignIn: () -> Unit) {
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         Spacer(modifier = Modifier.height(32.dp))
-        Button(onClick = onSignIn) {
+        Button(onClick = { /* MSAL/OAuth sign-in flow */ }) {
             Text("Sign in with Microsoft")
         }
     }
