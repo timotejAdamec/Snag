@@ -46,4 +46,6 @@ fun Project.configureLint() {
     dependencies {
         "ktlintRuleset"(library("compose-rules-ktlint"))
     }
+
+    configureArchitectureCheck()
 }
