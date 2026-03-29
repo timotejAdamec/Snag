@@ -44,10 +44,7 @@ directories/modules:
   `driving/` code is the entry point for the platform.
 
 ### Shared modules (`feat/shared/`)
-The `shared` directory contains cross-cutting concerns used by multiple features:
-- `database/` — Shared database infrastructure (`fe/`, `be/impl`, `be/test`).
-- `rules/business/` — Cross-cutting business-layer validation rules (`api/impl` split).
-  Auto-wired as a dependency to all feature modules via the convention plugin.
+The `shared` directory contains cross-cutting concerns used by multiple features.
 
 ### Cross-feature dependencies
 Dependencies between features and libs is handled by accessing:
