@@ -13,14 +13,11 @@
 package cz.adamec.timotej.snag.authentication.fe.ports
 
 import kotlinx.coroutines.flow.StateFlow
-import kotlin.uuid.Uuid
 
 interface AuthTokenProvider {
     val authState: StateFlow<AuthState>
 
     suspend fun login()
-
-    fun setAuthenticatedUserId(userId: Uuid)
 
     suspend fun getAccessToken(): String?
 

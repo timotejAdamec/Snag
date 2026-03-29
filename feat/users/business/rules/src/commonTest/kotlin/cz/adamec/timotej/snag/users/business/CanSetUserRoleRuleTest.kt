@@ -25,7 +25,7 @@ class CanSetUserRoleRuleTest {
     private fun createUser(role: UserRole?) =
         object : User {
             override val id: Uuid = UuidProvider.getUuid()
-            override val entraId: String = "entra"
+            override val authProviderId: String = "entra"
             override val email: String = "test@example.com"
             override val role: UserRole? = role
         }

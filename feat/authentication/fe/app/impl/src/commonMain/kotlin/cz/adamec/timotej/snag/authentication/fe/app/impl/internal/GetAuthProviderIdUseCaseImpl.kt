@@ -12,23 +12,22 @@
 
 package cz.adamec.timotej.snag.authentication.fe.app.impl.internal
 
-import cz.adamec.timotej.snag.authentication.fe.app.api.GetAuthenticatedUserIdUseCase
+import cz.adamec.timotej.snag.authentication.fe.app.api.GetAuthProviderIdUseCase
 import cz.adamec.timotej.snag.authentication.fe.ports.AuthState
 import cz.adamec.timotej.snag.authentication.fe.ports.AuthTokenProvider
 import cz.adamec.timotej.snag.core.foundation.common.mapState
-import kotlinx.coroutines.flow.StateFlow
-import kotlin.uuid.Uuid
+import kotlinx.coroutines.flow.Flow
 
-internal class GetAuthenticatedUserIdUseCaseImpl(
+internal class GetAuthProviderIdUseCaseImpl(
     authTokenProvider: AuthTokenProvider,
-) : GetAuthenticatedUserIdUseCase {
-    override val currentUserId: StateFlow<Uuid?> =
+) : GetAuthProviderIdUseCase {
+    private val authProviderIdFlow =
         authTokenProvider.authState.mapState { state ->
             when (state) {
-                is AuthState.Authenticated -> state.userId
+                is AuthState.Authenticated -> state.authProviderId
                 is AuthState.Unauthenticated -> null
             }
         }
 
-    override fun requireCurrentUserId(): Uuid = currentUserId.value ?: error("User must be authenticated first.")
+    override fun invoke(): Flow<String?> = authProviderIdFlow
 }

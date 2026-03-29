@@ -37,7 +37,7 @@ class GetUserUseCaseImplTest : BackendKoinInitializedTest() {
             val user =
                 BackendUserData(
                     id = userId,
-                    entraId = "entra-1",
+                    authProviderId = "entra-1",
                     email = "user@example.com",
                     role = UserRole.PASSPORT_LEAD,
                     updatedAt = Timestamp(100L),

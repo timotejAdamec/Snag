@@ -20,7 +20,7 @@ import kotlin.uuid.Uuid
 class UserEntity(
     id: EntityID<Uuid>,
 ) : UuidEntity(id) {
-    var entraId by UsersTable.entraId
+    var authProviderId by UsersTable.authProviderId
     var email by UsersTable.email
     var role by UsersTable.role
     var updatedAt by UsersTable.updatedAt

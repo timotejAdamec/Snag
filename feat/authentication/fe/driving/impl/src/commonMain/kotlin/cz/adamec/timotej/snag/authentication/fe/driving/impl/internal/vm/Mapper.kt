@@ -14,6 +14,6 @@ package cz.adamec.timotej.snag.authentication.fe.driving.impl.internal.vm
 
 internal fun AuthenticationVmState.toUiState() =
     AuthenticationUiState(
-        isAuthenticated = currentUserId != null,
+        isAuthenticated = authProviderId != null,
         isLoggingIn = isLoggingIn,
     )

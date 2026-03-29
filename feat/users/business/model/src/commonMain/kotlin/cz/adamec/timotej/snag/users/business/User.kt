@@ -1,12 +1,13 @@
 package cz.adamec.timotej.snag.users.business
 
+import cz.adamec.timotej.snag.authentication.app.model.AuthProviderIdentifiable
 import cz.adamec.timotej.snag.authorization.business.UserRole
 import kotlin.uuid.Uuid
 
-interface User {
+interface User : AuthProviderIdentifiable {
     val id: Uuid
 
-    val entraId: String
+    override val authProviderId: String
 
     val email: String
 

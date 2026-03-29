@@ -12,9 +12,7 @@
 
 package cz.adamec.timotej.snag.authentication.fe.driving.impl.internal.vm
 
-import kotlin.uuid.Uuid
-
 internal data class AuthenticationVmState(
-    val currentUserId: Uuid? = null,
+    val authProviderId: String? = null,
     val isLoggingIn: Boolean = false,
 )

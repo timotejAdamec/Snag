@@ -20,7 +20,7 @@ import cz.adamec.timotej.snag.users.be.model.BackendUserData
 internal fun UserEntity.toModel() =
     BackendUserData(
         id = id.value,
-        entraId = entraId,
+        authProviderId = authProviderId,
         email = email,
         role = role?.let { UserRole.valueOf(it) },
         updatedAt = Timestamp(updatedAt),

@@ -15,24 +15,16 @@ package cz.adamec.timotej.snag.authentication.fe.app.impl.internal
 import cz.adamec.timotej.snag.authentication.fe.app.api.LoginResult
 import cz.adamec.timotej.snag.authentication.fe.app.api.LoginUseCase
 import cz.adamec.timotej.snag.authentication.fe.ports.AuthTokenProvider
-import cz.adamec.timotej.snag.authentication.fe.ports.AuthenticationApi
-import cz.adamec.timotej.snag.core.network.fe.OnlineDataResult
 
 internal class LoginUseCaseImpl(
     private val authTokenProvider: AuthTokenProvider,
-    private val authenticationApi: AuthenticationApi,
 ) : LoginUseCase {
-    override suspend fun invoke(): LoginResult {
-        authTokenProvider.login()
-        return when (val result = authenticationApi.getCurrentUser()) {
-            is OnlineDataResult.Success -> {
-                authTokenProvider.setAuthenticatedUserId(result.data)
-                LoginResult.Success
-            }
-            is OnlineDataResult.Failure -> {
-                authTokenProvider.logout()
-                LoginResult.Error(message = "Failed to resolve user identity.")
-            }
+    @Suppress("TooGenericExceptionCaught")
+    override suspend fun invoke(): LoginResult =
+        try {
+            authTokenProvider.login()
+            LoginResult.Success
+        } catch (e: Exception) {
+            LoginResult.Error(message = e.message ?: "Login failed.")
         }
-    }
 }

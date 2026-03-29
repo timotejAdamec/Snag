@@ -21,7 +21,7 @@ interface UsersDb {
 
     suspend fun getUser(id: Uuid): BackendUser?
 
-    suspend fun getUserByEntraId(entraId: String): BackendUser?
+    suspend fun getUserByAuthProviderId(authProviderId: String): BackendUser?
 
     suspend fun saveUser(user: BackendUser): BackendUser
 

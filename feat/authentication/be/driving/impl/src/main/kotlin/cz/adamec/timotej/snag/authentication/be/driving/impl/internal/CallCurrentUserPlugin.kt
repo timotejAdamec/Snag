@@ -15,7 +15,7 @@ package cz.adamec.timotej.snag.authentication.be.driving.impl.internal
 import cz.adamec.timotej.snag.authentication.be.driving.api.CallCurrentUser
 import cz.adamec.timotej.snag.authentication.be.driving.api.CallCurrentUserKey
 import cz.adamec.timotej.snag.routing.common.USER_ID_HEADER
-import cz.adamec.timotej.snag.users.be.app.api.GetOrCreateUserByEntraIdUseCase
+import cz.adamec.timotej.snag.users.be.app.api.GetOrCreateUserByAuthProviderIdUseCase
 import cz.adamec.timotej.snag.users.be.app.api.GetUserUseCase
 import io.ktor.server.application.createApplicationPlugin
 import io.ktor.server.auth.jwt.JWTPrincipal
@@ -25,7 +25,7 @@ import kotlin.uuid.Uuid
 @Suppress("LabeledExpression")
 internal fun callCurrentUserPlugin(
     getUserUseCase: GetUserUseCase,
-    getOrCreateUserByEntraIdUseCase: GetOrCreateUserByEntraIdUseCase,
+    getOrCreateUserByAuthProviderIdUseCase: GetOrCreateUserByAuthProviderIdUseCase,
     mockAuth: Boolean,
 ) = createApplicationPlugin(name = "CallCurrentUserPlugin") {
     onCall { call ->
@@ -38,7 +38,7 @@ internal fun callCurrentUserPlugin(
             } else {
                 resolveFromPrincipal(
                     principal = call.principal<JWTPrincipal>(),
-                    getOrCreateUserByEntraIdUseCase = getOrCreateUserByEntraIdUseCase,
+                    getOrCreateUserByAuthProviderIdUseCase = getOrCreateUserByAuthProviderIdUseCase,
                 )
             }
         currentUser?.let { call.attributes.put(CallCurrentUserKey, it) }
@@ -57,15 +57,17 @@ private suspend fun resolveFromHeader(
 @Suppress("ReturnCount")
 private suspend fun resolveFromPrincipal(
     principal: JWTPrincipal?,
-    getOrCreateUserByEntraIdUseCase: GetOrCreateUserByEntraIdUseCase,
+    getOrCreateUserByAuthProviderIdUseCase: GetOrCreateUserByAuthProviderIdUseCase,
 ): CallCurrentUser? {
     val payload = principal?.payload ?: return null
-    val entraId = payload.getClaim("oid")?.asString() ?: return null
+    val authProviderId = payload.getClaim("oid")?.asString() ?: return null
+    // EntraID v2.0 tokens include preferred_username as the primary UPN;
+    // email is an optional claim that may be absent depending on token configuration.
     val email =
         payload.getClaim("preferred_username")?.asString()
             ?: payload.getClaim("email")?.asString()
             ?: ""
 
-    val user = getOrCreateUserByEntraIdUseCase(entraId = entraId, email = email)
+    val user = getOrCreateUserByAuthProviderIdUseCase(authProviderId = authProviderId, email = email)
     return CallCurrentUser(userId = user.id)
 }

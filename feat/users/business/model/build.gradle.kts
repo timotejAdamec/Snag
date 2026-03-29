@@ -6,6 +6,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             api(project(":feat:authorization:business:model"))
+            api(project(":feat:authentication:app:model"))
         }
     }
 }

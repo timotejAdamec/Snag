@@ -103,7 +103,7 @@ class ProjectAssignmentsRouteTest : BackendKoinInitializedTest() {
             usersDb.saveUser(
                 BackendUserData(
                     id = technicianId,
-                    entraId = "tech-entra",
+                    authProviderId = "tech-entra",
                     email = "tech@example.com",
                     role = UserRole.PASSPORT_TECHNICIAN,
                     updatedAt = Timestamp(1L),
@@ -127,7 +127,7 @@ class ProjectAssignmentsRouteTest : BackendKoinInitializedTest() {
             usersDb.saveUser(
                 BackendUserData(
                     id = TEST_USER_1,
-                    entraId = "entra-1",
+                    authProviderId = "entra-1",
                     email = "user@example.com",
                     updatedAt = Timestamp(100L),
                 ),
@@ -154,7 +154,7 @@ class ProjectAssignmentsRouteTest : BackendKoinInitializedTest() {
             usersDb.saveUser(
                 BackendUserData(
                     id = TEST_USER_1,
-                    entraId = "entra-1",
+                    authProviderId = "entra-1",
                     email = "user@example.com",
                     updatedAt = Timestamp(100L),
                 ),
@@ -178,7 +178,7 @@ class ProjectAssignmentsRouteTest : BackendKoinInitializedTest() {
             usersDb.saveUser(
                 BackendUserData(
                     id = technicianId,
-                    entraId = "tech-entra",
+                    authProviderId = "tech-entra",
                     email = "tech@example.com",
                     role = UserRole.PASSPORT_TECHNICIAN,
                     updatedAt = Timestamp(1L),
@@ -202,7 +202,7 @@ class ProjectAssignmentsRouteTest : BackendKoinInitializedTest() {
             usersDb.saveUser(
                 BackendUserData(
                     id = TEST_USER_1,
-                    entraId = "entra-1",
+                    authProviderId = "entra-1",
                     email = "user@example.com",
                     updatedAt = Timestamp(100L),
                 ),
@@ -228,7 +228,7 @@ class ProjectAssignmentsRouteTest : BackendKoinInitializedTest() {
             usersDb.saveUser(
                 BackendUserData(
                     id = TEST_USER_1,
-                    entraId = "entra-1",
+                    authProviderId = "entra-1",
                     email = "user@example.com",
                     updatedAt = Timestamp(100L),
                 ),
@@ -253,7 +253,7 @@ class ProjectAssignmentsRouteTest : BackendKoinInitializedTest() {
             usersDb.saveUser(
                 BackendUserData(
                     id = workerId,
-                    entraId = "worker-entra",
+                    authProviderId = "worker-entra",
                     email = "worker@example.com",
                     role = UserRole.SERVICE_WORKER,
                     updatedAt = Timestamp(1L),

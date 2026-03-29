@@ -12,11 +12,16 @@
 
 package cz.adamec.timotej.snag.authentication.fe.driving.impl.di
 
+import cz.adamec.timotej.snag.authentication.fe.driving.impl.internal.CallCurrentUserConfiguration
 import cz.adamec.timotej.snag.authentication.fe.driving.impl.internal.vm.AuthenticationViewModel
+import cz.adamec.timotej.snag.network.fe.HttpClientConfiguration
+import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModelOf
+import org.koin.dsl.bind
 import org.koin.dsl.module
 
 val authenticationDrivingModule =
     module {
         viewModelOf(::AuthenticationViewModel)
+        singleOf(::CallCurrentUserConfiguration) bind HttpClientConfiguration::class
     }

@@ -23,7 +23,7 @@ import kotlin.uuid.Uuid
 internal fun UserApiDto.toModel() =
     AppUserData(
         id = Uuid.parse(id),
-        entraId = entraId,
+        authProviderId = authProviderId,
         email = email,
         role = role?.let { UserRole.valueOf(it) },
         updatedAt = Timestamp(updatedAt),
@@ -31,7 +31,7 @@ internal fun UserApiDto.toModel() =
 
 internal fun AppUser.toApiDto() =
     PutUserApiDto(
-        entraId = entraId,
+        authProviderId = authProviderId,
         email = email,
         role = role?.name,
         updatedAt = updatedAt.value,

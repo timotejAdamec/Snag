@@ -13,12 +13,10 @@
 package cz.adamec.timotej.snag.authentication.fe.driven.test
 
 import cz.adamec.timotej.snag.authentication.fe.ports.AuthTokenProvider
-import cz.adamec.timotej.snag.authentication.fe.ports.AuthenticationApi
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
 val authenticationFeDrivenTestModule =
     module {
         single { FakeAuthTokenProvider() } bind AuthTokenProvider::class
-        single { FakeAuthenticationApi() } bind AuthenticationApi::class
     }

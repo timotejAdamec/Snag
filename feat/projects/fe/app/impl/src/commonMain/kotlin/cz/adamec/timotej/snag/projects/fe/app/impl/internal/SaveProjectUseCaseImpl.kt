@@ -25,7 +25,11 @@ import cz.adamec.timotej.snag.projects.fe.app.impl.internal.sync.PROJECT_SYNC_EN
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsDb
 import cz.adamec.timotej.snag.sync.fe.app.api.EnqueueSyncSaveUseCase
 import cz.adamec.timotej.snag.sync.fe.app.api.model.EnqueueSyncSaveRequest
-import cz.adamec.timotej.snag.users.fe.app.api.GetCurrentUserUseCase
+import cz.adamec.timotej.snag.users.app.model.AppUser
+import cz.adamec.timotej.snag.users.fe.app.api.GetCurrentUserFlowUseCase
+import kotlinx.coroutines.flow.filterIsInstance
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.mapNotNull
 import kotlin.uuid.Uuid
 
 class SaveProjectUseCaseImpl(
@@ -33,7 +37,7 @@ class SaveProjectUseCaseImpl(
     private val enqueueSyncSaveUseCase: EnqueueSyncSaveUseCase,
     private val uuidProvider: UuidProvider,
     private val timestampProvider: TimestampProvider,
-    private val getCurrentUserUseCase: GetCurrentUserUseCase,
+    private val getCurrentUserFlowUseCase: GetCurrentUserFlowUseCase,
 ) : SaveProjectUseCase {
     override suspend operator fun invoke(request: SaveProjectRequest): OfflineFirstDataResult<Uuid> {
         val creatorId = resolveCreatorId(request.id)
@@ -78,6 +82,9 @@ class SaveProjectUseCaseImpl(
                 }
             }
         }
-        return getCurrentUserUseCase()
+        return getCurrentUserFlowUseCase()
+            .filterIsInstance<OfflineFirstDataResult.Success<*>>()
+            .mapNotNull { (it.data as? AppUser)?.id }
+            .first()
     }
 }

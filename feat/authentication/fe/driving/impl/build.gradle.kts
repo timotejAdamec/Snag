@@ -18,6 +18,10 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(projects.feat.authentication.fe.app.api)
+            implementation(project(":lib:routing:common"))
+            implementation(project(":lib:network:fe:api"))
+            implementation(libs.ktor.client.auth)
+            implementation(libs.ktor.client.core)
         }
     }
 }

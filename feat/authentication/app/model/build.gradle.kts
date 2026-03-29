@@ -10,13 +10,6 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.users.be.app.api
-
-import cz.adamec.timotej.snag.users.be.model.BackendUser
-
-interface GetOrCreateUserByEntraIdUseCase {
-    suspend operator fun invoke(
-        entraId: String,
-        email: String,
-    ): BackendUser
+plugins {
+    alias(libs.plugins.snagMultiplatformModule)
 }

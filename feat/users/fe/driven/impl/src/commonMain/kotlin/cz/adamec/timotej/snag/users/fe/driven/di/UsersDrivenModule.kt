@@ -30,6 +30,12 @@ val usersDrivenModule =
                 ioDispatcher = getIoDispatcher(),
             )
         }
-        factory { RealUsersDb(ops = get()) } bind UsersDb::class
+        factory {
+            RealUsersDb(
+                ops = get(),
+                queries = get(),
+                ioDispatcher = getIoDispatcher(),
+            )
+        } bind UsersDb::class
         factoryOf(::RealUsersApi) bind UsersApi::class
     }

@@ -1,16 +1,16 @@
 CREATE TABLE IF NOT EXISTS UserEntity (
     id TEXT NOT NULL PRIMARY KEY,
-    entraId TEXT NOT NULL,
+    authProviderId TEXT NOT NULL,
     email TEXT NOT NULL,
     role TEXT,
     updatedAt INTEGER NOT NULL
 );
 
 save:
-INSERT INTO UserEntity(id, entraId, email, role, updatedAt)
+INSERT INTO UserEntity(id, authProviderId, email, role, updatedAt)
 VALUES ?
 ON CONFLICT(id) DO UPDATE SET
-    entraId = excluded.entraId,
+    authProviderId = excluded.authProviderId,
     email = excluded.email,
     role = excluded.role,
     updatedAt = excluded.updatedAt;
@@ -20,6 +20,9 @@ SELECT * FROM UserEntity;
 
 selectById:
 SELECT * FROM UserEntity WHERE id = :id;
+
+selectByAuthProviderId:
+SELECT * FROM UserEntity WHERE authProviderId = :authProviderId;
 
 deleteById:
 DELETE FROM UserEntity WHERE id = :id;

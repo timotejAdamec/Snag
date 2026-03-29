@@ -15,7 +15,7 @@ package cz.adamec.timotej.snag.authentication.be.driving.impl.internal
 import com.auth0.jwk.JwkProviderBuilder
 import cz.adamec.timotej.snag.configuration.be.AppConfiguration
 import cz.adamec.timotej.snag.configuration.common.CommonConfiguration
-import cz.adamec.timotej.snag.users.be.app.api.GetOrCreateUserByEntraIdUseCase
+import cz.adamec.timotej.snag.users.be.app.api.GetOrCreateUserByAuthProviderIdUseCase
 import cz.adamec.timotej.snag.users.be.app.api.GetUserUseCase
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit
 
 internal class CallCurrentUserConfiguration(
     private val getUserUseCase: GetUserUseCase,
-    private val getOrCreateUserByEntraIdUseCase: GetOrCreateUserByEntraIdUseCase,
+    private val getOrCreateUserByAuthProviderIdUseCase: GetOrCreateUserByAuthProviderIdUseCase,
 ) : AppConfiguration {
     override fun Application.setup() {
         if (!CommonConfiguration.mockAuth) {
@@ -37,7 +37,7 @@ internal class CallCurrentUserConfiguration(
         install(
             callCurrentUserPlugin(
                 getUserUseCase = getUserUseCase,
-                getOrCreateUserByEntraIdUseCase = getOrCreateUserByEntraIdUseCase,
+                getOrCreateUserByAuthProviderIdUseCase = getOrCreateUserByAuthProviderIdUseCase,
                 mockAuth = CommonConfiguration.mockAuth,
             ),
         )

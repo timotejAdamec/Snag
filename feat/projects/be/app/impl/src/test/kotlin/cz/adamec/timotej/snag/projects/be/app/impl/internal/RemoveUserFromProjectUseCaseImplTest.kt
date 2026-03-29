@@ -54,7 +54,7 @@ class RemoveUserFromProjectUseCaseImplTest : BackendKoinInitializedTest() {
             val user =
                 BackendUserData(
                     id = userId,
-                    entraId = "entra-1",
+                    authProviderId = "entra-1",
                     email = "user@example.com",
                     updatedAt = Timestamp(100L),
                 )

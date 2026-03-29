@@ -48,7 +48,7 @@ class ChangeUserRoleUseCaseImpl(
         val updatedUser =
             AppUserData(
                 id = user.id,
-                entraId = user.entraId,
+                authProviderId = user.authProviderId,
                 email = user.email,
                 role = request.newRole,
                 updatedAt = user.updatedAt,

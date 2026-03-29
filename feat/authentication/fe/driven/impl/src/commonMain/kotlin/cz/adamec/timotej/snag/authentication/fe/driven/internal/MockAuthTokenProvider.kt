@@ -16,31 +16,25 @@ import cz.adamec.timotej.snag.authentication.fe.ports.AuthState
 import cz.adamec.timotej.snag.authentication.fe.ports.AuthTokenProvider
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlin.uuid.Uuid
 
 internal class MockAuthTokenProvider : AuthTokenProvider {
     private val _authState =
         MutableStateFlow<AuthState>(
-            AuthState.Authenticated(userId = MOCK_USER_UUID),
+            AuthState.Authenticated(authProviderId = MOCK_AUTH_PROVIDER_ID),
         )
     override val authState: StateFlow<AuthState> = _authState
 
     override suspend fun login() {
-        _authState.value = AuthState.Authenticated(userId = MOCK_USER_UUID)
+        _authState.value = AuthState.Authenticated(authProviderId = MOCK_AUTH_PROVIDER_ID)
     }
 
-    override fun setAuthenticatedUserId(userId: Uuid) {
-        _authState.value = AuthState.Authenticated(userId = userId)
-    }
-
-    override suspend fun getAccessToken(): String? = MOCK_USER_ID
+    override suspend fun getAccessToken(): String? = MOCK_AUTH_PROVIDER_ID
 
     override suspend fun logout() {
         _authState.value = AuthState.Unauthenticated
     }
 
     internal companion object {
-        const val MOCK_USER_ID = "00000000-0000-0000-0005-000000000001"
-        val MOCK_USER_UUID: Uuid = Uuid.parse(MOCK_USER_ID)
+        const val MOCK_AUTH_PROVIDER_ID = "mock-auth-provider-id"
     }
 }

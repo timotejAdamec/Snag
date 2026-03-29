@@ -93,7 +93,7 @@ internal class RealProjectAssignmentsDb(
 private fun UserEntity.toBackendUserData(): BackendUser =
     BackendUserData(
         id = id.value,
-        entraId = entraId,
+        authProviderId = authProviderId,
         email = email,
         role = role?.let { UserRole.valueOf(it) },
         updatedAt = Timestamp(updatedAt),

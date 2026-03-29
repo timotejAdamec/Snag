@@ -9,7 +9,7 @@ interface BackendUser : AppUser
 
 data class BackendUserData(
     override val id: Uuid,
-    override val entraId: String,
+    override val authProviderId: String,
     override val email: String,
     override val role: UserRole? = null,
     override val updatedAt: Timestamp,

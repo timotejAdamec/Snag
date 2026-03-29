@@ -17,8 +17,6 @@ plugins {
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            implementation(project(":lib:routing:common"))
-            implementation(libs.ktor.client.auth)
             implementation(libs.oidc.appsupport)
             implementation(libs.oidc.tokenstore)
             implementation(libs.oidc.ktor)

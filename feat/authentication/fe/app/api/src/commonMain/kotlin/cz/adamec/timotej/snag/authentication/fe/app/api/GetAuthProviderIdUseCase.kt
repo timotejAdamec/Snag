@@ -10,10 +10,10 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.users.fe.app.api
+package cz.adamec.timotej.snag.authentication.fe.app.api
 
-import kotlin.uuid.Uuid
+import kotlinx.coroutines.flow.Flow
 
-interface GetCurrentUserUseCase {
-    operator fun invoke(): Uuid
+interface GetAuthProviderIdUseCase {
+    operator fun invoke(): Flow<String?>
 }

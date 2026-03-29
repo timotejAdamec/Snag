@@ -10,11 +10,13 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.authentication.fe.ports
+package cz.adamec.timotej.snag.users.be.app.api
 
-import cz.adamec.timotej.snag.core.network.fe.OnlineDataResult
-import kotlin.uuid.Uuid
+import cz.adamec.timotej.snag.users.be.model.BackendUser
 
-interface AuthenticationApi {
-    suspend fun getCurrentUser(): OnlineDataResult<Uuid>
+interface GetOrCreateUserByAuthProviderIdUseCase {
+    suspend operator fun invoke(
+        authProviderId: String,
+        email: String,
+    ): BackendUser
 }

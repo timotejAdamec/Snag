@@ -32,7 +32,7 @@ class CanAccessProjectRuleTest {
         role: UserRole?,
     ) = object : User {
         override val id: Uuid = id
-        override val entraId: String = "entra-id"
+        override val authProviderId: String = "entra-id"
         override val email: String = "test@example.com"
         override val role: UserRole? = role
     }

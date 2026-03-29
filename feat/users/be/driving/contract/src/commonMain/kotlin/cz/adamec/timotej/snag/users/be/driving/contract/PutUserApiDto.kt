@@ -16,7 +16,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class PutUserApiDto(
-    val entraId: String,
+    val authProviderId: String,
     val email: String,
     val role: String? = null,
     val updatedAt: Long,

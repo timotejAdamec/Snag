@@ -14,7 +14,7 @@ package cz.adamec.timotej.snag.authentication.fe.driving.impl.internal.vm
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import cz.adamec.timotej.snag.authentication.fe.app.api.GetAuthenticatedUserIdUseCase
+import cz.adamec.timotej.snag.authentication.fe.app.api.GetAuthProviderIdUseCase
 import cz.adamec.timotej.snag.authentication.fe.app.api.LoginUseCase
 import cz.adamec.timotej.snag.core.foundation.common.mapState
 import cz.adamec.timotej.snag.lib.design.fe.state.launchWhileSubscribed
@@ -27,7 +27,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 internal class AuthenticationViewModel(
-    private val getAuthenticatedUserIdUseCase: GetAuthenticatedUserIdUseCase,
+    private val getAuthProviderIdUseCase: GetAuthProviderIdUseCase,
     private val loginUseCase: LoginUseCase,
 ) : ViewModel() {
     private val vmState: MutableStateFlow<AuthenticationVmState> =
@@ -48,8 +48,8 @@ internal class AuthenticationViewModel(
     }
 
     private fun collectAuthState(): Job =
-        getAuthenticatedUserIdUseCase.currentUserId
-            .map { userId ->
-                vmState.update { it.copy(currentUserId = userId) }
+        getAuthProviderIdUseCase()
+            .map { authProviderId ->
+                vmState.update { it.copy(authProviderId = authProviderId) }
             }.launchIn(viewModelScope)
 }

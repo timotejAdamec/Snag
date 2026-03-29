@@ -100,7 +100,7 @@ class CallCurrentUserPluginTest : BackendKoinInitializedTest() {
             usersDb.saveUser(
                 BackendUserData(
                     id = EXISTING_USER_ID,
-                    entraId = "entra-1",
+                    authProviderId = "entra-1",
                     email = "user@example.com",
                     role = UserRole.ADMINISTRATOR,
                     updatedAt = Timestamp(1L),
