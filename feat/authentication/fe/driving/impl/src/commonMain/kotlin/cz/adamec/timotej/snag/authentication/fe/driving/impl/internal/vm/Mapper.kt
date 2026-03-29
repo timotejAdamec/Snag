@@ -16,4 +16,5 @@ internal fun AuthenticationVmState.toUiState() =
     AuthenticationUiState(
         isAuthenticated = authProviderId != null,
         isLoggingIn = isLoggingIn,
+        loginError = loginError,
     )

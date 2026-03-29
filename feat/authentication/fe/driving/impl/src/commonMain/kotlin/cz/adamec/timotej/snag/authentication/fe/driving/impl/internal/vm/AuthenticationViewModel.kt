@@ -15,6 +15,7 @@ package cz.adamec.timotej.snag.authentication.fe.driving.impl.internal.vm
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cz.adamec.timotej.snag.authentication.fe.app.api.GetAuthProviderIdUseCase
+import cz.adamec.timotej.snag.authentication.fe.app.api.LoginResult
 import cz.adamec.timotej.snag.authentication.fe.app.api.LoginUseCase
 import cz.adamec.timotej.snag.core.foundation.common.mapState
 import cz.adamec.timotej.snag.lib.design.fe.state.launchWhileSubscribed
@@ -39,11 +40,20 @@ internal class AuthenticationViewModel(
     val state: StateFlow<AuthenticationUiState> =
         vmState.mapState { it.toUiState() }
 
+    init {
+        login()
+    }
+
     fun login() {
+        if (vmState.value.authProviderId != null) return
         viewModelScope.launch {
-            vmState.update { it.copy(isLoggingIn = true) }
-            loginUseCase()
-            vmState.update { it.copy(isLoggingIn = false) }
+            vmState.update { it.copy(isLoggingIn = true, loginError = null) }
+            when (val result = loginUseCase()) {
+                is LoginResult.Success ->
+                    vmState.update { it.copy(isLoggingIn = false) }
+                is LoginResult.Error ->
+                    vmState.update { it.copy(isLoggingIn = false, loginError = result.message) }
+            }
         }
     }
 

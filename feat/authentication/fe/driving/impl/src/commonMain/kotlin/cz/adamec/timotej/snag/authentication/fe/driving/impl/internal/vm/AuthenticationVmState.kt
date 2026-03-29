@@ -15,4 +15,5 @@ package cz.adamec.timotej.snag.authentication.fe.driving.impl.internal.vm
 internal data class AuthenticationVmState(
     val authProviderId: String? = null,
     val isLoggingIn: Boolean = false,
+    val loginError: String? = null,
 )

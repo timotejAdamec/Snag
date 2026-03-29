@@ -30,8 +30,9 @@ internal class AuthenticationGateProviderImpl : AuthenticationGateProvider {
             authenticatedContent()
         } else {
             LoginScreen(
-                onSignIn = viewModel::login,
+                onRetry = viewModel::login,
                 isLoading = state.isLoggingIn,
+                errorMessage = state.loginError,
             )
         }
     }

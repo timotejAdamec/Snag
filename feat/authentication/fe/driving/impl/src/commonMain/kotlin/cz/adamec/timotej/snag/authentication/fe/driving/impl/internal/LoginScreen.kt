@@ -30,8 +30,9 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 internal fun LoginScreen(
-    onSignIn: () -> Unit,
+    onRetry: () -> Unit,
     isLoading: Boolean,
+    errorMessage: String?,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -47,16 +48,30 @@ internal fun LoginScreen(
             style = MaterialTheme.typography.displayMedium,
         )
         Spacer(modifier = Modifier.height(8.dp))
-        Text(
-            text = "Sign in to continue",
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-        Spacer(modifier = Modifier.height(32.dp))
         if (isLoading) {
+            Text(
+                text = "Signing in\u2026",
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            Spacer(modifier = Modifier.height(32.dp))
             CircularProgressIndicator(modifier = Modifier.size(48.dp))
         } else {
-            Button(onClick = onSignIn) {
+            if (errorMessage != null) {
+                Text(
+                    text = errorMessage,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.error,
+                )
+            } else {
+                Text(
+                    text = "Sign in to continue",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+            Spacer(modifier = Modifier.height(32.dp))
+            Button(onClick = onRetry) {
                 Text("Sign in with Microsoft")
             }
         }
