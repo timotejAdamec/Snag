@@ -13,6 +13,6 @@
 <resources>
     <string name="projects_tab_title">Projects</string>
     <string name="directory_tab_title">Directory</string>
-    <string name="users_tab_title">Colleagues</string>
+    <string name="users_tab_title">Workers</string>
     <string name="clients_tab_title">Clients</string>
 </resources>
