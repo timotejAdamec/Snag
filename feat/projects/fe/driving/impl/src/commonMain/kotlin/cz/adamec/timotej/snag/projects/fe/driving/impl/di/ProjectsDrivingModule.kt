@@ -226,6 +226,9 @@ val projectsDrivingImplModule =
                 canEditProjectEntitiesUseCase = get(),
                 canCloseProjectUseCase = get(),
                 canAssignUserToProjectUseCase = get(),
+                getProjectAssignmentsUseCase = get(),
+                getUsersUseCase = get(),
+                assignUserToProjectUseCase = get(),
                 timestampProvider = get(),
             )
         }

@@ -12,9 +12,22 @@
 
 package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.vm
 
+import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectAssignments.vm.toAssignedUserItem
+import kotlinx.collections.immutable.toPersistentList
+
 internal fun ProjectDetailsVmState.toUiState(): ProjectDetailsUiState {
     val isClosed = project?.isClosed == true
     val isProjectEditable = projectStatus == ProjectDetailsUiStatus.LOADED && !isClosed && canEditEntities
+    val assignedUsers =
+        allUsers
+            .filter { it.id in assignedUserIds }
+            .map { it.toAssignedUserItem() }
+            .toPersistentList()
+    val availableUsers =
+        allUsers
+            .filter { it.id !in assignedUserIds }
+            .map { it.toAssignedUserItem() }
+            .toPersistentList()
     return ProjectDetailsUiState(
         projectStatus = projectStatus,
         isDownloadingReport = isDownloadingReport,
@@ -22,6 +35,8 @@ internal fun ProjectDetailsVmState.toUiState(): ProjectDetailsUiState {
         project = project,
         structures = structures,
         inspections = inspections,
+        assignedUsers = assignedUsers,
+        availableUsers = availableUsers,
         isClosed = isClosed,
         isProjectEditable = isProjectEditable,
         canInvokeDeletion = isProjectEditable && !isBeingDeleted,
