@@ -22,17 +22,11 @@ package cz.adamec.timotej.snag.buildsrc.configuration
 internal fun isAllowlisted(source: String, target: String): Boolean =
     (source to target) in exactAllowlist || patternAllowlist.any { it(source, target) }
 
-/**
- * Exact (source, target) pairs for individual exceptions.
- */
 private val exactAllowlist: Set<Pair<String, String>> = setOf(
     // shared:database:be:test wraps the real impl for in-memory test doubles
     ":feat:shared:database:be:test" to ":feat:shared:database:be:impl",
 )
 
-/**
- * Pattern-based exceptions for structural allowances.
- */
 private val patternAllowlist: List<(String, String) -> Boolean> = listOf(
     // All BE lib modules depend on feat:sync:be:api — auto-wired by BackendModuleSetup
     // because sync is quasi-infrastructure for all backend modules
