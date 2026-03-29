@@ -15,16 +15,16 @@ package cz.adamec.timotej.snag.authentication.fe.app.impl.internal
 import cz.adamec.timotej.snag.authentication.fe.app.api.LoginResult
 import cz.adamec.timotej.snag.authentication.fe.app.api.LoginUseCase
 import cz.adamec.timotej.snag.authentication.fe.ports.AuthTokenProvider
+import cz.adamec.timotej.snag.core.foundation.common.runCatchingCancellable
 
 internal class LoginUseCaseImpl(
     private val authTokenProvider: AuthTokenProvider,
 ) : LoginUseCase {
-    @Suppress("TooGenericExceptionCaught")
     override suspend fun invoke(): LoginResult =
-        try {
+        runCatchingCancellable {
             authTokenProvider.login()
             LoginResult.Success
-        } catch (e: Exception) {
+        }.getOrElse { e ->
             LoginResult.Error(message = e.message ?: "Login failed.")
         }
 }

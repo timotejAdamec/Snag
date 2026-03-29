@@ -15,14 +15,14 @@ package cz.adamec.timotej.snag.authentication.fe.driving.impl
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import cz.adamec.timotej.snag.authentication.fe.driving.api.AuthenticationGateProvider
+import cz.adamec.timotej.snag.authentication.fe.driving.api.AuthenticationGateContent
 import cz.adamec.timotej.snag.authentication.fe.driving.impl.internal.LoginScreen
 import cz.adamec.timotej.snag.authentication.fe.driving.impl.internal.vm.AuthenticationViewModel
 import org.koin.compose.viewmodel.koinViewModel
 
-internal class AuthenticationGateProviderImpl : AuthenticationGateProvider {
+internal class AuthenticationGateContentImpl : AuthenticationGateContent {
     @Composable
-    override fun Content(authenticatedContent: @Composable () -> Unit) {
+    override fun invoke(authenticatedContent: @Composable () -> Unit) {
         val viewModel: AuthenticationViewModel = koinViewModel()
         val state by viewModel.state.collectAsStateWithLifecycle()
 

@@ -27,7 +27,6 @@ val authenticationDrivenModule =
                 OidcAuthTokenProvider(
                     tokenStore = get(),
                     authFlowFactory = get(),
-                    applicationScope = get(),
                 )
             }
         }

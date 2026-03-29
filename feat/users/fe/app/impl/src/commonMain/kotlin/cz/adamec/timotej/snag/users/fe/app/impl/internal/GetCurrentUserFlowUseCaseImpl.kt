@@ -18,16 +18,17 @@ import cz.adamec.timotej.snag.users.app.model.AppUser
 import cz.adamec.timotej.snag.users.fe.app.api.GetCurrentUserFlowUseCase
 import cz.adamec.timotej.snag.users.fe.ports.UsersDb
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flatMapLatest
 
 internal class GetCurrentUserFlowUseCaseImpl(
     private val getAuthProviderIdUseCase: GetAuthProviderIdUseCase,
     private val usersDb: UsersDb,
 ) : GetCurrentUserFlowUseCase {
-    override operator fun invoke(): Flow<OfflineFirstDataResult<AppUser?>> {
-        val authProviderIdFlow = getAuthProviderIdUseCase()
-        val authProviderId = (authProviderIdFlow as? StateFlow)?.value ?: return emptyFlow()
-        return usersDb.getUserByAuthProviderIdFlow(authProviderId)
-    }
+    override operator fun invoke(): Flow<OfflineFirstDataResult<AppUser?>> =
+        getAuthProviderIdUseCase()
+            .filterNotNull()
+            .flatMapLatest { authProviderId ->
+                usersDb.getUserByAuthProviderIdFlow(authProviderId)
+            }
 }

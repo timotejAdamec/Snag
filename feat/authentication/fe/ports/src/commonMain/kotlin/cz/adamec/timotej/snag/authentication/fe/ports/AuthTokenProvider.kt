@@ -17,6 +17,8 @@ import kotlinx.coroutines.flow.StateFlow
 interface AuthTokenProvider {
     val authState: StateFlow<AuthState>
 
+    suspend fun restoreSession()
+
     suspend fun login()
 
     suspend fun getAccessToken(): String?

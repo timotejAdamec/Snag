@@ -19,15 +19,13 @@ import cz.adamec.timotej.snag.core.foundation.common.mapState
 import kotlinx.coroutines.flow.Flow
 
 internal class GetAuthProviderIdUseCaseImpl(
-    authTokenProvider: AuthTokenProvider,
+    private val authTokenProvider: AuthTokenProvider,
 ) : GetAuthProviderIdUseCase {
-    private val authProviderIdFlow =
+    override fun invoke(): Flow<String?> =
         authTokenProvider.authState.mapState { state ->
             when (state) {
                 is AuthState.Authenticated -> state.authProviderId
-                is AuthState.Unauthenticated -> null
+                is AuthState.Loading, is AuthState.Unauthenticated -> null
             }
         }
-
-    override fun invoke(): Flow<String?> = authProviderIdFlow
 }

@@ -15,14 +15,13 @@ package cz.adamec.timotej.snag.authentication.fe.driving.api
 import androidx.compose.runtime.Composable
 import org.koin.compose.getKoin
 
-@Suppress("UnnecessaryFullyQualifiedName")
 @Composable
 fun AuthenticationGate(authenticatedContent: @Composable () -> Unit) {
-    val gate: AuthenticationGateProvider = getKoin().get()
-    gate.Content(authenticatedContent = authenticatedContent)
+    val gate: AuthenticationGateContent = getKoin().get()
+    gate(authenticatedContent = authenticatedContent)
 }
 
-interface AuthenticationGateProvider {
+interface AuthenticationGateContent {
     @Composable
-    fun Content(authenticatedContent: @Composable () -> Unit)
+    operator fun invoke(authenticatedContent: @Composable () -> Unit)
 }

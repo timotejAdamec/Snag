@@ -12,16 +12,13 @@
 
 package cz.adamec.timotej.snag.authentication.fe.app.impl.internal
 
-import cz.adamec.timotej.snag.authentication.fe.app.api.LogoutUseCase
+import cz.adamec.timotej.snag.authentication.fe.app.api.RestoreSessionUseCase
 import cz.adamec.timotej.snag.authentication.fe.ports.AuthTokenProvider
-import cz.adamec.timotej.snag.core.foundation.common.runCatchingCancellable
 
-internal class LogoutUseCaseImpl(
+internal class RestoreSessionUseCaseImpl(
     private val authTokenProvider: AuthTokenProvider,
-) : LogoutUseCase {
+) : RestoreSessionUseCase {
     override suspend fun invoke() {
-        runCatchingCancellable {
-            authTokenProvider.logout()
-        }
+        authTokenProvider.restoreSession()
     }
 }

@@ -24,6 +24,8 @@ internal class MockAuthTokenProvider : AuthTokenProvider {
         )
     override val authState: StateFlow<AuthState> = _authState
 
+    override suspend fun restoreSession() = Unit
+
     override suspend fun login() {
         _authState.value = AuthState.Authenticated(authProviderId = MOCK_AUTH_PROVIDER_ID)
     }

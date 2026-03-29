@@ -15,10 +15,8 @@ package cz.adamec.timotej.snag.authentication.fe.driven.internal
 import cz.adamec.timotej.snag.authentication.fe.ports.AuthState
 import cz.adamec.timotej.snag.authentication.fe.ports.AuthTokenProvider
 import cz.adamec.timotej.snag.configuration.common.CommonConfiguration
-import cz.adamec.timotej.snag.core.foundation.common.ApplicationScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
 import org.publicvalue.multiplatform.oidc.OpenIdConnectClient
 import org.publicvalue.multiplatform.oidc.flows.CodeAuthFlowFactory
 import org.publicvalue.multiplatform.oidc.tokenstore.TokenStore
@@ -28,9 +26,8 @@ import org.publicvalue.multiplatform.oidc.types.Jwt
 internal class OidcAuthTokenProvider(
     private val tokenStore: TokenStore,
     private val authFlowFactory: CodeAuthFlowFactory,
-    applicationScope: ApplicationScope,
 ) : AuthTokenProvider {
-    private val _authState = MutableStateFlow<AuthState>(AuthState.Unauthenticated)
+    private val _authState = MutableStateFlow<AuthState>(AuthState.Loading)
     override val authState: StateFlow<AuthState> = _authState
 
     private val client =
@@ -43,10 +40,20 @@ internal class OidcAuthTokenProvider(
             redirectUri = CommonConfiguration.entraIdRedirectUri
         }
 
-    init {
-        applicationScope.launch {
-            restoreSessionIfPossible()
+    override suspend fun restoreSession() {
+        val accessToken = tokenStore.getAccessToken()
+        if (accessToken.isNullOrBlank()) {
+            _authState.value = AuthState.Unauthenticated
+            return
         }
+        val idToken = tokenStore.getIdToken()
+        val authProviderId = idToken?.let { extractOidFromIdToken(it) }
+        _authState.value =
+            if (authProviderId != null) {
+                AuthState.Authenticated(authProviderId = authProviderId)
+            } else {
+                AuthState.Unauthenticated
+            }
     }
 
     override suspend fun login() {
@@ -68,15 +75,6 @@ internal class OidcAuthTokenProvider(
     override suspend fun logout() {
         tokenStore.saveTokens(accessToken = "", refreshToken = "", idToken = "")
         _authState.value = AuthState.Unauthenticated
-    }
-
-    @Suppress("ReturnCount")
-    private suspend fun restoreSessionIfPossible() {
-        val accessToken = tokenStore.getAccessToken()
-        if (accessToken.isNullOrBlank()) return
-        val idToken = tokenStore.getIdToken() ?: return
-        val authProviderId = extractOidFromIdToken(idToken) ?: return
-        _authState.value = AuthState.Authenticated(authProviderId = authProviderId)
     }
 
     private fun extractOidFromIdToken(idToken: String): String? =

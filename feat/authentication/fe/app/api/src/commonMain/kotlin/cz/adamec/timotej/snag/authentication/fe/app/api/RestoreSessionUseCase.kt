@@ -10,14 +10,8 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.authentication.fe.ports
+package cz.adamec.timotej.snag.authentication.fe.app.api
 
-sealed interface AuthState {
-    data object Loading : AuthState
-
-    data object Unauthenticated : AuthState
-
-    data class Authenticated(
-        val authProviderId: String,
-    ) : AuthState
+interface RestoreSessionUseCase {
+    suspend operator fun invoke()
 }
