@@ -15,6 +15,7 @@ package cz.adamec.timotej.snag.authentication.fe.driving.impl.internal.vm
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cz.adamec.timotej.snag.authentication.fe.app.api.GetAuthenticatedUserIdUseCase
+import cz.adamec.timotej.snag.authentication.fe.app.api.LoginUseCase
 import cz.adamec.timotej.snag.core.foundation.common.mapState
 import cz.adamec.timotej.snag.lib.design.fe.state.launchWhileSubscribed
 import kotlinx.coroutines.Job
@@ -23,9 +24,11 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 internal class AuthenticationViewModel(
     private val getAuthenticatedUserIdUseCase: GetAuthenticatedUserIdUseCase,
+    private val loginUseCase: LoginUseCase,
 ) : ViewModel() {
     private val vmState: MutableStateFlow<AuthenticationVmState> =
         MutableStateFlow(AuthenticationVmState())
@@ -35,6 +38,14 @@ internal class AuthenticationViewModel(
 
     val state: StateFlow<AuthenticationUiState> =
         vmState.mapState { it.toUiState() }
+
+    fun login() {
+        viewModelScope.launch {
+            vmState.update { it.copy(isLoggingIn = true) }
+            loginUseCase()
+            vmState.update { it.copy(isLoggingIn = false) }
+        }
+    }
 
     private fun collectAuthState(): Job =
         getAuthenticatedUserIdUseCase.currentUserId

@@ -10,8 +10,9 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.authentication.fe.driving.impl.internal
+package cz.adamec.timotej.snag.authentication.fe.driven.internal
 
+import cz.adamec.timotej.snag.authentication.fe.ports.AuthTokenProvider
 import cz.adamec.timotej.snag.configuration.common.CommonConfiguration
 import cz.adamec.timotej.snag.network.fe.HttpClientConfiguration
 import cz.adamec.timotej.snag.routing.common.USER_ID_HEADER

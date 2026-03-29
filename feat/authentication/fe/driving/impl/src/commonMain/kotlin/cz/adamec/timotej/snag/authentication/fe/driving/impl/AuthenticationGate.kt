@@ -27,6 +27,9 @@ fun AuthenticationGate(authenticatedContent: @Composable () -> Unit) {
     if (state.isAuthenticated) {
         authenticatedContent()
     } else {
-        LoginScreen(onSignIn = { /* OAuth sign-in flow */ })
+        LoginScreen(
+            onSignIn = viewModel::login,
+            isLoading = state.isLoggingIn,
+        )
     }
 }

@@ -16,4 +16,5 @@ import kotlin.uuid.Uuid
 
 internal data class AuthenticationVmState(
     val currentUserId: Uuid? = null,
+    val isLoggingIn: Boolean = false,
 )

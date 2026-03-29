@@ -53,6 +53,10 @@ val entraIdClientId =
     findProperty("snag.entraIdClientId")?.toString()
         ?: buildProfile.getProperty("snag.entraIdClientId")
         ?: ""
+val entraIdRedirectUri =
+    findProperty("snag.entraIdRedirectUri")?.toString()
+        ?: buildProfile.getProperty("snag.entraIdRedirectUri")
+        ?: "snag://auth/callback"
 
 buildkonfig {
     packageName = "cz.adamec.timotej.snag.configuration.common"
@@ -105,6 +109,12 @@ buildkonfig {
             com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING,
             "ENTRA_ID_CLIENT_ID",
             entraIdClientId,
+            const = true,
+        )
+        buildConfigField(
+            com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING,
+            "ENTRA_ID_REDIRECT_URI",
+            entraIdRedirectUri,
             const = true,
         )
     }

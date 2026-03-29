@@ -48,6 +48,7 @@ filekit = "0.13.0"
 kotlinx-io = "0.7.0"
 buildkonfig = "0.17.1"
 openpdf = "3.0.3"
+oidc = "0.16.5"
 
 [libraries]
 kotlin-gradle = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlinGradlePlugin" }
@@ -163,6 +164,9 @@ openpdf = { module = "com.github.librepdf:openpdf", version.ref = "openpdf" }
 ktor-server-auth = { module = "io.ktor:ktor-server-auth-jvm", version.ref = "ktor" }
 ktor-server-auth-jwt = { module = "io.ktor:ktor-server-auth-jwt-jvm", version.ref = "ktor" }
 ktor-client-auth = { module = "io.ktor:ktor-client-auth", version.ref = "ktor" }
+oidc-appsupport = { module = "io.github.kalinjul.kotlin.multiplatform:oidc-appsupport", version.ref = "oidc" }
+oidc-tokenstore = { module = "io.github.kalinjul.kotlin.multiplatform:oidc-tokenstore", version.ref = "oidc" }
+oidc-ktor = { module = "io.github.kalinjul.kotlin.multiplatform:oidc-ktor", version.ref = "oidc" }
 
 [plugins]
 snagMultiplatformModule = { id = "libs.plugins.snag.multiplatform.module" }

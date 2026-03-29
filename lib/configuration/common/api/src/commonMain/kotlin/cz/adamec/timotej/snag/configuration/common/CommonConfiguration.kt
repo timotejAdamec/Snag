@@ -26,4 +26,5 @@ object CommonConfiguration {
     val mockAuth: Boolean = SnagBuildConfig.MOCK_AUTH.toBooleanStrictOrNull() ?: true
     val entraIdTenantId: String = SnagBuildConfig.ENTRA_ID_TENANT_ID
     val entraIdClientId: String = SnagBuildConfig.ENTRA_ID_CLIENT_ID
+    val entraIdRedirectUri: String = SnagBuildConfig.ENTRA_ID_REDIRECT_URI
 }

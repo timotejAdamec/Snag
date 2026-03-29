@@ -40,6 +40,7 @@ android {
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = SnagVersioning.versionCode(project).get()
         versionName = SnagVersioning.versionName(project).get()
+        manifestPlaceholders["oidcRedirectScheme"] = "snag"
     }
 
     signingConfigs {

@@ -17,4 +17,5 @@ import androidx.compose.runtime.Immutable
 @Immutable
 internal data class AuthenticationUiState(
     val isAuthenticated: Boolean = false,
+    val isLoggingIn: Boolean = false,
 )
