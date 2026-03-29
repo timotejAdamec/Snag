@@ -103,7 +103,17 @@ The architecture is fully implemented across all platforms. The following steps 
 
 ---
 
-## 5. Testing
+## 5. First User Bootstrap
+
+In a fresh deployment, no users have roles. Since only an administrator can assign roles, the system automatically assigns the `ADMINISTRATOR` role to the very first user who logs in. This only triggers when the users table is empty — subsequent logins create users with `role = null` as usual.
+
+No configuration is needed — just deploy and the first person to log in becomes admin.
+
+See [#175](https://github.com/timotejAdamec/Snag/issues/175) for implementation status.
+
+---
+
+## 6. Testing
 
 - With `MOCK_AUTH=true` (default): everything works as before — no EntraID dependency.
 - All existing tests run in mock mode automatically (`CommonConfiguration.mockAuth` defaults to `true`).
