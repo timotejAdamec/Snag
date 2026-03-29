@@ -9,7 +9,7 @@ This document describes how to configure Microsoft EntraID authentication for pr
 The system uses a dual-mode authentication architecture:
 
 - **Mock mode** (`MOCK_AUTH=true`, default): Uses `X-User-Id` header on BE and a hardcoded user ID on FE. No external dependencies. Used for local development and testing.
-- **Production mode** (`MOCK_AUTH=false`): BE validates EntraID JWT tokens via Ktor's `Authentication` plugin with `jwt {}` provider; FE uses `ktor-client-auth` Bearer plugin for token injection with `OAuthTokenProvider` for cross-platform OAuth2/OIDC.
+- **Production mode** (`MOCK_AUTH=false`): BE validates EntraID JWT tokens via Ktor's `Authentication` plugin with `jwt {}` provider; FE uses `kotlin-multiplatform-oidc` for OAuth2 Authorization Code + PKCE flow with persistent token storage and automatic token refresh via `oidcBearer` Ktor integration.
 
 ---
 
@@ -20,12 +20,19 @@ The system uses a dual-mode authentication architecture:
 3. Set:
    - **Name**: `Snag`
    - **Supported account types**: Accounts in this organizational directory only (single tenant)
-   - **Redirect URI**: configure per platform (browser redirect for web/desktop, deep link for mobile)
+   - **Redirect URI**: `snag://auth/callback` (custom URI scheme for mobile/desktop)
 4. After creation, note:
    - **Application (client) ID** → this is `ENTRA_ID_CLIENT_ID`
    - **Directory (tenant) ID** → this is `ENTRA_ID_TENANT_ID`
 5. Under **API permissions**, ensure `User.Read` (Microsoft Graph) is granted.
 6. Under **Expose an API**, set the Application ID URI (e.g., `api://<client-id>`).
+
+### Platform-specific redirect URI setup
+
+- **Android**: `manifestPlaceholders["oidcRedirectScheme"] = "snag"` is set in `androidApp/build.gradle.kts`. The library's manifest merger handles the intent filter automatically.
+- **iOS**: Add URL scheme `snag` in Info.plist.
+- **Desktop**: The library uses an embedded localhost webserver — no scheme registration needed.
+- **Web (WasmJS)**: Redirect to same origin.
 
 ---
 
@@ -37,6 +44,7 @@ Auth configuration is set at build time via `CommonConfiguration` (BuildKonfig).
 snag.mockAuth=false
 snag.entraIdTenantId=<your-tenant-id>
 snag.entraIdClientId=<your-client-id>
+snag.entraIdRedirectUri=snag://auth/callback
 ```
 
 ### How it works
@@ -54,6 +62,7 @@ snag.entraIdClientId=<your-client-id>
 - `feat/authentication/be/driving/impl/.../CallCurrentUserConfiguration.kt` — Ktor Authentication plugin setup
 - `feat/authentication/be/driving/impl/.../CallCurrentUserPlugin.kt` — dual-mode user resolution
 - `feat/users/be/app/api/.../GetOrCreateUserByEntraIdUseCase.kt` — user lookup/creation
+- `feat/users/be/driving/impl/.../UsersRoute.kt` — includes `GET /users/me` for post-login user resolution
 
 ---
 
@@ -63,14 +72,24 @@ snag.entraIdClientId=<your-client-id>
 
 Same as backend — set in `config/release.properties` (see section 2). Values are compiled into `CommonConfiguration` via BuildKonfig and available on all platforms (Android, iOS, JVM, JS, WasmJS).
 
+### How it works
+
+1. `LoginUseCase` coordinates the sign-in flow:
+   a. Triggers OIDC Authorization Code + PKCE flow via `AuthTokenProvider.login()` (browser-based authentication).
+   b. After tokens are obtained and stored, calls `GET /users/me` via `AuthenticationApi` to resolve the app user UUID.
+   c. Sets `AuthState.Authenticated(userId)` on the token provider.
+2. `AuthenticationGate` composable observes auth state and shows `LoginScreen` or app content.
+3. Token refresh is handled automatically by `TokenRefreshHandler` + `oidcBearer` Ktor integration — 401 responses trigger transparent refresh and retry.
+4. Tokens are persisted via `TokenStore` (Android `EncryptedSharedPreferences`, iOS Keychain).
+
 ### Key files
 
-- `feat/authentication/fe/app/api/.../GetAuthenticatedUserIdUseCase.kt` — cross-feature interface for current user identity
-- `feat/authentication/fe/driving/impl/.../AuthTokenProvider.kt` — internal interface for token management
-- `feat/authentication/fe/driving/impl/.../MockAuthTokenProvider.kt` — dev mode (hardcoded user)
-- `feat/authentication/fe/driving/impl/.../OAuthTokenProvider.kt` — production mode (OAuth2 token storage)
-- `feat/authentication/fe/driving/impl/.../CallCurrentUserConfiguration.kt` — HTTP client auth (Bearer via `ktor-client-auth` or mock header)
-- `feat/authentication/fe/driving/api/.../AuthenticationGate.kt` — login gate composable
+- `feat/authentication/fe/app/api/` — use case interfaces (`GetAuthenticatedUserIdUseCase`, `LoginUseCase`, `LogoutUseCase`)
+- `feat/authentication/fe/app/impl/` — use case implementations (login coordination)
+- `feat/authentication/fe/ports/` — port interfaces (`AuthTokenProvider`, `AuthState`, `AuthenticationApi`)
+- `feat/authentication/fe/driven/impl/` — adapters (`OidcAuthTokenProvider`, `MockAuthTokenProvider`, `CallCurrentUserConfiguration`, `RealAuthenticationApi`)
+- `feat/authentication/fe/driven/test/` — test fakes (`FakeAuthTokenProvider`, `FakeAuthenticationApi`)
+- `feat/authentication/fe/driving/impl/` — UI (`AuthenticationGate`, `LoginScreen`, `AuthenticationViewModel`)
 
 ---
 
@@ -80,9 +99,7 @@ The architecture is fully implemented across all platforms. The following steps 
 
 1. **Register app in Azure Portal** and obtain tenant/client IDs (section 1 above).
 2. **Set config values** in `config/release.properties` (section 2 above).
-3. **Implement OAuth2 browser flow in `OAuthTokenProvider`** — open browser to EntraID authorize endpoint, handle redirect with auth code, exchange for tokens. The `OAuthTokenProvider` class is in place with token storage; the interactive sign-in flow needs platform-specific browser launching.
-4. **Resolve `GetAuthenticatedUserIdUseCase` user ID after login** — after OAuth2 login + first sync, resolve the current user's UUID from the local DB by matching the `oid` JWT claim to `entraId` in the users table.
-5. **Connect `LoginScreen` sign-in button** to `OAuthTokenProvider`'s sign-in flow.
+3. **Provide `TokenStore` and `CodeAuthFlowFactory` in DI** — the `OidcAuthTokenProvider` expects these injected via Koin. Platform-specific implementations (`AndroidEncryptedPreferencesSettingsStore`, `IosKeychainTokenStore`) need to be registered, along with `CodeAuthFlowFactory` for browser flow launching.
 
 ---
 
@@ -92,3 +109,4 @@ The architecture is fully implemented across all platforms. The following steps 
 - All existing tests run in mock mode automatically (`CommonConfiguration.mockAuth` defaults to `true`).
 - Backend `CallCurrentUserPluginTest` tests the mock-auth path.
 - For testing the JWT path: set `MOCK_AUTH=false` and provide test JWTs signed with known keys.
+- `FakeAuthTokenProvider` and `FakeAuthenticationApi` in `feat/authentication/fe/driven/test/` are available for FE unit tests.
