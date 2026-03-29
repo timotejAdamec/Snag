@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetailsEdit.vm
 
+import cz.adamec.timotej.snag.authorization.business.UserRole
 import cz.adamec.timotej.snag.clients.app.model.AppClientData
 import cz.adamec.timotej.snag.clients.fe.app.api.GetClientsUseCase
 import cz.adamec.timotej.snag.clients.fe.driven.test.FakeClientsDb
@@ -25,16 +26,16 @@ import cz.adamec.timotej.snag.projects.fe.app.api.CanCreateProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.CanEditProjectEntitiesUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.GetProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.SaveProjectUseCase
+import cz.adamec.timotej.snag.projects.fe.driven.test.FakeProjectAssignmentsDb
 import cz.adamec.timotej.snag.projects.fe.driven.test.FakeProjectsDb
 import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
+import cz.adamec.timotej.snag.users.app.model.AppUserData
+import cz.adamec.timotej.snag.users.fe.driven.test.FakeUsersDb
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
-import org.koin.core.module.Module
-import org.koin.dsl.module
 import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -45,7 +46,11 @@ import kotlin.uuid.Uuid
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class ProjectDetailsEditViewModelTest : FrontendKoinInitializedTest() {
+    private val currentUserId = Uuid.parse("00000000-0000-0000-0005-000000000001")
+
     private val fakeProjectsDb: FakeProjectsDb by inject()
+    private val fakeProjectAssignmentsDb: FakeProjectAssignmentsDb by inject()
+    private val fakeUsersDb: FakeUsersDb by inject()
     private val fakeClientsDb: FakeClientsDb by inject()
 
     private val getProjectUseCase: GetProjectUseCase by inject()
@@ -54,21 +59,17 @@ class ProjectDetailsEditViewModelTest : FrontendKoinInitializedTest() {
     private val canCreateProjectUseCase: CanCreateProjectUseCase by inject()
     private val canEditProjectEntitiesUseCase: CanEditProjectEntitiesUseCase by inject()
 
-    override fun additionalKoinModules(): List<Module> =
-        listOf(
-            module {
-                factory<CanCreateProjectUseCase> {
-                    object : CanCreateProjectUseCase {
-                        override fun invoke() = flowOf(true)
-                    }
-                }
-                factory<CanEditProjectEntitiesUseCase> {
-                    object : CanEditProjectEntitiesUseCase {
-                        override fun invoke(projectId: Uuid) = flowOf(true)
-                    }
-                }
-            },
+    private fun seedCurrentUser() {
+        fakeUsersDb.setUser(
+            AppUserData(
+                id = currentUserId,
+                entraId = "entra-id",
+                email = "admin@test.com",
+                role = UserRole.ADMINISTRATOR,
+                updatedAt = Timestamp(0L),
+            ),
         )
+    }
 
     private fun createViewModel(projectId: Uuid? = null) =
         ProjectDetailsEditViewModel(
@@ -83,6 +84,7 @@ class ProjectDetailsEditViewModelTest : FrontendKoinInitializedTest() {
     @Test
     fun `initial state is empty when projectId is null`() =
         runTest(testDispatcher) {
+            seedCurrentUser()
             val viewModel = createViewModel(projectId = null)
 
             assertEquals("", viewModel.state.value.projectName)
@@ -93,6 +95,7 @@ class ProjectDetailsEditViewModelTest : FrontendKoinInitializedTest() {
     @Test
     fun `loading project data updates state when projectId is provided`() =
         runTest(testDispatcher) {
+            seedCurrentUser()
             val projectId = Uuid.random()
             val project =
                 AppProjectData(
@@ -103,6 +106,7 @@ class ProjectDetailsEditViewModelTest : FrontendKoinInitializedTest() {
                     updatedAt = Timestamp(10L),
                 )
             fakeProjectsDb.setProject(project)
+            fakeProjectAssignmentsDb.setAssignments(projectId, setOf(currentUserId))
 
             val viewModel = createViewModel(projectId = projectId)
 
@@ -115,6 +119,7 @@ class ProjectDetailsEditViewModelTest : FrontendKoinInitializedTest() {
     @Test
     fun `onProjectNameChange updates state`() =
         runTest(testDispatcher) {
+            seedCurrentUser()
             val viewModel = createViewModel()
 
             viewModel.onProjectNameChange("New Name")
@@ -125,6 +130,7 @@ class ProjectDetailsEditViewModelTest : FrontendKoinInitializedTest() {
     @Test
     fun `onProjectAddressChange updates state`() =
         runTest(testDispatcher) {
+            seedCurrentUser()
             val viewModel = createViewModel()
 
             viewModel.onProjectAddressChange("New Address")
@@ -135,6 +141,7 @@ class ProjectDetailsEditViewModelTest : FrontendKoinInitializedTest() {
     @Test
     fun `onSaveProject with empty name shows inline error`() =
         runTest(testDispatcher) {
+            seedCurrentUser()
             val viewModel = createViewModel()
             val subscriber = launch { viewModel.state.collect { } }
             advanceUntilIdle()
@@ -151,6 +158,7 @@ class ProjectDetailsEditViewModelTest : FrontendKoinInitializedTest() {
     @Test
     fun `onSaveProject with empty address shows inline error`() =
         runTest(testDispatcher) {
+            seedCurrentUser()
             val viewModel = createViewModel()
             val subscriber = launch { viewModel.state.collect { } }
             advanceUntilIdle()
@@ -167,6 +175,7 @@ class ProjectDetailsEditViewModelTest : FrontendKoinInitializedTest() {
     @Test
     fun `editing field clears its error`() =
         runTest(testDispatcher) {
+            seedCurrentUser()
             val viewModel = createViewModel()
             val subscriber = launch { viewModel.state.collect { } }
             advanceUntilIdle()
@@ -187,6 +196,7 @@ class ProjectDetailsEditViewModelTest : FrontendKoinInitializedTest() {
     @Test
     fun `onSaveProject successful sends save event`() =
         runTest(testDispatcher) {
+            seedCurrentUser()
             val viewModel = createViewModel()
             val subscriber = launch { viewModel.state.collect { } }
             advanceUntilIdle()
@@ -209,6 +219,7 @@ class ProjectDetailsEditViewModelTest : FrontendKoinInitializedTest() {
     @Test
     fun `onSaveProject failure sends error`() =
         runTest(testDispatcher) {
+            seedCurrentUser()
             val viewModel = createViewModel()
             val subscriber = launch { viewModel.state.collect { } }
             advanceUntilIdle()
@@ -227,6 +238,7 @@ class ProjectDetailsEditViewModelTest : FrontendKoinInitializedTest() {
     @Test
     fun `clients are loaded into state`() =
         runTest(testDispatcher) {
+            seedCurrentUser()
             val clientId = Uuid.random()
             fakeClientsDb.setClient(
                 AppClientData(
@@ -252,6 +264,7 @@ class ProjectDetailsEditViewModelTest : FrontendKoinInitializedTest() {
     @Test
     fun `selecting a client updates state`() =
         runTest(testDispatcher) {
+            seedCurrentUser()
             val clientId = Uuid.random()
             val viewModel = createViewModel()
 
@@ -263,6 +276,7 @@ class ProjectDetailsEditViewModelTest : FrontendKoinInitializedTest() {
     @Test
     fun `clearing client selection updates state`() =
         runTest(testDispatcher) {
+            seedCurrentUser()
             val clientId = Uuid.random()
             val viewModel = createViewModel()
             viewModel.onClientSelected(clientId, "ACME Corp")
@@ -275,6 +289,7 @@ class ProjectDetailsEditViewModelTest : FrontendKoinInitializedTest() {
     @Test
     fun `saving project with client includes clientId`() =
         runTest(testDispatcher) {
+            seedCurrentUser()
             val clientId = Uuid.random()
             val viewModel = createViewModel()
             val subscriber = launch { viewModel.state.collect { } }
@@ -295,6 +310,7 @@ class ProjectDetailsEditViewModelTest : FrontendKoinInitializedTest() {
     @Test
     fun `editing project with clientId pre-selects client`() =
         runTest(testDispatcher) {
+            seedCurrentUser()
             val projectId = Uuid.random()
             val clientId = Uuid.random()
             fakeClientsDb.setClient(
@@ -317,6 +333,7 @@ class ProjectDetailsEditViewModelTest : FrontendKoinInitializedTest() {
                     updatedAt = Timestamp(10L),
                 ),
             )
+            fakeProjectAssignmentsDb.setAssignments(projectId, setOf(currentUserId))
 
             val viewModel = createViewModel(projectId = projectId)
             val subscriber = launch { viewModel.state.collect { } }
@@ -329,6 +346,7 @@ class ProjectDetailsEditViewModelTest : FrontendKoinInitializedTest() {
     @Test
     fun `onClientCreated selects newly created client`() =
         runTest(testDispatcher) {
+            seedCurrentUser()
             val clientId = Uuid.random()
             fakeClientsDb.setClient(
                 AppClientData(

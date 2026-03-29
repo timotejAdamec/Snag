@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.clients.fe.driving.impl.internal.clientDetailsEdit.vm
 
+import cz.adamec.timotej.snag.authorization.business.UserRole
 import cz.adamec.timotej.snag.clients.app.model.AppClient
 import cz.adamec.timotej.snag.clients.app.model.AppClientData
 import cz.adamec.timotej.snag.clients.fe.app.api.CanDeleteClientUseCase
@@ -26,14 +27,13 @@ import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.projects.app.model.AppProjectData
 import cz.adamec.timotej.snag.projects.fe.driven.test.FakeProjectsDb
 import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
+import cz.adamec.timotej.snag.users.app.model.AppUserData
+import cz.adamec.timotej.snag.users.fe.driven.test.FakeUsersDb
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
-import org.koin.core.module.Module
-import org.koin.dsl.module
 import org.koin.test.get
 import org.koin.test.inject
 import kotlin.test.Test
@@ -49,6 +49,7 @@ import kotlin.uuid.Uuid
 class ClientDetailsEditViewModelTest : FrontendKoinInitializedTest() {
     private val fakeClientsDb: FakeClientsDb by inject()
     private val fakeProjectsDb: FakeProjectsDb by inject()
+    private val fakeUsersDb: FakeUsersDb by inject()
 
     private val getClientUseCase: GetClientUseCase by inject()
     private val saveClientUseCase: SaveClientUseCase by inject()
@@ -56,16 +57,19 @@ class ClientDetailsEditViewModelTest : FrontendKoinInitializedTest() {
     private val canDeleteClientUseCase: CanDeleteClientUseCase by inject()
     private val canManageClientsUseCase: CanManageClientsUseCase by inject()
 
-    override fun additionalKoinModules(): List<Module> =
-        listOf(
-            module {
-                factory<CanManageClientsUseCase> {
-                    object : CanManageClientsUseCase {
-                        override fun invoke() = flowOf(true)
-                    }
-                }
-            },
+    private val currentUserId = Uuid.parse("00000000-0000-0000-0005-000000000001")
+
+    private fun seedCurrentUser() {
+        fakeUsersDb.setUser(
+            AppUserData(
+                id = currentUserId,
+                entraId = "entra-id",
+                email = "user@example.com",
+                role = UserRole.ADMINISTRATOR,
+                updatedAt = Timestamp(100L),
+            ),
         )
+    }
 
     private fun createViewModel(clientId: Uuid? = null) =
         ClientDetailsEditViewModel(
@@ -82,6 +86,7 @@ class ClientDetailsEditViewModelTest : FrontendKoinInitializedTest() {
     @Test
     fun `initial state is empty when clientId is null`() =
         runTest(testDispatcher) {
+            seedCurrentUser()
             val viewModel = createViewModel(clientId = null)
 
             assertEquals("", viewModel.state.value.clientName)
@@ -104,6 +109,7 @@ class ClientDetailsEditViewModelTest : FrontendKoinInitializedTest() {
                     updatedAt = Timestamp(10L),
                 )
             fakeClientsDb.setClient(client)
+            seedCurrentUser()
 
             val viewModel = createViewModel(clientId = clientId)
 
@@ -118,6 +124,7 @@ class ClientDetailsEditViewModelTest : FrontendKoinInitializedTest() {
     @Test
     fun `onClientNameChange updates state`() =
         runTest(testDispatcher) {
+            seedCurrentUser()
             val viewModel = createViewModel()
 
             viewModel.onClientNameChange("New Name")
@@ -128,6 +135,7 @@ class ClientDetailsEditViewModelTest : FrontendKoinInitializedTest() {
     @Test
     fun `onClientAddressChange updates state`() =
         runTest(testDispatcher) {
+            seedCurrentUser()
             val viewModel = createViewModel()
 
             viewModel.onClientAddressChange("New Address")
@@ -138,6 +146,7 @@ class ClientDetailsEditViewModelTest : FrontendKoinInitializedTest() {
     @Test
     fun `onClientPhoneNumberChange updates state`() =
         runTest(testDispatcher) {
+            seedCurrentUser()
             val viewModel = createViewModel()
 
             viewModel.onClientPhoneNumberChange("+420999888777")
@@ -148,6 +157,7 @@ class ClientDetailsEditViewModelTest : FrontendKoinInitializedTest() {
     @Test
     fun `onClientEmailChange updates state`() =
         runTest(testDispatcher) {
+            seedCurrentUser()
             val viewModel = createViewModel()
 
             viewModel.onClientEmailChange("new@example.com")
@@ -158,6 +168,7 @@ class ClientDetailsEditViewModelTest : FrontendKoinInitializedTest() {
     @Test
     fun `onSaveClient with empty name shows inline error`() =
         runTest(testDispatcher) {
+            seedCurrentUser()
             val viewModel = createViewModel()
             val subscriber = launch { viewModel.state.collect { } }
             advanceUntilIdle()
@@ -172,6 +183,7 @@ class ClientDetailsEditViewModelTest : FrontendKoinInitializedTest() {
     @Test
     fun `onSaveClient with invalid email shows inline error`() =
         runTest(testDispatcher) {
+            seedCurrentUser()
             val viewModel = createViewModel()
             val subscriber = launch { viewModel.state.collect { } }
             advanceUntilIdle()
@@ -189,6 +201,7 @@ class ClientDetailsEditViewModelTest : FrontendKoinInitializedTest() {
     @Test
     fun `onSaveClient with invalid phone shows inline error`() =
         runTest(testDispatcher) {
+            seedCurrentUser()
             val viewModel = createViewModel()
             val subscriber = launch { viewModel.state.collect { } }
             advanceUntilIdle()
@@ -206,6 +219,7 @@ class ClientDetailsEditViewModelTest : FrontendKoinInitializedTest() {
     @Test
     fun `onSaveClient with valid optional fields passes validation`() =
         runTest(testDispatcher) {
+            seedCurrentUser()
             val viewModel = createViewModel()
             val subscriber = launch { viewModel.state.collect { } }
             advanceUntilIdle()
@@ -226,6 +240,7 @@ class ClientDetailsEditViewModelTest : FrontendKoinInitializedTest() {
     @Test
     fun `editing field clears its error`() =
         runTest(testDispatcher) {
+            seedCurrentUser()
             val viewModel = createViewModel()
             val subscriber = launch { viewModel.state.collect { } }
             advanceUntilIdle()
@@ -242,6 +257,7 @@ class ClientDetailsEditViewModelTest : FrontendKoinInitializedTest() {
     @Test
     fun `onSaveClient successful sends save event`() =
         runTest(testDispatcher) {
+            seedCurrentUser()
             val viewModel = createViewModel()
             val subscriber = launch { viewModel.state.collect { } }
             advanceUntilIdle()
@@ -261,6 +277,7 @@ class ClientDetailsEditViewModelTest : FrontendKoinInitializedTest() {
     @Test
     fun `onSaveClient failure sends error`() =
         runTest(testDispatcher) {
+            seedCurrentUser()
             val viewModel = createViewModel()
             val subscriber = launch { viewModel.state.collect { } }
             advanceUntilIdle()
@@ -279,6 +296,7 @@ class ClientDetailsEditViewModelTest : FrontendKoinInitializedTest() {
     @Test
     fun `onDelete success sends deleted event`() =
         runTest(testDispatcher) {
+            seedCurrentUser()
             val clientId = Uuid.random()
             val client =
                 AppClientData(
@@ -304,6 +322,7 @@ class ClientDetailsEditViewModelTest : FrontendKoinInitializedTest() {
     @Test
     fun `onDelete failure sends error`() =
         runTest(testDispatcher) {
+            seedCurrentUser()
             val clientId = Uuid.random()
             val client =
                 AppClientData(
@@ -333,6 +352,7 @@ class ClientDetailsEditViewModelTest : FrontendKoinInitializedTest() {
     @Test
     fun `canDelete is true when client is not referenced`() =
         runTest(testDispatcher) {
+            seedCurrentUser()
             val clientId = Uuid.random()
             val client =
                 AppClientData(
@@ -356,6 +376,7 @@ class ClientDetailsEditViewModelTest : FrontendKoinInitializedTest() {
     @Test
     fun `canDelete is false when client is referenced by project`() =
         runTest(testDispatcher) {
+            seedCurrentUser()
             val clientId = Uuid.random()
             val client =
                 AppClientData(

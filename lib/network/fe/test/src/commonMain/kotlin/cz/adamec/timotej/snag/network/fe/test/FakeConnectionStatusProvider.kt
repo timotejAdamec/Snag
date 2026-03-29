@@ -13,10 +13,15 @@
 package cz.adamec.timotej.snag.network.fe.test
 
 import cz.adamec.timotej.snag.core.network.fe.ConnectionStatusProvider
-import org.koin.dsl.bind
-import org.koin.dsl.module
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 
-val networkFeTestModule =
-    module {
-        single { FakeConnectionStatusProvider() } bind ConnectionStatusProvider::class
+class FakeConnectionStatusProvider : ConnectionStatusProvider {
+    private val connected = MutableStateFlow(true)
+
+    override fun isConnectedFlow(): Flow<Boolean> = connected
+
+    fun setConnected(value: Boolean) {
+        connected.value = value
     }
+}

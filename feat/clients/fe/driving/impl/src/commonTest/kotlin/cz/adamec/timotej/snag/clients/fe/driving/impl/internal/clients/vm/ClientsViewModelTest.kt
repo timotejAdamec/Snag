@@ -12,19 +12,19 @@
 
 package cz.adamec.timotej.snag.clients.fe.driving.impl.internal.clients.vm
 
+import cz.adamec.timotej.snag.authorization.business.UserRole
 import cz.adamec.timotej.snag.clients.app.model.AppClientData
 import cz.adamec.timotej.snag.clients.fe.app.api.CanManageClientsUseCase
 import cz.adamec.timotej.snag.clients.fe.app.api.GetClientsUseCase
 import cz.adamec.timotej.snag.clients.fe.driven.test.FakeClientsDb
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
+import cz.adamec.timotej.snag.users.app.model.AppUserData
+import cz.adamec.timotej.snag.users.fe.driven.test.FakeUsersDb
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
-import org.koin.core.module.Module
-import org.koin.dsl.module
 import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -34,20 +34,24 @@ import kotlin.uuid.Uuid
 @OptIn(ExperimentalCoroutinesApi::class)
 class ClientsViewModelTest : FrontendKoinInitializedTest() {
     private val fakeClientsDb: FakeClientsDb by inject()
+    private val fakeUsersDb: FakeUsersDb by inject()
 
     private val getClientsUseCase: GetClientsUseCase by inject()
     private val canManageClientsUseCase: CanManageClientsUseCase by inject()
 
-    override fun additionalKoinModules(): List<Module> =
-        listOf(
-            module {
-                factory<CanManageClientsUseCase> {
-                    object : CanManageClientsUseCase {
-                        override fun invoke() = flowOf(true)
-                    }
-                }
-            },
+    private val currentUserId = Uuid.parse("00000000-0000-0000-0005-000000000001")
+
+    private fun seedCurrentUser() {
+        fakeUsersDb.setUser(
+            AppUserData(
+                id = currentUserId,
+                entraId = "entra-id",
+                email = "user@example.com",
+                role = UserRole.ADMINISTRATOR,
+                updatedAt = Timestamp(100L),
+            ),
         )
+    }
 
     private fun createViewModel() =
         ClientsViewModel(
@@ -58,6 +62,7 @@ class ClientsViewModelTest : FrontendKoinInitializedTest() {
     @Test
     fun `initial state has empty clients list`() =
         runTest(testDispatcher) {
+            seedCurrentUser()
             val viewModel = createViewModel()
 
             val clients = viewModel.state.value.clients
@@ -77,6 +82,7 @@ class ClientsViewModelTest : FrontendKoinInitializedTest() {
                     updatedAt = Timestamp(10L),
                 )
             fakeClientsDb.setClient(client)
+            seedCurrentUser()
 
             val viewModel = createViewModel()
 

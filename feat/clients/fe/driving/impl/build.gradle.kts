@@ -15,6 +15,9 @@ kotlin {
                 implementation(project(":feat:clients:fe:driven:test"))
                 implementation(project(":feat:projects:fe:driven:test"))
                 implementation(project(":feat:sync:fe:driven:test"))
+                implementation(project(":feat:users:fe:driven:test"))
+                implementation(project(":feat:users:app:model"))
+                implementation(project(":feat:authorization:business:model"))
             }
         }
     }

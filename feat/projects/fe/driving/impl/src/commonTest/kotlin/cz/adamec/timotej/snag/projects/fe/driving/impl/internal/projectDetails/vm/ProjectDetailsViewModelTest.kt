@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.vm
 
+import cz.adamec.timotej.snag.authorization.business.UserRole
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.core.foundation.common.TimestampProvider
 import cz.adamec.timotej.snag.core.foundation.common.UuidProvider
@@ -36,16 +37,18 @@ import cz.adamec.timotej.snag.projects.fe.app.api.GetProjectAssignmentsUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.GetProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.RemoveUserFromProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.SetProjectClosedUseCase
+import cz.adamec.timotej.snag.projects.fe.driven.test.FakeProjectAssignmentsDb
 import cz.adamec.timotej.snag.projects.fe.driven.test.FakeProjectsApi
 import cz.adamec.timotej.snag.projects.fe.driven.test.FakeProjectsDb
 import cz.adamec.timotej.snag.structures.fe.app.api.GetStructuresUseCase
 import cz.adamec.timotej.snag.sync.fe.driven.test.FakeSyncQueue
 import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
+import cz.adamec.timotej.snag.users.app.model.AppUserData
 import cz.adamec.timotej.snag.users.fe.app.api.GetUsersUseCase
+import cz.adamec.timotej.snag.users.fe.driven.test.FakeUsersDb
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
@@ -62,8 +65,11 @@ import kotlin.uuid.Uuid
 @OptIn(ExperimentalCoroutinesApi::class)
 class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
     private val fixedNow = Timestamp(1_700_000_000_000L)
+    private val currentUserId = Uuid.parse("00000000-0000-0000-0005-000000000001")
 
     private val fakeProjectsDb: FakeProjectsDb by inject()
+    private val fakeProjectAssignmentsDb: FakeProjectAssignmentsDb by inject()
+    private val fakeUsersDb: FakeUsersDb by inject()
     private val fakeInspectionsDb: FakeInspectionsDb by inject()
     private val fakeInspectionsApi: FakeInspectionsApi by inject()
     private val fakeSyncQueue: FakeSyncQueue by inject()
@@ -93,43 +99,20 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
                         override fun getNowTimestamp() = fixedNow
                     }
                 }
-                factory<CanEditProjectEntitiesUseCase> {
-                    object : CanEditProjectEntitiesUseCase {
-                        override fun invoke(projectId: Uuid) = flowOf(true)
-                    }
-                }
-                factory<CanCloseProjectUseCase> {
-                    object : CanCloseProjectUseCase {
-                        override fun invoke(projectId: Uuid) = flowOf(true)
-                    }
-                }
-                factory<CanAssignUserToProjectUseCase> {
-                    object : CanAssignUserToProjectUseCase {
-                        override fun invoke(projectId: Uuid) = flowOf(false)
-                    }
-                }
-                factory<AssignUserToProjectUseCase> {
-                    object : AssignUserToProjectUseCase {
-                        override suspend fun invoke(
-                            projectId: Uuid,
-                            userId: Uuid,
-                        ) {
-                            // no-op for existing tests
-                        }
-                    }
-                }
-                factory<RemoveUserFromProjectUseCase> {
-                    object : RemoveUserFromProjectUseCase {
-                        override suspend fun invoke(
-                            projectId: Uuid,
-                            userId: Uuid,
-                        ) {
-                            // no-op for existing tests
-                        }
-                    }
-                }
             },
         )
+
+    private fun seedCurrentUser() {
+        fakeUsersDb.setUser(
+            AppUserData(
+                id = currentUserId,
+                entraId = "entra-id",
+                email = "admin@test.com",
+                role = UserRole.ADMINISTRATOR,
+                updatedAt = Timestamp(0L),
+            ),
+        )
+    }
 
     private fun createViewModel(projectId: Uuid) =
         ProjectDetailsViewModel(
@@ -176,6 +159,7 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
     }
 
     private fun seedProject(projectId: Uuid): AppProject {
+        seedCurrentUser()
         val project =
             AppProjectData(
                 id = projectId,
@@ -185,6 +169,7 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
                 updatedAt = Timestamp(10L),
             )
         fakeProjectsDb.setProject(project)
+        fakeProjectAssignmentsDb.setAssignments(projectId, setOf(currentUserId))
         return project
     }
 
@@ -505,6 +490,7 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
         }
 
     private fun seedClosedProject(projectId: Uuid): AppProject {
+        seedCurrentUser()
         val project =
             AppProjectData(
                 id = projectId,
@@ -515,6 +501,7 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
                 updatedAt = Timestamp(10L),
             )
         fakeProjectsDb.setProject(project)
+        fakeProjectAssignmentsDb.setAssignments(projectId, setOf(currentUserId))
         return project
     }
 
