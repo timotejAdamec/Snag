@@ -31,8 +31,6 @@ internal class AuthenticationViewModel(
     private val getAuthProviderIdUseCase: GetAuthProviderIdUseCase,
     private val loginUseCase: LoginUseCase,
 ) : ViewModel() {
-    private var hasReceivedInitialAuthState = false
-
     private val vmState: MutableStateFlow<AuthenticationVmState> =
         MutableStateFlow(AuthenticationVmState())
             .launchWhileSubscribed(scope = viewModelScope) {
@@ -58,9 +56,6 @@ internal class AuthenticationViewModel(
         getAuthProviderIdUseCase()
             .onEach { authProviderId ->
                 vmState.update { it.copy(authProviderId = authProviderId) }
-                if (!hasReceivedInitialAuthState) {
-                    hasReceivedInitialAuthState = true
-                    if (authProviderId == null) login()
-                }
+                if (authProviderId == null) login()
             }.launchIn(viewModelScope)
 }
