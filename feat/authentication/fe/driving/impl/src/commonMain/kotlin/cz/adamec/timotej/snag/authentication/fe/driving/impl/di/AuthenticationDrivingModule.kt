@@ -12,6 +12,8 @@
 
 package cz.adamec.timotej.snag.authentication.fe.driving.impl.di
 
+import cz.adamec.timotej.snag.authentication.fe.driving.api.AuthenticationGateProvider
+import cz.adamec.timotej.snag.authentication.fe.driving.impl.AuthenticationGateProviderImpl
 import cz.adamec.timotej.snag.authentication.fe.driving.impl.internal.CallCurrentUserConfiguration
 import cz.adamec.timotej.snag.authentication.fe.driving.impl.internal.vm.AuthenticationViewModel
 import cz.adamec.timotej.snag.network.fe.HttpClientConfiguration
@@ -24,4 +26,5 @@ val authenticationDrivingModule =
     module {
         viewModelOf(::AuthenticationViewModel)
         singleOf(::CallCurrentUserConfiguration) bind HttpClientConfiguration::class
+        single<AuthenticationGateProvider> { AuthenticationGateProviderImpl() }
     }
