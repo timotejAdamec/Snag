@@ -33,11 +33,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.AssistChip
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalFloatingToolbar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.InputChip
+import androidx.compose.material3.InputChipDefaults
 import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
@@ -87,6 +88,7 @@ import snag.feat.projects.fe.driving.impl.generated.resources.structures_section
 import snag.lib.design.fe.generated.resources.delete
 import snag.lib.design.fe.generated.resources.edit
 import snag.lib.design.fe.generated.resources.ic_add
+import snag.lib.design.fe.generated.resources.ic_close
 import snag.lib.design.fe.generated.resources.ic_delete
 import snag.lib.design.fe.generated.resources.ic_edit
 import snag.lib.design.fe.generated.resources.ic_event_note
@@ -115,6 +117,7 @@ internal fun ProjectDetailsContent(
     onToggleClose: () -> Unit,
     onManageAssignmentsClick: () -> Unit,
     onAssignUser: (Uuid) -> Unit,
+    onRemoveUser: (Uuid) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(
@@ -147,6 +150,7 @@ internal fun ProjectDetailsContent(
                     onToggleClose = onToggleClose,
                     onManageAssignmentsClick = onManageAssignmentsClick,
                     onAssignUser = onAssignUser,
+                    onRemoveUser = onRemoveUser,
                 )
             }
 
@@ -175,6 +179,7 @@ private fun LoadedProjectDetailsContent(
     onToggleClose: () -> Unit,
     onManageAssignmentsClick: () -> Unit,
     onAssignUser: (Uuid) -> Unit,
+    onRemoveUser: (Uuid) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val projectName = state.project?.name.orEmpty()
@@ -249,16 +254,33 @@ private fun LoadedProjectDetailsContent(
                             items = state.assignedUsers,
                             key = { it.id },
                         ) { user ->
-                            AssistChip(
+                            InputChip(
+                                selected = false,
                                 onClick = onManageAssignmentsClick,
                                 label = { Text(text = user.email) },
                                 leadingIcon = {
                                     Icon(
-                                        modifier = Modifier.size(18.dp),
+                                        modifier = Modifier.size(InputChipDefaults.AvatarSize),
                                         painter = painterResource(DesignRes.drawable.ic_person),
                                         contentDescription = null,
                                     )
                                 },
+                                trailingIcon =
+                                    if (state.canAssignUsers) {
+                                        {
+                                            IconButton(
+                                                onClick = { onRemoveUser(user.id) },
+                                            ) {
+                                                Icon(
+                                                    modifier = Modifier.size(InputChipDefaults.AvatarSize),
+                                                    painter = painterResource(DesignRes.drawable.ic_close),
+                                                    contentDescription = null,
+                                                )
+                                            }
+                                        }
+                                    } else {
+                                        null
+                                    },
                             )
                         }
                     }
@@ -574,6 +596,7 @@ private fun LoadedProjectDetailsContentPreview() {
             onToggleClose = {},
             onManageAssignmentsClick = {},
             onAssignUser = {},
+            onRemoveUser = {},
         )
     }
 }

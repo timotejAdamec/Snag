@@ -32,6 +32,7 @@ import cz.adamec.timotej.snag.projects.fe.app.api.CanEditProjectEntitiesUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.DeleteProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.GetProjectAssignmentsUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.GetProjectUseCase
+import cz.adamec.timotej.snag.projects.fe.app.api.RemoveUserFromProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.SetProjectClosedUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.model.SetProjectClosedRequest
 import cz.adamec.timotej.snag.reports.business.Report
@@ -63,6 +64,7 @@ internal class ProjectDetailsViewModel(
     private val getProjectAssignmentsUseCase: GetProjectAssignmentsUseCase,
     private val getUsersUseCase: GetUsersUseCase,
     private val assignUserToProjectUseCase: AssignUserToProjectUseCase,
+    private val removeUserFromProjectUseCase: RemoveUserFromProjectUseCase,
     private val timestampProvider: TimestampProvider,
 ) : ViewModel() {
     private val vmState: MutableStateFlow<ProjectDetailsVmState> =
@@ -233,6 +235,14 @@ internal class ProjectDetailsViewModel(
     fun onAssignUser(userId: Uuid) =
         viewModelScope.launch {
             assignUserToProjectUseCase(
+                projectId = projectId,
+                userId = userId,
+            )
+        }
+
+    fun onRemoveUser(userId: Uuid) =
+        viewModelScope.launch {
+            removeUserFromProjectUseCase(
                 projectId = projectId,
                 userId = userId,
             )

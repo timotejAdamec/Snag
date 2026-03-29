@@ -229,6 +229,7 @@ val projectsDrivingImplModule =
                 getProjectAssignmentsUseCase = get(),
                 getUsersUseCase = get(),
                 assignUserToProjectUseCase = get(),
+                removeUserFromProjectUseCase = get(),
                 timestampProvider = get(),
             )
         }

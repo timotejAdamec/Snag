@@ -34,6 +34,7 @@ import cz.adamec.timotej.snag.projects.fe.app.api.CanEditProjectEntitiesUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.DeleteProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.GetProjectAssignmentsUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.GetProjectUseCase
+import cz.adamec.timotej.snag.projects.fe.app.api.RemoveUserFromProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.SetProjectClosedUseCase
 import cz.adamec.timotej.snag.projects.fe.driven.test.FakeProjectsApi
 import cz.adamec.timotej.snag.projects.fe.driven.test.FakeProjectsDb
@@ -81,6 +82,7 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
     private val getProjectAssignmentsUseCase: GetProjectAssignmentsUseCase by inject()
     private val getUsersUseCase: GetUsersUseCase by inject()
     private val assignUserToProjectUseCase: AssignUserToProjectUseCase by inject()
+    private val removeUserFromProjectUseCase: RemoveUserFromProjectUseCase by inject()
     private val timestampProvider: TimestampProvider by inject()
 
     override fun additionalKoinModules(): List<Module> =
@@ -116,6 +118,16 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
                         }
                     }
                 }
+                factory<RemoveUserFromProjectUseCase> {
+                    object : RemoveUserFromProjectUseCase {
+                        override suspend fun invoke(
+                            projectId: Uuid,
+                            userId: Uuid,
+                        ) {
+                            // no-op for existing tests
+                        }
+                    }
+                }
             },
         )
 
@@ -135,6 +147,7 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
             getProjectAssignmentsUseCase = getProjectAssignmentsUseCase,
             getUsersUseCase = getUsersUseCase,
             assignUserToProjectUseCase = assignUserToProjectUseCase,
+            removeUserFromProjectUseCase = removeUserFromProjectUseCase,
             timestampProvider = timestampProvider,
         )
 
