@@ -54,8 +54,14 @@ internal data class InfraModule(
     val name: String,
 ) : ModuleIdentity
 
+internal enum class RuleId {
+    CATEGORY_DIRECTION,
+    HEXAGONAL_DIRECTION,
+    ENCAPSULATION_DIRECTION,
+}
+
 internal data class Violation(
-    val ruleId: String,
+    val ruleId: RuleId,
     val source: String,
     val target: String,
     val message: String,
@@ -84,7 +90,11 @@ private val ENCAPSULATIONS = mapOf(
 
 private val INFRA_PREFIXES = setOf("testInfra", "koinModulesAggregate", "server")
 
+private val TOP_LEVEL_CATEGORIES = setOf("core", "lib", "feat")
+
 private val RECOGNIZED_TOKENS = PLATFORMS.keys + HEX_LAYERS.keys + ENCAPSULATIONS.keys + "model" + "rules"
+
+private val IMPL_OR_TEST = setOf(Encapsulation.IMPL, Encapsulation.TEST)
 
 internal fun parseModulePath(path: String): ModuleIdentity {
     val segments = path.removePrefix(":").split(":")
@@ -98,7 +108,7 @@ internal fun parseModulePath(path: String): ModuleIdentity {
     }
 
     // Application modules (single-segment top-level)
-    if (segments.size == 1 || firstSegment !in setOf("core", "lib", "feat")) {
+    if (segments.size == 1 || firstSegment !in TOP_LEVEL_CATEGORIES) {
         return AppModule(path = path, name = segments.joinToString(":"))
     }
 
@@ -117,7 +127,6 @@ private fun parseCoreOrLib(
     rest: List<String>,
     isCore: Boolean,
 ): ModuleIdentity {
-    // Collect name segments until we hit a recognized token
     val nameSegments = mutableListOf<String>()
     var platform: Platform? = null
     var encapsulation: Encapsulation? = null
@@ -126,8 +135,7 @@ private fun parseCoreOrLib(
         when {
             platform == null && segment in PLATFORMS -> platform = PLATFORMS[segment]
             encapsulation == null && segment in ENCAPSULATIONS -> encapsulation = ENCAPSULATIONS[segment]
-            segment !in RECOGNIZED_TOKENS -> nameSegments += segment
-            // Skip hex layers and model/rules for core/lib — they become part of the name
+            // Unrecognized tokens and hex layers/model/rules become part of the name for core/lib
             else -> nameSegments += segment
         }
     }
@@ -200,7 +208,7 @@ internal fun checkCategoryDirection(
 
     if (sourceRank < targetRank) {
         return Violation(
-            ruleId = "CATEGORY_DIRECTION",
+            ruleId = RuleId.CATEGORY_DIRECTION,
             source = source.path,
             target = target.path,
             message = "${categoryName(source)} must not depend on ${categoryName(target)}",
@@ -246,7 +254,7 @@ internal fun checkHexagonalDirection(
         source.hexLayer != target.hexLayer
     ) {
         return Violation(
-            ruleId = "HEXAGONAL_DIRECTION",
+            ruleId = RuleId.HEXAGONAL_DIRECTION,
             source = source.path,
             target = target.path,
             message = "driving/ and driven/ must not depend on each other",
@@ -256,7 +264,7 @@ internal fun checkHexagonalDirection(
     // Inner must not depend on outer
     if (sourceRank < targetRank) {
         return Violation(
-            ruleId = "HEXAGONAL_DIRECTION",
+            ruleId = RuleId.HEXAGONAL_DIRECTION,
             source = source.path,
             target = target.path,
             message = "${source.hexLayer?.name?.lowercase()}/ must not depend on " +
@@ -284,10 +292,10 @@ internal fun checkEncapsulationDirection(
 
     // api must not depend on impl or test
     if (sourceEncap == Encapsulation.API &&
-        targetEncap in setOf(Encapsulation.IMPL, Encapsulation.TEST)
+        targetEncap in IMPL_OR_TEST
     ) {
         return Violation(
-            ruleId = "ENCAPSULATION_DIRECTION",
+            ruleId = RuleId.ENCAPSULATION_DIRECTION,
             source = source.path,
             target = target.path,
             message = "api must not depend on ${targetEncap.name.lowercase()}",
@@ -299,7 +307,7 @@ internal fun checkEncapsulationDirection(
         (sourceEncap == Encapsulation.TEST && targetEncap == Encapsulation.IMPL)
     ) {
         return Violation(
-            ruleId = "ENCAPSULATION_DIRECTION",
+            ruleId = RuleId.ENCAPSULATION_DIRECTION,
             source = source.path,
             target = target.path,
             message = "${sourceEncap.name.lowercase()} must not depend on " +

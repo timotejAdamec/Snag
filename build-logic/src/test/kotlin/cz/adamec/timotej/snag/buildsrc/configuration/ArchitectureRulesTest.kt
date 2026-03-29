@@ -385,7 +385,7 @@ class CategoryDirectionRuleTest {
         val source = parseModulePath(":core:foundation:common")
         val target = parseModulePath(":feat:projects:business:model")
         val violation = checkCategoryDirection(source, target)
-        assertEquals("CATEGORY_DIRECTION", violation?.ruleId)
+        assertEquals(RuleId.CATEGORY_DIRECTION, violation?.ruleId)
     }
 
     @Test
@@ -393,7 +393,7 @@ class CategoryDirectionRuleTest {
         val source = parseModulePath(":core:foundation:fe")
         val target = parseModulePath(":lib:design:fe")
         val violation = checkCategoryDirection(source, target)
-        assertEquals("CATEGORY_DIRECTION", violation?.ruleId)
+        assertEquals(RuleId.CATEGORY_DIRECTION, violation?.ruleId)
     }
 
     @Test
@@ -401,7 +401,7 @@ class CategoryDirectionRuleTest {
         val source = parseModulePath(":lib:network:fe:impl")
         val target = parseModulePath(":feat:projects:fe:app:api")
         val violation = checkCategoryDirection(source, target)
-        assertEquals("CATEGORY_DIRECTION", violation?.ruleId)
+        assertEquals(RuleId.CATEGORY_DIRECTION, violation?.ruleId)
     }
 
     @Test
@@ -490,7 +490,7 @@ class HexagonalDirectionRuleTest {
         val source = parseModulePath(":feat:projects:fe:ports")
         val target = parseModulePath(":feat:projects:fe:app:api")
         val violation = checkHexagonalDirection(source, target)
-        assertEquals("HEXAGONAL_DIRECTION", violation?.ruleId)
+        assertEquals(RuleId.HEXAGONAL_DIRECTION, violation?.ruleId)
     }
 
     @Test
@@ -498,7 +498,7 @@ class HexagonalDirectionRuleTest {
         val source = parseModulePath(":feat:projects:fe:app:impl")
         val target = parseModulePath(":feat:projects:fe:driving:api")
         val violation = checkHexagonalDirection(source, target)
-        assertEquals("HEXAGONAL_DIRECTION", violation?.ruleId)
+        assertEquals(RuleId.HEXAGONAL_DIRECTION, violation?.ruleId)
     }
 
     @Test
@@ -506,7 +506,7 @@ class HexagonalDirectionRuleTest {
         val source = parseModulePath(":feat:projects:fe:driving:impl")
         val target = parseModulePath(":feat:projects:fe:driven:impl")
         val violation = checkHexagonalDirection(source, target)
-        assertEquals("HEXAGONAL_DIRECTION", violation?.ruleId)
+        assertEquals(RuleId.HEXAGONAL_DIRECTION, violation?.ruleId)
     }
 
     @Test
@@ -514,7 +514,7 @@ class HexagonalDirectionRuleTest {
         val source = parseModulePath(":feat:projects:fe:driven:impl")
         val target = parseModulePath(":feat:projects:fe:driving:api")
         val violation = checkHexagonalDirection(source, target)
-        assertEquals("HEXAGONAL_DIRECTION", violation?.ruleId)
+        assertEquals(RuleId.HEXAGONAL_DIRECTION, violation?.ruleId)
     }
 
     @Test
@@ -572,13 +572,9 @@ class EncapsulationDirectionRuleTest {
 
     @Test
     fun `test depending on api is allowed`() {
-        val source = parseModulePath(":feat:projects:fe:driven:test")
-        val target = parseModulePath(":feat:projects:fe:driven:impl")
-        // test -> impl is a violation, but test -> api is allowed
-        // Let me test test -> api properly
-        val source2 = parseModulePath(":lib:network:fe:test")
-        val target2 = parseModulePath(":lib:network:fe:api")
-        assertNull(checkEncapsulationDirection(source2, target2))
+        val source = parseModulePath(":lib:network:fe:test")
+        val target = parseModulePath(":lib:network:fe:api")
+        assertNull(checkEncapsulationDirection(source, target))
     }
 
     @Test
@@ -586,7 +582,7 @@ class EncapsulationDirectionRuleTest {
         val source = parseModulePath(":feat:projects:fe:app:api")
         val target = parseModulePath(":feat:projects:fe:app:impl")
         val violation = checkEncapsulationDirection(source, target)
-        assertEquals("ENCAPSULATION_DIRECTION", violation?.ruleId)
+        assertEquals(RuleId.ENCAPSULATION_DIRECTION, violation?.ruleId)
     }
 
     @Test
@@ -594,7 +590,7 @@ class EncapsulationDirectionRuleTest {
         val source = parseModulePath(":lib:network:fe:api")
         val target = parseModulePath(":lib:network:fe:test")
         val violation = checkEncapsulationDirection(source, target)
-        assertEquals("ENCAPSULATION_DIRECTION", violation?.ruleId)
+        assertEquals(RuleId.ENCAPSULATION_DIRECTION, violation?.ruleId)
     }
 
     @Test
@@ -602,7 +598,7 @@ class EncapsulationDirectionRuleTest {
         val source = parseModulePath(":feat:projects:fe:driven:impl")
         val target = parseModulePath(":feat:projects:fe:driven:test")
         val violation = checkEncapsulationDirection(source, target)
-        assertEquals("ENCAPSULATION_DIRECTION", violation?.ruleId)
+        assertEquals(RuleId.ENCAPSULATION_DIRECTION, violation?.ruleId)
     }
 
     @Test
@@ -610,7 +606,7 @@ class EncapsulationDirectionRuleTest {
         val source = parseModulePath(":feat:projects:fe:driven:test")
         val target = parseModulePath(":feat:projects:fe:driven:impl")
         val violation = checkEncapsulationDirection(source, target)
-        assertEquals("ENCAPSULATION_DIRECTION", violation?.ruleId)
+        assertEquals(RuleId.ENCAPSULATION_DIRECTION, violation?.ruleId)
     }
 
     @Test
@@ -643,20 +639,17 @@ class CheckDependencyCombinerTest {
         val target = parseModulePath(":feat:projects:business:model")
         val violations = checkDependency(source, target)
         assertEquals(1, violations.size)
-        assertEquals("CATEGORY_DIRECTION", violations.first().ruleId)
+        assertEquals(RuleId.CATEGORY_DIRECTION, violations.first().ruleId)
     }
 
     @Test
     fun `multiple violations can be produced`() {
-        // api depending on impl within same feature+platform
-        // This violates both hexagonal (ports -> driving) and encapsulation (api -> impl)
-        // Let's construct a case: ports does not have encapsulation, so we need a different case
-        // app:api depending on driving:impl — hex violation + encapsulation violation
+        // app:api depending on driving:impl violates both hexagonal and encapsulation rules
         val source = parseModulePath(":feat:projects:fe:app:api")
         val target = parseModulePath(":feat:projects:fe:driving:impl")
         val violations = checkDependency(source, target)
         assertTrue(violations.size >= 2)
-        assertTrue(violations.any { it.ruleId == "HEXAGONAL_DIRECTION" })
-        assertTrue(violations.any { it.ruleId == "ENCAPSULATION_DIRECTION" })
+        assertTrue(violations.any { it.ruleId == RuleId.HEXAGONAL_DIRECTION })
+        assertTrue(violations.any { it.ruleId == RuleId.ENCAPSULATION_DIRECTION })
     }
 }
