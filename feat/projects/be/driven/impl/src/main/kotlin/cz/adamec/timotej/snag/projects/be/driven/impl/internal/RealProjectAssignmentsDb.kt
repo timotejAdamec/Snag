@@ -57,8 +57,7 @@ internal class RealProjectAssignmentsDb(
                     .where {
                         ProjectAssignmentsTable.userId eq userId and
                             (ProjectAssignmentsTable.projectId eq projectId)
-                    }
-                    .any()
+                    }.any()
 
             if (!exists) {
                 ProjectAssignmentsTable.insert {

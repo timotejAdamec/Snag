@@ -82,8 +82,9 @@ internal fun DirectoryScreen(modifier: Modifier = Modifier) {
     val usersRoute: UsersRoute = koinInject()
 
     Column(
-        modifier = modifier
-            .systemBarsPadding(),
+        modifier =
+            modifier
+                .systemBarsPadding(),
     ) {
         PrimaryTabRow(selectedTabIndex = selectedTab) {
             Tab(

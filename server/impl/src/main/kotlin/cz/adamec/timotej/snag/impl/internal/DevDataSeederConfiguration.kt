@@ -39,6 +39,7 @@ import io.ktor.server.application.Application
 import kotlinx.coroutines.runBlocking
 import kotlin.uuid.Uuid
 
+@Suppress("TooManyFunctions")
 internal class DevDataSeederConfiguration(
     private val projectsDb: ProjectsDb,
     private val projectAssignmentsDb: ProjectAssignmentsDb,
