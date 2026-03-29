@@ -1,5 +1,6 @@
 package cz.adamec.timotej.snag.users.app.model
 
+import cz.adamec.timotej.snag.authentication.app.model.AuthProviderIdentifiable
 import cz.adamec.timotej.snag.authorization.business.UserRole
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.sync.model.MutableVersioned
@@ -8,6 +9,7 @@ import kotlin.uuid.Uuid
 
 interface AppUser :
     User,
+    AuthProviderIdentifiable,
     MutableVersioned
 
 data class AppUserData(
