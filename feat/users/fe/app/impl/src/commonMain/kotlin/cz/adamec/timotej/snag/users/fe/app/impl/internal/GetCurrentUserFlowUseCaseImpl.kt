@@ -18,6 +18,7 @@ import cz.adamec.timotej.snag.users.app.model.AppUser
 import cz.adamec.timotej.snag.users.fe.app.api.GetCurrentUserFlowUseCase
 import cz.adamec.timotej.snag.users.fe.ports.UsersDb
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 
@@ -28,6 +29,7 @@ internal class GetCurrentUserFlowUseCaseImpl(
     override operator fun invoke(): Flow<OfflineFirstDataResult<AppUser?>> =
         getAuthProviderIdUseCase()
             .filterNotNull()
+            .distinctUntilChanged()
             .flatMapLatest { authProviderId ->
                 usersDb.getUserByAuthProviderIdFlow(authProviderId)
             }

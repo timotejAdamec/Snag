@@ -83,8 +83,8 @@ class SaveProjectUseCaseImpl(
             }
         }
         return getCurrentUserFlowUseCase()
-            .filterIsInstance<OfflineFirstDataResult.Success<*>>()
-            .mapNotNull { (it.data as? AppUser)?.id }
+            .filterIsInstance<OfflineFirstDataResult.Success<AppUser?>>()
+            .mapNotNull { it.data?.id }
             .first()
     }
 }

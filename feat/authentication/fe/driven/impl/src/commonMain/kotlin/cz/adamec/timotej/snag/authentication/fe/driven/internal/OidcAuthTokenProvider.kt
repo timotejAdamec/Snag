@@ -64,10 +64,10 @@ internal class OidcAuthTokenProvider(
             refreshToken = tokens.refresh_token,
             idToken = tokens.id_token,
         )
-        val authProviderId = tokens.id_token?.let { extractOidFromIdToken(it) }
-        if (authProviderId != null) {
-            _authState.value = AuthState.Authenticated(authProviderId = authProviderId)
-        }
+        val authProviderId =
+            tokens.id_token?.let { extractOidFromIdToken(it) }
+                ?: error("ID token missing or does not contain oid claim after successful login.")
+        _authState.value = AuthState.Authenticated(authProviderId = authProviderId)
     }
 
     override suspend fun getAccessToken(): String? = tokenStore.getAccessToken()

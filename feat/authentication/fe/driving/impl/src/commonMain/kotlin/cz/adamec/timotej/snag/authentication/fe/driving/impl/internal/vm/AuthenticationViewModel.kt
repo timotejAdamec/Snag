@@ -23,7 +23,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -31,6 +31,8 @@ internal class AuthenticationViewModel(
     private val getAuthProviderIdUseCase: GetAuthProviderIdUseCase,
     private val loginUseCase: LoginUseCase,
 ) : ViewModel() {
+    private var hasReceivedInitialAuthState = false
+
     private val vmState: MutableStateFlow<AuthenticationVmState> =
         MutableStateFlow(AuthenticationVmState())
             .launchWhileSubscribed(scope = viewModelScope) {
@@ -39,10 +41,6 @@ internal class AuthenticationViewModel(
 
     val state: StateFlow<AuthenticationUiState> =
         vmState.mapState { it.toUiState() }
-
-    init {
-        loginIfNecessary()
-    }
 
     fun login() {
         viewModelScope.launch {
@@ -56,14 +54,13 @@ internal class AuthenticationViewModel(
         }
     }
 
-    private fun loginIfNecessary() {
-        if (vmState.value.authProviderId != null) return
-        login()
-    }
-
     private fun collectAuthState(): Job =
         getAuthProviderIdUseCase()
-            .map { authProviderId ->
+            .onEach { authProviderId ->
                 vmState.update { it.copy(authProviderId = authProviderId) }
+                if (!hasReceivedInitialAuthState) {
+                    hasReceivedInitialAuthState = true
+                    if (authProviderId == null) login()
+                }
             }.launchIn(viewModelScope)
 }

@@ -30,7 +30,7 @@ internal class MockAuthTokenProvider : AuthTokenProvider {
         _authState.value = AuthState.Authenticated(authProviderId = MOCK_AUTH_PROVIDER_ID)
     }
 
-    override suspend fun getAccessToken(): String? = MOCK_AUTH_PROVIDER_ID
+    override suspend fun getAccessToken(): String? = MOCK_USER_ID
 
     override suspend fun logout() {
         _authState.value = AuthState.Unauthenticated
@@ -38,5 +38,6 @@ internal class MockAuthTokenProvider : AuthTokenProvider {
 
     internal companion object {
         const val MOCK_AUTH_PROVIDER_ID = "mock-auth-provider-id"
+        private const val MOCK_USER_ID = "00000000-0000-0000-0005-000000000001"
     }
 }
