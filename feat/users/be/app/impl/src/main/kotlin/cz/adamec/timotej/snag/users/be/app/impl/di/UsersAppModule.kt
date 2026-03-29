@@ -13,11 +13,13 @@
 package cz.adamec.timotej.snag.users.be.app.impl.di
 
 import cz.adamec.timotej.snag.users.be.app.api.CanSetUserRoleUseCase
+import cz.adamec.timotej.snag.users.be.app.api.GetOrCreateUserByAuthProviderIdUseCase
 import cz.adamec.timotej.snag.users.be.app.api.GetUserUseCase
 import cz.adamec.timotej.snag.users.be.app.api.GetUsersModifiedSinceUseCase
 import cz.adamec.timotej.snag.users.be.app.api.GetUsersUseCase
 import cz.adamec.timotej.snag.users.be.app.api.SaveUserUseCase
 import cz.adamec.timotej.snag.users.be.app.impl.internal.CanSetUserRoleUseCaseImpl
+import cz.adamec.timotej.snag.users.be.app.impl.internal.GetOrCreateUserByAuthProviderIdUseCaseImpl
 import cz.adamec.timotej.snag.users.be.app.impl.internal.GetUserUseCaseImpl
 import cz.adamec.timotej.snag.users.be.app.impl.internal.GetUsersModifiedSinceUseCaseImpl
 import cz.adamec.timotej.snag.users.be.app.impl.internal.GetUsersUseCaseImpl
@@ -34,5 +36,6 @@ val usersAppModule =
         factoryOf(::GetUsersModifiedSinceUseCaseImpl) bind GetUsersModifiedSinceUseCase::class
         factoryOf(::SaveUserUseCaseImpl) bind SaveUserUseCase::class
         factoryOf(::CanSetUserRoleRule)
+        factoryOf(::GetOrCreateUserByAuthProviderIdUseCaseImpl) bind GetOrCreateUserByAuthProviderIdUseCase::class
         factoryOf(::CanSetUserRoleUseCaseImpl) bind CanSetUserRoleUseCase::class
     }

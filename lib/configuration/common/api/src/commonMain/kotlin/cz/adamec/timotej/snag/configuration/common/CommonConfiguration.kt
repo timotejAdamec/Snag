@@ -23,4 +23,8 @@ object CommonConfiguration {
     val semanticVersion: String = SnagBuildConfig.SEMANTIC_VERSION
     val versionCode: String = SnagBuildConfig.VERSION_CODE
     val versionName: String = SnagBuildConfig.VERSION_NAME
+    val mockAuth: Boolean = SnagBuildConfig.MOCK_AUTH.toBooleanStrictOrNull() ?: true
+    val entraIdTenantId: String = SnagBuildConfig.ENTRA_ID_TENANT_ID
+    val entraIdClientId: String = SnagBuildConfig.ENTRA_ID_CLIENT_ID
+    val entraIdRedirectUri: String = SnagBuildConfig.ENTRA_ID_REDIRECT_URI
 }

@@ -45,7 +45,7 @@ class CanEditProjectEntitiesUseCaseImplTest : FrontendKoinInitializedTest() {
         fakeUsersDb.setUser(
             AppUserData(
                 id = currentUserId,
-                entraId = "entra-id",
+                authProviderId = "mock-auth-provider-id",
                 email = "user@example.com",
                 role = role,
                 updatedAt = Timestamp(100L),

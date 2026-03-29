@@ -36,16 +36,16 @@ internal class RealUsersDb(
             UserEntity.findById(id)?.toModel()
         }
 
-    override suspend fun getUserByEntraId(entraId: String): BackendUser? =
+    override suspend fun getUserByAuthProviderId(authProviderId: String): BackendUser? =
         transaction(database) {
-            UserEntity.find { UsersTable.entraId eq entraId }.firstOrNull()?.toModel()
+            UserEntity.find { UsersTable.authProviderId eq authProviderId }.firstOrNull()?.toModel()
         }
 
     override suspend fun saveUser(user: BackendUser): BackendUser =
         transaction(database) {
             val existing = UserEntity.findById(user.id)
             if (existing != null) {
-                existing.entraId = user.entraId
+                existing.authProviderId = user.authProviderId
                 existing.email = user.email
                 existing.role = user.role?.name
                 existing.updatedAt = user.updatedAt.value
@@ -53,7 +53,7 @@ internal class RealUsersDb(
             } else {
                 UserEntity
                     .new(user.id) {
-                        entraId = user.entraId
+                        authProviderId = user.authProviderId
                         email = user.email
                         role = user.role?.name
                         updatedAt = user.updatedAt.value

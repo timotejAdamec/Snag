@@ -81,7 +81,7 @@ class GetProjectsUseCaseImplTest : BackendKoinInitializedTest() {
             usersDb.saveUser(
                 BackendUserData(
                     id = leadId,
-                    entraId = "lead-entra",
+                    authProviderId = "lead-entra",
                     email = "lead@example.com",
                     role = UserRole.PASSPORT_LEAD,
                     updatedAt = Timestamp(1L),

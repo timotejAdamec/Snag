@@ -49,7 +49,7 @@ class UserManagementViewModelTest : FrontendKoinInitializedTest() {
     private val testUser =
         AppUserData(
             id = Uuid.parse("00000000-0000-0000-0000-000000000001"),
-            entraId = "entra-1",
+            authProviderId = "entra-1",
             email = "user@example.com",
             role = null,
             updatedAt = Timestamp(100L),

@@ -88,7 +88,7 @@ class StructuresRouteTest : BackendKoinInitializedTest() {
             usersDb.saveUser(
                 BackendUserData(
                     id = TECH_USER_ID,
-                    entraId = "tech-entra",
+                    authProviderId = "tech-entra",
                     email = "tech@example.com",
                     role = UserRole.PASSPORT_TECHNICIAN,
                     updatedAt = Timestamp(1L),

@@ -21,7 +21,7 @@ import kotlin.uuid.Uuid
 internal fun PutUserApiDto.toModel(id: Uuid) =
     BackendUserData(
         id = id,
-        entraId = entraId,
+        authProviderId = authProviderId,
         email = email,
         role = role?.let { UserRole.valueOf(it) },
         updatedAt = Timestamp(updatedAt),

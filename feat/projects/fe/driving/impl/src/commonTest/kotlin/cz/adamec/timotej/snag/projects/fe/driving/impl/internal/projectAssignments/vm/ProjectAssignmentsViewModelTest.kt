@@ -68,7 +68,7 @@ class ProjectAssignmentsViewModelTest : FrontendKoinInitializedTest() {
         fakeUsersDb.setUser(
             AppUserData(
                 id = currentUserId,
-                entraId = "entra-id",
+                authProviderId = "mock-auth-provider-id",
                 email = "admin@test.com",
                 role = role,
                 updatedAt = Timestamp(0L),

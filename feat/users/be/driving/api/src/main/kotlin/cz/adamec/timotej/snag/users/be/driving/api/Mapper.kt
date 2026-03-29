@@ -18,7 +18,7 @@ import cz.adamec.timotej.snag.users.be.model.BackendUser
 fun BackendUser.toDto() =
     UserApiDto(
         id = id.toString(),
-        entraId = entraId,
+        authProviderId = authProviderId,
         email = email,
         role = role?.name,
         updatedAt = updatedAt.value,

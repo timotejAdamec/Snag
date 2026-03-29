@@ -22,7 +22,7 @@ import kotlin.uuid.Uuid
 internal fun AppUser.toEntity() =
     UserEntity(
         id = id.toString(),
-        entraId = entraId,
+        authProviderId = authProviderId,
         email = email,
         role = role?.name,
         updatedAt = updatedAt.value,
@@ -31,7 +31,7 @@ internal fun AppUser.toEntity() =
 internal fun UserEntity.toModel() =
     AppUserData(
         id = Uuid.parse(id),
-        entraId = entraId,
+        authProviderId = authProviderId,
         email = email,
         role = role?.let { UserRole.valueOf(it) },
         updatedAt = Timestamp(updatedAt),

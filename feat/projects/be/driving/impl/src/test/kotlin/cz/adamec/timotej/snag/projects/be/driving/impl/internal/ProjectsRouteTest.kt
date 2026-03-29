@@ -131,7 +131,7 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
             usersDb.saveUser(
                 BackendUserData(
                     id = leadId,
-                    entraId = "lead-entra",
+                    authProviderId = "lead-entra",
                     email = "lead@example.com",
                     role = UserRole.PASSPORT_LEAD,
                     updatedAt = Timestamp(1L),
@@ -300,7 +300,7 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
             usersDb.saveUser(
                 BackendUserData(
                     id = technicianId,
-                    entraId = "tech-entra",
+                    authProviderId = "tech-entra",
                     email = "tech@example.com",
                     role = UserRole.PASSPORT_TECHNICIAN,
                     updatedAt = Timestamp(1L),
@@ -551,7 +551,7 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
             usersDb.saveUser(
                 BackendUserData(
                     id = technicianId,
-                    entraId = "tech-entra",
+                    authProviderId = "tech-entra",
                     email = "tech@example.com",
                     role = UserRole.PASSPORT_TECHNICIAN,
                     updatedAt = Timestamp(1L),
@@ -585,7 +585,7 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
             usersDb.saveUser(
                 BackendUserData(
                     id = leadId,
-                    entraId = "lead-entra",
+                    authProviderId = "lead-entra",
                     email = "lead@example.com",
                     role = UserRole.PASSPORT_LEAD,
                     updatedAt = Timestamp(1L),
@@ -627,7 +627,7 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
             usersDb.saveUser(
                 BackendUserData(
                     id = technicianId,
-                    entraId = "tech-entra",
+                    authProviderId = "tech-entra",
                     email = "tech@example.com",
                     role = UserRole.PASSPORT_TECHNICIAN,
                     updatedAt = Timestamp(1L),

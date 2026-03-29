@@ -56,6 +56,17 @@ internal class UsersRoute(
                 }
             }
 
+            get("/me") {
+                val userId = currentUser().userId
+                val user =
+                    getUserUseCase(userId)
+                        ?: return@get call.respond(
+                            status = HttpStatusCode.NotFound,
+                            message = "Current user not found.",
+                        )
+                call.respond(user.toDto())
+            }
+
             get("/{id}") {
                 val id = getIdFromParameters()
 

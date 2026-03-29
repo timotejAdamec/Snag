@@ -137,6 +137,7 @@ private fun FullscreenPhotoViewerSinglePreview() {
 
 @Preview
 @Composable
+@Suppress("MagicNumber")
 private fun FullscreenPhotoViewerMultiplePreview() {
     FullscreenPhotoViewer(
         photos =

@@ -22,6 +22,8 @@ interface UsersDb {
 
     fun getUserFlow(id: Uuid): Flow<OfflineFirstDataResult<AppUser?>>
 
+    fun getUserByAuthProviderIdFlow(authProviderId: String): Flow<OfflineFirstDataResult<AppUser?>>
+
     suspend fun saveUser(user: AppUser): OfflineFirstDataResult<Unit>
 
     suspend fun saveUsers(users: List<AppUser>): OfflineFirstDataResult<Unit>

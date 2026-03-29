@@ -11,14 +11,16 @@
  */
 
 plugins {
-    alias(libs.plugins.snagFrontendMultiplatformModule)
+    alias(libs.plugins.snagDrivingFrontendMultiplatformModule)
 }
 
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            implementation(projects.lib.network.fe.api)
-            implementation(projects.lib.routing.common)
+            implementation(projects.feat.authentication.fe.app.api)
+            implementation(project(":lib:routing:common"))
+            implementation(project(":lib:network:fe:api"))
+            implementation(libs.ktor.client.auth)
             implementation(libs.ktor.client.core)
         }
     }

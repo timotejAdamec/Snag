@@ -17,7 +17,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class UserApiDto(
     val id: String,
-    val entraId: String,
+    val authProviderId: String,
     val email: String,
     val role: String? = null,
     val updatedAt: Long,

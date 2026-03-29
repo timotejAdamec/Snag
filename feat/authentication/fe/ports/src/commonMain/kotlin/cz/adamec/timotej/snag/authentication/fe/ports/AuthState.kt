@@ -10,10 +10,14 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.users.fe.app.api
+package cz.adamec.timotej.snag.authentication.fe.ports
 
-import kotlin.uuid.Uuid
+sealed interface AuthState {
+    data object Loading : AuthState
 
-interface GetCurrentUserUseCase {
-    operator fun invoke(): Uuid
+    data object Unauthenticated : AuthState
+
+    data class Authenticated(
+        val authProviderId: String,
+    ) : AuthState
 }

@@ -52,7 +52,6 @@ class ProjectDetailsEditViewModelTest : FrontendKoinInitializedTest() {
     private val fakeProjectAssignmentsDb: FakeProjectAssignmentsDb by inject()
     private val fakeUsersDb: FakeUsersDb by inject()
     private val fakeClientsDb: FakeClientsDb by inject()
-
     private val getProjectUseCase: GetProjectUseCase by inject()
     private val saveProjectUseCase: SaveProjectUseCase by inject()
     private val getClientsUseCase: GetClientsUseCase by inject()
@@ -63,7 +62,7 @@ class ProjectDetailsEditViewModelTest : FrontendKoinInitializedTest() {
         fakeUsersDb.setUser(
             AppUserData(
                 id = currentUserId,
-                entraId = "entra-id",
+                authProviderId = "mock-auth-provider-id",
                 email = "admin@test.com",
                 role = UserRole.ADMINISTRATOR,
                 updatedAt = Timestamp(0L),

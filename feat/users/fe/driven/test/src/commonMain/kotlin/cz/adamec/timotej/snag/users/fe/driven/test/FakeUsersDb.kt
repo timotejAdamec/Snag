@@ -17,6 +17,7 @@ import cz.adamec.timotej.snag.lib.database.fe.test.FakeDbOps
 import cz.adamec.timotej.snag.users.app.model.AppUser
 import cz.adamec.timotej.snag.users.fe.ports.UsersDb
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlin.uuid.Uuid
 
 class FakeUsersDb : UsersDb {
@@ -31,6 +32,15 @@ class FakeUsersDb : UsersDb {
     override fun getAllUsersFlow(): Flow<OfflineFirstDataResult<List<AppUser>>> = ops.allItemsFlow()
 
     override fun getUserFlow(id: Uuid): Flow<OfflineFirstDataResult<AppUser?>> = ops.itemByIdFlow(id)
+
+    override fun getUserByAuthProviderIdFlow(authProviderId: String): Flow<OfflineFirstDataResult<AppUser?>> =
+        ops.allItemsFlow().map { result ->
+            when (result) {
+                is OfflineFirstDataResult.Success<List<AppUser>> ->
+                    OfflineFirstDataResult.Success(result.data.firstOrNull { it.authProviderId == authProviderId })
+                is OfflineFirstDataResult.ProgrammerError -> OfflineFirstDataResult.ProgrammerError(result.throwable)
+            }
+        }
 
     override suspend fun saveUser(user: AppUser): OfflineFirstDataResult<Unit> = ops.saveOneItem(user)
 
