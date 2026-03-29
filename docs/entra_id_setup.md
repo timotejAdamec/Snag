@@ -30,7 +30,7 @@ The system uses a dual-mode authentication architecture:
 ### Platform-specific redirect URI setup
 
 - **Android**: `manifestPlaceholders["oidcRedirectScheme"] = "snag"` is set in `androidApp/build.gradle.kts`. The library's manifest merger handles the intent filter automatically.
-- **iOS**: Add URL scheme `snag` in Info.plist.
+- **iOS**: URL scheme `snag` is registered in `iosApp/iosApp/Info.plist` via `CFBundleURLSchemes`.
 - **Desktop**: The library uses an embedded localhost webserver — no scheme registration needed.
 - **Web (WasmJS)**: Redirect to same origin.
 
