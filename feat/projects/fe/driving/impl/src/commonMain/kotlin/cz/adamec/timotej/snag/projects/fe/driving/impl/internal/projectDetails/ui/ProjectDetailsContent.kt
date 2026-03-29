@@ -33,13 +33,18 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalFloatingToolbar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.InputChip
+import androidx.compose.material3.InputChipDefaults
 import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -51,6 +56,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import cz.adamec.timotej.snag.authorization.business.UserRole
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.core.foundation.common.UuidProvider
 import cz.adamec.timotej.snag.feat.inspections.fe.driving.api.InspectionCard
@@ -60,25 +66,29 @@ import cz.adamec.timotej.snag.lib.design.fe.scaffold.BackNavigationIcon
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.CollapsableTopAppBarScaffold
 import cz.adamec.timotej.snag.lib.design.fe.theme.SnagPreview
 import cz.adamec.timotej.snag.projects.app.model.AppProjectData
+import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectAssignments.ui.components.AddUserBottomSheetContent
+import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectAssignments.vm.AssignedUserItem
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.vm.ProjectDetailsUiState
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.vm.ProjectDetailsUiStatus
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import snag.feat.projects.fe.driving.impl.generated.resources.Res
+import snag.feat.projects.fe.driving.impl.generated.resources.add_user_to_project
 import snag.feat.projects.fe.driving.impl.generated.resources.close_project
 import snag.feat.projects.fe.driving.impl.generated.resources.delete_project_confirmation_text
 import snag.feat.projects.fe.driving.impl.generated.resources.delete_project_confirmation_title
 import snag.feat.projects.fe.driving.impl.generated.resources.download_report
 import snag.feat.projects.fe.driving.impl.generated.resources.inspections_section_title
-import snag.feat.projects.fe.driving.impl.generated.resources.manage_assignments
 import snag.feat.projects.fe.driving.impl.generated.resources.new_inspection
 import snag.feat.projects.fe.driving.impl.generated.resources.new_structure
+import snag.feat.projects.fe.driving.impl.generated.resources.project_assignments_title
 import snag.feat.projects.fe.driving.impl.generated.resources.project_not_found
 import snag.feat.projects.fe.driving.impl.generated.resources.reopen_project
 import snag.feat.projects.fe.driving.impl.generated.resources.structures_section_title
 import snag.lib.design.fe.generated.resources.delete
 import snag.lib.design.fe.generated.resources.edit
 import snag.lib.design.fe.generated.resources.ic_add
+import snag.lib.design.fe.generated.resources.ic_close
 import snag.lib.design.fe.generated.resources.ic_delete
 import snag.lib.design.fe.generated.resources.ic_edit
 import snag.lib.design.fe.generated.resources.ic_event_note
@@ -86,6 +96,7 @@ import snag.lib.design.fe.generated.resources.ic_file_export
 import snag.lib.design.fe.generated.resources.ic_group
 import snag.lib.design.fe.generated.resources.ic_lock
 import snag.lib.design.fe.generated.resources.ic_lock_open
+import snag.lib.design.fe.generated.resources.ic_person
 import snag.lib.design.fe.generated.resources.ic_space_dashboard
 import kotlin.uuid.Uuid
 import snag.lib.design.fe.generated.resources.Res as DesignRes
@@ -105,6 +116,8 @@ internal fun ProjectDetailsContent(
     onDownloadReportClick: () -> Unit,
     onToggleClose: () -> Unit,
     onManageAssignmentsClick: () -> Unit,
+    onAssignUser: (Uuid) -> Unit,
+    onRemoveUser: (Uuid) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(
@@ -136,6 +149,8 @@ internal fun ProjectDetailsContent(
                     onDownloadReportClick = onDownloadReportClick,
                     onToggleClose = onToggleClose,
                     onManageAssignmentsClick = onManageAssignmentsClick,
+                    onAssignUser = onAssignUser,
+                    onRemoveUser = onRemoveUser,
                 )
             }
 
@@ -148,6 +163,7 @@ internal fun ProjectDetailsContent(
 
 @Suppress("LongMethod", "CognitiveComplexMethod")
 @Composable
+@OptIn(ExperimentalMaterial3Api::class)
 private fun LoadedProjectDetailsContent(
     state: ProjectDetailsUiState,
     onNewStructureClick: () -> Unit,
@@ -162,6 +178,8 @@ private fun LoadedProjectDetailsContent(
     onDownloadReportClick: () -> Unit,
     onToggleClose: () -> Unit,
     onManageAssignmentsClick: () -> Unit,
+    onAssignUser: (Uuid) -> Unit,
+    onRemoveUser: (Uuid) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val projectName = state.project?.name.orEmpty()
@@ -186,6 +204,8 @@ private fun LoadedProjectDetailsContent(
                         end = paddingValues.calculateEndPadding(LayoutDirection.Ltr),
                     ).consumeWindowInsets(paddingValues),
         ) {
+            var showAddUserSheet by remember { mutableStateOf(false) }
+
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
                 contentPadding =
@@ -194,6 +214,80 @@ private fun LoadedProjectDetailsContent(
                         bottom = 116.dp,
                     ),
             ) {
+                item {
+                    Row(
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp)
+                                .padding(bottom = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Row(
+                            modifier = Modifier.weight(1f),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        ) {
+                            Icon(
+                                painter = painterResource(DesignRes.drawable.ic_group),
+                                contentDescription = stringResource(Res.string.project_assignments_title),
+                            )
+                            Text(
+                                text = stringResource(Res.string.project_assignments_title),
+                                style = MaterialTheme.typography.titleMedium,
+                            )
+                        }
+                        if (state.canAssignUsers) {
+                            AdaptiveTonalButton(
+                                onClick = { showAddUserSheet = true },
+                                icon = DesignRes.drawable.ic_add,
+                                label = stringResource(Res.string.add_user_to_project),
+                            )
+                        }
+                    }
+                }
+                item {
+                    LazyRow(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        contentPadding = PaddingValues(horizontal = 16.dp),
+                    ) {
+                        items(
+                            items = state.assignedUsers,
+                            key = { it.id },
+                        ) { user ->
+                            InputChip(
+                                selected = false,
+                                onClick = onManageAssignmentsClick,
+                                label = { Text(text = user.email) },
+                                leadingIcon = {
+                                    Icon(
+                                        modifier = Modifier.size(InputChipDefaults.AvatarSize),
+                                        painter = painterResource(DesignRes.drawable.ic_person),
+                                        contentDescription = null,
+                                    )
+                                },
+                                trailingIcon =
+                                    if (state.canAssignUsers) {
+                                        {
+                                            IconButton(
+                                                onClick = { onRemoveUser(user.id) },
+                                            ) {
+                                                Icon(
+                                                    modifier = Modifier.size(InputChipDefaults.AvatarSize),
+                                                    painter = painterResource(DesignRes.drawable.ic_close),
+                                                    contentDescription = null,
+                                                )
+                                            }
+                                        }
+                                    } else {
+                                        null
+                                    },
+                            )
+                        }
+                    }
+                }
+                item {
+                    Spacer(modifier = Modifier.height(24.dp))
+                }
                 item {
                     Row(
                         modifier =
@@ -318,6 +412,22 @@ private fun LoadedProjectDetailsContent(
                 }
             }
 
+            if (showAddUserSheet) {
+                val bottomSheetState = rememberModalBottomSheetState()
+                ModalBottomSheet(
+                    onDismissRequest = { showAddUserSheet = false },
+                    sheetState = bottomSheetState,
+                ) {
+                    AddUserBottomSheetContent(
+                        availableUsers = state.availableUsers,
+                        onUserClick = { userId ->
+                            onAssignUser(userId)
+                            showAddUserSheet = false
+                        },
+                    )
+                }
+            }
+
             var isShowingDeleteConfirmation by remember { mutableStateOf(false) }
             if (isShowingDeleteConfirmation) {
                 ProjectDeletionAlertDialog(
@@ -337,15 +447,6 @@ private fun LoadedProjectDetailsContent(
                         ),
                 expanded = true,
             ) {
-                IconButton(
-                    enabled = state.canAssignUsers,
-                    onClick = onManageAssignmentsClick,
-                ) {
-                    Icon(
-                        painter = painterResource(DesignRes.drawable.ic_group),
-                        contentDescription = stringResource(Res.string.manage_assignments),
-                    )
-                }
                 IconButton(
                     enabled = state.canToggleClosed,
                     onClick = onToggleClose,
@@ -468,6 +569,19 @@ private fun LoadedProjectDetailsContentPreview() {
                             creatorId = UuidProvider.getUuid(),
                             updatedAt = Timestamp(0L),
                         ),
+                    assignedUsers =
+                        kotlinx.collections.immutable.persistentListOf(
+                            AssignedUserItem(
+                                id = UuidProvider.getUuid(),
+                                email = "user1@example.com",
+                                role = UserRole.ADMINISTRATOR,
+                            ),
+                            AssignedUserItem(
+                                id = UuidProvider.getUuid(),
+                                email = "user2@example.com",
+                                role = UserRole.SERVICE_WORKER,
+                            ),
+                        ),
                 ),
             onNewStructureClick = {},
             onStructureClick = { _, _ -> },
@@ -481,6 +595,8 @@ private fun LoadedProjectDetailsContentPreview() {
             onDownloadReportClick = {},
             onToggleClose = {},
             onManageAssignmentsClick = {},
+            onAssignUser = {},
+            onRemoveUser = {},
         )
     }
 }

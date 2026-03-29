@@ -27,17 +27,21 @@ import cz.adamec.timotej.snag.feat.reports.fe.driven.test.FakeReportsApi
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.projects.app.model.AppProject
 import cz.adamec.timotej.snag.projects.app.model.AppProjectData
+import cz.adamec.timotej.snag.projects.fe.app.api.AssignUserToProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.CanAssignUserToProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.CanCloseProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.CanEditProjectEntitiesUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.DeleteProjectUseCase
+import cz.adamec.timotej.snag.projects.fe.app.api.GetProjectAssignmentsUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.GetProjectUseCase
+import cz.adamec.timotej.snag.projects.fe.app.api.RemoveUserFromProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.SetProjectClosedUseCase
 import cz.adamec.timotej.snag.projects.fe.driven.test.FakeProjectsApi
 import cz.adamec.timotej.snag.projects.fe.driven.test.FakeProjectsDb
 import cz.adamec.timotej.snag.structures.fe.app.api.GetStructuresUseCase
 import cz.adamec.timotej.snag.sync.fe.driven.test.FakeSyncQueue
 import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
+import cz.adamec.timotej.snag.users.fe.app.api.GetUsersUseCase
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
@@ -75,6 +79,10 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
     private val canEditProjectEntitiesUseCase: CanEditProjectEntitiesUseCase by inject()
     private val canCloseProjectUseCase: CanCloseProjectUseCase by inject()
     private val canAssignUserToProjectUseCase: CanAssignUserToProjectUseCase by inject()
+    private val getProjectAssignmentsUseCase: GetProjectAssignmentsUseCase by inject()
+    private val getUsersUseCase: GetUsersUseCase by inject()
+    private val assignUserToProjectUseCase: AssignUserToProjectUseCase by inject()
+    private val removeUserFromProjectUseCase: RemoveUserFromProjectUseCase by inject()
     private val timestampProvider: TimestampProvider by inject()
 
     override fun additionalKoinModules(): List<Module> =
@@ -100,6 +108,26 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
                         override fun invoke(projectId: Uuid) = flowOf(false)
                     }
                 }
+                factory<AssignUserToProjectUseCase> {
+                    object : AssignUserToProjectUseCase {
+                        override suspend fun invoke(
+                            projectId: Uuid,
+                            userId: Uuid,
+                        ) {
+                            // no-op for existing tests
+                        }
+                    }
+                }
+                factory<RemoveUserFromProjectUseCase> {
+                    object : RemoveUserFromProjectUseCase {
+                        override suspend fun invoke(
+                            projectId: Uuid,
+                            userId: Uuid,
+                        ) {
+                            // no-op for existing tests
+                        }
+                    }
+                }
             },
         )
 
@@ -116,6 +144,10 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
             canEditProjectEntitiesUseCase = canEditProjectEntitiesUseCase,
             canCloseProjectUseCase = canCloseProjectUseCase,
             canAssignUserToProjectUseCase = canAssignUserToProjectUseCase,
+            getProjectAssignmentsUseCase = getProjectAssignmentsUseCase,
+            getUsersUseCase = getUsersUseCase,
+            assignUserToProjectUseCase = assignUserToProjectUseCase,
+            removeUserFromProjectUseCase = removeUserFromProjectUseCase,
             timestampProvider = timestampProvider,
         )
 

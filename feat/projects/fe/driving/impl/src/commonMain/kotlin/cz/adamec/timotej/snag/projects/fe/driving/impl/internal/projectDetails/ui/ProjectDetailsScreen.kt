@@ -61,5 +61,7 @@ internal fun ProjectDetailsScreen(
         onDownloadReportClick = viewModel::onDownloadReport,
         onToggleClose = viewModel::onToggleClose,
         onManageAssignmentsClick = onManageAssignmentsClick,
+        onAssignUser = viewModel::onAssignUser,
+        onRemoveUser = viewModel::onRemoveUser,
     )
 }

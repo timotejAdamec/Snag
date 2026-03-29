@@ -15,6 +15,7 @@ package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.
 import cz.adamec.timotej.snag.feat.inspections.app.model.AppInspection
 import cz.adamec.timotej.snag.feat.structures.app.model.AppStructure
 import cz.adamec.timotej.snag.projects.app.model.AppProject
+import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectAssignments.vm.AssignedUserItem
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
@@ -25,6 +26,8 @@ internal data class ProjectDetailsUiState(
     val project: AppProject? = null,
     val structures: ImmutableList<AppStructure> = persistentListOf(),
     val inspections: ImmutableList<AppInspection> = persistentListOf(),
+    val assignedUsers: ImmutableList<AssignedUserItem> = persistentListOf(),
+    val availableUsers: ImmutableList<AssignedUserItem> = persistentListOf(),
     val isClosed: Boolean = false,
     val isProjectEditable: Boolean = false,
     val canInvokeDeletion: Boolean = false,

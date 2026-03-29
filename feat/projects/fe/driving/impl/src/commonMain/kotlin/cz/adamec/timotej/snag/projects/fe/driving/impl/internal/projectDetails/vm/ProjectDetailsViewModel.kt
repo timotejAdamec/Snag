@@ -25,15 +25,19 @@ import cz.adamec.timotej.snag.feat.reports.fe.app.api.DownloadReportUseCase
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.lib.design.fe.error.toUiError
 import cz.adamec.timotej.snag.lib.design.fe.state.launchWhileSubscribed
+import cz.adamec.timotej.snag.projects.fe.app.api.AssignUserToProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.CanAssignUserToProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.CanCloseProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.CanEditProjectEntitiesUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.DeleteProjectUseCase
+import cz.adamec.timotej.snag.projects.fe.app.api.GetProjectAssignmentsUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.GetProjectUseCase
+import cz.adamec.timotej.snag.projects.fe.app.api.RemoveUserFromProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.SetProjectClosedUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.model.SetProjectClosedRequest
 import cz.adamec.timotej.snag.reports.business.Report
 import cz.adamec.timotej.snag.structures.fe.app.api.GetStructuresUseCase
+import cz.adamec.timotej.snag.users.fe.app.api.GetUsersUseCase
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -44,6 +48,7 @@ import kotlinx.coroutines.launch
 import org.koin.core.annotation.InjectedParam
 import kotlin.uuid.Uuid
 
+@Suppress("TooManyFunctions")
 internal class ProjectDetailsViewModel(
     @InjectedParam private val projectId: Uuid,
     private val getProjectUseCase: GetProjectUseCase,
@@ -56,6 +61,10 @@ internal class ProjectDetailsViewModel(
     private val canEditProjectEntitiesUseCase: CanEditProjectEntitiesUseCase,
     private val canCloseProjectUseCase: CanCloseProjectUseCase,
     private val canAssignUserToProjectUseCase: CanAssignUserToProjectUseCase,
+    private val getProjectAssignmentsUseCase: GetProjectAssignmentsUseCase,
+    private val getUsersUseCase: GetUsersUseCase,
+    private val assignUserToProjectUseCase: AssignUserToProjectUseCase,
+    private val removeUserFromProjectUseCase: RemoveUserFromProjectUseCase,
     private val timestampProvider: TimestampProvider,
 ) : ViewModel() {
     private val vmState: MutableStateFlow<ProjectDetailsVmState> =
@@ -68,6 +77,8 @@ internal class ProjectDetailsViewModel(
                     collectCanEditEntities(projectId),
                     collectCanCloseProject(projectId),
                     collectCanAssignUsers(projectId),
+                    collectAssignments(projectId),
+                    collectUsers(),
                 )
             }
     val state: StateFlow<ProjectDetailsUiState> =
@@ -181,6 +192,60 @@ internal class ProjectDetailsViewModel(
             canAssignUserToProjectUseCase(projectId).collect { canAssign ->
                 vmState.update { it.copy(canAssignUsers = canAssign) }
             }
+        }
+
+    private fun collectAssignments(projectId: Uuid) =
+        viewModelScope.launch {
+            getProjectAssignmentsUseCase(projectId).collect { result ->
+                when (result) {
+                    is OfflineFirstDataResult.ProgrammerError -> {
+                        errorEventsChannel.send(UiError.Unknown)
+                    }
+                    is OfflineFirstDataResult.Success -> {
+                        vmState.update {
+                            it.copy(
+                                assignedUserIds = result.data,
+                                assignmentsLoaded = true,
+                            )
+                        }
+                    }
+                }
+            }
+        }
+
+    private fun collectUsers() =
+        viewModelScope.launch {
+            getUsersUseCase().collect { result ->
+                when (result) {
+                    is OfflineFirstDataResult.ProgrammerError -> {
+                        errorEventsChannel.send(UiError.Unknown)
+                    }
+                    is OfflineFirstDataResult.Success -> {
+                        vmState.update {
+                            it.copy(
+                                allUsers = result.data.toImmutableList(),
+                                usersLoaded = true,
+                            )
+                        }
+                    }
+                }
+            }
+        }
+
+    fun onAssignUser(userId: Uuid) =
+        viewModelScope.launch {
+            assignUserToProjectUseCase(
+                projectId = projectId,
+                userId = userId,
+            )
+        }
+
+    fun onRemoveUser(userId: Uuid) =
+        viewModelScope.launch {
+            removeUserFromProjectUseCase(
+                projectId = projectId,
+                userId = userId,
+            )
         }
 
     fun onDelete() =
