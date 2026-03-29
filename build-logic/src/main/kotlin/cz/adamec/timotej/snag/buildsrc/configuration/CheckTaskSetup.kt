@@ -21,7 +21,7 @@ import org.gradle.kotlin.dsl.apply
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.dependencies
 
-fun Project.configureLint() {
+fun Project.configureCheckTask() {
     apply(plugin = pluginId("detekt"))
     apply(plugin = pluginId("ktlint"))
 
