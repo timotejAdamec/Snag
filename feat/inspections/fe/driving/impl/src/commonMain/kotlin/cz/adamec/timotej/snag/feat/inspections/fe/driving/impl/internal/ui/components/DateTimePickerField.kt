@@ -51,6 +51,7 @@ internal fun DateTimePickerField(
     onEditClick: () -> Unit,
     onClearClick: () -> Unit,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     leadingIcon: @Composable (() -> Unit)? = null,
 ) {
     Column(modifier = modifier) {
@@ -63,6 +64,7 @@ internal fun DateTimePickerField(
         Surface(
             modifier = Modifier.fillMaxWidth(),
             onClick = onEditClick,
+            enabled = enabled,
             shape = MaterialTheme.shapes.medium,
             border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
         ) {
@@ -96,14 +98,20 @@ internal fun DateTimePickerField(
                     style = MaterialTheme.typography.bodyLarge,
                     color = textColor,
                 )
-                IconButton(onClick = onEditClick) {
+                IconButton(
+                    onClick = onEditClick,
+                    enabled = enabled,
+                ) {
                     Icon(
                         painter = painterResource(DesignRes.drawable.ic_edit),
                         contentDescription = stringResource(DesignRes.string.edit),
                     )
                 }
                 if (value != null) {
-                    IconButton(onClick = onClearClick) {
+                    IconButton(
+                        onClick = onClearClick,
+                        enabled = enabled,
+                    ) {
                         Icon(
                             painter = painterResource(DesignRes.drawable.ic_close),
                             contentDescription = stringResource(DesignRes.string.clear),
