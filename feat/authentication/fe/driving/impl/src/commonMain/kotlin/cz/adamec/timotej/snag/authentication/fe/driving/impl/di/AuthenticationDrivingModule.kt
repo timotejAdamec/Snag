@@ -13,7 +13,7 @@
 package cz.adamec.timotej.snag.authentication.fe.driving.impl.di
 
 import cz.adamec.timotej.snag.authentication.fe.driving.api.AuthenticationGateContent
-import cz.adamec.timotej.snag.authentication.fe.driving.impl.AuthenticationGateContentImpl
+import cz.adamec.timotej.snag.authentication.fe.driving.impl.internal.AuthenticationGateContentImpl
 import cz.adamec.timotej.snag.authentication.fe.driving.impl.internal.AuthenticationInitializer
 import cz.adamec.timotej.snag.authentication.fe.driving.impl.internal.CallCurrentUserConfiguration
 import cz.adamec.timotej.snag.authentication.fe.driving.impl.internal.vm.AuthenticationViewModel

@@ -23,9 +23,12 @@ class FakeAuthTokenProvider(
     private val _authState = MutableStateFlow(initialState)
     override val authState: StateFlow<AuthState> = _authState
 
+    var loginFailure: Throwable? = null
+
     override suspend fun restoreSession() = Unit
 
     override suspend fun login() {
+        loginFailure?.let { throw it }
         _authState.value = AuthState.Authenticated(authProviderId = "fake-provider-id")
     }
 

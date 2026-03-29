@@ -22,27 +22,32 @@ import kotlin.test.assertNull
 
 class GetAuthProviderIdUseCaseImplTest {
     @Test
-    fun `first emission is authProviderId when session exists`() =
+    fun `returns authProviderId when authenticated`() =
         runTest {
             val provider =
                 FakeAuthTokenProvider(
-                    initialState = AuthState.Authenticated(authProviderId = "existing-session-id"),
+                    initialState = AuthState.Authenticated(authProviderId = "test-id"),
                 )
             val useCase = GetAuthProviderIdUseCaseImpl(authTokenProvider = provider)
 
-            val firstValue = useCase().first()
-
-            assertEquals(expected = "existing-session-id", actual = firstValue)
+            assertEquals(expected = "test-id", actual = useCase().first())
         }
 
     @Test
-    fun `first emission is null when unauthenticated`() =
+    fun `returns null when unauthenticated`() =
         runTest {
             val provider = FakeAuthTokenProvider(initialState = AuthState.Unauthenticated)
             val useCase = GetAuthProviderIdUseCaseImpl(authTokenProvider = provider)
 
-            val firstValue = useCase().first()
+            assertNull(useCase().first())
+        }
 
-            assertNull(firstValue)
+    @Test
+    fun `returns null when loading`() =
+        runTest {
+            val provider = FakeAuthTokenProvider(initialState = AuthState.Loading)
+            val useCase = GetAuthProviderIdUseCaseImpl(authTokenProvider = provider)
+
+            assertNull(useCase().first())
         }
 }

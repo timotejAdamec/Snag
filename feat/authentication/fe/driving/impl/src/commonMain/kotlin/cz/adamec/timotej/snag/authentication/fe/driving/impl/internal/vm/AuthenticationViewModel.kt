@@ -41,11 +41,10 @@ internal class AuthenticationViewModel(
         vmState.mapState { it.toUiState() }
 
     init {
-        login()
+        loginIfNecessary()
     }
 
     fun login() {
-        if (vmState.value.authProviderId != null) return
         viewModelScope.launch {
             vmState.update { it.copy(isLoggingIn = true, loginError = null) }
             when (val result = loginUseCase()) {
@@ -55,6 +54,11 @@ internal class AuthenticationViewModel(
                     vmState.update { it.copy(isLoggingIn = false, loginError = result.message) }
             }
         }
+    }
+
+    private fun loginIfNecessary() {
+        if (vmState.value.authProviderId != null) return
+        login()
     }
 
     private fun collectAuthState(): Job =

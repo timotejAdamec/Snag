@@ -10,13 +10,12 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.authentication.fe.driving.impl
+package cz.adamec.timotej.snag.authentication.fe.driving.impl.internal
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cz.adamec.timotej.snag.authentication.fe.driving.api.AuthenticationGateContent
-import cz.adamec.timotej.snag.authentication.fe.driving.impl.internal.LoginScreen
 import cz.adamec.timotej.snag.authentication.fe.driving.impl.internal.vm.AuthenticationViewModel
 import org.koin.compose.viewmodel.koinViewModel
 
