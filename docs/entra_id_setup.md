@@ -52,7 +52,7 @@ snag.entraIdRedirectUri=snag://auth/callback
 1. `CallCurrentUserConfiguration` installs Ktor's `Authentication` plugin with a `jwt {}` provider that verifies tokens against the EntraID JWKS endpoint (`https://login.microsoftonline.com/{tenantId}/discovery/v2.0/keys`) with key caching.
 2. Every request must include `Authorization: Bearer <jwt-token>`.
 3. The JWT's signature (RSA256), issuer, audience, and expiry are verified.
-4. `CallCurrentUserPlugin` extracts the `oid` claim from the validated `JWTPrincipal` and resolves the user via `GetOrCreateUserByEntraIdUseCase`.
+4. `CallCurrentUserPlugin` extracts the `oid` claim from the validated `JWTPrincipal` and resolves the user via `GetOrCreateUserByAuthProviderIdUseCase`.
 5. If no user exists with that `oid`, one is auto-created with `role=null`.
 6. Requests without a valid token receive no `CallCurrentUser` in the call context — any route calling `currentUser()` throws `UnauthenticatedException` → HTTP 401.
 
@@ -61,8 +61,7 @@ snag.entraIdRedirectUri=snag://auth/callback
 - `lib/configuration/common/api/.../CommonConfiguration.kt` — build-time config (shared BE/FE)
 - `feat/authentication/be/driving/impl/.../CallCurrentUserConfiguration.kt` — Ktor Authentication plugin setup
 - `feat/authentication/be/driving/impl/.../CallCurrentUserPlugin.kt` — dual-mode user resolution
-- `feat/users/be/app/api/.../GetOrCreateUserByEntraIdUseCase.kt` — user lookup/creation
-- `feat/users/be/driving/impl/.../UsersRoute.kt` — includes `GET /users/me` for post-login user resolution
+- `feat/users/be/app/api/.../GetOrCreateUserByAuthProviderIdUseCase.kt` — user lookup/creation
 
 ---
 
@@ -74,22 +73,22 @@ Same as backend — set in `config/release.properties` (see section 2). Values a
 
 ### How it works
 
-1. `LoginUseCase` coordinates the sign-in flow:
-   a. Triggers OIDC Authorization Code + PKCE flow via `AuthTokenProvider.login()` (browser-based authentication).
-   b. After tokens are obtained and stored, calls `GET /users/me` via `AuthenticationApi` to resolve the app user UUID.
-   c. Sets `AuthState.Authenticated(userId)` on the token provider.
-2. `AuthenticationGate` composable observes auth state and shows `LoginScreen` or app content.
-3. Token refresh is handled automatically by `TokenRefreshHandler` + `oidcBearer` Ktor integration — 401 responses trigger transparent refresh and retry.
-4. Tokens are persisted via `TokenStore` (Android `EncryptedSharedPreferences`, iOS Keychain).
+1. On app start, `AuthenticationInitializer` restores the session from persisted tokens. If a valid ID token exists, `authProviderId` is extracted from its `oid` claim and auth state is set to `Authenticated`.
+2. If unauthenticated, `AuthenticationViewModel` automatically triggers `LoginUseCase`, which starts the OIDC Authorization Code + PKCE flow via `AuthTokenProvider.login()`. The adapter extracts `authProviderId` from the ID token after successful login.
+3. `AuthenticationGate` composable (in `driving/api`) observes auth state and shows app content when authenticated, or a login screen with error/retry on failure.
+4. The authentication feature is user-agnostic — it only knows about `authProviderId` (the `oid` from the JWT). The users feature resolves `authProviderId` → app user via `GetCurrentUserFlowUseCaseImpl` querying the local DB by `authProviderId`.
+5. Token refresh is handled automatically by `TokenRefreshHandler` + `oidcBearer` Ktor integration — 401 responses trigger transparent refresh and retry.
+6. Tokens are persisted via `TokenStore` (Android `EncryptedSharedPreferences`, iOS Keychain).
 
 ### Key files
 
-- `feat/authentication/fe/app/api/` — use case interfaces (`GetAuthenticatedUserIdUseCase`, `LoginUseCase`, `LogoutUseCase`)
-- `feat/authentication/fe/app/impl/` — use case implementations (login coordination)
-- `feat/authentication/fe/ports/` — port interfaces (`AuthTokenProvider`, `AuthState`, `AuthenticationApi`)
-- `feat/authentication/fe/driven/impl/` — adapters (`OidcAuthTokenProvider`, `MockAuthTokenProvider`, `CallCurrentUserConfiguration`, `RealAuthenticationApi`)
-- `feat/authentication/fe/driven/test/` — test fakes (`FakeAuthTokenProvider`, `FakeAuthenticationApi`)
-- `feat/authentication/fe/driving/impl/` — UI (`AuthenticationGate`, `LoginScreen`, `AuthenticationViewModel`)
+- `feat/authentication/fe/app/api/` — use case interfaces (`GetAuthProviderIdUseCase`, `GetAccessTokenUseCase`, `LoginUseCase`, `LogoutUseCase`, `RestoreSessionUseCase`)
+- `feat/authentication/fe/app/impl/` — use case implementations
+- `feat/authentication/fe/ports/` — port interfaces (`AuthTokenProvider`, `AuthState`)
+- `feat/authentication/fe/driven/impl/` — adapters (`OidcAuthTokenProvider`, `MockAuthTokenProvider`)
+- `feat/authentication/fe/driven/test/` — test fakes (`FakeAuthTokenProvider`)
+- `feat/authentication/fe/driving/api/` — public composable (`AuthenticationGate`, `AuthenticationGateContent`)
+- `feat/authentication/fe/driving/impl/` — internal UI (`LoginScreen`, `AuthenticationViewModel`, `CallCurrentUserConfiguration`, `AuthenticationInitializer`)
 
 ---
 
@@ -119,4 +118,4 @@ See [#175](https://github.com/timotejAdamec/Snag/issues/175) for implementation 
 - All existing tests run in mock mode automatically (`CommonConfiguration.mockAuth` defaults to `true`).
 - Backend `CallCurrentUserPluginTest` tests the mock-auth path.
 - For testing the JWT path: set `MOCK_AUTH=false` and provide test JWTs signed with known keys.
-- `FakeAuthTokenProvider` and `FakeAuthenticationApi` in `feat/authentication/fe/driven/test/` are available for FE unit tests.
+- `FakeAuthTokenProvider` in `feat/authentication/fe/driven/test/` is available for FE unit tests.
