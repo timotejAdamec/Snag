@@ -70,7 +70,7 @@ internal class DevDataSeederConfiguration(
         listOf(
             BackendUserData(
                 id = Uuid.parse(USER_1),
-                authProviderId = "entra-admin-001",
+                authProviderId = "mock-auth-provider-id",
                 email = "jan.novak@snag.cz",
                 role = UserRole.ADMINISTRATOR,
                 updatedAt = now,
