@@ -27,6 +27,7 @@ import org.publicvalue.multiplatform.oidc.types.Jwt
 internal class OidcAuthTokenProvider(
     private val tokenStore: TokenStore,
     private val authFlowFactory: CodeAuthFlowFactory,
+    redirectUri: String,
 ) : AuthTokenProvider {
     private val _authState = MutableStateFlow<AuthState>(AuthState.Loading)
     override val authState: StateFlow<AuthState> = _authState
@@ -38,7 +39,7 @@ internal class OidcAuthTokenProvider(
             clientId = CommonConfiguration.entraIdClientId
             codeChallengeMethod = CodeChallengeMethod.S256
             scope = "openid profile email offline_access"
-            redirectUri = CommonConfiguration.entraIdRedirectUri
+            this.redirectUri = redirectUri
         }
 
     override suspend fun restoreSession() {

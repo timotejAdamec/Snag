@@ -18,7 +18,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 class FakeAuthTokenProvider(
-    initialState: AuthState = AuthState.Authenticated(authProviderId = "fake-provider-id"),
+    initialState: AuthState = AuthState.Authenticated(authProviderId = "mock-auth-provider-id"),
 ) : AuthTokenProvider {
     private val _authState = MutableStateFlow(initialState)
     override val authState: StateFlow<AuthState> = _authState
@@ -29,7 +29,7 @@ class FakeAuthTokenProvider(
 
     override suspend fun login() {
         loginFailure?.let { throw it }
-        _authState.value = AuthState.Authenticated(authProviderId = "fake-provider-id")
+        _authState.value = AuthState.Authenticated(authProviderId = "mock-auth-provider-id")
     }
 
     override suspend fun getAccessToken(): String? = "fake-access-token"
