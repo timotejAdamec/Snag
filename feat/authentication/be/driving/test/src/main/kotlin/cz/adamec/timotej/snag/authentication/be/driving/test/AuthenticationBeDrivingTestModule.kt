@@ -10,9 +10,12 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.authentication.fe.driving.impl.di
+package cz.adamec.timotej.snag.authentication.be.driving.test
 
-import org.koin.core.module.Module
+import cz.adamec.timotej.snag.authentication.be.driving.impl.di.MOCK_AUTH_QUALIFIER
 import org.koin.dsl.module
 
-internal actual val drivingPlatformModule: Module = module {}
+val authenticationBeDrivingTestModule =
+    module {
+        single(qualifier = MOCK_AUTH_QUALIFIER) { true }
+    }

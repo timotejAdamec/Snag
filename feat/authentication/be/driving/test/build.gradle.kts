@@ -10,8 +10,10 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.authentication.fe.driven.di
+plugins {
+    alias(libs.plugins.snagBackendModule)
+}
 
-import org.koin.core.module.Module
-
-expect val platformModule: Module
+dependencies {
+    implementation(projects.feat.authentication.be.driving.impl)
+}

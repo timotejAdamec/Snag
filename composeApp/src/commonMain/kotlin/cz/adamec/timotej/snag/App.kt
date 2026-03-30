@@ -28,15 +28,17 @@ import cz.adamec.timotej.snag.lib.design.fe.initializer.ComposeInitializer
 import cz.adamec.timotej.snag.ui.MainScreen
 import org.koin.compose.KoinApplication
 import org.koin.compose.getKoin
+import org.koin.core.module.Module
 import org.koin.dsl.koinConfiguration
 
 @Composable
-fun App() {
+fun App(extraModules: List<Module> = emptyList()) {
     KoinApplication(
         configuration =
             koinConfiguration(
                 declaration = {
                     modules(appModule)
+                    modules(extraModules)
                     logger(KermitKoinLogger(Logger.withTag("Koin")))
                 },
             ),

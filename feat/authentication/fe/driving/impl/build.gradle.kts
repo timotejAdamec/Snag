@@ -23,10 +23,5 @@ kotlin {
             implementation(libs.ktor.client.auth)
             implementation(libs.ktor.client.core)
         }
-        val androidMain by getting {
-            dependencies {
-                implementation(libs.oidc.appsupport)
-            }
-        }
     }
 }

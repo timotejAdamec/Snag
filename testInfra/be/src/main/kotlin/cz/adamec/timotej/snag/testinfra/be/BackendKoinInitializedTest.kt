@@ -12,19 +12,13 @@
 
 package cz.adamec.timotej.snag.testinfra.be
 
-import cz.adamec.timotej.snag.authentication.be.driving.impl.di.MOCK_AUTH_QUALIFIER
+import cz.adamec.timotej.snag.authentication.be.driving.test.authenticationBeDrivingTestModule
 import cz.adamec.timotej.snag.di.aggregate.be.backendModulesAggregate
 import cz.adamec.timotej.snag.feat.shared.database.be.di.sharedDatabaseTestModule
 import cz.adamec.timotej.snag.lib.storage.be.test.di.fakeStorageTestModule
 import cz.adamec.timotej.snag.reports.be.driven.test.reportsDrivenTestModule
 import cz.adamec.timotej.snag.testinfra.KoinInitializedTest
 import org.koin.core.module.Module
-import org.koin.dsl.module
-
-private val mockAuthTestModule =
-    module {
-        single(qualifier = MOCK_AUTH_QUALIFIER) { true }
-    }
 
 abstract class BackendKoinInitializedTest : KoinInitializedTest() {
     override fun koinModules(): List<Module> =
@@ -33,6 +27,6 @@ abstract class BackendKoinInitializedTest : KoinInitializedTest() {
             sharedDatabaseTestModule,
             fakeStorageTestModule,
             reportsDrivenTestModule,
-            mockAuthTestModule,
+            authenticationBeDrivingTestModule,
         )
 }
