@@ -280,8 +280,9 @@ private fun isDrivingOrDriven(layer: HexLayer?): Boolean =
 
 // --- Rule 3: Encapsulation Split ---
 // impl/test -> api
+// test -> impl (test doubles wrap implementations)
 // api must not depend on impl or test
-// impl and test must not depend on each other
+// impl must not depend on test
 
 internal fun checkEncapsulationDirection(
     source: ModuleIdentity,
@@ -302,16 +303,13 @@ internal fun checkEncapsulationDirection(
         )
     }
 
-    // impl must not depend on test and vice-versa
-    if ((sourceEncap == Encapsulation.IMPL && targetEncap == Encapsulation.TEST) ||
-        (sourceEncap == Encapsulation.TEST && targetEncap == Encapsulation.IMPL)
-    ) {
+    // impl must not depend on test
+    if (sourceEncap == Encapsulation.IMPL && targetEncap == Encapsulation.TEST) {
         return Violation(
             ruleId = RuleId.ENCAPSULATION_DIRECTION,
             source = source.path,
             target = target.path,
-            message = "${sourceEncap.name.lowercase()} must not depend on " +
-                "${targetEncap.name.lowercase()}",
+            message = "impl must not depend on test",
         )
     }
 

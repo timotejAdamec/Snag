@@ -602,11 +602,10 @@ class EncapsulationDirectionRuleTest {
     }
 
     @Test
-    fun `test depending on impl is a violation`() {
+    fun `test depending on impl is allowed`() {
         val source = parseModulePath(":feat:projects:fe:driven:test")
         val target = parseModulePath(":feat:projects:fe:driven:impl")
-        val violation = checkEncapsulationDirection(source, target)
-        assertEquals(RuleId.ENCAPSULATION_DIRECTION, violation?.ruleId)
+        assertNull(checkEncapsulationDirection(source, target))
     }
 
     @Test

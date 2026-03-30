@@ -23,8 +23,6 @@ internal fun isAllowlisted(source: String, target: String): Boolean =
     (source to target) in exactAllowlist || patternAllowlist.any { it(source, target) }
 
 private val exactAllowlist: Set<Pair<String, String>> = setOf(
-    // shared:database:be:test wraps the real impl for in-memory test doubles
-    ":feat:shared:database:be:test" to ":feat:shared:database:be:impl",
 )
 
 private val patternAllowlist: List<(String, String) -> Boolean> = listOf(
