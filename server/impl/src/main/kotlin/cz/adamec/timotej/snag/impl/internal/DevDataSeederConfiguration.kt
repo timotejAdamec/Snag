@@ -110,6 +110,13 @@ internal class DevDataSeederConfiguration(
                 role = null,
                 updatedAt = now,
             ),
+            BackendUserData(
+                id = Uuid.parse(USER_7),
+                authProviderId = "7bed0d57-0d0b-440d-aa45-24fceaa80403",
+                email = "tim.adamec@gmail.com",
+                role = UserRole.ADMINISTRATOR,
+                updatedAt = now,
+            ),
         ).forEach { usersDb.saveUser(it) }
     }
 
@@ -395,6 +402,7 @@ internal class DevDataSeederConfiguration(
         private const val USER_4 = "00000000-0000-0000-0005-000000000004"
         private const val USER_5 = "00000000-0000-0000-0005-000000000005"
         private const val USER_6 = "00000000-0000-0000-0005-000000000006"
+        private const val USER_7 = "00000000-0000-0000-0005-000000000007"
         private const val CLIENT_1 = "00000000-0000-0000-0003-000000000001"
         private const val CLIENT_2 = "00000000-0000-0000-0003-000000000002"
         private const val PROJECT_1 = "00000000-0000-0000-0000-000000000001"
