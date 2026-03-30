@@ -150,7 +150,6 @@ private fun parseCoreOrLib(
 }
 
 private fun parseFeat(path: String, rest: List<String>): FeatModule {
-    // Collect feature name segments until we hit a recognized token
     val featureSegments = mutableListOf<String>()
     var platform: Platform? = null
     var hexLayer: HexLayer? = null
@@ -160,8 +159,6 @@ private fun parseFeat(path: String, rest: List<String>): FeatModule {
 
     for (segment in rest) {
         when {
-            // Only assign platform/hex/encap if we haven't collected the feature name yet
-            // or if we have and it's a recognized token
             featureSegments.isNotEmpty() && platform == null && segment in PLATFORMS ->
                 platform = PLATFORMS[segment]
             featureSegments.isNotEmpty() && hexLayer == null && segment in HEX_LAYERS ->
@@ -186,10 +183,6 @@ private fun parseFeat(path: String, rest: List<String>): FeatModule {
         isRules = isRules,
     )
 }
-
-// --- Rule 1: Category Direction ---
-// [app] -> feat -> lib -> core
-// Lower rank must not depend on higher rank
 
 private fun categoryRank(module: ModuleIdentity): Int? = when (module) {
     is CoreModule -> 0
@@ -225,10 +218,6 @@ private fun categoryName(module: ModuleIdentity): String = when (module) {
     is InfraModule -> "infra"
 }
 
-// --- Rule 2: Hexagonal Layer Direction ---
-// driving/driven -> app -> business/ports
-// Only within same feature+platform
-
 private fun hexLayerRank(layer: HexLayer?): Int? = when (layer) {
     HexLayer.BUSINESS, HexLayer.PORTS -> 0
     HexLayer.APP -> 1
@@ -249,7 +238,6 @@ internal fun checkHexagonalDirection(
     val sourceRank = hexLayerRank(source.hexLayer) ?: return null
     val targetRank = hexLayerRank(target.hexLayer) ?: return null
 
-    // driving <-> driven forbidden
     if (isDrivingOrDriven(source.hexLayer) && isDrivingOrDriven(target.hexLayer) &&
         source.hexLayer != target.hexLayer
     ) {
@@ -261,7 +249,6 @@ internal fun checkHexagonalDirection(
         )
     }
 
-    // Inner must not depend on outer
     if (sourceRank < targetRank) {
         return Violation(
             ruleId = RuleId.HEXAGONAL_DIRECTION,
@@ -278,12 +265,6 @@ internal fun checkHexagonalDirection(
 private fun isDrivingOrDriven(layer: HexLayer?): Boolean =
     layer == HexLayer.DRIVING || layer == HexLayer.DRIVEN
 
-// --- Rule 3: Encapsulation Split ---
-// impl/test -> api
-// test -> impl (test doubles wrap implementations)
-// api must not depend on impl or test
-// impl must not depend on test
-
 internal fun checkEncapsulationDirection(
     source: ModuleIdentity,
     target: ModuleIdentity,
@@ -291,7 +272,6 @@ internal fun checkEncapsulationDirection(
     val sourceEncap = encapsulationOf(source) ?: return null
     val targetEncap = encapsulationOf(target) ?: return null
 
-    // api must not depend on impl or test
     if (sourceEncap == Encapsulation.API &&
         targetEncap in IMPL_OR_TEST
     ) {
@@ -323,8 +303,6 @@ private fun encapsulationOf(module: ModuleIdentity): Encapsulation? = when (modu
     is AppModule -> null
     is InfraModule -> null
 }
-
-// --- Combiner ---
 
 internal fun checkDependency(
     source: ModuleIdentity,
