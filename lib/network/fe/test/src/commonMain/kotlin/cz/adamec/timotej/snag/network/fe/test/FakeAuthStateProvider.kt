@@ -12,13 +12,17 @@
 
 package cz.adamec.timotej.snag.network.fe.test
 
-import cz.adamec.timotej.snag.core.network.fe.ConnectionStatusProvider
 import cz.adamec.timotej.snag.network.fe.ports.AuthStateProvider
-import org.koin.dsl.bind
-import org.koin.dsl.module
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
-val networkFeTestModule =
-    module {
-        single { FakeConnectionStatusProvider() } bind ConnectionStatusProvider::class
-        single { FakeAuthStateProvider() } bind AuthStateProvider::class
+class FakeAuthStateProvider(
+    initiallyReady: Boolean = true,
+) : AuthStateProvider {
+    private val _isReady = MutableStateFlow(initiallyReady)
+    override val isReady: StateFlow<Boolean> = _isReady
+
+    fun setReady(ready: Boolean) {
+        _isReady.value = ready
     }
+}

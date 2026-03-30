@@ -14,11 +14,13 @@ package cz.adamec.timotej.snag.authentication.fe.app.impl.di
 
 import cz.adamec.timotej.snag.authentication.fe.app.api.GetAccessTokenUseCase
 import cz.adamec.timotej.snag.authentication.fe.app.api.GetAuthProviderIdUseCase
+import cz.adamec.timotej.snag.authentication.fe.app.api.IsCurrentUserAuthenticatedFlowUseCase
 import cz.adamec.timotej.snag.authentication.fe.app.api.LoginUseCase
 import cz.adamec.timotej.snag.authentication.fe.app.api.LogoutUseCase
 import cz.adamec.timotej.snag.authentication.fe.app.api.RestoreSessionUseCase
 import cz.adamec.timotej.snag.authentication.fe.app.impl.internal.GetAccessTokenUseCaseImpl
 import cz.adamec.timotej.snag.authentication.fe.app.impl.internal.GetAuthProviderIdUseCaseImpl
+import cz.adamec.timotej.snag.authentication.fe.app.impl.internal.IsCurrentUserAuthenticatedFlowUseCaseImpl
 import cz.adamec.timotej.snag.authentication.fe.app.impl.internal.LoginUseCaseImpl
 import cz.adamec.timotej.snag.authentication.fe.app.impl.internal.LogoutUseCaseImpl
 import cz.adamec.timotej.snag.authentication.fe.app.impl.internal.RestoreSessionUseCaseImpl
@@ -33,4 +35,5 @@ val authenticationAppModule =
         factoryOf(::LoginUseCaseImpl) bind LoginUseCase::class
         factoryOf(::LogoutUseCaseImpl) bind LogoutUseCase::class
         factoryOf(::RestoreSessionUseCaseImpl) bind RestoreSessionUseCase::class
+        factoryOf(::IsCurrentUserAuthenticatedFlowUseCaseImpl) bind IsCurrentUserAuthenticatedFlowUseCase::class
     }
