@@ -15,11 +15,16 @@ package cz.adamec.timotej.snag.lib.storage.be.impl.internal
 import cz.adamec.timotej.snag.configuration.be.AppConfiguration
 import cz.adamec.timotej.snag.lib.storage.be.test.FakeStorageService
 import cz.adamec.timotej.snag.network.be.test.jsonClient
+import cz.adamec.timotej.snag.routing.common.USER_ID_HEADER
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
+import cz.adamec.timotej.snag.users.be.driven.test.TEST_USER_ID
+import cz.adamec.timotej.snag.users.be.driven.test.seedTestUser
+import cz.adamec.timotej.snag.users.be.ports.UsersDb
 import io.ktor.client.call.body
 import io.ktor.client.request.delete
 import io.ktor.client.request.forms.formData
 import io.ktor.client.request.forms.submitFormWithBinaryData
+import io.ktor.client.request.header
 import io.ktor.http.Headers
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
@@ -32,6 +37,7 @@ import kotlin.test.assertTrue
 
 class FileRouteTest : BackendKoinInitializedTest() {
     private val fakeStorageService: FakeStorageService by inject()
+    private val usersDb: UsersDb by inject()
 
     private fun ApplicationTestBuilder.configureApp() {
         val configurations = getKoin().getAll<AppConfiguration>()
@@ -46,6 +52,7 @@ class FileRouteTest : BackendKoinInitializedTest() {
     fun `POST file upload returns URL`() =
         testApplication {
             configureApp()
+            usersDb.seedTestUser()
             val client = jsonClient()
 
             val response =
@@ -63,7 +70,9 @@ class FileRouteTest : BackendKoinInitializedTest() {
                             )
                             append("directory", "projects/abc/structures/xyz")
                         },
-                )
+                ) {
+                    header(USER_ID_HEADER, TEST_USER_ID.toString())
+                }
 
             assertEquals(HttpStatusCode.OK, response.status)
             val body = response.body<Map<String, String>>()
@@ -76,6 +85,7 @@ class FileRouteTest : BackendKoinInitializedTest() {
     fun `POST file upload without file part returns 400`() =
         testApplication {
             configureApp()
+            usersDb.seedTestUser()
             val client = jsonClient()
 
             val response =
@@ -85,7 +95,9 @@ class FileRouteTest : BackendKoinInitializedTest() {
                         formData {
                             append("directory", "some-dir")
                         },
-                )
+                ) {
+                    header(USER_ID_HEADER, TEST_USER_ID.toString())
+                }
 
             assertEquals(HttpStatusCode.BadRequest, response.status)
         }
@@ -94,6 +106,7 @@ class FileRouteTest : BackendKoinInitializedTest() {
     fun `POST file upload without directory part returns 400`() =
         testApplication {
             configureApp()
+            usersDb.seedTestUser()
             val client = jsonClient()
 
             val response =
@@ -110,7 +123,9 @@ class FileRouteTest : BackendKoinInitializedTest() {
                                 },
                             )
                         },
-                )
+                ) {
+                    header(USER_ID_HEADER, TEST_USER_ID.toString())
+                }
 
             assertEquals(HttpStatusCode.BadRequest, response.status)
         }
@@ -119,10 +134,13 @@ class FileRouteTest : BackendKoinInitializedTest() {
     fun `DELETE file returns 204`() =
         testApplication {
             configureApp()
+            usersDb.seedTestUser()
             val client = jsonClient()
 
             val response =
-                client.delete("/files?url=https://storage.test/test-uploads/1.png")
+                client.delete("/files?url=https://storage.test/test-uploads/1.png") {
+                    header(USER_ID_HEADER, TEST_USER_ID.toString())
+                }
 
             assertEquals(HttpStatusCode.NoContent, response.status)
             assertEquals(1, fakeStorageService.deletedUrls.size)
@@ -136,9 +154,13 @@ class FileRouteTest : BackendKoinInitializedTest() {
     fun `DELETE file without url param returns 400`() =
         testApplication {
             configureApp()
+            usersDb.seedTestUser()
             val client = jsonClient()
 
-            val response = client.delete("/files")
+            val response =
+                client.delete("/files") {
+                    header(USER_ID_HEADER, TEST_USER_ID.toString())
+                }
 
             assertEquals(HttpStatusCode.BadRequest, response.status)
         }

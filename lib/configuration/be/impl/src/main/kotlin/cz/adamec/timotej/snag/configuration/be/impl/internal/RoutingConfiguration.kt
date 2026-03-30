@@ -17,6 +17,7 @@ import cz.adamec.timotej.snag.routing.be.AppRoute
 import io.ktor.http.ContentType
 import io.ktor.openapi.OpenApiInfo
 import io.ktor.server.application.Application
+import io.ktor.server.auth.authenticate
 import io.ktor.server.plugins.swagger.swaggerUI
 import io.ktor.server.response.respondText
 import io.ktor.server.routing.get
@@ -29,9 +30,6 @@ internal class RoutingConfiguration : AppConfiguration {
         val routes = getKoin().getAll<AppRoute>()
         routing {
             val routingScope = this
-            routes.forEach { route ->
-                with(route) { setup() }
-            }
             get("/") {
                 call.respondText("Ktor: Hello server")
             }
@@ -41,6 +39,11 @@ internal class RoutingConfiguration : AppConfiguration {
                     OpenApiDocSource.Routing(ContentType.Application.Json) {
                         routingScope.descendants()
                     }
+            }
+            authenticate {
+                routes.forEach { route ->
+                    with(route) { setup() }
+                }
             }
         }
     }

@@ -101,6 +101,7 @@ class ClientsRouteTest : BackendKoinInitializedTest() {
     fun `GET clients works without restriction`() =
         testApplication {
             configureApp()
+            usersDb.seedTestUser()
             val client = jsonClient()
 
             val response =
