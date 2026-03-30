@@ -14,16 +14,18 @@ package cz.adamec.timotej.snag.authentication.be.driving.impl.internal
 
 import cz.adamec.timotej.snag.authentication.be.driving.api.CallCurrentUserKey
 import cz.adamec.timotej.snag.authorization.business.UserRole
-import cz.adamec.timotej.snag.configuration.be.AppConfiguration
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.routing.common.USER_ID_HEADER
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
+import cz.adamec.timotej.snag.users.be.app.api.GetOrCreateUserByAuthProviderIdUseCase
+import cz.adamec.timotej.snag.users.be.app.api.GetUserUseCase
 import cz.adamec.timotej.snag.users.be.model.BackendUserData
 import cz.adamec.timotej.snag.users.be.ports.UsersDb
 import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpStatusCode
+import io.ktor.server.application.install
 import io.ktor.server.response.respondText
 import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
@@ -36,13 +38,18 @@ import kotlin.uuid.Uuid
 
 class CallCurrentUserPluginTest : BackendKoinInitializedTest() {
     private val usersDb: UsersDb by inject()
+    private val getUserUseCase: GetUserUseCase by inject()
+    private val getOrCreateUserByAuthProviderIdUseCase: GetOrCreateUserByAuthProviderIdUseCase by inject()
 
     private fun ApplicationTestBuilder.configureApp() {
-        val configurations = getKoin().getAll<AppConfiguration>()
         application {
-            configurations.forEach { config ->
-                with(config) { setup() }
-            }
+            install(
+                callCurrentUserPlugin(
+                    getUserUseCase = getUserUseCase,
+                    getOrCreateUserByAuthProviderIdUseCase = getOrCreateUserByAuthProviderIdUseCase,
+                    mockAuth = true,
+                ),
+            )
             routing {
                 get("/test-current-user") {
                     val currentUser = call.attributes.getOrNull(CallCurrentUserKey)

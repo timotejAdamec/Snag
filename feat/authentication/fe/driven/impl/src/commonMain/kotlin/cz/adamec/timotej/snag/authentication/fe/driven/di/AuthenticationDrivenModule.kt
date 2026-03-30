@@ -16,10 +16,14 @@ import cz.adamec.timotej.snag.authentication.fe.driven.internal.MockAuthTokenPro
 import cz.adamec.timotej.snag.authentication.fe.driven.internal.OidcAuthTokenProvider
 import cz.adamec.timotej.snag.authentication.fe.ports.AuthTokenProvider
 import cz.adamec.timotej.snag.configuration.common.CommonConfiguration
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
+
+val OIDC_REDIRECT_URI_QUALIFIER = named("oidcRedirectUri")
 
 val authenticationDrivenModule =
     module {
+        includes(platformModule)
         single<AuthTokenProvider> {
             if (CommonConfiguration.mockAuth) {
                 MockAuthTokenProvider()
@@ -27,6 +31,7 @@ val authenticationDrivenModule =
                 OidcAuthTokenProvider(
                     tokenStore = get(),
                     authFlowFactory = get(),
+                    redirectUri = get(qualifier = OIDC_REDIRECT_URI_QUALIFIER),
                 )
             }
         }

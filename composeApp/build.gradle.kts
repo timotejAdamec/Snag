@@ -61,6 +61,11 @@ kotlin {
         jvmMain.dependencies {
             implementation(compose.desktop.currentOs)
         }
+        val webMain by getting {
+            dependencies {
+                implementation(libs.oidc.appsupport)
+            }
+        }
     }
 }
 

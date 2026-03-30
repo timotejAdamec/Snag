@@ -16,9 +16,17 @@ package cz.adamec.timotej.snag
 
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.window.ComposeViewport
+import kotlinx.browser.window
+import org.publicvalue.multiplatform.oidc.ExperimentalOpenIdConnect
+import org.publicvalue.multiplatform.oidc.appsupport.PlatformCodeAuthFlow
 
-@OptIn(ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalComposeUiApi::class, ExperimentalOpenIdConnect::class)
 fun main() {
+    val currentPath = window.location.pathname
+    if (currentPath.startsWith("/redirect") || currentPath.startsWith("/logout")) {
+        PlatformCodeAuthFlow.handleRedirect()
+        return
+    }
     ComposeViewport {
         App()
     }

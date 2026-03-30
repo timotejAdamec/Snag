@@ -89,6 +89,8 @@ android {
 
 dependencies {
     implementation(projects.composeApp)
+    implementation(projects.feat.authentication.fe.driven.impl)
+    implementation(libs.oidc.appsupport)
     implementation(libs.androidx.activity.compose)
     implementation(libs.compose.ui.tooling.preview)
     debugImplementation(libs.compose.ui.tooling)

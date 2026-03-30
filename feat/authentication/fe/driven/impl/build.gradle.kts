@@ -21,5 +21,10 @@ kotlin {
             implementation(libs.oidc.tokenstore)
             implementation(libs.oidc.ktor)
         }
+        val webMain by getting {
+            dependencies {
+                implementation(libs.kotlinx.browser)
+            }
+        }
     }
 }

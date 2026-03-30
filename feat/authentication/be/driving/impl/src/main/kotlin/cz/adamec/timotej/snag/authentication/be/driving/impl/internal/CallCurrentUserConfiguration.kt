@@ -29,21 +29,22 @@ import java.util.concurrent.TimeUnit
 internal class CallCurrentUserConfiguration(
     private val getUserUseCase: GetUserUseCase,
     private val getOrCreateUserByAuthProviderIdUseCase: GetOrCreateUserByAuthProviderIdUseCase,
+    private val mockAuth: Boolean,
 ) : AppConfiguration {
     override fun Application.setup() {
-        if (!CommonConfiguration.mockAuth) {
+        if (!mockAuth) {
             logger.info("Installing JWT authentication with EntraID.")
             installJwtAuthentication()
         } else {
             logger.info("Mock auth enabled, skipping JWT authentication setup.")
         }
 
-        logger.debug("Installing CallCurrentUserPlugin (mockAuth={}).", CommonConfiguration.mockAuth)
+        logger.debug("Installing CallCurrentUserPlugin (mockAuth={}).", mockAuth)
         install(
             callCurrentUserPlugin(
                 getUserUseCase = getUserUseCase,
                 getOrCreateUserByAuthProviderIdUseCase = getOrCreateUserByAuthProviderIdUseCase,
-                mockAuth = CommonConfiguration.mockAuth,
+                mockAuth = mockAuth,
             ),
         )
     }

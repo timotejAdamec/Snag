@@ -16,12 +16,23 @@ import cz.adamec.timotej.snag.authentication.be.driving.impl.internal.Authentica
 import cz.adamec.timotej.snag.authentication.be.driving.impl.internal.CallCurrentUserConfiguration
 import cz.adamec.timotej.snag.configuration.be.AppConfiguration
 import cz.adamec.timotej.snag.configuration.be.AppStatusPageHandler
+import cz.adamec.timotej.snag.configuration.common.CommonConfiguration
 import org.koin.core.module.dsl.singleOf
+import org.koin.core.qualifier.named
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
+val MOCK_AUTH_QUALIFIER = named("mockAuth")
+
 val authenticationModule =
     module {
-        singleOf(::CallCurrentUserConfiguration) bind AppConfiguration::class
+        single(qualifier = MOCK_AUTH_QUALIFIER) { CommonConfiguration.mockAuth }
+        single<AppConfiguration> {
+            CallCurrentUserConfiguration(
+                getUserUseCase = get(),
+                getOrCreateUserByAuthProviderIdUseCase = get(),
+                mockAuth = get(qualifier = MOCK_AUTH_QUALIFIER),
+            )
+        }
         singleOf(::AuthenticationStatusPageHandler) bind AppStatusPageHandler::class
     }
