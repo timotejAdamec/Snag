@@ -18,17 +18,11 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
-import cz.adamec.timotej.snag.authentication.fe.driven.internal.AndroidCodeAuthFlowFactoryHolder
-import org.publicvalue.multiplatform.oidc.appsupport.AndroidCodeAuthFlowFactory
 
 class MainActivity : ComponentActivity() {
-    private val codeAuthFlowFactory = AndroidCodeAuthFlowFactory()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
-        codeAuthFlowFactory.registerActivity(this)
-        AndroidCodeAuthFlowFactoryHolder.factory = codeAuthFlowFactory
 
         setContent {
             App()

@@ -26,6 +26,7 @@ import org.koin.dsl.module
 
 val authenticationDrivingModule =
     module {
+        includes(drivingPlatformModule)
         viewModelOf(::AuthenticationViewModel)
         singleOf(::CallCurrentUserConfiguration) bind HttpClientConfiguration::class
         singleOf(::AuthenticationInitializer) bind Initializer::class

@@ -13,11 +13,11 @@
 package cz.adamec.timotej.snag.authentication.fe.driven.di
 
 import android.content.Context
-import cz.adamec.timotej.snag.authentication.fe.driven.internal.AndroidCodeAuthFlowFactoryHolder
 import cz.adamec.timotej.snag.configuration.common.CommonConfiguration
 import org.koin.core.module.Module
 import org.koin.dsl.module
 import org.publicvalue.multiplatform.oidc.ExperimentalOpenIdConnect
+import org.publicvalue.multiplatform.oidc.appsupport.AndroidCodeAuthFlowFactory
 import org.publicvalue.multiplatform.oidc.flows.CodeAuthFlowFactory
 import org.publicvalue.multiplatform.oidc.tokenstore.AndroidSettingsTokenStore
 import org.publicvalue.multiplatform.oidc.tokenstore.TokenStore
@@ -25,7 +25,7 @@ import org.publicvalue.multiplatform.oidc.tokenstore.TokenStore
 @OptIn(ExperimentalOpenIdConnect::class)
 actual val platformModule: Module =
     module {
-        single<CodeAuthFlowFactory> { AndroidCodeAuthFlowFactoryHolder.factory }
+        single<CodeAuthFlowFactory> { AndroidCodeAuthFlowFactory() }
         single<TokenStore> { AndroidSettingsTokenStore(context = get<Context>()) }
         single(qualifier = OIDC_REDIRECT_URI_QUALIFIER) { CommonConfiguration.entraIdRedirectUri }
     }
