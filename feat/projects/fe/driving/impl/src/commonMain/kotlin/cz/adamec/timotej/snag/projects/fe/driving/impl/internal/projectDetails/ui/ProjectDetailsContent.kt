@@ -338,6 +338,7 @@ private fun LoadedProjectDetailsContent(
                                 onEndClick = {
                                     onEndInspection(inspection.id)
                                 },
+                                actionsEnabled = state.isProjectEditable,
                             )
                         }
                     }

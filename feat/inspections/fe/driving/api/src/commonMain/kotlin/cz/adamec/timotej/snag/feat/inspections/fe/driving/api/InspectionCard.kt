@@ -78,6 +78,7 @@ fun InspectionCard(
     onStartClick: () -> Unit,
     onEndClick: () -> Unit,
     modifier: Modifier = Modifier,
+    actionsEnabled: Boolean = true,
 ) {
     val timestampProvider = koinInject<TimestampProvider>()
     val now = timestampProvider.getNowTimestamp()
@@ -95,6 +96,7 @@ fun InspectionCard(
         onClick = onClick,
         onStartClick = onStartClick,
         onEndClick = onEndClick,
+        actionsEnabled = actionsEnabled,
         modifier = modifier,
     )
 }
@@ -107,6 +109,7 @@ private fun InspectionCardContent(
     onStartClick: () -> Unit,
     onEndClick: () -> Unit,
     modifier: Modifier = Modifier,
+    actionsEnabled: Boolean = true,
 ) {
     Card(
         modifier = modifier,
@@ -158,6 +161,7 @@ private fun InspectionCardContent(
 
             InspectionCardAction(
                 cardState = cardState,
+                enabled = actionsEnabled,
                 onStartClick = onStartClick,
                 onEndClick = onEndClick,
             )
@@ -168,6 +172,7 @@ private fun InspectionCardContent(
 @Composable
 private fun InspectionCardAction(
     cardState: CardStatus,
+    enabled: Boolean,
     onStartClick: () -> Unit,
     onEndClick: () -> Unit,
 ) {
@@ -176,6 +181,7 @@ private fun InspectionCardAction(
         CardStatus.NOT_STARTED ->
             Button(
                 onClick = onStartClick,
+                enabled = enabled,
                 modifier = Modifier.fillMaxWidth(),
                 contentPadding = ButtonDefaults.contentPaddingFor(buttonHeight),
             ) {
@@ -193,6 +199,7 @@ private fun InspectionCardAction(
         CardStatus.IN_PROGRESS ->
             Button(
                 onClick = onEndClick,
+                enabled = enabled,
                 modifier = Modifier.fillMaxWidth(),
                 contentPadding = ButtonDefaults.contentPaddingFor(buttonHeight),
             ) {
