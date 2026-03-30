@@ -16,9 +16,8 @@ import cz.adamec.timotej.snag.authorization.business.UserRole
 import cz.adamec.timotej.snag.configuration.be.AppConfiguration
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.network.be.test.jsonClient
-import cz.adamec.timotej.snag.routing.common.USER_ID_HEADER
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
-import cz.adamec.timotej.snag.users.be.driven.test.TEST_USER_ID
+import cz.adamec.timotej.snag.users.be.driven.test.asAuthenticated
 import cz.adamec.timotej.snag.users.be.driven.test.seedTestUser
 import cz.adamec.timotej.snag.users.be.driving.contract.PutUserApiDto
 import cz.adamec.timotej.snag.users.be.driving.contract.UserApiDto
@@ -26,7 +25,6 @@ import cz.adamec.timotej.snag.users.be.model.BackendUserData
 import cz.adamec.timotej.snag.users.be.ports.UsersDb
 import io.ktor.client.call.body
 import io.ktor.client.request.get
-import io.ktor.client.request.header
 import io.ktor.client.request.put
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
@@ -79,21 +77,27 @@ class UsersRouteTest : BackendKoinInitializedTest() {
     // endregion
 
     @Test
-    fun `GET users returns empty list when no users exist`() =
+    fun `GET users returns only auth user when no other users exist`() =
         testApplication {
             configureApp()
+            usersDb.seedTestUser()
             val client = jsonClient()
 
-            val response = client.get("/users")
+            val response =
+                client.get("/users") {
+                    asAuthenticated()
+                }
 
             assertEquals(HttpStatusCode.OK, response.status)
-            assertEquals(emptyList<UserApiDto>(), response.body<List<UserApiDto>>())
+            val body = response.body<List<UserApiDto>>()
+            assertEquals(1, body.size)
         }
 
     @Test
     fun `GET users returns all users`() =
         testApplication {
             configureApp()
+            usersDb.seedTestUser()
             usersDb.saveUser(
                 BackendUserData(
                     id = TEST_USER_1,
@@ -113,17 +117,21 @@ class UsersRouteTest : BackendKoinInitializedTest() {
             )
             val client = jsonClient()
 
-            val response = client.get("/users")
+            val response =
+                client.get("/users") {
+                    asAuthenticated()
+                }
 
             assertEquals(HttpStatusCode.OK, response.status)
             val body = response.body<List<UserApiDto>>()
-            assertEquals(2, body.size)
+            assertEquals(3, body.size)
         }
 
     @Test
     fun `GET users with since returns only modified users`() =
         testApplication {
             configureApp()
+            usersDb.seedTestUser()
             usersDb.saveUser(
                 BackendUserData(
                     id = TEST_USER_1,
@@ -142,7 +150,10 @@ class UsersRouteTest : BackendKoinInitializedTest() {
             )
             val client = jsonClient()
 
-            val response = client.get("/users?since=200")
+            val response =
+                client.get("/users?since=200") {
+                    asAuthenticated()
+                }
 
             assertEquals(HttpStatusCode.OK, response.status)
             val body = response.body<List<UserApiDto>>()
@@ -154,6 +165,7 @@ class UsersRouteTest : BackendKoinInitializedTest() {
     fun `GET users with since returns empty when none modified`() =
         testApplication {
             configureApp()
+            usersDb.seedTestUser()
             usersDb.saveUser(
                 BackendUserData(
                     id = TEST_USER_1,
@@ -164,7 +176,10 @@ class UsersRouteTest : BackendKoinInitializedTest() {
             )
             val client = jsonClient()
 
-            val response = client.get("/users?since=200")
+            val response =
+                client.get("/users?since=200") {
+                    asAuthenticated()
+                }
 
             assertEquals(HttpStatusCode.OK, response.status)
             assertEquals(emptyList<UserApiDto>(), response.body<List<UserApiDto>>())
@@ -174,6 +189,7 @@ class UsersRouteTest : BackendKoinInitializedTest() {
     fun `GET user by id returns user when found`() =
         testApplication {
             configureApp()
+            usersDb.seedTestUser()
             usersDb.saveUser(
                 BackendUserData(
                     id = TEST_USER_1,
@@ -185,7 +201,10 @@ class UsersRouteTest : BackendKoinInitializedTest() {
             )
             val client = jsonClient()
 
-            val response = client.get("/users/$TEST_USER_1")
+            val response =
+                client.get("/users/$TEST_USER_1") {
+                    asAuthenticated()
+                }
 
             assertEquals(HttpStatusCode.OK, response.status)
             val body = response.body<UserApiDto>()
@@ -198,9 +217,13 @@ class UsersRouteTest : BackendKoinInitializedTest() {
     fun `GET user by id returns 404 when not found`() =
         testApplication {
             configureApp()
+            usersDb.seedTestUser()
             val client = jsonClient()
 
-            val response = client.get("/users/$TEST_USER_1")
+            val response =
+                client.get("/users/$TEST_USER_1") {
+                    asAuthenticated()
+                }
 
             assertEquals(HttpStatusCode.NotFound, response.status)
         }
@@ -209,9 +232,13 @@ class UsersRouteTest : BackendKoinInitializedTest() {
     fun `GET user with invalid id returns 400`() =
         testApplication {
             configureApp()
+            usersDb.seedTestUser()
             val client = jsonClient()
 
-            val response = client.get("/users/not-a-uuid")
+            val response =
+                client.get("/users/not-a-uuid") {
+                    asAuthenticated()
+                }
 
             assertEquals(HttpStatusCode.BadRequest, response.status)
         }
@@ -226,7 +253,7 @@ class UsersRouteTest : BackendKoinInitializedTest() {
             val response =
                 client.put("/users/$TEST_USER_1") {
                     contentType(ContentType.Application.Json)
-                    header(USER_ID_HEADER, TEST_USER_ID.toString())
+                    asAuthenticated()
                     setBody(
                         PutUserApiDto(
                             authProviderId = "entra-1",
@@ -254,7 +281,7 @@ class UsersRouteTest : BackendKoinInitializedTest() {
             val response =
                 client.put("/users/$TEST_USER_1") {
                     contentType(ContentType.Application.Json)
-                    header(USER_ID_HEADER, TEST_USER_ID.toString())
+                    asAuthenticated()
                     setBody(
                         PutUserApiDto(
                             authProviderId = "entra-1",
@@ -288,7 +315,7 @@ class UsersRouteTest : BackendKoinInitializedTest() {
             val response =
                 client.put("/users/$TEST_USER_1") {
                     contentType(ContentType.Application.Json)
-                    header(USER_ID_HEADER, TEST_USER_ID.toString())
+                    asAuthenticated()
                     setBody(
                         PutUserApiDto(
                             authProviderId = "entra-1",
@@ -315,7 +342,7 @@ class UsersRouteTest : BackendKoinInitializedTest() {
             val response =
                 client.put("/users/not-a-uuid") {
                     contentType(ContentType.Application.Json)
-                    header(USER_ID_HEADER, TEST_USER_ID.toString())
+                    asAuthenticated()
                     setBody(
                         PutUserApiDto(
                             authProviderId = "entra-1",

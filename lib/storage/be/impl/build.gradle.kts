@@ -8,4 +8,6 @@ dependencies {
     implementation(libs.google.cloud.storage)
     testImplementation(project(":lib:configuration:be:api"))
     testImplementation(project(":lib:storage:be:test"))
+    testImplementation(project(":feat:users:be:driven:test"))
+    testImplementation(project(":feat:users:be:ports"))
 }

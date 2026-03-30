@@ -18,13 +18,11 @@ import cz.adamec.timotej.snag.clients.be.ports.ClientsDb
 import cz.adamec.timotej.snag.configuration.be.AppConfiguration
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.network.be.test.jsonClient
-import cz.adamec.timotej.snag.routing.common.USER_ID_HEADER
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
-import cz.adamec.timotej.snag.users.be.driven.test.TEST_USER_ID
+import cz.adamec.timotej.snag.users.be.driven.test.asAuthenticated
 import cz.adamec.timotej.snag.users.be.driven.test.seedTestUser
 import cz.adamec.timotej.snag.users.be.ports.UsersDb
 import io.ktor.client.request.get
-import io.ktor.client.request.header
 import io.ktor.client.request.put
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
@@ -85,7 +83,7 @@ class ClientsRouteTest : BackendKoinInitializedTest() {
             val response =
                 client.put("/clients/$TEST_CLIENT_ID") {
                     contentType(ContentType.Application.Json)
-                    header(USER_ID_HEADER, TECH_USER_ID.toString())
+                    asAuthenticated(userId = TECH_USER_ID)
                     setBody(
                         PutClientApiDto(
                             name = "Test",
@@ -101,11 +99,12 @@ class ClientsRouteTest : BackendKoinInitializedTest() {
     fun `GET clients works without restriction`() =
         testApplication {
             configureApp()
+            usersDb.seedTestUser()
             val client = jsonClient()
 
             val response =
                 client.get("/clients") {
-                    header(USER_ID_HEADER, TEST_USER_ID.toString())
+                    asAuthenticated()
                 }
 
             assertEquals(HttpStatusCode.OK, response.status)

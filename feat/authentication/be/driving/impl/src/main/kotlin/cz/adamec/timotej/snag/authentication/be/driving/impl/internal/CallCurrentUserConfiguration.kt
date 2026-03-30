@@ -32,11 +32,12 @@ internal class CallCurrentUserConfiguration(
     private val mockAuth: Boolean,
 ) : AppConfiguration {
     override fun Application.setup() {
-        if (!mockAuth) {
+        if (mockAuth) {
+            logger.info("Mock auth enabled, installing mock authentication provider.")
+            installMockAuthentication()
+        } else {
             logger.info("Installing JWT authentication with EntraID.")
             installJwtAuthentication()
-        } else {
-            logger.info("Mock auth enabled, skipping JWT authentication setup.")
         }
 
         logger.debug("Installing CallCurrentUserPlugin (mockAuth={}).", mockAuth)
@@ -47,6 +48,13 @@ internal class CallCurrentUserConfiguration(
                 mockAuth = mockAuth,
             ),
         )
+    }
+
+    private fun Application.installMockAuthentication() {
+        install(Authentication) {
+            mockHeader(getUserUseCase = getUserUseCase)
+        }
+        logger.info("Mock authentication installed.")
     }
 
     private fun Application.installJwtAuthentication() {

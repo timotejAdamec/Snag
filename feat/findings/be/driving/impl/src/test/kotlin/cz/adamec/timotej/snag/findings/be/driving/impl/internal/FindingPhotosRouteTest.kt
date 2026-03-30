@@ -24,17 +24,15 @@ import cz.adamec.timotej.snag.findings.be.ports.FindingsDb
 import cz.adamec.timotej.snag.network.be.test.jsonClient
 import cz.adamec.timotej.snag.projects.be.driven.test.seedTestProject
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
-import cz.adamec.timotej.snag.routing.common.USER_ID_HEADER
 import cz.adamec.timotej.snag.structures.be.driven.test.seedTestStructure
 import cz.adamec.timotej.snag.structures.be.ports.StructuresDb
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
-import cz.adamec.timotej.snag.users.be.driven.test.TEST_USER_ID
+import cz.adamec.timotej.snag.users.be.driven.test.asAuthenticated
 import cz.adamec.timotej.snag.users.be.driven.test.seedTestUser
 import cz.adamec.timotej.snag.users.be.model.BackendUserData
 import cz.adamec.timotej.snag.users.be.ports.UsersDb
 import io.ktor.client.call.body
 import io.ktor.client.request.get
-import io.ktor.client.request.header
 import io.ktor.client.request.patch
 import io.ktor.client.request.put
 import io.ktor.client.request.setBody
@@ -108,7 +106,7 @@ class FindingPhotosRouteTest : BackendKoinInitializedTest() {
 
             val response =
                 client.get("/findings/$FINDING_ID/photos?since=100") {
-                    header(USER_ID_HEADER, TECH_USER_ID.toString())
+                    asAuthenticated(userId = TECH_USER_ID)
                 }
 
             assertEquals(HttpStatusCode.Forbidden, response.status)
@@ -128,7 +126,7 @@ class FindingPhotosRouteTest : BackendKoinInitializedTest() {
             val response =
                 client.put("/findings/$FINDING_ID/photos/$PHOTO_ID_1") {
                     contentType(ContentType.Application.Json)
-                    header(USER_ID_HEADER, TEST_USER_ID.toString())
+                    asAuthenticated()
                     setBody(
                         PutFindingPhotoApiDto(
                             findingId = FINDING_ID,
@@ -154,7 +152,7 @@ class FindingPhotosRouteTest : BackendKoinInitializedTest() {
 
             client.put("/findings/$FINDING_ID/photos/$PHOTO_ID_1") {
                 contentType(ContentType.Application.Json)
-                header(USER_ID_HEADER, TEST_USER_ID.toString())
+                asAuthenticated()
                 setBody(
                     PutFindingPhotoApiDto(
                         findingId = FINDING_ID,
@@ -167,7 +165,7 @@ class FindingPhotosRouteTest : BackendKoinInitializedTest() {
             val response =
                 client.patch("/findings/$FINDING_ID/photos/$PHOTO_ID_1") {
                     contentType(ContentType.Application.Json)
-                    header(USER_ID_HEADER, TEST_USER_ID.toString())
+                    asAuthenticated()
                     setBody(DeleteFindingPhotoApiDto(deletedAt = Timestamp(200L)))
                 }
 
@@ -187,7 +185,7 @@ class FindingPhotosRouteTest : BackendKoinInitializedTest() {
 
             client.put("/findings/$FINDING_ID/photos/$PHOTO_ID_1") {
                 contentType(ContentType.Application.Json)
-                header(USER_ID_HEADER, TEST_USER_ID.toString())
+                asAuthenticated()
                 setBody(
                     PutFindingPhotoApiDto(
                         findingId = FINDING_ID,
@@ -198,7 +196,7 @@ class FindingPhotosRouteTest : BackendKoinInitializedTest() {
             }
             client.put("/findings/$FINDING_ID/photos/$PHOTO_ID_2") {
                 contentType(ContentType.Application.Json)
-                header(USER_ID_HEADER, TEST_USER_ID.toString())
+                asAuthenticated()
                 setBody(
                     PutFindingPhotoApiDto(
                         findingId = FINDING_ID,
@@ -210,7 +208,7 @@ class FindingPhotosRouteTest : BackendKoinInitializedTest() {
 
             val response =
                 client.get("/findings/$FINDING_ID/photos?since=100") {
-                    header(USER_ID_HEADER, TEST_USER_ID.toString())
+                    asAuthenticated()
                 }
 
             assertEquals(HttpStatusCode.OK, response.status)

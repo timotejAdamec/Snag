@@ -16,6 +16,9 @@ import cz.adamec.timotej.snag.configuration.be.AppConfiguration
 import cz.adamec.timotej.snag.lib.storage.be.test.FakeStorageService
 import cz.adamec.timotej.snag.network.be.test.jsonClient
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
+import cz.adamec.timotej.snag.users.be.driven.test.asAuthenticated
+import cz.adamec.timotej.snag.users.be.driven.test.seedTestUser
+import cz.adamec.timotej.snag.users.be.ports.UsersDb
 import io.ktor.client.call.body
 import io.ktor.client.request.delete
 import io.ktor.client.request.forms.formData
@@ -32,6 +35,7 @@ import kotlin.test.assertTrue
 
 class FileRouteTest : BackendKoinInitializedTest() {
     private val fakeStorageService: FakeStorageService by inject()
+    private val usersDb: UsersDb by inject()
 
     private fun ApplicationTestBuilder.configureApp() {
         val configurations = getKoin().getAll<AppConfiguration>()
@@ -46,6 +50,7 @@ class FileRouteTest : BackendKoinInitializedTest() {
     fun `POST file upload returns URL`() =
         testApplication {
             configureApp()
+            usersDb.seedTestUser()
             val client = jsonClient()
 
             val response =
@@ -63,7 +68,9 @@ class FileRouteTest : BackendKoinInitializedTest() {
                             )
                             append("directory", "projects/abc/structures/xyz")
                         },
-                )
+                ) {
+                    asAuthenticated()
+                }
 
             assertEquals(HttpStatusCode.OK, response.status)
             val body = response.body<Map<String, String>>()
@@ -76,6 +83,7 @@ class FileRouteTest : BackendKoinInitializedTest() {
     fun `POST file upload without file part returns 400`() =
         testApplication {
             configureApp()
+            usersDb.seedTestUser()
             val client = jsonClient()
 
             val response =
@@ -85,7 +93,9 @@ class FileRouteTest : BackendKoinInitializedTest() {
                         formData {
                             append("directory", "some-dir")
                         },
-                )
+                ) {
+                    asAuthenticated()
+                }
 
             assertEquals(HttpStatusCode.BadRequest, response.status)
         }
@@ -94,6 +104,7 @@ class FileRouteTest : BackendKoinInitializedTest() {
     fun `POST file upload without directory part returns 400`() =
         testApplication {
             configureApp()
+            usersDb.seedTestUser()
             val client = jsonClient()
 
             val response =
@@ -110,7 +121,9 @@ class FileRouteTest : BackendKoinInitializedTest() {
                                 },
                             )
                         },
-                )
+                ) {
+                    asAuthenticated()
+                }
 
             assertEquals(HttpStatusCode.BadRequest, response.status)
         }
@@ -119,10 +132,13 @@ class FileRouteTest : BackendKoinInitializedTest() {
     fun `DELETE file returns 204`() =
         testApplication {
             configureApp()
+            usersDb.seedTestUser()
             val client = jsonClient()
 
             val response =
-                client.delete("/files?url=https://storage.test/test-uploads/1.png")
+                client.delete("/files?url=https://storage.test/test-uploads/1.png") {
+                    asAuthenticated()
+                }
 
             assertEquals(HttpStatusCode.NoContent, response.status)
             assertEquals(1, fakeStorageService.deletedUrls.size)
@@ -136,9 +152,13 @@ class FileRouteTest : BackendKoinInitializedTest() {
     fun `DELETE file without url param returns 400`() =
         testApplication {
             configureApp()
+            usersDb.seedTestUser()
             val client = jsonClient()
 
-            val response = client.delete("/files")
+            val response =
+                client.delete("/files") {
+                    asAuthenticated()
+                }
 
             assertEquals(HttpStatusCode.BadRequest, response.status)
         }

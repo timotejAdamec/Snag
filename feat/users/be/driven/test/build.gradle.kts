@@ -13,3 +13,8 @@
 plugins {
     alias(libs.plugins.snagBackendModule)
 }
+
+dependencies {
+    implementation(project(":lib:routing:common"))
+    implementation(libs.ktor.client.core)
+}
