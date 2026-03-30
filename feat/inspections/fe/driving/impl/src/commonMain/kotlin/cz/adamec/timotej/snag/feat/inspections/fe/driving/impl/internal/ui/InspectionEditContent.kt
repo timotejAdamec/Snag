@@ -292,6 +292,7 @@ internal fun InspectionEditContent(
         ) {
             OutlinedTextField(
                 modifier = Modifier.fillMaxWidth(),
+                enabled = state.canEdit,
                 label = { Text(text = stringResource(Res.string.participants_label)) },
                 leadingIcon = {
                     Icon(
@@ -304,6 +305,7 @@ internal fun InspectionEditContent(
             )
             OutlinedTextField(
                 modifier = Modifier.fillMaxWidth(),
+                enabled = state.canEdit,
                 label = { Text(text = stringResource(Res.string.climate_label)) },
                 leadingIcon = {
                     Icon(
@@ -326,6 +328,7 @@ internal fun InspectionEditContent(
                 },
                 onEditClick = { startedAtPickerStep = PickerStep.DateStep },
                 onClearClick = { onStartedAtChange(null) },
+                enabled = state.canEdit,
                 modifier = Modifier.fillMaxWidth(),
             )
             DateTimePickerField(
@@ -340,10 +343,12 @@ internal fun InspectionEditContent(
                 },
                 onEditClick = { endedAtPickerStep = PickerStep.DateStep },
                 onClearClick = { onEndedAtChange(null) },
+                enabled = state.canEdit,
                 modifier = Modifier.fillMaxWidth(),
             )
             OutlinedTextField(
                 modifier = Modifier.fillMaxWidth(),
+                enabled = state.canEdit,
                 label = { Text(text = stringResource(Res.string.note_label)) },
                 leadingIcon = {
                     Icon(
