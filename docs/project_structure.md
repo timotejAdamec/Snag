@@ -74,7 +74,7 @@ Each feature/core/library module/directory can be split into submodules if there
       adapter layer (not in the core `business` layer).
 - `impl` — Production implementations. Depends on `api`/`contract`.
 - `test` — In-memory and other non-production unit-test-friendly implementations for use instead
-  of `impl`. In features, it is typical for the `driven` layer so that tests in `driving` and `app`
+  of or adjusting `impl`. In features, it is typical for the `driven` layer so that tests in `driving` and `app`
   layers can run with non-production unit-test-friendly adapter `ports`.
 
 ## Dependency directions
@@ -85,9 +85,8 @@ driving -
          -> app -> business
 driven  -
 
-impl -
-       -> api
-test -
+impl -> api
+test -> (impl) -> api
 ```
 
 ## Modules configurations
