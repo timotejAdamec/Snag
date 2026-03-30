@@ -16,9 +16,12 @@ import kotlinx.coroutines.ExperimentalForInheritanceCoroutinesApi
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.StateFlow
 
+private val NOT_SET = Any()
+
 /**
  * Synchronous [StateFlow] mapping — [value] always returns the current
  * mapped value of the upstream flow without requiring a coroutine scope.
+ * Emissions are deduplicated: consecutive equal mapped values are not re-emitted.
  */
 @OptIn(ExperimentalForInheritanceCoroutinesApi::class)
 fun <T, R> StateFlow<T>.mapState(transform: (T) -> R): StateFlow<R> =
@@ -28,6 +31,13 @@ fun <T, R> StateFlow<T>.mapState(transform: (T) -> R): StateFlow<R> =
         override val replayCache: List<R> get() = this@mapState.replayCache.map(transform)
 
         override suspend fun collect(collector: FlowCollector<R>): Nothing {
-            this@mapState.collect { collector.emit(transform(it)) }
+            var prev: Any? = NOT_SET
+            this@mapState.collect {
+                val mapped = transform(it)
+                if (prev == NOT_SET || prev != mapped) {
+                    prev = mapped
+                    collector.emit(mapped)
+                }
+            }
         }
     }

@@ -19,16 +19,26 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import org.koin.dsl.module
+import org.publicvalue.multiplatform.oidc.ExperimentalOpenIdConnect
+import org.publicvalue.multiplatform.oidc.appsupport.AndroidCodeAuthFlowFactory
+import org.publicvalue.multiplatform.oidc.flows.CodeAuthFlowFactory
 
+@OptIn(ExperimentalOpenIdConnect::class)
 class MainActivity : ComponentActivity() {
+    private val codeAuthFlowFactory = AndroidCodeAuthFlowFactory()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
+        codeAuthFlowFactory.registerActivity(this)
 
         setContent {
             App(
                 extraModules = listOf(
-                    module { single<ComponentActivity> { this@MainActivity } },
+                    module {
+                        single<ComponentActivity> { this@MainActivity }
+                        single<CodeAuthFlowFactory> { codeAuthFlowFactory }
+                    },
                 ),
             )
         }
