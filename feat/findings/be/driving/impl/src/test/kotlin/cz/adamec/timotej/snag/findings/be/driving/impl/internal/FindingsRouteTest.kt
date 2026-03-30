@@ -26,13 +26,13 @@ import cz.adamec.timotej.snag.findings.be.driving.contract.FindingApiDto
 import cz.adamec.timotej.snag.findings.be.driving.contract.PutFindingApiDto
 import cz.adamec.timotej.snag.findings.be.driving.contract.RelativeCoordinateApiDto
 import cz.adamec.timotej.snag.findings.be.ports.FindingsDb
-import cz.adamec.timotej.snag.network.be.test.authenticatedAs
 import cz.adamec.timotej.snag.network.be.test.jsonClient
 import cz.adamec.timotej.snag.projects.be.driven.test.seedTestProject
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
 import cz.adamec.timotej.snag.structures.be.driven.test.seedTestStructure
 import cz.adamec.timotej.snag.structures.be.ports.StructuresDb
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
+import cz.adamec.timotej.snag.users.be.driven.test.asAuthenticated
 import cz.adamec.timotej.snag.users.be.driven.test.seedTestUser
 import cz.adamec.timotej.snag.users.be.model.BackendUserData
 import cz.adamec.timotej.snag.users.be.ports.UsersDb
@@ -108,7 +108,7 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
 
             val response =
                 client.get("/structures/$STRUCTURE_ID/findings") {
-                    authenticatedAs(userId = TECH_USER_ID)
+                    asAuthenticated(userId = TECH_USER_ID)
                 }
 
             assertEquals(HttpStatusCode.Forbidden, response.status)
@@ -137,7 +137,7 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
             val response =
                 client.patch("/findings/$TEST_ID_1") {
                     contentType(ContentType.Application.Json)
-                    authenticatedAs()
+                    asAuthenticated()
                     setBody(DeleteFindingApiDto(deletedAt = Timestamp(200L)))
                 }
 
@@ -160,13 +160,13 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
 
             client.patch("/findings/$TEST_ID_1") {
                 contentType(ContentType.Application.Json)
-                authenticatedAs()
+                asAuthenticated()
                 setBody(DeleteFindingApiDto(deletedAt = Timestamp(200L)))
             }
 
             val getResponse =
                 client.get("/structures/$STRUCTURE_ID/findings") {
-                    authenticatedAs()
+                    asAuthenticated()
                 }
             assertEquals(HttpStatusCode.OK, getResponse.status)
             val body = getResponse.body<List<FindingApiDto>>()
@@ -194,7 +194,7 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
             val response =
                 client.patch("/findings/$TEST_ID_1") {
                     contentType(ContentType.Application.Json)
-                    authenticatedAs()
+                    asAuthenticated()
                     setBody(DeleteFindingApiDto(deletedAt = Timestamp(200L)))
                 }
 
@@ -213,7 +213,7 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
             val response =
                 client.patch("/findings/not-a-uuid") {
                     contentType(ContentType.Application.Json)
-                    authenticatedAs()
+                    asAuthenticated()
                     setBody(DeleteFindingApiDto(deletedAt = Timestamp(200L)))
                 }
 
@@ -237,7 +237,7 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
             val response =
                 client.patch("/findings/$TEST_ID_1") {
                     contentType(ContentType.Application.Json)
-                    authenticatedAs()
+                    asAuthenticated()
                     setBody("{\"invalid\": true}")
                 }
 
@@ -257,7 +257,7 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
 
             val response =
                 client.get("/structures/$STRUCTURE_ID/findings") {
-                    authenticatedAs()
+                    asAuthenticated()
                 }
 
             assertEquals(HttpStatusCode.OK, response.status)
@@ -289,7 +289,7 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
 
             val response =
                 client.get("/structures/$STRUCTURE_ID/findings") {
-                    authenticatedAs()
+                    asAuthenticated()
                 }
 
             assertEquals(HttpStatusCode.OK, response.status)
@@ -325,7 +325,7 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
 
             val response =
                 client.get("/structures/$STRUCTURE_ID/findings") {
-                    authenticatedAs()
+                    asAuthenticated()
                 }
 
             assertEquals(HttpStatusCode.OK, response.status)
@@ -358,7 +358,7 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
 
             val response =
                 client.get("/structures/$STRUCTURE_ID/findings?since=100") {
-                    authenticatedAs()
+                    asAuthenticated()
                 }
 
             assertEquals(HttpStatusCode.OK, response.status)
@@ -390,7 +390,7 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
 
             val response =
                 client.get("/structures/$STRUCTURE_ID/findings?since=100") {
-                    authenticatedAs()
+                    asAuthenticated()
                 }
 
             assertEquals(HttpStatusCode.OK, response.status)
@@ -408,7 +408,7 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
 
             val response =
                 client.get("/structures/not-a-uuid/findings") {
-                    authenticatedAs()
+                    asAuthenticated()
                 }
 
             assertEquals(HttpStatusCode.BadRequest, response.status)
@@ -428,7 +428,7 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
             val response =
                 client.put("/structures/$STRUCTURE_ID/findings/$TEST_ID_1") {
                     contentType(ContentType.Application.Json)
-                    authenticatedAs()
+                    asAuthenticated()
                     setBody(
                         PutFindingApiDto(
                             structureId = STRUCTURE_ID,
@@ -463,7 +463,7 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
             val response =
                 client.put("/structures/$STRUCTURE_ID/findings/$TEST_ID_1") {
                     contentType(ContentType.Application.Json)
-                    authenticatedAs()
+                    asAuthenticated()
                     setBody(
                         PutFindingApiDto(
                             structureId = STRUCTURE_ID,
@@ -506,7 +506,7 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
             val response =
                 client.put("/structures/$STRUCTURE_ID/findings/$TEST_ID_1") {
                     contentType(ContentType.Application.Json)
-                    authenticatedAs()
+                    asAuthenticated()
                     setBody(
                         PutFindingApiDto(
                             structureId = STRUCTURE_ID,
@@ -537,7 +537,7 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
             val response =
                 client.put("/structures/$STRUCTURE_ID/findings/not-a-uuid") {
                     contentType(ContentType.Application.Json)
-                    authenticatedAs()
+                    asAuthenticated()
                     setBody(
                         PutFindingApiDto(
                             structureId = STRUCTURE_ID,
@@ -565,7 +565,7 @@ class FindingsRouteTest : BackendKoinInitializedTest() {
             val response =
                 client.put("/structures/$STRUCTURE_ID/findings/$TEST_ID_1") {
                     contentType(ContentType.Application.Json)
-                    authenticatedAs()
+                    asAuthenticated()
                     setBody("{\"invalid\": true}")
                 }
 

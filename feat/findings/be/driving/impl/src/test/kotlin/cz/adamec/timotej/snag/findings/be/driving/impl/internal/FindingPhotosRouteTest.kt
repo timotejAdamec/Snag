@@ -21,13 +21,13 @@ import cz.adamec.timotej.snag.findings.be.driving.contract.FindingPhotoApiDto
 import cz.adamec.timotej.snag.findings.be.driving.contract.PutFindingPhotoApiDto
 import cz.adamec.timotej.snag.findings.be.ports.FindingPhotosDb
 import cz.adamec.timotej.snag.findings.be.ports.FindingsDb
-import cz.adamec.timotej.snag.network.be.test.authenticatedAs
 import cz.adamec.timotej.snag.network.be.test.jsonClient
 import cz.adamec.timotej.snag.projects.be.driven.test.seedTestProject
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
 import cz.adamec.timotej.snag.structures.be.driven.test.seedTestStructure
 import cz.adamec.timotej.snag.structures.be.ports.StructuresDb
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
+import cz.adamec.timotej.snag.users.be.driven.test.asAuthenticated
 import cz.adamec.timotej.snag.users.be.driven.test.seedTestUser
 import cz.adamec.timotej.snag.users.be.model.BackendUserData
 import cz.adamec.timotej.snag.users.be.ports.UsersDb
@@ -106,7 +106,7 @@ class FindingPhotosRouteTest : BackendKoinInitializedTest() {
 
             val response =
                 client.get("/findings/$FINDING_ID/photos?since=100") {
-                    authenticatedAs(userId = TECH_USER_ID)
+                    asAuthenticated(userId = TECH_USER_ID)
                 }
 
             assertEquals(HttpStatusCode.Forbidden, response.status)
@@ -126,7 +126,7 @@ class FindingPhotosRouteTest : BackendKoinInitializedTest() {
             val response =
                 client.put("/findings/$FINDING_ID/photos/$PHOTO_ID_1") {
                     contentType(ContentType.Application.Json)
-                    authenticatedAs()
+                    asAuthenticated()
                     setBody(
                         PutFindingPhotoApiDto(
                             findingId = FINDING_ID,
@@ -152,7 +152,7 @@ class FindingPhotosRouteTest : BackendKoinInitializedTest() {
 
             client.put("/findings/$FINDING_ID/photos/$PHOTO_ID_1") {
                 contentType(ContentType.Application.Json)
-                authenticatedAs()
+                asAuthenticated()
                 setBody(
                     PutFindingPhotoApiDto(
                         findingId = FINDING_ID,
@@ -165,7 +165,7 @@ class FindingPhotosRouteTest : BackendKoinInitializedTest() {
             val response =
                 client.patch("/findings/$FINDING_ID/photos/$PHOTO_ID_1") {
                     contentType(ContentType.Application.Json)
-                    authenticatedAs()
+                    asAuthenticated()
                     setBody(DeleteFindingPhotoApiDto(deletedAt = Timestamp(200L)))
                 }
 
@@ -185,7 +185,7 @@ class FindingPhotosRouteTest : BackendKoinInitializedTest() {
 
             client.put("/findings/$FINDING_ID/photos/$PHOTO_ID_1") {
                 contentType(ContentType.Application.Json)
-                authenticatedAs()
+                asAuthenticated()
                 setBody(
                     PutFindingPhotoApiDto(
                         findingId = FINDING_ID,
@@ -196,7 +196,7 @@ class FindingPhotosRouteTest : BackendKoinInitializedTest() {
             }
             client.put("/findings/$FINDING_ID/photos/$PHOTO_ID_2") {
                 contentType(ContentType.Application.Json)
-                authenticatedAs()
+                asAuthenticated()
                 setBody(
                     PutFindingPhotoApiDto(
                         findingId = FINDING_ID,
@@ -208,7 +208,7 @@ class FindingPhotosRouteTest : BackendKoinInitializedTest() {
 
             val response =
                 client.get("/findings/$FINDING_ID/photos?since=100") {
-                    authenticatedAs()
+                    asAuthenticated()
                 }
 
             assertEquals(HttpStatusCode.OK, response.status)

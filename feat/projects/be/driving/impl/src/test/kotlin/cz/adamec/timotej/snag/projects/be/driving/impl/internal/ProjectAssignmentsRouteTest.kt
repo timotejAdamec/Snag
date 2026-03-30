@@ -15,13 +15,13 @@ package cz.adamec.timotej.snag.projects.be.driving.impl.internal
 import cz.adamec.timotej.snag.authorization.business.UserRole
 import cz.adamec.timotej.snag.configuration.be.AppConfiguration
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
-import cz.adamec.timotej.snag.network.be.test.authenticatedAs
 import cz.adamec.timotej.snag.network.be.test.jsonClient
 import cz.adamec.timotej.snag.projects.be.model.BackendProjectData
 import cz.adamec.timotej.snag.projects.be.ports.ProjectAssignmentsDb
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
 import cz.adamec.timotej.snag.users.be.driven.test.TEST_USER_ID
+import cz.adamec.timotej.snag.users.be.driven.test.asAuthenticated
 import cz.adamec.timotej.snag.users.be.driven.test.seedTestUser
 import cz.adamec.timotej.snag.users.be.driving.contract.UserApiDto
 import cz.adamec.timotej.snag.users.be.model.BackendUserData
@@ -74,7 +74,7 @@ class ProjectAssignmentsRouteTest : BackendKoinInitializedTest() {
 
             val response =
                 client.get("/projects/$TEST_PROJECT_1/assignments") {
-                    authenticatedAs()
+                    asAuthenticated()
                 }
 
             assertEquals(HttpStatusCode.OK, response.status)
@@ -112,7 +112,7 @@ class ProjectAssignmentsRouteTest : BackendKoinInitializedTest() {
 
             val response =
                 client.get("/projects/$TEST_PROJECT_1/assignments") {
-                    authenticatedAs(userId = technicianId)
+                    asAuthenticated(userId = technicianId)
                 }
 
             assertEquals(HttpStatusCode.Forbidden, response.status)
@@ -136,7 +136,7 @@ class ProjectAssignmentsRouteTest : BackendKoinInitializedTest() {
 
             val response =
                 client.get("/projects/$TEST_PROJECT_1/assignments") {
-                    authenticatedAs()
+                    asAuthenticated()
                 }
 
             assertEquals(HttpStatusCode.OK, response.status)
@@ -162,7 +162,7 @@ class ProjectAssignmentsRouteTest : BackendKoinInitializedTest() {
 
             val response =
                 client.put("/projects/$TEST_PROJECT_1/assignments/$TEST_USER_1") {
-                    authenticatedAs()
+                    asAuthenticated()
                 }
 
             assertEquals(HttpStatusCode.NoContent, response.status)
@@ -187,7 +187,7 @@ class ProjectAssignmentsRouteTest : BackendKoinInitializedTest() {
 
             val response =
                 client.put("/projects/$TEST_PROJECT_1/assignments/$TEST_USER_1") {
-                    authenticatedAs(userId = technicianId)
+                    asAuthenticated(userId = technicianId)
                 }
 
             assertEquals(HttpStatusCode.Forbidden, response.status)
@@ -209,11 +209,11 @@ class ProjectAssignmentsRouteTest : BackendKoinInitializedTest() {
             val client = jsonClient()
 
             client.put("/projects/$TEST_PROJECT_1/assignments/$TEST_USER_1") {
-                authenticatedAs()
+                asAuthenticated()
             }
             val response =
                 client.put("/projects/$TEST_PROJECT_1/assignments/$TEST_USER_1") {
-                    authenticatedAs()
+                    asAuthenticated()
                 }
 
             assertEquals(HttpStatusCode.NoContent, response.status)
@@ -237,7 +237,7 @@ class ProjectAssignmentsRouteTest : BackendKoinInitializedTest() {
 
             val response =
                 client.delete("/projects/$TEST_PROJECT_1/assignments/$TEST_USER_1") {
-                    authenticatedAs()
+                    asAuthenticated()
                 }
 
             assertEquals(HttpStatusCode.NoContent, response.status)
@@ -262,7 +262,7 @@ class ProjectAssignmentsRouteTest : BackendKoinInitializedTest() {
 
             val response =
                 client.delete("/projects/$TEST_PROJECT_1/assignments/$TEST_USER_1") {
-                    authenticatedAs(userId = workerId)
+                    asAuthenticated(userId = workerId)
                 }
 
             assertEquals(HttpStatusCode.Forbidden, response.status)

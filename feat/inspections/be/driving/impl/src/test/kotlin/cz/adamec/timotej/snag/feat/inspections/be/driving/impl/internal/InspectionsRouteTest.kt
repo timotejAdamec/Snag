@@ -19,11 +19,11 @@ import cz.adamec.timotej.snag.feat.inspections.be.driven.test.seedTestInspection
 import cz.adamec.timotej.snag.feat.inspections.be.driving.contract.DeleteInspectionApiDto
 import cz.adamec.timotej.snag.feat.inspections.be.driving.contract.InspectionApiDto
 import cz.adamec.timotej.snag.feat.inspections.be.ports.InspectionsDb
-import cz.adamec.timotej.snag.network.be.test.authenticatedAs
 import cz.adamec.timotej.snag.network.be.test.jsonClient
 import cz.adamec.timotej.snag.projects.be.driven.test.seedTestProject
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
+import cz.adamec.timotej.snag.users.be.driven.test.asAuthenticated
 import cz.adamec.timotej.snag.users.be.driven.test.seedTestUser
 import cz.adamec.timotej.snag.users.be.model.BackendUserData
 import cz.adamec.timotej.snag.users.be.ports.UsersDb
@@ -95,7 +95,7 @@ class InspectionsRouteTest : BackendKoinInitializedTest() {
 
             val response =
                 client.get("/projects/$PROJECT_ID/inspections") {
-                    authenticatedAs(userId = TECH_USER_ID)
+                    asAuthenticated(userId = TECH_USER_ID)
                 }
 
             assertEquals(HttpStatusCode.Forbidden, response.status)
@@ -122,7 +122,7 @@ class InspectionsRouteTest : BackendKoinInitializedTest() {
             val response =
                 client.delete("/inspections/$TEST_ID_1") {
                     contentType(ContentType.Application.Json)
-                    authenticatedAs()
+                    asAuthenticated()
                     setBody(DeleteInspectionApiDto(deletedAt = Timestamp(200L)))
                 }
 
@@ -145,7 +145,7 @@ class InspectionsRouteTest : BackendKoinInitializedTest() {
             val response =
                 client.delete("/inspections/$TEST_ID_1") {
                     contentType(ContentType.Application.Json)
-                    authenticatedAs()
+                    asAuthenticated()
                     setBody(DeleteInspectionApiDto(deletedAt = Timestamp(200L)))
                 }
 
@@ -164,7 +164,7 @@ class InspectionsRouteTest : BackendKoinInitializedTest() {
             val response =
                 client.delete("/inspections/not-a-uuid") {
                     contentType(ContentType.Application.Json)
-                    authenticatedAs()
+                    asAuthenticated()
                     setBody(DeleteInspectionApiDto(deletedAt = Timestamp(200L)))
                 }
 
@@ -188,7 +188,7 @@ class InspectionsRouteTest : BackendKoinInitializedTest() {
             val response =
                 client.delete("/inspections/$TEST_ID_1") {
                     contentType(ContentType.Application.Json)
-                    authenticatedAs()
+                    asAuthenticated()
                     setBody("{\"invalid\": true}")
                 }
 

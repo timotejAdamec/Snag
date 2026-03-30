@@ -14,9 +14,9 @@ package cz.adamec.timotej.snag.lib.storage.be.impl.internal
 
 import cz.adamec.timotej.snag.configuration.be.AppConfiguration
 import cz.adamec.timotej.snag.lib.storage.be.test.FakeStorageService
-import cz.adamec.timotej.snag.network.be.test.authenticatedAs
 import cz.adamec.timotej.snag.network.be.test.jsonClient
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
+import cz.adamec.timotej.snag.users.be.driven.test.asAuthenticated
 import cz.adamec.timotej.snag.users.be.driven.test.seedTestUser
 import cz.adamec.timotej.snag.users.be.ports.UsersDb
 import io.ktor.client.call.body
@@ -69,7 +69,7 @@ class FileRouteTest : BackendKoinInitializedTest() {
                             append("directory", "projects/abc/structures/xyz")
                         },
                 ) {
-                    authenticatedAs()
+                    asAuthenticated()
                 }
 
             assertEquals(HttpStatusCode.OK, response.status)
@@ -94,7 +94,7 @@ class FileRouteTest : BackendKoinInitializedTest() {
                             append("directory", "some-dir")
                         },
                 ) {
-                    authenticatedAs()
+                    asAuthenticated()
                 }
 
             assertEquals(HttpStatusCode.BadRequest, response.status)
@@ -122,7 +122,7 @@ class FileRouteTest : BackendKoinInitializedTest() {
                             )
                         },
                 ) {
-                    authenticatedAs()
+                    asAuthenticated()
                 }
 
             assertEquals(HttpStatusCode.BadRequest, response.status)
@@ -137,7 +137,7 @@ class FileRouteTest : BackendKoinInitializedTest() {
 
             val response =
                 client.delete("/files?url=https://storage.test/test-uploads/1.png") {
-                    authenticatedAs()
+                    asAuthenticated()
                 }
 
             assertEquals(HttpStatusCode.NoContent, response.status)
@@ -157,7 +157,7 @@ class FileRouteTest : BackendKoinInitializedTest() {
 
             val response =
                 client.delete("/files") {
-                    authenticatedAs()
+                    asAuthenticated()
                 }
 
             assertEquals(HttpStatusCode.BadRequest, response.status)
