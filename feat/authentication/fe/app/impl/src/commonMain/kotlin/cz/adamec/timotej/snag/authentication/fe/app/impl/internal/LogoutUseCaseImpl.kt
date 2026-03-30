@@ -13,6 +13,7 @@
 package cz.adamec.timotej.snag.authentication.fe.app.impl.internal
 
 import cz.adamec.timotej.snag.authentication.fe.app.api.LogoutUseCase
+import cz.adamec.timotej.snag.authentication.fe.app.impl.internal.LH.logger
 import cz.adamec.timotej.snag.authentication.fe.ports.AuthTokenProvider
 import cz.adamec.timotej.snag.core.foundation.common.runCatchingCancellable
 
@@ -20,8 +21,13 @@ internal class LogoutUseCaseImpl(
     private val authTokenProvider: AuthTokenProvider,
 ) : LogoutUseCase {
     override suspend fun invoke() {
+        logger.d { "Executing logout." }
         runCatchingCancellable {
             authTokenProvider.logout()
+        }.onFailure { e ->
+            logger.e(throwable = e) { "Logout failed." }
+        }.onSuccess {
+            logger.d { "Logout completed." }
         }
     }
 }

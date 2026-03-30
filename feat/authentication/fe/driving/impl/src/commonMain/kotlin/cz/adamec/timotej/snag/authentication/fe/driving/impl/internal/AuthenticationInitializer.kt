@@ -13,12 +13,15 @@
 package cz.adamec.timotej.snag.authentication.fe.driving.impl.internal
 
 import cz.adamec.timotej.snag.authentication.fe.app.api.RestoreSessionUseCase
+import cz.adamec.timotej.snag.authentication.fe.driving.impl.internal.LH.logger
 import cz.adamec.timotej.snag.core.foundation.fe.Initializer
 
 internal class AuthenticationInitializer(
     private val restoreSessionUseCase: RestoreSessionUseCase,
 ) : Initializer {
     override suspend fun init() {
+        logger.d { "Initializing authentication, restoring session." }
         restoreSessionUseCase()
+        logger.d { "Authentication initialization completed." }
     }
 }

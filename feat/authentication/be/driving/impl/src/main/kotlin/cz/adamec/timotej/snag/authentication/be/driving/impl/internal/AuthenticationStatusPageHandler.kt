@@ -13,6 +13,7 @@
 package cz.adamec.timotej.snag.authentication.be.driving.impl.internal
 
 import cz.adamec.timotej.snag.authentication.be.driving.api.UnauthenticatedException
+import cz.adamec.timotej.snag.authentication.be.driving.impl.internal.LH.logger
 import cz.adamec.timotej.snag.configuration.be.AppStatusPageHandler
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.plugins.statuspages.StatusPagesConfig
@@ -21,6 +22,7 @@ import io.ktor.server.response.respond
 internal class AuthenticationStatusPageHandler : AppStatusPageHandler {
     override fun StatusPagesConfig.setup() {
         exception<UnauthenticatedException> { call, _ ->
+            logger.warn("Unauthenticated request: {} {}.", call.request.local.method.value, call.request.local.uri)
             call.respond(
                 status = HttpStatusCode.Unauthorized,
                 message = "Authentication required.",

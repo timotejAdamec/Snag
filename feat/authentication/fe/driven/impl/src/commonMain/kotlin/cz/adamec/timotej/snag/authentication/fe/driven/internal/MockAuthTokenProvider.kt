@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.authentication.fe.driven.internal
 
+import cz.adamec.timotej.snag.authentication.fe.driven.internal.LH.logger
 import cz.adamec.timotej.snag.authentication.fe.ports.AuthState
 import cz.adamec.timotej.snag.authentication.fe.ports.AuthTokenProvider
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,15 +25,22 @@ internal class MockAuthTokenProvider : AuthTokenProvider {
         )
     override val authState: StateFlow<AuthState> = _authState
 
-    override suspend fun restoreSession() = Unit
+    override suspend fun restoreSession() {
+        logger.d { "Mock: restoring session (no-op, already authenticated)." }
+    }
 
     override suspend fun login() {
+        logger.d { "Mock: logging in with authProviderId=$MOCK_AUTH_PROVIDER_ID." }
         _authState.value = AuthState.Authenticated(authProviderId = MOCK_AUTH_PROVIDER_ID)
     }
 
-    override suspend fun getAccessToken(): String? = MOCK_USER_ID
+    override suspend fun getAccessToken(): String? {
+        logger.d { "Mock: returning mock user ID as access token." }
+        return MOCK_USER_ID
+    }
 
     override suspend fun logout() {
+        logger.d { "Mock: logging out." }
         _authState.value = AuthState.Unauthenticated
     }
 

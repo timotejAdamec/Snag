@@ -13,6 +13,7 @@
 package cz.adamec.timotej.snag.authentication.be.driving.impl.internal
 
 import com.auth0.jwk.JwkProviderBuilder
+import cz.adamec.timotej.snag.authentication.be.driving.impl.internal.LH.logger
 import cz.adamec.timotej.snag.configuration.be.AppConfiguration
 import cz.adamec.timotej.snag.configuration.common.CommonConfiguration
 import cz.adamec.timotej.snag.users.be.app.api.GetOrCreateUserByAuthProviderIdUseCase
@@ -31,9 +32,13 @@ internal class CallCurrentUserConfiguration(
 ) : AppConfiguration {
     override fun Application.setup() {
         if (!CommonConfiguration.mockAuth) {
+            logger.info("Installing JWT authentication with EntraID.")
             installJwtAuthentication()
+        } else {
+            logger.info("Mock auth enabled, skipping JWT authentication setup.")
         }
 
+        logger.debug("Installing CallCurrentUserPlugin (mockAuth={}).", CommonConfiguration.mockAuth)
         install(
             callCurrentUserPlugin(
                 getUserUseCase = getUserUseCase,
@@ -49,6 +54,8 @@ internal class CallCurrentUserConfiguration(
         val issuer = "https://login.microsoftonline.com/$tenantId/v2.0"
         val jwksUri = "https://login.microsoftonline.com/$tenantId/discovery/v2.0/keys"
 
+        logger.debug("Configuring JWT: issuer={}, clientId={}, jwksUri={}.", issuer, clientId, jwksUri)
+
         val jwkProvider =
             JwkProviderBuilder(URI(jwksUri).toURL())
                 .cached(JWKS_CACHE_SIZE, JWKS_CACHE_EXPIRY_HOURS, TimeUnit.HOURS)
@@ -63,13 +70,18 @@ internal class CallCurrentUserConfiguration(
                     withAudience(clientId)
                 }
                 validate { credential ->
-                    credential.payload
-                        .getClaim("oid")
-                        ?.asString()
-                        ?.let { JWTPrincipal(credential.payload) }
+                    val oid = credential.payload.getClaim("oid")?.asString()
+                    if (oid != null) {
+                        logger.debug("JWT validated, oid={}.", oid)
+                        JWTPrincipal(credential.payload)
+                    } else {
+                        logger.warn("JWT validation failed: missing oid claim.")
+                        null
+                    }
                 }
             }
         }
+        logger.info("JWT authentication installed.")
     }
 
     private companion object {
