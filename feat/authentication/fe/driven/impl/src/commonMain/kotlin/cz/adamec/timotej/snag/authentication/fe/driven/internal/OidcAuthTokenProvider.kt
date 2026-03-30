@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.authentication.fe.driven.internal
 
+import cz.adamec.timotej.snag.authentication.fe.driven.internal.LH.logger
 import cz.adamec.timotej.snag.authentication.fe.ports.AuthState
 import cz.adamec.timotej.snag.authentication.fe.ports.AuthTokenProvider
 import cz.adamec.timotej.snag.configuration.common.CommonConfiguration
@@ -41,8 +42,10 @@ internal class OidcAuthTokenProvider(
         }
 
     override suspend fun restoreSession() {
+        logger.d { "Restoring session." }
         val accessToken = tokenStore.getAccessToken()
         if (accessToken.isNullOrBlank()) {
+            logger.d { "No stored access token found, setting state to Unauthenticated." }
             _authState.value = AuthState.Unauthenticated
             return
         }
@@ -50,15 +53,19 @@ internal class OidcAuthTokenProvider(
         val authProviderId = idToken?.let { extractOidFromIdToken(it) }
         _authState.value =
             if (authProviderId != null) {
+                logger.d { "Restored session for authProviderId=$authProviderId." }
                 AuthState.Authenticated(authProviderId = authProviderId)
             } else {
+                logger.d { "No OID claim in ID token, setting state to Unauthenticated." }
                 AuthState.Unauthenticated
             }
     }
 
     override suspend fun login() {
+        logger.d { "Starting OIDC login flow." }
         val flow = authFlowFactory.createAuthFlow(client)
         val tokens = flow.getAccessToken()
+        logger.d { "Received tokens from OIDC provider, saving to token store." }
         tokenStore.saveTokens(
             accessToken = tokens.access_token,
             refreshToken = tokens.refresh_token,
@@ -67,21 +74,26 @@ internal class OidcAuthTokenProvider(
         val authProviderId =
             tokens.id_token?.let { extractOidFromIdToken(it) }
                 ?: error("ID token missing or does not contain oid claim after successful login.")
+        logger.d { "Login successful for authProviderId=$authProviderId." }
         _authState.value = AuthState.Authenticated(authProviderId = authProviderId)
     }
 
-    override suspend fun getAccessToken(): String? = tokenStore.getAccessToken()
-
-    override suspend fun logout() {
-        tokenStore.saveTokens(accessToken = "", refreshToken = "", idToken = "")
-        _authState.value = AuthState.Unauthenticated
+    override suspend fun getAccessToken(): String? {
+        logger.d { "Getting access token from token store." }
+        return tokenStore.getAccessToken().also {
+            logger.d { "Got access token: present=${it != null}." }
+        }
     }
 
-    private fun extractOidFromIdToken(idToken: String): String? =
-        try {
-            val jwt = Jwt.parse(idToken)
-            jwt.payload.additionalClaims["oid"] as? String
-        } catch (_: Exception) {
-            null
-        }
+    override suspend fun logout() {
+        logger.d { "Logging out, clearing token store." }
+        tokenStore.saveTokens(accessToken = "", refreshToken = "", idToken = "")
+        _authState.value = AuthState.Unauthenticated
+        logger.d { "Logged out, state set to Unauthenticated." }
+    }
+
+    private fun extractOidFromIdToken(idToken: String): String? {
+        val jwt = Jwt.parse(idToken)
+        return jwt.payload.additionalClaims["oid"] as? String
+    }
 }

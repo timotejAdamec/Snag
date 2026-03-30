@@ -14,17 +14,23 @@ package cz.adamec.timotej.snag.authentication.fe.app.impl.internal
 
 import cz.adamec.timotej.snag.authentication.fe.app.api.LoginResult
 import cz.adamec.timotej.snag.authentication.fe.app.api.LoginUseCase
+import cz.adamec.timotej.snag.authentication.fe.app.impl.internal.LH.logger
 import cz.adamec.timotej.snag.authentication.fe.ports.AuthTokenProvider
 import cz.adamec.timotej.snag.core.foundation.common.runCatchingCancellable
 
 internal class LoginUseCaseImpl(
     private val authTokenProvider: AuthTokenProvider,
 ) : LoginUseCase {
-    override suspend fun invoke(): LoginResult =
-        runCatchingCancellable {
+    override suspend fun invoke(): LoginResult {
+        logger.d { "Executing login." }
+        return runCatchingCancellable {
             authTokenProvider.login()
             LoginResult.Success
         }.getOrElse { e ->
+            logger.e(throwable = e) { "Login failed." }
             LoginResult.Error(message = e.message ?: "Login failed.")
+        }.also {
+            logger.d { "Login result: $it." }
         }
+    }
 }

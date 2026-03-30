@@ -26,6 +26,7 @@ import cz.adamec.timotej.snag.users.be.app.api.GetUsersUseCase
 import cz.adamec.timotej.snag.users.be.app.api.SaveUserUseCase
 import cz.adamec.timotej.snag.users.be.driving.api.toDto
 import cz.adamec.timotej.snag.users.be.driving.contract.PutUserApiDto
+import cz.adamec.timotej.snag.users.be.driving.impl.internal.LH.logger
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
@@ -101,13 +102,26 @@ internal class UsersRoute(
         targetUserId: Uuid,
         newRole: UserRole?,
     ) {
+        logger.debug(
+            "Checking role assignment permission: actingUser={}, targetUser={}, newRole={}.",
+            actingUserId,
+            targetUserId,
+            newRole,
+        )
         if (!canSetUserRoleUseCase(
                 actingUserId = actingUserId,
                 targetUserId = targetUserId,
                 newRole = newRole,
             )
         ) {
+            logger.warn(
+                "Role assignment denied: actingUser={}, targetUser={}, newRole={}.",
+                actingUserId,
+                targetUserId,
+                newRole,
+            )
             throw ForbiddenException()
         }
+        logger.debug("Role assignment permitted.")
     }
 }
