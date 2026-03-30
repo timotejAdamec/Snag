@@ -22,7 +22,6 @@ import cz.adamec.timotej.snag.authentication.fe.driven.internal.AndroidCodeAuthF
 import org.publicvalue.multiplatform.oidc.appsupport.AndroidCodeAuthFlowFactory
 
 class MainActivity : ComponentActivity() {
-    // Single instance — persists across Activity recreation (e.g. low memory).
     private val codeAuthFlowFactory = AndroidCodeAuthFlowFactory()
 
     override fun onCreate(savedInstanceState: Bundle?) {
