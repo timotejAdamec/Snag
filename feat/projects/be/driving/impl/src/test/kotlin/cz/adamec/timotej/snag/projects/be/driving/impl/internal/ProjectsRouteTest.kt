@@ -15,6 +15,7 @@ package cz.adamec.timotej.snag.projects.be.driving.impl.internal
 import cz.adamec.timotej.snag.authorization.business.UserRole
 import cz.adamec.timotej.snag.configuration.be.AppConfiguration
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
+import cz.adamec.timotej.snag.network.be.test.authenticatedAs
 import cz.adamec.timotej.snag.network.be.test.jsonClient
 import cz.adamec.timotej.snag.projects.be.driven.test.seedTestProject
 import cz.adamec.timotej.snag.projects.be.driving.contract.DeleteProjectApiDto
@@ -22,14 +23,12 @@ import cz.adamec.timotej.snag.projects.be.driving.contract.ProjectApiDto
 import cz.adamec.timotej.snag.projects.be.driving.contract.PutProjectApiDto
 import cz.adamec.timotej.snag.projects.be.model.BackendProjectData
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
-import cz.adamec.timotej.snag.routing.common.USER_ID_HEADER
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
 import cz.adamec.timotej.snag.users.be.driven.test.seedTestUser
 import cz.adamec.timotej.snag.users.be.model.BackendUserData
 import cz.adamec.timotej.snag.users.be.ports.UsersDb
 import io.ktor.client.call.body
 import io.ktor.client.request.get
-import io.ktor.client.request.header
 import io.ktor.client.request.patch
 import io.ktor.client.request.put
 import io.ktor.client.request.setBody
@@ -72,7 +71,7 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
 
             val response =
                 client.get("/projects") {
-                    header(USER_ID_HEADER, ADMIN_USER_ID.toString())
+                    authenticatedAs(userId = ADMIN_USER_ID)
                 }
 
             assertEquals(HttpStatusCode.OK, response.status)
@@ -102,7 +101,7 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
 
             val response =
                 client.get("/projects") {
-                    header(USER_ID_HEADER, ADMIN_USER_ID.toString())
+                    authenticatedAs(userId = ADMIN_USER_ID)
                 }
 
             assertEquals(HttpStatusCode.OK, response.status)
@@ -159,7 +158,7 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
 
             val response =
                 client.get("/projects") {
-                    header(USER_ID_HEADER, leadId.toString())
+                    authenticatedAs(userId = leadId)
                 }
 
             assertEquals(HttpStatusCode.OK, response.status)
@@ -194,7 +193,7 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
 
             val response =
                 client.get("/projects") {
-                    header(USER_ID_HEADER, ADMIN_USER_ID.toString())
+                    authenticatedAs(userId = ADMIN_USER_ID)
                 }
 
             assertEquals(HttpStatusCode.OK, response.status)
@@ -229,7 +228,7 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
 
             val response =
                 client.get("/projects?since=100") {
-                    header(USER_ID_HEADER, ADMIN_USER_ID.toString())
+                    authenticatedAs(userId = ADMIN_USER_ID)
                 }
 
             assertEquals(HttpStatusCode.OK, response.status)
@@ -257,7 +256,7 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
 
             val response =
                 client.get("/projects?since=100") {
-                    header(USER_ID_HEADER, ADMIN_USER_ID.toString())
+                    authenticatedAs(userId = ADMIN_USER_ID)
                 }
 
             assertEquals(HttpStatusCode.OK, response.status)
@@ -282,7 +281,7 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
 
             val response =
                 client.get("/projects/$TEST_ID_1") {
-                    header(USER_ID_HEADER, ADMIN_USER_ID.toString())
+                    authenticatedAs(userId = ADMIN_USER_ID)
                 }
 
             assertEquals(HttpStatusCode.OK, response.status)
@@ -319,7 +318,7 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
 
             val response =
                 client.get("/projects/$TEST_ID_1") {
-                    header(USER_ID_HEADER, technicianId.toString())
+                    authenticatedAs(userId = technicianId)
                 }
 
             assertEquals(HttpStatusCode.Forbidden, response.status)
@@ -344,7 +343,7 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
 
             val response =
                 client.get("/projects/$TEST_ID_1") {
-                    header(USER_ID_HEADER, ADMIN_USER_ID.toString())
+                    authenticatedAs(userId = ADMIN_USER_ID)
                 }
 
             assertEquals(HttpStatusCode.OK, response.status)
@@ -362,7 +361,7 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
 
             val response =
                 client.get("/projects/$TEST_ID_1") {
-                    header(USER_ID_HEADER, ADMIN_USER_ID.toString())
+                    authenticatedAs(userId = ADMIN_USER_ID)
                 }
 
             assertEquals(HttpStatusCode.Forbidden, response.status)
@@ -377,7 +376,7 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
 
             val response =
                 client.get("/projects/not-a-uuid") {
-                    header(USER_ID_HEADER, ADMIN_USER_ID.toString())
+                    authenticatedAs(userId = ADMIN_USER_ID)
                 }
 
             assertEquals(HttpStatusCode.BadRequest, response.status)
@@ -393,7 +392,7 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
             val response =
                 client.put("/projects/$TEST_ID_1") {
                     contentType(ContentType.Application.Json)
-                    header(USER_ID_HEADER, ADMIN_USER_ID.toString())
+                    authenticatedAs(userId = ADMIN_USER_ID)
                     setBody(
                         PutProjectApiDto(
                             name = "New",
@@ -424,7 +423,7 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
             val response =
                 client.put("/projects/$TEST_ID_1") {
                     contentType(ContentType.Application.Json)
-                    header(USER_ID_HEADER, ADMIN_USER_ID.toString())
+                    authenticatedAs(userId = ADMIN_USER_ID)
                     setBody(
                         PutProjectApiDto(
                             name = "New",
@@ -461,7 +460,7 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
             val response =
                 client.put("/projects/$TEST_ID_1") {
                     contentType(ContentType.Application.Json)
-                    header(USER_ID_HEADER, ADMIN_USER_ID.toString())
+                    authenticatedAs(userId = ADMIN_USER_ID)
                     setBody(
                         PutProjectApiDto(
                             name = "New",
@@ -488,7 +487,7 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
             val response =
                 client.put("/projects/not-a-uuid") {
                     contentType(ContentType.Application.Json)
-                    header(USER_ID_HEADER, ADMIN_USER_ID.toString())
+                    authenticatedAs(userId = ADMIN_USER_ID)
                     setBody(
                         PutProjectApiDto(
                             name = "New",
@@ -512,7 +511,7 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
             val response =
                 client.put("/projects/$TEST_ID_1") {
                     contentType(ContentType.Application.Json)
-                    header(USER_ID_HEADER, ADMIN_USER_ID.toString())
+                    authenticatedAs(userId = ADMIN_USER_ID)
                     setBody("{\"invalid\": true}")
                 }
 
@@ -562,7 +561,7 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
             val response =
                 client.put("/projects/$TEST_ID_1") {
                     contentType(ContentType.Application.Json)
-                    header(USER_ID_HEADER, technicianId.toString())
+                    authenticatedAs(userId = technicianId)
                     setBody(
                         PutProjectApiDto(
                             name = "New",
@@ -603,7 +602,7 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
             val response =
                 client.put("/projects/$TEST_ID_1") {
                     contentType(ContentType.Application.Json)
-                    header(USER_ID_HEADER, leadId.toString())
+                    authenticatedAs(userId = leadId)
                     setBody(
                         PutProjectApiDto(
                             name = "Open Project",
@@ -647,7 +646,7 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
             val response =
                 client.put("/projects/$TEST_ID_1") {
                     contentType(ContentType.Application.Json)
-                    header(USER_ID_HEADER, technicianId.toString())
+                    authenticatedAs(userId = technicianId)
                     setBody(
                         PutProjectApiDto(
                             name = "Admin's Project",
@@ -678,7 +677,7 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
             val response =
                 client.patch("/projects/$TEST_ID_1") {
                     contentType(ContentType.Application.Json)
-                    header(USER_ID_HEADER, ADMIN_USER_ID.toString())
+                    authenticatedAs(userId = ADMIN_USER_ID)
                     setBody(DeleteProjectApiDto(deletedAt = Timestamp(200L)))
                 }
 
@@ -701,13 +700,13 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
 
             client.patch("/projects/$TEST_ID_1") {
                 contentType(ContentType.Application.Json)
-                header(USER_ID_HEADER, ADMIN_USER_ID.toString())
+                authenticatedAs(userId = ADMIN_USER_ID)
                 setBody(DeleteProjectApiDto(deletedAt = Timestamp(200L)))
             }
 
             val getResponse =
                 client.get("/projects/$TEST_ID_1") {
-                    header(USER_ID_HEADER, ADMIN_USER_ID.toString())
+                    authenticatedAs(userId = ADMIN_USER_ID)
                 }
             assertEquals(HttpStatusCode.OK, getResponse.status)
             val body = getResponse.body<ProjectApiDto>()
@@ -732,7 +731,7 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
             val response =
                 client.patch("/projects/$TEST_ID_1") {
                     contentType(ContentType.Application.Json)
-                    header(USER_ID_HEADER, ADMIN_USER_ID.toString())
+                    authenticatedAs(userId = ADMIN_USER_ID)
                     setBody(DeleteProjectApiDto(deletedAt = Timestamp(200L)))
                 }
 
@@ -776,7 +775,7 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
             val response =
                 client.patch("/projects/not-a-uuid") {
                     contentType(ContentType.Application.Json)
-                    header(USER_ID_HEADER, ADMIN_USER_ID.toString())
+                    authenticatedAs(userId = ADMIN_USER_ID)
                     setBody(DeleteProjectApiDto(deletedAt = Timestamp(200L)))
                 }
 
@@ -802,7 +801,7 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
             val response =
                 client.patch("/projects/$TEST_ID_1") {
                     contentType(ContentType.Application.Json)
-                    header(USER_ID_HEADER, ADMIN_USER_ID.toString())
+                    authenticatedAs(userId = ADMIN_USER_ID)
                     setBody("{\"invalid\": true}")
                 }
 

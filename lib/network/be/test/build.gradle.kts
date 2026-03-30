@@ -4,6 +4,8 @@ plugins {
 
 dependencies {
     api(libs.ktor.server.test.host)
+    implementation(project(":lib:routing:common"))
+    implementation(project(":feat:users:be:driven:test"))
     implementation(libs.ktor.client.content.negotiation)
     implementation(libs.ktor.serialization.kotlinx.json)
 }

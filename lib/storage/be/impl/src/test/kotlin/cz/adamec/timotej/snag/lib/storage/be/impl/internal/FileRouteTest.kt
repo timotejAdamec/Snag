@@ -14,17 +14,15 @@ package cz.adamec.timotej.snag.lib.storage.be.impl.internal
 
 import cz.adamec.timotej.snag.configuration.be.AppConfiguration
 import cz.adamec.timotej.snag.lib.storage.be.test.FakeStorageService
+import cz.adamec.timotej.snag.network.be.test.authenticatedAs
 import cz.adamec.timotej.snag.network.be.test.jsonClient
-import cz.adamec.timotej.snag.routing.common.USER_ID_HEADER
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
-import cz.adamec.timotej.snag.users.be.driven.test.TEST_USER_ID
 import cz.adamec.timotej.snag.users.be.driven.test.seedTestUser
 import cz.adamec.timotej.snag.users.be.ports.UsersDb
 import io.ktor.client.call.body
 import io.ktor.client.request.delete
 import io.ktor.client.request.forms.formData
 import io.ktor.client.request.forms.submitFormWithBinaryData
-import io.ktor.client.request.header
 import io.ktor.http.Headers
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
@@ -71,7 +69,7 @@ class FileRouteTest : BackendKoinInitializedTest() {
                             append("directory", "projects/abc/structures/xyz")
                         },
                 ) {
-                    header(USER_ID_HEADER, TEST_USER_ID.toString())
+                    authenticatedAs()
                 }
 
             assertEquals(HttpStatusCode.OK, response.status)
@@ -96,7 +94,7 @@ class FileRouteTest : BackendKoinInitializedTest() {
                             append("directory", "some-dir")
                         },
                 ) {
-                    header(USER_ID_HEADER, TEST_USER_ID.toString())
+                    authenticatedAs()
                 }
 
             assertEquals(HttpStatusCode.BadRequest, response.status)
@@ -124,7 +122,7 @@ class FileRouteTest : BackendKoinInitializedTest() {
                             )
                         },
                 ) {
-                    header(USER_ID_HEADER, TEST_USER_ID.toString())
+                    authenticatedAs()
                 }
 
             assertEquals(HttpStatusCode.BadRequest, response.status)
@@ -139,7 +137,7 @@ class FileRouteTest : BackendKoinInitializedTest() {
 
             val response =
                 client.delete("/files?url=https://storage.test/test-uploads/1.png") {
-                    header(USER_ID_HEADER, TEST_USER_ID.toString())
+                    authenticatedAs()
                 }
 
             assertEquals(HttpStatusCode.NoContent, response.status)
@@ -159,7 +157,7 @@ class FileRouteTest : BackendKoinInitializedTest() {
 
             val response =
                 client.delete("/files") {
-                    header(USER_ID_HEADER, TEST_USER_ID.toString())
+                    authenticatedAs()
                 }
 
             assertEquals(HttpStatusCode.BadRequest, response.status)

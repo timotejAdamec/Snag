@@ -15,17 +15,16 @@ package cz.adamec.timotej.snag.reports.be.driving.impl.internal
 import cz.adamec.timotej.snag.authorization.business.UserRole
 import cz.adamec.timotej.snag.configuration.be.AppConfiguration
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
+import cz.adamec.timotej.snag.network.be.test.authenticatedAs
 import cz.adamec.timotej.snag.projects.be.model.BackendProjectData
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
 import cz.adamec.timotej.snag.reports.be.driven.test.FakePdfReportGenerator
-import cz.adamec.timotej.snag.routing.common.USER_ID_HEADER
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
 import cz.adamec.timotej.snag.users.be.driven.test.TEST_USER_ID
 import cz.adamec.timotej.snag.users.be.driven.test.seedTestUser
 import cz.adamec.timotej.snag.users.be.model.BackendUserData
 import cz.adamec.timotej.snag.users.be.ports.UsersDb
 import io.ktor.client.request.get
-import io.ktor.client.request.header
 import io.ktor.client.statement.readRawBytes
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
@@ -90,7 +89,7 @@ class ReportRouteTest : BackendKoinInitializedTest() {
 
             val response =
                 client.get("/projects/$PROJECT_ID/report") {
-                    header(USER_ID_HEADER, TECH_USER_ID.toString())
+                    authenticatedAs(userId = TECH_USER_ID)
                 }
 
             assertEquals(HttpStatusCode.Forbidden, response.status)
@@ -107,7 +106,7 @@ class ReportRouteTest : BackendKoinInitializedTest() {
 
             val response =
                 client.get("/projects/$PROJECT_ID/report") {
-                    header(USER_ID_HEADER, TEST_USER_ID.toString())
+                    authenticatedAs()
                 }
 
             assertEquals(HttpStatusCode.NotFound, response.status)
@@ -131,7 +130,7 @@ class ReportRouteTest : BackendKoinInitializedTest() {
 
             val response =
                 client.get("/projects/$PROJECT_ID/report") {
-                    header(USER_ID_HEADER, TEST_USER_ID.toString())
+                    authenticatedAs()
                 }
 
             assertEquals(HttpStatusCode.OK, response.status)
@@ -151,7 +150,7 @@ class ReportRouteTest : BackendKoinInitializedTest() {
 
             val response =
                 client.get("/projects/not-a-uuid/report") {
-                    header(USER_ID_HEADER, TEST_USER_ID.toString())
+                    authenticatedAs()
                 }
 
             assertEquals(HttpStatusCode.BadRequest, response.status)

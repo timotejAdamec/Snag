@@ -15,11 +15,11 @@ package cz.adamec.timotej.snag.projects.be.driving.impl.internal
 import cz.adamec.timotej.snag.authorization.business.UserRole
 import cz.adamec.timotej.snag.configuration.be.AppConfiguration
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
+import cz.adamec.timotej.snag.network.be.test.authenticatedAs
 import cz.adamec.timotej.snag.network.be.test.jsonClient
 import cz.adamec.timotej.snag.projects.be.model.BackendProjectData
 import cz.adamec.timotej.snag.projects.be.ports.ProjectAssignmentsDb
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
-import cz.adamec.timotej.snag.routing.common.USER_ID_HEADER
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
 import cz.adamec.timotej.snag.users.be.driven.test.TEST_USER_ID
 import cz.adamec.timotej.snag.users.be.driven.test.seedTestUser
@@ -29,7 +29,6 @@ import cz.adamec.timotej.snag.users.be.ports.UsersDb
 import io.ktor.client.call.body
 import io.ktor.client.request.delete
 import io.ktor.client.request.get
-import io.ktor.client.request.header
 import io.ktor.client.request.put
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.ApplicationTestBuilder
@@ -75,7 +74,7 @@ class ProjectAssignmentsRouteTest : BackendKoinInitializedTest() {
 
             val response =
                 client.get("/projects/$TEST_PROJECT_1/assignments") {
-                    header(USER_ID_HEADER, TEST_USER_ID.toString())
+                    authenticatedAs()
                 }
 
             assertEquals(HttpStatusCode.OK, response.status)
@@ -113,7 +112,7 @@ class ProjectAssignmentsRouteTest : BackendKoinInitializedTest() {
 
             val response =
                 client.get("/projects/$TEST_PROJECT_1/assignments") {
-                    header(USER_ID_HEADER, technicianId.toString())
+                    authenticatedAs(userId = technicianId)
                 }
 
             assertEquals(HttpStatusCode.Forbidden, response.status)
@@ -137,7 +136,7 @@ class ProjectAssignmentsRouteTest : BackendKoinInitializedTest() {
 
             val response =
                 client.get("/projects/$TEST_PROJECT_1/assignments") {
-                    header(USER_ID_HEADER, TEST_USER_ID.toString())
+                    authenticatedAs()
                 }
 
             assertEquals(HttpStatusCode.OK, response.status)
@@ -163,7 +162,7 @@ class ProjectAssignmentsRouteTest : BackendKoinInitializedTest() {
 
             val response =
                 client.put("/projects/$TEST_PROJECT_1/assignments/$TEST_USER_1") {
-                    header(USER_ID_HEADER, TEST_USER_ID.toString())
+                    authenticatedAs()
                 }
 
             assertEquals(HttpStatusCode.NoContent, response.status)
@@ -188,7 +187,7 @@ class ProjectAssignmentsRouteTest : BackendKoinInitializedTest() {
 
             val response =
                 client.put("/projects/$TEST_PROJECT_1/assignments/$TEST_USER_1") {
-                    header(USER_ID_HEADER, technicianId.toString())
+                    authenticatedAs(userId = technicianId)
                 }
 
             assertEquals(HttpStatusCode.Forbidden, response.status)
@@ -210,11 +209,11 @@ class ProjectAssignmentsRouteTest : BackendKoinInitializedTest() {
             val client = jsonClient()
 
             client.put("/projects/$TEST_PROJECT_1/assignments/$TEST_USER_1") {
-                header(USER_ID_HEADER, TEST_USER_ID.toString())
+                authenticatedAs()
             }
             val response =
                 client.put("/projects/$TEST_PROJECT_1/assignments/$TEST_USER_1") {
-                    header(USER_ID_HEADER, TEST_USER_ID.toString())
+                    authenticatedAs()
                 }
 
             assertEquals(HttpStatusCode.NoContent, response.status)
@@ -238,7 +237,7 @@ class ProjectAssignmentsRouteTest : BackendKoinInitializedTest() {
 
             val response =
                 client.delete("/projects/$TEST_PROJECT_1/assignments/$TEST_USER_1") {
-                    header(USER_ID_HEADER, TEST_USER_ID.toString())
+                    authenticatedAs()
                 }
 
             assertEquals(HttpStatusCode.NoContent, response.status)
@@ -263,7 +262,7 @@ class ProjectAssignmentsRouteTest : BackendKoinInitializedTest() {
 
             val response =
                 client.delete("/projects/$TEST_PROJECT_1/assignments/$TEST_USER_1") {
-                    header(USER_ID_HEADER, workerId.toString())
+                    authenticatedAs(userId = workerId)
                 }
 
             assertEquals(HttpStatusCode.Forbidden, response.status)

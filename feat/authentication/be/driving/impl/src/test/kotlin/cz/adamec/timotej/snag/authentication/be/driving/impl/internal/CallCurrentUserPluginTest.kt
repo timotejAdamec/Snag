@@ -15,6 +15,7 @@ package cz.adamec.timotej.snag.authentication.be.driving.impl.internal
 import cz.adamec.timotej.snag.authentication.be.driving.api.CallCurrentUserKey
 import cz.adamec.timotej.snag.authorization.business.UserRole
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
+import cz.adamec.timotej.snag.network.be.test.authenticatedAs
 import cz.adamec.timotej.snag.routing.common.USER_ID_HEADER
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
 import cz.adamec.timotej.snag.users.be.app.api.GetOrCreateUserByAuthProviderIdUseCase
@@ -94,7 +95,7 @@ class CallCurrentUserPluginTest : BackendKoinInitializedTest() {
 
             val response =
                 client.get("/test-current-user") {
-                    header(USER_ID_HEADER, UNKNOWN_USER_ID.toString())
+                    authenticatedAs(userId = UNKNOWN_USER_ID)
                 }
 
             assertEquals(HttpStatusCode.NotFound, response.status)
@@ -116,7 +117,7 @@ class CallCurrentUserPluginTest : BackendKoinInitializedTest() {
 
             val response =
                 client.get("/test-current-user") {
-                    header(USER_ID_HEADER, EXISTING_USER_ID.toString())
+                    authenticatedAs(userId = EXISTING_USER_ID)
                 }
 
             assertEquals(HttpStatusCode.OK, response.status)
