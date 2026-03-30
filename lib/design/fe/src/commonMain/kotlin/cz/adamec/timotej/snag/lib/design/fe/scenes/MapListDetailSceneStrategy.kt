@@ -16,21 +16,14 @@ package cz.adamec.timotej.snag.lib.design.fe.scenes
 
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBars
-import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.SheetValue
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.movableContentOf
@@ -168,24 +161,13 @@ private class AdaptiveMapListDetailScene<T : Any>(
                                     initialValue = SheetValue.PartiallyExpanded,
                                 ),
                         )
-                    val isSheetExpanded by remember {
-                        derivedStateOf {
-                            scaffoldState.bottomSheetState.currentValue == SheetValue.Expanded
-                        }
-                    }
-                    val statusBarTop =
-                        WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
-                    val sheetTopPadding by animateDpAsState(
-                        targetValue = if (isSheetExpanded) statusBarTop else 0.dp,
-                        label = "sheetTopPadding",
-                    )
                     BottomSheetScaffold(
                         scaffoldState = scaffoldState,
                         sheetPeekHeight = sheetPeekHeight,
                         sheetDragHandle = {
-                            Box(modifier = Modifier.padding(top = sheetTopPadding)) {
-                                BottomSheetDefaults.DragHandle()
-                            }
+                            StatusBarAwareDragHandle(
+                                sheetState = scaffoldState.bottomSheetState,
+                            )
                         },
                         sheetContent = {
                             CompositionLocalProvider(LocalIsInSheet provides true) {

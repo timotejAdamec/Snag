@@ -40,6 +40,7 @@ import cz.adamec.timotej.snag.core.foundation.common.UuidProvider
 import cz.adamec.timotej.snag.lib.design.fe.button.AdaptiveTonalButton
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.BackNavigationIcon
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.CollapsableTopAppBarScaffold
+import cz.adamec.timotej.snag.lib.design.fe.scenes.StatusBarAwareDragHandle
 import cz.adamec.timotej.snag.lib.design.fe.theme.SnagPreview
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectAssignments.ui.components.AddUserBottomSheetContent
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectAssignments.ui.components.AssignedUserListItem
@@ -119,6 +120,9 @@ internal fun ProjectAssignmentsContent(
             ModalBottomSheet(
                 onDismissRequest = { showAddUserSheet = false },
                 sheetState = bottomSheetState,
+                dragHandle = {
+                    StatusBarAwareDragHandle(sheetState = bottomSheetState)
+                },
             ) {
                 AddUserBottomSheetContent(
                     availableUsers = state.availableUsers,
