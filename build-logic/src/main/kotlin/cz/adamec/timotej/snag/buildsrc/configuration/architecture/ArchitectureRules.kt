@@ -110,36 +110,80 @@ internal fun checkHexagonalDirection(
     target: ModuleIdentity,
 ): Violation? {
     if (source !is FeatModule || target !is FeatModule) return null
-    if (source.feature != target.feature) return null
     // Model modules are data containers — any layer can depend on them
     if (target.isModel) return null
 
-    val sourceRank = hexLayerRank(source.hexLayer) ?: return null
-    val targetRank = hexLayerRank(target.hexLayer) ?: return null
+    val sourceLayer = source.hexLayer ?: return null
+    val targetLayer = target.hexLayer ?: return null
 
-    if (isDrivingOrDriven(source.hexLayer) && isDrivingOrDriven(target.hexLayer) &&
-        source.hexLayer != target.hexLayer
-    ) {
-        return Violation(
-            ruleId = RuleId.HEXAGONAL_DIRECTION,
-            source = source.path,
-            target = target.path,
-            message = "driving/ and driven/ must not depend on each other",
-        )
+    if (source.feature == target.feature) {
+        return checkSameFeatureHexDirection(source, target, sourceLayer, targetLayer)
     }
 
+    return checkCrossFeatureHexDirection(source, target, sourceLayer, targetLayer)
+}
+
+private fun checkSameFeatureHexDirection(
+    source: FeatModule,
+    target: FeatModule,
+    sourceLayer: HexLayer,
+    targetLayer: HexLayer,
+): Violation? {
+    if (isDrivingOrDriven(sourceLayer) && isDrivingOrDriven(targetLayer) &&
+        sourceLayer != targetLayer
+    ) {
+        return hexViolation(source, target, "driving/ and driven/ must not depend on each other")
+    }
+
+    // Driving must not depend on ports (should go through app layer)
+    if (sourceLayer == HexLayer.DRIVING && targetLayer == HexLayer.PORTS) {
+        return hexViolation(source, target, "driving/ must not depend on ports/ directly")
+    }
+
+    val sourceRank = hexLayerRank(sourceLayer) ?: return null
+    val targetRank = hexLayerRank(targetLayer) ?: return null
+
     if (sourceRank < targetRank) {
-        return Violation(
-            ruleId = RuleId.HEXAGONAL_DIRECTION,
-            source = source.path,
-            target = target.path,
-            message = "${source.hexLayer?.name?.lowercase()}/ must not depend on " +
-                "${target.hexLayer?.name?.lowercase()}/",
+        return hexViolation(
+            source,
+            target,
+            "${sourceLayer.name.lowercase()}/ must not depend on ${targetLayer.name.lowercase()}/",
         )
     }
 
     return null
 }
+
+private fun checkCrossFeatureHexDirection(
+    source: FeatModule,
+    target: FeatModule,
+    sourceLayer: HexLayer,
+    targetLayer: HexLayer,
+): Violation? {
+    // Cross-feature access to ports is forbidden — use app:api instead
+    if (targetLayer == HexLayer.PORTS &&
+        sourceLayer in setOf(HexLayer.APP, HexLayer.DRIVEN, HexLayer.DRIVING)
+    ) {
+        return hexViolation(
+            source,
+            target,
+            "${sourceLayer.name.lowercase()}/ must not depend on another feature's ports/",
+        )
+    }
+
+    return null
+}
+
+private fun hexViolation(
+    source: FeatModule,
+    target: FeatModule,
+    message: String,
+) = Violation(
+    ruleId = RuleId.HEXAGONAL_DIRECTION,
+    source = source.path,
+    target = target.path,
+    message = message,
+)
 
 private fun isDrivingOrDriven(layer: HexLayer?): Boolean =
     layer == HexLayer.DRIVING || layer == HexLayer.DRIVEN

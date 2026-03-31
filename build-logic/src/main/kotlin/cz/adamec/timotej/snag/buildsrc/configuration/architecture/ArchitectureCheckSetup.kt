@@ -35,6 +35,7 @@ internal abstract class ArchitectureCheckTask : DefaultTask() {
         val violations = projectDependencies.get()
             .map { parseModulePath(it) }
             .flatMap { target -> checkDependency(source, target) }
+            .filter { !isAllowlisted(it.source, it.target) }
 
         if (violations.isNotEmpty()) {
             val message = buildString {

@@ -635,8 +635,46 @@ class HexagonalDirectionRuleTest {
     fun `business depending on app model is allowed`() {
         val source = parseModulePath(":feat:projects:business:model")
         val target = parseModulePath(":feat:projects:app:model")
-        // Different platforms (null vs null) and isModel target — exempt
         assertNull(checkHexagonalDirection(source, target))
+    }
+
+    @Test
+    fun `driving depending on ports is a violation`() {
+        val source = parseModulePath(":feat:projects:fe:driving:impl")
+        val target = parseModulePath(":feat:projects:fe:ports")
+        val violation = checkHexagonalDirection(source, target)
+        assertEquals(RuleId.HEXAGONAL_DIRECTION, violation?.ruleId)
+    }
+
+    @Test
+    fun `cross-feature app depending on ports is a violation`() {
+        val source = parseModulePath(":feat:structures:fe:app:impl")
+        val target = parseModulePath(":feat:projects:fe:ports")
+        val violation = checkHexagonalDirection(source, target)
+        assertEquals(RuleId.HEXAGONAL_DIRECTION, violation?.ruleId)
+    }
+
+    @Test
+    fun `cross-feature driven depending on ports is a violation`() {
+        val source = parseModulePath(":feat:structures:fe:driven:impl")
+        val target = parseModulePath(":feat:projects:fe:ports")
+        val violation = checkHexagonalDirection(source, target)
+        assertEquals(RuleId.HEXAGONAL_DIRECTION, violation?.ruleId)
+    }
+
+    @Test
+    fun `cross-feature driving depending on app api is allowed`() {
+        val source = parseModulePath(":feat:structures:fe:driving:impl")
+        val target = parseModulePath(":feat:projects:fe:app:api")
+        assertNull(checkHexagonalDirection(source, target))
+    }
+
+    @Test
+    fun `cross-feature driving depending on ports is a violation`() {
+        val source = parseModulePath(":feat:structures:fe:driving:impl")
+        val target = parseModulePath(":feat:projects:fe:ports")
+        val violation = checkHexagonalDirection(source, target)
+        assertEquals(RuleId.HEXAGONAL_DIRECTION, violation?.ruleId)
     }
 }
 
