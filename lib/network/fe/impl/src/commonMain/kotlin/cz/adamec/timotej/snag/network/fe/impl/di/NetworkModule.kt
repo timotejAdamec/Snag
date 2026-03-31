@@ -15,6 +15,7 @@ package cz.adamec.timotej.snag.network.fe.impl.di
 import cz.adamec.timotej.snag.network.fe.HttpClientConfiguration
 import cz.adamec.timotej.snag.network.fe.ServerUrlFactory
 import cz.adamec.timotej.snag.network.fe.SnagNetworkHttpClient
+import cz.adamec.timotej.snag.network.fe.impl.internal.AuthGatedSnagNetworkHttpClient
 import cz.adamec.timotej.snag.network.fe.impl.internal.ContentNegotiationConfiguration
 import cz.adamec.timotej.snag.network.fe.impl.internal.LoggingConfiguration
 import cz.adamec.timotej.snag.network.fe.impl.internal.ResponseValidationConfiguration
@@ -49,7 +50,16 @@ val networkModule =
                 }
             }
         }
-        singleOf(::SnagNetworkHttpClientImpl) bind SnagNetworkHttpClient::class
+        single<SnagNetworkHttpClient> {
+            AuthGatedSnagNetworkHttpClient(
+                delegate =
+                    SnagNetworkHttpClientImpl(
+                        httpClient = get(),
+                        serverUrlFactory = get(),
+                    ),
+                authStateProvider = get(),
+            )
+        }
     }
 
 internal expect val serverUrlPlatformModule: Module
