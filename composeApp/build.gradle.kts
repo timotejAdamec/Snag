@@ -73,6 +73,10 @@ compose.desktop {
     application {
         mainClass = "cz.adamec.timotej.snag.MainKt"
 
+        buildTypes.release.proguard {
+            configurationFiles.from(project.file("proguard-desktop.pro"))
+        }
+
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = SNAG_NAMESPACE
