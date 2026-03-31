@@ -79,20 +79,8 @@ compose.desktop {
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "Snag"
+            packageName = SNAG_NAMESPACE
             packageVersion = SnagVersioning.semanticVersion(project).get()
-
-            macOS {
-                bundleID = SNAG_NAMESPACE
-            }
-
-            linux {
-                packageName = SNAG_NAMESPACE
-            }
-
-            windows {
-                packageName = "Snag"
-            }
         }
     }
 }
