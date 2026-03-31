@@ -13,7 +13,7 @@
 package cz.adamec.timotej.snag.authentication.be.driving.impl.di
 
 import cz.adamec.timotej.snag.authentication.be.driving.impl.internal.AuthenticationStatusPageHandler
-import cz.adamec.timotej.snag.authentication.be.driving.impl.internal.CallCurrentUserConfiguration
+import cz.adamec.timotej.snag.authentication.be.driving.impl.internal.CurrentUserConfiguration
 import cz.adamec.timotej.snag.configuration.be.AppConfiguration
 import cz.adamec.timotej.snag.configuration.be.AppStatusPageHandler
 import cz.adamec.timotej.snag.configuration.common.CommonConfiguration
@@ -28,7 +28,7 @@ val authenticationModule =
     module {
         single(qualifier = MOCK_AUTH_QUALIFIER) { CommonConfiguration.mockAuth }
         single<AppConfiguration> {
-            CallCurrentUserConfiguration(
+            CurrentUserConfiguration(
                 getUserUseCase = get(),
                 getOrCreateUserByAuthProviderIdUseCase = get(),
                 mockAuth = get(qualifier = MOCK_AUTH_QUALIFIER),

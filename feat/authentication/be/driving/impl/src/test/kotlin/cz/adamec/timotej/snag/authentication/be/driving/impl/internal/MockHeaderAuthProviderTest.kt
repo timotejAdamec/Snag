@@ -12,12 +12,11 @@
 
 package cz.adamec.timotej.snag.authentication.be.driving.impl.internal
 
-import cz.adamec.timotej.snag.authentication.be.driving.api.CallCurrentUserKey
+import cz.adamec.timotej.snag.authentication.be.driving.api.SnagPrincipal
 import cz.adamec.timotej.snag.authorization.business.UserRole
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.routing.common.USER_ID_HEADER
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
-import cz.adamec.timotej.snag.users.be.app.api.GetOrCreateUserByAuthProviderIdUseCase
 import cz.adamec.timotej.snag.users.be.app.api.GetUserUseCase
 import cz.adamec.timotej.snag.users.be.model.BackendUserData
 import cz.adamec.timotej.snag.users.be.ports.UsersDb
@@ -26,6 +25,9 @@ import io.ktor.client.request.header
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.install
+import io.ktor.server.auth.Authentication
+import io.ktor.server.auth.authenticate
+import io.ktor.server.auth.principal
 import io.ktor.server.response.respondText
 import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
@@ -36,28 +38,24 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.uuid.Uuid
 
-class CallCurrentUserPluginTest : BackendKoinInitializedTest() {
+class MockHeaderAuthProviderTest : BackendKoinInitializedTest() {
     private val usersDb: UsersDb by inject()
     private val getUserUseCase: GetUserUseCase by inject()
-    private val getOrCreateUserByAuthProviderIdUseCase: GetOrCreateUserByAuthProviderIdUseCase by inject()
 
     private fun ApplicationTestBuilder.configureApp() {
         application {
-            install(
-                callCurrentUserPlugin(
-                    getUserUseCase = getUserUseCase,
-                    getOrCreateUserByAuthProviderIdUseCase = getOrCreateUserByAuthProviderIdUseCase,
-                    mockAuth = true,
-                ),
-            )
+            install(Authentication) {
+                mockHeader(getUserUseCase = getUserUseCase)
+            }
             routing {
-                get("/test-current-user") {
-                    val currentUser = call.attributes.getOrNull(CallCurrentUserKey)
-                    if (currentUser != null) {
-                        call.respondText(currentUser.userId.toString())
-                    } else {
-                        call.response.status(HttpStatusCode.NotFound)
-                        call.respondText("No user")
+                authenticate {
+                    get("/test-current-user") {
+                        val principal = call.principal<SnagPrincipal>()
+                        if (principal != null) {
+                            call.respondText(principal.currentUser.userId.toString())
+                        } else {
+                            call.respondText("No user")
+                        }
                     }
                 }
             }
@@ -65,17 +63,17 @@ class CallCurrentUserPluginTest : BackendKoinInitializedTest() {
     }
 
     @Test
-    fun `request without X-User-Id header has no current user`() =
+    fun `request without X-User-Id header returns 401`() =
         testApplication {
             configureApp()
 
             val response = client.get("/test-current-user")
 
-            assertEquals(HttpStatusCode.NotFound, response.status)
+            assertEquals(HttpStatusCode.Unauthorized, response.status)
         }
 
     @Test
-    fun `request with invalid UUID in X-User-Id header has no current user`() =
+    fun `request with invalid UUID in X-User-Id header returns 401`() =
         testApplication {
             configureApp()
 
@@ -84,11 +82,11 @@ class CallCurrentUserPluginTest : BackendKoinInitializedTest() {
                     header(USER_ID_HEADER, "not-a-uuid")
                 }
 
-            assertEquals(HttpStatusCode.NotFound, response.status)
+            assertEquals(HttpStatusCode.Unauthorized, response.status)
         }
 
     @Test
-    fun `request with valid UUID for non-existent user has no current user`() =
+    fun `request with valid UUID for non-existent user returns 401`() =
         testApplication {
             configureApp()
 
@@ -97,7 +95,7 @@ class CallCurrentUserPluginTest : BackendKoinInitializedTest() {
                     header(USER_ID_HEADER, UNKNOWN_USER_ID.toString())
                 }
 
-            assertEquals(HttpStatusCode.NotFound, response.status)
+            assertEquals(HttpStatusCode.Unauthorized, response.status)
         }
 
     @Test
