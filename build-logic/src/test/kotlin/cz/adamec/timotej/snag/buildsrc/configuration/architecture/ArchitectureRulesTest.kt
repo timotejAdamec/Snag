@@ -461,6 +461,84 @@ class CategoryDirectionRuleTest {
     }
 }
 
+class PlatformDirectionRuleTest {
+
+    @Test
+    fun `platform-agnostic depending on FE is a violation`() {
+        val source = parseModulePath(":feat:projects:app:model")
+        val target = parseModulePath(":feat:projects:fe:app:model")
+        val violation = checkPlatformDirection(source, target)
+        assertEquals(RuleId.PLATFORM_DIRECTION, violation?.ruleId)
+    }
+
+    @Test
+    fun `platform-agnostic depending on BE is a violation`() {
+        val source = parseModulePath(":feat:projects:app:model")
+        val target = parseModulePath(":feat:projects:be:app:model")
+        val violation = checkPlatformDirection(source, target)
+        assertEquals(RuleId.PLATFORM_DIRECTION, violation?.ruleId)
+    }
+
+    @Test
+    fun `FE depending on BE is a violation`() {
+        val source = parseModulePath(":feat:projects:fe:app:impl")
+        val target = parseModulePath(":feat:projects:be:app:api")
+        val violation = checkPlatformDirection(source, target)
+        assertEquals(RuleId.PLATFORM_DIRECTION, violation?.ruleId)
+    }
+
+    @Test
+    fun `BE depending on FE is a violation`() {
+        val source = parseModulePath(":feat:projects:be:app:impl")
+        val target = parseModulePath(":feat:projects:fe:app:api")
+        val violation = checkPlatformDirection(source, target)
+        assertEquals(RuleId.PLATFORM_DIRECTION, violation?.ruleId)
+    }
+
+    @Test
+    fun `FE depending on platform-agnostic is allowed`() {
+        val source = parseModulePath(":feat:projects:fe:app:impl")
+        val target = parseModulePath(":feat:projects:app:model")
+        assertNull(checkPlatformDirection(source, target))
+    }
+
+    @Test
+    fun `BE depending on platform-agnostic is allowed`() {
+        val source = parseModulePath(":feat:projects:be:app:impl")
+        val target = parseModulePath(":feat:projects:business:model")
+        assertNull(checkPlatformDirection(source, target))
+    }
+
+    @Test
+    fun `COMMON depending on FE is a violation`() {
+        val source = parseModulePath(":lib:routing:common")
+        val target = parseModulePath(":lib:routing:fe")
+        // Only applies to FeatModules — lib modules skip
+        assertNull(checkPlatformDirection(source, target))
+    }
+
+    @Test
+    fun `null depending on COMMON is allowed`() {
+        val source = parseModulePath(":feat:projects:business:model")
+        val target = parseModulePath(":feat:projects:business:model")
+        assertNull(checkPlatformDirection(source, target))
+    }
+
+    @Test
+    fun `same platform is allowed`() {
+        val source = parseModulePath(":feat:projects:fe:driving:impl")
+        val target = parseModulePath(":feat:projects:fe:app:api")
+        assertNull(checkPlatformDirection(source, target))
+    }
+
+    @Test
+    fun `different features - rule does not apply`() {
+        val source = parseModulePath(":feat:projects:app:model")
+        val target = parseModulePath(":feat:findings:fe:app:api")
+        assertNull(checkPlatformDirection(source, target))
+    }
+}
+
 class HexagonalDirectionRuleTest {
 
     @Test
@@ -525,10 +603,11 @@ class HexagonalDirectionRuleTest {
     }
 
     @Test
-    fun `different platforms - rule does not apply`() {
+    fun `cross-platform hex violation is caught`() {
         val source = parseModulePath(":feat:projects:fe:app:impl")
         val target = parseModulePath(":feat:projects:be:driving:impl")
-        assertNull(checkHexagonalDirection(source, target))
+        val violation = checkHexagonalDirection(source, target)
+        assertEquals(RuleId.HEXAGONAL_DIRECTION, violation?.ruleId)
     }
 
     @Test

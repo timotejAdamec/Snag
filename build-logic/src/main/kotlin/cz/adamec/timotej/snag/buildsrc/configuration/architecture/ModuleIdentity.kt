@@ -56,6 +56,7 @@ internal data class InfraModule(
 
 internal enum class RuleId {
     CATEGORY_DIRECTION,
+    PLATFORM_DIRECTION,
     HEXAGONAL_DIRECTION,
     ENCAPSULATION_DIRECTION,
 }

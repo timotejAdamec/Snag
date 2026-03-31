@@ -14,11 +14,14 @@ package cz.adamec.timotej.snag.buildsrc.configuration.architecture
 
 private val IMPL_OR_TEST = setOf(Encapsulation.IMPL, Encapsulation.TEST)
 
+private val PLATFORM_SPECIFIC = setOf(Platform.FE, Platform.BE)
+
 internal fun checkDependency(
     source: ModuleIdentity,
     target: ModuleIdentity,
 ): List<Violation> = listOfNotNull(
     checkCategoryDirection(source, target),
+    checkPlatformDirection(source, target),
     checkHexagonalDirection(source, target),
     checkEncapsulationDirection(source, target),
 )
@@ -57,6 +60,44 @@ private fun categoryName(module: ModuleIdentity): String = when (module) {
     is InfraModule -> "infra"
 }
 
+internal fun checkPlatformDirection(
+    source: ModuleIdentity,
+    target: ModuleIdentity,
+): Violation? {
+    if (source !is FeatModule || target !is FeatModule) return null
+    if (source.feature != target.feature) return null
+
+    val sourcePlatform = source.platform
+    val targetPlatform = target.platform
+
+    if (sourcePlatform == targetPlatform) return null
+
+    val sourceIsAgnostic = sourcePlatform == null || sourcePlatform == Platform.COMMON
+    val targetIsAgnostic = targetPlatform == null || targetPlatform == Platform.COMMON
+
+    if (sourceIsAgnostic && !targetIsAgnostic) {
+        return Violation(
+            ruleId = RuleId.PLATFORM_DIRECTION,
+            source = source.path,
+            target = target.path,
+            message = "platform-agnostic module must not depend on " +
+                "${targetPlatform?.name?.lowercase()}/ module",
+        )
+    }
+
+    if (sourcePlatform in PLATFORM_SPECIFIC && targetPlatform in PLATFORM_SPECIFIC) {
+        return Violation(
+            ruleId = RuleId.PLATFORM_DIRECTION,
+            source = source.path,
+            target = target.path,
+            message = "${sourcePlatform?.name?.lowercase()}/ must not depend on " +
+                "${targetPlatform?.name?.lowercase()}/",
+        )
+    }
+
+    return null
+}
+
 private fun hexLayerRank(layer: HexLayer?): Int? = when (layer) {
     HexLayer.BUSINESS, HexLayer.PORTS -> 0
     HexLayer.APP -> 1
@@ -70,7 +111,6 @@ internal fun checkHexagonalDirection(
 ): Violation? {
     if (source !is FeatModule || target !is FeatModule) return null
     if (source.feature != target.feature) return null
-    if (source.platform != target.platform) return null
     // Model modules are data containers — any layer can depend on them
     if (target.isModel) return null
 
