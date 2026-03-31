@@ -65,5 +65,5 @@ dependencies {
     implementation(libs.ktlint.gradle)
     implementation(libs.buildkonfig.gradle)
 
-    testImplementation(kotlin("test"))
+    testImplementation(libs.kotlin.test)
 }

@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.buildsrc.configuration
 
+import cz.adamec.timotej.snag.buildsrc.configuration.architecture.configureArchitectureCheck
 import cz.adamec.timotej.snag.buildsrc.extensions.library
 import cz.adamec.timotej.snag.buildsrc.extensions.pluginId
 import cz.adamec.timotej.snag.buildsrc.extensions.version

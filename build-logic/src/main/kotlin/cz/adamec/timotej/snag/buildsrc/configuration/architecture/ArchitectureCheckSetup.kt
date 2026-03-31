@@ -10,7 +10,7 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.buildsrc.configuration
+package cz.adamec.timotej.snag.buildsrc.configuration.architecture
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
@@ -35,7 +35,6 @@ internal abstract class ArchitectureCheckTask : DefaultTask() {
         val violations = projectDependencies.get()
             .map { parseModulePath(it) }
             .flatMap { target -> checkDependency(source, target) }
-            .filter { !isAllowlisted(it.source, it.target) }
 
         if (violations.isNotEmpty()) {
             val message = buildString {

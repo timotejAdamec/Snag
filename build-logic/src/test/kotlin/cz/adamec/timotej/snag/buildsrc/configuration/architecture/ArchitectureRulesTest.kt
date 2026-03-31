@@ -10,7 +10,7 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.buildsrc.configuration
+package cz.adamec.timotej.snag.buildsrc.configuration.architecture
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
