@@ -13,8 +13,8 @@
 package cz.adamec.timotej.snag.clients.fe.driven.internal.api
 
 import cz.adamec.timotej.snag.clients.app.model.AppClient
-import cz.adamec.timotej.snag.clients.be.driving.contract.ClientApiDto
-import cz.adamec.timotej.snag.clients.be.driving.contract.DeleteClientApiDto
+import cz.adamec.timotej.snag.clients.contract.ClientApiDto
+import cz.adamec.timotej.snag.clients.contract.DeleteClientApiDto
 import cz.adamec.timotej.snag.clients.fe.driven.internal.LH
 import cz.adamec.timotej.snag.clients.fe.ports.ClientSyncResult
 import cz.adamec.timotej.snag.clients.fe.ports.ClientsApi

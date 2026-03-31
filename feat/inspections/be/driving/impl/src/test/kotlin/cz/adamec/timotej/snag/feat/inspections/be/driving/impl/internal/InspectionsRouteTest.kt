@@ -16,8 +16,8 @@ import cz.adamec.timotej.snag.authorization.business.UserRole
 import cz.adamec.timotej.snag.configuration.be.AppConfiguration
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.feat.inspections.be.driven.test.seedTestInspection
-import cz.adamec.timotej.snag.feat.inspections.be.driving.contract.DeleteInspectionApiDto
-import cz.adamec.timotej.snag.feat.inspections.be.driving.contract.InspectionApiDto
+import cz.adamec.timotej.snag.feat.inspections.contract.DeleteInspectionApiDto
+import cz.adamec.timotej.snag.feat.inspections.contract.InspectionApiDto
 import cz.adamec.timotej.snag.feat.inspections.be.ports.InspectionsDb
 import cz.adamec.timotej.snag.network.be.test.jsonClient
 import cz.adamec.timotej.snag.projects.be.driven.test.seedTestProject

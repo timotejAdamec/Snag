@@ -16,8 +16,8 @@ import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.core.network.fe.OnlineDataResult
 import cz.adamec.timotej.snag.core.network.fe.safeApiCall
 import cz.adamec.timotej.snag.feat.inspections.app.model.AppInspection
-import cz.adamec.timotej.snag.feat.inspections.be.driving.contract.DeleteInspectionApiDto
-import cz.adamec.timotej.snag.feat.inspections.be.driving.contract.InspectionApiDto
+import cz.adamec.timotej.snag.feat.inspections.contract.DeleteInspectionApiDto
+import cz.adamec.timotej.snag.feat.inspections.contract.InspectionApiDto
 import cz.adamec.timotej.snag.feat.inspections.fe.driven.internal.LH
 import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionSyncResult
 import cz.adamec.timotej.snag.feat.inspections.fe.ports.InspectionsApi

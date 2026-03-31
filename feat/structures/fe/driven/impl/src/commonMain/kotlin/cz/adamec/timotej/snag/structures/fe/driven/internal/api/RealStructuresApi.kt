@@ -17,8 +17,8 @@ import cz.adamec.timotej.snag.core.network.fe.OnlineDataResult
 import cz.adamec.timotej.snag.core.network.fe.safeApiCall
 import cz.adamec.timotej.snag.feat.structures.app.model.AppStructure
 import cz.adamec.timotej.snag.network.fe.SnagNetworkHttpClient
-import cz.adamec.timotej.snag.structures.be.driving.contract.DeleteStructureApiDto
-import cz.adamec.timotej.snag.structures.be.driving.contract.StructureApiDto
+import cz.adamec.timotej.snag.structures.contract.DeleteStructureApiDto
+import cz.adamec.timotej.snag.structures.contract.StructureApiDto
 import cz.adamec.timotej.snag.structures.fe.driven.internal.LH
 import cz.adamec.timotej.snag.structures.fe.ports.StructureSyncResult
 import cz.adamec.timotej.snag.structures.fe.ports.StructuresApi

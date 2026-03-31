@@ -26,8 +26,8 @@ import cz.adamec.timotej.snag.structures.be.app.api.GetStructuresUseCase
 import cz.adamec.timotej.snag.structures.be.app.api.SaveStructureUseCase
 import cz.adamec.timotej.snag.structures.be.app.api.model.DeleteStructureRequest
 import cz.adamec.timotej.snag.structures.be.app.api.model.GetStructuresModifiedSinceRequest
-import cz.adamec.timotej.snag.structures.be.driving.contract.DeleteStructureApiDto
-import cz.adamec.timotej.snag.structures.be.driving.contract.PutStructureApiDto
+import cz.adamec.timotej.snag.structures.contract.DeleteStructureApiDto
+import cz.adamec.timotej.snag.structures.contract.PutStructureApiDto
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route

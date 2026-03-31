@@ -21,8 +21,8 @@ import cz.adamec.timotej.snag.findings.be.app.api.GetFindingUseCase
 import cz.adamec.timotej.snag.findings.be.app.api.SaveFindingPhotoUseCase
 import cz.adamec.timotej.snag.findings.be.app.api.model.DeleteFindingPhotoRequest
 import cz.adamec.timotej.snag.findings.be.app.api.model.GetFindingPhotosModifiedSinceRequest
-import cz.adamec.timotej.snag.findings.be.driving.contract.DeleteFindingPhotoApiDto
-import cz.adamec.timotej.snag.findings.be.driving.contract.PutFindingPhotoApiDto
+import cz.adamec.timotej.snag.findings.contract.DeleteFindingPhotoApiDto
+import cz.adamec.timotej.snag.findings.contract.PutFindingPhotoApiDto
 import cz.adamec.timotej.snag.projects.be.app.api.CanAccessProjectUseCase
 import cz.adamec.timotej.snag.routing.be.AppRoute
 import cz.adamec.timotej.snag.routing.be.getDtoFromBody

@@ -22,8 +22,8 @@ import cz.adamec.timotej.snag.feat.inspections.be.app.api.GetInspectionsUseCase
 import cz.adamec.timotej.snag.feat.inspections.be.app.api.SaveInspectionUseCase
 import cz.adamec.timotej.snag.feat.inspections.be.app.api.model.DeleteInspectionRequest
 import cz.adamec.timotej.snag.feat.inspections.be.app.api.model.GetInspectionsModifiedSinceRequest
-import cz.adamec.timotej.snag.feat.inspections.be.driving.contract.DeleteInspectionApiDto
-import cz.adamec.timotej.snag.feat.inspections.be.driving.contract.PutInspectionApiDto
+import cz.adamec.timotej.snag.feat.inspections.contract.DeleteInspectionApiDto
+import cz.adamec.timotej.snag.feat.inspections.contract.PutInspectionApiDto
 import cz.adamec.timotej.snag.projects.be.app.api.CanAccessProjectUseCase
 import cz.adamec.timotej.snag.routing.be.AppRoute
 import cz.adamec.timotej.snag.routing.be.getDtoFromBody

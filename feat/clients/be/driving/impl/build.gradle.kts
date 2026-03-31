@@ -3,7 +3,7 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":feat:clients:be:driving:contract"))
+    implementation(project(":feat:clients:contract"))
     implementation(project(":feat:clients:be:app:api"))
     implementation(project(":feat:authentication:be:driving:api"))
     implementation(project(":feat:authorization:be:driving:api"))

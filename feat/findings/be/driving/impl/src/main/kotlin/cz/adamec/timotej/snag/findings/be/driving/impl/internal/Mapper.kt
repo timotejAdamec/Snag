@@ -20,11 +20,11 @@ import cz.adamec.timotej.snag.feat.findings.business.FindingType
 import cz.adamec.timotej.snag.feat.findings.business.Importance
 import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
 import cz.adamec.timotej.snag.feat.findings.business.Term
-import cz.adamec.timotej.snag.findings.be.driving.contract.FindingApiDto
-import cz.adamec.timotej.snag.findings.be.driving.contract.FindingPhotoApiDto
-import cz.adamec.timotej.snag.findings.be.driving.contract.PutFindingApiDto
-import cz.adamec.timotej.snag.findings.be.driving.contract.PutFindingPhotoApiDto
-import cz.adamec.timotej.snag.findings.be.driving.contract.RelativeCoordinateApiDto
+import cz.adamec.timotej.snag.findings.contract.FindingApiDto
+import cz.adamec.timotej.snag.findings.contract.FindingPhotoApiDto
+import cz.adamec.timotej.snag.findings.contract.PutFindingApiDto
+import cz.adamec.timotej.snag.findings.contract.PutFindingPhotoApiDto
+import cz.adamec.timotej.snag.findings.contract.RelativeCoordinateApiDto
 import kotlin.uuid.Uuid
 
 internal fun FindingType.toDtoKey(): FindingTypeDtoKey =

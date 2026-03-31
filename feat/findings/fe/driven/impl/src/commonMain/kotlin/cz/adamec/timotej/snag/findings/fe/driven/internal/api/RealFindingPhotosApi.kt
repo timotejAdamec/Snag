@@ -16,8 +16,8 @@ import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.core.network.fe.OnlineDataResult
 import cz.adamec.timotej.snag.core.network.fe.safeApiCall
 import cz.adamec.timotej.snag.feat.findings.app.model.AppFindingPhoto
-import cz.adamec.timotej.snag.findings.be.driving.contract.DeleteFindingPhotoApiDto
-import cz.adamec.timotej.snag.findings.be.driving.contract.FindingPhotoApiDto
+import cz.adamec.timotej.snag.findings.contract.DeleteFindingPhotoApiDto
+import cz.adamec.timotej.snag.findings.contract.FindingPhotoApiDto
 import cz.adamec.timotej.snag.findings.fe.driven.internal.LH
 import cz.adamec.timotej.snag.findings.fe.ports.FindingPhotoSyncResult
 import cz.adamec.timotej.snag.findings.fe.ports.FindingPhotosApi
