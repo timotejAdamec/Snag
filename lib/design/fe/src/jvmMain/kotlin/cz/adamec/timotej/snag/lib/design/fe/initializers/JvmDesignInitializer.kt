@@ -12,12 +12,12 @@
 
 package cz.adamec.timotej.snag.lib.design.fe.initializers
 
-import cz.adamec.timotej.snag.configuration.common.CommonConfiguration
+import cz.adamec.timotej.snag.configuration.fe.FrontendRunConfig
 import cz.adamec.timotej.snag.core.foundation.fe.Initializer
 import io.github.vinceglb.filekit.FileKit
 
 internal class JvmDesignInitializer : Initializer {
     override suspend fun init() {
-        FileKit.init(appId = CommonConfiguration.namespace)
+        FileKit.init(appId = FrontendRunConfig.namespace)
     }
 }

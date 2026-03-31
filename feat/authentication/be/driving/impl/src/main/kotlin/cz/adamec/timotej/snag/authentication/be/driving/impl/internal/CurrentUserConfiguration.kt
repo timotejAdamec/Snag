@@ -17,7 +17,7 @@ import cz.adamec.timotej.snag.authentication.be.driving.api.CurrentUser
 import cz.adamec.timotej.snag.authentication.be.driving.api.SnagPrincipal
 import cz.adamec.timotej.snag.authentication.be.driving.impl.internal.LH.logger
 import cz.adamec.timotej.snag.configuration.be.AppConfiguration
-import cz.adamec.timotej.snag.configuration.common.CommonConfiguration
+import cz.adamec.timotej.snag.configuration.be.BackendRunConfig
 import cz.adamec.timotej.snag.users.be.app.api.GetOrCreateUserByAuthProviderIdUseCase
 import cz.adamec.timotej.snag.users.be.app.api.GetUserUseCase
 import io.ktor.server.application.Application
@@ -47,8 +47,8 @@ internal class CurrentUserConfiguration(
 
     @Suppress("LabeledExpression")
     private fun AuthenticationConfig.installJwtProvider() {
-        val tenantId = CommonConfiguration.entraIdTenantId
-        val clientId = CommonConfiguration.entraIdClientId
+        val tenantId = BackendRunConfig.entraIdTenantId
+        val clientId = BackendRunConfig.entraIdClientId
         val issuer = "https://login.microsoftonline.com/$tenantId/v2.0"
         val jwksUri = "https://login.microsoftonline.com/$tenantId/discovery/v2.0/keys"
 

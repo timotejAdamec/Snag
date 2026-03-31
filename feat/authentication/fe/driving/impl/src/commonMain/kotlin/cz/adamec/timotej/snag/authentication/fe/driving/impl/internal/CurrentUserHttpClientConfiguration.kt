@@ -13,7 +13,7 @@
 package cz.adamec.timotej.snag.authentication.fe.driving.impl.internal
 
 import cz.adamec.timotej.snag.authentication.fe.app.api.GetAccessTokenUseCase
-import cz.adamec.timotej.snag.configuration.common.CommonConfiguration
+import cz.adamec.timotej.snag.configuration.common.RunConfig
 import cz.adamec.timotej.snag.network.fe.HttpClientConfiguration
 import cz.adamec.timotej.snag.routing.common.USER_ID_HEADER
 import io.ktor.client.HttpClientConfig
@@ -27,7 +27,7 @@ internal class CurrentUserHttpClientConfiguration(
     private val getAccessTokenUseCase: GetAccessTokenUseCase,
 ) : HttpClientConfiguration {
     override fun HttpClientConfig<*>.setup() {
-        if (CommonConfiguration.mockAuth) {
+        if (RunConfig.mockAuth) {
             installMockAuth()
         } else {
             installBearerAuth()

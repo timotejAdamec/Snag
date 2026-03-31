@@ -10,7 +10,7 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.configuration.common
+package cz.adamec.timotej.snag.configuration.fe
 
 enum class ServerTarget {
     LOCALHOST,
@@ -20,7 +20,7 @@ enum class ServerTarget {
 
     internal companion object {
         fun fromBuildConfig(): ServerTarget =
-            when (SnagBuildConfig.SERVER_TARGET) {
+            when (FrontendBuildConfig.SERVER_TARGET) {
                 "dev" -> DEV
                 "demo" -> DEMO
                 else -> LOCALHOST

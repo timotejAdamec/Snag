@@ -10,7 +10,7 @@
  * Department of Software Engineering
  */
 
-import cz.adamec.timotej.snag.buildsrc.consts.SnagVersioning
+import cz.adamec.timotej.snag.buildsrc.consts.SNAG_NAMESPACE
 import java.util.Properties
 
 plugins {
@@ -45,53 +45,31 @@ fun requireProperty(key: String): String =
         ?: buildProfile.getProperty(key)
         ?: error("Missing required property: $key")
 
-val mockAuth = requireProperty("snag.mockAuth")
-val entraIdTenantId = requireProperty("snag.entraIdTenantId")
-val entraIdClientId = requireProperty("snag.entraIdClientId")
+val serverTarget = requireProperty("snag.serverTarget")
+val entraIdRedirectUri = requireProperty("snag.entraIdRedirectUri")
 
 buildkonfig {
-    packageName = "cz.adamec.timotej.snag.configuration.common"
-    objectName = "RunBuildConfig"
+    packageName = "cz.adamec.timotej.snag.configuration.fe"
+    objectName = "FrontendBuildConfig"
 
     defaultConfigs {
         buildConfigField(
             com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING,
-            "SEMANTIC_VERSION",
-            SnagVersioning.semanticVersion(project).get(),
+            "NAMESPACE",
+            SNAG_NAMESPACE,
             const = true,
         )
         buildConfigField(
             com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING,
-            "VERSION_CODE",
-            SnagVersioning.versionCode(project).get().toString(),
+            "SERVER_TARGET",
+            serverTarget,
             const = true,
         )
         buildConfigField(
             com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING,
-            "VERSION_NAME",
-            SnagVersioning.versionName(project).get(),
-            const = true,
-        )
-        buildConfigField(
-            com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING,
-            "MOCK_AUTH",
-            mockAuth,
-            const = true,
-        )
-        buildConfigField(
-            com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING,
-            "ENTRA_ID_TENANT_ID",
-            entraIdTenantId,
-            const = true,
-        )
-        buildConfigField(
-            com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING,
-            "ENTRA_ID_CLIENT_ID",
-            entraIdClientId,
+            "ENTRA_ID_REDIRECT_URI",
+            entraIdRedirectUri,
             const = true,
         )
     }
-
-    // exposeObjectWithName not used - @JsExport on objects breaks wasmJs compilation.
-    // Instead, values are re-exported via RunConfig.kt in commonMain.
 }

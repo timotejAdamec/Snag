@@ -18,7 +18,9 @@ import cz.adamec.timotej.snag.buildsrc.extensions.library
 import cz.adamec.timotej.snag.buildsrc.extensions.libs
 import cz.adamec.timotej.snag.buildsrc.extensions.testImplementation
 import org.gradle.api.Project
+import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.dependencies
+import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmExtension
 
 internal fun Project.configureBackendModule() {
@@ -31,9 +33,6 @@ internal fun Project.configureBackendModule() {
         }
         if (path.startsWith(":feat") && !path.startsWith(":feat:sync") && path.contains(":be:app:model")) {
             api(project(":feat:sync:be:model"))
-        }
-        if (!path.contains("configuration") && !path.contains("core")) {
-            implementation(project(":lib:configuration:common:api"))
         }
 
         for (dep in resolveHexagonalDependencies()) {
@@ -52,6 +51,18 @@ internal fun Project.configureBackendModule() {
         }
         testImplementation(libs.library("kotlin-test-junit"))
         testImplementation(libs.library("kotlinx-coroutines-test"))
+    }
+
+    tasks.withType<Test> {
+        val envFile = rootProject.file("config/backend-debug.env")
+        if (envFile.exists()) {
+            for (line in envFile.readLines()) {
+                if (line.isNotBlank() && !line.startsWith("#")) {
+                    val (key, value) = line.split("=", limit = 2)
+                    environment(key.trim(), value.trim())
+                }
+            }
+        }
     }
 
     extensions.findByType(KotlinJvmExtension::class.java)?.apply {

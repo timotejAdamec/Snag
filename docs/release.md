@@ -97,8 +97,8 @@ Debug and release builds can coexist on the same device thanks to the `.debug` a
 Server target is determined at compile time via `buildkonfig` and applies to all platforms (Android, iOS, desktop, web).
 
 **Config files** in `config/`:
-- `config/debug.properties` — used for debug builds (default: `localhost`)
-- `config/release.properties` — used for release builds (default: `dev`)
+- `config/frontend-debug.properties` — used for debug builds (default: `localhost`)
+- `config/frontend-release.properties` — used for release builds (default: `dev`)
 
 Detection is automatic based on Gradle task names (e.g., `assembleRelease`, `linkReleaseFramework`).
 
