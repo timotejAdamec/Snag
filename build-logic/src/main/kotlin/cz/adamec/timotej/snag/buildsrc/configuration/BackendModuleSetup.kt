@@ -23,11 +23,14 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinJvmExtension
 
 internal fun Project.configureBackendModule() {
     dependencies {
-        if (!path.contains("core")) {
+        if (!path.startsWith(":core")) {
             implementation(project(":core:foundation:be"))
         }
-        if (!path.contains("core") && !path.startsWith(":feat:sync")) {
+        if (path.startsWith(":feat") && !path.startsWith(":feat:sync") && path.contains(":be:driven:impl")) {
             implementation(project(":feat:sync:be:api"))
+        }
+        if (path.startsWith(":feat") && !path.startsWith(":feat:sync") && path.contains(":be:app:model")) {
+            api(project(":feat:sync:be:model"))
         }
         if (!path.contains("configuration") && !path.contains("core")) {
             implementation(project(":lib:configuration:common:api"))
