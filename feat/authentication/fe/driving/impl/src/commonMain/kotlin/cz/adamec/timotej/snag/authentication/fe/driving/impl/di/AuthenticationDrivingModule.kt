@@ -16,7 +16,7 @@ import cz.adamec.timotej.snag.authentication.fe.driving.api.AuthenticationGateCo
 import cz.adamec.timotej.snag.authentication.fe.driving.impl.internal.AuthStateProviderImpl
 import cz.adamec.timotej.snag.authentication.fe.driving.impl.internal.AuthenticationGateContentImpl
 import cz.adamec.timotej.snag.authentication.fe.driving.impl.internal.AuthenticationInitializer
-import cz.adamec.timotej.snag.authentication.fe.driving.impl.internal.CallCurrentUserConfiguration
+import cz.adamec.timotej.snag.authentication.fe.driving.impl.internal.CurrentUserHttpClientConfiguration
 import cz.adamec.timotej.snag.authentication.fe.driving.impl.internal.vm.AuthenticationViewModel
 import cz.adamec.timotej.snag.core.foundation.fe.Initializer
 import cz.adamec.timotej.snag.network.fe.HttpClientConfiguration
@@ -29,7 +29,7 @@ import org.koin.dsl.module
 val authenticationDrivingModule =
     module {
         viewModelOf(::AuthenticationViewModel)
-        singleOf(::CallCurrentUserConfiguration) bind HttpClientConfiguration::class
+        singleOf(::CurrentUserHttpClientConfiguration) bind HttpClientConfiguration::class
         singleOf(::AuthenticationInitializer) bind Initializer::class
         single<AuthenticationGateContent> { AuthenticationGateContentImpl() }
         singleOf(::AuthStateProviderImpl) bind AuthStateProvider::class

@@ -14,6 +14,6 @@ package cz.adamec.timotej.snag.authentication.be.driving.api
 
 import kotlin.uuid.Uuid
 
-data class CallCurrentUser(
+data class CurrentUser(
     val userId: Uuid,
 )

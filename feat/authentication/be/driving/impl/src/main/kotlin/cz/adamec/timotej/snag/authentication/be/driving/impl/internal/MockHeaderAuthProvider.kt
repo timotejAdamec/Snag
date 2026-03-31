@@ -12,6 +12,8 @@
 
 package cz.adamec.timotej.snag.authentication.be.driving.impl.internal
 
+import cz.adamec.timotej.snag.authentication.be.driving.api.CurrentUser
+import cz.adamec.timotej.snag.authentication.be.driving.api.SnagPrincipal
 import cz.adamec.timotej.snag.authentication.be.driving.impl.internal.LH.logger
 import cz.adamec.timotej.snag.routing.common.USER_ID_HEADER
 import cz.adamec.timotej.snag.users.be.app.api.GetUserUseCase
@@ -20,7 +22,6 @@ import io.ktor.server.auth.AuthenticationConfig
 import io.ktor.server.auth.AuthenticationContext
 import io.ktor.server.auth.AuthenticationFailedCause
 import io.ktor.server.auth.AuthenticationProvider
-import io.ktor.server.auth.UserIdPrincipal
 import io.ktor.server.response.respond
 import kotlin.uuid.Uuid
 
@@ -62,7 +63,7 @@ private class MockHeaderAuthProvider(
         }
 
         logger.debug("Mock auth: authenticated userId={}.", userId)
-        context.principal(UserIdPrincipal(name = userId.toString()))
+        context.principal(SnagPrincipal(currentUser = CurrentUser(userId = user.id)))
     }
 
     private fun AuthenticationContext.rejectAuth(cause: AuthenticationFailedCause) {

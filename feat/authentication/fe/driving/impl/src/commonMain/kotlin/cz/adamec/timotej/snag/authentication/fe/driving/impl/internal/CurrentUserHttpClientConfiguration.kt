@@ -23,7 +23,7 @@ import io.ktor.client.plugins.auth.providers.BearerTokens
 import io.ktor.client.plugins.auth.providers.bearer
 
 @Suppress("LabeledExpression")
-internal class CallCurrentUserConfiguration(
+internal class CurrentUserHttpClientConfiguration(
     private val getAccessTokenUseCase: GetAccessTokenUseCase,
 ) : HttpClientConfiguration {
     override fun HttpClientConfig<*>.setup() {

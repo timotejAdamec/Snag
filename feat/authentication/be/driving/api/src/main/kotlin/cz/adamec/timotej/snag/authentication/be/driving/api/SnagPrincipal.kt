@@ -12,7 +12,6 @@
 
 package cz.adamec.timotej.snag.authentication.be.driving.api
 
-import io.ktor.server.auth.principal
-import io.ktor.server.routing.RoutingContext
-
-fun RoutingContext.currentUser(): CurrentUser = call.principal<SnagPrincipal>()?.currentUser ?: throw UnauthenticatedException()
+data class SnagPrincipal(
+    val currentUser: CurrentUser,
+)

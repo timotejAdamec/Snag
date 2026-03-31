@@ -49,18 +49,19 @@ snag.entraIdRedirectUri=snag://auth/callback
 
 ### How it works
 
-1. `CallCurrentUserConfiguration` installs Ktor's `Authentication` plugin with a `jwt {}` provider that verifies tokens against the EntraID JWKS endpoint (`https://login.microsoftonline.com/{tenantId}/discovery/v2.0/keys`) with key caching.
-2. Every request must include `Authorization: Bearer <jwt-token>`.
-3. The JWT's signature (RSA256), issuer, audience, and expiry are verified.
-4. `CallCurrentUserPlugin` extracts the `oid` claim from the validated `JWTPrincipal` and resolves the user via `GetOrCreateUserByAuthProviderIdUseCase`.
-5. If no user exists with that `oid`, one is auto-created with `role=null`.
-6. Requests without a valid token receive no `CallCurrentUser` in the call context — any route calling `currentUser()` throws `UnauthenticatedException` → HTTP 401.
+1. `CurrentUserConfiguration` installs Ktor's `Authentication` plugin with a dual-mode provider:
+   - **Production** (`mockAuth=false`): `jwt {}` provider verifies tokens against the EntraID JWKS endpoint (`https://login.microsoftonline.com/{tenantId}/discovery/v2.0/keys`) with key caching. The `validate` callback extracts the `oid` claim, resolves/creates the user, and returns a `SnagPrincipal`.
+   - **Mock** (`mockAuth=true`): `MockHeaderAuthProvider` reads the `X-Snag-User-Id` header and resolves the user from the database.
+2. All feature routes are wrapped in `authenticate { }`.
+3. Route handlers call `currentUser()` which reads from `call.principal<SnagPrincipal>()`. If no principal is present, `UnauthenticatedException` is thrown → HTTP 401.
+4. If no user exists with the `oid` from the JWT, one is auto-created with `role=null`.
 
 ### Key files
 
 - `lib/configuration/common/api/.../CommonConfiguration.kt` — build-time config (shared BE/FE)
-- `feat/authentication/be/driving/impl/.../CallCurrentUserConfiguration.kt` — Ktor Authentication plugin setup
-- `feat/authentication/be/driving/impl/.../CallCurrentUserPlugin.kt` — dual-mode user resolution
+- `feat/authentication/be/driving/impl/.../CurrentUserConfiguration.kt` — Ktor Authentication plugin setup with dual-mode providers
+- `feat/authentication/be/driving/impl/.../MockHeaderAuthProvider.kt` — mock auth provider for testing
+- `feat/authentication/be/driving/api/.../SnagPrincipal.kt` — principal carrying `CurrentUser`
 - `feat/users/be/app/api/.../GetOrCreateUserByAuthProviderIdUseCase.kt` — user lookup/creation
 
 ---
@@ -88,7 +89,7 @@ Same as backend — set in `config/release.properties` (see section 2). Values a
 - `feat/authentication/fe/driven/impl/` — adapters (`OidcAuthTokenProvider`, `MockAuthTokenProvider`)
 - `feat/authentication/fe/driven/test/` — test fakes (`FakeAuthTokenProvider`)
 - `feat/authentication/fe/driving/api/` — public composable (`AuthenticationGate`, `AuthenticationGateContent`)
-- `feat/authentication/fe/driving/impl/` — internal UI (`LoginScreen`, `AuthenticationViewModel`, `CallCurrentUserConfiguration`, `AuthenticationInitializer`)
+- `feat/authentication/fe/driving/impl/` — internal UI (`LoginScreen`, `AuthenticationViewModel`, `CurrentUserHttpClientConfiguration`, `AuthenticationInitializer`)
 
 ---
 
@@ -116,6 +117,6 @@ See [#175](https://github.com/timotejAdamec/Snag/issues/175) for implementation 
 
 - With `MOCK_AUTH=true` (default): everything works as before — no EntraID dependency.
 - All existing tests run in mock mode automatically (`CommonConfiguration.mockAuth` defaults to `true`).
-- Backend `CallCurrentUserPluginTest` tests the mock-auth path.
+- Backend `MockHeaderAuthProviderTest` tests the mock-auth path.
 - For testing the JWT path: set `MOCK_AUTH=false` and provide test JWTs signed with known keys.
 - `FakeAuthTokenProvider` in `feat/authentication/fe/driven/test/` is available for FE unit tests.
