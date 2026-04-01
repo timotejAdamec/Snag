@@ -9,6 +9,6 @@ while IFS='=' read -r key value; do
     if [[ -z "${!key+x}" ]]; then
         export "$key=$value"
     fi
-done < config/backend-release.env
+done < config/backend.env
 
 exec java -jar app.jar "$@"

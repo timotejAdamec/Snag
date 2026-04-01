@@ -43,7 +43,7 @@ jobs:
 
       - name: Build and push Docker image
         run: |
-          docker build -t ${{ env.IMAGE }} .
+          docker build --build-arg SNAG_ENV=${{ github.event.inputs.environment }} -t ${{ env.IMAGE }} .
           docker push ${{ env.IMAGE }}
 
       - name: Deploy to Cloud Run
@@ -58,8 +58,3 @@ jobs:
             --min-instances=0
             --max-instances=2
             --allow-unauthenticated
-          # Non-secret defaults are bundled in config/backend-release.env.
-          # Only pass per-environment overrides here.
-          env_vars: |
-            SNAG_GCS_BUCKET_NAME=${{ vars.SNAG_GCS_BUCKET_NAME }}
-            SNAG_CORS_ALLOWED_HOSTS=${{ vars.SNAG_CORS_ALLOWED_HOSTS }}
