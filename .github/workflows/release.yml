@@ -124,7 +124,7 @@ jobs:
           name: wasmjs-dist
           path: snag-wasmjs.zip
 
-  macos-builds:
+  macos-build:
     runs-on: macos-26
 
     steps:
@@ -145,14 +145,32 @@ jobs:
       - name: Build macOS DMG
         run: ./gradlew :composeApp:packageReleaseDmg
 
-      - name: Build iOS framework
-        run: ./gradlew :composeApp:linkReleaseFrameworkIosArm64
-
       - name: Upload macOS DMG
         uses: actions/upload-artifact@v4
         with:
           name: macos-dmg
           path: composeApp/build/compose/binaries/main-release/dmg/*.dmg
+
+  ios-build:
+    runs-on: macos-26
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Build iOS framework
+        run: ./gradlew :composeApp:linkReleaseFrameworkIosArm64
 
       - name: Zip iOS framework
         run: cd composeApp/build/bin/iosArm64/releaseFramework && zip -r "$GITHUB_WORKSPACE/snag-ios-framework.zip" ComposeApp.framework
@@ -192,7 +210,7 @@ jobs:
 
   release:
     runs-on: ubuntu-latest
-    needs: [android-build, linux-build, web-builds, macos-builds, windows-build]
+    needs: [android-build, linux-build, web-builds, macos-build, ios-build, windows-build]
     permissions:
       contents: write
 
