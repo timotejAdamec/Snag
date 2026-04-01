@@ -125,7 +125,7 @@ jobs:
           path: snag-wasmjs.zip
 
   macos-builds:
-    runs-on: macos-latest
+    runs-on: macos-26
 
     steps:
       - name: Checkout
