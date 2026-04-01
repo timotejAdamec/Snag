@@ -58,12 +58,8 @@ jobs:
             --min-instances=0
             --max-instances=2
             --allow-unauthenticated
+          # Non-secret defaults are bundled in config/backend-release.env.
+          # Only pass per-environment overrides here.
           env_vars: |
-            SNAG_PORT=${{ vars.SNAG_PORT }}
             SNAG_GCS_BUCKET_NAME=${{ vars.SNAG_GCS_BUCKET_NAME }}
             SNAG_CORS_ALLOWED_HOSTS=${{ vars.SNAG_CORS_ALLOWED_HOSTS }}
-            SNAG_SEED_DATA=${{ vars.SNAG_SEED_DATA }}
-            SNAG_LOG_LEVEL=${{ vars.SNAG_LOG_LEVEL }}
-            SNAG_MOCK_AUTH=${{ vars.SNAG_MOCK_AUTH }}
-            SNAG_ENTRA_ID_TENANT_ID=${{ vars.SNAG_ENTRA_ID_TENANT_ID }}
-            SNAG_ENTRA_ID_CLIENT_ID=${{ vars.SNAG_ENTRA_ID_CLIENT_ID }}
