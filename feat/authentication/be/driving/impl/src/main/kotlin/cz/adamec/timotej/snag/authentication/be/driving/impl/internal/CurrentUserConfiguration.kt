@@ -49,7 +49,7 @@ internal class CurrentUserConfiguration(
     private fun AuthenticationConfig.installJwtProvider() {
         val tenantId = CommonConfiguration.entraIdTenantId
         val clientId = CommonConfiguration.entraIdClientId
-        val audience = "api://$clientId"
+        val audience = clientId
         val issuer = "https://login.microsoftonline.com/$tenantId/v2.0"
         val jwksUri = "https://login.microsoftonline.com/$tenantId/discovery/v2.0/keys"
 
