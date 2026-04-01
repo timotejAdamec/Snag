@@ -18,7 +18,7 @@ env:
   GRADLE_WORKERS_MAX: '4'
 
 jobs:
-  linux-builds:
+  android-build:
     runs-on: ubuntu-latest
 
     steps:
@@ -49,26 +49,62 @@ jobs:
           SNAG_RELEASE_KEYALIAS: ${{ secrets.RELEASE_KEY_ALIAS }}
           SNAG_RELEASE_KEYPASSWORD: ${{ secrets.RELEASE_KEY_PASSWORD }}
 
-      - name: Build Linux DEB
-        run: ./gradlew :composeApp:packageReleaseDeb
-
-      - name: Build JS distribution
-        run: ./gradlew :composeApp:jsBrowserDistribution
-
-      - name: Build WasmJS distribution
-        run: ./gradlew :composeApp:wasmJsBrowserDistribution
-
       - name: Upload Android APK
         uses: actions/upload-artifact@v4
         with:
           name: android-apk
           path: androidApp/build/outputs/apk/release/*.apk
 
+  linux-build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Build Linux DEB
+        run: ./gradlew :composeApp:packageReleaseDeb
+
       - name: Upload Linux DEB
         uses: actions/upload-artifact@v4
         with:
           name: linux-deb
           path: composeApp/build/compose/binaries/main-release/deb/*.deb
+
+  web-builds:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Build JS distribution
+        run: ./gradlew :composeApp:jsBrowserDistribution
+
+      - name: Build WasmJS distribution
+        run: ./gradlew :composeApp:wasmJsBrowserDistribution
 
       - name: Zip JS distribution
         run: cd composeApp/build/dist/js/productionExecutable && zip -r "$GITHUB_WORKSPACE/snag-js.zip" .
@@ -156,7 +192,7 @@ jobs:
 
   release:
     runs-on: ubuntu-latest
-    needs: [linux-builds, macos-builds, windows-build]
+    needs: [android-build, linux-build, web-builds, macos-builds, windows-build]
     permissions:
       contents: write
 
