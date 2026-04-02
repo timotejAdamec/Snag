@@ -25,6 +25,7 @@ import cz.adamec.timotej.snag.authentication.fe.driving.api.AuthenticationGate
 import cz.adamec.timotej.snag.core.foundation.fe.Initializer
 import cz.adamec.timotej.snag.di.appModule
 import cz.adamec.timotej.snag.lib.design.fe.initializer.ComposeInitializer
+import cz.adamec.timotej.snag.lib.design.fe.theme.SnagTheme
 import cz.adamec.timotej.snag.ui.MainScreen
 import org.koin.compose.KoinApplication
 import org.koin.compose.getKoin
@@ -43,11 +44,13 @@ fun App(extraModules: List<Module> = emptyList()) {
                 },
             ),
     ) {
-        InitializeInitializers(
-            uninitializedContent = { ContainedLoadingIndicator() },
-        ) {
-            AuthenticationGate {
-                MainScreen()
+        SnagTheme {
+            InitializeInitializers(
+                uninitializedContent = { ContainedLoadingIndicator() },
+            ) {
+                AuthenticationGate {
+                    MainScreen()
+                }
             }
         }
     }
