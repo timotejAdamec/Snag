@@ -21,11 +21,11 @@ import cz.adamec.timotej.snag.feat.findings.business.Importance
 import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
 import cz.adamec.timotej.snag.feat.findings.business.Term
 import cz.adamec.timotej.snag.findings.be.driven.test.seedTestFinding
+import cz.adamec.timotej.snag.findings.be.ports.FindingsDb
 import cz.adamec.timotej.snag.findings.contract.DeleteFindingApiDto
 import cz.adamec.timotej.snag.findings.contract.FindingApiDto
 import cz.adamec.timotej.snag.findings.contract.PutFindingApiDto
 import cz.adamec.timotej.snag.findings.contract.RelativeCoordinateApiDto
-import cz.adamec.timotej.snag.findings.be.ports.FindingsDb
 import cz.adamec.timotej.snag.network.be.test.jsonClient
 import cz.adamec.timotej.snag.projects.be.driven.test.seedTestProject
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb

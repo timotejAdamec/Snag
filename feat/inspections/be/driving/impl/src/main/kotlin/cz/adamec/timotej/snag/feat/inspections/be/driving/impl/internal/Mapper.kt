@@ -12,10 +12,10 @@
 
 package cz.adamec.timotej.snag.feat.inspections.be.driving.impl.internal
 
-import cz.adamec.timotej.snag.feat.inspections.contract.InspectionApiDto
-import cz.adamec.timotej.snag.feat.inspections.contract.PutInspectionApiDto
 import cz.adamec.timotej.snag.feat.inspections.be.model.BackendInspection
 import cz.adamec.timotej.snag.feat.inspections.be.model.BackendInspectionData
+import cz.adamec.timotej.snag.feat.inspections.contract.InspectionApiDto
+import cz.adamec.timotej.snag.feat.inspections.contract.PutInspectionApiDto
 import kotlin.uuid.Uuid
 
 internal fun BackendInspection.toDto() =

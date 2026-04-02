@@ -33,11 +33,11 @@ Only add if the autowiring does not wire them.
 
 For new code, tests should be created.
 
-### Gradle
+### Gradle check
 
-After finishing making changes run `check`. If it fails, analyze **all** errors from the full output
-(so do not take too low number of lines!), fix them all in one pass, then re-run `check` once to
-confirm. Do not fix-and-rerun iteratively one error at a time.
+After finishing making changes run `check`. If it fails, analyze **all** errors from the full output,
+fix them all in one pass, then re-run `check` once to confirm. Do not fix-and-rerun iteratively one
+error at a time – see *ALL* the errors at once.
 
 ### Following patterns
 

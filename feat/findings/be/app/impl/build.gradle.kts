@@ -5,7 +5,7 @@ plugins {
 dependencies {
     implementation(projects.feat.projects.business.rules)
     implementation(projects.feat.projects.be.app.api)
-    implementation(projects.feat.structures.be.ports)
+    implementation(projects.feat.structures.be.app.api)
     testImplementation(projects.feat.projects.be.ports)
     testImplementation(projects.feat.structures.be.ports)
     testImplementation(projects.feat.users.be.ports)

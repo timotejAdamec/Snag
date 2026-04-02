@@ -12,10 +12,10 @@
 
 package cz.adamec.timotej.snag.projects.be.driving.impl.internal
 
-import cz.adamec.timotej.snag.projects.contract.ProjectApiDto
-import cz.adamec.timotej.snag.projects.contract.PutProjectApiDto
 import cz.adamec.timotej.snag.projects.be.model.BackendProject
 import cz.adamec.timotej.snag.projects.be.model.BackendProjectData
+import cz.adamec.timotej.snag.projects.contract.ProjectApiDto
+import cz.adamec.timotej.snag.projects.contract.PutProjectApiDto
 import kotlin.uuid.Uuid
 
 internal fun BackendProject.toDto() =

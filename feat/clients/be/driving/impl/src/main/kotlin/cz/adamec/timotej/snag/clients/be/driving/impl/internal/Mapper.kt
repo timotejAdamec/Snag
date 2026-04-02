@@ -12,10 +12,10 @@
 
 package cz.adamec.timotej.snag.clients.be.driving.impl.internal
 
-import cz.adamec.timotej.snag.clients.contract.ClientApiDto
-import cz.adamec.timotej.snag.clients.contract.PutClientApiDto
 import cz.adamec.timotej.snag.clients.be.model.BackendClient
 import cz.adamec.timotej.snag.clients.be.model.BackendClientData
+import cz.adamec.timotej.snag.clients.contract.ClientApiDto
+import cz.adamec.timotej.snag.clients.contract.PutClientApiDto
 import kotlin.uuid.Uuid
 
 internal fun BackendClient.toDto() =

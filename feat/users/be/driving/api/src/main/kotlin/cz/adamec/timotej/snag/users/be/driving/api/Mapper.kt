@@ -12,8 +12,8 @@
 
 package cz.adamec.timotej.snag.users.be.driving.api
 
-import cz.adamec.timotej.snag.users.contract.UserApiDto
 import cz.adamec.timotej.snag.users.be.model.BackendUser
+import cz.adamec.timotej.snag.users.contract.UserApiDto
 
 fun BackendUser.toDto() =
     UserApiDto(

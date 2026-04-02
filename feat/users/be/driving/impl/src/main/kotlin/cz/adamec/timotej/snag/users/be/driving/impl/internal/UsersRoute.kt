@@ -25,8 +25,8 @@ import cz.adamec.timotej.snag.users.be.app.api.GetUsersModifiedSinceUseCase
 import cz.adamec.timotej.snag.users.be.app.api.GetUsersUseCase
 import cz.adamec.timotej.snag.users.be.app.api.SaveUserUseCase
 import cz.adamec.timotej.snag.users.be.driving.api.toDto
-import cz.adamec.timotej.snag.users.contract.PutUserApiDto
 import cz.adamec.timotej.snag.users.be.driving.impl.internal.LH.logger
+import cz.adamec.timotej.snag.users.contract.PutUserApiDto
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route

@@ -14,8 +14,8 @@ package cz.adamec.timotej.snag.users.be.driving.impl.internal
 
 import cz.adamec.timotej.snag.authorization.business.UserRole
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
-import cz.adamec.timotej.snag.users.contract.PutUserApiDto
 import cz.adamec.timotej.snag.users.be.model.BackendUserData
+import cz.adamec.timotej.snag.users.contract.PutUserApiDto
 import kotlin.uuid.Uuid
 
 internal fun PutUserApiDto.toModel(id: Uuid) =
