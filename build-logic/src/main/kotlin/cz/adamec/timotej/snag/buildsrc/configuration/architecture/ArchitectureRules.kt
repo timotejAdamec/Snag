@@ -73,7 +73,6 @@ internal fun checkPlatformDirection(
     target: ModuleIdentity,
 ): Violation? {
     if (source is AppModule || source is InfraModule) return null
-    if (target is AppModule || target is InfraModule) return null
 
     val sourcePlatform = platformOf(source)
     val targetPlatform = platformOf(target)
