@@ -13,11 +13,8 @@
 package cz.adamec.timotej.snag.configuration.fe
 
 /**
- * Compile-time configuration for frontend platforms only.
- *
- * Values are injected via the BuildKonfig Gradle plugin at build time.
+ * Compile-time configuration for web platforms (JS, WasmJS).
  */
-object FrontendRunConfig {
-    val namespace: String = FrontendBuildConfig.NAMESPACE
-    val serverTarget: ServerTarget = ServerTarget.fromBuildConfig()
+object WebRunConfig {
+    val redirectPath: String = FrontendBuildConfig.ENTRA_ID_WEB_REDIRECT_PATH
 }

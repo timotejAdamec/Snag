@@ -20,7 +20,7 @@ The system uses a dual-mode authentication architecture:
 3. Set:
    - **Name**: `Snag`
    - **Supported account types**: Accounts in this organizational directory only (single tenant)
-   - **Redirect URI**: `snag://auth/callback` (custom URI scheme for mobile/desktop)
+   - **Redirect URI**: `snag://auth-callback` (Mobile and desktop — Android/iOS)
 4. After creation, note:
    - **Application (client) ID** → this is `ENTRA_ID_CLIENT_ID`
    - **Directory (tenant) ID** → this is `ENTRA_ID_TENANT_ID`
@@ -29,10 +29,18 @@ The system uses a dual-mode authentication architecture:
 
 ### Platform-specific redirect URI setup
 
+Register all redirect URIs in Azure Portal → Authentication:
+
+| Platform | Redirect URI | Azure type |
+|---|---|---|
+| Android/iOS | `snag://auth-callback` | Mobile and desktop |
+| macOS/JVM desktop | `http://localhost:8080/auth-callback` | Mobile and desktop |
+| Web (WasmJS) | `http://localhost:8080/web-auth-callback` | Single-page application |
+
 - **Android**: `manifestPlaceholders["oidcRedirectScheme"] = "snag"` is set in `androidApp/build.gradle.kts`. The library's manifest merger handles the intent filter automatically.
 - **iOS**: URL scheme `snag` is registered in `iosApp/iosApp/Info.plist` via `CFBundleURLSchemes`.
 - **Desktop**: The library uses an embedded localhost webserver — no scheme registration needed.
-- **Web (WasmJS)**: Redirect to same origin.
+- **Web (WasmJS)**: Must be registered as SPA type (distinct from Mobile/desktop) for CORS compatibility.
 
 ---
 
@@ -44,7 +52,9 @@ Auth configuration is set at build time via `RunConfig` (BuildKonfig). Set the f
 snag.mockAuth=false
 snag.entraIdTenantId=<your-tenant-id>
 snag.entraIdClientId=<your-client-id>
-snag.entraIdRedirectUri=snag://auth/callback
+snag.entraIdMobileRedirectUri=snag://auth-callback
+snag.entraIdJvmRedirectUri=http://localhost:8080/auth-callback
+snag.entraIdWebRedirectPath=/web-auth-callback
 ```
 
 ### How it works

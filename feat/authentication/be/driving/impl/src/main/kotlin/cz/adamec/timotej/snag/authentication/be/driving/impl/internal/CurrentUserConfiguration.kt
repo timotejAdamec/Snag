@@ -49,10 +49,11 @@ internal class CurrentUserConfiguration(
     private fun AuthenticationConfig.installJwtProvider() {
         val tenantId = BackendRunConfig.entraIdTenantId
         val clientId = BackendRunConfig.entraIdClientId
+        val audience = clientId
         val issuer = "https://login.microsoftonline.com/$tenantId/v2.0"
         val jwksUri = "https://login.microsoftonline.com/$tenantId/discovery/v2.0/keys"
 
-        logger.debug("Configuring JWT: issuer={}, clientId={}, jwksUri={}.", issuer, clientId, jwksUri)
+        logger.debug("Configuring JWT: issuer={}, audience={}, jwksUri={}.", issuer, audience, jwksUri)
 
         val jwkProvider =
             JwkProviderBuilder(URI(jwksUri).toURL())
@@ -64,7 +65,7 @@ internal class CurrentUserConfiguration(
             realm = "snag"
             verifier(jwkProvider, issuer) {
                 acceptLeeway(JWT_LEEWAY_SECONDS)
-                withAudience(clientId)
+                withAudience(audience)
             }
             validate { credential ->
                 val oid = credential.payload.getClaim("oid")?.asString()

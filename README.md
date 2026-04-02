@@ -128,6 +128,18 @@ Alternatively, you can pass it as a command-line flag without modifying any file
 ./gradlew <task> -Psnag.serverTarget=dev
 ```
 
+# Making a Release
+
+1. Tag and push:
+   ```bash
+   git tag v0.2.0
+   git push origin v0.2.0
+   ```
+2. GitHub Actions automatically builds all platform artifacts and creates a GitHub Release with them attached
+3. Artifacts are downloadable from the [Releases](../../releases) page
+
+The version is derived entirely from the git tag — no manual version bumps needed anywhere.
+
 # Project Structure
 
 See [Project Structure](docs/project_structure.md).

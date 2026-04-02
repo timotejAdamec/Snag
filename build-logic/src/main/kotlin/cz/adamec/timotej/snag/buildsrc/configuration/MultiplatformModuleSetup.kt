@@ -127,6 +127,13 @@ private fun NamedDomainObjectContainer<KotlinSourceSet>.configureIntermediateSou
     fun findAndroidInstrumented(): KotlinSourceSet? =
         if (isTest) findByName("androidInstrumentedTest") else null
 
+    val mobile = create("mobile$suffix") {
+        dependsOn(common)
+    }
+    findAndroid()?.dependsOn(mobile)
+    findAndroidInstrumented()?.dependsOn(mobile)
+    getOrCreate("ios").dependsOn(mobile)
+
     val nonWeb = create("nonWeb$suffix") {
         dependsOn(common)
     }

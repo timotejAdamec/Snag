@@ -46,7 +46,9 @@ fun requireProperty(key: String): String =
         ?: error("Missing required property: $key")
 
 val serverTarget = requireProperty("snag.serverTarget")
-val entraIdRedirectUri = requireProperty("snag.entraIdRedirectUri")
+val entraIdMobileRedirectUri = requireProperty("snag.entraIdMobileRedirectUri")
+val entraIdJvmRedirectUri = requireProperty("snag.entraIdJvmRedirectUri")
+val entraIdWebRedirectPath = requireProperty("snag.entraIdWebRedirectPath")
 
 buildkonfig {
     packageName = "cz.adamec.timotej.snag.configuration.fe"
@@ -67,8 +69,20 @@ buildkonfig {
         )
         buildConfigField(
             com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING,
-            "ENTRA_ID_REDIRECT_URI",
-            entraIdRedirectUri,
+            "ENTRA_ID_MOBILE_REDIRECT_URI",
+            entraIdMobileRedirectUri,
+            const = true,
+        )
+        buildConfigField(
+            com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING,
+            "ENTRA_ID_JVM_REDIRECT_URI",
+            entraIdJvmRedirectUri,
+            const = true,
+        )
+        buildConfigField(
+            com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING,
+            "ENTRA_ID_WEB_REDIRECT_PATH",
+            entraIdWebRedirectPath,
             const = true,
         )
     }

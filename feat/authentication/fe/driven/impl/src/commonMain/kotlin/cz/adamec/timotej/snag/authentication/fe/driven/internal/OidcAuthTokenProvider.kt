@@ -38,7 +38,7 @@ internal class OidcAuthTokenProvider(
         ) {
             clientId = RunConfig.entraIdClientId
             codeChallengeMethod = CodeChallengeMethod.S256
-            scope = "openid profile email offline_access"
+            scope = "openid profile email offline_access api://${RunConfig.entraIdClientId}/access_as_user"
             this.redirectUri = redirectUri
         }
 
