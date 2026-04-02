@@ -32,7 +32,7 @@ val isRelease =
         }
 val buildProfileFile =
     rootProject.file(
-        if (isRelease) "config/frontend-release.properties" else "config/frontend-debug.properties",
+        if (isRelease) "config/common-release.properties" else "config/common-debug.properties",
     )
 val buildProfile =
     Properties().apply {
