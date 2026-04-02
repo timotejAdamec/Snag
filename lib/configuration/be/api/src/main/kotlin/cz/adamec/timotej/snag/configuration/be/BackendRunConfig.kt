@@ -17,7 +17,7 @@ package cz.adamec.timotej.snag.configuration.be
  *
  * All values are read from environment variables. The server crashes on startup
  * if any required variable is missing. For local development, source the
- * `config/backend-local.env` file before running the server.
+ * `config/backend-debug.env` file before running the server.
  */
 object BackendRunConfig {
     val port: Int = requireEnv("SNAG_PORT").toInt()

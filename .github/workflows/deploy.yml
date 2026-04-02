@@ -34,7 +34,7 @@ jobs:
 
       - name: Build and push Docker image
         run: |
-          docker build --build-arg SNAG_ENV=demo -t ${{ env.IMAGE }} .
+          docker build -t ${{ env.IMAGE }} .
           docker push ${{ env.IMAGE }}
 
       - name: Deploy to Cloud Run
