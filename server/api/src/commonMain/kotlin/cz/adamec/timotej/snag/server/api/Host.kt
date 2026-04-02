@@ -21,8 +21,7 @@ sealed interface Host {
         const val URL: String = "https://snag-server-dev-ioifzecczq-ey.a.run.app"
     }
 
-    @Suppress("NotImplementedDeclaration")
     data object DemoRemote : Host {
-        val URL: String = TODO("Demo environment not yet provisioned")
+        const val URL: String = "https://snag-server-demo-ioifzecczq-ey.a.run.app"
     }
 }
