@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -35,44 +36,43 @@ internal fun LoginScreen(
     errorMessage: String?,
     modifier: Modifier = Modifier,
 ) {
-    Column(
-        modifier =
-            modifier
-                .fillMaxSize()
-                .padding(32.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-    ) {
-        Text(
-            text = "Snag",
-            style = MaterialTheme.typography.displayMedium,
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        if (isLoading) {
+    Surface(modifier = modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier.fillMaxSize().padding(32.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+        ) {
             Text(
-                text = "Signing in\u2026",
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                text = "Snag",
+                style = MaterialTheme.typography.displayMedium,
             )
-            Spacer(modifier = Modifier.height(32.dp))
-            LoadingIndicator(modifier = Modifier.size(48.dp))
-        } else {
-            if (errorMessage != null) {
+            Spacer(modifier = Modifier.height(8.dp))
+            if (isLoading) {
                 Text(
-                    text = errorMessage,
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.error,
-                )
-            } else {
-                Text(
-                    text = "Sign in to continue",
+                    text = "Signing in\u2026",
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
-            }
-            Spacer(modifier = Modifier.height(32.dp))
-            Button(onClick = onRetry) {
-                Text("Sign in with Microsoft")
+                Spacer(modifier = Modifier.height(32.dp))
+                LoadingIndicator(modifier = Modifier.size(48.dp))
+            } else {
+                if (errorMessage != null) {
+                    Text(
+                        text = errorMessage,
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.error,
+                    )
+                } else {
+                    Text(
+                        text = "Sign in to continue",
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+                Spacer(modifier = Modifier.height(32.dp))
+                Button(onClick = onRetry) {
+                    Text("Sign in with Microsoft")
+                }
             }
         }
     }

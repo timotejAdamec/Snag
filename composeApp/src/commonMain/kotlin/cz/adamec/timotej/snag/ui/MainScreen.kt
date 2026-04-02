@@ -32,7 +32,6 @@ import cz.adamec.timotej.snag.lib.design.fe.adaptive.isScreenWide
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.AppScaffold
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.SyncStatusBar
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.SyncStatusBarState
-import cz.adamec.timotej.snag.lib.design.fe.theme.SnagTheme
 import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectsNavRoute
 import cz.adamec.timotej.snag.ui.components.TabItem
 import cz.adamec.timotej.snag.vm.MainViewModel
@@ -44,22 +43,20 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 internal fun MainScreen(mainViewModel: MainViewModel = koinViewModel()) {
     val syncStatus by mainViewModel.syncStatus.collectAsStateWithLifecycle()
-    SnagTheme {
-        val outerContainerColor =
-            if (isScreenWide()) {
-                ContentPaneDefaults.containerColor
-            } else {
-                ContentPaneDefaults.paneColor
-            }
-        AppScaffold(
-            containerColor = outerContainerColor,
-        ) { paddingValues ->
-            MainScreenContent(
-                paddingValues = paddingValues,
-                syncBarState = syncStatus.toBarState(),
-                outerContainerColor = outerContainerColor,
-            )
+    val outerContainerColor =
+        if (isScreenWide()) {
+            ContentPaneDefaults.containerColor
+        } else {
+            ContentPaneDefaults.paneColor
         }
+    AppScaffold(
+        containerColor = outerContainerColor,
+    ) { paddingValues ->
+        MainScreenContent(
+            paddingValues = paddingValues,
+            syncBarState = syncStatus.toBarState(),
+            outerContainerColor = outerContainerColor,
+        )
     }
 }
 
