@@ -54,7 +54,7 @@ snag.entraIdTenantId=<your-tenant-id>
 snag.entraIdClientId=<your-client-id>
 snag.entraIdMobileRedirectUri=snag://auth-callback
 snag.entraIdJvmRedirectUri=http://localhost:8080/auth-callback
-snag.entraIdWebRedirectUri=http://localhost:8080/web-auth-callback
+snag.entraIdWebRedirectPath=/web-auth-callback
 ```
 
 ### How it works

@@ -28,5 +28,5 @@ object CommonConfiguration {
     val entraIdClientId: String = SnagBuildConfig.ENTRA_ID_CLIENT_ID
     val entraIdMobileRedirectUri: String = SnagBuildConfig.ENTRA_ID_MOBILE_REDIRECT_URI
     val entraIdJvmRedirectUri: String = SnagBuildConfig.ENTRA_ID_JVM_REDIRECT_URI
-    val entraIdWebRedirectUri: String = SnagBuildConfig.ENTRA_ID_WEB_REDIRECT_URI
+    val entraIdWebRedirectPath: String = SnagBuildConfig.ENTRA_ID_WEB_REDIRECT_PATH
 }

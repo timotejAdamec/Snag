@@ -61,9 +61,9 @@ val entraIdJvmRedirectUri =
     findProperty("snag.entraIdJvmRedirectUri")?.toString()
         ?: buildProfile.getProperty("snag.entraIdJvmRedirectUri")
         ?: ""
-val entraIdWebRedirectUri =
-    findProperty("snag.entraIdWebRedirectUri")?.toString()
-        ?: buildProfile.getProperty("snag.entraIdWebRedirectUri")
+val entraIdWebRedirectPath =
+    findProperty("snag.entraIdWebRedirectPath")?.toString()
+        ?: buildProfile.getProperty("snag.entraIdWebRedirectPath")
         ?: ""
 
 buildkonfig {
@@ -133,8 +133,8 @@ buildkonfig {
         )
         buildConfigField(
             com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING,
-            "ENTRA_ID_WEB_REDIRECT_URI",
-            entraIdWebRedirectUri,
+            "ENTRA_ID_WEB_REDIRECT_PATH",
+            entraIdWebRedirectPath,
             const = true,
         )
     }

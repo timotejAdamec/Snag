@@ -16,6 +16,7 @@ package cz.adamec.timotej.snag
 
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.window.ComposeViewport
+import cz.adamec.timotej.snag.configuration.common.CommonConfiguration
 import kotlinx.browser.window
 import org.publicvalue.multiplatform.oidc.ExperimentalOpenIdConnect
 import org.publicvalue.multiplatform.oidc.appsupport.PlatformCodeAuthFlow
@@ -23,7 +24,7 @@ import org.publicvalue.multiplatform.oidc.appsupport.PlatformCodeAuthFlow
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalOpenIdConnect::class)
 fun main() {
     val currentPath = window.location.pathname
-    if (currentPath.startsWith("/web-auth-callback") || currentPath.startsWith("/logout")) {
+    if (currentPath.startsWith(CommonConfiguration.entraIdWebRedirectPath) || currentPath.startsWith("/logout")) {
         PlatformCodeAuthFlow.handleRedirect()
         return
     }
