@@ -187,16 +187,47 @@ class PlatformDirectionRuleTest {
     }
 
     @Test
-    fun `different features - rule does not apply`() {
+    fun `cross-feature agnostic depending on FE is a violation`() {
         val source = parseModulePath(":feat:projects:app:model")
         val target = parseModulePath(":feat:findings:fe:app:api")
+        val violation = checkPlatformDirection(source, target)
+        assertEquals(RuleId.PLATFORM_DIRECTION, violation?.ruleId)
+    }
+
+    @Test
+    fun `lib COMMON depending on lib FE is a violation`() {
+        val source = parseModulePath(":lib:routing:common")
+        val target = parseModulePath(":lib:routing:fe")
+        val violation = checkPlatformDirection(source, target)
+        assertEquals(RuleId.PLATFORM_DIRECTION, violation?.ruleId)
+    }
+
+    @Test
+    fun `core COMMON depending on core FE is a violation`() {
+        val source = parseModulePath(":core:foundation:common")
+        val target = parseModulePath(":core:foundation:fe")
+        val violation = checkPlatformDirection(source, target)
+        assertEquals(RuleId.PLATFORM_DIRECTION, violation?.ruleId)
+    }
+
+    @Test
+    fun `lib FE depending on lib common is allowed`() {
+        val source = parseModulePath(":lib:routing:fe")
+        val target = parseModulePath(":lib:routing:common")
         assertNull(checkPlatformDirection(source, target))
     }
 
     @Test
-    fun `non-feat modules - rule does not apply`() {
-        val source = parseModulePath(":lib:routing:common")
-        val target = parseModulePath(":lib:routing:fe")
+    fun `app module is not checked`() {
+        val source = parseModulePath(":androidApp")
+        val target = parseModulePath(":feat:projects:fe:driving:impl")
+        assertNull(checkPlatformDirection(source, target))
+    }
+
+    @Test
+    fun `infra module is not checked`() {
+        val source = parseModulePath(":testInfra:be")
+        val target = parseModulePath(":feat:projects:fe:app:impl")
         assertNull(checkPlatformDirection(source, target))
     }
 }
@@ -358,17 +389,17 @@ class HexagonalDirectionRuleTest {
         assertEquals(RuleId.HEXAGONAL_DIRECTION, violation?.ruleId)
     }
 
-    // --- Skip conditions ---
+    // --- Not checked ---
 
     @Test
-    fun `non-feat modules - rule does not apply`() {
+    fun `non-feat modules are not checked`() {
         val source = parseModulePath(":lib:network:fe:impl")
         val target = parseModulePath(":lib:network:fe:api")
         assertNull(checkHexagonalDirection(source, target))
     }
 
     @Test
-    fun `modules without hex layer - rule does not apply`() {
+    fun `feat modules without hex layer are not checked`() {
         val source = parseModulePath(":feat:sync:be:impl")
         val target = parseModulePath(":feat:sync:be:api")
         assertNull(checkHexagonalDirection(source, target))
@@ -430,7 +461,7 @@ class EncapsulationDirectionRuleTest {
     }
 
     @Test
-    fun `modules without encapsulation - rule does not apply`() {
+    fun `modules without encapsulation are not checked`() {
         val source = parseModulePath(":feat:projects:fe:ports")
         val target = parseModulePath(":feat:projects:business:model")
         assertNull(checkEncapsulationDirection(source, target))

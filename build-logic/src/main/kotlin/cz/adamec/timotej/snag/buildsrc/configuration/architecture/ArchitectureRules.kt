@@ -60,15 +60,23 @@ private fun categoryName(module: ModuleIdentity): String = when (module) {
     is InfraModule -> "infra"
 }
 
+private fun platformOf(module: ModuleIdentity): Platform? = when (module) {
+    is CoreModule -> module.platform
+    is LibModule -> module.platform
+    is FeatModule -> module.platform
+    is AppModule -> null
+    is InfraModule -> null
+}
+
 internal fun checkPlatformDirection(
     source: ModuleIdentity,
     target: ModuleIdentity,
 ): Violation? {
-    if (source !is FeatModule || target !is FeatModule) return null
-    if (source.feature != target.feature) return null
+    if (source is AppModule || source is InfraModule) return null
+    if (target is AppModule || target is InfraModule) return null
 
-    val sourcePlatform = source.platform
-    val targetPlatform = target.platform
+    val sourcePlatform = platformOf(source)
+    val targetPlatform = platformOf(target)
 
     if (sourcePlatform == targetPlatform) return null
 
