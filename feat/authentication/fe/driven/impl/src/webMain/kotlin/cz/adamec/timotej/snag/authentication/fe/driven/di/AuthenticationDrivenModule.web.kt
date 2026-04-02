@@ -13,7 +13,7 @@
 package cz.adamec.timotej.snag.authentication.fe.driven.di
 
 import cz.adamec.timotej.snag.authentication.fe.driven.internal.WebLocalStorageSettingsStore
-import kotlinx.browser.window
+import cz.adamec.timotej.snag.configuration.common.CommonConfiguration
 import org.koin.core.module.Module
 import org.koin.dsl.module
 import org.publicvalue.multiplatform.oidc.ExperimentalOpenIdConnect
@@ -27,5 +27,5 @@ actual val platformModule: Module =
     module {
         single<CodeAuthFlowFactory> { WebCodeAuthFlowFactory() }
         single<TokenStore> { SettingsTokenStore(settings = WebLocalStorageSettingsStore()) }
-        single(qualifier = OIDC_REDIRECT_URI_QUALIFIER) { "${window.location.origin}/web-auth-callback" }
+        single(qualifier = OIDC_REDIRECT_URI_QUALIFIER) { CommonConfiguration.entraIdWebRedirectUri }
     }
