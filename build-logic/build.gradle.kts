@@ -64,4 +64,6 @@ dependencies {
     implementation(libs.detekt.gradle)
     implementation(libs.ktlint.gradle)
     implementation(libs.buildkonfig.gradle)
+
+    testImplementation(libs.kotlin.test)
 }

@@ -13,7 +13,7 @@
 package cz.adamec.timotej.snag.buildsrc.plugins
 
 import cz.adamec.timotej.snag.buildsrc.configuration.configureKotlinMultiplatformModule
-import cz.adamec.timotej.snag.buildsrc.configuration.configureLint
+import cz.adamec.timotej.snag.buildsrc.configuration.configureCheckTask
 import cz.adamec.timotej.snag.buildsrc.extensions.pluginId
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -25,6 +25,6 @@ class MultiplatformModulePlugin : Plugin<Project> {
         apply(plugin = pluginId("kotlinMultiplatform"))
         apply(plugin = pluginId("androidKotlinMultiplatformLibrary"))
         configureKotlinMultiplatformModule()
-        configureLint()
+        configureCheckTask()
     }
 }

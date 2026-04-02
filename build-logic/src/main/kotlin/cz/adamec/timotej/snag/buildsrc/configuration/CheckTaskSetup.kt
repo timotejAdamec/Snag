@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.buildsrc.configuration
 
+import cz.adamec.timotej.snag.buildsrc.configuration.architecture.configureArchitectureCheck
 import cz.adamec.timotej.snag.buildsrc.extensions.library
 import cz.adamec.timotej.snag.buildsrc.extensions.pluginId
 import cz.adamec.timotej.snag.buildsrc.extensions.version
@@ -21,7 +22,7 @@ import org.gradle.kotlin.dsl.apply
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.dependencies
 
-fun Project.configureLint() {
+fun Project.configureCheckTask() {
     apply(plugin = pluginId("detekt"))
     apply(plugin = pluginId("ktlint"))
 
@@ -46,4 +47,6 @@ fun Project.configureLint() {
     dependencies {
         "ktlintRuleset"(library("compose-rules-ktlint"))
     }
+
+    configureArchitectureCheck()
 }
