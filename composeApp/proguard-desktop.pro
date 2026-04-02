@@ -17,6 +17,25 @@
 # --- Ktor ---
 -dontwarn io.ktor.**
 
+# --- ServiceLoader preservation (META-INF/services) ---
+-adaptresourcefilecontents META-INF/services/**
+-keepdirectories META-INF/services
+
+# Ktor HTTP client engine
+-keep class io.ktor.client.engine.HttpClientEngineContainer { *; }
+-keep class io.ktor.client.engine.okhttp.OkHttpEngineContainer { *; }
+-keep class io.ktor.client.engine.okhttp.OkHttp { *; }
+
+# kotlinx-coroutines Swing main dispatcher
+-keep class * implements kotlinx.coroutines.internal.MainDispatcherFactory { *; }
+
+# SQLDelight JDBC driver
+-keep class org.sqlite.** { *; }
+-keep class * implements java.sql.Driver { *; }
+
+# SLF4J service provider
+-keep class * implements org.slf4j.spi.SLF4JServiceProvider { *; }
+
 # --- General ---
 -dontwarn kotlin.**
 -dontwarn org.koin.**
