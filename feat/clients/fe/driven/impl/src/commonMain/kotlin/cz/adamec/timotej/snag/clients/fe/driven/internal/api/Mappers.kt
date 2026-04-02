@@ -14,8 +14,8 @@ package cz.adamec.timotej.snag.clients.fe.driven.internal.api
 
 import cz.adamec.timotej.snag.clients.app.model.AppClient
 import cz.adamec.timotej.snag.clients.app.model.AppClientData
-import cz.adamec.timotej.snag.clients.be.driving.contract.ClientApiDto
-import cz.adamec.timotej.snag.clients.be.driving.contract.PutClientApiDto
+import cz.adamec.timotej.snag.clients.contract.ClientApiDto
+import cz.adamec.timotej.snag.clients.contract.PutClientApiDto
 
 internal fun ClientApiDto.toModel(): AppClient =
     AppClientData(

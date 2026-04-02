@@ -19,8 +19,8 @@ import cz.adamec.timotej.snag.network.be.test.jsonClient
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
 import cz.adamec.timotej.snag.users.be.driven.test.asAuthenticated
 import cz.adamec.timotej.snag.users.be.driven.test.seedTestUser
-import cz.adamec.timotej.snag.users.be.driving.contract.PutUserApiDto
-import cz.adamec.timotej.snag.users.be.driving.contract.UserApiDto
+import cz.adamec.timotej.snag.users.contract.PutUserApiDto
+import cz.adamec.timotej.snag.users.contract.UserApiDto
 import cz.adamec.timotej.snag.users.be.model.BackendUserData
 import cz.adamec.timotej.snag.users.be.ports.UsersDb
 import io.ktor.client.call.body

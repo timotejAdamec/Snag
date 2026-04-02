@@ -5,7 +5,7 @@ plugins {
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            implementation(project(":feat:clients:be:driving:contract"))
+            implementation(project(":feat:clients:contract"))
             implementation(project(":feat:clients:business:model"))
             implementation(project(":lib:database:fe"))
         }

@@ -16,8 +16,8 @@ import cz.adamec.timotej.snag.authorization.business.UserRole
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.users.app.model.AppUser
 import cz.adamec.timotej.snag.users.app.model.AppUserData
-import cz.adamec.timotej.snag.users.be.driving.contract.PutUserApiDto
-import cz.adamec.timotej.snag.users.be.driving.contract.UserApiDto
+import cz.adamec.timotej.snag.users.contract.PutUserApiDto
+import cz.adamec.timotej.snag.users.contract.UserApiDto
 import kotlin.uuid.Uuid
 
 internal fun UserApiDto.toModel() =

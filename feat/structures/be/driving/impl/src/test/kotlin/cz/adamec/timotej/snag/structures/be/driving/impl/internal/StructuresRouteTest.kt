@@ -20,9 +20,9 @@ import cz.adamec.timotej.snag.network.be.test.jsonClient
 import cz.adamec.timotej.snag.projects.be.driven.test.seedTestProject
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
 import cz.adamec.timotej.snag.structures.be.driven.test.seedTestStructure
-import cz.adamec.timotej.snag.structures.be.driving.contract.DeleteStructureApiDto
-import cz.adamec.timotej.snag.structures.be.driving.contract.PutStructureApiDto
-import cz.adamec.timotej.snag.structures.be.driving.contract.StructureApiDto
+import cz.adamec.timotej.snag.structures.contract.DeleteStructureApiDto
+import cz.adamec.timotej.snag.structures.contract.PutStructureApiDto
+import cz.adamec.timotej.snag.structures.contract.StructureApiDto
 import cz.adamec.timotej.snag.structures.be.ports.StructuresDb
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
 import cz.adamec.timotej.snag.users.be.driven.test.asAuthenticated

@@ -14,8 +14,8 @@ package cz.adamec.timotej.snag.structures.be.driving.impl.internal
 
 import cz.adamec.timotej.snag.feat.structures.be.model.BackendStructure
 import cz.adamec.timotej.snag.feat.structures.be.model.BackendStructureData
-import cz.adamec.timotej.snag.structures.be.driving.contract.PutStructureApiDto
-import cz.adamec.timotej.snag.structures.be.driving.contract.StructureApiDto
+import cz.adamec.timotej.snag.structures.contract.PutStructureApiDto
+import cz.adamec.timotej.snag.structures.contract.StructureApiDto
 import kotlin.uuid.Uuid
 
 internal fun BackendStructure.toDto() =

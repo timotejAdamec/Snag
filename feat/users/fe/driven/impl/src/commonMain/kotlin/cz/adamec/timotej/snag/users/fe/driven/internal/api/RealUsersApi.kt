@@ -17,7 +17,7 @@ import cz.adamec.timotej.snag.core.network.fe.OnlineDataResult
 import cz.adamec.timotej.snag.core.network.fe.safeApiCall
 import cz.adamec.timotej.snag.network.fe.SnagNetworkHttpClient
 import cz.adamec.timotej.snag.users.app.model.AppUser
-import cz.adamec.timotej.snag.users.be.driving.contract.UserApiDto
+import cz.adamec.timotej.snag.users.contract.UserApiDto
 import cz.adamec.timotej.snag.users.fe.driven.internal.LH
 import cz.adamec.timotej.snag.users.fe.ports.UserSyncResult
 import cz.adamec.timotej.snag.users.fe.ports.UsersApi

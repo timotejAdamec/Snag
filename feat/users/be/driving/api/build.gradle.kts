@@ -15,6 +15,6 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":feat:users:be:driving:contract"))
+    implementation(project(":feat:users:contract"))
     implementation(project(":feat:users:be:app:model"))
 }

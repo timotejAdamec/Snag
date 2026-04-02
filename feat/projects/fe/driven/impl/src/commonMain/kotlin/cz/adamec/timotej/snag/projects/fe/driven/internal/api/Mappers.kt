@@ -14,8 +14,8 @@ package cz.adamec.timotej.snag.projects.fe.driven.internal.api
 
 import cz.adamec.timotej.snag.projects.app.model.AppProject
 import cz.adamec.timotej.snag.projects.app.model.AppProjectData
-import cz.adamec.timotej.snag.projects.be.driving.contract.ProjectApiDto
-import cz.adamec.timotej.snag.projects.be.driving.contract.PutProjectApiDto
+import cz.adamec.timotej.snag.projects.contract.ProjectApiDto
+import cz.adamec.timotej.snag.projects.contract.PutProjectApiDto
 
 internal fun ProjectApiDto.toModel(): AppProject =
     AppProjectData(

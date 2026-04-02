@@ -14,8 +14,8 @@ package cz.adamec.timotej.snag.feat.inspections.fe.driven.internal.api
 
 import cz.adamec.timotej.snag.feat.inspections.app.model.AppInspection
 import cz.adamec.timotej.snag.feat.inspections.app.model.AppInspectionData
-import cz.adamec.timotej.snag.feat.inspections.be.driving.contract.InspectionApiDto
-import cz.adamec.timotej.snag.feat.inspections.be.driving.contract.PutInspectionApiDto
+import cz.adamec.timotej.snag.feat.inspections.contract.InspectionApiDto
+import cz.adamec.timotej.snag.feat.inspections.contract.PutInspectionApiDto
 
 internal fun InspectionApiDto.toModel() =
     AppInspectionData(

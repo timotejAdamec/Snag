@@ -30,8 +30,8 @@ import cz.adamec.timotej.snag.projects.be.app.api.SaveProjectUseCase
 import cz.adamec.timotej.snag.projects.be.app.api.model.AssignUserToProjectRequest
 import cz.adamec.timotej.snag.projects.be.app.api.model.DeleteProjectRequest
 import cz.adamec.timotej.snag.projects.be.app.api.model.RemoveUserFromProjectRequest
-import cz.adamec.timotej.snag.projects.be.driving.contract.DeleteProjectApiDto
-import cz.adamec.timotej.snag.projects.be.driving.contract.PutProjectApiDto
+import cz.adamec.timotej.snag.projects.contract.DeleteProjectApiDto
+import cz.adamec.timotej.snag.projects.contract.PutProjectApiDto
 import cz.adamec.timotej.snag.routing.be.AppRoute
 import cz.adamec.timotej.snag.routing.be.getDtoFromBody
 import cz.adamec.timotej.snag.routing.be.getIdFromParameters

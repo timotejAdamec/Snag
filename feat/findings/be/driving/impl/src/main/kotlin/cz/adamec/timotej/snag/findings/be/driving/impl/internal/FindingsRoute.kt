@@ -22,8 +22,8 @@ import cz.adamec.timotej.snag.findings.be.app.api.GetFindingsUseCase
 import cz.adamec.timotej.snag.findings.be.app.api.SaveFindingUseCase
 import cz.adamec.timotej.snag.findings.be.app.api.model.DeleteFindingRequest
 import cz.adamec.timotej.snag.findings.be.app.api.model.GetFindingsModifiedSinceRequest
-import cz.adamec.timotej.snag.findings.be.driving.contract.DeleteFindingApiDto
-import cz.adamec.timotej.snag.findings.be.driving.contract.PutFindingApiDto
+import cz.adamec.timotej.snag.findings.contract.DeleteFindingApiDto
+import cz.adamec.timotej.snag.findings.contract.PutFindingApiDto
 import cz.adamec.timotej.snag.projects.be.app.api.CanAccessProjectUseCase
 import cz.adamec.timotej.snag.routing.be.AppRoute
 import cz.adamec.timotej.snag.routing.be.getDtoFromBody
