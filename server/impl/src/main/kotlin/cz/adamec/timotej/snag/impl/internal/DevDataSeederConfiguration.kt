@@ -77,8 +77,8 @@ internal class DevDataSeederConfiguration(
             ),
             BackendUserData(
                 id = Uuid.parse(USER_2),
-                authProviderId = "entra-lead-001",
-                email = "petr.svoboda@snag.cz",
+                authProviderId = "287a44e3-125d-48e4-80af-5dbadc83c23d",
+                email = "test-user-1@timadamecgmail.onmicrosoft.com",
                 role = UserRole.PASSPORT_LEAD,
                 updatedAt = now,
             ),
