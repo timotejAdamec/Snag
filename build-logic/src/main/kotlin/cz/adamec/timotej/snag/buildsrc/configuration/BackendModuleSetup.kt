@@ -56,7 +56,7 @@ internal fun Project.configureBackendModule() {
     }
 
     tasks.withType<Test> {
-        loadEnvFile(rootProject.file("config/backend-debug.env"))
+        loadEnvFile(rootProject.file("config/backend-local.env"))
         loadPropertiesAsEnv(rootProject.file("config/common-debug.properties"))
     }
 
