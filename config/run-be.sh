@@ -10,6 +10,6 @@ while IFS='=' read -r key value; do
 done < "$DIR/common-debug.properties"
 
 # Load backend-specific config
-set -a; source "$DIR/backend-local.env"; set +a
+set -a; source "$DIR/backend-debug.env"; set +a
 
 exec ./gradlew :server:impl:run --no-daemon "$@"
