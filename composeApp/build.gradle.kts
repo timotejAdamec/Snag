@@ -63,6 +63,7 @@ kotlin {
         }
         val webMain by getting {
             dependencies {
+                implementation(projects.lib.configuration.fe.api)
                 implementation(libs.oidc.appsupport)
             }
         }

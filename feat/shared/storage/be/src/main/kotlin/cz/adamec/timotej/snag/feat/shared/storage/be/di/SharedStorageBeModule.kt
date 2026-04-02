@@ -12,13 +12,13 @@
 
 package cz.adamec.timotej.snag.feat.shared.storage.be.di
 
-import cz.adamec.timotej.snag.configuration.be.SnagConfig
+import cz.adamec.timotej.snag.configuration.be.BackendRunConfig
 import cz.adamec.timotej.snag.lib.storage.be.api.FileRouteConfig
 import cz.adamec.timotej.snag.lib.storage.be.impl.di.gcsStorageModule
 import org.koin.dsl.module
 
 val sharedStorageBeModule =
     module {
-        includes(gcsStorageModule(bucketName = SnagConfig.gcsBucketName))
+        includes(gcsStorageModule(bucketName = BackendRunConfig.gcsBucketName))
         single { FileRouteConfig(routePath = "/files") }
     }

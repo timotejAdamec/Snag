@@ -15,7 +15,7 @@ package cz.adamec.timotej.snag.authentication.fe.driven.internal
 import cz.adamec.timotej.snag.authentication.fe.driven.internal.LH.logger
 import cz.adamec.timotej.snag.authentication.fe.ports.AuthState
 import cz.adamec.timotej.snag.authentication.fe.ports.AuthTokenProvider
-import cz.adamec.timotej.snag.configuration.common.CommonConfiguration
+import cz.adamec.timotej.snag.configuration.common.RunConfig
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import org.publicvalue.multiplatform.oidc.OpenIdConnectClient
@@ -34,11 +34,11 @@ internal class OidcAuthTokenProvider(
 
     private val client =
         OpenIdConnectClient(
-            discoveryUri = "https://login.microsoftonline.com/${CommonConfiguration.entraIdTenantId}/v2.0/.well-known/openid-configuration",
+            discoveryUri = "https://login.microsoftonline.com/${RunConfig.entraIdTenantId}/v2.0/.well-known/openid-configuration",
         ) {
-            clientId = CommonConfiguration.entraIdClientId
+            clientId = RunConfig.entraIdClientId
             codeChallengeMethod = CodeChallengeMethod.S256
-            scope = "openid profile email offline_access api://${CommonConfiguration.entraIdClientId}/access_as_user"
+            scope = "openid profile email offline_access api://${RunConfig.entraIdClientId}/access_as_user"
             this.redirectUri = redirectUri
         }
 

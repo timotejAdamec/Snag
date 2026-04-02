@@ -17,6 +17,7 @@ plugins {
 kotlin {
     sourceSets {
         commonMain.dependencies {
+            implementation(projects.lib.configuration.common.api)
             implementation(projects.feat.authentication.fe.app.api)
             implementation(project(":lib:routing:common"))
             implementation(project(":lib:network:fe:api"))

@@ -13,7 +13,7 @@
 package cz.adamec.timotej.snag.impl
 
 import cz.adamec.timotej.snag.configuration.be.AppConfiguration
-import cz.adamec.timotej.snag.configuration.be.SnagConfig
+import cz.adamec.timotej.snag.configuration.be.BackendRunConfig
 import cz.adamec.timotej.snag.impl.di.appModule
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
@@ -24,7 +24,7 @@ import org.koin.ktor.plugin.Koin
 import org.koin.logger.slf4jLogger
 
 fun main() {
-    val port = SnagConfig.port
+    val port = BackendRunConfig.port
     embeddedServer(
         factory = Netty,
         port = port,

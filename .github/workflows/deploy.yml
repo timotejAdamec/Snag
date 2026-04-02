@@ -2,25 +2,16 @@ name: Deploy to Cloud Run
 
 on:
   workflow_dispatch:
-    inputs:
-      environment:
-        description: 'Environment to deploy to'
-        required: true
-        type: choice
-        options:
-          - dev
-          - demo
 
 env:
   REGION: europe-west3
-  SERVICE_NAME: snag-server-${{ github.event.inputs.environment }}
+  SERVICE_NAME: snag-server-demo
   IMAGE: europe-west3-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/snag/server:${{ github.sha }}
 
 jobs:
   deploy:
-    name: Deploy (${{ github.event.inputs.environment }})
+    name: Deploy
     runs-on: ubuntu-latest
-    environment: ${{ github.event.inputs.environment }}
     permissions:
       contents: read
       id-token: write
@@ -58,8 +49,3 @@ jobs:
             --min-instances=0
             --max-instances=2
             --allow-unauthenticated
-          env_vars: |
-            GCS_BUCKET_NAME=${{ vars.GCS_BUCKET_NAME }}
-            CORS_ALLOWED_HOSTS=${{ vars.CORS_ALLOWED_HOSTS }}
-            SEED_DATA=${{ vars.SEED_DATA }}
-            LOG_LEVEL=${{ vars.LOG_LEVEL }}

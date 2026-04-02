@@ -13,7 +13,7 @@
 package cz.adamec.timotej.snag.authentication.fe.driven.di
 
 import cz.adamec.timotej.snag.authentication.fe.driven.internal.WebLocalStorageSettingsStore
-import cz.adamec.timotej.snag.configuration.common.CommonConfiguration
+import cz.adamec.timotej.snag.configuration.fe.WebRunConfig
 import kotlinx.browser.window
 import org.koin.core.module.Module
 import org.koin.dsl.module
@@ -28,5 +28,5 @@ actual val platformModule: Module =
     module {
         single<CodeAuthFlowFactory> { WebCodeAuthFlowFactory() }
         single<TokenStore> { SettingsTokenStore(settings = WebLocalStorageSettingsStore()) }
-        single(qualifier = OIDC_REDIRECT_URI_QUALIFIER) { "${window.location.origin}${CommonConfiguration.entraIdWebRedirectPath}" }
+        single(qualifier = OIDC_REDIRECT_URI_QUALIFIER) { "${window.location.origin}${WebRunConfig.redirectPath}" }
     }

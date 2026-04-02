@@ -13,7 +13,7 @@
 package cz.adamec.timotej.snag.authentication.fe.driven.di
 
 import android.content.Context
-import cz.adamec.timotej.snag.configuration.common.CommonConfiguration
+import cz.adamec.timotej.snag.configuration.fe.MobileRunConfig
 import org.koin.core.module.Module
 import org.koin.dsl.module
 import org.publicvalue.multiplatform.oidc.ExperimentalOpenIdConnect
@@ -26,5 +26,5 @@ internal actual val platformModule: Module =
         // CodeAuthFlowFactory is provided by MainActivity via App(extraModules)
         // because registerActivity() must be called before the activity reaches STARTED state.
         single<TokenStore> { AndroidSettingsTokenStore(context = get<Context>()) }
-        single(qualifier = OIDC_REDIRECT_URI_QUALIFIER) { CommonConfiguration.entraIdMobileRedirectUri }
+        single(qualifier = OIDC_REDIRECT_URI_QUALIFIER) { MobileRunConfig.redirectUri }
     }

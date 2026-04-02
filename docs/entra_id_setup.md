@@ -46,7 +46,7 @@ Register all redirect URIs in Azure Portal → Authentication:
 
 ## 2. Backend Configuration
 
-Auth configuration is set at build time via `CommonConfiguration` (BuildKonfig). Set the following in `config/release.properties`:
+Auth configuration is set at build time via `RunConfig` (BuildKonfig). Set the following in `config/frontend-release.properties`:
 
 ```properties
 snag.mockAuth=false
@@ -68,7 +68,7 @@ snag.entraIdWebRedirectPath=/web-auth-callback
 
 ### Key files
 
-- `lib/configuration/common/api/.../CommonConfiguration.kt` — build-time config (shared BE/FE)
+- `lib/configuration/common/api/.../RunConfig.kt` — build-time config (shared BE/FE)
 - `feat/authentication/be/driving/impl/.../CurrentUserConfiguration.kt` — Ktor Authentication plugin setup with dual-mode providers
 - `feat/authentication/be/driving/impl/.../MockHeaderAuthProvider.kt` — mock auth provider for testing
 - `feat/authentication/be/driving/api/.../SnagPrincipal.kt` — principal carrying `CurrentUser`
@@ -80,7 +80,7 @@ snag.entraIdWebRedirectPath=/web-auth-callback
 
 ### 3a. Build config
 
-Same as backend — set in `config/release.properties` (see section 2). Values are compiled into `CommonConfiguration` via BuildKonfig and available on all platforms (Android, iOS, JVM, JS, WasmJS).
+Same as backend — set in `config/frontend-release.properties` (see section 2). Values are compiled into `RunConfig` via BuildKonfig and available on all platforms (Android, iOS, JVM, JS, WasmJS).
 
 ### How it works
 
@@ -108,7 +108,7 @@ Same as backend — set in `config/release.properties` (see section 2). Values a
 The architecture is fully implemented across all platforms. The following steps are needed for a working `MOCK_AUTH=false` deployment:
 
 1. **Register app in Azure Portal** and obtain tenant/client IDs (section 1 above).
-2. **Set config values** in `config/release.properties` (section 2 above).
+2. **Set config values** in `config/frontend-release.properties` (section 2 above).
 3. **Provide `TokenStore` and `CodeAuthFlowFactory` in DI** — the `OidcAuthTokenProvider` expects these injected via Koin. Platform-specific implementations (`AndroidEncryptedPreferencesSettingsStore`, `IosKeychainTokenStore`) need to be registered, along with `CodeAuthFlowFactory` for browser flow launching.
 
 ---
@@ -126,7 +126,7 @@ See [#175](https://github.com/timotejAdamec/Snag/issues/175) for implementation 
 ## 6. Testing
 
 - With `MOCK_AUTH=true` (default): everything works as before — no EntraID dependency.
-- All existing tests run in mock mode automatically (`CommonConfiguration.mockAuth` defaults to `true`).
+- All existing tests run in mock mode automatically (`RunConfig.mockAuth` defaults to `true`).
 - Backend `MockHeaderAuthProviderTest` tests the mock-auth path.
 - For testing the JWT path: set `MOCK_AUTH=false` and provide test JWTs signed with known keys.
 - `FakeAuthTokenProvider` in `feat/authentication/fe/driven/test/` is available for FE unit tests.

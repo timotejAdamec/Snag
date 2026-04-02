@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.authentication.fe.driven.di
 
-import cz.adamec.timotej.snag.configuration.common.CommonConfiguration
+import cz.adamec.timotej.snag.configuration.fe.MobileRunConfig
 import org.koin.core.module.Module
 import org.koin.dsl.module
 import org.publicvalue.multiplatform.oidc.ExperimentalOpenIdConnect
@@ -26,5 +26,5 @@ actual val platformModule: Module =
     module {
         single<CodeAuthFlowFactory> { IosCodeAuthFlowFactory() }
         single<TokenStore> { IosKeychainTokenStore() }
-        single(qualifier = OIDC_REDIRECT_URI_QUALIFIER) { CommonConfiguration.entraIdMobileRedirectUri }
+        single(qualifier = OIDC_REDIRECT_URI_QUALIFIER) { MobileRunConfig.redirectUri }
     }

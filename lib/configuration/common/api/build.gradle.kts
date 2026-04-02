@@ -10,7 +10,6 @@
  * Department of Software Engineering
  */
 
-import cz.adamec.timotej.snag.buildsrc.consts.SNAG_NAMESPACE
 import cz.adamec.timotej.snag.buildsrc.consts.SnagVersioning
 import java.util.Properties
 
@@ -26,63 +25,35 @@ configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
 }
 
 val isRelease =
-    gradle.startParameter.taskNames.any {
-        it.contains("release", ignoreCase = true)
-    }
+    findProperty("snag.release")?.toString()?.toBooleanStrictOrNull() == true ||
+        gradle.startParameter.taskNames.any {
+            it.contains("release", ignoreCase = true) ||
+                it.contains("Distribution", ignoreCase = false)
+        }
 val buildProfileFile =
     rootProject.file(
-        if (isRelease) "config/release.properties" else "config/debug.properties",
+        if (isRelease) "config/common-release.properties" else "config/common-debug.properties",
     )
 val buildProfile =
     Properties().apply {
-        if (buildProfileFile.exists()) buildProfileFile.inputStream().use { load(it) }
+        check(buildProfileFile.exists()) { "Missing config file: ${buildProfileFile.absolutePath}" }
+        buildProfileFile.inputStream().use { load(it) }
     }
-val serverTarget =
-    findProperty("snag.serverTarget")?.toString()
-        ?: buildProfile.getProperty("snag.serverTarget")
-        ?: "localhost"
-val mockAuth =
-    findProperty("snag.mockAuth")?.toString()
-        ?: buildProfile.getProperty("snag.mockAuth")
-        ?: "true"
-val entraIdTenantId =
-    findProperty("snag.entraIdTenantId")?.toString()
-        ?: buildProfile.getProperty("snag.entraIdTenantId")
-        ?: ""
-val entraIdClientId =
-    findProperty("snag.entraIdClientId")?.toString()
-        ?: buildProfile.getProperty("snag.entraIdClientId")
-        ?: ""
-val entraIdMobileRedirectUri =
-    findProperty("snag.entraIdMobileRedirectUri")?.toString()
-        ?: buildProfile.getProperty("snag.entraIdMobileRedirectUri")
-        ?: ""
-val entraIdJvmRedirectUri =
-    findProperty("snag.entraIdJvmRedirectUri")?.toString()
-        ?: buildProfile.getProperty("snag.entraIdJvmRedirectUri")
-        ?: ""
-val entraIdWebRedirectPath =
-    findProperty("snag.entraIdWebRedirectPath")?.toString()
-        ?: buildProfile.getProperty("snag.entraIdWebRedirectPath")
-        ?: ""
+
+fun requireProperty(key: String): String =
+    findProperty(key)?.toString()
+        ?: buildProfile.getProperty(key)
+        ?: error("Missing required property: $key")
+
+val mockAuth = requireProperty("snag.mockAuth")
+val entraIdTenantId = requireProperty("snag.entraIdTenantId")
+val entraIdClientId = requireProperty("snag.entraIdClientId")
 
 buildkonfig {
     packageName = "cz.adamec.timotej.snag.configuration.common"
-    objectName = "SnagBuildConfig"
+    objectName = "RunBuildConfig"
 
     defaultConfigs {
-        buildConfigField(
-            com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING,
-            "NAMESPACE",
-            SNAG_NAMESPACE,
-            const = true,
-        )
-        buildConfigField(
-            com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING,
-            "SERVER_TARGET",
-            serverTarget,
-            const = true,
-        )
         buildConfigField(
             com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING,
             "SEMANTIC_VERSION",
@@ -119,26 +90,8 @@ buildkonfig {
             entraIdClientId,
             const = true,
         )
-        buildConfigField(
-            com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING,
-            "ENTRA_ID_MOBILE_REDIRECT_URI",
-            entraIdMobileRedirectUri,
-            const = true,
-        )
-        buildConfigField(
-            com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING,
-            "ENTRA_ID_JVM_REDIRECT_URI",
-            entraIdJvmRedirectUri,
-            const = true,
-        )
-        buildConfigField(
-            com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING,
-            "ENTRA_ID_WEB_REDIRECT_PATH",
-            entraIdWebRedirectPath,
-            const = true,
-        )
     }
 
     // exposeObjectWithName not used - @JsExport on objects breaks wasmJs compilation.
-    // Instead, values are re-exported via SnagConfig.kt in commonMain.
+    // Instead, values are re-exported via RunConfig.kt in commonMain.
 }

@@ -86,9 +86,7 @@ internal fun Project.configureKotlinMultiplatformModule() {
                 if (!path.contains("core")) {
                     implementation(project(":core:foundation:common"))
                 }
-                if (!path.contains("configuration") && !path.contains("core")) {
-                    implementation(project(":lib:configuration:common:api"))
-                }
+
                 implementation(library("kotlinx-coroutines-core"))
                 implementation(library("kotlinx-immutable-collections"))
                 implementation(library("koin-core"))
@@ -126,6 +124,13 @@ private fun NamedDomainObjectContainer<KotlinSourceSet>.configureIntermediateSou
 
     fun findAndroidInstrumented(): KotlinSourceSet? =
         if (isTest) findByName("androidInstrumentedTest") else null
+
+    val mobile = create("mobile$suffix") {
+        dependsOn(common)
+    }
+    findAndroid()?.dependsOn(mobile)
+    findAndroidInstrumented()?.dependsOn(mobile)
+    getOrCreate("ios").dependsOn(mobile)
 
     val nonWeb = create("nonWeb$suffix") {
         dependsOn(common)

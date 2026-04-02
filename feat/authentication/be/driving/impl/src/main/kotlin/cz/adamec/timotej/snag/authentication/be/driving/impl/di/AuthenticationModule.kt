@@ -16,7 +16,7 @@ import cz.adamec.timotej.snag.authentication.be.driving.impl.internal.Authentica
 import cz.adamec.timotej.snag.authentication.be.driving.impl.internal.CurrentUserConfiguration
 import cz.adamec.timotej.snag.configuration.be.AppConfiguration
 import cz.adamec.timotej.snag.configuration.be.AppStatusPageHandler
-import cz.adamec.timotej.snag.configuration.common.CommonConfiguration
+import cz.adamec.timotej.snag.configuration.be.BackendRunConfig
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.qualifier.named
 import org.koin.dsl.bind
@@ -26,7 +26,7 @@ val MOCK_AUTH_QUALIFIER = named("mockAuth")
 
 val authenticationModule =
     module {
-        single(qualifier = MOCK_AUTH_QUALIFIER) { CommonConfiguration.mockAuth }
+        single(qualifier = MOCK_AUTH_QUALIFIER) { BackendRunConfig.mockAuth }
         single<AppConfiguration> {
             CurrentUserConfiguration(
                 getUserUseCase = get(),

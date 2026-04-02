@@ -18,8 +18,12 @@ import cz.adamec.timotej.snag.buildsrc.extensions.library
 import cz.adamec.timotej.snag.buildsrc.extensions.libs
 import cz.adamec.timotej.snag.buildsrc.extensions.testImplementation
 import org.gradle.api.Project
+import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.dependencies
+import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmExtension
+import java.io.File
+import java.util.Properties
 
 internal fun Project.configureBackendModule() {
     dependencies {
@@ -31,9 +35,6 @@ internal fun Project.configureBackendModule() {
         }
         if (path.startsWith(":feat") && !path.startsWith(":feat:sync") && path.contains(":be:app:model")) {
             api(project(":feat:sync:be:model"))
-        }
-        if (!path.contains("configuration") && !path.contains("core")) {
-            implementation(project(":lib:configuration:common:api"))
         }
 
         for (dep in resolveHexagonalDependencies()) {
@@ -54,9 +55,41 @@ internal fun Project.configureBackendModule() {
         testImplementation(libs.library("kotlinx-coroutines-test"))
     }
 
+    tasks.withType<Test> {
+        loadEnvFile(rootProject.file("config/backend-debug.env"))
+        loadPropertiesAsEnv(rootProject.file("config/common-debug.properties"))
+    }
+
     extensions.findByType(KotlinJvmExtension::class.java)?.apply {
         this.compilerOptions {
             freeCompilerArgs.add("-opt-in=kotlin.uuid.ExperimentalUuidApi")
         }
+    }
+}
+
+private fun Test.loadEnvFile(file: File) {
+    if (!file.exists()) return
+    for (line in file.readLines()) {
+        if (line.isNotBlank() && !line.startsWith("#")) {
+            val (key, value) = line.split("=", limit = 2)
+            environment(key.trim(), value.trim())
+        }
+    }
+}
+
+/**
+ * Loads a `.properties` file and sets each property as an environment variable
+ * with key converted from `snag.camelCase` to `SNAG_UPPER_SNAKE_CASE`.
+ */
+private fun Test.loadPropertiesAsEnv(file: File) {
+    if (!file.exists()) return
+    val props = Properties().apply { file.inputStream().use { load(it) } }
+    for ((key, value) in props) {
+        val envKey =
+            (key as String)
+                .replace(".", "_")
+                .replace(Regex("([a-z])([A-Z])")) { "${it.groupValues[1]}_${it.groupValues[2]}" }
+                .uppercase()
+        environment(envKey, value as String)
     }
 }
