@@ -26,5 +26,5 @@ internal actual val platformModule: Module =
         // CodeAuthFlowFactory is provided by MainActivity via App(extraModules)
         // because registerActivity() must be called before the activity reaches STARTED state.
         single<TokenStore> { AndroidSettingsTokenStore(context = get<Context>()) }
-        single(qualifier = OIDC_REDIRECT_URI_QUALIFIER) { CommonConfiguration.entraIdRedirectUri }
+        single(qualifier = OIDC_REDIRECT_URI_QUALIFIER) { CommonConfiguration.entraIdMobileRedirectUri }
     }

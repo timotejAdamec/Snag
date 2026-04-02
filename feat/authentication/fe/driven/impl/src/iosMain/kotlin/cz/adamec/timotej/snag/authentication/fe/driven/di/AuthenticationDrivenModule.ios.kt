@@ -26,5 +26,5 @@ actual val platformModule: Module =
     module {
         single<CodeAuthFlowFactory> { IosCodeAuthFlowFactory() }
         single<TokenStore> { IosKeychainTokenStore() }
-        single(qualifier = OIDC_REDIRECT_URI_QUALIFIER) { CommonConfiguration.entraIdRedirectUri }
+        single(qualifier = OIDC_REDIRECT_URI_QUALIFIER) { CommonConfiguration.entraIdMobileRedirectUri }
     }

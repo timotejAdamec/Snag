@@ -53,10 +53,18 @@ val entraIdClientId =
     findProperty("snag.entraIdClientId")?.toString()
         ?: buildProfile.getProperty("snag.entraIdClientId")
         ?: ""
-val entraIdRedirectUri =
-    findProperty("snag.entraIdRedirectUri")?.toString()
-        ?: buildProfile.getProperty("snag.entraIdRedirectUri")
-        ?: "snag://auth/callback"
+val entraIdMobileRedirectUri =
+    findProperty("snag.entraIdMobileRedirectUri")?.toString()
+        ?: buildProfile.getProperty("snag.entraIdMobileRedirectUri")
+        ?: ""
+val entraIdJvmRedirectUri =
+    findProperty("snag.entraIdJvmRedirectUri")?.toString()
+        ?: buildProfile.getProperty("snag.entraIdJvmRedirectUri")
+        ?: ""
+val entraIdWebRedirectPath =
+    findProperty("snag.entraIdWebRedirectPath")?.toString()
+        ?: buildProfile.getProperty("snag.entraIdWebRedirectPath")
+        ?: ""
 
 buildkonfig {
     packageName = "cz.adamec.timotej.snag.configuration.common"
@@ -113,8 +121,20 @@ buildkonfig {
         )
         buildConfigField(
             com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING,
-            "ENTRA_ID_REDIRECT_URI",
-            entraIdRedirectUri,
+            "ENTRA_ID_MOBILE_REDIRECT_URI",
+            entraIdMobileRedirectUri,
+            const = true,
+        )
+        buildConfigField(
+            com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING,
+            "ENTRA_ID_JVM_REDIRECT_URI",
+            entraIdJvmRedirectUri,
+            const = true,
+        )
+        buildConfigField(
+            com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING,
+            "ENTRA_ID_WEB_REDIRECT_PATH",
+            entraIdWebRedirectPath,
             const = true,
         )
     }
