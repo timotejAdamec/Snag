@@ -21,7 +21,7 @@ import org.publicvalue.multiplatform.oidc.flows.CodeAuthFlowFactory
 import org.publicvalue.multiplatform.oidc.tokenstore.SettingsTokenStore
 import org.publicvalue.multiplatform.oidc.tokenstore.TokenStore
 
-private const val JVM_REDIRECT_URI = "http://localhost:8080/callback"
+private const val JVM_REDIRECT_URI = "http://localhost:8080/auth-callback"
 
 @OptIn(ExperimentalOpenIdConnect::class)
 actual val platformModule: Module =

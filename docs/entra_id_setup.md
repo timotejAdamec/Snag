@@ -20,7 +20,7 @@ The system uses a dual-mode authentication architecture:
 3. Set:
    - **Name**: `Snag`
    - **Supported account types**: Accounts in this organizational directory only (single tenant)
-   - **Redirect URI**: `snag://auth/callback` (custom URI scheme for mobile/desktop)
+   - **Redirect URI**: `snag://auth-callback` (custom URI scheme for mobile/desktop)
 4. After creation, note:
    - **Application (client) ID** → this is `ENTRA_ID_CLIENT_ID`
    - **Directory (tenant) ID** → this is `ENTRA_ID_TENANT_ID`
@@ -44,7 +44,7 @@ Auth configuration is set at build time via `CommonConfiguration` (BuildKonfig).
 snag.mockAuth=false
 snag.entraIdTenantId=<your-tenant-id>
 snag.entraIdClientId=<your-client-id>
-snag.entraIdRedirectUri=snag://auth/callback
+snag.entraIdRedirectUri=snag://auth-callback
 ```
 
 ### How it works

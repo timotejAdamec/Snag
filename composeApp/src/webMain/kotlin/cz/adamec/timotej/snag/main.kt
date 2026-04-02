@@ -23,7 +23,7 @@ import org.publicvalue.multiplatform.oidc.appsupport.PlatformCodeAuthFlow
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalOpenIdConnect::class)
 fun main() {
     val currentPath = window.location.pathname
-    if (currentPath.startsWith("/redirect") || currentPath.startsWith("/logout")) {
+    if (currentPath.startsWith("/web-auth-callback") || currentPath.startsWith("/logout")) {
         PlatformCodeAuthFlow.handleRedirect()
         return
     }

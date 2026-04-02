@@ -56,7 +56,7 @@ val entraIdClientId =
 val entraIdRedirectUri =
     findProperty("snag.entraIdRedirectUri")?.toString()
         ?: buildProfile.getProperty("snag.entraIdRedirectUri")
-        ?: "snag://auth/callback"
+        ?: "snag://auth-callback"
 
 buildkonfig {
     packageName = "cz.adamec.timotej.snag.configuration.common"

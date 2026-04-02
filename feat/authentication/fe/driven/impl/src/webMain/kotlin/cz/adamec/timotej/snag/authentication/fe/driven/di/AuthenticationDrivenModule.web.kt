@@ -27,5 +27,5 @@ actual val platformModule: Module =
     module {
         single<CodeAuthFlowFactory> { WebCodeAuthFlowFactory() }
         single<TokenStore> { SettingsTokenStore(settings = WebLocalStorageSettingsStore()) }
-        single(qualifier = OIDC_REDIRECT_URI_QUALIFIER) { "${window.location.origin}/redirect" }
+        single(qualifier = OIDC_REDIRECT_URI_QUALIFIER) { "${window.location.origin}/web-auth-callback" }
     }
