@@ -1,4 +1,5 @@
 FROM eclipse-temurin:21-jdk AS build
+RUN apt-get update && apt-get install -y --no-install-recommends git && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 COPY . .
 RUN ./gradlew :server:impl:buildFatJar --no-daemon
