@@ -14,6 +14,14 @@ plugins {
     alias(libs.plugins.snagDrivingFrontendMultiplatformModule)
 }
 
+kotlin {
+    sourceSets {
+        commonMain.dependencies {
+            implementation(projects.lib.configuration.fe.api)
+        }
+    }
+}
+
 compose.resources {
     publicResClass = true
 }
