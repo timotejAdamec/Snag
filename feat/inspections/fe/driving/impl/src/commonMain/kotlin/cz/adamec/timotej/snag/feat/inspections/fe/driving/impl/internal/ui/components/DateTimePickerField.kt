@@ -74,7 +74,7 @@ internal fun DateTimePickerField(
             modifier = Modifier.fillMaxWidth(),
             onClick = onEditClick,
             enabled = enabled,
-            shape = MaterialTheme.shapes.medium,
+            shape = MaterialTheme.shapes.extraSmall,
             border =
                 BorderStroke(
                     width = 1.dp,
