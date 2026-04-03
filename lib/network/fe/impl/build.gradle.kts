@@ -6,7 +6,6 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(projects.lib.configuration.fe.api)
-            implementation(projects.server.api)
         }
         val nonWebMain by getting {
             dependencies {

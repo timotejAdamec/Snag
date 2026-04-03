@@ -54,6 +54,9 @@ fun requireProperty(key: String): String =
         ?: error("Missing required property: $key")
 
 val serverTarget = requireProperty("snag.serverTarget")
+val serverLocalhostPort = requireProperty("snag.serverLocalhostPort")
+val serverDevUrl = requireProperty("snag.serverDevUrl")
+val serverDemoUrl = requireProperty("snag.serverDemoUrl")
 val entraIdMobileRedirectUri = requireProperty("snag.entraIdMobileRedirectUri")
 val entraIdJvmRedirectUri = requireProperty("snag.entraIdJvmRedirectUri")
 val entraIdWebRedirectPath = requireProperty("snag.entraIdWebRedirectPath")
@@ -73,6 +76,24 @@ buildkonfig {
             com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING,
             "SERVER_TARGET",
             serverTarget,
+            const = true,
+        )
+        buildConfigField(
+            com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING,
+            "SERVER_LOCALHOST_PORT",
+            serverLocalhostPort,
+            const = true,
+        )
+        buildConfigField(
+            com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING,
+            "SERVER_DEV_URL",
+            serverDevUrl,
+            const = true,
+        )
+        buildConfigField(
+            com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING,
+            "SERVER_DEMO_URL",
+            serverDemoUrl,
             const = true,
         )
         buildConfigField(

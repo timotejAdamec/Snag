@@ -18,6 +18,19 @@ enum class ServerTarget {
     DEMO,
     ;
 
+    val serverUrl: String
+        get() =
+            when (this) {
+                LOCALHOST -> error("Use localhostUrl(address) for localhost")
+                DEV -> FrontendBuildConfig.SERVER_DEV_URL
+                DEMO -> FrontendBuildConfig.SERVER_DEMO_URL
+            }
+
+    val localhostPort: Int
+        get() = FrontendBuildConfig.SERVER_LOCALHOST_PORT.toInt()
+
+    fun localhostUrl(address: String): String = "http://$address:$localhostPort"
+
     internal companion object {
         fun fromBuildConfig(): ServerTarget =
             when (FrontendBuildConfig.SERVER_TARGET) {

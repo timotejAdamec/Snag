@@ -10,7 +10,7 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.server.api
+package cz.adamec.timotej.snag.configuration.common
 
 import io.ktor.serialization.Configuration
 import io.ktor.serialization.kotlinx.json.json

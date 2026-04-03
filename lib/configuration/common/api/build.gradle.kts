@@ -18,6 +18,14 @@ plugins {
     id("com.codingfeline.buildkonfig")
 }
 
+kotlin {
+    sourceSets {
+        commonMain.dependencies {
+            implementation(libs.ktor.serialization.kotlinx.json)
+        }
+    }
+}
+
 configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
     filter {
         exclude { it.file.path.contains("buildkonfig") }

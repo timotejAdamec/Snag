@@ -348,16 +348,9 @@ class ParseModulePathTest {
     }
 
     @Test
-    fun `server api`() {
-        val result = parseModulePath(":server:api")
-        assertIs<InfraModule>(result)
-        assertEquals("server:api", result.name)
-    }
-
-    @Test
-    fun `server impl`() {
-        val result = parseModulePath(":server:impl")
-        assertIs<InfraModule>(result)
-        assertEquals("server:impl", result.name)
+    fun `server`() {
+        val result = parseModulePath(":server")
+        assertIs<AppModule>(result)
+        assertEquals("server", result.name)
     }
 }

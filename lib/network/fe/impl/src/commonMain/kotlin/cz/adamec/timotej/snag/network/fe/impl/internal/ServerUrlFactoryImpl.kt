@@ -15,15 +15,16 @@ package cz.adamec.timotej.snag.network.fe.impl.internal
 import cz.adamec.timotej.snag.configuration.fe.FrontendRunConfig
 import cz.adamec.timotej.snag.configuration.fe.ServerTarget
 import cz.adamec.timotej.snag.network.fe.ServerUrlFactory
-import cz.adamec.timotej.snag.server.api.Host
 
 internal class ServerUrlFactoryImpl(
     private val localhostAddress: String,
 ) : ServerUrlFactory {
-    override fun createUrl(): String =
-        when (FrontendRunConfig.serverTarget) {
-            ServerTarget.LOCALHOST -> "http://$localhostAddress:${Host.Localhost.PORT}"
-            ServerTarget.DEV -> Host.DevRemote.URL
-            ServerTarget.DEMO -> Host.DemoRemote.URL
+    override fun createUrl(): String {
+        val target = FrontendRunConfig.serverTarget
+        return if (target == ServerTarget.LOCALHOST) {
+            target.localhostUrl(localhostAddress)
+        } else {
+            target.serverUrl
         }
+    }
 }
