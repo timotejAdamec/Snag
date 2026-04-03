@@ -12,7 +12,6 @@
 
 package cz.adamec.timotej.snag.network.fe.impl.internal
 
-import cz.adamec.timotej.snag.network.fe.NetworkErrorClassifier
 import io.ktor.client.network.sockets.ConnectTimeoutException
 import io.ktor.client.network.sockets.SocketTimeoutException
 import io.ktor.client.plugins.HttpRequestTimeoutException

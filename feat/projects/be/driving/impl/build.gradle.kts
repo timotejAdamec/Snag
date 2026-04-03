@@ -10,7 +10,7 @@ dependencies {
     implementation(project(":feat:users:be:driving:api"))
     implementation(project(":feat:users:contract"))
     implementation(project(":feat:users:be:app:model"))
-    testImplementation(project(":lib:configuration:be:api"))
+    testImplementation(project(":lib:network:be:api"))
     testImplementation(project(":feat:projects:be:ports"))
     testImplementation(project(":feat:users:be:ports"))
 }

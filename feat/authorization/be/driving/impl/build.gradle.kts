@@ -3,5 +3,5 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":lib:configuration:be:api"))
+    implementation(project(":lib:network:be:api"))
 }

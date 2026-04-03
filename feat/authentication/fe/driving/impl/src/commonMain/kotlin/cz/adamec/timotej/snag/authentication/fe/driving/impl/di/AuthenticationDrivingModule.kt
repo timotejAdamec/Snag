@@ -16,10 +16,10 @@ import cz.adamec.timotej.snag.authentication.fe.driving.api.AuthenticationGateCo
 import cz.adamec.timotej.snag.authentication.fe.driving.impl.internal.AuthStateProviderImpl
 import cz.adamec.timotej.snag.authentication.fe.driving.impl.internal.AuthenticationGateContentImpl
 import cz.adamec.timotej.snag.authentication.fe.driving.impl.internal.AuthenticationInitializer
-import cz.adamec.timotej.snag.authentication.fe.driving.impl.internal.CurrentUserHttpClientConfiguration
+import cz.adamec.timotej.snag.authentication.fe.driving.impl.internal.CurrentUserKtorClientConfiguration
 import cz.adamec.timotej.snag.authentication.fe.driving.impl.internal.vm.AuthenticationViewModel
 import cz.adamec.timotej.snag.core.foundation.fe.Initializer
-import cz.adamec.timotej.snag.network.fe.HttpClientConfiguration
+import cz.adamec.timotej.snag.network.fe.ports.KtorClientConfiguration
 import cz.adamec.timotej.snag.network.fe.ports.AuthStateProvider
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModelOf
@@ -29,7 +29,7 @@ import org.koin.dsl.module
 val authenticationDrivingModule =
     module {
         viewModelOf(::AuthenticationViewModel)
-        singleOf(::CurrentUserHttpClientConfiguration) bind HttpClientConfiguration::class
+        singleOf(::CurrentUserKtorClientConfiguration) bind KtorClientConfiguration::class
         singleOf(::AuthenticationInitializer) bind Initializer::class
         single<AuthenticationGateContent> { AuthenticationGateContentImpl() }
         singleOf(::AuthStateProviderImpl) bind AuthStateProvider::class

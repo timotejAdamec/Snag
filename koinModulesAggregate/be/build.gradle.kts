@@ -18,7 +18,7 @@ dependencies {
     // Core infrastructure
     implementation(projects.core.foundation.be)
     implementation(projects.feat.sync.be.impl)
-    implementation(projects.lib.configuration.be.impl)
+    implementation(projects.lib.network.be.impl)
     implementation(projects.lib.storage.be.impl)
     implementation(projects.feat.shared.storage.be)
     implementation(projects.feat.shared.database.be.impl)

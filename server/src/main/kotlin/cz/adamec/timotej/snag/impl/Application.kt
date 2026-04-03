@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.impl
 
-import cz.adamec.timotej.snag.configuration.be.AppConfiguration
+import cz.adamec.timotej.snag.network.be.KtorServerConfiguration
 import cz.adamec.timotej.snag.configuration.be.BackendRunConfig
 import cz.adamec.timotej.snag.impl.di.appModule
 import io.ktor.server.application.Application
@@ -38,7 +38,7 @@ fun Application.main() {
         slf4jLogger()
         modules(appModule)
     }
-    getKoin().getAll<AppConfiguration>().forEach { config ->
+    getKoin().getAll<KtorServerConfiguration>().forEach { config ->
         with(config) { setup() }
     }
 }

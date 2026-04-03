@@ -12,14 +12,14 @@
 
 package cz.adamec.timotej.snag.network.fe.impl.di
 
-import cz.adamec.timotej.snag.network.fe.HttpClientConfiguration
 import cz.adamec.timotej.snag.network.fe.SnagNetworkHttpClient
 import cz.adamec.timotej.snag.network.fe.impl.internal.AuthGatedSnagNetworkHttpClient
-import cz.adamec.timotej.snag.network.fe.impl.internal.ContentNegotiationConfiguration
-import cz.adamec.timotej.snag.network.fe.impl.internal.LoggingConfiguration
-import cz.adamec.timotej.snag.network.fe.impl.internal.ResponseValidationConfiguration
-import cz.adamec.timotej.snag.network.fe.impl.internal.RetryConfiguration
 import cz.adamec.timotej.snag.network.fe.impl.internal.SnagNetworkHttpClientImpl
+import cz.adamec.timotej.snag.network.fe.impl.internal.ports.ContentNegotiationConfiguration
+import cz.adamec.timotej.snag.network.fe.impl.internal.ports.LoggingConfiguration
+import cz.adamec.timotej.snag.network.fe.impl.internal.ports.ResponseValidationConfiguration
+import cz.adamec.timotej.snag.network.fe.impl.internal.ports.RetryConfiguration
+import cz.adamec.timotej.snag.network.fe.ports.KtorClientConfiguration
 import io.ktor.client.HttpClient
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.singleOf
@@ -30,13 +30,13 @@ val networkModule =
     module {
         includes(networkErrorClassifierPlatformModule)
         includes(connectionStatusPlatformModule)
-        singleOf(::LoggingConfiguration) bind HttpClientConfiguration::class
-        singleOf(::ContentNegotiationConfiguration) bind HttpClientConfiguration::class
-        singleOf(::ResponseValidationConfiguration) bind HttpClientConfiguration::class
-        singleOf(::RetryConfiguration) bind HttpClientConfiguration::class
+        singleOf(::LoggingConfiguration) bind KtorClientConfiguration::class
+        singleOf(::ContentNegotiationConfiguration) bind KtorClientConfiguration::class
+        singleOf(::ResponseValidationConfiguration) bind KtorClientConfiguration::class
+        singleOf(::RetryConfiguration) bind KtorClientConfiguration::class
         single {
             HttpClient {
-                getAll<HttpClientConfiguration>().forEach { configuration ->
+                getAll<KtorClientConfiguration>().forEach { configuration ->
                     with(configuration) { setup() }
                 }
             }
