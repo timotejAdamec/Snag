@@ -193,9 +193,6 @@ private class AdaptiveMapListDetailScene<T : Any>(
                         CompositionLocalProvider(LocalIsInSheet provides true) {
                             AnimatedContent(
                                 targetState = isDetail,
-                                transitionSpec = {
-                                    fadeIn(tween()) togetherWith fadeOut(tween())
-                                },
                                 label = "sheetContent",
                             ) { showDetail ->
                                 if (showDetail) {
