@@ -82,6 +82,8 @@ compose.desktop {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = SNAG_NAMESPACE
             packageVersion = SnagVersioning.semanticVersion(project).get()
+
+            modules("java.sql")
         }
     }
 }
