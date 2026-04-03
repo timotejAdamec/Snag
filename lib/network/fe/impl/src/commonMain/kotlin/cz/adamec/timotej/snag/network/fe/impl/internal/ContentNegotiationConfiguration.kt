@@ -12,8 +12,8 @@
 
 package cz.adamec.timotej.snag.network.fe.impl.internal
 
+import cz.adamec.timotej.snag.configuration.common.configureJson
 import cz.adamec.timotej.snag.network.fe.HttpClientConfiguration
-import cz.adamec.timotej.snag.server.api.configureJson
 import io.ktor.client.HttpClientConfig
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 

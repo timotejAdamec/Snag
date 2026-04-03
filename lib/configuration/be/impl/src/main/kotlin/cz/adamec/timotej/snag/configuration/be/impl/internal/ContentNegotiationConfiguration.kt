@@ -13,7 +13,7 @@
 package cz.adamec.timotej.snag.configuration.be.impl.internal
 
 import cz.adamec.timotej.snag.configuration.be.AppConfiguration
-import cz.adamec.timotej.snag.server.api.configureJson
+import cz.adamec.timotej.snag.configuration.common.configureJson
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation

@@ -54,6 +54,9 @@ fun requireProperty(key: String): String =
         ?: error("Missing required property: $key")
 
 val serverTarget = requireProperty("snag.serverTarget")
+val serverLocalhostPort = requireProperty("snag.serverLocalhostPort")
+val serverDevUrl = requireProperty("snag.serverDevUrl")
+val serverDemoUrl = requireProperty("snag.serverDemoUrl")
 val entraIdMobileRedirectUri = requireProperty("snag.entraIdMobileRedirectUri")
 val entraIdJvmRedirectUri = requireProperty("snag.entraIdJvmRedirectUri")
 val entraIdWebRedirectPath = requireProperty("snag.entraIdWebRedirectPath")
@@ -77,6 +80,24 @@ buildkonfig {
         )
         buildConfigField(
             com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING,
+            "SERVER_LOCALHOST_URL",
+            "http://localhost:$serverLocalhostPort",
+            const = true,
+        )
+        buildConfigField(
+            com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING,
+            "SERVER_DEV_URL",
+            serverDevUrl,
+            const = true,
+        )
+        buildConfigField(
+            com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING,
+            "SERVER_DEMO_URL",
+            serverDemoUrl,
+            const = true,
+        )
+        buildConfigField(
+            com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING,
             "ENTRA_ID_MOBILE_REDIRECT_URI",
             entraIdMobileRedirectUri,
             const = true,
@@ -93,5 +114,16 @@ buildkonfig {
             entraIdWebRedirectPath,
             const = true,
         )
+    }
+
+    targetConfigs {
+        create("android") {
+            buildConfigField(
+                com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING,
+                "SERVER_LOCALHOST_URL",
+                "http://10.0.2.2:$serverLocalhostPort",
+                const = true,
+            )
+        }
     }
 }

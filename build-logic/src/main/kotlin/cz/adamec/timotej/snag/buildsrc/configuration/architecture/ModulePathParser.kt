@@ -33,7 +33,7 @@ private val ENCAPSULATIONS = mapOf(
     "contract" to Encapsulation.CONTRACT,
 )
 
-private val INFRA_PREFIXES = setOf("testInfra", "koinModulesAggregate", "server")
+private val INFRA_PREFIXES = setOf("testInfra", "koinModulesAggregate")
 
 private val TOP_LEVEL_CATEGORIES = setOf("core", "lib", "feat")
 

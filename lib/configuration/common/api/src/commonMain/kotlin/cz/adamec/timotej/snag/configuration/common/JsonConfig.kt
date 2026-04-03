@@ -10,8 +10,16 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.network.fe
+package cz.adamec.timotej.snag.configuration.common
 
-interface ServerUrlFactory {
-    fun createUrl(): String
+import io.ktor.serialization.Configuration
+import io.ktor.serialization.kotlinx.json.json
+import kotlinx.serialization.json.Json
+
+fun Configuration.configureJson() {
+    json(
+        Json {
+            ignoreUnknownKeys = true
+        },
+    )
 }

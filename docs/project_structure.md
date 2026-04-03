@@ -8,7 +8,7 @@ Each platform application is runnable from the following modules:
   - jvm, js, wasmJs
 - :androidApp
 - :iosApp
-- :server:impl
+- :server
 
 ## Feature modules
 Feature modules are located in the `feat` directory. These contain domain-tied code. Each feature is

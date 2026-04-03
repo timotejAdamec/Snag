@@ -76,11 +76,11 @@ To build and run the development version of the server, use the run configuratio
 in your IDE’s toolbar or run it directly from the terminal:
 - on macOS/Linux
   ```shell
-  ./gradlew :server:impl:run --no-daemon
+  ./gradlew :server:run --no-daemon
   ```
 - on Windows
   ```shell
-  .\gradlew.bat :server:impl:run --no-daemon
+  .\gradlew.bat :server:run --no-daemon
   ```
 
 ## Build and Run Web Application

@@ -12,10 +12,12 @@
 
 package cz.adamec.timotej.snag.configuration.fe
 
-enum class ServerTarget {
-    LOCALHOST,
-    DEV,
-    DEMO,
+enum class ServerTarget(
+    val serverUrl: String,
+) {
+    LOCALHOST(serverUrl = FrontendBuildConfig.SERVER_LOCALHOST_URL),
+    DEV(serverUrl = FrontendBuildConfig.SERVER_DEV_URL),
+    DEMO(serverUrl = FrontendBuildConfig.SERVER_DEMO_URL),
     ;
 
     internal companion object {

@@ -11,4 +11,4 @@ done < "config/common-debug.properties"
 # Load backend-specific config
 set -a; source "config/backend-debug.env"; set +a
 
-exec ./gradlew :server:impl:run --no-daemon "$@"
+exec ./gradlew :server:run --no-daemon "$@"
