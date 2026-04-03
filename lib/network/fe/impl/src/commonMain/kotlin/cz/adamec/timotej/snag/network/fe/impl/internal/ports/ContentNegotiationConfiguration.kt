@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.network.fe.impl.internal.ports
 
-import cz.adamec.timotej.snag.network.common.configureJson
+import cz.adamec.timotej.snag.network.common.impl.configureJson
 import cz.adamec.timotej.snag.network.fe.ports.KtorClientConfiguration
 import io.ktor.client.HttpClientConfig
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation

@@ -13,7 +13,7 @@
 package cz.adamec.timotej.snag.network.be.impl.internal
 
 import cz.adamec.timotej.snag.network.be.KtorServerConfiguration
-import cz.adamec.timotej.snag.network.common.configureJson
+import cz.adamec.timotej.snag.network.common.impl.configureJson
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation

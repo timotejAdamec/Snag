@@ -96,6 +96,14 @@ internal fun Project.resolveHexagonalDependencies(): List<AutoWiredDependency> {
         }
     }
 
+    // platform-specific impl → common/impl within the same module family
+    if (name == "impl" && (moduleDirectoryPath.endsWith(":fe") || moduleDirectoryPath.endsWith(":be"))) {
+        val familyRootPath = modulePreDirectoryPath
+        if (hasFolderInPath("$familyRootPath:common", "impl")) {
+            result += AutoWiredDependency("$familyRootPath:common:impl", DependencyScope.IMPLEMENTATION)
+        }
+    }
+
     // shared validation rules for all feat modules
     if (path.startsWith(":feat:")) {
         result += AutoWiredDependency(":core:business:rules:api", DependencyScope.IMPLEMENTATION)

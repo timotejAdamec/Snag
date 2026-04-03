@@ -3,7 +3,6 @@ plugins {
 }
 
 dependencies {
-    implementation(projects.lib.network.common)
     implementation(projects.lib.configuration.be.api)
     implementation(libs.ktor.server.auth)
     implementation(libs.ktor.server.content.negotiation)
