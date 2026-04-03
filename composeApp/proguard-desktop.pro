@@ -26,6 +26,11 @@
 -keep class io.ktor.client.engine.okhttp.OkHttpEngineContainer { *; }
 -keep class io.ktor.client.engine.okhttp.OkHttp { *; }
 
+# Ktor content negotiation / kotlinx.serialization ServiceLoader providers
+-keep class io.ktor.serialization.kotlinx.KotlinxSerializationExtensionProvider { *; }
+-keep class io.ktor.serialization.kotlinx.json.KotlinxSerializationJsonExtensionProvider { *; }
+-keep class * implements io.ktor.serialization.kotlinx.KotlinxSerializationExtensionProvider { *; }
+
 # kotlinx-coroutines Swing main dispatcher
 -keep class * implements kotlinx.coroutines.internal.MainDispatcherFactory { *; }
 
