@@ -14,7 +14,12 @@
 
 package cz.adamec.timotej.snag.lib.design.fe.scenes
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,10 +29,12 @@ import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.key
 import androidx.compose.runtime.movableContentOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.NavEntry
@@ -153,37 +160,59 @@ private class AdaptiveMapListDetailScene<T : Any>(
                     targetValue = if (isDetail) 192.dp else 128.dp,
                     label = "sheetPeekHeight",
                 )
-                key(isDetail) {
-                    val scaffoldState =
-                        rememberBottomSheetScaffoldState(
-                            bottomSheetState =
-                                rememberStandardBottomSheetState(
-                                    initialValue = SheetValue.PartiallyExpanded,
-                                ),
+
+                var cachedDetailEntry by remember {
+                    mutableStateOf(detailEntry)
+                }
+                if (detailEntry != null) cachedDetailEntry = detailEntry
+
+                val scaffoldState =
+                    rememberBottomSheetScaffoldState(
+                        bottomSheetState =
+                            rememberStandardBottomSheetState(
+                                initialValue = SheetValue.PartiallyExpanded,
+                            ),
+                    )
+                LaunchedEffect(isDetail) {
+                    scaffoldState.bottomSheetState.partialExpand()
+                }
+
+                BottomSheetScaffold(
+                    scaffoldState = scaffoldState,
+                    sheetPeekHeight = sheetPeekHeight,
+                    sheetDragHandle = {
+                        StatusBarAwareDragHandle(
+                            sheetState = scaffoldState.bottomSheetState,
                         )
-                    BottomSheetScaffold(
-                        scaffoldState = scaffoldState,
-                        sheetPeekHeight = sheetPeekHeight,
-                        sheetDragHandle = {
-                            StatusBarAwareDragHandle(
-                                sheetState = scaffoldState.bottomSheetState,
-                            )
-                        },
-                        sheetContent = {
-                            CompositionLocalProvider(LocalIsInSheet provides true) {
-                                if (isDetail) {
-                                    detailEntry.Content()
+                    },
+                    sheetContent = {
+                        CompositionLocalProvider(LocalIsInSheet provides true) {
+                            AnimatedContent(
+                                targetState = isDetail,
+                                transitionSpec = {
+                                    if (targetState) {
+                                        slideInHorizontally { it } togetherWith
+                                            slideOutHorizontally { -it }
+                                    } else {
+                                        slideInHorizontally { -it } togetherWith
+                                            slideOutHorizontally { it }
+                                    } using SizeTransform(clip = false)
+                                },
+                                label = "sheetContent",
+                            ) { showDetail ->
+                                if (showDetail) {
+                                    cachedDetailEntry?.Content()
                                 } else {
                                     listEntry?.Content()
                                 }
                             }
-                        },
-                    ) {
-                        CompositionLocalProvider(
-                            LocalSheetPeekHeight provides sheetPeekHeight,
-                        ) {
-                            hostPane(hostEntry)
                         }
+                    },
+                ) {
+                    CompositionLocalProvider(
+                        LocalSheetPeekHeight provides sheetPeekHeight,
+                    ) {
+                        hostPane(hostEntry)
                     }
                 }
             }
