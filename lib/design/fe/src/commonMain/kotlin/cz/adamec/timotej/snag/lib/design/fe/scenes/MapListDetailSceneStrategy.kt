@@ -15,10 +15,10 @@
 package cz.adamec.timotej.snag.lib.design.fe.scenes
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -194,13 +194,7 @@ private class AdaptiveMapListDetailScene<T : Any>(
                             AnimatedContent(
                                 targetState = isDetail,
                                 transitionSpec = {
-                                    if (targetState) {
-                                        slideInHorizontally { it } togetherWith
-                                            slideOutHorizontally { -it }
-                                    } else {
-                                        slideInHorizontally { -it } togetherWith
-                                            slideOutHorizontally { it }
-                                    } using SizeTransform(clip = false)
+                                    fadeIn(tween()) togetherWith fadeOut(tween())
                                 },
                                 label = "sheetContent",
                             ) { showDetail ->
