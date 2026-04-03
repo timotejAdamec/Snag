@@ -5,7 +5,7 @@
 # Builds multi-platform release artifacts and creates a GitHub Release when a frontend version tag is pushed.
 #
 
-name: Release
+name: Release frontends
 
 on:
   push:
