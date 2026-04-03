@@ -30,6 +30,15 @@ import androidx.compose.runtime.movableContentOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation3.runtime.NavEntry
+import androidx.navigation3.scene.Scene
+import androidx.navigation3.scene.SceneStrategy
+import androidx.navigation3.scene.SceneStrategyScope
+import cz.adamec.timotej.snag.lib.design.fe.adaptive.ContentPane
+import cz.adamec.timotej.snag.lib.design.fe.adaptive.ContentPaneSpacing
+import cz.adamec.timotej.snag.lib.design.fe.adaptive.isScreenExtraWide
+import cz.adamec.timotej.snag.lib.design.fe.adaptive.isScreenWide
+import cz.adamec.timotej.snag.lib.design.fe.layout.systemBarsPaddingCoerceAtLeast
 
 class MapListDetailSceneStrategy<T : Any> : SceneStrategy<T> {
     @Suppress("ReturnCount")
