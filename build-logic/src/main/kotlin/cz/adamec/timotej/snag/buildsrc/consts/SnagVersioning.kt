@@ -20,8 +20,12 @@ import java.time.format.DateTimeFormatter
 /**
  * Centralized version computation for all platforms.
  *
- * - **Semantic version** (`0.2.0`) — derived from the latest git tag (`v0.2.0`).
- *   Falls back to `"0.0.0"` when no tags exist (local dev without a release).
+ * Frontend and backend use independent version tags with prefixes [FE_TAG_PREFIX] (`fe-v`)
+ * and [BE_TAG_PREFIX] (`be-v`). The active prefix is auto-detected from the Gradle task graph:
+ * if `buildFatJar` is among the requested tasks, the backend prefix is used; otherwise frontend.
+ *
+ * - **Semantic version** (`0.2.0`) — derived from the nearest matching git tag (`fe-v0.2.0`
+ *   or `be-v0.2.0`). Falls back to `"0.0.0"` when no matching tags exist.
  * - **Version code** (`260326042`) — `YYMMDD * 1000 + (commitCount % 1000)`.
  *   Encodes the build date and approximate commit position.
  * - **Version name** (`0.2.0.260326042`) — composite of semantic version and version code.
@@ -30,14 +34,24 @@ import java.time.format.DateTimeFormatter
  */
 object SnagVersioning {
 
-    fun semanticVersion(project: Project): Provider<String> =
-        project.providers.exec {
-            commandLine("git", "describe", "--tags", "--abbrev=0")
+    private const val FE_TAG_PREFIX = "fe-v"
+    private const val BE_TAG_PREFIX = "be-v"
+
+    fun semanticVersion(project: Project): Provider<String> {
+        val tagPrefix = resolveTagPrefix(project)
+        return project.providers.exec {
+            commandLine(
+                "git", "describe",
+                "--tags", "--abbrev=0",
+                "--match", "${tagPrefix}*",
+            )
             isIgnoreExitValue = true
         }.standardOutput.asText.map { output ->
             val tag = output.trim()
-            if (tag.startsWith("v")) tag.removePrefix("v") else if (tag.isNotEmpty()) tag else "0.0.0"
+            val version = tag.removePrefix(tagPrefix)
+            version.ifEmpty { "0.0.0" }
         }
+    }
 
     fun versionCode(project: Project): Provider<Int> {
         val commitCount = project.providers.exec {
@@ -54,5 +68,12 @@ object SnagVersioning {
         val semantic = semanticVersion(project)
         val code = versionCode(project)
         return semantic.zip(code) { s, c -> "$s.$c" }
+    }
+
+    private fun resolveTagPrefix(project: Project): String {
+        val isBackend = project.gradle.startParameter.taskNames.any {
+            it.contains("buildFatJar", ignoreCase = true)
+        }
+        return if (isBackend) BE_TAG_PREFIX else FE_TAG_PREFIX
     }
 }

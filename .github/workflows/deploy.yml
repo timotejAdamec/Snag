@@ -2,11 +2,13 @@ name: Deploy to Cloud Run
 
 on:
   workflow_dispatch:
+  push:
+    tags:
+      - 'be-v*'
 
 env:
   REGION: europe-west3
   SERVICE_NAME: snag-server-demo
-  IMAGE: europe-west3-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/snag/server:${{ github.sha }}
 
 jobs:
   deploy:
@@ -19,6 +21,18 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Resolve image tag
+        id: image-tag
+        run: |
+          if [[ "${{ github.ref_type }}" == "tag" ]]; then
+            TAG="${{ github.ref_name }}"
+            echo "tag=${TAG#be-}" >> "$GITHUB_OUTPUT"
+          else
+            echo "tag=sha-$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v2
@@ -33,16 +47,18 @@ jobs:
         run: gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet
 
       - name: Build and push Docker image
+        env:
+          IMAGE: europe-west3-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/snag/server:${{ steps.image-tag.outputs.tag }}
         run: |
-          docker build -t ${{ env.IMAGE }} .
-          docker push ${{ env.IMAGE }}
+          docker build -t $IMAGE .
+          docker push $IMAGE
 
       - name: Deploy to Cloud Run
         uses: google-github-actions/deploy-cloudrun@v2
         with:
           service: ${{ env.SERVICE_NAME }}
           region: ${{ env.REGION }}
-          image: ${{ env.IMAGE }}
+          image: europe-west3-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/snag/server:${{ steps.image-tag.outputs.tag }}
           flags: >-
             --memory=512Mi
             --cpu=1
