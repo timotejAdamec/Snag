@@ -23,7 +23,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.stateIn
 
-private const val SYNC_STATUS_DEBOUNCE_MS = 300L
+private const val SYNC_STATUS_DEBOUNCE_MS = 1000L
 
 @OptIn(FlowPreview::class)
 internal class MainViewModel(
