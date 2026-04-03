@@ -21,7 +21,7 @@ enum class ServerTarget {
     val serverUrl: String
         get() =
             when (this) {
-                LOCALHOST -> "http://${FrontendBuildConfig.LOCALHOST_ADDRESS}:${FrontendBuildConfig.SERVER_LOCALHOST_PORT}"
+                LOCALHOST -> FrontendBuildConfig.SERVER_LOCALHOST_URL
                 DEV -> FrontendBuildConfig.SERVER_DEV_URL
                 DEMO -> FrontendBuildConfig.SERVER_DEMO_URL
             }
