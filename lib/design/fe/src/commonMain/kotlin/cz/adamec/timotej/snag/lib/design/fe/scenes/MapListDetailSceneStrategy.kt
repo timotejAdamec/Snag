@@ -28,20 +28,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.movableContentOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.backhandler.BackHandler
 import androidx.compose.ui.unit.dp
-import androidx.navigation3.runtime.NavEntry
-import androidx.navigation3.scene.Scene
-import androidx.navigation3.scene.SceneStrategy
-import androidx.navigation3.scene.SceneStrategyScope
-import cz.adamec.timotej.snag.lib.design.fe.adaptive.ContentPane
-import cz.adamec.timotej.snag.lib.design.fe.adaptive.ContentPaneSpacing
-import cz.adamec.timotej.snag.lib.design.fe.adaptive.isScreenExtraWide
-import cz.adamec.timotej.snag.lib.design.fe.adaptive.isScreenWide
-import cz.adamec.timotej.snag.lib.design.fe.layout.systemBarsPaddingCoerceAtLeast
-import kotlinx.coroutines.launch
 
 class MapListDetailSceneStrategy<T : Any> : SceneStrategy<T> {
     @Suppress("ReturnCount")
@@ -164,15 +152,6 @@ private class AdaptiveMapListDetailScene<T : Any>(
                                     initialValue = SheetValue.PartiallyExpanded,
                                 ),
                         )
-                    val scope = rememberCoroutineScope()
-                    BackHandler(
-                        enabled =
-                            scaffoldState.bottomSheetState.currentValue == SheetValue.Expanded,
-                    ) {
-                        scope.launch {
-                            scaffoldState.bottomSheetState.partialExpand()
-                        }
-                    }
                     BottomSheetScaffold(
                         scaffoldState = scaffoldState,
                         sheetPeekHeight = sheetPeekHeight,
