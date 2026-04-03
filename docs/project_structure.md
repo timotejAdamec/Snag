@@ -67,13 +67,6 @@ to be driven/driving.
 
 Can depend on `core` code, cannot depend on `feat` code.
 
-Notable library module families:
-- `lib/network/` — Ktor HTTP integration. `common/` holds shared serialization config,
-  `fe/{api,impl,test}` wraps the Ktor HTTP client, `be/{api,impl,test}` wraps the Ktor HTTP server
-  (routing, CORS, content negotiation, logging, status pages).
-- `lib/configuration/` — Build-time and runtime config values (versions, auth credentials, server
-  targets, environment variables).
-
 #### Encapsulation module splits
 Each feature/core/library module/directory can be split into submodules if there is a need for it:
 - `api` — Public interfaces. Can appear in any layer.
