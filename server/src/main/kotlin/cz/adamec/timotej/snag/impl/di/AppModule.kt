@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.impl.di
 
-import cz.adamec.timotej.snag.configuration.be.AppConfiguration
+import cz.adamec.timotej.snag.network.be.KtorServerConfiguration
 import cz.adamec.timotej.snag.configuration.be.BackendRunConfig
 import cz.adamec.timotej.snag.di.aggregate.be.backendModulesAggregate
 import cz.adamec.timotej.snag.impl.internal.DevDataSeederConfiguration
@@ -24,6 +24,6 @@ internal val appModule =
     module {
         includes(backendModulesAggregate)
         if (BackendRunConfig.seedData) {
-            singleOf(::DevDataSeederConfiguration) bind AppConfiguration::class
+            singleOf(::DevDataSeederConfiguration) bind KtorServerConfiguration::class
         }
     }

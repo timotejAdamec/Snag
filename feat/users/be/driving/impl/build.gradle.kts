@@ -20,6 +20,6 @@ dependencies {
     implementation(project(":feat:users:be:app:api"))
     implementation(project(":feat:authentication:be:driving:api"))
     implementation(project(":feat:authorization:be:driving:api"))
-    testImplementation(project(":lib:configuration:be:api"))
+    testImplementation(project(":lib:network:be:api"))
     testImplementation(project(":feat:users:be:ports"))
 }

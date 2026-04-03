@@ -1,0 +1,50 @@
+/*
+ * Copyright (c) 2026 Timotej Adamec
+ * SPDX-License-Identifier: MIT
+ *
+ * This file is part of the thesis:
+ * "Multiplatform snagging system with code sharing maximisation"
+ *
+ * Czech Technical University in Prague
+ * Faculty of Information Technology
+ * Department of Software Engineering
+ */
+
+package cz.adamec.timotej.snag.network.be.impl.internal
+
+import cz.adamec.timotej.snag.network.be.KtorServerConfiguration
+import cz.adamec.timotej.snag.routing.be.AppRoute
+import io.ktor.http.ContentType
+import io.ktor.openapi.OpenApiInfo
+import io.ktor.server.application.Application
+import io.ktor.server.auth.authenticate
+import io.ktor.server.plugins.swagger.swaggerUI
+import io.ktor.server.response.respondText
+import io.ktor.server.routing.get
+import io.ktor.server.routing.openapi.OpenApiDocSource
+import io.ktor.server.routing.routing
+import org.koin.ktor.ext.getKoin
+
+internal class RoutingConfiguration : KtorServerConfiguration {
+    override fun Application.setup() {
+        val routes = getKoin().getAll<AppRoute>()
+        routing {
+            val routingScope = this
+            get("/") {
+                call.respondText("Ktor: Hello server")
+            }
+            swaggerUI("/swaggerUI") {
+                info = OpenApiInfo("Snag API", "1.0")
+                source =
+                    OpenApiDocSource.Routing(ContentType.Application.Json) {
+                        routingScope.descendants()
+                    }
+            }
+            authenticate {
+                routes.forEach { route ->
+                    with(route) { setup() }
+                }
+            }
+        }
+    }
+}

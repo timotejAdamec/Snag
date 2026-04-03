@@ -13,12 +13,12 @@
 package cz.adamec.timotej.snag.authorization.be.driving.impl.di
 
 import cz.adamec.timotej.snag.authorization.be.driving.impl.internal.AuthorizationStatusPageHandler
-import cz.adamec.timotej.snag.configuration.be.AppStatusPageHandler
+import cz.adamec.timotej.snag.network.be.KtorStatusPageHandler
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
 val authorizationModule =
     module {
-        singleOf(::AuthorizationStatusPageHandler) bind AppStatusPageHandler::class
+        singleOf(::AuthorizationStatusPageHandler) bind KtorStatusPageHandler::class
     }

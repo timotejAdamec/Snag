@@ -13,7 +13,7 @@
 package cz.adamec.timotej.snag.network.fe.impl.di
 
 import cz.adamec.timotej.snag.core.network.fe.ConnectionStatusProvider
-import cz.adamec.timotej.snag.network.fe.NetworkErrorClassifier
+import cz.adamec.timotej.snag.network.fe.impl.internal.NetworkErrorClassifier
 import cz.adamec.timotej.snag.network.fe.impl.internal.WebConnectionStatusProvider
 import cz.adamec.timotej.snag.network.fe.impl.internal.WebNetworkErrorClassifier
 import org.koin.core.module.Module

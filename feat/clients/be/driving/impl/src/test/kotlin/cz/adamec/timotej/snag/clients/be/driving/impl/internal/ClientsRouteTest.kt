@@ -15,7 +15,7 @@ package cz.adamec.timotej.snag.clients.be.driving.impl.internal
 import cz.adamec.timotej.snag.authorization.business.UserRole
 import cz.adamec.timotej.snag.clients.be.ports.ClientsDb
 import cz.adamec.timotej.snag.clients.contract.PutClientApiDto
-import cz.adamec.timotej.snag.configuration.be.AppConfiguration
+import cz.adamec.timotej.snag.network.be.KtorServerConfiguration
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.network.be.test.jsonClient
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
@@ -40,7 +40,7 @@ class ClientsRouteTest : BackendKoinInitializedTest() {
     private val usersDb: UsersDb by inject()
 
     private fun ApplicationTestBuilder.configureApp() {
-        val configurations = getKoin().getAll<AppConfiguration>()
+        val configurations = getKoin().getAll<KtorServerConfiguration>()
         application {
             configurations.forEach { config ->
                 with(config) { setup() }

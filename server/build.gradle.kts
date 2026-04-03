@@ -45,6 +45,7 @@ tasks.withType<Zip> {
 dependencies {
     implementation(projects.koinModulesAggregate.be)
     implementation(projects.lib.configuration.be.api)
+    implementation(projects.lib.network.be.api)
     implementation(projects.feat.projects.be.ports)
     implementation(projects.feat.clients.be.ports)
     implementation(projects.feat.structures.be.ports)
