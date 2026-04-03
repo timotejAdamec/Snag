@@ -19,17 +19,21 @@ import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.scene.DialogSceneStrategy
 import androidx.navigation3.scene.SceneStrategy
 import androidx.navigation3.ui.NavDisplay
+import androidx.navigationevent.NavigationEventInfo
+import androidx.navigationevent.compose.NavigationEventHandler
+import androidx.navigationevent.compose.rememberNavigationEventState
 import org.koin.compose.navigation3.koinEntryProvider
 
 @Composable
 fun SnagNavDisplay(
-    backStack: List<SnagNavRoute>,
+    backStack: SnagBackStack,
     modifier: Modifier = Modifier,
     additionalSceneStrategies: List<SceneStrategy<SnagNavRoute>> = emptyList(),
 ) {
     NavDisplay(
         modifier = modifier,
-        backStack = backStack,
+        backStack = backStack.value,
+        onBack = {},
         entryProvider = koinEntryProvider<SnagNavRoute>(),
         sceneStrategies =
             listOf<SceneStrategy<SnagNavRoute>>(DialogSceneStrategy()) + additionalSceneStrategies,
@@ -38,5 +42,10 @@ fun SnagNavDisplay(
                 rememberSaveableStateHolderNavEntryDecorator(),
                 rememberViewModelStoreNavEntryDecorator(),
             ),
+    )
+    NavigationEventHandler(
+        state = rememberNavigationEventState(NavigationEventInfo.None),
+        isBackEnabled = backStack.value.size > 1,
+        onBackCompleted = { backStack.removeLastSafely() },
     )
 }

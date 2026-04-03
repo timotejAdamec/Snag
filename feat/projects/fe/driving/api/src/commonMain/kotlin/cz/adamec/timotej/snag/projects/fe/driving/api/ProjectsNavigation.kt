@@ -13,8 +13,6 @@
 package cz.adamec.timotej.snag.projects.fe.driving.api
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import cz.adamec.timotej.snag.lib.design.fe.scenes.ContentPaneSceneStrategy
 import cz.adamec.timotej.snag.lib.navigation.fe.SnagNavDisplay
@@ -22,10 +20,9 @@ import org.koin.compose.koinInject
 
 @Composable
 fun ProjectsNavigation(modifier: Modifier = Modifier) {
-    val injectedBackStack: ProjectsBackStack = koinInject()
-    val backStack = remember { mutableStateOf(injectedBackStack.value) }
+    val backStack: ProjectsBackStack = koinInject()
     SnagNavDisplay(
-        backStack = backStack.value,
+        backStack = backStack,
         modifier = modifier,
         additionalSceneStrategies =
             listOf(

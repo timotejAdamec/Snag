@@ -27,6 +27,7 @@ import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -42,6 +43,10 @@ import snag.lib.design.fe.generated.resources.ic_edit
 import snag.lib.design.fe.generated.resources.ic_schedule
 import snag.lib.design.fe.generated.resources.Res as DesignRes
 
+private const val DISABLED_CONTENT_ALPHA = 0.38f
+private const val DISABLED_BORDER_ALPHA = 0.12f
+
+@Suppress("CognitiveComplexMethod")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun DateTimePickerField(
@@ -59,14 +64,28 @@ internal fun DateTimePickerField(
             modifier = Modifier.padding(start = 16.dp, bottom = 4.dp),
             text = label,
             style = MaterialTheme.typography.labelMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            color =
+                if (enabled) {
+                    MaterialTheme.colorScheme.onSurfaceVariant
+                } else {
+                    MaterialTheme.colorScheme.onSurface.copy(alpha = DISABLED_CONTENT_ALPHA)
+                },
         )
         Surface(
             modifier = Modifier.fillMaxWidth(),
             onClick = onEditClick,
             enabled = enabled,
-            shape = MaterialTheme.shapes.medium,
-            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
+            shape = MaterialTheme.shapes.extraSmall,
+            border =
+                BorderStroke(
+                    width = 1.dp,
+                    color =
+                        if (enabled) {
+                            MaterialTheme.colorScheme.outline
+                        } else {
+                            MaterialTheme.colorScheme.onSurface.copy(alpha = DISABLED_BORDER_ALPHA)
+                        },
+                ),
         ) {
             val startPadding = if (leadingIcon != null) 12.dp else 16.dp
             Row(
@@ -83,11 +102,24 @@ internal fun DateTimePickerField(
                             .wrapContentSize()
                             .padding(end = 16.dp),
                     ) {
-                        it()
+                        if (enabled) {
+                            it()
+                        } else {
+                            CompositionLocalProvider(
+                                LocalContentColor provides
+                                    MaterialTheme.colorScheme.onSurface.copy(
+                                        alpha = DISABLED_CONTENT_ALPHA,
+                                    ),
+                            ) {
+                                it()
+                            }
+                        }
                     }
                 }
                 val textColor =
-                    if (value != null) {
+                    if (!enabled) {
+                        MaterialTheme.colorScheme.onSurface.copy(alpha = DISABLED_CONTENT_ALPHA)
+                    } else if (value != null) {
                         LocalContentColor.current
                     } else {
                         MaterialTheme.colorScheme.onSurfaceVariant
@@ -133,6 +165,68 @@ private fun DateTimePickerFieldPreview() {
             placeholder = "Placeholder",
             onEditClick = {},
             onClearClick = {},
+            leadingIcon = {
+                Icon(
+                    painter = painterResource(DesignRes.drawable.ic_schedule),
+                    contentDescription = null,
+                )
+            },
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun DateTimePickerFieldPlaceholderPreview() {
+    SnagPreview {
+        DateTimePickerField(
+            label = "Label",
+            value = null,
+            placeholder = "Placeholder",
+            onEditClick = {},
+            onClearClick = {},
+            leadingIcon = {
+                Icon(
+                    painter = painterResource(DesignRes.drawable.ic_schedule),
+                    contentDescription = null,
+                )
+            },
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun DateTimePickerFieldDisabledPreview() {
+    SnagPreview {
+        DateTimePickerField(
+            label = "Label",
+            value = "Value",
+            placeholder = "Placeholder",
+            onEditClick = {},
+            onClearClick = {},
+            enabled = false,
+            leadingIcon = {
+                Icon(
+                    painter = painterResource(DesignRes.drawable.ic_schedule),
+                    contentDescription = null,
+                )
+            },
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun DateTimePickerFieldDisabledPlaceholderPreview() {
+    SnagPreview {
+        DateTimePickerField(
+            label = "Label",
+            value = null,
+            placeholder = "Placeholder",
+            onEditClick = {},
+            onClearClick = {},
+            enabled = false,
             leadingIcon = {
                 Icon(
                     painter = painterResource(DesignRes.drawable.ic_schedule),
