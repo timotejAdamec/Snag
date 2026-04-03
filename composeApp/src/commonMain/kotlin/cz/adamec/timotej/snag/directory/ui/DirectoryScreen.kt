@@ -81,7 +81,10 @@ internal fun DirectoryScreen(modifier: Modifier = Modifier) {
     Column(
         modifier = modifier.systemBarsPadding(),
     ) {
-        PrimaryTabRow(selectedTabIndex = selectedTab) {
+        PrimaryTabRow(
+            selectedTabIndex = selectedTab,
+            containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+        ) {
             Tab(
                 selected = selectedTab == USERS_TAB_INDEX,
                 onClick = {

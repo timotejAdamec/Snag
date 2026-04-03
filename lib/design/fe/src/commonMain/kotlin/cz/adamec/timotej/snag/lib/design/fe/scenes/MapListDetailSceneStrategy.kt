@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.BottomSheetScaffold
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SheetValue
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberStandardBottomSheetState
@@ -164,6 +165,7 @@ private class AdaptiveMapListDetailScene<T : Any>(
                     BottomSheetScaffold(
                         scaffoldState = scaffoldState,
                         sheetPeekHeight = sheetPeekHeight,
+                        sheetContainerColor = MaterialTheme.colorScheme.surfaceContainer,
                         sheetDragHandle = {
                             StatusBarAwareDragHandle(
                                 sheetState = scaffoldState.bottomSheetState,

@@ -25,7 +25,7 @@ import androidx.compose.ui.graphics.Color
 @Composable
 fun AppScaffold(
     modifier: Modifier = Modifier,
-    containerColor: Color = MaterialTheme.colorScheme.surface,
+    containerColor: Color = MaterialTheme.colorScheme.surfaceContainerLowest,
     content: @Composable (PaddingValues) -> Unit,
 ) {
     val appScaffoldState = remember { AppScaffoldState() }

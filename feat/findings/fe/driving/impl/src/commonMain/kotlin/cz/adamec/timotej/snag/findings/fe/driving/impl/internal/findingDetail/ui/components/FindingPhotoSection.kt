@@ -131,7 +131,7 @@ internal fun FindingPhotoSection(
                 Surface(
                     modifier = Modifier.size(ThumbnailSize),
                     shape = MaterialTheme.shapes.medium,
-                    color = MaterialTheme.colorScheme.surfaceContainerLow,
+                    color = MaterialTheme.colorScheme.surfaceContainerHigh,
                 ) {
                     Box(
                         modifier = Modifier.fillMaxSize(),
@@ -173,7 +173,7 @@ private fun FindingPhotoThumbnail(
             modifier = Modifier.fillMaxSize(),
             onClick = onClick,
             shape = MaterialTheme.shapes.medium,
-            color = MaterialTheme.colorScheme.surfaceContainerLow,
+            color = MaterialTheme.colorScheme.surfaceContainerHigh,
         ) {
             AsyncImage(
                 model = photo.url,

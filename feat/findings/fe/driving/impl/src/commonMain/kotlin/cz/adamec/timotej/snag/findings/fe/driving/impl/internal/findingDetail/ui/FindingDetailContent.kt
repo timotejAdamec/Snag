@@ -133,7 +133,7 @@ internal fun FindingDetailContent(
                     if (isInSheet || isInContentPane) {
                         Color.Transparent
                     } else {
-                        MaterialTheme.colorScheme.background
+                        MaterialTheme.colorScheme.surfaceContainerLow
                     },
                 topBar = {
                     TopAppBar(

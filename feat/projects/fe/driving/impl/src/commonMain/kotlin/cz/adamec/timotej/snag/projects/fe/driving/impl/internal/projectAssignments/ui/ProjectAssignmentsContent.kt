@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.LoadingIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -120,6 +121,7 @@ internal fun ProjectAssignmentsContent(
             ModalBottomSheet(
                 onDismissRequest = { showAddUserSheet = false },
                 sheetState = bottomSheetState,
+                containerColor = MaterialTheme.colorScheme.surfaceContainer,
                 dragHandle = {
                     StatusBarAwareDragHandle(sheetState = bottomSheetState)
                 },

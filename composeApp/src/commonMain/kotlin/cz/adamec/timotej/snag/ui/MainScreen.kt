@@ -15,6 +15,7 @@ package cz.adamec.timotej.snag.ui
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.WideNavigationRailDefaults
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteDefaults
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
@@ -24,11 +25,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cz.adamec.timotej.snag.directory.ui.DirectoryNavRoute
-import cz.adamec.timotej.snag.lib.design.fe.adaptive.ContentPaneDefaults
-import cz.adamec.timotej.snag.lib.design.fe.adaptive.isScreenWide
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.AppScaffold
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.SyncStatusBar
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.SyncStatusBarState
@@ -43,19 +41,10 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 internal fun MainScreen(mainViewModel: MainViewModel = koinViewModel()) {
     val syncStatus by mainViewModel.syncStatus.collectAsStateWithLifecycle()
-    val outerContainerColor =
-        if (isScreenWide()) {
-            ContentPaneDefaults.containerColor
-        } else {
-            ContentPaneDefaults.paneColor
-        }
-    AppScaffold(
-        containerColor = outerContainerColor,
-    ) { paddingValues ->
+    AppScaffold { paddingValues ->
         MainScreenContent(
             paddingValues = paddingValues,
             syncBarState = syncStatus.toBarState(),
-            outerContainerColor = outerContainerColor,
         )
     }
 }
@@ -64,7 +53,6 @@ internal fun MainScreen(mainViewModel: MainViewModel = koinViewModel()) {
 private fun MainScreenContent(
     paddingValues: PaddingValues,
     syncBarState: SyncStatusBarState,
-    outerContainerColor: Color,
 ) {
     Column {
         var isSyncStatusBarVisible by remember { mutableStateOf(false) }
@@ -89,6 +77,7 @@ private fun MainScreenContent(
                 Modifier
             }
 
+        val outerContainerColor = MaterialTheme.colorScheme.surfaceContainerLowest
         val mainBackStack = koinInject<MainBackStack>()
         NavigationSuiteScaffold(
             modifier = navigationModifier,

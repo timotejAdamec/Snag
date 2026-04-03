@@ -74,7 +74,7 @@ internal fun FloorPlanEditSection(
             style = MaterialTheme.typography.labelMedium,
         )
         Surface(
-            color = MaterialTheme.colorScheme.surfaceContainerLow,
+            color = MaterialTheme.colorScheme.surfaceContainerHigh,
             shape = MaterialTheme.shapes.medium,
         ) {
             Column(

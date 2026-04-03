@@ -27,12 +27,10 @@ val LocalIsInContentPane = compositionLocalOf { false }
 
 object ContentPaneDefaults {
     val containerColor: Color
-        @Composable get() = MaterialTheme.colorScheme.surfaceContainerLow
+        @Composable get() = MaterialTheme.colorScheme.surfaceContainerLowest
 
-    // Change this will not override color for everything, will need changes
-    // so that this color is used where it needs to be used.
     val paneColor: Color
-        @Composable get() = MaterialTheme.colorScheme.surface
+        @Composable get() = MaterialTheme.colorScheme.surfaceContainer
 }
 
 @Composable

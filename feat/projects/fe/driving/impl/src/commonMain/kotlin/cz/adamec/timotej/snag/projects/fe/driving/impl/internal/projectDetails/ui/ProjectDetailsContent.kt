@@ -420,6 +420,7 @@ private fun LoadedProjectDetailsContent(
                 ModalBottomSheet(
                     onDismissRequest = { showAddUserSheet = false },
                     sheetState = bottomSheetState,
+                    containerColor = MaterialTheme.colorScheme.surfaceContainer,
                     dragHandle = {
                         StatusBarAwareDragHandle(sheetState = bottomSheetState)
                     },
