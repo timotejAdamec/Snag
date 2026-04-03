@@ -55,7 +55,6 @@ internal fun Project.configureComposeMultiplatformModule() {
                 implementation(library("compose-material3-adaptive"))
                 implementation(library("compose-material3-adaptive-layout"))
                 implementation(library("compose-ui"))
-                implementation(library("compose-ui-backhandler"))
                 implementation(library("compose-ui-tooling-preview"))
                 implementation(library("compose-components-resources"))
                 implementation(library("compose-components-uiToolingPreview"))
@@ -88,7 +87,6 @@ internal fun Project.configureComposeMultiplatformModule() {
                 languageSettings.optIn("org.koin.core.annotation.KoinExperimentalAPI")
                 languageSettings.optIn("androidx.compose.material3.ExperimentalMaterial3Api")
                 languageSettings.optIn("androidx.compose.material3.ExperimentalMaterial3ExpressiveApi")
-                languageSettings.optIn("androidx.compose.ui.ExperimentalComposeUiApi")
             }
         }
     }
