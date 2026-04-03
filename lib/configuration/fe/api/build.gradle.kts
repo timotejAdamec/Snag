@@ -98,6 +98,12 @@ buildkonfig {
         )
         buildConfigField(
             com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING,
+            "LOCALHOST_ADDRESS",
+            "localhost",
+            const = true,
+        )
+        buildConfigField(
+            com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING,
             "ENTRA_ID_MOBILE_REDIRECT_URI",
             entraIdMobileRedirectUri,
             const = true,
@@ -114,5 +120,16 @@ buildkonfig {
             entraIdWebRedirectPath,
             const = true,
         )
+    }
+
+    targetConfigs {
+        create("android") {
+            buildConfigField(
+                com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING,
+                "LOCALHOST_ADDRESS",
+                "10.0.2.2",
+                const = true,
+            )
+        }
     }
 }
