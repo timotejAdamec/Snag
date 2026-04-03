@@ -24,18 +24,16 @@ import org.koin.compose.navigation3.koinEntryProvider
 
 @Composable
 fun SnagNavDisplay(
-    backStack: List<SnagNavRoute>,
+    backStack: SnagBackStack,
     modifier: Modifier = Modifier,
     additionalSceneStrategies: List<SceneStrategy<SnagNavRoute>> = emptyList(),
 ) {
-    BackHandler(enabled = backStack.size > 1) {
-        (backStack as? MutableList<SnagNavRoute>)?.let {
-            if (it.size > 1) it.removeLastOrNull()
-        }
+    BackHandler(enabled = backStack.value.size > 1) {
+        backStack.removeLastSafely()
     }
     NavDisplay(
         modifier = modifier,
-        backStack = backStack,
+        backStack = backStack.value,
         onBack = {},
         entryProvider = koinEntryProvider<SnagNavRoute>(),
         sceneStrategies =

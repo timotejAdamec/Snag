@@ -21,7 +21,7 @@ import org.koin.compose.koinInject
 internal fun MainNavigation() {
     val backStack: MainBackStack = koinInject()
     SnagNavDisplay(
-        backStack = backStack.value,
+        backStack = backStack,
         additionalSceneStrategies =
             listOf(
                 ContentPaneSceneStrategy(),
