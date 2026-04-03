@@ -14,8 +14,6 @@ package cz.adamec.timotej.snag.structures.fe.driving.impl.internal.structureDeta
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.snapshotFlow
 import cz.adamec.timotej.snag.feat.findings.fe.driving.api.FindingsListRouteFactory
@@ -33,8 +31,7 @@ internal fun StructureDetailNestedNav(
     structureId: Uuid,
     onExit: () -> Unit,
 ) {
-    val injectedInnerBackStack = koinInject<StructureDetailBackStack>()
-    val backStack = remember { mutableStateOf(injectedInnerBackStack.value) }
+    val backStack = koinInject<StructureDetailBackStack>()
     val structureFloorPlanRouteFactory = koinInject<StructureFloorPlanRouteFactory>()
     val findingsListRouteFactory = koinInject<FindingsListRouteFactory>()
     val currentOnExit = rememberUpdatedState(onExit)
@@ -85,7 +82,7 @@ internal fun StructureDetailNestedNav(
     }
 
     SnagNavDisplay(
-        backStack = backStack.value,
+        backStack = backStack,
         additionalSceneStrategies =
             listOf(
                 MapListDetailSceneStrategy(),

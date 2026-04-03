@@ -20,8 +20,6 @@ import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import cz.adamec.timotej.snag.clients.fe.driving.api.ClientCreationRouteFactory
 import cz.adamec.timotej.snag.clients.fe.driving.api.ClientEditRouteFactory
@@ -48,13 +46,12 @@ private const val CLIENTS_TAB_INDEX = 1
 @Composable
 internal fun DirectoryScreen(modifier: Modifier = Modifier) {
     val backStack: DirectoryBackStack = koinInject()
-    val backStackEntriesState = remember { mutableStateOf(backStack.value) }
     val clientsRouteFactory = koinInject<ClientsRouteFactory>()
     val clientCreationRouteFactory = koinInject<ClientCreationRouteFactory>()
     val clientEditRouteFactory = koinInject<ClientEditRouteFactory>()
 
     val backStackContainsClients =
-        backStackEntriesState.value
+        backStack.value
             .filterIsInstance<ClientsRoute>()
             .isNotEmpty()
     val selectedTab =
@@ -132,7 +129,7 @@ internal fun DirectoryScreen(modifier: Modifier = Modifier) {
         }
 
         SnagNavDisplay(
-            backStack = backStackEntriesState.value,
+            backStack = backStack,
         )
     }
 }
