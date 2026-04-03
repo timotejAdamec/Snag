@@ -2,7 +2,7 @@
 # Copyright (c) 2026 Timotej Adamec
 # SPDX-License-Identifier: MIT
 #
-# Builds multi-platform release artifacts and creates a GitHub Release when a version tag is pushed.
+# Builds multi-platform release artifacts and creates a GitHub Release when a frontend version tag is pushed.
 #
 
 name: Release
@@ -10,7 +10,7 @@ name: Release
 on:
   push:
     tags:
-      - 'v*'
+      - 'fe-v*'
 
 env:
   ORG_GRADLE_JVMARGS: '-Xmx4g'
