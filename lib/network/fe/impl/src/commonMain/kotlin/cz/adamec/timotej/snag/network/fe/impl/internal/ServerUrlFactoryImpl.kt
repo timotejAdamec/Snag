@@ -13,18 +13,8 @@
 package cz.adamec.timotej.snag.network.fe.impl.internal
 
 import cz.adamec.timotej.snag.configuration.fe.FrontendRunConfig
-import cz.adamec.timotej.snag.configuration.fe.ServerTarget
 import cz.adamec.timotej.snag.network.fe.ServerUrlFactory
 
-internal class ServerUrlFactoryImpl(
-    private val localhostAddress: String,
-) : ServerUrlFactory {
-    override fun createUrl(): String {
-        val target = FrontendRunConfig.serverTarget
-        return if (target == ServerTarget.LOCALHOST) {
-            target.localhostUrl(localhostAddress)
-        } else {
-            target.serverUrl
-        }
-    }
+internal class ServerUrlFactoryImpl : ServerUrlFactory {
+    override fun createUrl(): String = FrontendRunConfig.serverTarget.serverUrl
 }

@@ -10,12 +10,6 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.network.fe.impl.di
+package cz.adamec.timotej.snag.configuration.fe
 
-import org.koin.core.qualifier.named
-import org.koin.dsl.module
-
-internal actual val serverUrlPlatformModule =
-    module {
-        single(named("localhostAddress")) { "localhost" }
-    }
+internal actual val localhostAddress: String = "10.0.2.2"

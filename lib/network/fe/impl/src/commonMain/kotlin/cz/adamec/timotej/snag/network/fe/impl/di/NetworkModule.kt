@@ -25,20 +25,14 @@ import cz.adamec.timotej.snag.network.fe.impl.internal.SnagNetworkHttpClientImpl
 import io.ktor.client.HttpClient
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.singleOf
-import org.koin.core.qualifier.named
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
 val networkModule =
     module {
-        includes(serverUrlPlatformModule)
         includes(networkErrorClassifierPlatformModule)
         includes(connectionStatusPlatformModule)
-        single<ServerUrlFactory> {
-            ServerUrlFactoryImpl(
-                localhostAddress = get<String>(named("localhostAddress")),
-            )
-        }
+        singleOf(::ServerUrlFactoryImpl) bind ServerUrlFactory::class
         singleOf(::LoggingConfiguration) bind HttpClientConfiguration::class
         singleOf(::ContentNegotiationConfiguration) bind HttpClientConfiguration::class
         singleOf(::ResponseValidationConfiguration) bind HttpClientConfiguration::class
@@ -62,6 +56,5 @@ val networkModule =
         }
     }
 
-internal expect val serverUrlPlatformModule: Module
 internal expect val networkErrorClassifierPlatformModule: Module
 internal expect val connectionStatusPlatformModule: Module
