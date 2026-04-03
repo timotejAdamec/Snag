@@ -23,11 +23,9 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import cz.adamec.timotej.snag.lib.design.fe.adaptive.LocalIsInContentPane
 
 @Composable
 fun CollapsableTopAppBarScaffold(
@@ -46,24 +44,8 @@ fun CollapsableTopAppBarScaffold(
             state = rememberTopAppBarState(),
         )
 
-    val isInContentPane = LocalIsInContentPane.current
-    val scaffoldContainerColor =
-        if (isInContentPane) Color.Transparent else Color.Unspecified
-    val topAppBarColors =
-        if (isInContentPane) {
-            TopAppBarDefaults.topAppBarColors(
-                containerColor = Color.Transparent,
-                scrolledContainerColor = Color.Transparent,
-            )
-        } else {
-            TopAppBarDefaults.topAppBarColors(
-                scrolledContainerColor = TopAppBarDefaults.topAppBarColors().containerColor,
-            )
-        }
-
     Scaffold(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        containerColor = scaffoldContainerColor,
         topBar = {
             MediumFlexibleTopAppBar(
                 title = {
@@ -89,7 +71,6 @@ fun CollapsableTopAppBarScaffold(
                 scrollBehavior = scrollBehavior,
                 navigationIcon = topAppBarNavigationIcon,
                 actions = topAppBarActions,
-                colors = topAppBarColors,
             )
         },
         bottomBar = bottomBar,
