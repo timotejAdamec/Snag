@@ -4,24 +4,11 @@ This document is a reference for the implementation team. It describes what the 
 
 ---
 
-## Remaining Work
+## Remaining Work — 3. 4. 2026, 16:30
 
-### Must do
-
-1. ~~**FE: User assignment UI**~~ — **Done.** FE `AssignUserToProjectUseCase` and `RemoveUserFromProjectUseCase` implemented and wired into `ProjectDetailsViewModel`. Local assignment cache, pull sync, cascade delete/restore, and query use case also done. *(§6 #2, FP4c, FP4d)*
-2. ~~**FE: Role-based UI gating**~~ — **Done.** FE use cases (`CanCreateProjectUseCase`, `CanCloseProjectUseCase`, `CanManageClientsUseCase`, `GetAllowedRoleOptionsUseCase`) wrap shared KMP rules with `GetCurrentUserFlowUseCase`, emitting reactive `Flow<Boolean>`. All ViewModels collect these into state booleans (deny-first defaults: `false` until confirmed). UI buttons hidden/disabled based on authorization. *(NP13 FE)*
-3. ~~**EntraID authentication**~~ — **Done.** BE: dual-mode `CurrentUserConfiguration` with Ktor `Authentication` plugin (`jwt {}` provider) for production, `X-User-Id` header for dev. `GetOrCreateUserByAuthProviderIdUseCase` auto-creates users on first login. `GET /users/me` endpoint returns current user's `UserApiDto`. FE: hexagonal architecture in `feat/authentication/fe/` — use cases (`GetAuthProviderIdUseCase`, `GetAccessTokenUseCase`, `LoginUseCase`, `LogoutUseCase`, `RestoreSessionUseCase`, `IsCurrentUserAuthenticatedFlowUseCase`) in `app/{api,impl}`, port interfaces (`AuthTokenProvider`, `AuthState`) in `ports`, adapters (`OidcAuthTokenProvider` via kotlin-multiplatform-oidc v0.16.5, `MockAuthTokenProvider`) in `driven/impl`, test fakes (`FakeAuthTokenProvider`) in `driven/test`, UI (`AuthenticationGate`, `LoginScreen`, `AuthenticationViewModel`) in `driving/impl`. `LoginUseCase` coordinates OIDC login → `/users/me` call → authenticated user ID resolution. Token refresh built into `OidcAuthTokenProvider`. FE bearer auth via Ktor `bearer {}` provider in `CurrentUserHttpClientConfiguration`. Mock/production dual-mode via `RunConfig.mockAuth` DI switching. Build-time config via BuildKonfig (`MOCK_AUTH`, `ENTRA_ID_TENANT_ID`, `ENTRA_ID_CLIENT_ID`, `ENTRA_ID_MOBILE_REDIRECT_URI`, `ENTRA_ID_JVM_REDIRECT_URI`, `ENTRA_ID_WEB_REDIRECT_PATH`). *(§4, FP34, FP35, NP12)*
-4. **Service protocol PDF** — Not started. Second report type with work description and signature fields. *(§5, FP32b)*
-5. ~~**FE: Role management UI**~~ — **Done.** `GetAllowedRoleOptionsUseCase` computes allowed role transitions per target user; `UserManagementViewModel` collects into `allowedRoleOptions` per `UserItem`; `RoleDropdown` filters options accordingly. *(§6 #4)*
-6. ~~**Closed-project access gap**~~ — **Not a gap.** `CanAccessProjectRule` intentionally does not check `isClosed`; `AreProjectEntitiesEditableRule` handles it separately. Both rules are composed at the use case layer: FE via `CanEditProjectEntitiesUseCaseImpl`, BE via sub-entity route use cases. Separation by design — access and editability are orthogonal concerns.
-
-### Partially done (BE complete, FE incomplete)
-
-| Feature | BE | FE |
-|---|---|---|
-| Project close/reopen | Done (mechanism + authorization + visibility filtering on all routes) | Close/reopen UI exists; role gating done (`CanCloseProjectUseCase` gates button to admin/creator) |
-| User assignment | Done (API + DB + `CanAssignUserToProjectRule`) | **Done** — `AssignUserToProjectUseCase` + `RemoveUserFromProjectUseCase` wired into `ProjectDetailsViewModel`; local cache + sync done |
-| Role management (UC7) | Done (`CanSetUserRoleRule`) | **Done** — `GetAllowedRoleOptionsUseCase` + filtered `RoleDropdown` |
+1. **Service protocol PDF** — Not started. Second report type with work description and signature fields. *(§5, FP32b)*
+2. **Per-role project visibility** — `CanAccessProjectRule` and `GetProjectsUseCaseImpl` use a simplified access model (Admin = all, others = creator + assigned). The spec requires Service Lead to see all service worker projects and Passport Lead / Service Worker to see own + assigned. *(§3, NP13)*
+3. **Stale FE data after role/assignment change** — When a user's role changes or they are unassigned, the local DB retains previously synced data (projects, structures, findings, photos). Backend blocks unauthorized writes (403), but old data remains readable offline. Possible fix: detect projects no longer returned by backend sync and purge local copies. *(NP13)*
 
 ---
 
