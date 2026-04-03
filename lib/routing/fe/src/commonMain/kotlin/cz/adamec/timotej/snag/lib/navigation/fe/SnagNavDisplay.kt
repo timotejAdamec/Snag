@@ -14,6 +14,7 @@ package cz.adamec.timotej.snag.lib.navigation.fe
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.backhandler.BackHandler
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.scene.DialogSceneStrategy
@@ -30,7 +31,7 @@ fun SnagNavDisplay(
     NavDisplay(
         modifier = modifier,
         backStack = backStack.value,
-        onBack = { backStack.removeLastSafely() },
+        onBack = {},
         entryProvider = koinEntryProvider<SnagNavRoute>(),
         sceneStrategies =
             listOf<SceneStrategy<SnagNavRoute>>(DialogSceneStrategy()) + additionalSceneStrategies,
@@ -40,4 +41,7 @@ fun SnagNavDisplay(
                 rememberViewModelStoreNavEntryDecorator(),
             ),
     )
+    BackHandler(enabled = backStack.value.size > 1) {
+        backStack.removeLastSafely()
+    }
 }
