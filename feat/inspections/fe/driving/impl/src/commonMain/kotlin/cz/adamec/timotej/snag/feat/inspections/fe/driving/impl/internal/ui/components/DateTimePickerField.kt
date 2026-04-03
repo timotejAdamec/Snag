@@ -42,6 +42,10 @@ import snag.lib.design.fe.generated.resources.ic_edit
 import snag.lib.design.fe.generated.resources.ic_schedule
 import snag.lib.design.fe.generated.resources.Res as DesignRes
 
+private const val DISABLED_CONTENT_ALPHA = 0.38f
+private const val DISABLED_BORDER_ALPHA = 0.12f
+
+@Suppress("CognitiveComplexMethod")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun DateTimePickerField(
@@ -59,14 +63,28 @@ internal fun DateTimePickerField(
             modifier = Modifier.padding(start = 16.dp, bottom = 4.dp),
             text = label,
             style = MaterialTheme.typography.labelMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            color =
+                if (enabled) {
+                    MaterialTheme.colorScheme.onSurfaceVariant
+                } else {
+                    MaterialTheme.colorScheme.onSurface.copy(alpha = DISABLED_CONTENT_ALPHA)
+                },
         )
         Surface(
             modifier = Modifier.fillMaxWidth(),
             onClick = onEditClick,
             enabled = enabled,
             shape = MaterialTheme.shapes.medium,
-            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
+            border =
+                BorderStroke(
+                    width = 1.dp,
+                    color =
+                        if (enabled) {
+                            MaterialTheme.colorScheme.outline
+                        } else {
+                            MaterialTheme.colorScheme.onSurface.copy(alpha = DISABLED_BORDER_ALPHA)
+                        },
+                ),
         ) {
             val startPadding = if (leadingIcon != null) 12.dp else 16.dp
             Row(
@@ -87,7 +105,9 @@ internal fun DateTimePickerField(
                     }
                 }
                 val textColor =
-                    if (value != null) {
+                    if (!enabled) {
+                        MaterialTheme.colorScheme.onSurface.copy(alpha = DISABLED_CONTENT_ALPHA)
+                    } else if (value != null) {
                         LocalContentColor.current
                     } else {
                         MaterialTheme.colorScheme.onSurfaceVariant
