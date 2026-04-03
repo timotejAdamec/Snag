@@ -174,7 +174,11 @@ private class AdaptiveMapListDetailScene<T : Any>(
                             ),
                     )
                 LaunchedEffect(isDetail) {
-                    scaffoldState.bottomSheetState.partialExpand()
+                    if (isDetail) {
+                        scaffoldState.bottomSheetState.expand()
+                    } else {
+                        scaffoldState.bottomSheetState.partialExpand()
+                    }
                 }
 
                 BottomSheetScaffold(
