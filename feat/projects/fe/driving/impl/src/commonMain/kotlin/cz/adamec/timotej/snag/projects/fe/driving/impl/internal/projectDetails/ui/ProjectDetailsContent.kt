@@ -33,6 +33,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.AlertDialog
+import cz.adamec.timotej.snag.lib.design.fe.dialog.DialogBackHandler
 import androidx.compose.material3.FloatingToolbarDefaults
 import androidx.compose.material3.HorizontalFloatingToolbar
 import androidx.compose.material3.Icon
@@ -210,6 +211,10 @@ private fun LoadedProjectDetailsContent(
                     ).consumeWindowInsets(paddingValues),
         ) {
             var showAddUserSheet by remember { mutableStateOf(false) }
+            DialogBackHandler(
+                enabled = showAddUserSheet,
+                onBack = { showAddUserSheet = false },
+            )
 
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
@@ -442,6 +447,10 @@ private fun LoadedProjectDetailsContent(
             }
 
             var isShowingDeleteConfirmation by remember { mutableStateOf(false) }
+            DialogBackHandler(
+                enabled = isShowingDeleteConfirmation,
+                onBack = { isShowingDeleteConfirmation = false },
+            )
             if (isShowingDeleteConfirmation) {
                 ProjectDeletionAlertDialog(
                     areButtonsEnabled = state.canInvokeDeletion,

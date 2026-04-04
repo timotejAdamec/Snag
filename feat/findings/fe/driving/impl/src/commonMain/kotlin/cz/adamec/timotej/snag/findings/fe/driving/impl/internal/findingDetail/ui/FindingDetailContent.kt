@@ -31,6 +31,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import cz.adamec.timotej.snag.lib.design.fe.dialog.DialogBackHandler
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -117,6 +118,10 @@ internal fun FindingDetailContent(
         -> {
             val finding = state.finding ?: return
             var isShowingDeleteConfirmation by remember { mutableStateOf(false) }
+            DialogBackHandler(
+                enabled = isShowingDeleteConfirmation,
+                onBack = { isShowingDeleteConfirmation = false },
+            )
             if (isShowingDeleteConfirmation) {
                 FindingDeletionAlertDialog(
                     areButtonsEnabled = state.canEdit,

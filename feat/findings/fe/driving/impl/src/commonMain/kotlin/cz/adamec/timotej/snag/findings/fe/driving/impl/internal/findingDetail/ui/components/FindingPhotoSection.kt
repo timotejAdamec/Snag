@@ -26,6 +26,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import cz.adamec.timotej.snag.lib.design.fe.dialog.DialogBackHandler
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -69,6 +70,10 @@ internal fun FindingPhotoSection(
     modifier: Modifier = Modifier,
 ) {
     var fullscreenPhotoIndex by remember { mutableStateOf<Int?>(null) }
+    DialogBackHandler(
+        enabled = fullscreenPhotoIndex != null,
+        onBack = { fullscreenPhotoIndex = null },
+    )
 
     fullscreenPhotoIndex?.let { index ->
         FullscreenPhotoViewer(
@@ -153,6 +158,10 @@ private fun FindingPhotoThumbnail(
     onClick: () -> Unit,
 ) {
     var isShowingDeleteConfirmation by remember { mutableStateOf(false) }
+    DialogBackHandler(
+        enabled = isShowingDeleteConfirmation,
+        onBack = { isShowingDeleteConfirmation = false },
+    )
 
     if (isShowingDeleteConfirmation) {
         FindingPhotoDeletionDialog(

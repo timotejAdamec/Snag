@@ -26,6 +26,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import cz.adamec.timotej.snag.lib.design.fe.dialog.DialogBackHandler
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -104,6 +105,18 @@ internal fun InspectionEditContent(
     var startedAtPickerStep by remember { mutableStateOf<PickerStep>(PickerStep.None) }
     var endedAtPickerStep by remember { mutableStateOf<PickerStep>(PickerStep.None) }
     var isShowingDeleteConfirmation by remember { mutableStateOf(false) }
+    DialogBackHandler(
+        enabled = isShowingDeleteConfirmation,
+        onBack = { isShowingDeleteConfirmation = false },
+    )
+    DialogBackHandler(
+        enabled = startedAtPickerStep != PickerStep.None,
+        onBack = { startedAtPickerStep = PickerStep.None },
+    )
+    DialogBackHandler(
+        enabled = endedAtPickerStep != PickerStep.None,
+        onBack = { endedAtPickerStep = PickerStep.None },
+    )
 
     if (isShowingDeleteConfirmation) {
         InspectionDeletionAlertDialog(

@@ -24,6 +24,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.ModalBottomSheet
+import cz.adamec.timotej.snag.lib.design.fe.dialog.DialogBackHandler
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -65,6 +66,10 @@ internal fun ProjectAssignmentsContent(
     modifier: Modifier = Modifier,
 ) {
     var showAddUserSheet by remember { mutableStateOf(false) }
+    DialogBackHandler(
+        enabled = showAddUserSheet,
+        onBack = { showAddUserSheet = false },
+    )
     val bottomSheetState = rememberModalBottomSheetState()
 
     CollapsableTopAppBarScaffold(
