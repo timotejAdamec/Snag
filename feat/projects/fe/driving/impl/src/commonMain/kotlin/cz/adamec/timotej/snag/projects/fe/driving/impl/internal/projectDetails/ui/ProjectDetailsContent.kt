@@ -65,7 +65,6 @@ import cz.adamec.timotej.snag.core.foundation.common.UuidProvider
 import cz.adamec.timotej.snag.feat.inspections.fe.driving.api.InspectionCard
 import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureCard
 import cz.adamec.timotej.snag.lib.design.fe.button.AdaptiveTonalButton
-import cz.adamec.timotej.snag.lib.design.fe.dialog.DialogBackHandler
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.BackNavigationIcon
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.CollapsableTopAppBarScaffold
 import cz.adamec.timotej.snag.lib.design.fe.scenes.StatusBarAwareDragHandle
@@ -211,10 +210,6 @@ private fun LoadedProjectDetailsContent(
                     ).consumeWindowInsets(paddingValues),
         ) {
             var showAddUserSheet by remember { mutableStateOf(false) }
-            DialogBackHandler(
-                enabled = showAddUserSheet,
-                onBack = { showAddUserSheet = false },
-            )
 
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),

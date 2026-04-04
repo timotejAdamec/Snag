@@ -38,7 +38,6 @@ import androidx.compose.ui.unit.dp
 import cz.adamec.timotej.snag.authorization.business.UserRole
 import cz.adamec.timotej.snag.core.foundation.common.UuidProvider
 import cz.adamec.timotej.snag.lib.design.fe.button.AdaptiveTonalButton
-import cz.adamec.timotej.snag.lib.design.fe.dialog.DialogBackHandler
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.BackNavigationIcon
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.CollapsableTopAppBarScaffold
 import cz.adamec.timotej.snag.lib.design.fe.scenes.StatusBarAwareDragHandle
@@ -66,10 +65,6 @@ internal fun ProjectAssignmentsContent(
     modifier: Modifier = Modifier,
 ) {
     var showAddUserSheet by remember { mutableStateOf(false) }
-    DialogBackHandler(
-        enabled = showAddUserSheet,
-        onBack = { showAddUserSheet = false },
-    )
     val bottomSheetState = rememberModalBottomSheetState()
 
     CollapsableTopAppBarScaffold(

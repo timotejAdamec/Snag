@@ -39,7 +39,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import cz.adamec.timotej.snag.feat.findings.app.model.AppFindingPhoto
-import cz.adamec.timotej.snag.lib.design.fe.dialog.DialogBackHandler
 import io.github.vinceglb.filekit.dialogs.FileKitType
 import io.github.vinceglb.filekit.dialogs.compose.rememberFilePickerLauncher
 import io.github.vinceglb.filekit.name
@@ -70,10 +69,6 @@ internal fun FindingPhotoSection(
     modifier: Modifier = Modifier,
 ) {
     var fullscreenPhotoIndex by remember { mutableStateOf<Int?>(null) }
-    DialogBackHandler(
-        enabled = fullscreenPhotoIndex != null,
-        onBack = { fullscreenPhotoIndex = null },
-    )
 
     fullscreenPhotoIndex?.let { index ->
         FullscreenPhotoViewer(
