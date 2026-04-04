@@ -24,7 +24,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.ModalBottomSheet
-import cz.adamec.timotej.snag.lib.design.fe.dialog.DialogBackHandler
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -39,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import cz.adamec.timotej.snag.authorization.business.UserRole
 import cz.adamec.timotej.snag.core.foundation.common.UuidProvider
 import cz.adamec.timotej.snag.lib.design.fe.button.AdaptiveTonalButton
+import cz.adamec.timotej.snag.lib.design.fe.dialog.DialogBackHandler
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.BackNavigationIcon
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.CollapsableTopAppBarScaffold
 import cz.adamec.timotej.snag.lib.design.fe.scenes.StatusBarAwareDragHandle
