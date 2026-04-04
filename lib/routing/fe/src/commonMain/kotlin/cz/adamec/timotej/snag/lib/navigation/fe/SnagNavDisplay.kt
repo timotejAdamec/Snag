@@ -33,7 +33,7 @@ fun SnagNavDisplay(
     NavDisplay(
         modifier = modifier,
         backStack = backStack.value,
-        onBack = {},
+        onBack = { backStack.removeLastSafely() },
         entryProvider = koinEntryProvider<SnagNavRoute>(),
         sceneStrategies =
             listOf<SceneStrategy<SnagNavRoute>>(DialogSceneStrategy()) + additionalSceneStrategies,
