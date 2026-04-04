@@ -27,11 +27,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cz.adamec.timotej.snag.directory.ui.DirectoryNavRoute
-import cz.adamec.timotej.snag.lib.design.fe.adaptive.ContentPaneDefaults
-import cz.adamec.timotej.snag.lib.design.fe.adaptive.isScreenWide
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.AppScaffold
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.SyncStatusBar
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.SyncStatusBarState
+import cz.adamec.timotej.snag.lib.design.fe.theme.SnagSurfaceColors
 import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectsNavRoute
 import cz.adamec.timotej.snag.ui.components.TabItem
 import cz.adamec.timotej.snag.vm.MainViewModel
@@ -43,19 +42,13 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 internal fun MainScreen(mainViewModel: MainViewModel = koinViewModel()) {
     val syncStatus by mainViewModel.syncStatus.collectAsStateWithLifecycle()
-    val outerContainerColor =
-        if (isScreenWide()) {
-            ContentPaneDefaults.containerColor
-        } else {
-            ContentPaneDefaults.paneColor
-        }
     AppScaffold(
-        containerColor = outerContainerColor,
+        containerColor = SnagSurfaceColors.containerColor,
     ) { paddingValues ->
         MainScreenContent(
             paddingValues = paddingValues,
             syncBarState = syncStatus.toBarState(),
-            outerContainerColor = outerContainerColor,
+            outerContainerColor = SnagSurfaceColors.containerColor,
         )
     }
 }
@@ -99,6 +92,8 @@ private fun MainScreenContent(
                         WideNavigationRailDefaults.colors(
                             containerColor = outerContainerColor,
                         ),
+                    shortNavigationBarContainerColor = outerContainerColor,
+                    navigationBarContentColor = outerContainerColor,
                 ),
             navigationItems = {
                 TabItem(

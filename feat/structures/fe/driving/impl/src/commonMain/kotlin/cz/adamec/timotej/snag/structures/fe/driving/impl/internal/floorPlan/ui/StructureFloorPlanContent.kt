@@ -22,12 +22,14 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.FloatingToolbarDefaults
 import androidx.compose.material3.HorizontalFloatingToolbar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -51,6 +53,7 @@ import cz.adamec.timotej.snag.feat.findings.fe.driving.api.FindingTypePickerDial
 import cz.adamec.timotej.snag.lib.design.fe.adaptive.LocalIsInContentPane
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.BackNavigationIcon
 import cz.adamec.timotej.snag.lib.design.fe.scenes.LocalSheetPeekHeight
+import cz.adamec.timotej.snag.lib.design.fe.theme.SnagSurfaceColors
 import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.floorPlan.ui.components.FloorPlanAddPlaceholder
 import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.floorPlan.ui.components.FloorPlanWithPins
 import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.floorPlan.ui.components.StructureDeletionAlertDialog
@@ -124,8 +127,7 @@ private fun LoadedStructureDetailsContent(
 ) {
     Scaffold(
         modifier = modifier,
-        containerColor =
-            if (LocalIsInContentPane.current) Color.Transparent else Color.Unspecified,
+        containerColor = SnagSurfaceColors.containerColor,
         topBar = {
             TopAppBar(
                 title = {
@@ -147,6 +149,9 @@ private fun LoadedStructureDetailsContent(
                         onClick = onBack,
                     )
                 },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = SnagSurfaceColors.containerColor,
+                )
             )
         },
     ) { paddingValues ->
@@ -239,6 +244,9 @@ private fun LoadedStructureDetailsContent(
                                 toolbarTopPx = it.positionInParent().y.toInt()
                             },
                     expanded = true,
+                    colors = FloatingToolbarDefaults.standardFloatingToolbarColors(
+                        toolbarContainerColor = SnagSurfaceColors.containerColor,
+                    )
                 ) {
                     IconButton(
                         enabled = state.canEdit,

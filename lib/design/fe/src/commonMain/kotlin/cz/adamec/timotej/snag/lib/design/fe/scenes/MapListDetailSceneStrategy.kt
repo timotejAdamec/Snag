@@ -40,6 +40,7 @@ import cz.adamec.timotej.snag.lib.design.fe.adaptive.ContentPaneSpacing
 import cz.adamec.timotej.snag.lib.design.fe.adaptive.isScreenExtraWide
 import cz.adamec.timotej.snag.lib.design.fe.adaptive.isScreenWide
 import cz.adamec.timotej.snag.lib.design.fe.layout.systemBarsPaddingCoerceAtLeast
+import cz.adamec.timotej.snag.lib.design.fe.theme.SnagSurfaceColors
 
 class MapListDetailSceneStrategy<T : Any> : SceneStrategy<T> {
     @Suppress("ReturnCount")
@@ -192,6 +193,8 @@ private class AdaptiveMapListDetailScene<T : Any>(
                             }
                         }
                     },
+                    sheetContainerColor = SnagSurfaceColors.sheetColor,
+                    containerColor = SnagSurfaceColors.screenContainerColor,
                 ) {
                     CompositionLocalProvider(
                         LocalSheetPeekHeight provides sheetPeekHeight,

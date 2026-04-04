@@ -33,6 +33,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.FloatingToolbarDefaults
 import androidx.compose.material3.HorizontalFloatingToolbar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -53,6 +54,7 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.LayoutDirection
@@ -67,6 +69,7 @@ import cz.adamec.timotej.snag.lib.design.fe.scaffold.BackNavigationIcon
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.CollapsableTopAppBarScaffold
 import cz.adamec.timotej.snag.lib.design.fe.scenes.StatusBarAwareDragHandle
 import cz.adamec.timotej.snag.lib.design.fe.theme.SnagPreview
+import cz.adamec.timotej.snag.lib.design.fe.theme.SnagSurfaceColors
 import cz.adamec.timotej.snag.projects.app.model.AppProjectData
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectAssignments.ui.components.AddUserBottomSheetContent
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectAssignments.vm.AssignedUserItem
@@ -283,6 +286,9 @@ private fun LoadedProjectDetailsContent(
                                     } else {
                                         null
                                     },
+                                colors = InputChipDefaults.inputChipColors(
+                                    containerColor = Color.Transparent,
+                                )
                             )
                         }
                     }
@@ -423,6 +429,7 @@ private fun LoadedProjectDetailsContent(
                     dragHandle = {
                         StatusBarAwareDragHandle(sheetState = bottomSheetState)
                     },
+                    containerColor = SnagSurfaceColors.sheetColor,
                 ) {
                     AddUserBottomSheetContent(
                         availableUsers = state.availableUsers,
@@ -452,6 +459,9 @@ private fun LoadedProjectDetailsContent(
                             bottom = paddingValues.calculateBottomPadding() + 16.dp,
                         ),
                 expanded = true,
+                colors = FloatingToolbarDefaults.standardFloatingToolbarColors(
+                    toolbarContainerColor = SnagSurfaceColors.containerColor,
+                )
             ) {
                 IconButton(
                     enabled = state.canToggleClosed,

@@ -18,22 +18,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import cz.adamec.timotej.snag.lib.design.fe.theme.SnagSurfaceColors
 
 val ContentPaneSpacing = 12.dp
 
 val LocalIsInContentPane = compositionLocalOf { false }
-
-object ContentPaneDefaults {
-    val containerColor: Color
-        @Composable get() = MaterialTheme.colorScheme.surfaceContainerLow
-
-    // Change this will not override color for everything, will need changes
-    // so that this color is used where it needs to be used.
-    val paneColor: Color
-        @Composable get() = MaterialTheme.colorScheme.surface
-}
 
 @Composable
 fun ContentPane(
@@ -43,7 +33,7 @@ fun ContentPane(
     Surface(
         modifier = modifier,
         shape = MaterialTheme.shapes.extraLarge,
-        color = ContentPaneDefaults.paneColor,
+        color = SnagSurfaceColors.screenContainerColor, // TODO check if needed
     ) {
         CompositionLocalProvider(LocalIsInContentPane provides true) {
             content()

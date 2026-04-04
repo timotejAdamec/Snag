@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.FloatingToolbarDefaults
 import androidx.compose.material3.HorizontalFloatingToolbar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -63,6 +64,7 @@ import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetail.vm
 import cz.adamec.timotej.snag.lib.design.fe.adaptive.LocalIsInContentPane
 import cz.adamec.timotej.snag.lib.design.fe.scenes.LocalIsInSheet
 import cz.adamec.timotej.snag.lib.design.fe.theme.SnagPreview
+import cz.adamec.timotej.snag.lib.design.fe.theme.SnagSurfaceColors
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
@@ -125,21 +127,13 @@ internal fun FindingDetailContent(
                 )
             }
             val isInSheet = LocalIsInSheet.current
-            val isInContentPane = LocalIsInContentPane.current
             val zeroInsets = WindowInsets(0, 0, 0, 0)
             Scaffold(
                 modifier = modifier,
-                containerColor =
-                    if (isInSheet || isInContentPane) {
-                        Color.Transparent
-                    } else {
-                        MaterialTheme.colorScheme.background
-                    },
+                containerColor = Color.Transparent,
                 topBar = {
                     TopAppBar(
-                        title = {
-                            Text(text = finding.name)
-                        },
+                        title = {},
                         navigationIcon = {
                             IconButton(onClick = onBack) {
                                 Icon(
@@ -181,6 +175,10 @@ internal fun FindingDetailContent(
                     Column(
                         verticalArrangement = Arrangement.spacedBy(16.dp),
                     ) {
+                        Text(
+                            text = finding.name,
+                            style = MaterialTheme.typography.headlineSmall,
+                        )
                         val type = finding.type
                         val visuals = type.visuals()
                         Row(
@@ -253,6 +251,9 @@ internal fun FindingDetailContent(
                             Modifier
                                 .align(Alignment.BottomCenter),
                         expanded = true,
+                        colors = FloatingToolbarDefaults.standardFloatingToolbarColors(
+                            toolbarContainerColor = SnagSurfaceColors.containerColor,
+                        )
                     ) {
                         IconButton(
                             enabled = state.canEdit,
@@ -330,7 +331,7 @@ private fun FindingDetailContentNotePreview() {
                         AppFindingData(
                             id = Uuid.random(),
                             structureId = Uuid.random(),
-                            name = "Check ventilation",
+                            name = "Really really really really really really really long name",
                             description = null,
                             type = FindingType.Note,
                             coordinates = emptySet(),

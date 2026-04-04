@@ -36,6 +36,7 @@ import cz.adamec.timotej.snag.core.foundation.common.UuidProvider
 import cz.adamec.timotej.snag.feat.structures.app.model.AppStructure
 import cz.adamec.timotej.snag.feat.structures.app.model.AppStructureData
 import cz.adamec.timotej.snag.lib.design.fe.theme.SnagPreview
+import cz.adamec.timotej.snag.lib.design.fe.theme.SnagSurfaceColors
 
 @Composable
 fun StructureCard(
@@ -46,8 +47,8 @@ fun StructureCard(
     ElevatedCard(
         modifier = modifier,
         colors =
-            CardDefaults.elevatedCardColors().copy(
-                containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+            CardDefaults.elevatedCardColors(
+                containerColor = SnagSurfaceColors.screenContentContainersColor,
             ),
         onClick = onClick,
     ) {
