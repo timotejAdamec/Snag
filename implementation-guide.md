@@ -8,7 +8,10 @@ This document is a reference for the implementation team. It describes what the 
 
 1. **Service protocol PDF** — Not started. Second report type with work description and signature fields. *(§5, FP32b)*
 2. **Per-role project visibility** — `CanAccessProjectRule` and `GetProjectsUseCaseImpl` use a simplified access model (Admin = all, others = creator + assigned). The spec requires Service Lead to see all service worker projects and Passport Lead / Service Worker to see own + assigned. *(§3, NP13)*
-3. **Stale FE data after role/assignment change** — When a user's role changes or they are unassigned, the local DB retains previously synced data (projects, structures, findings, photos). Backend blocks unauthorized writes (403), but old data remains readable offline. Possible fix: detect projects no longer returned by backend sync and purge local copies. *(NP13)*
+
+### Non-issues (evaluated and dismissed)
+
+- **~~Stale FE data after role/assignment change~~** — Local DB retains previously synced data after role/assignment changes, but this is not a user-facing issue: the UI filters by current permissions from backend, so orphaned data is never shown. Backend blocks unauthorized writes (403). The only effect is minor storage waste from orphaned rows/photos — can be addressed with background cleanup if it ever becomes measurable.
 
 ---
 
