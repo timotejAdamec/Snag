@@ -38,7 +38,7 @@ fun Application.main() {
         slf4jLogger()
         modules(appModule)
     }
-    getKoin().getAll<KtorServerConfiguration>().forEach { config ->
+    getKoin().getAll<KtorServerConfiguration>().sortedBy { it.priority }.forEach { config ->
         with(config) { setup() }
     }
 }

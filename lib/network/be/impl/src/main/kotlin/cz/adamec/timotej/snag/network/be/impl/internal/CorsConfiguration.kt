@@ -14,6 +14,7 @@ package cz.adamec.timotej.snag.network.be.impl.internal
 
 import cz.adamec.timotej.snag.configuration.be.BackendRunConfig
 import cz.adamec.timotej.snag.network.be.KtorServerConfiguration
+import cz.adamec.timotej.snag.routing.common.USER_ID_HEADER
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
 import io.ktor.server.application.Application
@@ -21,6 +22,9 @@ import io.ktor.server.application.install
 import io.ktor.server.plugins.cors.routing.CORS
 
 internal class CorsConfiguration : KtorServerConfiguration {
+
+    override val priority: Int get() = -1
+
     override fun Application.setup() {
         install(CORS) {
             for (host in BackendRunConfig.corsAllowedHosts) {
@@ -37,6 +41,9 @@ internal class CorsConfiguration : KtorServerConfiguration {
             allowMethod(HttpMethod.Options)
             allowHeader(HttpHeaders.ContentType)
             allowHeader(HttpHeaders.Authorization)
+            if (BackendRunConfig.mockAuth) {
+                allowHeader(USER_ID_HEADER)
+            }
         }
     }
 }

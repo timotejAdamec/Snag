@@ -4,6 +4,7 @@ plugins {
 
 dependencies {
     implementation(projects.lib.configuration.be.api)
+    implementation(projects.lib.routing.common)
     implementation(libs.ktor.server.auth)
     implementation(libs.ktor.server.content.negotiation)
     implementation(libs.ktor.server.status.pages)

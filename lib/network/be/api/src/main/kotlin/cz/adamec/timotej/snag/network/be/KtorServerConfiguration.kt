@@ -15,5 +15,12 @@ package cz.adamec.timotej.snag.network.be
 import io.ktor.server.application.Application
 
 interface KtorServerConfiguration {
+
+    /**
+     * Installation priority. Lower values are installed first.
+     * Use negative values for plugins that must precede authentication (e.g. CORS).
+     */
+    val priority: Int get() = 0
+
     fun Application.setup()
 }
