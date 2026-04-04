@@ -41,7 +41,7 @@ import cz.adamec.timotej.snag.core.foundation.common.toLocalDateTime
 import cz.adamec.timotej.snag.feat.inspections.app.model.AppInspection
 import cz.adamec.timotej.snag.feat.inspections.app.model.AppInspectionData
 import cz.adamec.timotej.snag.lib.design.fe.theme.SnagPreview
-import cz.adamec.timotej.snag.lib.design.fe.theme.SnagSurfaceColors
+import cz.adamec.timotej.snag.lib.design.fe.theme.SnagTheme
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.painterResource
@@ -259,11 +259,11 @@ private fun resolveCardStatus(
 @Composable
 private fun CardStatus.containerColor() =
     when (this) {
-        CardStatus.NOT_STARTED -> SnagSurfaceColors.screenContentContainersColorHigh
+        CardStatus.NOT_STARTED -> SnagTheme.surfaceColors.screenContentContainersColorHigh
         CardStatus.SCHEDULED -> MaterialTheme.colorScheme.secondaryContainer
         CardStatus.IN_PROGRESS -> MaterialTheme.colorScheme.primaryContainer
         CardStatus.ENDING_SOON -> MaterialTheme.colorScheme.tertiaryContainer
-        CardStatus.FINISHED -> SnagSurfaceColors.screenContentContainersColor
+        CardStatus.FINISHED -> SnagTheme.surfaceColors.screenContentContainersColor
     }
 
 private fun CardStatus.toStringRes(): StringResource =

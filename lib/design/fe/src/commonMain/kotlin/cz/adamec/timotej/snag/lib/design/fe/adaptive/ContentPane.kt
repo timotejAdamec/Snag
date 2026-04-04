@@ -19,7 +19,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import cz.adamec.timotej.snag.lib.design.fe.theme.SnagSurfaceColors
+import cz.adamec.timotej.snag.lib.design.fe.theme.SnagTheme
 
 val ContentPaneSpacing = 12.dp
 
@@ -33,7 +33,7 @@ fun ContentPane(
     Surface(
         modifier = modifier,
         shape = MaterialTheme.shapes.extraLarge,
-        color = SnagSurfaceColors.screenContainerColor, // TODO check if needed
+        color = SnagTheme.surfaceColors.screenContainerColor, // TODO check if needed
     ) {
         CompositionLocalProvider(LocalIsInContentPane provides true) {
             content()

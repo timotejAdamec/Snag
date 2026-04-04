@@ -30,7 +30,7 @@ import cz.adamec.timotej.snag.directory.ui.DirectoryNavRoute
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.AppScaffold
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.SyncStatusBar
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.SyncStatusBarState
-import cz.adamec.timotej.snag.lib.design.fe.theme.SnagSurfaceColors
+import cz.adamec.timotej.snag.lib.design.fe.theme.SnagTheme
 import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectsNavRoute
 import cz.adamec.timotej.snag.ui.components.TabItem
 import cz.adamec.timotej.snag.vm.MainViewModel
@@ -43,12 +43,12 @@ import org.koin.compose.viewmodel.koinViewModel
 internal fun MainScreen(mainViewModel: MainViewModel = koinViewModel()) {
     val syncStatus by mainViewModel.syncStatus.collectAsStateWithLifecycle()
     AppScaffold(
-        containerColor = SnagSurfaceColors.containerColor,
+        containerColor = SnagTheme.surfaceColors.containerColor,
     ) { paddingValues ->
         MainScreenContent(
             paddingValues = paddingValues,
             syncBarState = syncStatus.toBarState(),
-            outerContainerColor = SnagSurfaceColors.containerColor,
+            outerContainerColor = SnagTheme.surfaceColors.containerColor,
         )
     }
 }

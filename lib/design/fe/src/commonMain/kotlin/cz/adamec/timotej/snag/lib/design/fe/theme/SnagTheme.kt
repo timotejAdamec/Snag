@@ -18,16 +18,21 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.expressiveLightColorScheme
 import androidx.compose.runtime.Composable
 
-@Composable
-fun SnagTheme(content: @Composable () -> Unit) {
-    val colorScheme =
-        if (isSystemInDarkTheme()) {
-            darkColorScheme()
-        } else {
-            expressiveLightColorScheme()
-        }
+object SnagTheme {
 
-    MaterialExpressiveTheme(colorScheme = colorScheme) {
-        content()
+    val surfaceColors: SnagSurfaceColors = SnagSurfaceColors
+
+    @Composable
+    operator fun invoke(content: @Composable () -> Unit) {
+        val colorScheme =
+            if (isSystemInDarkTheme()) {
+                darkColorScheme()
+            } else {
+                expressiveLightColorScheme()
+            }
+
+        MaterialExpressiveTheme(colorScheme = colorScheme) {
+            content()
+        }
     }
 }
