@@ -27,7 +27,6 @@ import androidx.compose.material3.HorizontalFloatingToolbar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
-import cz.adamec.timotej.snag.lib.design.fe.dialog.DialogBackHandler
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -170,10 +169,6 @@ private fun LoadedStructureDetailsContent(
             var pendingCreationCoordinate by remember {
                 mutableStateOf<RelativeCoordinate?>(null)
             }
-            DialogBackHandler(
-                enabled = pendingCreationCoordinate != null,
-                onBack = { pendingCreationCoordinate = null },
-            )
             val toolbarBottomPadding =
                 if (LocalSheetPeekHeight.current == 0.dp) {
                     16.dp
@@ -226,10 +221,6 @@ private fun LoadedStructureDetailsContent(
             }
 
             var isShowingDeleteConfirmation by remember { mutableStateOf(false) }
-            DialogBackHandler(
-                enabled = isShowingDeleteConfirmation,
-                onBack = { isShowingDeleteConfirmation = false },
-            )
             if (isShowingDeleteConfirmation) {
                 StructureDeletionAlertDialog(
                     areButtonsEnabled = state.canEdit,

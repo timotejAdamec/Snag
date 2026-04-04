@@ -158,10 +158,6 @@ private fun FindingPhotoThumbnail(
     onClick: () -> Unit,
 ) {
     var isShowingDeleteConfirmation by remember { mutableStateOf(false) }
-    DialogBackHandler(
-        enabled = isShowingDeleteConfirmation,
-        onBack = { isShowingDeleteConfirmation = false },
-    )
 
     if (isShowingDeleteConfirmation) {
         FindingPhotoDeletionDialog(

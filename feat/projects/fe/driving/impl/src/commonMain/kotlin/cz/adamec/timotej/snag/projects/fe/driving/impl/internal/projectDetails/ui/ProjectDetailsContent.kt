@@ -447,10 +447,6 @@ private fun LoadedProjectDetailsContent(
             }
 
             var isShowingDeleteConfirmation by remember { mutableStateOf(false) }
-            DialogBackHandler(
-                enabled = isShowingDeleteConfirmation,
-                onBack = { isShowingDeleteConfirmation = false },
-            )
             if (isShowingDeleteConfirmation) {
                 ProjectDeletionAlertDialog(
                     areButtonsEnabled = state.canInvokeDeletion,

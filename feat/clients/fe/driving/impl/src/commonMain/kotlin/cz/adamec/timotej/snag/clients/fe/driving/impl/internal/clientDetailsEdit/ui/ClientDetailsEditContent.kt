@@ -22,7 +22,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
-import cz.adamec.timotej.snag.lib.design.fe.dialog.DialogBackHandler
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -78,10 +77,6 @@ internal fun ClientDetailsEditContent(
     modifier: Modifier = Modifier,
 ) {
     var isShowingDeleteConfirmation by remember { mutableStateOf(false) }
-    DialogBackHandler(
-        enabled = isShowingDeleteConfirmation,
-        onBack = { isShowingDeleteConfirmation = false },
-    )
 
     if (isShowingDeleteConfirmation) {
         ClientDeletionAlertDialog(
