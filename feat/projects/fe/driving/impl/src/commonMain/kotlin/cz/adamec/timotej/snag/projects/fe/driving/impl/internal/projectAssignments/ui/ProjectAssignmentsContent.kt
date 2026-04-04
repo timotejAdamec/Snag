@@ -43,7 +43,7 @@ import cz.adamec.timotej.snag.lib.design.fe.scaffold.BackNavigationIcon
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.CollapsableTopAppBarScaffold
 import cz.adamec.timotej.snag.lib.design.fe.scenes.StatusBarAwareDragHandle
 import cz.adamec.timotej.snag.lib.design.fe.theme.SnagPreview
-import cz.adamec.timotej.snag.lib.design.fe.theme.SnagSurfaceColors
+import cz.adamec.timotej.snag.lib.design.fe.theme.SnagTheme
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectAssignments.ui.components.AddUserBottomSheetContent
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectAssignments.ui.components.AssignedUserListItem
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectAssignments.vm.AssignedUserItem
@@ -129,7 +129,7 @@ internal fun ProjectAssignmentsContent(
                 dragHandle = {
                     StatusBarAwareDragHandle(sheetState = bottomSheetState)
                 },
-                containerColor = SnagSurfaceColors.sheetColor,
+                containerColor = SnagTheme.surfaceColors.sheetColor,
             ) {
                 AddUserBottomSheetContent(
                     availableUsers = state.availableUsers,

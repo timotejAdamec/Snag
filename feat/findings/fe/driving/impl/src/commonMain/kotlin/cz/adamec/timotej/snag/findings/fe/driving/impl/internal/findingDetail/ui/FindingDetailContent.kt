@@ -64,7 +64,7 @@ import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetail.vm
 import cz.adamec.timotej.snag.lib.design.fe.adaptive.LocalIsInContentPane
 import cz.adamec.timotej.snag.lib.design.fe.scenes.LocalIsInSheet
 import cz.adamec.timotej.snag.lib.design.fe.theme.SnagPreview
-import cz.adamec.timotej.snag.lib.design.fe.theme.SnagSurfaceColors
+import cz.adamec.timotej.snag.lib.design.fe.theme.SnagTheme
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
@@ -252,7 +252,7 @@ internal fun FindingDetailContent(
                                 .align(Alignment.BottomCenter),
                         expanded = true,
                         colors = FloatingToolbarDefaults.standardFloatingToolbarColors(
-                            toolbarContainerColor = SnagSurfaceColors.containerColor,
+                            toolbarContainerColor = SnagTheme.surfaceColors.containerColor,
                         )
                     ) {
                         IconButton(

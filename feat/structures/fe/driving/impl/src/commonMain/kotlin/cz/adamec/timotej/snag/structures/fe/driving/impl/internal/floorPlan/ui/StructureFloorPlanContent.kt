@@ -53,7 +53,7 @@ import cz.adamec.timotej.snag.feat.findings.fe.driving.api.FindingTypePickerDial
 import cz.adamec.timotej.snag.lib.design.fe.adaptive.LocalIsInContentPane
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.BackNavigationIcon
 import cz.adamec.timotej.snag.lib.design.fe.scenes.LocalSheetPeekHeight
-import cz.adamec.timotej.snag.lib.design.fe.theme.SnagSurfaceColors
+import cz.adamec.timotej.snag.lib.design.fe.theme.SnagTheme
 import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.floorPlan.ui.components.FloorPlanAddPlaceholder
 import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.floorPlan.ui.components.FloorPlanWithPins
 import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.floorPlan.ui.components.StructureDeletionAlertDialog
@@ -127,7 +127,7 @@ private fun LoadedStructureDetailsContent(
 ) {
     Scaffold(
         modifier = modifier,
-        containerColor = SnagSurfaceColors.containerColor,
+        containerColor = SnagTheme.surfaceColors.containerColor,
         topBar = {
             TopAppBar(
                 title = {
@@ -150,7 +150,7 @@ private fun LoadedStructureDetailsContent(
                     )
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = SnagSurfaceColors.containerColor,
+                    containerColor = SnagTheme.surfaceColors.containerColor,
                 )
             )
         },
@@ -245,7 +245,7 @@ private fun LoadedStructureDetailsContent(
                             },
                     expanded = true,
                     colors = FloatingToolbarDefaults.standardFloatingToolbarColors(
-                        toolbarContainerColor = SnagSurfaceColors.containerColor,
+                        toolbarContainerColor = SnagTheme.surfaceColors.containerColor,
                     )
                 ) {
                     IconButton(

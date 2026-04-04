@@ -26,7 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import cz.adamec.timotej.snag.lib.design.fe.theme.SnagSurfaceColors
+import cz.adamec.timotej.snag.lib.design.fe.theme.SnagTheme
 
 @Composable
 fun CollapsableTopAppBarScaffold(
@@ -73,12 +73,12 @@ fun CollapsableTopAppBarScaffold(
                 navigationIcon = topAppBarNavigationIcon,
                 actions = topAppBarActions,
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = SnagSurfaceColors.screenContainerColor,
-                    scrolledContainerColor = SnagSurfaceColors.screenAppBarColor,
+                    containerColor = SnagTheme.surfaceColors.screenContainerColor,
+                    scrolledContainerColor = SnagTheme.surfaceColors.screenAppBarColor,
                 )
             )
         },
-        containerColor = SnagSurfaceColors.screenContainerColor,
+        containerColor = SnagTheme.surfaceColors.screenContainerColor,
         bottomBar = bottomBar,
         floatingActionButton = floatingActionButton,
         floatingActionButtonPosition = floatingActionButtonPosition,
