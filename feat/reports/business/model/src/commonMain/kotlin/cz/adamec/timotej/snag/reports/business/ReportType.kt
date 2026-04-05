@@ -10,13 +10,9 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.reports.be.ports
+package cz.adamec.timotej.snag.reports.business
 
-import cz.adamec.timotej.snag.reports.business.ReportType
-
-interface PdfReportGenerator {
-    suspend fun generate(
-        data: ProjectReportData,
-        type: ReportType,
-    ): ByteArray
+enum class ReportType {
+    PASSPORT,
+    SERVICE_PROTOCOL,
 }

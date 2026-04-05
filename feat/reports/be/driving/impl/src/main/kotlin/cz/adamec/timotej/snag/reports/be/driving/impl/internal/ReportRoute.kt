@@ -16,7 +16,9 @@ import cz.adamec.timotej.snag.authentication.be.driving.api.currentUser
 import cz.adamec.timotej.snag.authorization.be.driving.api.ForbiddenException
 import cz.adamec.timotej.snag.projects.be.app.api.CanAccessProjectUseCase
 import cz.adamec.timotej.snag.projects.be.app.api.GetProjectUseCase
+import cz.adamec.timotej.snag.reports.be.app.api.CanGenerateReportUseCase
 import cz.adamec.timotej.snag.reports.be.app.api.GenerateProjectReportUseCase
+import cz.adamec.timotej.snag.reports.business.ReportType
 import cz.adamec.timotej.snag.routing.be.AppRoute
 import cz.adamec.timotej.snag.routing.be.getIdFromParameters
 import io.ktor.http.ContentDisposition
@@ -35,6 +37,7 @@ import kotlin.uuid.Uuid
 internal class ReportRoute(
     private val generateProjectReportUseCase: GenerateProjectReportUseCase,
     private val canAccessProjectUseCase: CanAccessProjectUseCase,
+    private val canGenerateReportUseCase: CanGenerateReportUseCase,
     private val getProjectUseCase: GetProjectUseCase,
 ) : AppRoute {
     override fun Route.setup() {
@@ -42,12 +45,18 @@ internal class ReportRoute(
             get {
                 val userId = currentUser().userId
                 val projectId = getIdFromParameters("projectId")
+                val reportType = parseReportType(call.parameters["type"])
+                if (reportType == null) {
+                    call.respond(HttpStatusCode.BadRequest)
+                    return@get
+                }
                 if (getProjectUseCase(projectId) == null) {
                     call.respond(HttpStatusCode.NotFound)
                     return@get
                 }
                 requireProjectAccess(userId = userId, projectId = projectId)
-                val report = generateProjectReportUseCase(projectId)
+                requireReportTypeAccess(userId = userId, type = reportType)
+                val report = generateProjectReportUseCase(projectId, reportType)
 
                 if (report != null) {
                     val disposition =
@@ -67,11 +76,27 @@ internal class ReportRoute(
         }
     }
 
+    private fun parseReportType(value: String?): ReportType? =
+        when (value) {
+            null, "passport" -> ReportType.PASSPORT
+            "service_protocol" -> ReportType.SERVICE_PROTOCOL
+            else -> null
+        }
+
     private suspend fun requireProjectAccess(
         userId: Uuid,
         projectId: Uuid,
     ) {
         if (!canAccessProjectUseCase(userId = userId, projectId = projectId)) {
+            throw ForbiddenException()
+        }
+    }
+
+    private suspend fun requireReportTypeAccess(
+        userId: Uuid,
+        type: ReportType,
+    ) {
+        if (!canGenerateReportUseCase(userId = userId, type = type)) {
             throw ForbiddenException()
         }
     }

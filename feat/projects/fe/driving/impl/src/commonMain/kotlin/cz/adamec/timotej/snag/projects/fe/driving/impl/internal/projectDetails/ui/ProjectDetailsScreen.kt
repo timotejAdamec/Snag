@@ -14,10 +14,14 @@ package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cz.adamec.timotej.snag.lib.design.fe.error.ShowSnackbarOnError
 import cz.adamec.timotej.snag.lib.design.fe.events.ObserveAsEvents
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.vm.ProjectDetailsViewModel
+import cz.adamec.timotej.snag.reports.business.ReportType
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 import kotlin.uuid.Uuid
@@ -35,6 +39,7 @@ internal fun ProjectDetailsScreen(
     viewModel: ProjectDetailsViewModel = koinViewModel { parametersOf(projectId) },
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    var reportTypePickerTypes by remember { mutableStateOf<List<ReportType>?>(null) }
 
     ShowSnackbarOnError(
         uiErrorsFlow = viewModel.errorsFlow,
@@ -45,7 +50,24 @@ internal fun ProjectDetailsScreen(
             onBack()
         },
     )
+    ObserveAsEvents(
+        eventsFlow = viewModel.showReportTypePickerFlow,
+        onEvent = { types ->
+            reportTypePickerTypes = types
+        },
+    )
     SaveReportEffect(reportFlow = viewModel.reportReadyFlow)
+
+    reportTypePickerTypes?.let { types ->
+        ReportTypePickerDialog(
+            types = types,
+            onSelectType = { type ->
+                reportTypePickerTypes = null
+                viewModel.onReportTypeSelected(type)
+            },
+            onDismiss = { reportTypePickerTypes = null },
+        )
+    }
 
     ProjectDetailsContent(
         state = state,

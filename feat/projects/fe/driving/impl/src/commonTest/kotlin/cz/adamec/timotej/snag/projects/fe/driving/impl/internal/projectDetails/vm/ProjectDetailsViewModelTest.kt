@@ -24,6 +24,7 @@ import cz.adamec.timotej.snag.feat.inspections.fe.app.api.SaveInspectionUseCase
 import cz.adamec.timotej.snag.feat.inspections.fe.driven.test.FakeInspectionsApi
 import cz.adamec.timotej.snag.feat.inspections.fe.driven.test.FakeInspectionsDb
 import cz.adamec.timotej.snag.feat.reports.fe.app.api.DownloadReportUseCase
+import cz.adamec.timotej.snag.feat.reports.fe.app.api.GetAvailableReportTypesUseCase
 import cz.adamec.timotej.snag.feat.reports.fe.driven.test.FakeReportsApi
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.projects.app.model.AppProject
@@ -81,6 +82,7 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
     private val getInspectionsUseCase: GetInspectionsUseCase by inject()
     private val saveInspectionUseCase: SaveInspectionUseCase by inject()
     private val downloadReportUseCase: DownloadReportUseCase by inject()
+    private val getAvailableReportTypesUseCase: GetAvailableReportTypesUseCase by inject()
     private val setProjectClosedUseCase: SetProjectClosedUseCase by inject()
     private val canEditProjectEntitiesUseCase: CanEditProjectEntitiesUseCase by inject()
     private val canCloseProjectUseCase: CanCloseProjectUseCase by inject()
@@ -122,6 +124,7 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
             getStructuresUseCase = getStructuresUseCase,
             getInspectionsUseCase = getInspectionsUseCase,
             downloadReportUseCase = downloadReportUseCase,
+            getAvailableReportTypesUseCase = getAvailableReportTypesUseCase,
             saveInspectionUseCase = saveInspectionUseCase,
             setProjectClosedUseCase = setProjectClosedUseCase,
             canEditProjectEntitiesUseCase = canEditProjectEntitiesUseCase,

@@ -10,15 +10,11 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.reports.be.app.api
+package cz.adamec.timotej.snag.feat.reports.fe.app.api
 
-import cz.adamec.timotej.snag.reports.be.model.BackendReport
 import cz.adamec.timotej.snag.reports.business.ReportType
-import kotlin.uuid.Uuid
+import kotlinx.coroutines.flow.Flow
 
-interface GenerateProjectReportUseCase {
-    suspend operator fun invoke(
-        projectId: Uuid,
-        type: ReportType,
-    ): BackendReport?
+interface GetAvailableReportTypesUseCase {
+    operator fun invoke(): Flow<List<ReportType>>
 }

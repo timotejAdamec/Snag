@@ -169,11 +169,12 @@ class ProjectDetailsMapperTest {
     }
 
     @Test
-    fun `canDownloadReport is true when LOADED and not downloading`() {
+    fun `canDownloadReport is true when LOADED and not downloading and has available types`() {
         val vmState =
             ProjectDetailsVmState(
                 projectStatus = ProjectDetailsUiStatus.LOADED,
                 isDownloadingReport = false,
+                availableReportTypes = listOf(cz.adamec.timotej.snag.reports.business.ReportType.PASSPORT),
             )
 
         assertTrue(vmState.toUiState().canDownloadReport)
@@ -185,6 +186,7 @@ class ProjectDetailsMapperTest {
             ProjectDetailsVmState(
                 projectStatus = ProjectDetailsUiStatus.LOADED,
                 isDownloadingReport = true,
+                availableReportTypes = listOf(cz.adamec.timotej.snag.reports.business.ReportType.PASSPORT),
             )
 
         assertFalse(vmState.toUiState().canDownloadReport)
@@ -196,6 +198,19 @@ class ProjectDetailsMapperTest {
             ProjectDetailsVmState(
                 projectStatus = ProjectDetailsUiStatus.LOADING,
                 isDownloadingReport = false,
+                availableReportTypes = listOf(cz.adamec.timotej.snag.reports.business.ReportType.PASSPORT),
+            )
+
+        assertFalse(vmState.toUiState().canDownloadReport)
+    }
+
+    @Test
+    fun `canDownloadReport is false when no available report types`() {
+        val vmState =
+            ProjectDetailsVmState(
+                projectStatus = ProjectDetailsUiStatus.LOADED,
+                isDownloadingReport = false,
+                availableReportTypes = emptyList(),
             )
 
         assertFalse(vmState.toUiState().canDownloadReport)
