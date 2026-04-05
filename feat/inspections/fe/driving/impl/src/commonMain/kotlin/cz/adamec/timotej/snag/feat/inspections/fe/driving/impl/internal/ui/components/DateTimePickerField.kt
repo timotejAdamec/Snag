@@ -27,8 +27,8 @@ import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -155,6 +155,7 @@ internal fun DateTimePickerField(
     }
 }
 
+@Suppress("StringLiteralDuplication")
 @Preview
 @Composable
 private fun DateTimePickerFieldPreview() {
@@ -175,6 +176,7 @@ private fun DateTimePickerFieldPreview() {
     }
 }
 
+@Suppress("StringLiteralDuplication")
 @Preview
 @Composable
 private fun DateTimePickerFieldPlaceholderPreview() {
@@ -195,6 +197,7 @@ private fun DateTimePickerFieldPlaceholderPreview() {
     }
 }
 
+@Suppress("StringLiteralDuplication")
 @Preview
 @Composable
 private fun DateTimePickerFieldDisabledPreview() {
@@ -216,6 +219,7 @@ private fun DateTimePickerFieldDisabledPreview() {
     }
 }
 
+@Suppress("StringLiteralDuplication")
 @Preview
 @Composable
 private fun DateTimePickerFieldDisabledPlaceholderPreview() {

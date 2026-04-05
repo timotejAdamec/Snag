@@ -14,9 +14,9 @@ package cz.adamec.timotej.snag.authentication.be.driving.impl.di
 
 import cz.adamec.timotej.snag.authentication.be.driving.impl.internal.AuthenticationStatusPageHandler
 import cz.adamec.timotej.snag.authentication.be.driving.impl.internal.CurrentUserConfiguration
+import cz.adamec.timotej.snag.configuration.be.BackendRunConfig
 import cz.adamec.timotej.snag.network.be.KtorServerConfiguration
 import cz.adamec.timotej.snag.network.be.KtorStatusPageHandler
-import cz.adamec.timotej.snag.configuration.be.BackendRunConfig
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.qualifier.named
 import org.koin.dsl.bind

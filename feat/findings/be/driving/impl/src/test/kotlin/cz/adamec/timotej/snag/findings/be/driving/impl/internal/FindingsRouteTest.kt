@@ -13,7 +13,6 @@
 package cz.adamec.timotej.snag.findings.be.driving.impl.internal
 
 import cz.adamec.timotej.snag.authorization.business.UserRole
-import cz.adamec.timotej.snag.network.be.KtorServerConfiguration
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.feat.findings.be.model.BackendFindingData
 import cz.adamec.timotej.snag.feat.findings.business.FindingType
@@ -26,6 +25,7 @@ import cz.adamec.timotej.snag.findings.contract.DeleteFindingApiDto
 import cz.adamec.timotej.snag.findings.contract.FindingApiDto
 import cz.adamec.timotej.snag.findings.contract.PutFindingApiDto
 import cz.adamec.timotej.snag.findings.contract.RelativeCoordinateApiDto
+import cz.adamec.timotej.snag.network.be.KtorServerConfiguration
 import cz.adamec.timotej.snag.network.be.test.jsonClient
 import cz.adamec.timotej.snag.projects.be.driven.test.seedTestProject
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb

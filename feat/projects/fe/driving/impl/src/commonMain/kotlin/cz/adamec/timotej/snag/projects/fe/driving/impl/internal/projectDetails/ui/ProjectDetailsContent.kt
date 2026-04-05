@@ -75,6 +75,7 @@ import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectAssignmen
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectAssignments.vm.AssignedUserItem
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.vm.ProjectDetailsUiState
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.vm.ProjectDetailsUiStatus
+import cz.adamec.timotej.snag.reports.business.ReportType
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import snag.feat.projects.fe.driving.impl.generated.resources.Res
@@ -103,7 +104,6 @@ import snag.lib.design.fe.generated.resources.ic_lock
 import snag.lib.design.fe.generated.resources.ic_lock_open
 import snag.lib.design.fe.generated.resources.ic_person
 import snag.lib.design.fe.generated.resources.ic_space_dashboard
-import cz.adamec.timotej.snag.reports.business.ReportType
 import kotlin.uuid.Uuid
 import snag.lib.design.fe.generated.resources.Res as DesignRes
 
@@ -287,9 +287,10 @@ private fun LoadedProjectDetailsContent(
                                     } else {
                                         null
                                     },
-                                colors = InputChipDefaults.inputChipColors(
-                                    containerColor = Color.Transparent,
-                                )
+                                colors =
+                                    InputChipDefaults.inputChipColors(
+                                        containerColor = Color.Transparent,
+                                    ),
                             )
                         }
                     }
@@ -471,9 +472,10 @@ private fun LoadedProjectDetailsContent(
                             bottom = paddingValues.calculateBottomPadding() + 16.dp,
                         ),
                 expanded = true,
-                colors = FloatingToolbarDefaults.standardFloatingToolbarColors(
-                    toolbarContainerColor = SnagTheme.surfaceColors.containerColor,
-                )
+                colors =
+                    FloatingToolbarDefaults.standardFloatingToolbarColors(
+                        toolbarContainerColor = SnagTheme.surfaceColors.containerColor,
+                    ),
             ) {
                 IconButton(
                     enabled = state.canToggleClosed,

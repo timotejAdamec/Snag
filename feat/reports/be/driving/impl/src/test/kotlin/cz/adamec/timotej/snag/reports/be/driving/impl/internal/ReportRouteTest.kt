@@ -15,10 +15,10 @@ package cz.adamec.timotej.snag.reports.be.driving.impl.internal
 import cz.adamec.timotej.snag.authorization.business.UserRole
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.network.be.KtorServerConfiguration
-import cz.adamec.timotej.snag.reports.contract.ReportTypeParam
 import cz.adamec.timotej.snag.projects.be.model.BackendProjectData
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
 import cz.adamec.timotej.snag.reports.be.driven.test.FakePdfReportGenerator
+import cz.adamec.timotej.snag.reports.contract.ReportTypeParam
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
 import cz.adamec.timotej.snag.users.be.driven.test.TEST_USER_ID
 import cz.adamec.timotej.snag.users.be.driven.test.asAuthenticated

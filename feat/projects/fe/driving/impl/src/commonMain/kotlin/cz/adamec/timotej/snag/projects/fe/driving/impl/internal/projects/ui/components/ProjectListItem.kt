@@ -84,9 +84,10 @@ internal fun ProjectListItem(
                 contentDescription = null,
             )
         },
-        colors = ListItemDefaults.colors(
-            containerColor = Color.Transparent,
-        )
+        colors =
+            ListItemDefaults.colors(
+                containerColor = Color.Transparent,
+            ),
     )
 }
 
