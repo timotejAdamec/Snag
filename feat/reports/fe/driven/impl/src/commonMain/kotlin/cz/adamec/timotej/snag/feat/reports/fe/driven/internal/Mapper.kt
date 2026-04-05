@@ -13,9 +13,10 @@
 package cz.adamec.timotej.snag.feat.reports.fe.driven.internal
 
 import cz.adamec.timotej.snag.reports.business.ReportType
+import cz.adamec.timotej.snag.reports.contract.ReportTypeParam
 
 internal fun ReportType.toQueryParam(): String =
     when (this) {
-        ReportType.PASSPORT -> "passport"
-        ReportType.SERVICE_PROTOCOL -> "service_protocol"
+        ReportType.PASSPORT -> ReportTypeParam.PASSPORT
+        ReportType.SERVICE_PROTOCOL -> ReportTypeParam.SERVICE_PROTOCOL
     }

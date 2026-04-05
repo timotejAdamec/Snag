@@ -13,10 +13,11 @@
 package cz.adamec.timotej.snag.reports.be.driving.impl.internal
 
 import cz.adamec.timotej.snag.reports.business.ReportType
+import cz.adamec.timotej.snag.reports.contract.ReportTypeParam
 
 internal fun parseReportType(value: String?): ReportType? =
     when (value) {
-        null, "passport" -> ReportType.PASSPORT
-        "service_protocol" -> ReportType.SERVICE_PROTOCOL
+        null, ReportTypeParam.PASSPORT -> ReportType.PASSPORT
+        ReportTypeParam.SERVICE_PROTOCOL -> ReportType.SERVICE_PROTOCOL
         else -> null
     }
