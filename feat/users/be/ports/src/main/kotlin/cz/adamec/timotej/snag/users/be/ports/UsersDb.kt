@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.users.be.ports
 
+import cz.adamec.timotej.snag.authorization.business.UserRole
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.users.be.model.BackendUser
 import kotlin.uuid.Uuid
@@ -20,6 +21,8 @@ interface UsersDb {
     suspend fun getUsers(): List<BackendUser>
 
     suspend fun getUser(id: Uuid): BackendUser?
+
+    suspend fun getUsersByRole(role: UserRole): List<BackendUser>
 
     suspend fun getUserByAuthProviderId(authProviderId: String): BackendUser?
 
