@@ -33,6 +33,7 @@ import cz.adamec.timotej.snag.projects.be.app.impl.di.projectsAppModule
 import cz.adamec.timotej.snag.projects.be.driven.impl.di.projectsDrivenModule
 import cz.adamec.timotej.snag.projects.be.driving.impl.di.projectsDrivingModule
 import cz.adamec.timotej.snag.reports.be.app.impl.di.reportsAppModule
+import cz.adamec.timotej.snag.reports.business.di.reportsRulesModule
 import cz.adamec.timotej.snag.reports.be.driven.impl.di.reportsDrivenModule
 import cz.adamec.timotej.snag.reports.be.driving.impl.di.reportsDrivingModule
 import cz.adamec.timotej.snag.structures.be.app.impl.di.structuresAppModule
@@ -74,6 +75,7 @@ val backendModulesAggregate =
             reportsDrivingModule,
             reportsDrivenModule,
             reportsAppModule,
+            reportsRulesModule,
             usersDrivingModule,
             usersDrivenModule,
             usersAppModule,

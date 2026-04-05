@@ -225,6 +225,7 @@ val projectsDrivingImplModule =
                 setProjectClosedUseCase = get(),
                 canEditProjectEntitiesUseCase = get(),
                 canCloseProjectUseCase = get(),
+                getAvailableReportTypesUseCase = get(),
                 canAssignUserToProjectUseCase = get(),
                 getProjectAssignmentsUseCase = get(),
                 getUsersUseCase = get(),

@@ -18,6 +18,7 @@ import cz.adamec.timotej.snag.projects.be.model.BackendProjectData
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
 import cz.adamec.timotej.snag.reports.be.app.api.GenerateProjectReportUseCase
 import cz.adamec.timotej.snag.reports.be.driven.test.FakePdfReportGenerator
+import cz.adamec.timotej.snag.reports.business.ReportType
 import cz.adamec.timotej.snag.structures.be.ports.StructuresDb
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
 import cz.adamec.timotej.snag.users.be.driven.test.TEST_USER_ID
@@ -42,7 +43,7 @@ class GenerateProjectReportUseCaseImplTest : BackendKoinInitializedTest() {
     @Test
     fun `returns null when project does not exist`() =
         runTest(testDispatcher) {
-            val result = useCase(Uuid.parse("00000000-0000-0000-0000-000000000099"))
+            val result = useCase(Uuid.parse("00000000-0000-0000-0000-000000000099"), ReportType.PASSPORT)
             assertNull(result)
         }
 
@@ -60,7 +61,7 @@ class GenerateProjectReportUseCaseImplTest : BackendKoinInitializedTest() {
                 ),
             )
 
-            val result = useCase(PROJECT_ID)
+            val result = useCase(PROJECT_ID, ReportType.PASSPORT)
 
             assertNotNull(result)
             assertEquals(PROJECT_ID, result.projectId)
@@ -103,7 +104,7 @@ class GenerateProjectReportUseCaseImplTest : BackendKoinInitializedTest() {
                 ),
             )
 
-            useCase(PROJECT_ID)
+            useCase(PROJECT_ID, ReportType.PASSPORT)
 
             val lastData = fakeGenerator.lastData
             assertNotNull(lastData)

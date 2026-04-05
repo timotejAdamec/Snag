@@ -16,6 +16,7 @@ import cz.adamec.timotej.snag.feat.inspections.app.model.AppInspection
 import cz.adamec.timotej.snag.feat.structures.app.model.AppStructure
 import cz.adamec.timotej.snag.projects.app.model.AppProject
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectAssignments.vm.AssignedUserItem
+import cz.adamec.timotej.snag.reports.business.ReportType
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
@@ -32,6 +33,7 @@ internal data class ProjectDetailsUiState(
     val isProjectEditable: Boolean = false,
     val canInvokeDeletion: Boolean = false,
     val canDownloadReport: Boolean = false,
+    val availableReportTypes: List<ReportType> = emptyList(),
     val canToggleClosed: Boolean = false,
     val canAssignUsers: Boolean = false,
 )

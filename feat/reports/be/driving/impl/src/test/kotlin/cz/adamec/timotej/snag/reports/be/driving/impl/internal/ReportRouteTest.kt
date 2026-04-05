@@ -15,6 +15,7 @@ package cz.adamec.timotej.snag.reports.be.driving.impl.internal
 import cz.adamec.timotej.snag.authorization.business.UserRole
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.network.be.KtorServerConfiguration
+import cz.adamec.timotej.snag.reports.contract.ReportTypeParam
 import cz.adamec.timotej.snag.projects.be.model.BackendProjectData
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
 import cz.adamec.timotej.snag.reports.be.driven.test.FakePdfReportGenerator
@@ -156,8 +157,116 @@ class ReportRouteTest : BackendKoinInitializedTest() {
             assertEquals(HttpStatusCode.BadRequest, response.status)
         }
 
+    @Test
+    fun `GET report with invalid type returns 400`() =
+        testApplication {
+            configureApp()
+            usersDb.seedTestUser()
+            projectsDb.saveProject(
+                BackendProjectData(
+                    id = PROJECT_ID,
+                    name = "Test Project",
+                    address = "Test Address",
+                    creatorId = TEST_USER_ID,
+                    updatedAt = Timestamp(1L),
+                ),
+            )
+            val client = createClient { }
+
+            val response =
+                client.get("/projects/$PROJECT_ID/report?type=invalid_type") {
+                    asAuthenticated()
+                }
+
+            assertEquals(HttpStatusCode.BadRequest, response.status)
+        }
+
+    @Test
+    fun `GET service protocol as passport user returns 403`() =
+        testApplication {
+            configureApp()
+            usersDb.seedTestUser(
+                id = PASSPORT_USER_ID,
+                role = UserRole.PASSPORT_LEAD,
+            )
+            projectsDb.saveProject(
+                BackendProjectData(
+                    id = PROJECT_ID,
+                    name = "Test Project",
+                    address = "Test Address",
+                    creatorId = PASSPORT_USER_ID,
+                    updatedAt = Timestamp(1L),
+                ),
+            )
+            val client = createClient { }
+
+            val response =
+                client.get("/projects/$PROJECT_ID/report?type=${ReportTypeParam.SERVICE_PROTOCOL}") {
+                    asAuthenticated(userId = PASSPORT_USER_ID)
+                }
+
+            assertEquals(HttpStatusCode.Forbidden, response.status)
+        }
+
+    @Test
+    fun `GET service protocol as service lead returns PDF`() =
+        testApplication {
+            configureApp()
+            usersDb.seedTestUser(
+                id = SERVICE_USER_ID,
+                role = UserRole.SERVICE_LEAD,
+            )
+            projectsDb.saveProject(
+                BackendProjectData(
+                    id = PROJECT_ID,
+                    name = "Test Project",
+                    address = "Test Address",
+                    creatorId = SERVICE_USER_ID,
+                    updatedAt = Timestamp(1L),
+                ),
+            )
+            val client = createClient { }
+
+            val response =
+                client.get("/projects/$PROJECT_ID/report?type=${ReportTypeParam.SERVICE_PROTOCOL}") {
+                    asAuthenticated(userId = SERVICE_USER_ID)
+                }
+
+            assertEquals(HttpStatusCode.OK, response.status)
+            assertEquals(
+                ContentType.Application.Pdf,
+                response.headers["Content-Type"]?.let { ContentType.parse(it) },
+            )
+        }
+
+    @Test
+    fun `GET report without type defaults to passport`() =
+        testApplication {
+            configureApp()
+            usersDb.seedTestUser()
+            projectsDb.saveProject(
+                BackendProjectData(
+                    id = PROJECT_ID,
+                    name = "Test Project",
+                    address = "Test Address",
+                    creatorId = TEST_USER_ID,
+                    updatedAt = Timestamp(1L),
+                ),
+            )
+            val client = createClient { }
+
+            val response =
+                client.get("/projects/$PROJECT_ID/report") {
+                    asAuthenticated()
+                }
+
+            assertEquals(HttpStatusCode.OK, response.status)
+        }
+
     companion object {
         private val PROJECT_ID = Uuid.parse("00000000-0000-0000-0000-000000000001")
         private val TECH_USER_ID = Uuid.parse("00000000-0000-0000-0000-000000000099")
+        private val PASSPORT_USER_ID = Uuid.parse("00000000-0000-0000-0000-000000000098")
+        private val SERVICE_USER_ID = Uuid.parse("00000000-0000-0000-0000-000000000097")
     }
 }

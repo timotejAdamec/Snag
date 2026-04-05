@@ -15,6 +15,7 @@ package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.core.foundation.common.UuidProvider
 import cz.adamec.timotej.snag.projects.app.model.AppProjectData
+import cz.adamec.timotej.snag.reports.business.ReportType
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -169,11 +170,12 @@ class ProjectDetailsMapperTest {
     }
 
     @Test
-    fun `canDownloadReport is true when LOADED and not downloading`() {
+    fun `canDownloadReport is true when LOADED and not downloading and has available types`() {
         val vmState =
             ProjectDetailsVmState(
                 projectStatus = ProjectDetailsUiStatus.LOADED,
                 isDownloadingReport = false,
+                availableReportTypes = listOf(ReportType.PASSPORT),
             )
 
         assertTrue(vmState.toUiState().canDownloadReport)
@@ -185,6 +187,7 @@ class ProjectDetailsMapperTest {
             ProjectDetailsVmState(
                 projectStatus = ProjectDetailsUiStatus.LOADED,
                 isDownloadingReport = true,
+                availableReportTypes = listOf(ReportType.PASSPORT),
             )
 
         assertFalse(vmState.toUiState().canDownloadReport)
@@ -196,6 +199,19 @@ class ProjectDetailsMapperTest {
             ProjectDetailsVmState(
                 projectStatus = ProjectDetailsUiStatus.LOADING,
                 isDownloadingReport = false,
+                availableReportTypes = listOf(ReportType.PASSPORT),
+            )
+
+        assertFalse(vmState.toUiState().canDownloadReport)
+    }
+
+    @Test
+    fun `canDownloadReport is false when no available report types`() {
+        val vmState =
+            ProjectDetailsVmState(
+                projectStatus = ProjectDetailsUiStatus.LOADED,
+                isDownloadingReport = false,
+                availableReportTypes = emptyList(),
             )
 
         assertFalse(vmState.toUiState().canDownloadReport)
