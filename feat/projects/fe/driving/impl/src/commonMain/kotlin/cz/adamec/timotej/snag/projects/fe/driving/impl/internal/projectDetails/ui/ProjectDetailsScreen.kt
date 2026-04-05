@@ -14,9 +14,6 @@ package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cz.adamec.timotej.snag.lib.design.fe.error.ShowSnackbarOnError
 import cz.adamec.timotej.snag.lib.design.fe.events.ObserveAsEvents
@@ -38,7 +35,6 @@ internal fun ProjectDetailsScreen(
     viewModel: ProjectDetailsViewModel = koinViewModel { parametersOf(projectId) },
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    var isShowingReportTypePicker by remember { mutableStateOf(false) }
 
     ShowSnackbarOnError(
         uiErrorsFlow = viewModel.errorsFlow,
@@ -51,17 +47,6 @@ internal fun ProjectDetailsScreen(
     )
     SaveReportEffect(reportFlow = viewModel.reportReadyFlow)
 
-    if (isShowingReportTypePicker) {
-        ReportTypePickerDialog(
-            types = state.availableReportTypes,
-            onSelectType = { type ->
-                isShowingReportTypePicker = false
-                viewModel.onDownloadReport(type)
-            },
-            onDismiss = { isShowingReportTypePicker = false },
-        )
-    }
-
     ProjectDetailsContent(
         state = state,
         onNewStructureClick = onNewStructureClick,
@@ -73,14 +58,7 @@ internal fun ProjectDetailsScreen(
         onBack = onBack,
         onEditClick = onEditClick,
         onDelete = viewModel::onDelete,
-        onDownloadReportClick = {
-            val types = state.availableReportTypes
-            if (types.size == 1) {
-                viewModel.onDownloadReport(types.first())
-            } else {
-                isShowingReportTypePicker = true
-            }
-        },
+        onDownloadReport = viewModel::onDownloadReport,
         onToggleClose = viewModel::onToggleClose,
         onManageAssignmentsClick = onManageAssignmentsClick,
         onAssignUser = viewModel::onAssignUser,

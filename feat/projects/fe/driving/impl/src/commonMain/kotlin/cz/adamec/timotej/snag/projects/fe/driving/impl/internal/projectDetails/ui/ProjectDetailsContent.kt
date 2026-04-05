@@ -103,6 +103,7 @@ import snag.lib.design.fe.generated.resources.ic_lock
 import snag.lib.design.fe.generated.resources.ic_lock_open
 import snag.lib.design.fe.generated.resources.ic_person
 import snag.lib.design.fe.generated.resources.ic_space_dashboard
+import cz.adamec.timotej.snag.reports.business.ReportType
 import kotlin.uuid.Uuid
 import snag.lib.design.fe.generated.resources.Res as DesignRes
 
@@ -118,7 +119,7 @@ internal fun ProjectDetailsContent(
     onBack: () -> Unit,
     onEditClick: () -> Unit,
     onDelete: () -> Unit,
-    onDownloadReportClick: () -> Unit,
+    onDownloadReport: (ReportType) -> Unit,
     onToggleClose: () -> Unit,
     onManageAssignmentsClick: () -> Unit,
     onAssignUser: (Uuid) -> Unit,
@@ -151,7 +152,7 @@ internal fun ProjectDetailsContent(
                     onBack = onBack,
                     onEditClick = onEditClick,
                     onDelete = onDelete,
-                    onDownloadReportClick = onDownloadReportClick,
+                    onDownloadReport = onDownloadReport,
                     onToggleClose = onToggleClose,
                     onManageAssignmentsClick = onManageAssignmentsClick,
                     onAssignUser = onAssignUser,
@@ -180,7 +181,7 @@ private fun LoadedProjectDetailsContent(
     onBack: () -> Unit,
     onEditClick: () -> Unit,
     onDelete: () -> Unit,
-    onDownloadReportClick: () -> Unit,
+    onDownloadReport: (ReportType) -> Unit,
     onToggleClose: () -> Unit,
     onManageAssignmentsClick: () -> Unit,
     onAssignUser: (Uuid) -> Unit,
@@ -451,6 +452,17 @@ private fun LoadedProjectDetailsContent(
                     },
                 )
             }
+            var isShowingReportTypePicker by remember { mutableStateOf(false) }
+            if (isShowingReportTypePicker) {
+                ReportTypePickerDialog(
+                    types = state.availableReportTypes,
+                    onSelectType = { type ->
+                        isShowingReportTypePicker = false
+                        onDownloadReport(type)
+                    },
+                    onDismiss = { isShowingReportTypePicker = false },
+                )
+            }
             HorizontalFloatingToolbar(
                 modifier =
                     Modifier
@@ -503,7 +515,14 @@ private fun LoadedProjectDetailsContent(
                 }
                 IconButton(
                     enabled = state.canDownloadReport,
-                    onClick = onDownloadReportClick,
+                    onClick = {
+                        val types = state.availableReportTypes
+                        if (types.size == 1) {
+                            onDownloadReport(types.first())
+                        } else {
+                            isShowingReportTypePicker = true
+                        }
+                    },
                 ) {
                     if (state.isDownloadingReport) {
                         LoadingIndicator(
@@ -608,7 +627,7 @@ private fun LoadedProjectDetailsContentPreview() {
             onBack = {},
             onEditClick = {},
             onDelete = {},
-            onDownloadReportClick = {},
+            onDownloadReport = { _ -> },
             onToggleClose = {},
             onManageAssignmentsClick = {},
             onAssignUser = {},
