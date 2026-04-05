@@ -219,6 +219,30 @@ private fun LoadedProjectDetailsContent(
                         bottom = 116.dp,
                     ),
             ) {
+                state.creatorEmail?.let { email ->
+                    item {
+                        Row(
+                            modifier =
+                                Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 16.dp)
+                                    .padding(bottom = 16.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        ) {
+                            Icon(
+                                painter = painterResource(DesignRes.drawable.ic_person),
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                            Text(
+                                text = "Created by $email",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
+                    }
+                }
                 item {
                     Row(
                         modifier =
@@ -598,6 +622,7 @@ private fun LoadedProjectDetailsContentPreview() {
                                 role = UserRole.SERVICE_WORKER,
                             ),
                         ),
+                    creatorEmail = "creator@example.com",
                 ),
             onNewStructureClick = {},
             onStructureClick = { _, _ -> },

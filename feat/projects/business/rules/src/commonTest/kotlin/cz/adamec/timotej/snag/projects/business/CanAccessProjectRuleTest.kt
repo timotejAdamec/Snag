@@ -54,6 +54,7 @@ class CanAccessProjectRuleTest {
                 user = user,
                 project = createProject(),
                 assignedUserIds = emptySet(),
+                projectCreatorRole = UserRole.PASSPORT_LEAD,
             ),
         )
     }
@@ -66,6 +67,7 @@ class CanAccessProjectRuleTest {
                 user = user,
                 project = createProject(projectCreatorId = creatorId),
                 assignedUserIds = emptySet(),
+                projectCreatorRole = UserRole.PASSPORT_LEAD,
             ),
         )
     }
@@ -78,6 +80,7 @@ class CanAccessProjectRuleTest {
                 user = user,
                 project = createProject(),
                 assignedUserIds = setOf(assignedUserId),
+                projectCreatorRole = UserRole.PASSPORT_LEAD,
             ),
         )
     }
@@ -90,6 +93,7 @@ class CanAccessProjectRuleTest {
                 user = user,
                 project = createProject(),
                 assignedUserIds = emptySet(),
+                projectCreatorRole = UserRole.PASSPORT_LEAD,
             ),
         )
     }
@@ -102,6 +106,7 @@ class CanAccessProjectRuleTest {
                 user = user,
                 project = createProject(),
                 assignedUserIds = emptySet(),
+                projectCreatorRole = UserRole.PASSPORT_LEAD,
             ),
         )
     }
@@ -114,6 +119,59 @@ class CanAccessProjectRuleTest {
                 user = user,
                 project = createProject(projectCreatorId = creatorId),
                 assignedUserIds = emptySet(),
+                projectCreatorRole = null,
+            ),
+        )
+    }
+
+    @Test
+    fun `SERVICE_LEAD can access project created by SERVICE_WORKER`() {
+        val user = createUser(role = UserRole.SERVICE_LEAD)
+        assertTrue(
+            rule(
+                user = user,
+                project = createProject(),
+                assignedUserIds = emptySet(),
+                projectCreatorRole = UserRole.SERVICE_WORKER,
+            ),
+        )
+    }
+
+    @Test
+    fun `SERVICE_LEAD cannot access project created by PASSPORT_LEAD`() {
+        val user = createUser(role = UserRole.SERVICE_LEAD)
+        assertFalse(
+            rule(
+                user = user,
+                project = createProject(),
+                assignedUserIds = emptySet(),
+                projectCreatorRole = UserRole.PASSPORT_LEAD,
+            ),
+        )
+    }
+
+    @Test
+    fun `PASSPORT_LEAD cannot access project created by SERVICE_WORKER`() {
+        val user = createUser(role = UserRole.PASSPORT_LEAD)
+        assertFalse(
+            rule(
+                user = user,
+                project = createProject(),
+                assignedUserIds = emptySet(),
+                projectCreatorRole = UserRole.SERVICE_WORKER,
+            ),
+        )
+    }
+
+    @Test
+    fun `SERVICE_LEAD cannot access project created by another SERVICE_LEAD`() {
+        val user = createUser(role = UserRole.SERVICE_LEAD)
+        assertFalse(
+            rule(
+                user = user,
+                project = createProject(),
+                assignedUserIds = emptySet(),
+                projectCreatorRole = UserRole.SERVICE_LEAD,
             ),
         )
     }

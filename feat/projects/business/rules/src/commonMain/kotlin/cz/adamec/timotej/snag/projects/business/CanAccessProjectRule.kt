@@ -21,11 +21,14 @@ class CanAccessProjectRule {
         user: User,
         project: Project,
         assignedUserIds: Set<Uuid>,
+        projectCreatorRole: UserRole?,
     ): Boolean =
         when {
             user.role == UserRole.ADMINISTRATOR -> true
             user.id == project.creatorId -> true
             user.id in assignedUserIds -> true
+            user.role == UserRole.SERVICE_LEAD &&
+                projectCreatorRole == UserRole.SERVICE_WORKER -> true
             else -> false
         }
 }

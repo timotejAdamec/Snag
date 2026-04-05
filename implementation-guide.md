@@ -7,7 +7,7 @@ This document is a reference for the implementation team. It describes what the 
 ## Remaining Work — 3. 4. 2026, 16:30
 
 1. **Service protocol PDF** — Not started. Second report type with work description and signature fields. *(§5, FP32b)*
-2. **Per-role project visibility** — `CanAccessProjectRule` and `GetProjectsUseCaseImpl` use a simplified access model (Admin = all, others = creator + assigned). The spec requires Service Lead to see all service worker projects and Passport Lead / Service Worker to see own + assigned. *(§3, NP13)*
+2. ~~**Per-role project visibility**~~ — Done. `CanAccessProjectRule` updated with `projectCreatorRole` param; Service Lead now sees all service worker projects. `GetProjectsUseCaseImpl` uses `GetUsersByRoleUseCase` for lazy filtering. FE `CanEditProjectEntitiesUseCaseImpl` updated. Creator email shown on project detail screen. *(§3, NP13)*
 
 ### Non-issues (evaluated and dismissed)
 
@@ -63,7 +63,7 @@ This document is a reference for the implementation team. It describes what the 
 | Service lead | Own projects + all projects of service workers they manage + projects to which they were assigned |
 | Administrator | All projects |
 
-> **Implementation note**: `CanAccessProjectRule` and `GetProjectsUseCaseImpl` currently use a simplified access model — Admin gets all projects, others get creator + assigned projects only. The per-role visibility logic described above (e.g., Service Lead seeing all service worker projects) is **not yet implemented**.
+> **Implementation note**: Per-role visibility fully implemented. `CanAccessProjectRule` accepts `projectCreatorRole` and grants Service Lead access to Service Worker projects. `GetProjectsUseCaseImpl` uses `GetUsersByRoleUseCase` for efficient batch filtering. FE `CanEditProjectEntitiesUseCaseImpl` resolves creator role via `GetUserFlowUseCase` with reactive `flatMapLatest`. Creator email displayed on project detail screen.
 
 ### CRUD Access to Project Sub-Entities
 
