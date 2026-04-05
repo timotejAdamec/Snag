@@ -13,9 +13,8 @@
 package cz.adamec.timotej.snag.findings.fe.app.impl.internal
 
 import app.cash.turbine.test
-import cz.adamec.timotej.snag.core.network.fe.ConnectionStatusProvider
 import cz.adamec.timotej.snag.findings.fe.app.api.CanModifyFindingPhotosUseCase
-import cz.adamec.timotej.snag.projects.fe.app.api.CanEditProjectEntitiesUseCase
+import cz.adamec.timotej.snag.projects.fe.app.api.CanModifyProjectFilesUseCase
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
@@ -25,31 +24,23 @@ import kotlin.test.assertTrue
 import kotlin.uuid.Uuid
 
 class CanModifyFindingPhotosUseCaseImplTest {
-    private val connectionFlow = MutableStateFlow(true)
-    private val canEditFlow = MutableStateFlow(true)
+    private val canModifyFlow = MutableStateFlow(true)
     private val projectId = Uuid.parse("00000000-0000-0000-0000-000000000001")
 
-    private val fakeConnectionStatusProvider =
-        object : ConnectionStatusProvider {
-            override fun isConnectedFlow(): Flow<Boolean> = connectionFlow
-        }
-
-    private val fakeCanEditProjectEntitiesUseCase =
-        object : CanEditProjectEntitiesUseCase {
-            override fun invoke(projectId: Uuid): Flow<Boolean> = canEditFlow
+    private val fakeCanModifyProjectFilesUseCase =
+        object : CanModifyProjectFilesUseCase {
+            override fun invoke(projectId: Uuid): Flow<Boolean> = canModifyFlow
         }
 
     private val useCase: CanModifyFindingPhotosUseCase =
         CanModifyFindingPhotosUseCaseImpl(
-            connectionStatusProvider = fakeConnectionStatusProvider,
-            canEditProjectEntitiesUseCase = fakeCanEditProjectEntitiesUseCase,
+            canModifyProjectFilesUseCase = fakeCanModifyProjectFilesUseCase,
         )
 
     @Test
-    fun `returns true when connected and can edit`() =
+    fun `delegates to canModifyProjectFilesUseCase and returns true`() =
         runTest {
-            connectionFlow.value = true
-            canEditFlow.value = true
+            canModifyFlow.value = true
 
             useCase(projectId).test {
                 assertTrue(awaitItem())
@@ -57,10 +48,9 @@ class CanModifyFindingPhotosUseCaseImplTest {
         }
 
     @Test
-    fun `returns false when disconnected`() =
+    fun `delegates to canModifyProjectFilesUseCase and returns false`() =
         runTest {
-            connectionFlow.value = false
-            canEditFlow.value = true
+            canModifyFlow.value = false
 
             useCase(projectId).test {
                 assertFalse(awaitItem())
@@ -68,75 +58,18 @@ class CanModifyFindingPhotosUseCaseImplTest {
         }
 
     @Test
-    fun `returns false when project is not editable`() =
+    fun `emits updated value when delegate changes`() =
         runTest {
-            connectionFlow.value = true
-            canEditFlow.value = false
-
-            useCase(projectId).test {
-                assertFalse(awaitItem())
-            }
-        }
-
-    @Test
-    fun `returns false when both disconnected and not editable`() =
-        runTest {
-            connectionFlow.value = false
-            canEditFlow.value = false
-
-            useCase(projectId).test {
-                assertFalse(awaitItem())
-            }
-        }
-
-    @Test
-    fun `emits updated value when connectivity changes`() =
-        runTest {
-            connectionFlow.value = true
-            canEditFlow.value = true
+            canModifyFlow.value = true
 
             useCase(projectId).test {
                 assertTrue(awaitItem())
 
-                connectionFlow.value = false
+                canModifyFlow.value = false
                 assertFalse(awaitItem())
 
-                connectionFlow.value = true
+                canModifyFlow.value = true
                 assertTrue(awaitItem())
-            }
-        }
-
-    @Test
-    fun `emits updated value when edit permission changes`() =
-        runTest {
-            connectionFlow.value = true
-            canEditFlow.value = true
-
-            useCase(projectId).test {
-                assertTrue(awaitItem())
-
-                canEditFlow.value = false
-                assertFalse(awaitItem())
-
-                canEditFlow.value = true
-                assertTrue(awaitItem())
-            }
-        }
-
-    @Test
-    fun `does not emit duplicate values`() =
-        runTest {
-            connectionFlow.value = true
-            canEditFlow.value = true
-
-            useCase(projectId).test {
-                assertTrue(awaitItem())
-
-                connectionFlow.value = true // same
-                expectNoEvents()
-
-                connectionFlow.value = false
-                assertFalse(awaitItem())
             }
         }
 }

@@ -1,0 +1,28 @@
+CREATE TABLE IF NOT EXISTS ProjectPhotoEntity (
+    id TEXT NOT NULL PRIMARY KEY,
+    projectId TEXT NOT NULL,
+    url TEXT NOT NULL,
+    description TEXT NOT NULL,
+    updatedAt INTEGER NOT NULL
+);
+
+save:
+INSERT INTO ProjectPhotoEntity(id, projectId, url, description, updatedAt)
+VALUES ?
+ON CONFLICT(id) DO UPDATE SET
+    projectId = excluded.projectId,
+    url = excluded.url,
+    description = excluded.description,
+    updatedAt = excluded.updatedAt;
+
+selectByProjectId:
+SELECT * FROM ProjectPhotoEntity WHERE projectId = :projectId;
+
+selectById:
+SELECT * FROM ProjectPhotoEntity WHERE id = :id;
+
+deleteById:
+DELETE FROM ProjectPhotoEntity WHERE id = :id;
+
+deleteByProjectId:
+DELETE FROM ProjectPhotoEntity WHERE projectId = :projectId;

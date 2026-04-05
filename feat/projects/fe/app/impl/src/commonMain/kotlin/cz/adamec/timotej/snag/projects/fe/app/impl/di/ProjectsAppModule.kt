@@ -23,41 +23,54 @@ import cz.adamec.timotej.snag.projects.fe.app.api.CanCloseProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.CanCreateProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.CanEditProjectEntitiesUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.CascadeDeleteLocalAssignmentsByProjectIdUseCase
+import cz.adamec.timotej.snag.projects.fe.app.api.CascadeDeleteLocalProjectPhotosByProjectIdUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.CascadeRestoreLocalAssignmentsByProjectIdUseCase
+import cz.adamec.timotej.snag.projects.fe.app.api.CascadeRestoreLocalProjectPhotosByProjectIdUseCase
+import cz.adamec.timotej.snag.projects.fe.app.api.DeleteProjectPhotoUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.DeleteProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.GetProjectAssignmentsUseCase
+import cz.adamec.timotej.snag.projects.fe.app.api.GetProjectPhotosUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.GetProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.GetProjectsUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.IsClientReferencedByProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.RemoveUserFromProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.SaveProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.SetProjectClosedUseCase
+import cz.adamec.timotej.snag.projects.fe.app.api.UpdateProjectPhotoDescriptionUseCase
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.AssignUserToProjectUseCaseImpl
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.CanAssignUserToProjectUseCaseImpl
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.CanCloseProjectUseCaseImpl
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.CanCreateProjectUseCaseImpl
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.CanEditProjectEntitiesUseCaseImpl
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.CascadeDeleteLocalAssignmentsByProjectIdUseCaseImpl
+import cz.adamec.timotej.snag.projects.fe.app.impl.internal.CascadeDeleteLocalProjectPhotosByProjectIdUseCaseImpl
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.CascadeRestoreLocalAssignmentsByProjectIdUseCaseImpl
+import cz.adamec.timotej.snag.projects.fe.app.impl.internal.CascadeRestoreLocalProjectPhotosByProjectIdUseCaseImpl
+import cz.adamec.timotej.snag.projects.fe.app.impl.internal.DeleteProjectPhotoUseCaseImpl
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.DeleteProjectUseCaseImpl
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.GetProjectAssignmentsUseCaseImpl
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.GetProjectUseCaseImpl
+import cz.adamec.timotej.snag.projects.fe.app.impl.internal.GetProjectPhotosUseCaseImpl
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.GetProjectsUseCaseImpl
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.IsClientReferencedByProjectUseCaseImpl
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.RemoveUserFromProjectUseCaseImpl
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.SaveProjectUseCaseImpl
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.SetProjectClosedUseCaseImpl
+import cz.adamec.timotej.snag.projects.fe.app.impl.internal.UpdateProjectPhotoDescriptionUseCaseImpl
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.sync.ProjectAssignmentsPullSyncHandler
+import cz.adamec.timotej.snag.projects.fe.app.impl.internal.sync.ProjectPhotoPullSyncHandler
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.sync.ProjectPullSyncHandler
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.sync.ProjectSyncHandler
 import cz.adamec.timotej.snag.sync.fe.app.api.handler.PullSyncOperationHandler
 import cz.adamec.timotej.snag.sync.fe.app.api.handler.PushSyncOperationHandler
+import org.koin.core.module.Module
 import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
 val projectsAppModule =
     module {
+        includes(projectsAppPlatformModule)
         factoryOf(::GetProjectsUseCaseImpl) bind GetProjectsUseCase::class
         factoryOf(::GetProjectUseCaseImpl) bind GetProjectUseCase::class
         factoryOf(::SaveProjectUseCaseImpl) bind SaveProjectUseCase::class
@@ -78,7 +91,20 @@ val projectsAppModule =
         factoryOf(::GetProjectAssignmentsUseCaseImpl) bind GetProjectAssignmentsUseCase::class
         factoryOf(::CascadeDeleteLocalAssignmentsByProjectIdUseCaseImpl) bind CascadeDeleteLocalAssignmentsByProjectIdUseCase::class
         factoryOf(::CascadeRestoreLocalAssignmentsByProjectIdUseCaseImpl) bind CascadeRestoreLocalAssignmentsByProjectIdUseCase::class
+        factoryOf(::GetProjectPhotosUseCaseImpl) bind GetProjectPhotosUseCase::class
+        factoryOf(::DeleteProjectPhotoUseCaseImpl) bind DeleteProjectPhotoUseCase::class
+        factoryOf(::UpdateProjectPhotoDescriptionUseCaseImpl) bind UpdateProjectPhotoDescriptionUseCase::class
+        factoryOf(::CascadeDeleteLocalProjectPhotosByProjectIdUseCaseImpl) bind CascadeDeleteLocalProjectPhotosByProjectIdUseCase::class
+        factory<CascadeRestoreLocalProjectPhotosByProjectIdUseCase> {
+            CascadeRestoreLocalProjectPhotosByProjectIdUseCaseImpl(
+                projectPhotosDb = get(),
+                executePullSyncUseCase = inject(),
+            )
+        }
         factoryOf(::ProjectSyncHandler) bind PushSyncOperationHandler::class
         factoryOf(::ProjectPullSyncHandler) bind PullSyncOperationHandler::class
+        factoryOf(::ProjectPhotoPullSyncHandler) bind PullSyncOperationHandler::class
         factoryOf(::ProjectAssignmentsPullSyncHandler) bind PullSyncOperationHandler::class
     }
+
+internal expect val projectsAppPlatformModule: Module

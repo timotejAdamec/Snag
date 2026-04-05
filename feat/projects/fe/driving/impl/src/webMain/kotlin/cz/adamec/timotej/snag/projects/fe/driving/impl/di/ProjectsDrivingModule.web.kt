@@ -17,7 +17,11 @@ import cz.adamec.timotej.snag.projects.fe.driving.api.WebProjectCreationRoute
 import cz.adamec.timotej.snag.projects.fe.driving.api.WebProjectDetailRoute
 import cz.adamec.timotej.snag.projects.fe.driving.api.WebProjectEditRoute
 import cz.adamec.timotej.snag.projects.fe.driving.api.WebProjectsRoute
+import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.vm.ProjectDetailsViewModel
+import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.vm.WebProjectDetailsViewModel
+import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
+import kotlin.uuid.Uuid
 
 internal actual val platformModule =
     module {
@@ -26,4 +30,29 @@ internal actual val platformModule =
         projectEditScreenNavigation<WebProjectEditRoute>()
         projectDetailsScreenNavigation<WebProjectDetailRoute>()
         projectAssignmentsNavigation<WebProjectAssignmentsRoute>()
+        viewModel<ProjectDetailsViewModel> { (projectId: Uuid) ->
+            WebProjectDetailsViewModel(
+                projectId = projectId,
+                getProjectUseCase = get(),
+                deleteProjectUseCase = get(),
+                getStructuresUseCase = get(),
+                getInspectionsUseCase = get(),
+                downloadReportUseCase = get(),
+                saveInspectionUseCase = get(),
+                setProjectClosedUseCase = get(),
+                canEditProjectEntitiesUseCase = get(),
+                canCloseProjectUseCase = get(),
+                canAssignUserToProjectUseCase = get(),
+                getProjectAssignmentsUseCase = get(),
+                getUsersUseCase = get(),
+                assignUserToProjectUseCase = get(),
+                removeUserFromProjectUseCase = get(),
+                timestampProvider = get(),
+                getProjectPhotosUseCase = get(),
+                deleteProjectPhotoUseCase = get(),
+                updateProjectPhotoDescriptionUseCase = get(),
+                webAddProjectPhotoUseCase = get(),
+                canModifyProjectFilesUseCase = get(),
+            )
+        }
     }
