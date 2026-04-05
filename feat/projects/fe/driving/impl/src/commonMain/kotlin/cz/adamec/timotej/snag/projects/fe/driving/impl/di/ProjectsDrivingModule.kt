@@ -39,7 +39,6 @@ import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectsRoute
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectAssignments.ui.ProjectAssignmentsScreen
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectAssignments.vm.ProjectAssignmentsViewModel
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.ui.ProjectDetailsScreen
-import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.vm.ProjectDetailsViewModel
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetailsEdit.ui.ProjectDetailsEditScreen
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetailsEdit.vm.ProjectDetailsEditViewModel
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projects.ui.ProjectsScreen
@@ -211,26 +210,6 @@ val projectsDrivingImplModule =
                 getClientsUseCase = get(),
                 canCreateProjectUseCase = get(),
                 canEditProjectEntitiesUseCase = get(),
-            )
-        }
-        viewModel { (projectId: Uuid) ->
-            ProjectDetailsViewModel(
-                projectId = projectId,
-                getProjectUseCase = get(),
-                deleteProjectUseCase = get(),
-                getStructuresUseCase = get(),
-                getInspectionsUseCase = get(),
-                downloadReportUseCase = get(),
-                saveInspectionUseCase = get(),
-                setProjectClosedUseCase = get(),
-                canEditProjectEntitiesUseCase = get(),
-                canCloseProjectUseCase = get(),
-                canAssignUserToProjectUseCase = get(),
-                getProjectAssignmentsUseCase = get(),
-                getUsersUseCase = get(),
-                assignUserToProjectUseCase = get(),
-                removeUserFromProjectUseCase = get(),
-                timestampProvider = get(),
             )
         }
         viewModel { (projectId: Uuid) ->

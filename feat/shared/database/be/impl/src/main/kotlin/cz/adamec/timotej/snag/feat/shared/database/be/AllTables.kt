@@ -21,6 +21,7 @@ val allTables: Array<Table> =
         UsersTable,
         ProjectsTable,
         ProjectAssignmentsTable,
+        ProjectPhotosTable,
         StructuresTable,
         FindingsTable,
         FindingPhotosTable,

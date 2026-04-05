@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.projects.be.driving.impl.di
 
+import cz.adamec.timotej.snag.projects.be.driving.impl.internal.ProjectPhotosRoute
 import cz.adamec.timotej.snag.projects.be.driving.impl.internal.ProjectsRoute
 import cz.adamec.timotej.snag.routing.be.AppRoute
 import org.koin.core.module.dsl.singleOf
@@ -21,4 +22,5 @@ import org.koin.dsl.module
 val projectsDrivingModule =
     module {
         singleOf(::ProjectsRoute) bind AppRoute::class
+        singleOf(::ProjectPhotosRoute) bind AppRoute::class
     }

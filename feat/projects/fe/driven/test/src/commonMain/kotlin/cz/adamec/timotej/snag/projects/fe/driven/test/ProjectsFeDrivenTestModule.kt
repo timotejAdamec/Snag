@@ -13,6 +13,8 @@
 package cz.adamec.timotej.snag.projects.fe.driven.test
 
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectAssignmentsDb
+import cz.adamec.timotej.snag.projects.fe.ports.ProjectPhotosApi
+import cz.adamec.timotej.snag.projects.fe.ports.ProjectPhotosDb
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsApi
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsDb
 import org.koin.core.module.dsl.singleOf
@@ -24,4 +26,6 @@ val projectsFeDrivenTestModule =
         singleOf(::FakeProjectsDb) bind ProjectsDb::class
         singleOf(::FakeProjectsApi) bind ProjectsApi::class
         singleOf(::FakeProjectAssignmentsDb) bind ProjectAssignmentsDb::class
+        singleOf(::FakeProjectPhotosDb) bind ProjectPhotosDb::class
+        singleOf(::FakeProjectPhotosApi) bind ProjectPhotosApi::class
     }
