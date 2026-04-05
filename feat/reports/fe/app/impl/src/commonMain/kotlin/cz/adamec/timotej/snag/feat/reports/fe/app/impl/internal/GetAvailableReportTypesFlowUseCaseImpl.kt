@@ -13,7 +13,7 @@
 package cz.adamec.timotej.snag.feat.reports.fe.app.impl.internal
 
 import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
-import cz.adamec.timotej.snag.feat.reports.fe.app.api.GetAvailableReportTypesUseCase
+import cz.adamec.timotej.snag.feat.reports.fe.app.api.GetAvailableReportTypesFlowUseCase
 import cz.adamec.timotej.snag.reports.business.GetAvailableReportTypesRule
 import cz.adamec.timotej.snag.reports.business.ReportType
 import cz.adamec.timotej.snag.users.fe.app.api.GetCurrentUserFlowUseCase
@@ -22,10 +22,10 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 
-internal class GetAvailableReportTypesUseCaseImpl(
+internal class GetAvailableReportTypesFlowUseCaseImpl(
     private val getCurrentUserFlowUseCase: GetCurrentUserFlowUseCase,
     private val getAvailableReportTypesRule: GetAvailableReportTypesRule,
-) : GetAvailableReportTypesUseCase {
+) : GetAvailableReportTypesFlowUseCase {
     override fun invoke(): Flow<List<ReportType>> =
         getCurrentUserFlowUseCase()
             .map { userResult ->

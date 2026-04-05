@@ -22,7 +22,7 @@ import cz.adamec.timotej.snag.feat.inspections.fe.app.api.GetInspectionsUseCase
 import cz.adamec.timotej.snag.feat.inspections.fe.app.api.SaveInspectionUseCase
 import cz.adamec.timotej.snag.feat.inspections.fe.app.api.model.SaveInspectionRequest
 import cz.adamec.timotej.snag.feat.reports.fe.app.api.DownloadReportUseCase
-import cz.adamec.timotej.snag.feat.reports.fe.app.api.GetAvailableReportTypesUseCase
+import cz.adamec.timotej.snag.feat.reports.fe.app.api.GetAvailableReportTypesFlowUseCase
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.lib.design.fe.error.toUiError
 import cz.adamec.timotej.snag.lib.design.fe.state.launchWhileSubscribed
@@ -58,7 +58,7 @@ internal class ProjectDetailsViewModel(
     private val getStructuresUseCase: GetStructuresUseCase,
     private val getInspectionsUseCase: GetInspectionsUseCase,
     private val downloadReportUseCase: DownloadReportUseCase,
-    private val getAvailableReportTypesUseCase: GetAvailableReportTypesUseCase,
+    private val getAvailableReportTypesUseCase: GetAvailableReportTypesFlowUseCase,
     private val saveInspectionUseCase: SaveInspectionUseCase,
     private val setProjectClosedUseCase: SetProjectClosedUseCase,
     private val canEditProjectEntitiesUseCase: CanEditProjectEntitiesUseCase,

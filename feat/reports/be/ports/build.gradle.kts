@@ -8,5 +8,4 @@ dependencies {
     api(project(":feat:structures:be:app:model"))
     api(project(":feat:findings:be:app:model"))
     api(project(":feat:inspections:be:app:model"))
-    api(project(":feat:reports:business:model"))
 }

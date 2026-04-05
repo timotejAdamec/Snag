@@ -10,11 +10,12 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.feat.reports.fe.app.api
+package cz.adamec.timotej.snag.feat.reports.fe.driven.internal
 
 import cz.adamec.timotej.snag.reports.business.ReportType
-import kotlinx.coroutines.flow.Flow
 
-interface GetAvailableReportTypesUseCase {
-    operator fun invoke(): Flow<List<ReportType>>
-}
+internal fun ReportType.toQueryParam(): String =
+    when (this) {
+        ReportType.PASSPORT -> "passport"
+        ReportType.SERVICE_PROTOCOL -> "service_protocol"
+    }

@@ -76,13 +76,6 @@ internal class ReportRoute(
         }
     }
 
-    private fun parseReportType(value: String?): ReportType? =
-        when (value) {
-            null, "passport" -> ReportType.PASSPORT
-            "service_protocol" -> ReportType.SERVICE_PROTOCOL
-            else -> null
-        }
-
     private suspend fun requireProjectAccess(
         userId: Uuid,
         projectId: Uuid,

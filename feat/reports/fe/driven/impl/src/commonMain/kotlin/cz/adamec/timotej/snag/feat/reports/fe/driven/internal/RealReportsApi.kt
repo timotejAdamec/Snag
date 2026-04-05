@@ -35,12 +35,7 @@ internal class RealReportsApi(
             logger = LH.logger,
             errorContext = "Error downloading report for project $projectId.",
         ) {
-            val typeParam =
-                when (type) {
-                    ReportType.PASSPORT -> "passport"
-                    ReportType.SERVICE_PROTOCOL -> "service_protocol"
-                }
-            val response = httpClient.get("/projects/$projectId/report?type=$typeParam")
+            val response = httpClient.get("/projects/$projectId/report?type=${type.toQueryParam()}")
             val bytes = response.body<ByteArray>()
             val fileName =
                 response.headers[HttpHeaders.ContentDisposition]
