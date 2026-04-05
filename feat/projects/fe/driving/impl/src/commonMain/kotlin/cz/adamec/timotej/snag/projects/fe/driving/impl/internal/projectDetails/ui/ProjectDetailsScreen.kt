@@ -21,7 +21,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cz.adamec.timotej.snag.lib.design.fe.error.ShowSnackbarOnError
 import cz.adamec.timotej.snag.lib.design.fe.events.ObserveAsEvents
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.vm.ProjectDetailsViewModel
-import cz.adamec.timotej.snag.reports.business.ReportType
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 import kotlin.uuid.Uuid
@@ -39,7 +38,7 @@ internal fun ProjectDetailsScreen(
     viewModel: ProjectDetailsViewModel = koinViewModel { parametersOf(projectId) },
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    var reportTypePickerTypes by remember { mutableStateOf<List<ReportType>?>(null) }
+    var isShowingReportTypePicker by remember { mutableStateOf(false) }
 
     ShowSnackbarOnError(
         uiErrorsFlow = viewModel.errorsFlow,
@@ -50,22 +49,16 @@ internal fun ProjectDetailsScreen(
             onBack()
         },
     )
-    ObserveAsEvents(
-        eventsFlow = viewModel.showReportTypePickerFlow,
-        onEvent = { types ->
-            reportTypePickerTypes = types
-        },
-    )
     SaveReportEffect(reportFlow = viewModel.reportReadyFlow)
 
-    reportTypePickerTypes?.let { types ->
+    if (isShowingReportTypePicker) {
         ReportTypePickerDialog(
-            types = types,
+            types = state.availableReportTypes,
             onSelectType = { type ->
-                reportTypePickerTypes = null
-                viewModel.onReportTypeSelected(type)
+                isShowingReportTypePicker = false
+                viewModel.onDownloadReport(type)
             },
-            onDismiss = { reportTypePickerTypes = null },
+            onDismiss = { isShowingReportTypePicker = false },
         )
     }
 
@@ -80,7 +73,14 @@ internal fun ProjectDetailsScreen(
         onBack = onBack,
         onEditClick = onEditClick,
         onDelete = viewModel::onDelete,
-        onDownloadReportClick = viewModel::onDownloadReport,
+        onDownloadReportClick = {
+            val types = state.availableReportTypes
+            if (types.size == 1) {
+                viewModel.onDownloadReport(types.first())
+            } else {
+                isShowingReportTypePicker = true
+            }
+        },
         onToggleClose = viewModel::onToggleClose,
         onManageAssignmentsClick = onManageAssignmentsClick,
         onAssignUser = viewModel::onAssignUser,

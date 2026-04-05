@@ -97,9 +97,6 @@ internal class ProjectDetailsViewModel(
     private val reportReadyChannel = Channel<Report>()
     val reportReadyFlow = reportReadyChannel.receiveAsFlow()
 
-    private val showReportTypePickerChannel = Channel<List<ReportType>>()
-    val showReportTypePickerFlow = showReportTypePickerChannel.receiveAsFlow()
-
     private fun collectProject(projectId: Uuid) =
         viewModelScope.launch {
             getProjectUseCase(projectId).collect { result ->
@@ -343,22 +340,7 @@ internal class ProjectDetailsViewModel(
             vmState.update { it.copy(isClosingOrReopening = false) }
         }
 
-    fun onDownloadReport() {
-        val types = vmState.value.availableReportTypes
-        when {
-            types.size == 1 -> downloadReport(types.first())
-            types.size > 1 ->
-                viewModelScope.launch {
-                    showReportTypePickerChannel.send(types)
-                }
-        }
-    }
-
-    fun onReportTypeSelected(type: ReportType) {
-        downloadReport(type)
-    }
-
-    private fun downloadReport(type: ReportType) =
+    fun onDownloadReport(type: ReportType) =
         viewModelScope.launch {
             vmState.update { it.copy(isDownloadingReport = true) }
             when (val result = downloadReportUseCase(projectId, type)) {
