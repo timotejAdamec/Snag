@@ -19,13 +19,11 @@ import cz.adamec.timotej.snag.projects.be.model.BackendProject
 import cz.adamec.timotej.snag.projects.be.ports.ProjectAssignmentsDb
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
 import cz.adamec.timotej.snag.users.be.app.api.GetUserUseCase
-import cz.adamec.timotej.snag.users.be.app.api.GetUsersByRoleUseCase
 import kotlin.uuid.Uuid
 
 internal class GetProjectsUseCaseImpl(
     private val projectsDb: ProjectsDb,
     private val getUserUseCase: GetUserUseCase,
-    private val getUsersByRoleUseCase: GetUsersByRoleUseCase,
     private val projectAssignmentsDb: ProjectAssignmentsDb,
 ) : GetProjectsUseCase {
     override suspend operator fun invoke(userId: Uuid): List<BackendProject> {
@@ -52,19 +50,8 @@ internal class GetProjectsUseCaseImpl(
         val assignedProjectIds =
             projectAssignmentsDb.getProjectsForUser(userId).toSet()
 
-        val serviceWorkerIds: Set<Uuid> =
-            if (userRole == UserRole.SERVICE_LEAD) {
-                getUsersByRoleUseCase(UserRole.SERVICE_WORKER)
-                    .map { it.id }
-                    .toSet()
-            } else {
-                emptySet()
-            }
-
         return projects.filter { project ->
-            project.creatorId == userId ||
-                project.id in assignedProjectIds ||
-                project.creatorId in serviceWorkerIds
+            project.creatorId == userId || project.id in assignedProjectIds
         }
     }
 }

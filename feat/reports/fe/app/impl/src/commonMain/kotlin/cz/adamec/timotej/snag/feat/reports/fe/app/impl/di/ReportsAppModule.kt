@@ -13,7 +13,9 @@
 package cz.adamec.timotej.snag.feat.reports.fe.app.impl.di
 
 import cz.adamec.timotej.snag.feat.reports.fe.app.api.DownloadReportUseCase
+import cz.adamec.timotej.snag.feat.reports.fe.app.api.GetAvailableReportTypesFlowUseCase
 import cz.adamec.timotej.snag.feat.reports.fe.app.impl.internal.DownloadReportUseCaseImpl
+import cz.adamec.timotej.snag.feat.reports.fe.app.impl.internal.GetAvailableReportTypesFlowUseCaseImpl
 import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
@@ -21,4 +23,5 @@ import org.koin.dsl.module
 val reportsAppModule =
     module {
         factoryOf(::DownloadReportUseCaseImpl) bind DownloadReportUseCase::class
+        factoryOf(::GetAvailableReportTypesFlowUseCaseImpl) bind GetAvailableReportTypesFlowUseCase::class
     }

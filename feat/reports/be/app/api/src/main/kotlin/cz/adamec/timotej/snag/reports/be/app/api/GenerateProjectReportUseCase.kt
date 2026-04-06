@@ -13,8 +13,12 @@
 package cz.adamec.timotej.snag.reports.be.app.api
 
 import cz.adamec.timotej.snag.reports.be.model.BackendReport
+import cz.adamec.timotej.snag.reports.business.ReportType
 import kotlin.uuid.Uuid
 
 interface GenerateProjectReportUseCase {
-    suspend operator fun invoke(projectId: Uuid): BackendReport?
+    suspend operator fun invoke(
+        projectId: Uuid,
+        type: ReportType,
+    ): BackendReport?
 }
