@@ -73,6 +73,7 @@ import cz.adamec.timotej.snag.lib.design.fe.theme.SnagTheme
 import cz.adamec.timotej.snag.projects.app.model.AppProjectData
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectAssignments.ui.components.AddUserBottomSheetContent
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectAssignments.vm.AssignedUserItem
+import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.ui.components.CreatorInfo
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.vm.ProjectDetailsUiState
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.vm.ProjectDetailsUiStatus
 import cz.adamec.timotej.snag.reports.business.ReportType
@@ -220,6 +221,18 @@ private fun LoadedProjectDetailsContent(
                         bottom = 116.dp,
                     ),
             ) {
+                state.creatorEmail?.let { email ->
+                    item {
+                        CreatorInfo(
+                            email = email,
+                            modifier =
+                                Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 16.dp)
+                                    .padding(bottom = 16.dp),
+                        )
+                    }
+                }
                 item {
                     Row(
                         modifier =
@@ -619,6 +632,7 @@ private fun LoadedProjectDetailsContentPreview() {
                                 role = UserRole.SERVICE_WORKER,
                             ),
                         ),
+                    creatorEmail = "creator@example.com",
                 ),
             onNewStructureClick = {},
             onStructureClick = { _, _ -> },

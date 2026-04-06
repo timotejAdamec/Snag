@@ -137,4 +137,137 @@ class GetProjectsUseCaseImplTest : BackendKoinInitializedTest() {
 
             assertEquals(emptyList(), result)
         }
+
+    @Suppress("LongMethod")
+    @Test
+    fun `service lead sees own and assigned and service worker projects`() =
+        runTest(testDispatcher) {
+            val serviceLeadId = Uuid.parse("00000000-0000-0000-0000-000000000010")
+            val serviceWorkerId = Uuid.parse("00000000-0000-0000-0000-000000000011")
+            val passportLeadId = Uuid.parse("00000000-0000-0000-0000-000000000012")
+            usersDb.saveUser(
+                BackendUserData(
+                    id = serviceLeadId,
+                    authProviderId = "sl-entra",
+                    email = "sl@example.com",
+                    role = UserRole.SERVICE_LEAD,
+                    updatedAt = Timestamp(1L),
+                ),
+            )
+            usersDb.saveUser(
+                BackendUserData(
+                    id = serviceWorkerId,
+                    authProviderId = "sw-entra",
+                    email = "sw@example.com",
+                    role = UserRole.SERVICE_WORKER,
+                    updatedAt = Timestamp(1L),
+                ),
+            )
+            usersDb.saveUser(
+                BackendUserData(
+                    id = passportLeadId,
+                    authProviderId = "pl-entra",
+                    email = "pl@example.com",
+                    role = UserRole.PASSPORT_LEAD,
+                    updatedAt = Timestamp(1L),
+                ),
+            )
+            val ownProject =
+                BackendProjectData(
+                    id = Uuid.parse("00000000-0000-0000-0000-000000000001"),
+                    name = "Lead's Own",
+                    address = "Address",
+                    creatorId = serviceLeadId,
+                    updatedAt = Timestamp(10L),
+                )
+            val workerProject =
+                BackendProjectData(
+                    id = Uuid.parse("00000000-0000-0000-0000-000000000002"),
+                    name = "Worker's Project",
+                    address = "Address",
+                    creatorId = serviceWorkerId,
+                    updatedAt = Timestamp(10L),
+                )
+            val assignedProject =
+                BackendProjectData(
+                    id = Uuid.parse("00000000-0000-0000-0000-000000000003"),
+                    name = "Assigned Project",
+                    address = "Address",
+                    creatorId = passportLeadId,
+                    updatedAt = Timestamp(10L),
+                )
+            val passportLeadProject =
+                BackendProjectData(
+                    id = Uuid.parse("00000000-0000-0000-0000-000000000004"),
+                    name = "Passport Lead's Project",
+                    address = "Address",
+                    creatorId = passportLeadId,
+                    updatedAt = Timestamp(10L),
+                )
+            dataSource.saveProject(ownProject)
+            dataSource.saveProject(workerProject)
+            dataSource.saveProject(assignedProject)
+            dataSource.saveProject(passportLeadProject)
+            assignmentsDb.assignUser(
+                userId = serviceLeadId,
+                projectId = assignedProject.id,
+            )
+
+            val result = useCase(serviceLeadId)
+
+            assertEquals(
+                setOf("Lead's Own", "Worker's Project", "Assigned Project"),
+                result.map { it.name }.toSet(),
+            )
+        }
+
+    @Test
+    fun `passport lead does not see service worker projects`() =
+        runTest(testDispatcher) {
+            val passportLeadId = Uuid.parse("00000000-0000-0000-0000-000000000020")
+            val serviceWorkerId = Uuid.parse("00000000-0000-0000-0000-000000000021")
+            usersDb.saveUser(
+                BackendUserData(
+                    id = passportLeadId,
+                    authProviderId = "pl-entra",
+                    email = "pl@example.com",
+                    role = UserRole.PASSPORT_LEAD,
+                    updatedAt = Timestamp(1L),
+                ),
+            )
+            usersDb.saveUser(
+                BackendUserData(
+                    id = serviceWorkerId,
+                    authProviderId = "sw-entra",
+                    email = "sw@example.com",
+                    role = UserRole.SERVICE_WORKER,
+                    updatedAt = Timestamp(1L),
+                ),
+            )
+            val ownProject =
+                BackendProjectData(
+                    id = Uuid.parse("00000000-0000-0000-0000-000000000001"),
+                    name = "Lead's Own",
+                    address = "Address",
+                    creatorId = passportLeadId,
+                    updatedAt = Timestamp(10L),
+                )
+            val workerProject =
+                BackendProjectData(
+                    id = Uuid.parse("00000000-0000-0000-0000-000000000002"),
+                    name = "Worker's Project",
+                    address = "Address",
+                    creatorId = serviceWorkerId,
+                    updatedAt = Timestamp(10L),
+                )
+            dataSource.saveProject(ownProject)
+            dataSource.saveProject(workerProject)
+
+            val result = useCase(passportLeadId)
+
+            assertEquals(
+                setOf("Lead's Own"),
+                result.map { it.name }.toSet(),
+            )
+        }
 }

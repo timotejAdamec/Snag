@@ -12,12 +12,17 @@
 
 package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.vm
 
+import cz.adamec.timotej.snag.authorization.business.UserRole
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.core.foundation.common.UuidProvider
 import cz.adamec.timotej.snag.projects.app.model.AppProjectData
 import cz.adamec.timotej.snag.reports.business.ReportType
+import cz.adamec.timotej.snag.users.app.model.AppUserData
+import kotlinx.collections.immutable.persistentListOf
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 import kotlin.uuid.Uuid
 
@@ -263,5 +268,58 @@ class ProjectDetailsMapperTest {
             )
 
         assertFalse(vmState.toUiState().canToggleClosed)
+    }
+
+    @Test
+    fun `creatorEmail is resolved from allUsers matching project creatorId`() {
+        val creatorId = UuidProvider.getUuid()
+        val vmState =
+            ProjectDetailsVmState(
+                project = AppProjectData(
+                    id = Uuid.random(),
+                    name = "Test",
+                    address = "Address",
+                    creatorId = creatorId,
+                    updatedAt = Timestamp(0L),
+                    isClosed = false,
+                ),
+                allUsers = persistentListOf(
+                    AppUserData(
+                        id = creatorId,
+                        authProviderId = "auth-1",
+                        email = "creator@example.com",
+                        role = UserRole.SERVICE_WORKER,
+                        updatedAt = Timestamp(0L),
+                    ),
+                ),
+            )
+
+        assertEquals("creator@example.com", vmState.toUiState().creatorEmail)
+    }
+
+    @Test
+    fun `creatorEmail is null when creator not in allUsers`() {
+        val vmState =
+            ProjectDetailsVmState(
+                project = openProject(),
+                allUsers = persistentListOf(
+                    AppUserData(
+                        id = UuidProvider.getUuid(),
+                        authProviderId = "auth-1",
+                        email = "other@example.com",
+                        role = UserRole.PASSPORT_LEAD,
+                        updatedAt = Timestamp(0L),
+                    ),
+                ),
+            )
+
+        assertNull(vmState.toUiState().creatorEmail)
+    }
+
+    @Test
+    fun `creatorEmail is null when project is null`() {
+        val vmState = ProjectDetailsVmState(project = null)
+
+        assertNull(vmState.toUiState().creatorEmail)
     }
 }
