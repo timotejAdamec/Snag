@@ -59,6 +59,7 @@ dependencies {
     implementation(projects.feat.reports.be.driving.impl)
     implementation(projects.feat.reports.be.driven.impl)
     implementation(projects.feat.reports.be.app.impl)
+    implementation(projects.feat.reports.business.rules)
 
     // Users feature
     implementation(projects.feat.users.be.driving.impl)

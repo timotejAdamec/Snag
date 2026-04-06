@@ -61,7 +61,6 @@ import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetail.ui
 import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetail.ui.components.TermLabel
 import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetail.vm.FindingDetailUiState
 import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetail.vm.FindingDetailUiStatus
-import cz.adamec.timotej.snag.lib.design.fe.adaptive.LocalIsInContentPane
 import cz.adamec.timotej.snag.lib.design.fe.scenes.LocalIsInSheet
 import cz.adamec.timotej.snag.lib.design.fe.theme.SnagPreview
 import cz.adamec.timotej.snag.lib.design.fe.theme.SnagTheme
@@ -251,9 +250,10 @@ internal fun FindingDetailContent(
                             Modifier
                                 .align(Alignment.BottomCenter),
                         expanded = true,
-                        colors = FloatingToolbarDefaults.standardFloatingToolbarColors(
-                            toolbarContainerColor = SnagTheme.surfaceColors.containerColor,
-                        )
+                        colors =
+                            FloatingToolbarDefaults.standardFloatingToolbarColors(
+                                toolbarContainerColor = SnagTheme.surfaceColors.containerColor,
+                            ),
                     ) {
                         IconButton(
                             enabled = state.canEdit,

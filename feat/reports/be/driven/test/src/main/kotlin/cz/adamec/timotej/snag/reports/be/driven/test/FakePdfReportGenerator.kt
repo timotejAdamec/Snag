@@ -14,12 +14,18 @@ package cz.adamec.timotej.snag.reports.be.driven.test
 
 import cz.adamec.timotej.snag.reports.be.ports.PdfReportGenerator
 import cz.adamec.timotej.snag.reports.be.ports.ProjectReportData
+import cz.adamec.timotej.snag.reports.business.ReportType
 
 class FakePdfReportGenerator : PdfReportGenerator {
     var lastData: ProjectReportData? = null
+    var lastType: ReportType? = null
 
-    override suspend fun generate(data: ProjectReportData): ByteArray {
+    override suspend fun generate(
+        data: ProjectReportData,
+        type: ReportType,
+    ): ByteArray {
         lastData = data
+        lastType = type
         return FAKE_PDF_BYTES
     }
 

@@ -22,6 +22,7 @@ import cz.adamec.timotej.snag.reports.be.model.BackendReport
 import cz.adamec.timotej.snag.reports.be.model.BackendReportData
 import cz.adamec.timotej.snag.reports.be.ports.PdfReportGenerator
 import cz.adamec.timotej.snag.reports.be.ports.ProjectReportData
+import cz.adamec.timotej.snag.reports.business.ReportType
 import cz.adamec.timotej.snag.structures.be.app.api.GetStructuresUseCase
 import kotlin.uuid.Uuid
 
@@ -33,8 +34,11 @@ internal class GenerateProjectReportUseCaseImpl(
     private val getInspectionsUseCase: GetInspectionsUseCase,
     private val pdfReportGenerator: PdfReportGenerator,
 ) : GenerateProjectReportUseCase {
-    override suspend operator fun invoke(projectId: Uuid): BackendReport? {
-        logger.debug("Generating report for project {}.", projectId)
+    override suspend operator fun invoke(
+        projectId: Uuid,
+        type: ReportType,
+    ): BackendReport? {
+        logger.debug("Generating {} report for project {}.", type, projectId)
 
         val backendProject = getProjectUseCase(projectId) ?: return null
         val backendClient = backendProject.clientId?.let { getClientUseCase(it) }
@@ -55,10 +59,15 @@ internal class GenerateProjectReportUseCaseImpl(
                 inspections = inspections,
             )
 
-        val bytes = pdfReportGenerator.generate(reportData)
-        logger.debug("Generated report for project {} ({} bytes).", projectId, bytes.size)
+        val bytes = pdfReportGenerator.generate(reportData, type)
+        logger.debug("Generated {} report for project {} ({} bytes).", type, projectId, bytes.size)
+        val fileSuffix =
+            when (type) {
+                ReportType.PASSPORT -> "report"
+                ReportType.SERVICE_PROTOCOL -> "service-protocol"
+            }
         val fileName =
-            "${backendProject.name}-report.pdf"
+            "${backendProject.name}-$fileSuffix.pdf"
                 .lowercase()
                 .replace(Regex("\\s+"), "-")
         return BackendReportData(

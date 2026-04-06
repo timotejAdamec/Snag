@@ -12,10 +12,10 @@
 
 package cz.adamec.timotej.snag.impl.di
 
-import cz.adamec.timotej.snag.network.be.KtorServerConfiguration
 import cz.adamec.timotej.snag.configuration.be.BackendRunConfig
 import cz.adamec.timotej.snag.di.aggregate.be.backendModulesAggregate
 import cz.adamec.timotej.snag.impl.internal.DevDataSeederConfiguration
+import cz.adamec.timotej.snag.network.be.KtorServerConfiguration
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
