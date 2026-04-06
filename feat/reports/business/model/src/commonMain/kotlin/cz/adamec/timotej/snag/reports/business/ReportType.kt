@@ -10,11 +10,9 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.users.be.app.api
+package cz.adamec.timotej.snag.reports.business
 
-import cz.adamec.timotej.snag.authorization.business.UserRole
-import cz.adamec.timotej.snag.users.be.model.BackendUser
-
-interface GetUsersByRoleUseCase {
-    suspend operator fun invoke(role: UserRole): List<BackendUser>
+enum class ReportType {
+    PASSPORT,
+    SERVICE_PROTOCOL,
 }

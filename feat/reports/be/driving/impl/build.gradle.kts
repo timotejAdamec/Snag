@@ -3,6 +3,7 @@ plugins {
 }
 
 dependencies {
+    implementation(project(":feat:reports:contract"))
     implementation(project(":feat:reports:be:app:api"))
     implementation(project(":feat:authentication:be:driving:api"))
     implementation(project(":feat:authorization:be:driving:api"))

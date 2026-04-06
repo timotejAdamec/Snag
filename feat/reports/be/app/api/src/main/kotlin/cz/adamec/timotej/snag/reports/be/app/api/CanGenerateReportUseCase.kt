@@ -10,13 +10,14 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.users.fe.app.api
+package cz.adamec.timotej.snag.reports.be.app.api
 
-import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
-import cz.adamec.timotej.snag.users.app.model.AppUser
-import kotlinx.coroutines.flow.Flow
+import cz.adamec.timotej.snag.reports.business.ReportType
 import kotlin.uuid.Uuid
 
-interface GetUserFlowUseCase {
-    operator fun invoke(id: Uuid): Flow<OfflineFirstDataResult<AppUser?>>
+interface CanGenerateReportUseCase {
+    suspend operator fun invoke(
+        userId: Uuid,
+        type: ReportType,
+    ): Boolean
 }

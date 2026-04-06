@@ -34,12 +34,10 @@ internal class CanAccessProjectUseCaseImpl(
         return if (user != null && project != null) {
             val assignedUsers = projectAssignmentsDb.getAssignedUsers(projectId)
             val assignedUserIds = assignedUsers.map { it.id }.toSet()
-            val creator = getUserUseCase(project.creatorId)
             canAccessProjectRule(
                 user = user,
                 project = project,
                 assignedUserIds = assignedUserIds,
-                projectCreatorRole = creator?.role,
             )
         } else {
             false

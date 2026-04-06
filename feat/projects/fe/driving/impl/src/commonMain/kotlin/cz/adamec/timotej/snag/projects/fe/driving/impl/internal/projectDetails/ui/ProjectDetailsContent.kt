@@ -73,9 +73,9 @@ import cz.adamec.timotej.snag.lib.design.fe.theme.SnagTheme
 import cz.adamec.timotej.snag.projects.app.model.AppProjectData
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectAssignments.ui.components.AddUserBottomSheetContent
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectAssignments.vm.AssignedUserItem
-import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.ui.components.CreatorInfo
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.vm.ProjectDetailsUiState
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.vm.ProjectDetailsUiStatus
+import cz.adamec.timotej.snag.reports.business.ReportType
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import snag.feat.projects.fe.driving.impl.generated.resources.Res
@@ -119,7 +119,7 @@ internal fun ProjectDetailsContent(
     onBack: () -> Unit,
     onEditClick: () -> Unit,
     onDelete: () -> Unit,
-    onDownloadReportClick: () -> Unit,
+    onDownloadReport: (ReportType) -> Unit,
     onToggleClose: () -> Unit,
     onManageAssignmentsClick: () -> Unit,
     onAssignUser: (Uuid) -> Unit,
@@ -152,7 +152,7 @@ internal fun ProjectDetailsContent(
                     onBack = onBack,
                     onEditClick = onEditClick,
                     onDelete = onDelete,
-                    onDownloadReportClick = onDownloadReportClick,
+                    onDownloadReport = onDownloadReport,
                     onToggleClose = onToggleClose,
                     onManageAssignmentsClick = onManageAssignmentsClick,
                     onAssignUser = onAssignUser,
@@ -181,7 +181,7 @@ private fun LoadedProjectDetailsContent(
     onBack: () -> Unit,
     onEditClick: () -> Unit,
     onDelete: () -> Unit,
-    onDownloadReportClick: () -> Unit,
+    onDownloadReport: (ReportType) -> Unit,
     onToggleClose: () -> Unit,
     onManageAssignmentsClick: () -> Unit,
     onAssignUser: (Uuid) -> Unit,
@@ -220,18 +220,6 @@ private fun LoadedProjectDetailsContent(
                         bottom = 116.dp,
                     ),
             ) {
-                state.creatorEmail?.let { email ->
-                    item {
-                        CreatorInfo(
-                            email = email,
-                            modifier =
-                                Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 16.dp)
-                                    .padding(bottom = 16.dp),
-                        )
-                    }
-                }
                 item {
                     Row(
                         modifier =
@@ -299,9 +287,10 @@ private fun LoadedProjectDetailsContent(
                                     } else {
                                         null
                                     },
-                                colors = InputChipDefaults.inputChipColors(
-                                    containerColor = Color.Transparent,
-                                )
+                                colors =
+                                    InputChipDefaults.inputChipColors(
+                                        containerColor = Color.Transparent,
+                                    ),
                             )
                         }
                     }
@@ -464,6 +453,17 @@ private fun LoadedProjectDetailsContent(
                     },
                 )
             }
+            var isShowingReportTypePicker by remember { mutableStateOf(false) }
+            if (isShowingReportTypePicker) {
+                ReportTypePickerDialog(
+                    types = state.availableReportTypes,
+                    onSelectType = { type ->
+                        isShowingReportTypePicker = false
+                        onDownloadReport(type)
+                    },
+                    onDismiss = { isShowingReportTypePicker = false },
+                )
+            }
             HorizontalFloatingToolbar(
                 modifier =
                     Modifier
@@ -472,9 +472,10 @@ private fun LoadedProjectDetailsContent(
                             bottom = paddingValues.calculateBottomPadding() + 16.dp,
                         ),
                 expanded = true,
-                colors = FloatingToolbarDefaults.standardFloatingToolbarColors(
-                    toolbarContainerColor = SnagTheme.surfaceColors.containerColor,
-                )
+                colors =
+                    FloatingToolbarDefaults.standardFloatingToolbarColors(
+                        toolbarContainerColor = SnagTheme.surfaceColors.containerColor,
+                    ),
             ) {
                 IconButton(
                     enabled = state.canToggleClosed,
@@ -516,7 +517,14 @@ private fun LoadedProjectDetailsContent(
                 }
                 IconButton(
                     enabled = state.canDownloadReport,
-                    onClick = onDownloadReportClick,
+                    onClick = {
+                        val types = state.availableReportTypes
+                        if (types.size == 1) {
+                            onDownloadReport(types.first())
+                        } else {
+                            isShowingReportTypePicker = true
+                        }
+                    },
                 ) {
                     if (state.isDownloadingReport) {
                         LoadingIndicator(
@@ -611,7 +619,6 @@ private fun LoadedProjectDetailsContentPreview() {
                                 role = UserRole.SERVICE_WORKER,
                             ),
                         ),
-                    creatorEmail = "creator@example.com",
                 ),
             onNewStructureClick = {},
             onStructureClick = { _, _ -> },
@@ -622,7 +629,7 @@ private fun LoadedProjectDetailsContentPreview() {
             onBack = {},
             onEditClick = {},
             onDelete = {},
-            onDownloadReportClick = {},
+            onDownloadReport = { _ -> },
             onToggleClose = {},
             onManageAssignmentsClick = {},
             onAssignUser = {},

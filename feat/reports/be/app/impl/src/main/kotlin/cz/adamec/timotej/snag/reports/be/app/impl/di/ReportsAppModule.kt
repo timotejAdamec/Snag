@@ -12,7 +12,9 @@
 
 package cz.adamec.timotej.snag.reports.be.app.impl.di
 
+import cz.adamec.timotej.snag.reports.be.app.api.CanGenerateReportUseCase
 import cz.adamec.timotej.snag.reports.be.app.api.GenerateProjectReportUseCase
+import cz.adamec.timotej.snag.reports.be.app.impl.internal.CanGenerateReportUseCaseImpl
 import cz.adamec.timotej.snag.reports.be.app.impl.internal.GenerateProjectReportUseCaseImpl
 import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.bind
@@ -21,4 +23,5 @@ import org.koin.dsl.module
 val reportsAppModule =
     module {
         factoryOf(::GenerateProjectReportUseCaseImpl) bind GenerateProjectReportUseCase::class
+        factoryOf(::CanGenerateReportUseCaseImpl) bind CanGenerateReportUseCase::class
     }
