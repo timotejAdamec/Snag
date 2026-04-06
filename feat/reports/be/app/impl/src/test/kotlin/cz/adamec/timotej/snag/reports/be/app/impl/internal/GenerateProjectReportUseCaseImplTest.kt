@@ -64,6 +64,7 @@ class GenerateProjectReportUseCaseImplTest : BackendKoinInitializedTest() {
 
             assertNotNull(result)
             assertEquals(PROJECT_ID, result.projectId)
+            assertEquals("test-project-report.pdf", result.fileName)
             assertContentEquals(FakePdfReportGenerator.FAKE_PDF_BYTES, result.bytes)
             val lastData = fakeGenerator.lastData
             assertNotNull(lastData)
