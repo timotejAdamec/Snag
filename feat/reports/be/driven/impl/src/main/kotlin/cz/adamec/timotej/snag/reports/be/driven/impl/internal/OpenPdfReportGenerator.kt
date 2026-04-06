@@ -17,7 +17,6 @@ import cz.adamec.timotej.snag.feat.findings.business.FindingType
 import cz.adamec.timotej.snag.feat.structures.be.model.BackendStructure
 import cz.adamec.timotej.snag.reports.be.ports.PdfReportGenerator
 import cz.adamec.timotej.snag.reports.be.ports.ProjectReportData
-import cz.adamec.timotej.snag.reports.business.ReportType
 import org.openpdf.text.Document
 import org.openpdf.text.Element
 import org.openpdf.text.Font
@@ -35,24 +34,17 @@ import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
-@Suppress("TooManyFunctions")
 internal class OpenPdfReportGenerator : PdfReportGenerator {
-    override suspend fun generate(
-        data: ProjectReportData,
-        type: ReportType,
-    ): ByteArray {
+    override suspend fun generate(data: ProjectReportData): ByteArray {
         val outputStream = ByteArrayOutputStream()
         val document = Document(PageSize.A4)
         PdfWriter.getInstance(document, outputStream)
         document.open()
 
-        addCoverPage(document, data, type)
+        addCoverPage(document, data)
         addInspectionsSection(document, data)
-        addStructureSections(document, data, type)
+        addStructureSections(document, data)
         addSummaryPage(document, data)
-        if (type == ReportType.SERVICE_PROTOCOL) {
-            addSignatureSection(document)
-        }
 
         document.close()
         return outputStream.toByteArray()
@@ -61,18 +53,11 @@ internal class OpenPdfReportGenerator : PdfReportGenerator {
     private fun addCoverPage(
         document: Document,
         data: ProjectReportData,
-        type: ReportType,
     ) {
-        val subtitle =
-            when (type) {
-                ReportType.PASSPORT -> "Project report"
-                ReportType.SERVICE_PROTOCOL -> "Service protocol"
-            }
-
         @Suppress("StringShouldBeRawString")
         document.add(Paragraph("\n\n\n"))
         document.add(Paragraph(data.project.name, FONT_TITLE))
-        document.add(Paragraph(subtitle, FONT_SMALL))
+        document.add(Paragraph("Project report", FONT_SMALL))
         document.add(Paragraph("\n"))
 
         val address = data.project.address
@@ -147,7 +132,6 @@ internal class OpenPdfReportGenerator : PdfReportGenerator {
     private fun addStructureSections(
         document: Document,
         data: ProjectReportData,
-        type: ReportType,
     ) {
         data.structures.forEach { structure ->
             document.newPage()
@@ -155,7 +139,6 @@ internal class OpenPdfReportGenerator : PdfReportGenerator {
                 document,
                 structure,
                 data.findingsByStructure[structure] ?: emptyList(),
-                type,
             )
         }
     }
@@ -164,7 +147,6 @@ internal class OpenPdfReportGenerator : PdfReportGenerator {
         document: Document,
         structure: BackendStructure,
         findings: List<BackendFinding>,
-        type: ReportType,
     ) {
         document.add(Paragraph(structure.name, FONT_HEADING))
         document.add(Paragraph("\n"))
@@ -176,12 +158,6 @@ internal class OpenPdfReportGenerator : PdfReportGenerator {
             return
         }
 
-        val descriptionColumnHeader =
-            when (type) {
-                ReportType.PASSPORT -> "Description"
-                ReportType.SERVICE_PROTOCOL -> "Work Performed"
-            }
-
         document.add(Paragraph("\n"))
         document.add(Paragraph("Findings (${findings.size})", FONT_SUBHEADING))
         document.add(Paragraph("\n"))
@@ -192,7 +168,7 @@ internal class OpenPdfReportGenerator : PdfReportGenerator {
 
         addHeaderCell(table, "#")
         addHeaderCell(table, "Name")
-        addHeaderCell(table, descriptionColumnHeader)
+        addHeaderCell(table, "Description")
         addHeaderCell(table, "Type")
 
         findings.forEachIndexed { index, backendFinding ->
@@ -281,46 +257,6 @@ internal class OpenPdfReportGenerator : PdfReportGenerator {
         }
     }
 
-    private fun addSignatureSection(document: Document) {
-        document.newPage()
-        document.add(Paragraph("Signatures", FONT_HEADING))
-        document.add(Paragraph("\n"))
-
-        val table = PdfPTable(SIGNATURE_TABLE_COLUMNS)
-        table.widthPercentage = TABLE_WIDTH_PERCENT
-        table.setWidths(SIGNATURE_TABLE_WIDTHS)
-
-        addHeaderCell(table, "Client")
-        addHeaderCell(table, "Service Worker")
-
-        addSignatureCell(table, "Name:")
-        addSignatureCell(table, "Name:")
-
-        addSignatureBoxCell(table)
-        addSignatureBoxCell(table)
-
-        document.add(table)
-    }
-
-    private fun addSignatureCell(
-        table: PdfPTable,
-        label: String,
-    ) {
-        val cell = PdfPCell(Phrase(label, FONT_NORMAL))
-        cell.setPadding(CELL_PADDING)
-        cell.minimumHeight = SIGNATURE_NAME_HEIGHT
-        cell.borderWidth = SIGNATURE_BORDER_WIDTH
-        table.addCell(cell)
-    }
-
-    private fun addSignatureBoxCell(table: PdfPTable) {
-        val cell = PdfPCell(Phrase("Signature:", FONT_SMALL))
-        cell.setPadding(CELL_PADDING)
-        cell.minimumHeight = SIGNATURE_BOX_HEIGHT
-        cell.borderWidth = SIGNATURE_BORDER_WIDTH
-        table.addCell(cell)
-    }
-
     private fun addHeaderCell(
         table: PdfPTable,
         text: String,
@@ -361,15 +297,10 @@ internal class OpenPdfReportGenerator : PdfReportGenerator {
 
         private val INSPECTIONS_TABLE_WIDTHS = floatArrayOf(2f, 2f, 2f, 2f, 3f)
         private val FINDINGS_TABLE_WIDTHS = floatArrayOf(0.5f, 2f, 3f, 1.5f)
-        private val SIGNATURE_TABLE_WIDTHS = floatArrayOf(1f, 1f)
         private const val TABLE_WIDTH_PERCENT = 100f
         private const val TABLE_COLUMNS_INSPECTIONS = 5
         private const val TABLE_COLUMNS_FINDINGS = 4
-        private const val SIGNATURE_TABLE_COLUMNS = 2
         private const val CELL_PADDING = 5f
         private const val FLOOR_PLAN_MAX_HEIGHT = 400f
-        private const val SIGNATURE_NAME_HEIGHT = 40f
-        private const val SIGNATURE_BOX_HEIGHT = 80f
-        private const val SIGNATURE_BORDER_WIDTH = 1f
     }
 }

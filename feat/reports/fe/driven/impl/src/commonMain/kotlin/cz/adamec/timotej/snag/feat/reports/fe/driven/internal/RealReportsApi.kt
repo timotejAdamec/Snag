@@ -18,7 +18,6 @@ import cz.adamec.timotej.snag.feat.reports.fe.ports.ReportsApi
 import cz.adamec.timotej.snag.network.fe.SnagNetworkHttpClient
 import cz.adamec.timotej.snag.reports.business.Report
 import cz.adamec.timotej.snag.reports.business.ReportData
-import cz.adamec.timotej.snag.reports.business.ReportType
 import io.ktor.client.call.body
 import io.ktor.http.ContentDisposition
 import io.ktor.http.HttpHeaders
@@ -27,15 +26,12 @@ import kotlin.uuid.Uuid
 internal class RealReportsApi(
     private val httpClient: SnagNetworkHttpClient,
 ) : ReportsApi {
-    override suspend fun downloadReport(
-        projectId: Uuid,
-        type: ReportType,
-    ): OnlineDataResult<Report> =
+    override suspend fun downloadReport(projectId: Uuid): OnlineDataResult<Report> =
         safeApiCall(
             logger = LH.logger,
             errorContext = "Error downloading report for project $projectId.",
         ) {
-            val response = httpClient.get("/projects/$projectId/report?type=${type.toQueryParam()}")
+            val response = httpClient.get("/projects/$projectId/report")
             val bytes = response.body<ByteArray>()
             val fileName =
                 response.headers[HttpHeaders.ContentDisposition]

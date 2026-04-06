@@ -12,11 +12,6 @@
 
 package cz.adamec.timotej.snag.reports.be.ports
 
-import cz.adamec.timotej.snag.reports.business.ReportType
-
 interface PdfReportGenerator {
-    suspend fun generate(
-        data: ProjectReportData,
-        type: ReportType,
-    ): ByteArray
+    suspend fun generate(data: ProjectReportData): ByteArray
 }

@@ -14,12 +14,8 @@ package cz.adamec.timotej.snag.feat.reports.fe.ports
 
 import cz.adamec.timotej.snag.core.network.fe.OnlineDataResult
 import cz.adamec.timotej.snag.reports.business.Report
-import cz.adamec.timotej.snag.reports.business.ReportType
 import kotlin.uuid.Uuid
 
 interface ReportsApi {
-    suspend fun downloadReport(
-        projectId: Uuid,
-        type: ReportType,
-    ): OnlineDataResult<Report>
+    suspend fun downloadReport(projectId: Uuid): OnlineDataResult<Report>
 }

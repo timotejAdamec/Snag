@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.users.be.driven.impl.internal
 
+import cz.adamec.timotej.snag.authorization.business.UserRole
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.feat.shared.database.be.UserEntity
 import cz.adamec.timotej.snag.feat.shared.database.be.UsersTable
@@ -34,6 +35,13 @@ internal class RealUsersDb(
     override suspend fun getUser(id: Uuid): BackendUser? =
         transaction(database) {
             UserEntity.findById(id)?.toModel()
+        }
+
+    override suspend fun getUsersByRole(role: UserRole): List<BackendUser> =
+        transaction(database) {
+            UserEntity
+                .find { UsersTable.role eq role.name }
+                .map { it.toModel() }
         }
 
     override suspend fun getUserByAuthProviderId(authProviderId: String): BackendUser? =

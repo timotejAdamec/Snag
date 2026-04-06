@@ -16,7 +16,6 @@ import cz.adamec.timotej.snag.core.network.fe.OnlineDataResult
 import cz.adamec.timotej.snag.feat.reports.fe.app.api.DownloadReportUseCase
 import cz.adamec.timotej.snag.feat.reports.fe.driven.test.FakeReportsApi
 import cz.adamec.timotej.snag.reports.business.Report
-import cz.adamec.timotej.snag.reports.business.ReportType
 import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
 import kotlinx.coroutines.test.runTest
 import org.koin.test.inject
@@ -36,7 +35,7 @@ class DownloadReportUseCaseImplTest : FrontendKoinInitializedTest() {
             val expectedBytes = byteArrayOf(0x25, 0x50, 0x44, 0x46)
             fakeReportsApi.reportBytes = expectedBytes
 
-            val result = useCase(projectId, ReportType.PASSPORT)
+            val result = useCase(projectId)
 
             assertIs<OnlineDataResult.Success<Report>>(result)
             assertTrue(
@@ -51,18 +50,8 @@ class DownloadReportUseCaseImplTest : FrontendKoinInitializedTest() {
             val projectId = Uuid.random()
             fakeReportsApi.forcedFailure = OnlineDataResult.Failure.NetworkUnavailable
 
-            val result = useCase(projectId, ReportType.PASSPORT)
+            val result = useCase(projectId)
 
             assertIs<OnlineDataResult.Failure>(result)
-        }
-
-    @Test
-    fun `passes report type to API`() =
-        runTest(testDispatcher) {
-            val projectId = Uuid.random()
-
-            useCase(projectId, ReportType.SERVICE_PROTOCOL)
-
-            assertTrue(fakeReportsApi.downloadedReportTypes.contains(ReportType.SERVICE_PROTOCOL))
         }
 }

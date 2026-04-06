@@ -147,4 +147,62 @@ class CanEditProjectEntitiesUseCaseImplTest : FrontendKoinInitializedTest() {
 
             assertFalse(result)
         }
+
+    @Test
+    fun `returns true for service lead on open project created by service worker`() =
+        runTest(testDispatcher) {
+            val serviceWorkerId = Uuid.parse("00000000-0000-0000-0005-000000000002")
+            fakeUsersDb.setUser(
+                AppUserData(
+                    id = currentUserId,
+                    authProviderId = "mock-auth-provider-id",
+                    email = "lead@example.com",
+                    role = UserRole.SERVICE_LEAD,
+                    updatedAt = Timestamp(100L),
+                ),
+            )
+            fakeUsersDb.setUser(
+                AppUserData(
+                    id = serviceWorkerId,
+                    authProviderId = "sw-auth-provider-id",
+                    email = "worker@example.com",
+                    role = UserRole.SERVICE_WORKER,
+                    updatedAt = Timestamp(100L),
+                ),
+            )
+            seedProject(isClosed = false, creatorId = serviceWorkerId)
+
+            val result = useCase(projectId).first()
+
+            assertTrue(result)
+        }
+
+    @Test
+    fun `returns false for passport lead on open project created by service worker`() =
+        runTest(testDispatcher) {
+            val serviceWorkerId = Uuid.parse("00000000-0000-0000-0005-000000000002")
+            fakeUsersDb.setUser(
+                AppUserData(
+                    id = currentUserId,
+                    authProviderId = "mock-auth-provider-id",
+                    email = "lead@example.com",
+                    role = UserRole.PASSPORT_LEAD,
+                    updatedAt = Timestamp(100L),
+                ),
+            )
+            fakeUsersDb.setUser(
+                AppUserData(
+                    id = serviceWorkerId,
+                    authProviderId = "sw-auth-provider-id",
+                    email = "worker@example.com",
+                    role = UserRole.SERVICE_WORKER,
+                    updatedAt = Timestamp(100L),
+                ),
+            )
+            seedProject(isClosed = false, creatorId = serviceWorkerId)
+
+            val result = useCase(projectId).first()
+
+            assertFalse(result)
+        }
 }
