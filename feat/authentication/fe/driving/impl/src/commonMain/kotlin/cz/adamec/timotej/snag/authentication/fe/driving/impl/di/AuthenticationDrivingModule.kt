@@ -19,8 +19,8 @@ import cz.adamec.timotej.snag.authentication.fe.driving.impl.internal.Authentica
 import cz.adamec.timotej.snag.authentication.fe.driving.impl.internal.CurrentUserKtorClientConfiguration
 import cz.adamec.timotej.snag.authentication.fe.driving.impl.internal.vm.AuthenticationViewModel
 import cz.adamec.timotej.snag.core.foundation.fe.Initializer
-import cz.adamec.timotej.snag.network.fe.ports.KtorClientConfiguration
 import cz.adamec.timotej.snag.network.fe.ports.AuthStateProvider
+import cz.adamec.timotej.snag.network.fe.ports.KtorClientConfiguration
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.bind

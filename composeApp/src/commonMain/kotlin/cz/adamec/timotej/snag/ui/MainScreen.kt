@@ -59,6 +59,7 @@ internal fun MainScreen(mainViewModel: MainViewModel = koinViewModel()) {
     }
 }
 
+@Suppress("CognitiveComplexMethod")
 @Composable
 private fun MainScreenContent(
     paddingValues: PaddingValues,

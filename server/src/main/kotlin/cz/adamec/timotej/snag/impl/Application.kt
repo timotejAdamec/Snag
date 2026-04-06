@@ -12,9 +12,9 @@
 
 package cz.adamec.timotej.snag.impl
 
-import cz.adamec.timotej.snag.network.be.KtorServerConfiguration
 import cz.adamec.timotej.snag.configuration.be.BackendRunConfig
 import cz.adamec.timotej.snag.impl.di.appModule
+import cz.adamec.timotej.snag.network.be.KtorServerConfiguration
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
 import io.ktor.server.engine.embeddedServer

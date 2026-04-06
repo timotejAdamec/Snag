@@ -21,11 +21,11 @@ which's meaning is obvious.
 
 Use trailing comma.
 
-## New modules
+## `build.gradle.kts` modifications
 
-Try implementing the `build.gradle.kts` just with the convention plugin described in `docs/gradle_plugins.md`
+Try using the `build.gradle.kts` just with the convention plugin described in `docs/gradle_plugins.md`
 without any explicit dependencies. The convention plugin should autowire the necessary dependencies.
-Only add if the autowiring does not wire them.
+Only add if the autowiring does not wire them. More info as `.claude/skills/project-structure`.
 
 ## Changes verification
 

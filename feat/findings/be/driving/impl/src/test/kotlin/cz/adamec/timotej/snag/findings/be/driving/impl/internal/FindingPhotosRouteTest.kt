@@ -13,7 +13,6 @@
 package cz.adamec.timotej.snag.findings.be.driving.impl.internal
 
 import cz.adamec.timotej.snag.authorization.business.UserRole
-import cz.adamec.timotej.snag.network.be.KtorServerConfiguration
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.findings.be.driven.test.seedTestFinding
 import cz.adamec.timotej.snag.findings.be.ports.FindingPhotosDb
@@ -21,6 +20,7 @@ import cz.adamec.timotej.snag.findings.be.ports.FindingsDb
 import cz.adamec.timotej.snag.findings.contract.DeleteFindingPhotoApiDto
 import cz.adamec.timotej.snag.findings.contract.FindingPhotoApiDto
 import cz.adamec.timotej.snag.findings.contract.PutFindingPhotoApiDto
+import cz.adamec.timotej.snag.network.be.KtorServerConfiguration
 import cz.adamec.timotej.snag.network.be.test.jsonClient
 import cz.adamec.timotej.snag.projects.be.driven.test.seedTestProject
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb

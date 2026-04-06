@@ -14,8 +14,8 @@ package cz.adamec.timotej.snag.network.fe.impl.di
 
 import cz.adamec.timotej.snag.core.network.fe.ConnectionStatusProvider
 import cz.adamec.timotej.snag.network.fe.impl.internal.DefaultNetworkErrorClassifier
-import cz.adamec.timotej.snag.network.fe.impl.internal.NetworkErrorClassifier
 import cz.adamec.timotej.snag.network.fe.impl.internal.KonnectionConnectionStatusProvider
+import cz.adamec.timotej.snag.network.fe.impl.internal.NetworkErrorClassifier
 import dev.tmapps.konnection.Konnection
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind

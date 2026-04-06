@@ -40,7 +40,6 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInParent
 import androidx.compose.ui.platform.LocalDensity
@@ -50,7 +49,6 @@ import androidx.compose.ui.unit.dp
 import cz.adamec.timotej.snag.feat.findings.business.FindingTypeKey
 import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
 import cz.adamec.timotej.snag.feat.findings.fe.driving.api.FindingTypePickerDialog
-import cz.adamec.timotej.snag.lib.design.fe.adaptive.LocalIsInContentPane
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.BackNavigationIcon
 import cz.adamec.timotej.snag.lib.design.fe.scenes.LocalSheetPeekHeight
 import cz.adamec.timotej.snag.lib.design.fe.theme.SnagTheme
@@ -149,9 +147,10 @@ private fun LoadedStructureDetailsContent(
                         onClick = onBack,
                     )
                 },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = SnagTheme.surfaceColors.containerColor,
-                )
+                colors =
+                    TopAppBarDefaults.topAppBarColors(
+                        containerColor = SnagTheme.surfaceColors.containerColor,
+                    ),
             )
         },
     ) { paddingValues ->
@@ -244,9 +243,10 @@ private fun LoadedStructureDetailsContent(
                                 toolbarTopPx = it.positionInParent().y.toInt()
                             },
                     expanded = true,
-                    colors = FloatingToolbarDefaults.standardFloatingToolbarColors(
-                        toolbarContainerColor = SnagTheme.surfaceColors.containerColor,
-                    )
+                    colors =
+                        FloatingToolbarDefaults.standardFloatingToolbarColors(
+                            toolbarContainerColor = SnagTheme.surfaceColors.containerColor,
+                        ),
                 ) {
                     IconButton(
                         enabled = state.canEdit,

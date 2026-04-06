@@ -72,10 +72,11 @@ fun CollapsableTopAppBarScaffold(
                 scrollBehavior = scrollBehavior,
                 navigationIcon = topAppBarNavigationIcon,
                 actions = topAppBarActions,
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = SnagTheme.surfaceColors.screenContainerColor,
-                    scrolledContainerColor = SnagTheme.surfaceColors.screenAppBarColor,
-                )
+                colors =
+                    TopAppBarDefaults.topAppBarColors(
+                        containerColor = SnagTheme.surfaceColors.screenContainerColor,
+                        scrolledContainerColor = SnagTheme.surfaceColors.screenAppBarColor,
+                    ),
             )
         },
         containerColor = SnagTheme.surfaceColors.screenContainerColor,
