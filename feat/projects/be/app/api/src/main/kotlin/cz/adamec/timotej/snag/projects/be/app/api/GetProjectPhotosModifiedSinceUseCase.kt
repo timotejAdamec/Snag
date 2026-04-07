@@ -4,7 +4,5 @@ import cz.adamec.timotej.snag.projects.be.app.api.model.GetProjectPhotosModified
 import cz.adamec.timotej.snag.projects.be.model.BackendProjectPhoto
 
 interface GetProjectPhotosModifiedSinceUseCase {
-    suspend operator fun invoke(
-        request: GetProjectPhotosModifiedSinceRequest,
-    ): List<BackendProjectPhoto>
+    suspend operator fun invoke(request: GetProjectPhotosModifiedSinceRequest): List<BackendProjectPhoto>
 }

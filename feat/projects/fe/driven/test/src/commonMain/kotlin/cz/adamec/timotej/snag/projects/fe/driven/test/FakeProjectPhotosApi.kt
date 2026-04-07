@@ -2,10 +2,10 @@ package cz.adamec.timotej.snag.projects.fe.driven.test
 
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.core.network.fe.OnlineDataResult
+import cz.adamec.timotej.snag.network.fe.test.FakeApiOps
 import cz.adamec.timotej.snag.projects.app.model.AppProjectPhoto
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectPhotoSyncResult
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectPhotosApi
-import cz.adamec.timotej.snag.network.fe.test.FakeApiOps
 import kotlin.uuid.Uuid
 
 class FakeProjectPhotosApi : ProjectPhotosApi {
@@ -30,9 +30,7 @@ class FakeProjectPhotosApi : ProjectPhotosApi {
             ops.modifiedSinceResults = value
         }
 
-    override suspend fun savePhoto(
-        photo: AppProjectPhoto,
-    ): OnlineDataResult<AppProjectPhoto?> = ops.saveItem(photo)
+    override suspend fun savePhoto(photo: AppProjectPhoto): OnlineDataResult<AppProjectPhoto?> = ops.saveItem(photo)
 
     override suspend fun deletePhoto(
         id: Uuid,

@@ -25,15 +25,9 @@ internal class NonWebProjectPhotoSyncHandler(
     override val entityTypeId: String = PROJECT_PHOTO_SYNC_ENTITY_TYPE
     override val entityName: String = "project_photo"
 
-    override fun getEntityFlow(
-        entityId: Uuid,
-    ): Flow<OfflineFirstDataResult<AppProjectPhoto?>> =
-        projectPhotosDb.getPhotoFlow(entityId)
+    override fun getEntityFlow(entityId: Uuid): Flow<OfflineFirstDataResult<AppProjectPhoto?>> = projectPhotosDb.getPhotoFlow(entityId)
 
-    override suspend fun saveEntityToDb(
-        entity: AppProjectPhoto,
-    ): OfflineFirstDataResult<Unit> =
-        projectPhotosDb.savePhoto(entity)
+    override suspend fun saveEntityToDb(entity: AppProjectPhoto): OfflineFirstDataResult<Unit> = projectPhotosDb.savePhoto(entity)
 
     override suspend fun deleteEntityFromApi(
         entityId: Uuid,
@@ -47,9 +41,7 @@ internal class NonWebProjectPhotoSyncHandler(
         )
 
     @Suppress("ReturnCount")
-    override suspend fun saveEntityToApi(
-        entity: AppProjectPhoto,
-    ): OnlineDataResult<AppProjectPhoto?> {
+    override suspend fun saveEntityToApi(entity: AppProjectPhoto): OnlineDataResult<AppProjectPhoto?> {
         if (entity.url.startsWith("http")) {
             return projectPhotosApi.savePhoto(entity)
         }

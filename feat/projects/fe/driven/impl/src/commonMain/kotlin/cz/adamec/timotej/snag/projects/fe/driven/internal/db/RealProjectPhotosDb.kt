@@ -6,10 +6,10 @@ import app.cash.sqldelight.coroutines.mapToOneOrNull
 import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.ProjectPhotoEntity
 import cz.adamec.timotej.snag.feat.shared.database.fe.db.ProjectPhotoEntityQueries
+import cz.adamec.timotej.snag.lib.database.fe.safeDbWrite
 import cz.adamec.timotej.snag.projects.app.model.AppProjectPhoto
 import cz.adamec.timotej.snag.projects.fe.driven.internal.LH
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectPhotosDb
-import cz.adamec.timotej.snag.lib.database.fe.safeDbWrite
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -20,9 +20,7 @@ internal class RealProjectPhotosDb(
     private val projectPhotoEntityQueries: ProjectPhotoEntityQueries,
     private val ioDispatcher: CoroutineDispatcher,
 ) : ProjectPhotosDb {
-    override fun getPhotosFlow(
-        projectId: Uuid,
-    ): Flow<OfflineFirstDataResult<List<AppProjectPhoto>>> =
+    override fun getPhotosFlow(projectId: Uuid): Flow<OfflineFirstDataResult<List<AppProjectPhoto>>> =
         projectPhotoEntityQueries
             .selectByProjectId(projectId.toString())
             .asFlow()

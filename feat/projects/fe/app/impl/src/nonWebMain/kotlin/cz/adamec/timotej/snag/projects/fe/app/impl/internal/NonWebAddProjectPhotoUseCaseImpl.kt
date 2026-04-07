@@ -25,9 +25,7 @@ internal class NonWebAddProjectPhotoUseCaseImpl(
     private val uuidProvider: UuidProvider,
 ) : NonWebAddProjectPhotoUseCase {
     @Suppress("TooGenericExceptionCaught")
-    override suspend operator fun invoke(
-        request: AddProjectPhotoRequest,
-    ): OfflineFirstDataResult<Uuid> {
+    override suspend operator fun invoke(request: AddProjectPhotoRequest): OfflineFirstDataResult<Uuid> {
         val photoId = uuidProvider.getUuid()
         val extension =
             request.fileName.substringAfterLast(

@@ -19,8 +19,11 @@ import cz.adamec.timotej.snag.feat.structures.app.model.AppStructure
 import cz.adamec.timotej.snag.feat.structures.app.model.AppStructureData
 import cz.adamec.timotej.snag.projects.app.model.AppProject
 import cz.adamec.timotej.snag.projects.app.model.AppProjectData
+import cz.adamec.timotej.snag.projects.app.model.AppProjectPhoto
+import cz.adamec.timotej.snag.projects.app.model.AppProjectPhotoData
 import cz.adamec.timotej.snag.projects.fe.app.api.DeleteProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.sync.PROJECT_SYNC_ENTITY_TYPE
+import cz.adamec.timotej.snag.projects.fe.driven.test.FakeProjectPhotosDb
 import cz.adamec.timotej.snag.projects.fe.driven.test.FakeProjectsDb
 import cz.adamec.timotej.snag.structures.fe.driven.test.FakeStructuresDb
 import cz.adamec.timotej.snag.sync.fe.driven.test.FakeSyncQueue
@@ -40,11 +43,13 @@ class DeleteProjectUseCaseImplTest : FrontendKoinInitializedTest() {
     private val fakeProjectsDb: FakeProjectsDb by inject()
     private val fakeSyncQueue: FakeSyncQueue by inject()
     private val fakeStructuresDb: FakeStructuresDb by inject()
+    private val fakeProjectPhotosDb: FakeProjectPhotosDb by inject()
 
     private val useCase: DeleteProjectUseCase by inject()
 
     private val projectId = Uuid.parse("00000000-0000-0000-0000-000000000001")
     private val structureId = Uuid.parse("00000000-0000-0000-0001-000000000001")
+    private val photoId = Uuid.parse("00000000-0000-0000-0002-000000000001")
 
     private fun createProject(id: Uuid) =
         AppProjectData(
@@ -110,5 +115,28 @@ class DeleteProjectUseCaseImplTest : FrontendKoinInitializedTest() {
             useCase(projectId)
 
             assertTrue(fakeSyncQueue.getAllPending().isEmpty())
+        }
+
+    @Test
+    fun `deletes project and cascade deletes project photos`() =
+        runTest(testDispatcher) {
+            val project = createProject(projectId)
+            fakeProjectsDb.setProject(project)
+
+            val photo =
+                AppProjectPhotoData(
+                    id = photoId,
+                    projectId = projectId,
+                    url = "https://example.com/photo.jpg",
+                    description = "Photo",
+                    updatedAt = Timestamp(1L),
+                )
+            fakeProjectPhotosDb.setPhoto(photo)
+
+            useCase(projectId)
+
+            val photosResult = fakeProjectPhotosDb.getPhotosFlow(projectId).first()
+            assertIs<OfflineFirstDataResult.Success<List<AppProjectPhoto>>>(photosResult)
+            assertTrue(photosResult.data.isEmpty())
         }
 }

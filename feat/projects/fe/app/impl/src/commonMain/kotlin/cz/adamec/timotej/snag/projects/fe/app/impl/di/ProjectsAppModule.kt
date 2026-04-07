@@ -49,8 +49,8 @@ import cz.adamec.timotej.snag.projects.fe.app.impl.internal.CascadeRestoreLocalP
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.DeleteProjectPhotoUseCaseImpl
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.DeleteProjectUseCaseImpl
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.GetProjectAssignmentsUseCaseImpl
-import cz.adamec.timotej.snag.projects.fe.app.impl.internal.GetProjectUseCaseImpl
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.GetProjectPhotosUseCaseImpl
+import cz.adamec.timotej.snag.projects.fe.app.impl.internal.GetProjectUseCaseImpl
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.GetProjectsUseCaseImpl
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.IsClientReferencedByProjectUseCaseImpl
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.RemoveUserFromProjectUseCaseImpl

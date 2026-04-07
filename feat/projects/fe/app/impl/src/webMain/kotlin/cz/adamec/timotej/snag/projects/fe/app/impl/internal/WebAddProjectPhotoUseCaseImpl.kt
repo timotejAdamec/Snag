@@ -22,9 +22,7 @@ internal class WebAddProjectPhotoUseCaseImpl(
     private val timestampProvider: TimestampProvider,
     private val uuidProvider: UuidProvider,
 ) : WebAddProjectPhotoUseCase {
-    override suspend operator fun invoke(
-        request: AddProjectPhotoRequest,
-    ): OnlineDataResult<Uuid> {
+    override suspend operator fun invoke(request: AddProjectPhotoRequest): OnlineDataResult<Uuid> {
         val photoId = uuidProvider.getUuid()
         val extension =
             request.fileName.substringAfterLast(

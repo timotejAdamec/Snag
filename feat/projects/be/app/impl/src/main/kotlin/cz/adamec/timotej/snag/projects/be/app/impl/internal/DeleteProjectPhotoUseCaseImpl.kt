@@ -9,9 +9,7 @@ import cz.adamec.timotej.snag.projects.be.ports.ProjectPhotosDb
 internal class DeleteProjectPhotoUseCaseImpl(
     private val projectPhotosDb: ProjectPhotosDb,
 ) : DeleteProjectPhotoUseCase {
-    override suspend operator fun invoke(
-        request: DeleteProjectPhotoRequest,
-    ): BackendProjectPhoto? {
+    override suspend operator fun invoke(request: DeleteProjectPhotoRequest): BackendProjectPhoto? {
         logger.debug("Deleting project photo {}.", request.photoId)
         val rejected =
             projectPhotosDb.deletePhoto(

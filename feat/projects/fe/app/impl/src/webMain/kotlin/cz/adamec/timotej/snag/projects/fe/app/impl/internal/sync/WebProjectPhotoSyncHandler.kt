@@ -20,15 +20,9 @@ internal class WebProjectPhotoSyncHandler(
     override val entityTypeId: String = PROJECT_PHOTO_SYNC_ENTITY_TYPE
     override val entityName: String = "project_photo"
 
-    override fun getEntityFlow(
-        entityId: Uuid,
-    ): Flow<OfflineFirstDataResult<AppProjectPhoto?>> =
-        projectPhotosDb.getPhotoFlow(entityId)
+    override fun getEntityFlow(entityId: Uuid): Flow<OfflineFirstDataResult<AppProjectPhoto?>> = projectPhotosDb.getPhotoFlow(entityId)
 
-    override suspend fun saveEntityToDb(
-        entity: AppProjectPhoto,
-    ): OfflineFirstDataResult<Unit> =
-        projectPhotosDb.savePhoto(entity)
+    override suspend fun saveEntityToDb(entity: AppProjectPhoto): OfflineFirstDataResult<Unit> = projectPhotosDb.savePhoto(entity)
 
     override suspend fun deleteEntityFromApi(
         entityId: Uuid,
@@ -41,8 +35,5 @@ internal class WebProjectPhotoSyncHandler(
             deletedAt = deletedAt,
         )
 
-    override suspend fun saveEntityToApi(
-        entity: AppProjectPhoto,
-    ): OnlineDataResult<AppProjectPhoto?> =
-        projectPhotosApi.savePhoto(entity)
+    override suspend fun saveEntityToApi(entity: AppProjectPhoto): OnlineDataResult<AppProjectPhoto?> = projectPhotosApi.savePhoto(entity)
 }

@@ -8,9 +8,7 @@ import cz.adamec.timotej.snag.projects.be.ports.ProjectPhotosDb
 internal class GetProjectPhotosModifiedSinceUseCaseImpl(
     private val projectPhotosDb: ProjectPhotosDb,
 ) : GetProjectPhotosModifiedSinceUseCase {
-    override suspend operator fun invoke(
-        request: GetProjectPhotosModifiedSinceRequest,
-    ): List<BackendProjectPhoto> =
+    override suspend operator fun invoke(request: GetProjectPhotosModifiedSinceRequest): List<BackendProjectPhoto> =
         projectPhotosDb.getPhotosModifiedSince(
             projectId = request.projectId,
             since = request.since,

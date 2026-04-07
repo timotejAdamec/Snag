@@ -18,9 +18,7 @@ internal class GetProjectPhotosUseCaseImpl(
     private val projectPhotosDb: ProjectPhotosDb,
     private val applicationScope: ApplicationScope,
 ) : GetProjectPhotosUseCase {
-    override operator fun invoke(
-        projectId: Uuid,
-    ): Flow<OfflineFirstDataResult<List<AppProjectPhoto>>> {
+    override operator fun invoke(projectId: Uuid): Flow<OfflineFirstDataResult<List<AppProjectPhoto>>> {
         applicationScope.launch {
             executePullSyncUseCase(
                 ExecutePullSyncRequest(
