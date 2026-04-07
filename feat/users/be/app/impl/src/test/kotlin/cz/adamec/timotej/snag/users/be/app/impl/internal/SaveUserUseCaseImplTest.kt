@@ -36,7 +36,7 @@ class SaveUserUseCaseImplTest : BackendKoinInitializedTest() {
             val user =
                 BackendUserData(
                     id = userId,
-                    authProviderId = "entra-1",
+                    authProviderId = "auth-provider-user-1",
                     email = "user@example.com",
                     role = UserRole.ADMINISTRATOR,
                     updatedAt = Timestamp(100L),
@@ -54,7 +54,7 @@ class SaveUserUseCaseImplTest : BackendKoinInitializedTest() {
             val user =
                 BackendUserData(
                     id = userId,
-                    authProviderId = "entra-1",
+                    authProviderId = "auth-provider-user-1",
                     email = "user@example.com",
                     role = UserRole.ADMINISTRATOR,
                     updatedAt = Timestamp(100L),
@@ -64,7 +64,7 @@ class SaveUserUseCaseImplTest : BackendKoinInitializedTest() {
             val updatedUser =
                 BackendUserData(
                     id = userId,
-                    authProviderId = "entra-1",
+                    authProviderId = "auth-provider-user-1",
                     email = "updated@example.com",
                     role = UserRole.PASSPORT_LEAD,
                     updatedAt = Timestamp(200L),
@@ -82,7 +82,7 @@ class SaveUserUseCaseImplTest : BackendKoinInitializedTest() {
             val user =
                 BackendUserData(
                     id = userId,
-                    authProviderId = "entra-1",
+                    authProviderId = "auth-provider-user-1",
                     email = "user@example.com",
                     role = null,
                     updatedAt = Timestamp(100L),
@@ -100,7 +100,7 @@ class SaveUserUseCaseImplTest : BackendKoinInitializedTest() {
             val user =
                 BackendUserData(
                     id = userId,
-                    authProviderId = "entra-1",
+                    authProviderId = "auth-provider-user-1",
                     email = "user@example.com",
                     role = UserRole.SERVICE_WORKER,
                     updatedAt = Timestamp(100L),

@@ -14,8 +14,8 @@ package cz.adamec.timotej.snag.feat.inspections.fe.driving.impl.internal.vm
 
 internal fun InspectionEditVmState.toUiState(): InspectionEditUiState =
     InspectionEditUiState(
-        startedAt = startedAt,
-        endedAt = endedAt,
+        dateFrom = dateFrom,
+        dateTo = dateTo,
         participants = participants,
         climate = climate,
         note = note,

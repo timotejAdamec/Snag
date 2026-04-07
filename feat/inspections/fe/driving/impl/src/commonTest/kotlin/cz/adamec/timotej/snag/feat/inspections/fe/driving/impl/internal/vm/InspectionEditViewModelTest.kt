@@ -64,8 +64,8 @@ class InspectionEditViewModelTest : FrontendKoinInitializedTest() {
             val projectId = UuidProvider.getUuid()
             val viewModel = createViewModel(inspectionId = null, projectId = projectId)
 
-            assertEquals(null, viewModel.state.value.startedAt)
-            assertEquals(null, viewModel.state.value.endedAt)
+            assertEquals(null, viewModel.state.value.dateFrom)
+            assertEquals(null, viewModel.state.value.dateTo)
             assertEquals("", viewModel.state.value.participants)
             assertEquals("", viewModel.state.value.climate)
             assertEquals("", viewModel.state.value.note)
@@ -80,8 +80,8 @@ class InspectionEditViewModelTest : FrontendKoinInitializedTest() {
                 AppInspectionData(
                     id = inspectionId,
                     projectId = projectId,
-                    startedAt = Timestamp(100L),
-                    endedAt = Timestamp(200L),
+                    dateFrom = Timestamp(100L),
+                    dateTo = Timestamp(200L),
                     participants = "John Doe",
                     climate = "Sunny",
                     note = "Test note",
@@ -93,8 +93,8 @@ class InspectionEditViewModelTest : FrontendKoinInitializedTest() {
 
             advanceUntilIdle()
 
-            assertEquals(Timestamp(100L), viewModel.state.value.startedAt)
-            assertEquals(Timestamp(200L), viewModel.state.value.endedAt)
+            assertEquals(Timestamp(100L), viewModel.state.value.dateFrom)
+            assertEquals(Timestamp(200L), viewModel.state.value.dateTo)
             assertEquals("John Doe", viewModel.state.value.participants)
             assertEquals("Sunny", viewModel.state.value.climate)
             assertEquals("Test note", viewModel.state.value.note)
@@ -134,25 +134,25 @@ class InspectionEditViewModelTest : FrontendKoinInitializedTest() {
         }
 
     @Test
-    fun `onStartedAtChange updates state`() =
+    fun `onDateFromChange updates state`() =
         runTest(testDispatcher) {
             val projectId = UuidProvider.getUuid()
             val viewModel = createViewModel(projectId = projectId)
 
-            viewModel.onStartedAtChange(Timestamp(12_345L))
+            viewModel.onDateFromChange(Timestamp(12_345L))
 
-            assertEquals(Timestamp(12_345L), viewModel.state.value.startedAt)
+            assertEquals(Timestamp(12_345L), viewModel.state.value.dateFrom)
         }
 
     @Test
-    fun `onEndedAtChange updates state`() =
+    fun `onDateToChange updates state`() =
         runTest(testDispatcher) {
             val projectId = UuidProvider.getUuid()
             val viewModel = createViewModel(projectId = projectId)
 
-            viewModel.onEndedAtChange(Timestamp(67_890L))
+            viewModel.onDateToChange(Timestamp(67_890L))
 
-            assertEquals(Timestamp(67_890L), viewModel.state.value.endedAt)
+            assertEquals(Timestamp(67_890L), viewModel.state.value.dateTo)
         }
 
     @Test
@@ -185,8 +185,8 @@ class InspectionEditViewModelTest : FrontendKoinInitializedTest() {
                 AppInspectionData(
                     id = inspectionId,
                     projectId = projectId,
-                    startedAt = null,
-                    endedAt = null,
+                    dateFrom = null,
+                    dateTo = null,
                     participants = "Original",
                     climate = null,
                     note = null,
@@ -243,8 +243,8 @@ class InspectionEditViewModelTest : FrontendKoinInitializedTest() {
                 AppInspectionData(
                     id = inspectionId,
                     projectId = projectId,
-                    startedAt = null,
-                    endedAt = null,
+                    dateFrom = null,
+                    dateTo = null,
                     participants = "John Doe",
                     climate = null,
                     note = null,

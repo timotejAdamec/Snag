@@ -8,9 +8,9 @@ interface Inspection {
 
     val projectId: Uuid
 
-    val startedAt: Timestamp?
+    val dateFrom: Timestamp?
 
-    val endedAt: Timestamp?
+    val dateTo: Timestamp?
 
     val participants: String?
 

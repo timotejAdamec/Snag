@@ -65,8 +65,8 @@ internal class RealInspectionsDb(
                 is SaveConflictResult.Proceed -> {
                     if (existing != null) {
                         existing.project = ProjectEntity[backendInspection.projectId]
-                        existing.startedAt = backendInspection.startedAt?.value
-                        existing.endedAt = backendInspection.endedAt?.value
+                        existing.dateFrom = backendInspection.dateFrom?.value
+                        existing.dateTo = backendInspection.dateTo?.value
                         existing.participants = backendInspection.participants
                         existing.climate = backendInspection.climate
                         existing.note = backendInspection.note
@@ -75,8 +75,8 @@ internal class RealInspectionsDb(
                     } else {
                         InspectionEntity.new(backendInspection.id) {
                             project = ProjectEntity[backendInspection.projectId]
-                            startedAt = backendInspection.startedAt?.value
-                            endedAt = backendInspection.endedAt?.value
+                            dateFrom = backendInspection.dateFrom?.value
+                            dateTo = backendInspection.dateTo?.value
                             participants = backendInspection.participants
                             climate = backendInspection.climate
                             note = backendInspection.note

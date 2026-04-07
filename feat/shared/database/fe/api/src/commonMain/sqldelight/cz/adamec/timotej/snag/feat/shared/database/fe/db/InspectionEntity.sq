@@ -3,8 +3,8 @@ import cz.adamec.timotej.snag.core.foundation.common.Timestamp;
 CREATE TABLE IF NOT EXISTS InspectionEntity (
     id TEXT NOT NULL PRIMARY KEY,
     projectId TEXT NOT NULL,
-    startedAt INTEGER,
-    endedAt INTEGER,
+    dateFrom INTEGER,
+    dateTo INTEGER,
     participants TEXT,
     climate TEXT,
     note TEXT,
@@ -12,12 +12,12 @@ CREATE TABLE IF NOT EXISTS InspectionEntity (
 );
 
 save:
-INSERT INTO InspectionEntity(id, projectId, startedAt, endedAt, participants, climate, note, updatedAt)
+INSERT INTO InspectionEntity(id, projectId, dateFrom, dateTo, participants, climate, note, updatedAt)
 VALUES ?
 ON CONFLICT(id) DO UPDATE SET
     projectId = excluded.projectId,
-    startedAt = excluded.startedAt,
-    endedAt = excluded.endedAt,
+    dateFrom = excluded.dateFrom,
+    dateTo = excluded.dateTo,
     participants = excluded.participants,
     climate = excluded.climate,
     note = excluded.note,

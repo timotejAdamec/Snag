@@ -39,7 +39,7 @@ internal class CurrentUserConfiguration(
                 logger.info("Installing mock header authentication.")
                 mockHeader(getUserUseCase = getUserUseCase)
             } else {
-                logger.info("Installing JWT authentication with EntraID.")
+                logger.info("Installing JWT authentication with auth provider.")
                 installJwtProvider()
             }
         }

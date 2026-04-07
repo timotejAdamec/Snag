@@ -45,7 +45,7 @@ class CanAccessProjectUseCaseImplTest : BackendKoinInitializedTest() {
             usersDb.saveUser(
                 BackendUserData(
                     id = serviceLeadId,
-                    authProviderId = "sl-entra",
+                    authProviderId = "auth-provider-sl",
                     email = "sl@example.com",
                     role = UserRole.SERVICE_LEAD,
                     updatedAt = Timestamp(1L),
@@ -54,7 +54,7 @@ class CanAccessProjectUseCaseImplTest : BackendKoinInitializedTest() {
             usersDb.saveUser(
                 BackendUserData(
                     id = serviceWorkerId,
-                    authProviderId = "sw-entra",
+                    authProviderId = "auth-provider-sw",
                     email = "sw@example.com",
                     role = UserRole.SERVICE_WORKER,
                     updatedAt = Timestamp(1L),
@@ -87,7 +87,7 @@ class CanAccessProjectUseCaseImplTest : BackendKoinInitializedTest() {
             usersDb.saveUser(
                 BackendUserData(
                     id = serviceLeadId,
-                    authProviderId = "sl-entra",
+                    authProviderId = "auth-provider-sl",
                     email = "sl@example.com",
                     role = UserRole.SERVICE_LEAD,
                     updatedAt = Timestamp(1L),
@@ -96,7 +96,7 @@ class CanAccessProjectUseCaseImplTest : BackendKoinInitializedTest() {
             usersDb.saveUser(
                 BackendUserData(
                     id = passportLeadId,
-                    authProviderId = "pl-entra",
+                    authProviderId = "auth-provider-pl",
                     email = "pl@example.com",
                     role = UserRole.PASSPORT_LEAD,
                     updatedAt = Timestamp(1L),
@@ -157,7 +157,7 @@ class CanAccessProjectUseCaseImplTest : BackendKoinInitializedTest() {
             usersDb.saveUser(
                 BackendUserData(
                     id = passportLeadId,
-                    authProviderId = "pl-entra",
+                    authProviderId = "auth-provider-pl",
                     email = "pl@example.com",
                     role = UserRole.PASSPORT_LEAD,
                     updatedAt = Timestamp(1L),
@@ -190,7 +190,7 @@ class CanAccessProjectUseCaseImplTest : BackendKoinInitializedTest() {
             usersDb.saveUser(
                 BackendUserData(
                     id = technicianId,
-                    authProviderId = "pt-entra",
+                    authProviderId = "auth-provider-pt",
                     email = "pt@example.com",
                     role = UserRole.PASSPORT_TECHNICIAN,
                     updatedAt = Timestamp(1L),
@@ -199,7 +199,7 @@ class CanAccessProjectUseCaseImplTest : BackendKoinInitializedTest() {
             usersDb.saveUser(
                 BackendUserData(
                     id = creatorId,
-                    authProviderId = "creator-entra",
+                    authProviderId = "auth-provider-creator",
                     email = "creator@example.com",
                     role = UserRole.PASSPORT_LEAD,
                     updatedAt = Timestamp(1L),

@@ -85,7 +85,7 @@ class InspectionsRouteTest : BackendKoinInitializedTest() {
             usersDb.saveUser(
                 BackendUserData(
                     id = TECH_USER_ID,
-                    authProviderId = "tech-entra",
+                    authProviderId = "auth-provider-tech",
                     email = "tech@example.com",
                     role = UserRole.PASSPORT_TECHNICIAN,
                     updatedAt = Timestamp(1L),
@@ -113,7 +113,7 @@ class InspectionsRouteTest : BackendKoinInitializedTest() {
             inspectionsDb.seedTestInspection(
                 id = TEST_ID_1,
                 projectId = PROJECT_ID,
-                startedAt = Timestamp(50L),
+                dateFrom = Timestamp(50L),
                 participants = "John Doe",
                 updatedAt = Timestamp(100L),
             )
@@ -179,7 +179,7 @@ class InspectionsRouteTest : BackendKoinInitializedTest() {
             inspectionsDb.seedTestInspection(
                 id = TEST_ID_1,
                 projectId = PROJECT_ID,
-                startedAt = Timestamp(50L),
+                dateFrom = Timestamp(50L),
                 participants = "John Doe",
                 updatedAt = Timestamp(100L),
             )

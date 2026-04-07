@@ -126,16 +126,16 @@ internal class OpenPdfReportGenerator : PdfReportGenerator {
         table.widthPercentage = TABLE_WIDTH_PERCENT
         table.setWidths(INSPECTIONS_TABLE_WIDTHS)
 
-        addHeaderCell(table, "Started")
-        addHeaderCell(table, "Ended")
+        addHeaderCell(table, "Date from")
+        addHeaderCell(table, "Date to")
         addHeaderCell(table, "Participants")
         addHeaderCell(table, "Climate")
         addHeaderCell(table, "Note")
 
         data.inspections.forEach { inspection ->
             val i = inspection
-            table.addCell(createCell(i.startedAt?.let { formatTimestamp(it.value) } ?: "-"))
-            table.addCell(createCell(i.endedAt?.let { formatTimestamp(it.value) } ?: "-"))
+            table.addCell(createCell(i.dateFrom?.let { formatTimestamp(it.value) } ?: "-"))
+            table.addCell(createCell(i.dateTo?.let { formatTimestamp(it.value) } ?: "-"))
             table.addCell(createCell(i.participants ?: "-"))
             table.addCell(createCell(i.climate ?: "-"))
             table.addCell(createCell(i.note ?: "-"))

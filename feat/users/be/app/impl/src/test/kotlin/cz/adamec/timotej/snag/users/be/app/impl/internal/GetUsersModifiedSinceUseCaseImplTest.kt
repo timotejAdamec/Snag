@@ -34,7 +34,7 @@ class GetUsersModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
             dataSource.saveUser(
                 BackendUserData(
                     id = Uuid.parse("00000000-0000-0000-0000-000000000001"),
-                    authProviderId = "entra-1",
+                    authProviderId = "auth-provider-user-1",
                     email = "user@example.com",
                     updatedAt = Timestamp(100L),
                 ),
@@ -51,14 +51,14 @@ class GetUsersModifiedSinceUseCaseImplTest : BackendKoinInitializedTest() {
             val oldUser =
                 BackendUserData(
                     id = Uuid.parse("00000000-0000-0000-0000-000000000001"),
-                    authProviderId = "entra-1",
+                    authProviderId = "auth-provider-user-1",
                     email = "old@example.com",
                     updatedAt = Timestamp(100L),
                 )
             val newUser =
                 BackendUserData(
                     id = Uuid.parse("00000000-0000-0000-0000-000000000002"),
-                    authProviderId = "entra-2",
+                    authProviderId = "auth-provider-user-2",
                     email = "new@example.com",
                     role = UserRole.ADMINISTRATOR,
                     updatedAt = Timestamp(300L),

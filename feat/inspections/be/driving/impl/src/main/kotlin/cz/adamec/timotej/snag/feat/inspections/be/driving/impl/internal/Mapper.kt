@@ -22,8 +22,8 @@ internal fun BackendInspection.toDto() =
     InspectionApiDto(
         id = id,
         projectId = projectId,
-        startedAt = startedAt,
-        endedAt = endedAt,
+        dateFrom = dateFrom,
+        dateTo = dateTo,
         participants = participants,
         climate = climate,
         note = note,
@@ -35,8 +35,8 @@ internal fun PutInspectionApiDto.toModel(id: Uuid) =
     BackendInspectionData(
         id = id,
         projectId = projectId,
-        startedAt = startedAt,
-        endedAt = endedAt,
+        dateFrom = dateFrom,
+        dateTo = dateTo,
         participants = participants,
         climate = climate,
         note = note,

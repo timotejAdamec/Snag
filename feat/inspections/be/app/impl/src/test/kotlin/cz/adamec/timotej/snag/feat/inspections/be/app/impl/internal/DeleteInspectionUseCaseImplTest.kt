@@ -43,8 +43,8 @@ class DeleteInspectionUseCaseImplTest : BackendKoinInitializedTest() {
         BackendInspectionData(
             id = inspectionId,
             projectId = projectId,
-            startedAt = null,
-            endedAt = null,
+            dateFrom = null,
+            dateTo = null,
             participants = null,
             climate = null,
             note = null,

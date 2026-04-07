@@ -15,8 +15,8 @@ package cz.adamec.timotej.snag.feat.inspections.fe.driving.impl.internal.vm
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 
 internal data class InspectionEditUiState(
-    val startedAt: Timestamp? = null,
-    val endedAt: Timestamp? = null,
+    val dateFrom: Timestamp? = null,
+    val dateTo: Timestamp? = null,
     val participants: String = "",
     val climate: String = "",
     val note: String = "",

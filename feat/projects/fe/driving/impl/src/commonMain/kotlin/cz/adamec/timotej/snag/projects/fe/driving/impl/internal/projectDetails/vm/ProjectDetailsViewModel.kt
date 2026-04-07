@@ -355,8 +355,8 @@ internal abstract class ProjectDetailsViewModel(
                         SaveInspectionRequest(
                             id = insp.id,
                             projectId = insp.projectId,
-                            startedAt = timestampProvider.getNowTimestamp(),
-                            endedAt = insp.endedAt,
+                            dateFrom = timestampProvider.getNowTimestamp(),
+                            dateTo = insp.dateTo,
                             participants = insp.participants,
                             climate = insp.climate,
                             note = insp.note,
@@ -374,8 +374,8 @@ internal abstract class ProjectDetailsViewModel(
                         SaveInspectionRequest(
                             id = insp.id,
                             projectId = insp.projectId,
-                            startedAt = insp.startedAt,
-                            endedAt = timestampProvider.getNowTimestamp(),
+                            dateFrom = insp.dateFrom,
+                            dateTo = timestampProvider.getNowTimestamp(),
                             participants = insp.participants,
                             climate = insp.climate,
                             note = insp.note,

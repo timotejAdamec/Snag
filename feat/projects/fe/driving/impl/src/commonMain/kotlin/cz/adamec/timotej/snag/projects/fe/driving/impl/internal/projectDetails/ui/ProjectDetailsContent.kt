@@ -170,7 +170,7 @@ internal fun ProjectDetailsContent(
     }
 }
 
-@Suppress("LongMethod", "CognitiveComplexMethod")
+@Suppress("LongMethod", "CognitiveComplexMethod", "CyclomaticComplexMethod")
 @Composable
 private fun LoadedProjectDetailsContent(
     state: ProjectDetailsUiState,

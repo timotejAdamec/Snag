@@ -19,8 +19,8 @@ import kotlin.uuid.Uuid
 @Serializable
 data class PutInspectionApiDto(
     val projectId: Uuid,
-    val startedAt: Timestamp?,
-    val endedAt: Timestamp?,
+    val dateFrom: Timestamp?,
+    val dateTo: Timestamp?,
     val participants: String?,
     val climate: String?,
     val note: String?,

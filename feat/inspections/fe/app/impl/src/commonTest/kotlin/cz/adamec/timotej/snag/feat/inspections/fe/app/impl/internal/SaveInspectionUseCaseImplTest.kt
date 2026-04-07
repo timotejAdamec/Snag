@@ -47,8 +47,8 @@ class SaveInspectionUseCaseImplTest : FrontendKoinInitializedTest() {
                 SaveInspectionRequest(
                     id = null,
                     projectId = projectId,
-                    startedAt = Timestamp(100L),
-                    endedAt = null,
+                    dateFrom = Timestamp(100L),
+                    dateTo = null,
                     participants = "John Doe",
                     climate = "Sunny",
                     note = null,
@@ -71,8 +71,8 @@ class SaveInspectionUseCaseImplTest : FrontendKoinInitializedTest() {
                 SaveInspectionRequest(
                     id = null,
                     projectId = projectId,
-                    startedAt = Timestamp(100L),
-                    endedAt = Timestamp(200L),
+                    dateFrom = Timestamp(100L),
+                    dateTo = Timestamp(200L),
                     participants = "Jane Doe",
                     climate = "Rainy",
                     note = "Test note",
@@ -83,8 +83,8 @@ class SaveInspectionUseCaseImplTest : FrontendKoinInitializedTest() {
             assertIs<OfflineFirstDataResult.Success<Uuid>>(result)
             val saved = getSavedInspection(result.data)
             assertEquals(projectId, saved.projectId)
-            assertEquals(Timestamp(100L), saved.startedAt)
-            assertEquals(Timestamp(200L), saved.endedAt)
+            assertEquals(Timestamp(100L), saved.dateFrom)
+            assertEquals(Timestamp(200L), saved.dateTo)
             assertEquals("Jane Doe", saved.participants)
             assertEquals("Rainy", saved.climate)
             assertEquals("Test note", saved.note)
@@ -98,8 +98,8 @@ class SaveInspectionUseCaseImplTest : FrontendKoinInitializedTest() {
                 SaveInspectionRequest(
                     id = id,
                     projectId = projectId,
-                    startedAt = null,
-                    endedAt = null,
+                    dateFrom = null,
+                    dateTo = null,
                     participants = null,
                     climate = null,
                     note = null,
@@ -118,8 +118,8 @@ class SaveInspectionUseCaseImplTest : FrontendKoinInitializedTest() {
                 SaveInspectionRequest(
                     id = null,
                     projectId = projectId,
-                    startedAt = null,
-                    endedAt = null,
+                    dateFrom = null,
+                    dateTo = null,
                     participants = null,
                     climate = null,
                     note = null,
@@ -141,8 +141,8 @@ class SaveInspectionUseCaseImplTest : FrontendKoinInitializedTest() {
                 SaveInspectionRequest(
                     id = null,
                     projectId = projectId,
-                    startedAt = null,
-                    endedAt = null,
+                    dateFrom = null,
+                    dateTo = null,
                     participants = null,
                     climate = null,
                     note = null,
@@ -163,8 +163,8 @@ class SaveInspectionUseCaseImplTest : FrontendKoinInitializedTest() {
                 SaveInspectionRequest(
                     id = null,
                     projectId = projectId,
-                    startedAt = null,
-                    endedAt = null,
+                    dateFrom = null,
+                    dateTo = null,
                     participants = null,
                     climate = null,
                     note = null,

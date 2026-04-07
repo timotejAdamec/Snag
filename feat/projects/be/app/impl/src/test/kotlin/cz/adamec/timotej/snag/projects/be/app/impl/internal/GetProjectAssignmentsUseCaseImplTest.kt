@@ -51,7 +51,7 @@ class GetProjectAssignmentsUseCaseImplTest : BackendKoinInitializedTest() {
             val user1 =
                 BackendUserData(
                     id = Uuid.parse("00000000-0000-0000-0000-000000000010"),
-                    authProviderId = "entra-1",
+                    authProviderId = "auth-provider-user-1",
                     email = "user1@example.com",
                     role = UserRole.ADMINISTRATOR,
                     updatedAt = Timestamp(100L),
@@ -59,7 +59,7 @@ class GetProjectAssignmentsUseCaseImplTest : BackendKoinInitializedTest() {
             val user2 =
                 BackendUserData(
                     id = Uuid.parse("00000000-0000-0000-0000-000000000020"),
-                    authProviderId = "entra-2",
+                    authProviderId = "auth-provider-user-2",
                     email = "user2@example.com",
                     updatedAt = Timestamp(100L),
                 )

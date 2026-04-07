@@ -54,12 +54,12 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import snag.feat.inspections.fe.driving.impl.generated.resources.Res
 import snag.feat.inspections.fe.driving.impl.generated.resources.climate_label
-import snag.feat.inspections.fe.driving.impl.generated.resources.ended_at_label
+import snag.feat.inspections.fe.driving.impl.generated.resources.date_from_label
+import snag.feat.inspections.fe.driving.impl.generated.resources.date_to_label
 import snag.feat.inspections.fe.driving.impl.generated.resources.new_inspection
 import snag.feat.inspections.fe.driving.impl.generated.resources.not_set
 import snag.feat.inspections.fe.driving.impl.generated.resources.note_label
 import snag.feat.inspections.fe.driving.impl.generated.resources.participants_label
-import snag.feat.inspections.fe.driving.impl.generated.resources.started_at_label
 import snag.lib.design.fe.generated.resources.cancel
 import snag.lib.design.fe.generated.resources.close
 import snag.lib.design.fe.generated.resources.delete
@@ -91,8 +91,8 @@ internal fun InspectionEditContent(
     isEditMode: Boolean,
     state: InspectionEditUiState,
     snackbarHostState: SnackbarHostState,
-    onStartedAtChange: (Timestamp?) -> Unit,
-    onEndedAtChange: (Timestamp?) -> Unit,
+    onDateFromChange: (Timestamp?) -> Unit,
+    onDateToChange: (Timestamp?) -> Unit,
     onParticipantsChange: (String) -> Unit,
     onClimateChange: (String) -> Unit,
     onNoteChange: (String) -> Unit,
@@ -101,8 +101,8 @@ internal fun InspectionEditContent(
     onCancelClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var startedAtPickerStep by remember { mutableStateOf<PickerStep>(PickerStep.None) }
-    var endedAtPickerStep by remember { mutableStateOf<PickerStep>(PickerStep.None) }
+    var dateFromPickerStep by remember { mutableStateOf<PickerStep>(PickerStep.None) }
+    var dateToPickerStep by remember { mutableStateOf<PickerStep>(PickerStep.None) }
     var isShowingDeleteConfirmation by remember { mutableStateOf(false) }
 
     if (isShowingDeleteConfirmation) {
@@ -113,21 +113,21 @@ internal fun InspectionEditContent(
         )
     }
 
-    when (val step = startedAtPickerStep) {
+    when (val step = dateFromPickerStep) {
         PickerStep.None -> {}
         PickerStep.DateStep -> {
             val datePickerState =
                 rememberDatePickerState(
-                    initialSelectedDateMillis = state.startedAt?.value,
+                    initialSelectedDateMillis = state.dateFrom?.value,
                 )
             DatePickerDialog(
-                onDismissRequest = { startedAtPickerStep = PickerStep.None },
+                onDismissRequest = { dateFromPickerStep = PickerStep.None },
                 confirmButton = {
                     TextButton(
                         onClick = {
                             val dateMillis = datePickerState.selectedDateMillis
                             if (dateMillis != null) {
-                                startedAtPickerStep = PickerStep.TimeStep(selectedDateMillis = dateMillis)
+                                dateFromPickerStep = PickerStep.TimeStep(selectedDateMillis = dateMillis)
                             }
                         },
                     ) {
@@ -135,7 +135,7 @@ internal fun InspectionEditContent(
                     }
                 },
                 dismissButton = {
-                    TextButton(onClick = { startedAtPickerStep = PickerStep.None }) {
+                    TextButton(onClick = { dateFromPickerStep = PickerStep.None }) {
                         Text(stringResource(DesignRes.string.cancel))
                     }
                 },
@@ -144,7 +144,7 @@ internal fun InspectionEditContent(
             }
         }
         is PickerStep.TimeStep -> {
-            val existingLocal = state.startedAt?.toLocalDateTime()
+            val existingLocal = state.dateFrom?.toLocalDateTime()
             val timePickerState =
                 rememberTimePickerState(
                     initialHour = existingLocal?.hour ?: 0,
@@ -152,36 +152,36 @@ internal fun InspectionEditContent(
                 )
             TimePickerDialog(
                 state = timePickerState,
-                onDismiss = { startedAtPickerStep = PickerStep.None },
+                onDismiss = { dateFromPickerStep = PickerStep.None },
                 onConfirm = {
-                    onStartedAtChange(
+                    onDateFromChange(
                         Timestamp(
                             dateMillis = step.selectedDateMillis,
                             hour = timePickerState.hour,
                             minute = timePickerState.minute,
                         ),
                     )
-                    startedAtPickerStep = PickerStep.None
+                    dateFromPickerStep = PickerStep.None
                 },
             )
         }
     }
 
-    when (val step = endedAtPickerStep) {
+    when (val step = dateToPickerStep) {
         PickerStep.None -> {}
         PickerStep.DateStep -> {
             val datePickerState =
                 rememberDatePickerState(
-                    initialSelectedDateMillis = state.endedAt?.value,
+                    initialSelectedDateMillis = state.dateTo?.value,
                 )
             DatePickerDialog(
-                onDismissRequest = { endedAtPickerStep = PickerStep.None },
+                onDismissRequest = { dateToPickerStep = PickerStep.None },
                 confirmButton = {
                     TextButton(
                         onClick = {
                             val dateMillis = datePickerState.selectedDateMillis
                             if (dateMillis != null) {
-                                endedAtPickerStep = PickerStep.TimeStep(selectedDateMillis = dateMillis)
+                                dateToPickerStep = PickerStep.TimeStep(selectedDateMillis = dateMillis)
                             }
                         },
                     ) {
@@ -189,7 +189,7 @@ internal fun InspectionEditContent(
                     }
                 },
                 dismissButton = {
-                    TextButton(onClick = { endedAtPickerStep = PickerStep.None }) {
+                    TextButton(onClick = { dateToPickerStep = PickerStep.None }) {
                         Text(stringResource(DesignRes.string.cancel))
                     }
                 },
@@ -198,7 +198,7 @@ internal fun InspectionEditContent(
             }
         }
         is PickerStep.TimeStep -> {
-            val existingLocal = state.endedAt?.toLocalDateTime()
+            val existingLocal = state.dateTo?.toLocalDateTime()
             val timePickerState =
                 rememberTimePickerState(
                     initialHour = existingLocal?.hour ?: 0,
@@ -206,16 +206,16 @@ internal fun InspectionEditContent(
                 )
             TimePickerDialog(
                 state = timePickerState,
-                onDismiss = { endedAtPickerStep = PickerStep.None },
+                onDismiss = { dateToPickerStep = PickerStep.None },
                 onConfirm = {
-                    onEndedAtChange(
+                    onDateToChange(
                         Timestamp(
                             dateMillis = step.selectedDateMillis,
                             hour = timePickerState.hour,
                             minute = timePickerState.minute,
                         ),
                     )
-                    endedAtPickerStep = PickerStep.None
+                    dateToPickerStep = PickerStep.None
                 },
             )
         }
@@ -317,32 +317,32 @@ internal fun InspectionEditContent(
                 onValueChange = onClimateChange,
             )
             DateTimePickerField(
-                label = stringResource(Res.string.started_at_label),
-                value = state.startedAt?.toDisplayString(),
+                label = stringResource(Res.string.date_from_label),
+                value = state.dateFrom?.toDisplayString(),
                 placeholder = stringResource(Res.string.not_set),
                 leadingIcon = {
                     Icon(
                         painter = painterResource(DesignRes.drawable.ic_schedule),
-                        contentDescription = stringResource(Res.string.started_at_label),
+                        contentDescription = stringResource(Res.string.date_from_label),
                     )
                 },
-                onEditClick = { startedAtPickerStep = PickerStep.DateStep },
-                onClearClick = { onStartedAtChange(null) },
+                onEditClick = { dateFromPickerStep = PickerStep.DateStep },
+                onClearClick = { onDateFromChange(null) },
                 enabled = state.canEdit,
                 modifier = Modifier.fillMaxWidth(),
             )
             DateTimePickerField(
-                label = stringResource(Res.string.ended_at_label),
-                value = state.endedAt?.toDisplayString(),
+                label = stringResource(Res.string.date_to_label),
+                value = state.dateTo?.toDisplayString(),
                 placeholder = stringResource(Res.string.not_set),
                 leadingIcon = {
                     Icon(
                         painter = painterResource(DesignRes.drawable.ic_event_available),
-                        contentDescription = stringResource(Res.string.ended_at_label),
+                        contentDescription = stringResource(Res.string.date_to_label),
                     )
                 },
-                onEditClick = { endedAtPickerStep = PickerStep.DateStep },
-                onClearClick = { onEndedAtChange(null) },
+                onEditClick = { dateToPickerStep = PickerStep.DateStep },
+                onClearClick = { onDateToChange(null) },
                 enabled = state.canEdit,
                 modifier = Modifier.fillMaxWidth(),
             )
@@ -373,8 +373,8 @@ private fun InspectionEditContentEmptyPreview() {
             isEditMode = false,
             state = InspectionEditUiState(),
             snackbarHostState = SnackbarHostState(),
-            onStartedAtChange = {},
-            onEndedAtChange = {},
+            onDateFromChange = {},
+            onDateToChange = {},
             onParticipantsChange = {},
             onClimateChange = {},
             onNoteChange = {},
@@ -396,13 +396,13 @@ private fun InspectionEditContentFilledPreview() {
                 InspectionEditUiState(
                     participants = "John Doe, Jane Smith",
                     climate = "Sunny, 18°C",
-                    startedAt = Timestamp(1_740_391_800_000L),
-                    endedAt = Timestamp(1_740_398_400_000L),
+                    dateFrom = Timestamp(1_740_391_800_000L),
+                    dateTo = Timestamp(1_740_398_400_000L),
                     note = "All defects recorded. Follow-up required for items 3 and 7.",
                 ),
             snackbarHostState = SnackbarHostState(),
-            onStartedAtChange = {},
-            onEndedAtChange = {},
+            onDateFromChange = {},
+            onDateToChange = {},
             onParticipantsChange = {},
             onClimateChange = {},
             onNoteChange = {},

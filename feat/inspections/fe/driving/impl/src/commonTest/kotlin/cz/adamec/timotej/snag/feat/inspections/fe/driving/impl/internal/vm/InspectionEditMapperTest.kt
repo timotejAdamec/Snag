@@ -70,8 +70,8 @@ class InspectionEditMapperTest {
         val vmState =
             InspectionEditVmState(
                 projectId = projectId,
-                startedAt = Timestamp(100L),
-                endedAt = Timestamp(200L),
+                dateFrom = Timestamp(100L),
+                dateTo = Timestamp(200L),
                 participants = "John",
                 climate = "Sunny",
                 note = "Note",
@@ -81,8 +81,8 @@ class InspectionEditMapperTest {
 
         val uiState = vmState.toUiState()
 
-        assertEquals(Timestamp(100L), uiState.startedAt)
-        assertEquals(Timestamp(200L), uiState.endedAt)
+        assertEquals(Timestamp(100L), uiState.dateFrom)
+        assertEquals(Timestamp(200L), uiState.dateTo)
         assertEquals("John", uiState.participants)
         assertEquals("Sunny", uiState.climate)
         assertEquals("Note", uiState.note)

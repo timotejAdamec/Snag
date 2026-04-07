@@ -17,8 +17,8 @@ import kotlin.uuid.Uuid
 
 internal data class InspectionEditVmState(
     val projectId: Uuid? = null,
-    val startedAt: Timestamp? = null,
-    val endedAt: Timestamp? = null,
+    val dateFrom: Timestamp? = null,
+    val dateTo: Timestamp? = null,
     val participants: String = "",
     val climate: String = "",
     val note: String = "",
