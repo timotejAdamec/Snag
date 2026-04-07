@@ -24,35 +24,39 @@ import cz.adamec.timotej.snag.feat.inspections.fe.app.api.model.SaveInspectionRe
 import cz.adamec.timotej.snag.feat.reports.fe.app.api.DownloadReportUseCase
 import cz.adamec.timotej.snag.feat.reports.fe.app.api.GetAvailableReportTypesFlowUseCase
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
+import cz.adamec.timotej.snag.lib.design.fe.error.UiError.Unknown
 import cz.adamec.timotej.snag.lib.design.fe.error.toUiError
 import cz.adamec.timotej.snag.lib.design.fe.state.launchWhileSubscribed
 import cz.adamec.timotej.snag.projects.fe.app.api.AssignUserToProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.CanAssignUserToProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.CanCloseProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.CanEditProjectEntitiesUseCase
+import cz.adamec.timotej.snag.projects.fe.app.api.DeleteProjectPhotoUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.DeleteProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.GetProjectAssignmentsUseCase
+import cz.adamec.timotej.snag.projects.fe.app.api.GetProjectPhotosUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.GetProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.RemoveUserFromProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.SetProjectClosedUseCase
+import cz.adamec.timotej.snag.projects.fe.app.api.UpdateProjectPhotoDescriptionUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.model.SetProjectClosedRequest
 import cz.adamec.timotej.snag.reports.business.Report
 import cz.adamec.timotej.snag.reports.business.ReportType
 import cz.adamec.timotej.snag.structures.fe.app.api.GetStructuresUseCase
 import cz.adamec.timotej.snag.users.fe.app.api.GetUsersUseCase
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.koin.core.annotation.InjectedParam
 import kotlin.uuid.Uuid
 
 @Suppress("TooManyFunctions")
-internal class ProjectDetailsViewModel(
-    @InjectedParam private val projectId: Uuid,
+internal abstract class ProjectDetailsViewModel(
+    protected val projectId: Uuid,
     private val getProjectUseCase: GetProjectUseCase,
     private val deleteProjectUseCase: DeleteProjectUseCase,
     private val getStructuresUseCase: GetStructuresUseCase,
@@ -69,26 +73,19 @@ internal class ProjectDetailsViewModel(
     private val assignUserToProjectUseCase: AssignUserToProjectUseCase,
     private val removeUserFromProjectUseCase: RemoveUserFromProjectUseCase,
     private val timestampProvider: TimestampProvider,
+    private val getProjectPhotosUseCase: GetProjectPhotosUseCase,
+    private val deleteProjectPhotoUseCase: DeleteProjectPhotoUseCase,
+    private val updateProjectPhotoDescriptionUseCase: UpdateProjectPhotoDescriptionUseCase,
 ) : ViewModel() {
-    private val vmState: MutableStateFlow<ProjectDetailsVmState> =
+    protected val vmState: MutableStateFlow<ProjectDetailsVmState> =
         MutableStateFlow(ProjectDetailsVmState())
             .launchWhileSubscribed(scope = viewModelScope) {
-                listOf(
-                    collectProject(projectId),
-                    collectStructures(projectId),
-                    collectInspections(projectId),
-                    collectCanEditEntities(projectId),
-                    collectCanCloseProject(projectId),
-                    collectCanAssignUsers(projectId),
-                    collectAssignments(projectId),
-                    collectUsers(),
-                    collectAvailableReportTypes(),
-                )
+                collectJobs()
             }
     val state: StateFlow<ProjectDetailsUiState> =
         vmState.mapState { it.toUiState() }
 
-    private val errorEventsChannel = Channel<UiError>()
+    protected val errorEventsChannel = Channel<UiError>()
     val errorsFlow = errorEventsChannel.receiveAsFlow()
 
     private val deletedSuccessfullyEventChannel = Channel<Unit>()
@@ -96,6 +93,20 @@ internal class ProjectDetailsViewModel(
 
     private val reportReadyChannel = Channel<Report>()
     val reportReadyFlow = reportReadyChannel.receiveAsFlow()
+
+    protected open fun collectJobs(): List<Job> =
+        listOf(
+            collectProject(projectId),
+            collectStructures(projectId),
+            collectInspections(projectId),
+            collectCanEditEntities(projectId),
+            collectCanCloseProject(projectId),
+            collectCanAssignUsers(projectId),
+            collectAssignments(projectId),
+            collectUsers(),
+            collectAvailableReportTypes(),
+            collectPhotos(),
+        )
 
     private fun collectProject(projectId: Uuid) =
         viewModelScope.launch {
@@ -242,6 +253,55 @@ internal class ProjectDetailsViewModel(
                 vmState.update { it.copy(availableReportTypes = types) }
             }
         }
+
+    private fun collectPhotos(): Job =
+        viewModelScope.launch {
+            getProjectPhotosUseCase(projectId).collect { result ->
+                when (result) {
+                    is OfflineFirstDataResult.Success -> {
+                        vmState.update { it.copy(photos = result.data.toImmutableList()) }
+                    }
+
+                    is OfflineFirstDataResult.ProgrammerError -> {
+                        errorEventsChannel.send(Unknown)
+                    }
+                }
+            }
+        }
+
+    abstract fun onAddPhoto(
+        bytes: ByteArray,
+        fileName: String,
+        description: String,
+    )
+
+    fun onDeletePhoto(photoId: Uuid) =
+        viewModelScope.launch {
+            when (deleteProjectPhotoUseCase(photoId)) {
+                is OfflineFirstDataResult.ProgrammerError -> {
+                    errorEventsChannel.send(Unknown)
+                }
+
+                is OfflineFirstDataResult.Success -> {
+                    // Photo will disappear via flow
+                }
+            }
+        }
+
+    fun onUpdatePhotoDescription(
+        photoId: Uuid,
+        newDescription: String,
+    ) = viewModelScope.launch {
+        when (updateProjectPhotoDescriptionUseCase(photoId = photoId, newDescription = newDescription)) {
+            is OfflineFirstDataResult.ProgrammerError -> {
+                errorEventsChannel.send(Unknown)
+            }
+
+            is OfflineFirstDataResult.Success -> {
+                // Description update will appear via flow
+            }
+        }
+    }
 
     fun onAssignUser(userId: Uuid) =
         viewModelScope.launch {

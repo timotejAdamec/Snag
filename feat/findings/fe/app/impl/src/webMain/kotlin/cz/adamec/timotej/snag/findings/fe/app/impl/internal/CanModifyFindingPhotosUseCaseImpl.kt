@@ -12,23 +12,13 @@
 
 package cz.adamec.timotej.snag.findings.fe.app.impl.internal
 
-import cz.adamec.timotej.snag.core.network.fe.ConnectionStatusProvider
 import cz.adamec.timotej.snag.findings.fe.app.api.CanModifyFindingPhotosUseCase
-import cz.adamec.timotej.snag.projects.fe.app.api.CanEditProjectEntitiesUseCase
+import cz.adamec.timotej.snag.projects.fe.app.api.CanModifyProjectFilesUseCase
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlin.uuid.Uuid
 
 internal class CanModifyFindingPhotosUseCaseImpl(
-    private val connectionStatusProvider: ConnectionStatusProvider,
-    private val canEditProjectEntitiesUseCase: CanEditProjectEntitiesUseCase,
+    private val canModifyProjectFilesUseCase: CanModifyProjectFilesUseCase,
 ) : CanModifyFindingPhotosUseCase {
-    override fun invoke(projectId: Uuid): Flow<Boolean> =
-        combine(
-            connectionStatusProvider.isConnectedFlow(),
-            canEditProjectEntitiesUseCase(projectId),
-        ) { isConnected, canEdit ->
-            isConnected && canEdit
-        }.distinctUntilChanged()
+    override fun invoke(projectId: Uuid): Flow<Boolean> = canModifyProjectFilesUseCase(projectId)
 }

@@ -31,6 +31,8 @@ kotlin {
                 implementation(project(":feat:findings:fe:driven:test"))
                 implementation(project(":feat:sync:fe:driven:test"))
                 implementation(project(":feat:users:fe:driven:test"))
+                implementation(project(":lib:storage:fe:test"))
+                implementation(project(":lib:network:fe:test"))
             }
         }
     }

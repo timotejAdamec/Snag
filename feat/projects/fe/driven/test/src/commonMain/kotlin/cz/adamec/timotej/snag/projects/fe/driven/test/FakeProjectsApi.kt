@@ -35,6 +35,12 @@ class FakeProjectsApi : ProjectsApi {
             ops.saveResponseOverride = value
         }
 
+    var deleteProjectResponseOverride
+        get() = ops.deleteResponseOverride
+        set(value) {
+            ops.deleteResponseOverride = value
+        }
+
     var modifiedSinceResults
         get() = ops.modifiedSinceResults
         set(value) {

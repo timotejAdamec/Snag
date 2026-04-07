@@ -14,8 +14,13 @@ package cz.adamec.timotej.snag.projects.fe.driven.internal.api
 
 import cz.adamec.timotej.snag.projects.app.model.AppProject
 import cz.adamec.timotej.snag.projects.app.model.AppProjectData
+import cz.adamec.timotej.snag.projects.app.model.AppProjectPhoto
+import cz.adamec.timotej.snag.projects.app.model.AppProjectPhotoData
 import cz.adamec.timotej.snag.projects.contract.ProjectApiDto
+import cz.adamec.timotej.snag.projects.contract.ProjectPhotoApiDto
 import cz.adamec.timotej.snag.projects.contract.PutProjectApiDto
+import cz.adamec.timotej.snag.projects.contract.PutProjectPhotoApiDto
+import cz.adamec.timotej.snag.projects.fe.ports.ProjectPhotoSyncResult
 
 internal fun ProjectApiDto.toModel(): AppProject =
     AppProjectData(
@@ -37,3 +42,27 @@ internal fun AppProject.toPutApiDto() =
         isClosed = isClosed,
         updatedAt = updatedAt,
     )
+
+internal fun AppProjectPhoto.toPutApiDto() =
+    PutProjectPhotoApiDto(
+        projectId = projectId,
+        url = url,
+        description = description,
+        updatedAt = updatedAt,
+    )
+
+internal fun ProjectPhotoApiDto.toModel(): AppProjectPhoto =
+    AppProjectPhotoData(
+        id = id,
+        projectId = projectId,
+        url = url,
+        description = description,
+        updatedAt = updatedAt,
+    )
+
+internal fun ProjectPhotoApiDto.toSyncResult(): ProjectPhotoSyncResult =
+    if (deletedAt != null) {
+        ProjectPhotoSyncResult.Deleted(id = id)
+    } else {
+        ProjectPhotoSyncResult.Updated(photo = toModel())
+    }

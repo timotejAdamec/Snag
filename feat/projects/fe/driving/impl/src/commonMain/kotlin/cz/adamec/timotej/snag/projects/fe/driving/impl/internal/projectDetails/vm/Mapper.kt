@@ -33,9 +33,11 @@ internal fun ProjectDetailsVmState.toUiState(): ProjectDetailsUiState {
         projectStatus = projectStatus,
         isDownloadingReport = isDownloadingReport,
         isClosingOrReopening = isClosingOrReopening,
+        isAddingPhoto = isAddingPhoto,
         project = project,
         structures = structures,
         inspections = inspections,
+        photos = photos,
         assignedUsers = assignedUsers,
         availableUsers = availableUsers,
         isClosed = isClosed,
@@ -48,6 +50,7 @@ internal fun ProjectDetailsVmState.toUiState(): ProjectDetailsUiState {
         availableReportTypes = availableReportTypes,
         canToggleClosed = projectStatus == ProjectDetailsUiStatus.LOADED && !isClosingOrReopening && canCloseProject,
         canAssignUsers = canAssignUsers,
+        canModifyPhotos = canModifyPhotos,
         creatorEmail = creatorEmail,
     )
 }

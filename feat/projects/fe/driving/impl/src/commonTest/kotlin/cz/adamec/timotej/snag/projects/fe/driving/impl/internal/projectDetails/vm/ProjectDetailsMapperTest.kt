@@ -275,23 +275,25 @@ class ProjectDetailsMapperTest {
         val creatorId = UuidProvider.getUuid()
         val vmState =
             ProjectDetailsVmState(
-                project = AppProjectData(
-                    id = Uuid.random(),
-                    name = "Test",
-                    address = "Address",
-                    creatorId = creatorId,
-                    updatedAt = Timestamp(0L),
-                    isClosed = false,
-                ),
-                allUsers = persistentListOf(
-                    AppUserData(
-                        id = creatorId,
-                        authProviderId = "auth-1",
-                        email = "creator@example.com",
-                        role = UserRole.SERVICE_WORKER,
+                project =
+                    AppProjectData(
+                        id = Uuid.random(),
+                        name = "Test",
+                        address = "Address",
+                        creatorId = creatorId,
                         updatedAt = Timestamp(0L),
+                        isClosed = false,
                     ),
-                ),
+                allUsers =
+                    persistentListOf(
+                        AppUserData(
+                            id = creatorId,
+                            authProviderId = "auth-1",
+                            email = "creator@example.com",
+                            role = UserRole.SERVICE_WORKER,
+                            updatedAt = Timestamp(0L),
+                        ),
+                    ),
             )
 
         assertEquals("creator@example.com", vmState.toUiState().creatorEmail)
@@ -302,15 +304,16 @@ class ProjectDetailsMapperTest {
         val vmState =
             ProjectDetailsVmState(
                 project = openProject(),
-                allUsers = persistentListOf(
-                    AppUserData(
-                        id = UuidProvider.getUuid(),
-                        authProviderId = "auth-1",
-                        email = "other@example.com",
-                        role = UserRole.PASSPORT_LEAD,
-                        updatedAt = Timestamp(0L),
+                allUsers =
+                    persistentListOf(
+                        AppUserData(
+                            id = UuidProvider.getUuid(),
+                            authProviderId = "auth-1",
+                            email = "other@example.com",
+                            role = UserRole.PASSPORT_LEAD,
+                            updatedAt = Timestamp(0L),
+                        ),
                     ),
-                ),
             )
 
         assertNull(vmState.toUiState().creatorEmail)

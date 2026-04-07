@@ -33,11 +33,14 @@ import cz.adamec.timotej.snag.projects.fe.app.api.AssignUserToProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.CanAssignUserToProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.CanCloseProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.CanEditProjectEntitiesUseCase
+import cz.adamec.timotej.snag.projects.fe.app.api.DeleteProjectPhotoUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.DeleteProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.GetProjectAssignmentsUseCase
+import cz.adamec.timotej.snag.projects.fe.app.api.GetProjectPhotosUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.GetProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.RemoveUserFromProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.SetProjectClosedUseCase
+import cz.adamec.timotej.snag.projects.fe.app.api.UpdateProjectPhotoDescriptionUseCase
 import cz.adamec.timotej.snag.projects.fe.driven.test.FakeProjectAssignmentsDb
 import cz.adamec.timotej.snag.projects.fe.driven.test.FakeProjectsApi
 import cz.adamec.timotej.snag.projects.fe.driven.test.FakeProjectsDb
@@ -93,6 +96,9 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
     private val assignUserToProjectUseCase: AssignUserToProjectUseCase by inject()
     private val removeUserFromProjectUseCase: RemoveUserFromProjectUseCase by inject()
     private val timestampProvider: TimestampProvider by inject()
+    private val getProjectPhotosUseCase: GetProjectPhotosUseCase by inject()
+    private val deleteProjectPhotoUseCase: DeleteProjectPhotoUseCase by inject()
+    private val updateProjectPhotoDescriptionUseCase: UpdateProjectPhotoDescriptionUseCase by inject()
 
     override fun additionalKoinModules(): List<Module> =
         listOf(
@@ -117,8 +123,8 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
         )
     }
 
-    private fun createViewModel(projectId: Uuid) =
-        ProjectDetailsViewModel(
+    private fun createViewModel(projectId: Uuid): ProjectDetailsViewModel =
+        object : ProjectDetailsViewModel(
             projectId = projectId,
             getProjectUseCase = getProjectUseCase,
             deleteProjectUseCase = deleteProjectUseCase,
@@ -136,7 +142,18 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
             assignUserToProjectUseCase = assignUserToProjectUseCase,
             removeUserFromProjectUseCase = removeUserFromProjectUseCase,
             timestampProvider = timestampProvider,
-        )
+            getProjectPhotosUseCase = getProjectPhotosUseCase,
+            deleteProjectPhotoUseCase = deleteProjectPhotoUseCase,
+            updateProjectPhotoDescriptionUseCase = updateProjectPhotoDescriptionUseCase,
+        ) {
+            override fun onAddPhoto(
+                bytes: ByteArray,
+                fileName: String,
+                description: String,
+            ) {
+                // no-op for existing tests
+            }
+        }
 
     private fun seedInspection(
         projectId: Uuid,

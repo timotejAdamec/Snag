@@ -14,8 +14,11 @@ package cz.adamec.timotej.snag.projects.be.driven.impl.internal
 
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.feat.shared.database.be.ProjectEntity
+import cz.adamec.timotej.snag.feat.shared.database.be.ProjectPhotoEntity
 import cz.adamec.timotej.snag.projects.be.model.BackendProject
 import cz.adamec.timotej.snag.projects.be.model.BackendProjectData
+import cz.adamec.timotej.snag.projects.be.model.BackendProjectPhoto
+import cz.adamec.timotej.snag.projects.be.model.BackendProjectPhotoData
 
 internal fun ProjectEntity.toModel(): BackendProject =
     BackendProjectData(
@@ -25,6 +28,16 @@ internal fun ProjectEntity.toModel(): BackendProject =
         clientId = client?.id?.value,
         creatorId = creatorId,
         isClosed = isClosed,
+        updatedAt = Timestamp(updatedAt),
+        deletedAt = deletedAt?.let { Timestamp(it) },
+    )
+
+internal fun ProjectPhotoEntity.toModel(): BackendProjectPhoto =
+    BackendProjectPhotoData(
+        id = id.value,
+        projectId = project.id.value,
+        url = url,
+        description = description,
         updatedAt = Timestamp(updatedAt),
         deletedAt = deletedAt?.let { Timestamp(it) },
     )

@@ -13,11 +13,15 @@
 package cz.adamec.timotej.snag.projects.fe.driven.di
 
 import cz.adamec.timotej.snag.core.foundation.common.di.getIoDispatcher
+import cz.adamec.timotej.snag.projects.fe.driven.internal.api.RealProjectPhotosApi
 import cz.adamec.timotej.snag.projects.fe.driven.internal.api.RealProjectsApi
 import cz.adamec.timotej.snag.projects.fe.driven.internal.db.ProjectsSqlDelightDbOps
 import cz.adamec.timotej.snag.projects.fe.driven.internal.db.RealProjectAssignmentsDb
+import cz.adamec.timotej.snag.projects.fe.driven.internal.db.RealProjectPhotosDb
 import cz.adamec.timotej.snag.projects.fe.driven.internal.db.RealProjectsDb
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectAssignmentsDb
+import cz.adamec.timotej.snag.projects.fe.ports.ProjectPhotosApi
+import cz.adamec.timotej.snag.projects.fe.ports.ProjectPhotosDb
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsApi
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectsDb
 import org.koin.core.module.dsl.factoryOf
@@ -40,4 +44,11 @@ val projectsDrivenModule =
                 ioDispatcher = getIoDispatcher(),
             )
         } bind ProjectAssignmentsDb::class
+        factory {
+            RealProjectPhotosDb(
+                projectPhotoEntityQueries = get(),
+                ioDispatcher = getIoDispatcher(),
+            )
+        } bind ProjectPhotosDb::class
+        factoryOf(::RealProjectPhotosApi) bind ProjectPhotosApi::class
     }

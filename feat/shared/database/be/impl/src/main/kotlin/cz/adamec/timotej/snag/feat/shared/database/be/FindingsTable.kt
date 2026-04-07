@@ -41,8 +41,6 @@ object ClassicFindingTable : IdTable<Uuid>("classic_findings") {
     override val primaryKey = PrimaryKey(id)
 }
 
-private const val URL_MAX_LENGTH = 2048
-
 object FindingPhotosTable : UuidTable("finding_photos") {
     val finding = reference(FINDING_ID_COLUMN, FindingsTable).index()
     val url = varchar("url", URL_MAX_LENGTH)
