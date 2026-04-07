@@ -70,10 +70,11 @@ class CanAccessProjectUseCaseImplTest : BackendKoinInitializedTest() {
                 ),
             )
 
-            val result = useCase(
-                userId = serviceLeadId,
-                projectId = projectId,
-            )
+            val result =
+                useCase(
+                    userId = serviceLeadId,
+                    projectId = projectId,
+                )
 
             assertTrue(result)
         }
@@ -111,10 +112,11 @@ class CanAccessProjectUseCaseImplTest : BackendKoinInitializedTest() {
                 ),
             )
 
-            val result = useCase(
-                userId = serviceLeadId,
-                projectId = projectId,
-            )
+            val result =
+                useCase(
+                    userId = serviceLeadId,
+                    projectId = projectId,
+                )
 
             assertFalse(result)
         }
@@ -124,10 +126,11 @@ class CanAccessProjectUseCaseImplTest : BackendKoinInitializedTest() {
         runTest(testDispatcher) {
             val unknownId = Uuid.parse("00000000-0000-0000-0000-000000000099")
 
-            val result = useCase(
-                userId = unknownId,
-                projectId = projectId,
-            )
+            val result =
+                useCase(
+                    userId = unknownId,
+                    projectId = projectId,
+                )
 
             assertFalse(result)
         }
@@ -138,10 +141,11 @@ class CanAccessProjectUseCaseImplTest : BackendKoinInitializedTest() {
             usersDb.seedTestUser()
             val unknownProjectId = Uuid.parse("00000000-0000-0000-0000-000000000099")
 
-            val result = useCase(
-                userId = cz.adamec.timotej.snag.users.be.driven.test.TEST_USER_ID,
-                projectId = unknownProjectId,
-            )
+            val result =
+                useCase(
+                    userId = cz.adamec.timotej.snag.users.be.driven.test.TEST_USER_ID,
+                    projectId = unknownProjectId,
+                )
 
             assertFalse(result)
         }
@@ -169,10 +173,11 @@ class CanAccessProjectUseCaseImplTest : BackendKoinInitializedTest() {
                 ),
             )
 
-            val result = useCase(
-                userId = passportLeadId,
-                projectId = projectId,
-            )
+            val result =
+                useCase(
+                    userId = passportLeadId,
+                    projectId = projectId,
+                )
 
             assertTrue(result)
         }
@@ -214,10 +219,11 @@ class CanAccessProjectUseCaseImplTest : BackendKoinInitializedTest() {
                 projectId = projectId,
             )
 
-            val result = useCase(
-                userId = technicianId,
-                projectId = projectId,
-            )
+            val result =
+                useCase(
+                    userId = technicianId,
+                    projectId = projectId,
+                )
 
             assertTrue(result)
         }

@@ -42,7 +42,7 @@ internal class ProjectPhotosRoute(
     private val canAccessProjectUseCase: CanAccessProjectUseCase,
 ) : AppRoute {
     override fun Route.setup() {
-        route("/projects/{projectId}/photos") {
+        route("/projects/{$PROJECT_ID_PARAM}/photos") {
             put("/{id}") {
                 val userId = currentUser().userId
                 val projectId = getIdFromParameters(PROJECT_ID_PARAM)

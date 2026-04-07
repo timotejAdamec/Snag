@@ -30,6 +30,7 @@ internal class UpdateProjectPhotoDescriptionUseCaseImpl(
     private val enqueueSyncSaveUseCase: EnqueueSyncSaveUseCase,
     private val timestampProvider: TimestampProvider,
 ) : UpdateProjectPhotoDescriptionUseCase {
+    @Suppress("ReturnCount")
     override suspend operator fun invoke(
         photoId: Uuid,
         newDescription: String,

@@ -13,43 +13,61 @@
 package cz.adamec.timotej.snag.projects.fe.app.impl.internal
 
 import app.cash.turbine.test
-import cz.adamec.timotej.snag.core.network.fe.ConnectionStatusProvider
-import cz.adamec.timotej.snag.projects.fe.app.api.CanEditProjectEntitiesUseCase
+import cz.adamec.timotej.snag.authorization.business.UserRole
+import cz.adamec.timotej.snag.core.foundation.common.Timestamp
+import cz.adamec.timotej.snag.core.foundation.common.UuidProvider
+import cz.adamec.timotej.snag.network.fe.test.FakeConnectionStatusProvider
+import cz.adamec.timotej.snag.projects.app.model.AppProjectData
 import cz.adamec.timotej.snag.projects.fe.app.api.CanModifyProjectFilesUseCase
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
+import cz.adamec.timotej.snag.projects.fe.driven.test.FakeProjectsDb
+import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
+import cz.adamec.timotej.snag.users.app.model.AppUserData
+import cz.adamec.timotej.snag.users.fe.driven.test.FakeUsersDb
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
+import org.koin.test.inject
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 import kotlin.uuid.Uuid
 
-class WebCanModifyProjectFilesUseCaseImplTest {
-    private val isConnectedFlow = MutableStateFlow(true)
-    private val canEditFlow = MutableStateFlow(true)
-    private val projectId = Uuid.parse("00000000-0000-0000-0000-000000000001")
+@OptIn(ExperimentalCoroutinesApi::class)
+class WebCanModifyProjectFilesUseCaseImplTest : FrontendKoinInitializedTest() {
+    private val fakeProjectsDb: FakeProjectsDb by inject()
+    private val fakeUsersDb: FakeUsersDb by inject()
+    private val fakeConnectionStatusProvider: FakeConnectionStatusProvider by inject()
+    private val useCase: CanModifyProjectFilesUseCase by inject()
 
-    private val fakeConnectionStatusProvider =
-        object : ConnectionStatusProvider {
-            override fun isConnectedFlow(): Flow<Boolean> = isConnectedFlow
-        }
+    private val currentUserId = Uuid.parse("00000000-0000-0000-0005-000000000001")
+    private val projectId = UuidProvider.getUuid()
 
-    private val fakeCanEditProjectEntitiesUseCase =
-        object : CanEditProjectEntitiesUseCase {
-            override fun invoke(projectId: Uuid): Flow<Boolean> = canEditFlow
-        }
-
-    private val useCase: CanModifyProjectFilesUseCase =
-        WebCanModifyProjectFilesUseCaseImpl(
-            connectionStatusProvider = fakeConnectionStatusProvider,
-            canEditProjectEntitiesUseCase = fakeCanEditProjectEntitiesUseCase,
+    private fun seedEditableProject() {
+        fakeUsersDb.setUser(
+            AppUserData(
+                id = currentUserId,
+                authProviderId = "mock-auth-provider-id",
+                email = "user@example.com",
+                role = UserRole.PASSPORT_LEAD,
+                updatedAt = Timestamp(100L),
+            ),
         )
+        fakeProjectsDb.setProject(
+            AppProjectData(
+                id = projectId,
+                name = "Test Project",
+                address = "Address",
+                creatorId = currentUserId,
+                isClosed = false,
+                updatedAt = Timestamp(100L),
+            ),
+        )
+    }
 
     @Test
     fun `returns true when connected and can edit`() =
-        runTest {
-            isConnectedFlow.value = true
-            canEditFlow.value = true
+        runTest(testDispatcher) {
+            seedEditableProject()
+            fakeConnectionStatusProvider.setConnected(true)
 
             useCase(projectId).test {
                 assertTrue(awaitItem())
@@ -58,9 +76,9 @@ class WebCanModifyProjectFilesUseCaseImplTest {
 
     @Test
     fun `returns false when disconnected`() =
-        runTest {
-            isConnectedFlow.value = false
-            canEditFlow.value = true
+        runTest(testDispatcher) {
+            seedEditableProject()
+            fakeConnectionStatusProvider.setConnected(false)
 
             useCase(projectId).test {
                 assertFalse(awaitItem())
@@ -69,9 +87,9 @@ class WebCanModifyProjectFilesUseCaseImplTest {
 
     @Test
     fun `returns false when cannot edit`() =
-        runTest {
-            isConnectedFlow.value = true
-            canEditFlow.value = false
+        runTest(testDispatcher) {
+            fakeConnectionStatusProvider.setConnected(true)
+            // No project seeded → canEditProjectEntities returns false
 
             useCase(projectId).test {
                 assertFalse(awaitItem())
@@ -80,17 +98,17 @@ class WebCanModifyProjectFilesUseCaseImplTest {
 
     @Test
     fun `reacts to connection status changes`() =
-        runTest {
-            isConnectedFlow.value = true
-            canEditFlow.value = true
+        runTest(testDispatcher) {
+            seedEditableProject()
+            fakeConnectionStatusProvider.setConnected(true)
 
             useCase(projectId).test {
                 assertTrue(awaitItem())
 
-                isConnectedFlow.value = false
+                fakeConnectionStatusProvider.setConnected(false)
                 assertFalse(awaitItem())
 
-                isConnectedFlow.value = true
+                fakeConnectionStatusProvider.setConnected(true)
                 assertTrue(awaitItem())
             }
         }

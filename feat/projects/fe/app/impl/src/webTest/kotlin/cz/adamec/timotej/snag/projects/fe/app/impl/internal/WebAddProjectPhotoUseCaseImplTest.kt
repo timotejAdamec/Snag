@@ -41,6 +41,7 @@ class WebAddProjectPhotoUseCaseImplTest : FrontendKoinInitializedTest() {
 
     private val projectId = Uuid.parse("00000000-0000-0000-0000-000000000001")
     private val photoBytes = byteArrayOf(1, 2, 3, 4)
+    private val fileName = "photo.jpg"
 
     @Test
     fun `uploads to remote storage and saves photo to database`() =
@@ -48,7 +49,7 @@ class WebAddProjectPhotoUseCaseImplTest : FrontendKoinInitializedTest() {
             val request =
                 AddProjectPhotoRequest(
                     bytes = photoBytes,
-                    fileName = "photo.jpg",
+                    fileName = fileName,
                     projectId = projectId,
                     description = "Test description",
                 )
@@ -71,7 +72,7 @@ class WebAddProjectPhotoUseCaseImplTest : FrontendKoinInitializedTest() {
             val request =
                 AddProjectPhotoRequest(
                     bytes = photoBytes,
-                    fileName = "photo.jpg",
+                    fileName = fileName,
                     projectId = projectId,
                     description = "Test",
                 )
@@ -95,7 +96,7 @@ class WebAddProjectPhotoUseCaseImplTest : FrontendKoinInitializedTest() {
             val request =
                 AddProjectPhotoRequest(
                     bytes = photoBytes,
-                    fileName = "photo.jpg",
+                    fileName = fileName,
                     projectId = projectId,
                     description = "Test",
                 )

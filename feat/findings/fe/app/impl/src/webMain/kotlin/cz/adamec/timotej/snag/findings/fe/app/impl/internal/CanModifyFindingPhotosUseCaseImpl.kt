@@ -20,6 +20,5 @@ import kotlin.uuid.Uuid
 internal class CanModifyFindingPhotosUseCaseImpl(
     private val canModifyProjectFilesUseCase: CanModifyProjectFilesUseCase,
 ) : CanModifyFindingPhotosUseCase {
-    override fun invoke(projectId: Uuid): Flow<Boolean> =
-        canModifyProjectFilesUseCase(projectId)
+    override fun invoke(projectId: Uuid): Flow<Boolean> = canModifyProjectFilesUseCase(projectId)
 }
