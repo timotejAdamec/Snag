@@ -10,5 +10,8 @@ SELECT userId FROM ProjectAssignmentEntity WHERE projectId = :projectId;
 deleteByProjectId:
 DELETE FROM ProjectAssignmentEntity WHERE projectId = :projectId;
 
+selectProjectIdsByUserId:
+SELECT projectId FROM ProjectAssignmentEntity WHERE userId = :userId;
+
 insert:
 INSERT OR IGNORE INTO ProjectAssignmentEntity(projectId, userId) VALUES (?, ?);

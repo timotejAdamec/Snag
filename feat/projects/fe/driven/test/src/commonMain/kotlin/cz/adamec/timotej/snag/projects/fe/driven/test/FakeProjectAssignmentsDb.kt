@@ -40,6 +40,11 @@ class FakeProjectAssignmentsDb : ProjectAssignmentsDb {
         return OfflineFirstDataResult.Success(Unit)
     }
 
+    override suspend fun getProjectIdsForAssignedUser(userId: Uuid): Set<Uuid> =
+        assignments.value
+            .filter { (_, userIds) -> userId in userIds }
+            .keys
+
     fun setAssignments(
         projectId: Uuid,
         userIds: Set<Uuid>,

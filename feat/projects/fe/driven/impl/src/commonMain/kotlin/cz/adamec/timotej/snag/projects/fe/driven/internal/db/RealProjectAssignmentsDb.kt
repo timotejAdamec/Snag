@@ -79,4 +79,13 @@ internal class RealProjectAssignmentsDb(
             LH.logger.e(e) { "Error deleting assignments for project $projectId." }
             OfflineFirstDataResult.ProgrammerError(e)
         }
+
+    override suspend fun getProjectIdsForAssignedUser(userId: Uuid): Set<Uuid> =
+        withContext(ioDispatcher) {
+            queries
+                .selectProjectIdsByUserId(userId.toString())
+                .executeAsList()
+                .map { Uuid.parse(it) }
+                .toSet()
+        }
 }
