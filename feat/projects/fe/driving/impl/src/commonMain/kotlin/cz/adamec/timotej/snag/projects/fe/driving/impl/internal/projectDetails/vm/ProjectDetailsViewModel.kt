@@ -303,7 +303,6 @@ internal abstract class ProjectDetailsViewModel(
         }
     }
 
-
     fun onAssignUser(userId: Uuid) =
         viewModelScope.launch {
             assignUserToProjectUseCase(

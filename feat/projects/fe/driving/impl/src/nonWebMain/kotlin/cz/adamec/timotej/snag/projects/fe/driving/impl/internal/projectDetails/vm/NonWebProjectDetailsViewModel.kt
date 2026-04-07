@@ -18,6 +18,7 @@ import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.feat.inspections.fe.app.api.GetInspectionsUseCase
 import cz.adamec.timotej.snag.feat.inspections.fe.app.api.SaveInspectionUseCase
 import cz.adamec.timotej.snag.feat.reports.fe.app.api.DownloadReportUseCase
+import cz.adamec.timotej.snag.feat.reports.fe.app.api.GetAvailableReportTypesFlowUseCase
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.projects.fe.app.api.AddProjectPhotoRequest
 import cz.adamec.timotej.snag.projects.fe.app.api.AssignUserToProjectUseCase
@@ -46,6 +47,7 @@ internal class NonWebProjectDetailsViewModel(
     getStructuresUseCase: GetStructuresUseCase,
     getInspectionsUseCase: GetInspectionsUseCase,
     downloadReportUseCase: DownloadReportUseCase,
+    getAvailableReportTypesUseCase: GetAvailableReportTypesFlowUseCase,
     saveInspectionUseCase: SaveInspectionUseCase,
     setProjectClosedUseCase: SetProjectClosedUseCase,
     canEditProjectEntitiesUseCase: CanEditProjectEntitiesUseCase,
@@ -67,6 +69,7 @@ internal class NonWebProjectDetailsViewModel(
         getStructuresUseCase = getStructuresUseCase,
         getInspectionsUseCase = getInspectionsUseCase,
         downloadReportUseCase = downloadReportUseCase,
+        getAvailableReportTypesUseCase = getAvailableReportTypesUseCase,
         saveInspectionUseCase = saveInspectionUseCase,
         setProjectClosedUseCase = setProjectClosedUseCase,
         canEditProjectEntitiesUseCase = canEditProjectEntitiesUseCase,

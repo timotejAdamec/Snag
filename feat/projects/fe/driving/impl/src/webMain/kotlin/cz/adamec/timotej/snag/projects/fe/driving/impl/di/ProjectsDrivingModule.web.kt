@@ -38,6 +38,7 @@ internal actual val platformModule =
                 getStructuresUseCase = get(),
                 getInspectionsUseCase = get(),
                 downloadReportUseCase = get(),
+                getAvailableReportTypesUseCase = get(),
                 saveInspectionUseCase = get(),
                 setProjectClosedUseCase = get(),
                 canEditProjectEntitiesUseCase = get(),

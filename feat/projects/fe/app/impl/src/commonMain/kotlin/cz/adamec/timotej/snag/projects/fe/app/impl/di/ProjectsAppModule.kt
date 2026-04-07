@@ -95,12 +95,7 @@ val projectsAppModule =
         factoryOf(::DeleteProjectPhotoUseCaseImpl) bind DeleteProjectPhotoUseCase::class
         factoryOf(::UpdateProjectPhotoDescriptionUseCaseImpl) bind UpdateProjectPhotoDescriptionUseCase::class
         factoryOf(::CascadeDeleteLocalProjectPhotosByProjectIdUseCaseImpl) bind CascadeDeleteLocalProjectPhotosByProjectIdUseCase::class
-        factory<CascadeRestoreLocalProjectPhotosByProjectIdUseCase> {
-            CascadeRestoreLocalProjectPhotosByProjectIdUseCaseImpl(
-                projectPhotosDb = get(),
-                executePullSyncUseCase = inject(),
-            )
-        }
+        factoryOf(::CascadeRestoreLocalProjectPhotosByProjectIdUseCaseImpl) bind CascadeRestoreLocalProjectPhotosByProjectIdUseCase::class
         factoryOf(::ProjectSyncHandler) bind PushSyncOperationHandler::class
         factoryOf(::ProjectPullSyncHandler) bind PullSyncOperationHandler::class
         factoryOf(::ProjectPhotoPullSyncHandler) bind PullSyncOperationHandler::class
