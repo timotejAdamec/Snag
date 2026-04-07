@@ -15,8 +15,8 @@
     <string name="participants_label">Participants</string>
     <string name="climate_label">Climate</string>
     <string name="note_label">Note</string>
-    <string name="date_from_label">Date from</string>
-    <string name="date_to_label">Date to</string>
+    <string name="date_from_label">From</string>
+    <string name="date_to_label">To</string>
     <string name="not_set">Not set</string>
     <string name="delete_inspection_confirmation_title">Delete inspection?</string>
     <string name="delete_inspection_confirmation_text">This inspection and all its data will be permanently deleted. This action cannot be undone.</string>
