@@ -158,7 +158,7 @@ internal class DevDataSeederConfiguration(
                 name = "FIT CTU New Building",
                 address = "Thákurova 9, 160 00 Praha 6",
                 clientId = Uuid.parse(CLIENT_1),
-                creatorId = Uuid.parse(USER_1),
+                creatorId = Uuid.parse(USER_5),
                 updatedAt = now,
             ),
             BackendProjectData(
@@ -166,7 +166,7 @@ internal class DevDataSeederConfiguration(
                 name = "National Library of Technology",
                 address = "Technická 2710/6, 160 00 Praha 6",
                 clientId = Uuid.parse(CLIENT_2),
-                creatorId = Uuid.parse(USER_1),
+                creatorId = Uuid.parse(USER_3),
                 updatedAt = now,
             ),
         ).forEach { projectsDb.saveProject(it) }
