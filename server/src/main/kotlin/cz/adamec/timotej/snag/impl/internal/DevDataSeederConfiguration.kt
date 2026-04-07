@@ -79,7 +79,7 @@ internal class DevDataSeederConfiguration(
                 id = Uuid.parse(USER_2),
                 authProviderId = "287a44e3-125d-48e4-80af-5dbadc83c23d",
                 email = "test-user-1@timadamecgmail.onmicrosoft.com",
-                role = UserRole.PASSPORT_LEAD,
+                role = UserRole.ADMINISTRATOR,
                 updatedAt = now,
             ),
             BackendUserData(
