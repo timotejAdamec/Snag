@@ -86,8 +86,8 @@ fun InspectionCard(
 
     val cardState =
         resolveCardStatus(
-            startedAt = feInspection.startedAt,
-            endedAt = feInspection.endedAt,
+            dateFrom = feInspection.dateFrom,
+            dateTo = feInspection.dateTo,
             now = now,
         )
 
@@ -142,7 +142,7 @@ private fun InspectionCardContent(
                 )
             }
 
-            inspection.startedAt?.let {
+            inspection.dateFrom?.let {
                 InspectionIconRow(
                     icon = DesignRes.drawable.ic_schedule,
                     text = it.toDisplayString(),
@@ -151,7 +151,7 @@ private fun InspectionCardContent(
             }
 
             if (cardState == CardStatus.ENDING_SOON || cardState == CardStatus.FINISHED) {
-                inspection.endedAt?.let {
+                inspection.dateTo?.let {
                     InspectionIconRow(
                         icon = DesignRes.drawable.ic_event_available,
                         text = it.toDisplayString(),
@@ -244,15 +244,15 @@ private fun InspectionIconRow(
 }
 
 private fun resolveCardStatus(
-    startedAt: Timestamp?,
-    endedAt: Timestamp?,
+    dateFrom: Timestamp?,
+    dateTo: Timestamp?,
     now: Timestamp,
 ): CardStatus =
     when {
-        startedAt == null -> CardStatus.NOT_STARTED
-        startedAt > now -> CardStatus.SCHEDULED
-        endedAt == null -> CardStatus.IN_PROGRESS
-        endedAt > now -> CardStatus.ENDING_SOON
+        dateFrom == null -> CardStatus.NOT_STARTED
+        dateFrom > now -> CardStatus.SCHEDULED
+        dateTo == null -> CardStatus.IN_PROGRESS
+        dateTo > now -> CardStatus.ENDING_SOON
         else -> CardStatus.FINISHED
     }
 
@@ -304,14 +304,14 @@ private val previewEndTimestamp = Timestamp(1_700_003_600_000L)
 
 @OptIn(ExperimentalUuidApi::class)
 private fun previewInspection(
-    startedAt: Timestamp? = null,
-    endedAt: Timestamp? = null,
+    dateFrom: Timestamp? = null,
+    dateTo: Timestamp? = null,
     participants: String? = "Alice, Bob",
 ) = AppInspectionData(
     id = Uuid.random(),
     projectId = Uuid.random(),
-    startedAt = startedAt,
-    endedAt = endedAt,
+    dateFrom = dateFrom,
+    dateTo = dateTo,
     participants = participants,
     climate = "Sunny",
     note = "Initial walkthrough",
@@ -340,7 +340,7 @@ private fun ScheduledPreview() {
         InspectionCardContent(
             inspection =
                 previewInspection(
-                    startedAt = previewFutureTimestamp,
+                    dateFrom = previewFutureTimestamp,
                 ),
             cardState = CardStatus.SCHEDULED,
             onClick = {},
@@ -358,7 +358,7 @@ private fun InProgressPreview() {
         InspectionCardContent(
             inspection =
                 previewInspection(
-                    startedAt = previewPastTimestamp,
+                    dateFrom = previewPastTimestamp,
                 ),
             cardState = CardStatus.IN_PROGRESS,
             onClick = {},
@@ -376,8 +376,8 @@ private fun EndingSoonPreview() {
         InspectionCardContent(
             inspection =
                 previewInspection(
-                    startedAt = previewPastTimestamp,
-                    endedAt = previewFutureTimestamp,
+                    dateFrom = previewPastTimestamp,
+                    dateTo = previewFutureTimestamp,
                 ),
             cardState = CardStatus.ENDING_SOON,
             onClick = {},
@@ -395,8 +395,8 @@ private fun FinishedPreview() {
         InspectionCardContent(
             inspection =
                 previewInspection(
-                    startedAt = previewPastTimestamp,
-                    endedAt = previewEndTimestamp,
+                    dateFrom = previewPastTimestamp,
+                    dateTo = previewEndTimestamp,
                 ),
             cardState = CardStatus.FINISHED,
             onClick = {},

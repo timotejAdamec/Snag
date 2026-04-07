@@ -23,8 +23,8 @@ val TEST_INSPECTION_ID: Uuid = Uuid.parse("00000000-0000-0000-0004-000000000001"
 suspend fun InspectionsDb.seedTestInspection(
     id: Uuid = TEST_INSPECTION_ID,
     projectId: Uuid = TEST_PROJECT_ID,
-    startedAt: Timestamp? = null,
-    endedAt: Timestamp? = null,
+    dateFrom: Timestamp? = null,
+    dateTo: Timestamp? = null,
     participants: String? = null,
     climate: String? = null,
     note: String? = null,
@@ -34,8 +34,8 @@ suspend fun InspectionsDb.seedTestInspection(
         BackendInspectionData(
             id = id,
             projectId = projectId,
-            startedAt = startedAt,
-            endedAt = endedAt,
+            dateFrom = dateFrom,
+            dateTo = dateTo,
             participants = participants,
             climate = climate,
             note = note,

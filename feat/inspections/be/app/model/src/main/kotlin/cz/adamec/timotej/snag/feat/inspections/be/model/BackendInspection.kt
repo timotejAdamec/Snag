@@ -14,8 +14,8 @@ interface BackendInspection :
 data class BackendInspectionData(
     override val id: Uuid,
     override val projectId: Uuid,
-    override val startedAt: Timestamp?,
-    override val endedAt: Timestamp?,
+    override val dateFrom: Timestamp?,
+    override val dateTo: Timestamp?,
     override val participants: String?,
     override val climate: String?,
     override val note: String?,

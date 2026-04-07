@@ -87,8 +87,8 @@ internal class InspectionEditViewModel(
                             vmState.update {
                                 it.copy(
                                     projectId = data.projectId,
-                                    startedAt = data.startedAt,
-                                    endedAt = data.endedAt,
+                                    dateFrom = data.dateFrom,
+                                    dateTo = data.dateTo,
                                     participants =
                                         data.participants.orEmpty(),
                                     climate = data.climate.orEmpty(),
@@ -105,12 +105,12 @@ internal class InspectionEditViewModel(
             }
         }
 
-    fun onStartedAtChange(value: Timestamp?) {
-        vmState.update { it.copy(startedAt = value) }
+    fun onDateFromChange(value: Timestamp?) {
+        vmState.update { it.copy(dateFrom = value) }
     }
 
-    fun onEndedAtChange(value: Timestamp?) {
-        vmState.update { it.copy(endedAt = value) }
+    fun onDateToChange(value: Timestamp?) {
+        vmState.update { it.copy(dateTo = value) }
     }
 
     fun onParticipantsChange(value: String) {
@@ -156,8 +156,8 @@ internal class InspectionEditViewModel(
                     SaveInspectionRequest(
                         id = inspectionId,
                         projectId = currentState.projectId ?: projectId!!,
-                        startedAt = currentState.startedAt,
-                        endedAt = currentState.endedAt,
+                        dateFrom = currentState.dateFrom,
+                        dateTo = currentState.dateTo,
                         participants =
                             currentState.participants.ifBlank { null },
                         climate = currentState.climate.ifBlank { null },

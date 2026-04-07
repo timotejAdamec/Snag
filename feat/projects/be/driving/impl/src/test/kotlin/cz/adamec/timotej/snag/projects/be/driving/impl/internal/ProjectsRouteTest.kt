@@ -130,7 +130,7 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
             usersDb.saveUser(
                 BackendUserData(
                     id = leadId,
-                    authProviderId = "lead-entra",
+                    authProviderId = "auth-provider-lead",
                     email = "lead@example.com",
                     role = UserRole.PASSPORT_LEAD,
                     updatedAt = Timestamp(1L),
@@ -299,7 +299,7 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
             usersDb.saveUser(
                 BackendUserData(
                     id = technicianId,
-                    authProviderId = "tech-entra",
+                    authProviderId = "auth-provider-tech",
                     email = "tech@example.com",
                     role = UserRole.PASSPORT_TECHNICIAN,
                     updatedAt = Timestamp(1L),
@@ -550,7 +550,7 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
             usersDb.saveUser(
                 BackendUserData(
                     id = technicianId,
-                    authProviderId = "tech-entra",
+                    authProviderId = "auth-provider-tech",
                     email = "tech@example.com",
                     role = UserRole.PASSPORT_TECHNICIAN,
                     updatedAt = Timestamp(1L),
@@ -584,7 +584,7 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
             usersDb.saveUser(
                 BackendUserData(
                     id = leadId,
-                    authProviderId = "lead-entra",
+                    authProviderId = "auth-provider-lead",
                     email = "lead@example.com",
                     role = UserRole.PASSPORT_LEAD,
                     updatedAt = Timestamp(1L),
@@ -626,7 +626,7 @@ class ProjectsRouteTest : BackendKoinInitializedTest() {
             usersDb.saveUser(
                 BackendUserData(
                     id = technicianId,
-                    authProviderId = "tech-entra",
+                    authProviderId = "auth-provider-tech",
                     email = "tech@example.com",
                     role = UserRole.PASSPORT_TECHNICIAN,
                     updatedAt = Timestamp(1L),

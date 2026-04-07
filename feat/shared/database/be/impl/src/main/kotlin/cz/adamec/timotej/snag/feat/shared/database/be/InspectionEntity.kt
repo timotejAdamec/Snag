@@ -21,8 +21,8 @@ class InspectionEntity(
     id: EntityID<Uuid>,
 ) : UuidEntity(id) {
     var project by ProjectEntity referencedOn InspectionsTable.project
-    var startedAt by InspectionsTable.startedAt
-    var endedAt by InspectionsTable.endedAt
+    var dateFrom by InspectionsTable.dateFrom
+    var dateTo by InspectionsTable.dateTo
     var participants by InspectionsTable.participants
     var climate by InspectionsTable.climate
     var note by InspectionsTable.note

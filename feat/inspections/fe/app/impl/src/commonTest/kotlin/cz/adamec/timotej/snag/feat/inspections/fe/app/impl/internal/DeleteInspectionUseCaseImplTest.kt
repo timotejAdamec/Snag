@@ -45,8 +45,8 @@ class DeleteInspectionUseCaseImplTest : FrontendKoinInitializedTest() {
         AppInspectionData(
             id = id,
             projectId = projectId,
-            startedAt = Timestamp(100L),
-            endedAt = null,
+            dateFrom = Timestamp(100L),
+            dateTo = null,
             participants = "John Doe",
             climate = "Sunny",
             note = null,

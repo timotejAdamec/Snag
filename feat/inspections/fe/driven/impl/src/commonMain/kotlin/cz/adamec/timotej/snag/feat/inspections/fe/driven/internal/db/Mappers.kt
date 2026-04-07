@@ -22,8 +22,8 @@ internal fun AppInspection.toEntity() =
     InspectionEntity(
         id = id.toString(),
         projectId = projectId.toString(),
-        startedAt = startedAt?.value,
-        endedAt = endedAt?.value,
+        dateFrom = dateFrom?.value,
+        dateTo = dateTo?.value,
         participants = participants,
         climate = climate,
         note = note,
@@ -34,8 +34,8 @@ internal fun InspectionEntity.toModel() =
     AppInspectionData(
         id = Uuid.parse(id),
         projectId = Uuid.parse(projectId),
-        startedAt = startedAt?.let { Timestamp(it) },
-        endedAt = endedAt?.let { Timestamp(it) },
+        dateFrom = dateFrom?.let { Timestamp(it) },
+        dateTo = dateTo?.let { Timestamp(it) },
         participants = participants,
         climate = climate,
         note = note,

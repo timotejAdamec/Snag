@@ -20,8 +20,8 @@ import kotlin.uuid.Uuid
 data class InspectionApiDto(
     val id: Uuid,
     val projectId: Uuid,
-    val startedAt: Timestamp?,
-    val endedAt: Timestamp?,
+    val dateFrom: Timestamp?,
+    val dateTo: Timestamp?,
     val participants: String?,
     val climate: String?,
     val note: String?,

@@ -158,8 +158,8 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
     private fun seedInspection(
         projectId: Uuid,
         inspectionId: Uuid = Uuid.random(),
-        startedAt: Timestamp? = null,
-        endedAt: Timestamp? = null,
+        dateFrom: Timestamp? = null,
+        dateTo: Timestamp? = null,
         participants: String? = "Alice",
         climate: String? = "sunny",
         note: String? = "note",
@@ -168,8 +168,8 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
             AppInspectionData(
                 id = inspectionId,
                 projectId = projectId,
-                startedAt = startedAt,
-                endedAt = endedAt,
+                dateFrom = dateFrom,
+                dateTo = dateTo,
                 participants = participants,
                 climate = climate,
                 note = note,
@@ -327,7 +327,7 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
         }
 
     @Test
-    fun `onStartInspection sets startedAt to current timestamp`() =
+    fun `onStartInspection sets dateFrom to current timestamp`() =
         runTest(testDispatcher) {
             val projectId = Uuid.random()
             val inspectionId = Uuid.random()
@@ -344,7 +344,7 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
             val saved =
                 viewModel.state.value.inspections
                     .find { it.id == inspectionId }
-            assertEquals(fixedNow, saved?.startedAt)
+            assertEquals(fixedNow, saved?.dateFrom)
             subscriber.cancel()
         }
 
@@ -357,7 +357,7 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
             seedInspection(
                 projectId = projectId,
                 inspectionId = inspectionId,
-                endedAt = Timestamp(999L),
+                dateTo = Timestamp(999L),
                 participants = "Bob",
                 climate = "rainy",
                 note = "my note",
@@ -374,7 +374,7 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
                 viewModel.state.value.inspections
                     .find { it.id == inspectionId }
             assertEquals(projectId, saved?.projectId)
-            assertEquals(Timestamp(999L), saved?.endedAt)
+            assertEquals(Timestamp(999L), saved?.dateTo)
             assertEquals("Bob", saved?.participants)
             assertEquals("rainy", saved?.climate)
             assertEquals("my note", saved?.note)
@@ -382,12 +382,12 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
         }
 
     @Test
-    fun `onEndInspection sets endedAt to current timestamp`() =
+    fun `onEndInspection sets dateTo to current timestamp`() =
         runTest(testDispatcher) {
             val projectId = Uuid.random()
             val inspectionId = Uuid.random()
             seedProject(projectId)
-            seedInspection(projectId = projectId, inspectionId = inspectionId, startedAt = Timestamp(1L))
+            seedInspection(projectId = projectId, inspectionId = inspectionId, dateFrom = Timestamp(1L))
 
             val viewModel = createViewModel(projectId)
             val subscriber = launch { viewModel.state.collect { } }
@@ -399,12 +399,12 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
             val saved =
                 viewModel.state.value.inspections
                     .find { it.id == inspectionId }
-            assertEquals(fixedNow, saved?.endedAt)
+            assertEquals(fixedNow, saved?.dateTo)
             subscriber.cancel()
         }
 
     @Test
-    fun `onEndInspection preserves existing startedAt`() =
+    fun `onEndInspection preserves existing dateFrom`() =
         runTest(testDispatcher) {
             val projectId = Uuid.random()
             val inspectionId = Uuid.random()
@@ -413,7 +413,7 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
             seedInspection(
                 projectId = projectId,
                 inspectionId = inspectionId,
-                startedAt = existingStartedAt,
+                dateFrom = existingStartedAt,
             )
 
             val viewModel = createViewModel(projectId)
@@ -426,7 +426,7 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
             val saved =
                 viewModel.state.value.inspections
                     .find { it.id == inspectionId }
-            assertEquals(existingStartedAt, saved?.startedAt)
+            assertEquals(existingStartedAt, saved?.dateFrom)
             subscriber.cancel()
         }
 
@@ -483,7 +483,7 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
             val apiResult = fakeInspectionsApi.getInspections(projectId)
             assertIs<OnlineDataResult.Success<List<AppInspection>>>(apiResult)
             val synced = apiResult.data.find { it.id == inspectionId }
-            assertEquals(fixedNow, synced?.startedAt)
+            assertEquals(fixedNow, synced?.dateFrom)
             subscriber.cancel()
         }
 
@@ -493,7 +493,7 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
             val projectId = Uuid.random()
             val inspectionId = Uuid.random()
             seedProject(projectId)
-            seedInspection(projectId = projectId, inspectionId = inspectionId, startedAt = Timestamp(1L))
+            seedInspection(projectId = projectId, inspectionId = inspectionId, dateFrom = Timestamp(1L))
 
             val viewModel = createViewModel(projectId)
             val subscriber = launch { viewModel.state.collect { } }
@@ -506,7 +506,7 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
             val apiResult = fakeInspectionsApi.getInspections(projectId)
             assertIs<OnlineDataResult.Success<List<AppInspection>>>(apiResult)
             val synced = apiResult.data.find { it.id == inspectionId }
-            assertEquals(fixedNow, synced?.endedAt)
+            assertEquals(fixedNow, synced?.dateTo)
             subscriber.cancel()
         }
 

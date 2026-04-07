@@ -20,8 +20,8 @@ internal fun InspectionEntity.toModel() =
     BackendInspectionData(
         id = id.value,
         projectId = project.id.value,
-        startedAt = startedAt?.let { Timestamp(it) },
-        endedAt = endedAt?.let { Timestamp(it) },
+        dateFrom = dateFrom?.let { Timestamp(it) },
+        dateTo = dateTo?.let { Timestamp(it) },
         participants = participants,
         climate = climate,
         note = note,

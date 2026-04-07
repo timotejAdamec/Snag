@@ -27,7 +27,7 @@ suspend fun UsersDb.seedTestUser(
     saveUser(
         BackendUserData(
             id = id,
-            authProviderId = "test-entra",
+            authProviderId = "auth-provider-test",
             email = "test@example.com",
             role = role,
             updatedAt = Timestamp(1L),

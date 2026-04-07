@@ -20,8 +20,8 @@ private const val NOTE_MAX_LENGTH = 4096
 
 object InspectionsTable : UuidTable("inspections") {
     val project = reference("project_id", ProjectsTable)
-    val startedAt = long("started_at").nullable()
-    val endedAt = long("ended_at").nullable()
+    val dateFrom = long("date_from").nullable()
+    val dateTo = long("date_to").nullable()
     val participants = varchar("participants", PARTICIPANTS_MAX_LENGTH).nullable()
     val climate = varchar("climate", CLIMATE_MAX_LENGTH).nullable()
     val note = varchar("note", NOTE_MAX_LENGTH).nullable()

@@ -63,7 +63,7 @@ class UsersRouteTest : BackendKoinInitializedTest() {
                     contentType(ContentType.Application.Json)
                     setBody(
                         PutUserApiDto(
-                            authProviderId = "entra-1",
+                            authProviderId = "auth-provider-user-1",
                             email = "user@example.com",
                             role = "ADMINISTRATOR",
                             updatedAt = 100L,
@@ -101,7 +101,7 @@ class UsersRouteTest : BackendKoinInitializedTest() {
             usersDb.saveUser(
                 BackendUserData(
                     id = TEST_USER_1,
-                    authProviderId = "entra-1",
+                    authProviderId = "auth-provider-user-1",
                     email = "user1@example.com",
                     role = UserRole.ADMINISTRATOR,
                     updatedAt = Timestamp(100L),
@@ -110,7 +110,7 @@ class UsersRouteTest : BackendKoinInitializedTest() {
             usersDb.saveUser(
                 BackendUserData(
                     id = TEST_USER_2,
-                    authProviderId = "entra-2",
+                    authProviderId = "auth-provider-user-2",
                     email = "user2@example.com",
                     updatedAt = Timestamp(100L),
                 ),
@@ -135,7 +135,7 @@ class UsersRouteTest : BackendKoinInitializedTest() {
             usersDb.saveUser(
                 BackendUserData(
                     id = TEST_USER_1,
-                    authProviderId = "entra-1",
+                    authProviderId = "auth-provider-user-1",
                     email = "user1@example.com",
                     updatedAt = Timestamp(100L),
                 ),
@@ -143,7 +143,7 @@ class UsersRouteTest : BackendKoinInitializedTest() {
             usersDb.saveUser(
                 BackendUserData(
                     id = TEST_USER_2,
-                    authProviderId = "entra-2",
+                    authProviderId = "auth-provider-user-2",
                     email = "user2@example.com",
                     updatedAt = Timestamp(300L),
                 ),
@@ -169,7 +169,7 @@ class UsersRouteTest : BackendKoinInitializedTest() {
             usersDb.saveUser(
                 BackendUserData(
                     id = TEST_USER_1,
-                    authProviderId = "entra-1",
+                    authProviderId = "auth-provider-user-1",
                     email = "user1@example.com",
                     updatedAt = Timestamp(100L),
                 ),
@@ -193,7 +193,7 @@ class UsersRouteTest : BackendKoinInitializedTest() {
             usersDb.saveUser(
                 BackendUserData(
                     id = TEST_USER_1,
-                    authProviderId = "entra-1",
+                    authProviderId = "auth-provider-user-1",
                     email = "user@example.com",
                     role = UserRole.PASSPORT_LEAD,
                     updatedAt = Timestamp(100L),
@@ -256,7 +256,7 @@ class UsersRouteTest : BackendKoinInitializedTest() {
                     asAuthenticated()
                     setBody(
                         PutUserApiDto(
-                            authProviderId = "entra-1",
+                            authProviderId = "auth-provider-user-1",
                             email = "user@example.com",
                             role = "ADMINISTRATOR",
                             updatedAt = 100L,
@@ -284,7 +284,7 @@ class UsersRouteTest : BackendKoinInitializedTest() {
                     asAuthenticated()
                     setBody(
                         PutUserApiDto(
-                            authProviderId = "entra-1",
+                            authProviderId = "auth-provider-user-1",
                             email = "user@example.com",
                             role = null,
                             updatedAt = 100L,
@@ -305,7 +305,7 @@ class UsersRouteTest : BackendKoinInitializedTest() {
             usersDb.saveUser(
                 BackendUserData(
                     id = TEST_USER_1,
-                    authProviderId = "entra-1",
+                    authProviderId = "auth-provider-user-1",
                     email = "old@example.com",
                     updatedAt = Timestamp(100L),
                 ),
@@ -318,7 +318,7 @@ class UsersRouteTest : BackendKoinInitializedTest() {
                     asAuthenticated()
                     setBody(
                         PutUserApiDto(
-                            authProviderId = "entra-1",
+                            authProviderId = "auth-provider-user-1",
                             email = "new@example.com",
                             role = "SERVICE_LEAD",
                             updatedAt = 200L,
@@ -345,7 +345,7 @@ class UsersRouteTest : BackendKoinInitializedTest() {
                     asAuthenticated()
                     setBody(
                         PutUserApiDto(
-                            authProviderId = "entra-1",
+                            authProviderId = "auth-provider-user-1",
                             email = "user@example.com",
                             updatedAt = 100L,
                         ),

@@ -39,7 +39,7 @@ internal class CurrentUserConfiguration(
                 logger.info("Installing mock header authentication.")
                 mockHeader(getUserUseCase = getUserUseCase)
             } else {
-                logger.info("Installing JWT authentication with EntraID.")
+                logger.info("Installing JWT authentication with auth provider.")
                 installJwtProvider()
             }
         }
@@ -73,7 +73,7 @@ internal class CurrentUserConfiguration(
                     logger.warn("JWT validation failed: missing oid claim.")
                     return@validate null
                 }
-                // EntraID v2.0 tokens include preferred_username as the primary UPN;
+                // Auth provider v2.0 tokens include preferred_username as the primary UPN;
                 // email is an optional claim that may be absent depending on token configuration.
                 val email =
                     credential.payload.getClaim("preferred_username")?.asString()

@@ -38,8 +38,8 @@ class SaveInspectionUseCaseImpl(
             AppInspectionData(
                 id = request.id ?: uuidProvider.getUuid(),
                 projectId = request.projectId,
-                startedAt = request.startedAt,
-                endedAt = request.endedAt,
+                dateFrom = request.dateFrom,
+                dateTo = request.dateTo,
                 participants = request.participants,
                 climate = request.climate,
                 note = request.note,

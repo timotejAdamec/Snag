@@ -33,7 +33,7 @@ class ProjectAssignmentsMapperTest {
         role: UserRole? = null,
     ) = AppUserData(
         id = id,
-        authProviderId = "entra-$id",
+        authProviderId = "auth-provider-user-$id",
         email = email,
         role = role,
         updatedAt = Timestamp(0L),

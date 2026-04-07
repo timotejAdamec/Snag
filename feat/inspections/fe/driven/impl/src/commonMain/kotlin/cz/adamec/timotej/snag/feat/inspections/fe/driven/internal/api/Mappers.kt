@@ -21,8 +21,8 @@ internal fun InspectionApiDto.toModel() =
     AppInspectionData(
         id = id,
         projectId = projectId,
-        startedAt = startedAt,
-        endedAt = endedAt,
+        dateFrom = dateFrom,
+        dateTo = dateTo,
         participants = participants,
         climate = climate,
         note = note,
@@ -32,8 +32,8 @@ internal fun InspectionApiDto.toModel() =
 internal fun AppInspection.toPutApiDto() =
     PutInspectionApiDto(
         projectId = projectId,
-        startedAt = startedAt,
-        endedAt = endedAt,
+        dateFrom = dateFrom,
+        dateTo = dateTo,
         participants = participants,
         climate = climate,
         note = note,
