@@ -6,8 +6,8 @@ This document is a reference for the implementation team. It describes what the 
 
 ## Remaining Work — 3. 4. 2026, 16:30
 
-1. **Service protocol PDF** — Not started. Second report type with work description and signature fields. *(§5, FP32b)*
-2. **Per-role project visibility** — `CanAccessProjectRule` and `GetProjectsUseCaseImpl` use a simplified access model (Admin = all, others = creator + assigned). The spec requires Service Lead to see all service worker projects and Passport Lead / Service Worker to see own + assigned. *(§3, NP13)*
+1. ~~**Service protocol PDF**~~ — Done. `ReportType` enum, `CanGenerateReportRule`/`GetAvailableReportTypesRule` business rules, service protocol PDF layout with signature section, role-based implicit type selection, admin picker dialog. *(§5, FP32b)*
+2. ~~**Per-role project visibility**~~ — Done. `CanAccessProjectRule` updated with `projectCreatorRole` param; Service Lead now sees all service worker projects. `GetProjectsUseCaseImpl` uses `GetUsersByRoleUseCase` for lazy filtering. FE `CanEditProjectEntitiesUseCaseImpl` updated. Creator email shown on project detail screen. *(§3, NP13)*
 
 ### Non-issues (evaluated and dismissed)
 
@@ -63,7 +63,7 @@ This document is a reference for the implementation team. It describes what the 
 | Service lead | Own projects + all projects of service workers they manage + projects to which they were assigned |
 | Administrator | All projects |
 
-> **Implementation note**: `CanAccessProjectRule` and `GetProjectsUseCaseImpl` currently use a simplified access model — Admin gets all projects, others get creator + assigned projects only. The per-role visibility logic described above (e.g., Service Lead seeing all service worker projects) is **not yet implemented**.
+> **Implementation note**: Per-role visibility fully implemented. `CanAccessProjectRule` accepts `projectCreatorRole` and grants Service Lead access to Service Worker projects. `GetProjectsUseCaseImpl` uses `GetUsersByRoleUseCase` for efficient batch filtering. FE `CanEditProjectEntitiesUseCaseImpl` resolves creator role via `GetUserFlowUseCase` with reactive `flatMapLatest`. Creator email displayed on project detail screen.
 
 ### CRUD Access to Project Sub-Entities
 
@@ -111,7 +111,7 @@ The following features are new compared to the original analysis (which had no r
 4. - [x] **Role management (UC7)** — admin manages all roles; passport lead delegates technician role; service lead delegates service worker role. *(BE API done: role set via PUT /users/{id}; authorization enforced via `CanSetUserRoleRule`. FE: `GetAllowedRoleOptionsUseCase` computes allowed transitions; `UserManagementViewModel` populates `allowedRoleOptions` per user; `RoleDropdown` filters visible options.)*
 5. - [x] **Inspection deletion** — UC5 Scenario E. *(full-stack: BE API + DB soft delete + sync, FE use case + local delete + sync enqueue, FE UI delete button + confirmation dialog)*
 6. - [x] **Client deletion** — UC2 Scenario F. A client can only be deleted if no project references it. *(full-stack: CanDeleteClientRule in business/rules, FE CanDeleteClientUseCase + delete guard in BE DeleteClientUseCaseImpl, FE UI delete button + confirmation dialog in client edit screen)*
-7. - [ ] **Service protocol** — second PDF export format with signature fields.
+7. - [x] **Service protocol** — second PDF export format with signature fields. *(ReportType enum, CanGenerateReportRule/GetAvailableReportTypesRule in reports/business/rules, OpenPdfReportGenerator service protocol layout with signature section, role-based implicit type selection on FE, admin picker dialog, BE route authorization via CanGenerateReportUseCase.)*
 
 ---
 
@@ -126,7 +126,7 @@ The following features are new compared to the original analysis (which had no r
 | FP4e | Close project — creator access: only creator retains access to closed project | UC1 | - [x] Sub-entity editing blocked on closed projects; `creatorId` tracked; creator-only close/reopen enforced; project visibility filtering enforced on all routes including sub-entity routes. FE: `CanEditProjectEntitiesUseCase` composes access + editability checks. |
 | FP10 | Delete client — only if not referenced by any project | UC2 | - [x] Done |
 | FP31 | Delete inspection | UC5 | - [x] Done |
-| FP32b | Generate service protocol — PDF with work description and signature fields | UC6 | - [ ] Not started |
+| FP32b | Generate service protocol — PDF with work description and signature fields | UC6 | - [x] Done. `ReportType` enum, `CanGenerateReportRule`, service protocol layout with signature section, role-based implicit selection. |
 | FP34 | Authentication via Microsoft EntraID | — | - [x] BE: dual-mode `CurrentUserConfiguration` (Ktor `jwt {}` provider + mock header); `GET /users/me` endpoint. FE: `OidcAuthTokenProvider` (kotlin-multiplatform-oidc, Auth Code + PKCE), `LoginUseCase` (OIDC → /users/me → user ID), `AuthenticationGate` precondition gate. |
 | FP35 | Deny access without authentication | — | - [x] BE: unauthenticated requests get no `CurrentUser` → `currentUser()` throws → 401. FE: `AuthenticationGate` shows `LoginScreen` until `IsCurrentUserAuthenticatedFlowUseCase` emits authenticated state. |
 | FP36 | Role management by administrator | UC7 | - [x] BE API done + authorization enforced via `CanSetUserRoleRule` (Admin: any role change) |

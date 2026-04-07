@@ -24,6 +24,7 @@ import cz.adamec.timotej.snag.feat.inspections.fe.app.api.SaveInspectionUseCase
 import cz.adamec.timotej.snag.feat.inspections.fe.driven.test.FakeInspectionsApi
 import cz.adamec.timotej.snag.feat.inspections.fe.driven.test.FakeInspectionsDb
 import cz.adamec.timotej.snag.feat.reports.fe.app.api.DownloadReportUseCase
+import cz.adamec.timotej.snag.feat.reports.fe.app.api.GetAvailableReportTypesFlowUseCase
 import cz.adamec.timotej.snag.feat.reports.fe.driven.test.FakeReportsApi
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.projects.app.model.AppProject
@@ -43,6 +44,7 @@ import cz.adamec.timotej.snag.projects.fe.app.api.UpdateProjectPhotoDescriptionU
 import cz.adamec.timotej.snag.projects.fe.driven.test.FakeProjectAssignmentsDb
 import cz.adamec.timotej.snag.projects.fe.driven.test.FakeProjectsApi
 import cz.adamec.timotej.snag.projects.fe.driven.test.FakeProjectsDb
+import cz.adamec.timotej.snag.reports.business.ReportType
 import cz.adamec.timotej.snag.structures.fe.app.api.GetStructuresUseCase
 import cz.adamec.timotej.snag.sync.fe.driven.test.FakeSyncQueue
 import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
@@ -84,6 +86,7 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
     private val getInspectionsUseCase: GetInspectionsUseCase by inject()
     private val saveInspectionUseCase: SaveInspectionUseCase by inject()
     private val downloadReportUseCase: DownloadReportUseCase by inject()
+    private val getAvailableReportTypesUseCase: GetAvailableReportTypesFlowUseCase by inject()
     private val setProjectClosedUseCase: SetProjectClosedUseCase by inject()
     private val canEditProjectEntitiesUseCase: CanEditProjectEntitiesUseCase by inject()
     private val canCloseProjectUseCase: CanCloseProjectUseCase by inject()
@@ -128,6 +131,7 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
             getStructuresUseCase = getStructuresUseCase,
             getInspectionsUseCase = getInspectionsUseCase,
             downloadReportUseCase = downloadReportUseCase,
+            getAvailableReportTypesUseCase = getAvailableReportTypesUseCase,
             saveInspectionUseCase = saveInspectionUseCase,
             setProjectClosedUseCase = setProjectClosedUseCase,
             canEditProjectEntitiesUseCase = canEditProjectEntitiesUseCase,
@@ -203,7 +207,7 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
             val subscriber = launch { viewModel.state.collect { } }
             advanceUntilIdle()
 
-            viewModel.onDownloadReport()
+            viewModel.onDownloadReport(ReportType.PASSPORT)
 
             val report = viewModel.reportReadyFlow.first()
             assertTrue(report.bytes.contentEquals(samplePdfBytes))
@@ -223,7 +227,7 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
             val subscriber = launch { viewModel.state.collect { } }
             advanceUntilIdle()
 
-            viewModel.onDownloadReport()
+            viewModel.onDownloadReport(ReportType.PASSPORT)
 
             val error = viewModel.errorsFlow.first()
             assertIs<UiError.NetworkUnavailable>(error)
@@ -243,7 +247,7 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
             val subscriber = launch { viewModel.state.collect { } }
             advanceUntilIdle()
 
-            viewModel.onDownloadReport()
+            viewModel.onDownloadReport(ReportType.PASSPORT)
 
             val error = viewModel.errorsFlow.first()
             assertIs<UiError.Unknown>(error)
@@ -261,7 +265,7 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
             val subscriber = launch { viewModel.state.collect { } }
             advanceUntilIdle()
 
-            viewModel.onDownloadReport()
+            viewModel.onDownloadReport(ReportType.PASSPORT)
             advanceUntilIdle()
 
             assertEquals(listOf(projectId), fakeReportsApi.downloadedProjectIds)
@@ -307,7 +311,7 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
             assertTrue(viewModel.state.value.canDownloadReport)
 
             val reportCollector = launch { viewModel.reportReadyFlow.first() }
-            viewModel.onDownloadReport()
+            viewModel.onDownloadReport(ReportType.PASSPORT)
             advanceUntilIdle()
 
             assertFalse(viewModel.state.value.canDownloadReport)

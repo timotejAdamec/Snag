@@ -22,6 +22,7 @@ import cz.adamec.timotej.snag.feat.inspections.fe.app.api.GetInspectionsUseCase
 import cz.adamec.timotej.snag.feat.inspections.fe.app.api.SaveInspectionUseCase
 import cz.adamec.timotej.snag.feat.inspections.fe.app.api.model.SaveInspectionRequest
 import cz.adamec.timotej.snag.feat.reports.fe.app.api.DownloadReportUseCase
+import cz.adamec.timotej.snag.feat.reports.fe.app.api.GetAvailableReportTypesFlowUseCase
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError.Unknown
 import cz.adamec.timotej.snag.lib.design.fe.error.toUiError
@@ -40,6 +41,7 @@ import cz.adamec.timotej.snag.projects.fe.app.api.SetProjectClosedUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.UpdateProjectPhotoDescriptionUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.model.SetProjectClosedRequest
 import cz.adamec.timotej.snag.reports.business.Report
+import cz.adamec.timotej.snag.reports.business.ReportType
 import cz.adamec.timotej.snag.structures.fe.app.api.GetStructuresUseCase
 import cz.adamec.timotej.snag.users.fe.app.api.GetUsersUseCase
 import kotlinx.collections.immutable.toImmutableList
@@ -60,6 +62,7 @@ internal abstract class ProjectDetailsViewModel(
     private val getStructuresUseCase: GetStructuresUseCase,
     private val getInspectionsUseCase: GetInspectionsUseCase,
     private val downloadReportUseCase: DownloadReportUseCase,
+    private val getAvailableReportTypesUseCase: GetAvailableReportTypesFlowUseCase,
     private val saveInspectionUseCase: SaveInspectionUseCase,
     private val setProjectClosedUseCase: SetProjectClosedUseCase,
     private val canEditProjectEntitiesUseCase: CanEditProjectEntitiesUseCase,
@@ -101,6 +104,7 @@ internal abstract class ProjectDetailsViewModel(
             collectCanAssignUsers(projectId),
             collectAssignments(projectId),
             collectUsers(),
+            collectAvailableReportTypes(),
             collectPhotos(),
         )
 
@@ -243,6 +247,13 @@ internal abstract class ProjectDetailsViewModel(
             }
         }
 
+    private fun collectAvailableReportTypes() =
+        viewModelScope.launch {
+            getAvailableReportTypesUseCase().collect { types ->
+                vmState.update { it.copy(availableReportTypes = types) }
+            }
+        }
+
     private fun collectPhotos(): Job =
         viewModelScope.launch {
             getProjectPhotosUseCase(projectId).collect { result ->
@@ -291,6 +302,7 @@ internal abstract class ProjectDetailsViewModel(
             }
         }
     }
+
 
     fun onAssignUser(userId: Uuid) =
         viewModelScope.launch {
@@ -389,10 +401,10 @@ internal abstract class ProjectDetailsViewModel(
             vmState.update { it.copy(isClosingOrReopening = false) }
         }
 
-    fun onDownloadReport() =
+    fun onDownloadReport(type: ReportType) =
         viewModelScope.launch {
             vmState.update { it.copy(isDownloadingReport = true) }
-            when (val result = downloadReportUseCase(projectId)) {
+            when (val result = downloadReportUseCase(projectId, type)) {
                 is OnlineDataResult.Success -> {
                     reportReadyChannel.send(result.data)
                 }

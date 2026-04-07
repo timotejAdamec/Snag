@@ -16,8 +16,8 @@ import com.auth0.jwk.JwkProviderBuilder
 import cz.adamec.timotej.snag.authentication.be.driving.api.CurrentUser
 import cz.adamec.timotej.snag.authentication.be.driving.api.SnagPrincipal
 import cz.adamec.timotej.snag.authentication.be.driving.impl.internal.LH.logger
-import cz.adamec.timotej.snag.network.be.KtorServerConfiguration
 import cz.adamec.timotej.snag.configuration.be.BackendRunConfig
+import cz.adamec.timotej.snag.network.be.KtorServerConfiguration
 import cz.adamec.timotej.snag.users.be.app.api.GetOrCreateUserByAuthProviderIdUseCase
 import cz.adamec.timotej.snag.users.be.app.api.GetUserUseCase
 import io.ktor.server.application.Application

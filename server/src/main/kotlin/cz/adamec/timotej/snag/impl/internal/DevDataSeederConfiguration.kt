@@ -15,7 +15,6 @@ package cz.adamec.timotej.snag.impl.internal
 import cz.adamec.timotej.snag.authorization.business.UserRole
 import cz.adamec.timotej.snag.clients.be.model.BackendClientData
 import cz.adamec.timotej.snag.clients.be.ports.ClientsDb
-import cz.adamec.timotej.snag.network.be.KtorServerConfiguration
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.core.foundation.common.TimestampProvider
 import cz.adamec.timotej.snag.feat.findings.be.model.BackendFindingData
@@ -29,6 +28,7 @@ import cz.adamec.timotej.snag.feat.inspections.be.ports.InspectionsDb
 import cz.adamec.timotej.snag.feat.structures.be.model.BackendStructureData
 import cz.adamec.timotej.snag.findings.be.ports.FindingPhotosDb
 import cz.adamec.timotej.snag.findings.be.ports.FindingsDb
+import cz.adamec.timotej.snag.network.be.KtorServerConfiguration
 import cz.adamec.timotej.snag.projects.be.model.BackendProjectData
 import cz.adamec.timotej.snag.projects.be.ports.ProjectAssignmentsDb
 import cz.adamec.timotej.snag.projects.be.ports.ProjectsDb
@@ -79,7 +79,7 @@ internal class DevDataSeederConfiguration(
                 id = Uuid.parse(USER_2),
                 authProviderId = "287a44e3-125d-48e4-80af-5dbadc83c23d",
                 email = "test-user-1@timadamecgmail.onmicrosoft.com",
-                role = UserRole.PASSPORT_LEAD,
+                role = UserRole.ADMINISTRATOR,
                 updatedAt = now,
             ),
             BackendUserData(
@@ -158,7 +158,7 @@ internal class DevDataSeederConfiguration(
                 name = "FIT CTU New Building",
                 address = "Thákurova 9, 160 00 Praha 6",
                 clientId = Uuid.parse(CLIENT_1),
-                creatorId = Uuid.parse(USER_1),
+                creatorId = Uuid.parse(USER_5),
                 updatedAt = now,
             ),
             BackendProjectData(
@@ -166,7 +166,7 @@ internal class DevDataSeederConfiguration(
                 name = "National Library of Technology",
                 address = "Technická 2710/6, 160 00 Praha 6",
                 clientId = Uuid.parse(CLIENT_2),
-                creatorId = Uuid.parse(USER_1),
+                creatorId = Uuid.parse(USER_3),
                 updatedAt = now,
             ),
         ).forEach { projectsDb.saveProject(it) }

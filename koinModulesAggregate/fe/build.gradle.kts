@@ -68,6 +68,7 @@ kotlin {
             // Reports feature
             implementation(projects.feat.reports.fe.app.impl)
             implementation(projects.feat.reports.fe.driven.impl)
+            implementation(projects.feat.reports.business.rules)
 
             // Users feature
             implementation(projects.feat.users.fe.app.impl)

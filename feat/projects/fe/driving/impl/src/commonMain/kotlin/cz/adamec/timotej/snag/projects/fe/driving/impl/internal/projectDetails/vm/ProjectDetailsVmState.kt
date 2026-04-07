@@ -16,6 +16,7 @@ import cz.adamec.timotej.snag.feat.inspections.app.model.AppInspection
 import cz.adamec.timotej.snag.feat.structures.app.model.AppStructure
 import cz.adamec.timotej.snag.projects.app.model.AppProject
 import cz.adamec.timotej.snag.projects.app.model.AppProjectPhoto
+import cz.adamec.timotej.snag.reports.business.ReportType
 import cz.adamec.timotej.snag.users.app.model.AppUser
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -37,6 +38,7 @@ internal data class ProjectDetailsVmState(
     val canCloseProject: Boolean = false,
     val canAssignUsers: Boolean = false,
     val canModifyPhotos: Boolean = true,
+    val availableReportTypes: List<ReportType> = emptyList(),
     val allUsers: ImmutableList<AppUser> = persistentListOf(),
     val assignedUserIds: Set<Uuid> = emptySet(),
     val usersLoaded: Boolean = false,

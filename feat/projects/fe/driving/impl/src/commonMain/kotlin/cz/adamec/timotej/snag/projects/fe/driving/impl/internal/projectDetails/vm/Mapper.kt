@@ -28,6 +28,7 @@ internal fun ProjectDetailsVmState.toUiState(): ProjectDetailsUiState {
             .filter { it.id !in assignedUserIds }
             .map { it.toAssignedUserItem() }
             .toPersistentList()
+    val creatorEmail = allUsers.find { it.id == project?.creatorId }?.email
     return ProjectDetailsUiState(
         projectStatus = projectStatus,
         isDownloadingReport = isDownloadingReport,
@@ -42,9 +43,14 @@ internal fun ProjectDetailsVmState.toUiState(): ProjectDetailsUiState {
         isClosed = isClosed,
         isProjectEditable = isProjectEditable,
         canInvokeDeletion = isProjectEditable && !isBeingDeleted,
-        canDownloadReport = projectStatus == ProjectDetailsUiStatus.LOADED && !isDownloadingReport,
+        canDownloadReport =
+            projectStatus == ProjectDetailsUiStatus.LOADED &&
+                !isDownloadingReport &&
+                availableReportTypes.isNotEmpty(),
+        availableReportTypes = availableReportTypes,
         canToggleClosed = projectStatus == ProjectDetailsUiStatus.LOADED && !isClosingOrReopening && canCloseProject,
         canAssignUsers = canAssignUsers,
         canModifyPhotos = canModifyPhotos,
+        creatorEmail = creatorEmail,
     )
 }

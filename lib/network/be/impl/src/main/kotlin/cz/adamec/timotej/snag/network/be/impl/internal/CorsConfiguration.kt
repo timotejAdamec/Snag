@@ -22,7 +22,6 @@ import io.ktor.server.application.install
 import io.ktor.server.plugins.cors.routing.CORS
 
 internal class CorsConfiguration : KtorServerConfiguration {
-
     override val priority: Int get() = -1
 
     override fun Application.setup() {

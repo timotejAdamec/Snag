@@ -17,7 +17,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
 object SnagSurfaceColors {
-
     /**
      * Color for nav bar/rail and outer color on large screens.
      */

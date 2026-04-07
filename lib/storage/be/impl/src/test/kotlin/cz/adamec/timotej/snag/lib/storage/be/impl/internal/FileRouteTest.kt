@@ -12,8 +12,8 @@
 
 package cz.adamec.timotej.snag.lib.storage.be.impl.internal
 
-import cz.adamec.timotej.snag.network.be.KtorServerConfiguration
 import cz.adamec.timotej.snag.lib.storage.be.test.FakeStorageService
+import cz.adamec.timotej.snag.network.be.KtorServerConfiguration
 import cz.adamec.timotej.snag.network.be.test.jsonClient
 import cz.adamec.timotej.snag.testinfra.be.BackendKoinInitializedTest
 import cz.adamec.timotej.snag.users.be.driven.test.asAuthenticated

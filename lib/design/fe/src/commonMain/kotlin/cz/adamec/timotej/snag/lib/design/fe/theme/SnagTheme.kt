@@ -19,7 +19,6 @@ import androidx.compose.material3.expressiveLightColorScheme
 import androidx.compose.runtime.Composable
 
 object SnagTheme {
-
     val surfaceColors: SnagSurfaceColors = SnagSurfaceColors
 
     @Composable
