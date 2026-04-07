@@ -25,4 +25,6 @@ interface ProjectAssignmentsDb {
     ): OfflineFirstDataResult<Unit>
 
     suspend fun deleteAssignmentsByProjectId(projectId: Uuid): OfflineFirstDataResult<Unit>
+
+    suspend fun getProjectIdsForAssignedUser(userId: Uuid): Set<Uuid>
 }
