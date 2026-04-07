@@ -73,7 +73,7 @@ internal class CurrentUserConfiguration(
                     logger.warn("JWT validation failed: missing oid claim.")
                     return@validate null
                 }
-                // Auth provider v2.0 tokens include preferred_username as the primary UPN;
+                // EntraID v2.0 tokens include preferred_username as the primary UPN;
                 // email is an optional claim that may be absent depending on token configuration.
                 val email =
                     credential.payload.getClaim("preferred_username")?.asString()
