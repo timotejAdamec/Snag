@@ -29,7 +29,6 @@ module_path,source_set,kotlin_loc,kotlin_files
 :feat:projects:contract,commonMain,66,6
 :feat:reports:contract,commonMain,5,1
 :feat:structures:contract,commonMain,31,3
-:feat:sync:model,commonMain,10,2
 :feat:users:contract,commonMain,19,2
 :lib:database:fe,androidMain,17,1
 :lib:database:fe,commonMain,164,5
@@ -84,11 +83,7 @@ module_path,source_set,kotlin_loc,kotlin_files
 :feat:structures:be:ports,main,17,1
 :feat:structures:business:model,commonMain,8,1
 :feat:structures:fe:ports,commonMain,39,2
-:feat:sync:be:api,main,43,4
-:feat:sync:be:impl,main,57,3
-:feat:sync:be:impl,test,142,1
-:feat:sync:be:model,main,5,1
-:feat:sync:fe:model,commonMain,12,2
+:feat:sync:business:model,commonMain,10,2
 :feat:sync:fe:ports,commonMain,36,3
 :feat:users:app:model,commonMain,18,1
 :feat:users:be:ports,main,13,1
@@ -282,10 +277,15 @@ module_path,source_set,kotlin_loc,kotlin_files
 :feat:structures:fe:driving:impl,commonTest,518,4
 :feat:structures:fe:driving:impl,nonWebMain,13,1
 :feat:structures:fe:driving:impl,webMain,13,1
+:feat:sync:be:app:api,main,43,4
+:feat:sync:be:app:impl,main,57,3
+:feat:sync:be:app:impl,test,142,1
+:feat:sync:be:app:model,main,5,1
 :feat:sync:fe:app:api,commonMain,241,18
 :feat:sync:fe:app:api,commonTest,178,1
 :feat:sync:fe:app:impl,commonMain,313,12
 :feat:sync:fe:app:impl,commonTest,615,3
+:feat:sync:fe:app:model,commonMain,12,2
 :feat:sync:fe:driven:impl,commonMain,128,4
 :feat:sync:fe:driven:test,commonMain,65,3
 :feat:users:be:app:api,main,46,7

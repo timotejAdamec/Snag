@@ -51,33 +51,72 @@ def load_joined_table() -> pd.DataFrame:
 
 
 # ---------------------------------------------------------------------------------------------
-# Hex layer derivation
+# Row label derivation (architecture layer / module category)
 # ---------------------------------------------------------------------------------------------
 #
-# The `hex_layer` column emitted by SharingReportTask is blank for some rows that still
-# conceptually belong to a layer — contract modules carry `encapsulation=contract` but no
-# hex layer, model modules carry no hex layer at all, core/lib/infra/app modules carry no
-# feature-layer concept. For the §4.2 heatmap we introduce a derived layer label so every
-# LOC row lands in exactly one row of the matrix.
+# The heatmap's vertical axis groups each LOC row by a coarse "architectural role" label.
+# The `hex_layer` column emitted by SharingReportTask only fills in for feat modules that
+# follow the hexagonal convention, so we extend it with module-category fallbacks so every
+# LOC row lands in exactly one row of the matrix:
+#
+# - feat modules with a hex layer → the hex layer name (business / app / ports / driving / driven)
+# - feat or lib modules with encapsulation=contract → `contract`
+# - feat modules without either signal → `feat (other)`. After the sync-structure refactor
+#   this bucket catches the shared cross-feature infrastructure in `:feat:shared:database:*`
+#   and `:feat:shared:storage:*` — modules with multi-segment feature names that expose
+#   common database/storage plumbing used by several features and don't fit the standard
+#   per-feature hex layout. It is deliberately a small residual bucket, not a first-class
+#   architectural layer.
+# - core modules → `core`
+# - lib modules (non-contract) → `lib`
+# - infra modules → `infra`
+# - top-level app modules (androidApp, composeApp, server, wearApp) → `app (top-level)`
+#
+# Note that `app` as a feat hex layer and `app (top-level)` as a category are different things
+# and appear as separate rows. `app` is the application layer inside a feature's hexagonal
+# architecture; `app (top-level)` is the single-segment module at the root of the build that
+# wires everything into a runnable binary.
 
 
 LAYER_ORDER = [
+    # Feat hex layers — the primary thesis axis
     "business",
     "app",
     "ports",
     "driving",
     "driven",
+    # Cross-cutting within features
     "contract",
-    "other",
+    "feat (other)",
+    # Other top-level categories
+    "core",
+    "lib",
+    "infra",
+    "app (top-level)",
 ]
 
 
 def derive_layer(row: pd.Series) -> str:
+    category = row["category"]
     hex_layer = row["hex_layer"]
-    if hex_layer:
-        return hex_layer
-    if row["encapsulation"] == "contract":
-        return "contract"
+    encapsulation = row["encapsulation"]
+
+    if category == "feat":
+        if hex_layer:
+            return hex_layer
+        if encapsulation == "contract":
+            return "contract"
+        return "feat (other)"
+    if category == "lib":
+        if encapsulation == "contract":
+            return "contract"
+        return "lib"
+    if category == "core":
+        return "core"
+    if category == "infra":
+        return "infra"
+    if category == "app":
+        return "app (top-level)"
     return "other"
 
 
