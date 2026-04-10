@@ -21,11 +21,11 @@ import java.io.File
 
 internal data class SharingReportSubprojectInput(
     val modulePath: String,
-    val appliedSnagPluginIds: List<String>,
+    val appliedPluginIds: List<String>,
     val sourceSetDirs: List<SourceSetDir>,
 ) : java.io.Serializable {
     companion object {
-        private const val serialVersionUID: Long = 1L
+        private const val serialVersionUID: Long = 2L
     }
 }
 
@@ -42,7 +42,7 @@ internal abstract class SharingReportTask : DefaultTask() {
         val rows = subprojectInputs.get().flatMap { input ->
             SharingReportRowBuilder.buildRows(
                 modulePath = input.modulePath,
-                appliedSnagPluginIds = input.appliedSnagPluginIds,
+                appliedPluginIds = input.appliedPluginIds,
                 sourceSetDirs = input.sourceSetDirs,
             )
         }
@@ -65,7 +65,7 @@ internal abstract class SharingReportTask : DefaultTask() {
 }
 
 private const val CSV_HEADER =
-    "module_path,category,feature,platform,hex_layer,encapsulation,plugin_applied,source_set,source_set_dir"
+    "module_path,category,feature,platform,hex_layer,encapsulation,plugin_applied,source_set,source_set_dir,platform_set"
 
 private fun SharingReportRow.toCsv(): String = listOf(
     modulePath,
@@ -77,6 +77,7 @@ private fun SharingReportRow.toCsv(): String = listOf(
     pluginApplied,
     sourceSet,
     sourceSetDir,
+    platformSet,
 ).joinToString(",") { it.csvEscape() }
 
 private fun String.csvEscape(): String {

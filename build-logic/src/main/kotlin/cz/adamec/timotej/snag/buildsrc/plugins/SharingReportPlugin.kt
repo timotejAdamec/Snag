@@ -13,6 +13,7 @@
 package cz.adamec.timotej.snag.buildsrc.plugins
 
 import cz.adamec.timotej.snag.buildsrc.configuration.analysis.CANONICAL_SNAG_PLUGIN_IDS
+import cz.adamec.timotej.snag.buildsrc.configuration.analysis.PLATFORM_MARKER_PLUGIN_IDS
 import cz.adamec.timotej.snag.buildsrc.configuration.analysis.SharingReportSubprojectInput
 import cz.adamec.timotej.snag.buildsrc.configuration.analysis.SharingReportTask
 import cz.adamec.timotej.snag.buildsrc.configuration.analysis.SourceSetDir
@@ -37,10 +38,11 @@ internal class SharingReportPlugin : Plugin<Project> {
         }
 
         target.gradle.projectsEvaluated {
+            val probedPluginIds = CANONICAL_SNAG_PLUGIN_IDS + PLATFORM_MARKER_PLUGIN_IDS
             val inputs = target.rootProject.subprojects.map { subproject ->
                 SharingReportSubprojectInput(
                     modulePath = subproject.path,
-                    appliedSnagPluginIds = CANONICAL_SNAG_PLUGIN_IDS.filter { pluginId ->
+                    appliedPluginIds = probedPluginIds.filter { pluginId ->
                         subproject.pluginManager.hasPlugin(pluginId)
                     },
                     sourceSetDirs = discoverSourceSetDirs(subproject.projectDir),

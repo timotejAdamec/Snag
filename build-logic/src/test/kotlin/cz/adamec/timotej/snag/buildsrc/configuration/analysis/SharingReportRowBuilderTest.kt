@@ -22,7 +22,7 @@ class SharingReportRowBuilderTest {
     // ---------- CoreModule ----------
 
     @Test
-    fun `core foundation common fans out across all six source sets`() {
+    fun `core foundation common fans out across all six source sets with full-platform reach`() {
         val rows = buildRows(
             modulePath = ":core:foundation:common",
             pluginId = "libs.plugins.snag.multiplatform.module",
@@ -43,10 +43,17 @@ class SharingReportRowBuilderTest {
             listOf("commonMain", "androidMain", "iosMain", "jvmMain", "jsMain", "wasmJsMain"),
             rows.map { it.sourceSet },
         )
+        // Full-platform KMP commonMain reaches all 6 platforms; jvmMain reaches both jvm-desktop
+        // and the JVM backend because backend modules transitively consume this module's jvmMain
+        // artifacts. This is the distinction the thesis cares about.
+        assertEquals(
+            listOf("all", "android", "ios", "jvm_shared", "js", "wasmJs"),
+            rows.map { it.platformSet },
+        )
     }
 
     @Test
-    fun `core foundation fe yields fe platform`() {
+    fun `core foundation fe yields frontend-only reach for commonMain`() {
         val rows = buildRows(
             modulePath = ":core:foundation:fe",
             pluginId = "libs.plugins.snag.frontend.multiplatform.module",
@@ -58,10 +65,13 @@ class SharingReportRowBuilderTest {
             assertEquals("fe", row.platform)
             assertEquals("", row.encapsulation)
         }
+        // Frontend-only commonMain is the 5-platform "frontend" label (NO backend) — this is
+        // the key regression check: it must NOT be "all".
+        assertEquals(listOf("frontend", "android"), rows.map { it.platformSet })
     }
 
     @Test
-    fun `core foundation be yields be platform`() {
+    fun `core foundation be yields backend reach for main`() {
         val rows = buildRows(
             modulePath = ":core:foundation:be",
             pluginId = "libs.plugins.snag.backend.module",
@@ -73,6 +83,8 @@ class SharingReportRowBuilderTest {
             assertEquals("be", row.platform)
         }
         assertEquals(listOf("main", "test"), rows.map { it.sourceSet })
+        // `main` → backend; test source sets get blank (excluded from reach aggregation).
+        assertEquals(listOf("backend", ""), rows.map { it.platformSet })
     }
 
     @Test
@@ -495,13 +507,310 @@ class SharingReportRowBuilderTest {
         assertEquals("infra", row.category)
     }
 
+    // ---------- Platform reach ----------
+    //
+    // The platform_set column is the primary thesis aggregation axis. The naive source-set
+    // name (e.g. `commonMain`) is ambiguous — it reaches different platforms depending on
+    // whether the module is full-platform or frontend-only. These tests pin down every
+    // (plugin family × source set) combination and serve as the regression harness for the
+    // bug where a previous revision conflated full-platform commonMain with frontend-only
+    // commonMain.
+
+    @Test
+    fun `stacked frontend plugins do not accidentally classify as full-platform`() {
+        // Regression: Snag convention plugins stack — applying the driving-frontend plugin
+        // also applies the base frontend plugin AND the base multiplatform plugin. A naïve
+        // `any { it in FULL_PLATFORM_SNAG_PLUGINS }` check would match the base plugin and
+        // wrongly classify every frontend module as full-platform, emitting "all" for its
+        // commonMain LOC. This test pins down the correct behavior: the most-specific Snag
+        // plugin applied wins, and it must be the frontend-family driving plugin.
+        val row = SharingReportRowBuilder.buildRows(
+            modulePath = ":composeApp",
+            appliedPluginIds = listOf(
+                "libs.plugins.snag.multiplatform.module",
+                "libs.plugins.snag.frontend.multiplatform.module",
+                "libs.plugins.snag.driving.frontend.multiplatform.module",
+            ),
+            sourceSetDirs = listOf(SourceSetDir("commonMain", "/tmp/composeApp/src/commonMain")),
+        ).single()
+        assertEquals("frontend", row.platformSet)
+    }
+
+    @Test
+    fun `stacked backend plugins do not accidentally classify as full-platform`() {
+        // Same regression on the backend side: applying `snag.impl.driving.backend.module`
+        // may transitively apply `snag.backend.module`. The result must be BACKEND, not FULL.
+        val row = SharingReportRowBuilder.buildRows(
+            modulePath = ":feat:users:be:driving:impl",
+            appliedPluginIds = listOf(
+                "libs.plugins.snag.backend.module",
+                "libs.plugins.snag.impl.driving.backend.module",
+            ),
+            sourceSetDirs = listOf(SourceSetDir("main", "/tmp/feat/users/be/driving/impl/src/main")),
+        ).single()
+        assertEquals("backend", row.platformSet)
+    }
+
+    @Test
+    fun `stacked contract plugin classifies as full-platform`() {
+        // Contract modules apply `snag.contract.driving.backend.multiplatform.module` which
+        // transitively applies the base `snag.multiplatform.module`. Both belong to the full-
+        // platform family, so this must classify as FULL and emit "all" for commonMain.
+        val row = SharingReportRowBuilder.buildRows(
+            modulePath = ":feat:clients:contract",
+            appliedPluginIds = listOf(
+                "libs.plugins.snag.multiplatform.module",
+                "libs.plugins.snag.contract.driving.backend.multiplatform.module",
+            ),
+            sourceSetDirs = listOf(SourceSetDir("commonMain", "/tmp/feat/clients/contract/src/commonMain")),
+        ).single()
+        assertEquals("all", row.platformSet)
+    }
+
+    @Test
+    fun `full-platform commonMain reaches all six platforms`() {
+        val row = buildRows(
+            modulePath = ":feat:clients:contract",
+            pluginId = "libs.plugins.snag.contract.driving.backend.multiplatform.module",
+            sourceSets = listOf("commonMain"),
+        ).single()
+        assertEquals("all", row.platformSet)
+    }
+
+    @Test
+    fun `frontend-only commonMain reaches the five frontends but not backend`() {
+        val row = buildRows(
+            modulePath = ":feat:projects:fe:driven:impl",
+            pluginId = "libs.plugins.snag.driven.frontend.multiplatform.module",
+            sourceSets = listOf("commonMain"),
+        ).single()
+        assertEquals("frontend", row.platformSet)
+    }
+
+    @Test
+    fun `backend main reaches only the JVM backend`() {
+        val row = buildRows(
+            modulePath = ":feat:projects:be:driven:impl",
+            pluginId = "libs.plugins.snag.driven.backend.module",
+            sourceSets = listOf("main"),
+        ).single()
+        assertEquals("backend", row.platformSet)
+    }
+
+    @Test
+    fun `full-platform nonWebMain reaches android ios jvmDesktop and jvmBackend`() {
+        val row = buildRows(
+            modulePath = ":core:foundation:common",
+            pluginId = "libs.plugins.snag.multiplatform.module",
+            sourceSets = listOf("nonWebMain"),
+        ).single()
+        assertEquals("nonWeb_shared", row.platformSet)
+    }
+
+    @Test
+    fun `frontend-only nonWebMain reaches android ios and jvmDesktop without backend`() {
+        val row = buildRows(
+            modulePath = ":feat:projects:fe:driving:impl",
+            pluginId = "libs.plugins.snag.driving.frontend.multiplatform.module",
+            sourceSets = listOf("nonWebMain"),
+        ).single()
+        assertEquals("nonWeb_fe", row.platformSet)
+    }
+
+    @Test
+    fun `full-platform jvmMain is jvmShared because backend depends on this module`() {
+        val row = buildRows(
+            modulePath = ":core:foundation:common",
+            pluginId = "libs.plugins.snag.multiplatform.module",
+            sourceSets = listOf("jvmMain"),
+        ).single()
+        assertEquals("jvm_shared", row.platformSet)
+    }
+
+    @Test
+    fun `frontend-only jvmMain is jvm_desktop because backend cannot depend on it`() {
+        val row = buildRows(
+            modulePath = ":feat:projects:fe:driving:impl",
+            pluginId = "libs.plugins.snag.driving.frontend.multiplatform.module",
+            sourceSets = listOf("jvmMain"),
+        ).single()
+        assertEquals("jvm_desktop", row.platformSet)
+    }
+
+    @Test
+    fun `mobileMain has the same reach regardless of plugin family`() {
+        val fullRow = buildRows(
+            modulePath = ":core:foundation:common",
+            pluginId = "libs.plugins.snag.multiplatform.module",
+            sourceSets = listOf("mobileMain"),
+        ).single()
+        val feRow = buildRows(
+            modulePath = ":feat:projects:fe:driving:impl",
+            pluginId = "libs.plugins.snag.driving.frontend.multiplatform.module",
+            sourceSets = listOf("mobileMain"),
+        ).single()
+        assertEquals("mobile", fullRow.platformSet)
+        assertEquals("mobile", feRow.platformSet)
+    }
+
+    @Test
+    fun `webMain has the same reach regardless of plugin family`() {
+        val fullRow = buildRows(
+            modulePath = ":core:foundation:common",
+            pluginId = "libs.plugins.snag.multiplatform.module",
+            sourceSets = listOf("webMain"),
+        ).single()
+        val feRow = buildRows(
+            modulePath = ":feat:projects:fe:driving:impl",
+            pluginId = "libs.plugins.snag.driving.frontend.multiplatform.module",
+            sourceSets = listOf("webMain"),
+        ).single()
+        assertEquals("web", fullRow.platformSet)
+        assertEquals("web", feRow.platformSet)
+    }
+
+    @Test
+    fun `nonJvmMain has the same reach regardless of plugin family`() {
+        val fullRow = buildRows(
+            modulePath = ":core:foundation:common",
+            pluginId = "libs.plugins.snag.multiplatform.module",
+            sourceSets = listOf("nonJvmMain"),
+        ).single()
+        val feRow = buildRows(
+            modulePath = ":feat:projects:fe:driving:impl",
+            pluginId = "libs.plugins.snag.driving.frontend.multiplatform.module",
+            sourceSets = listOf("nonJvmMain"),
+        ).single()
+        assertEquals("nonJvm", fullRow.platformSet)
+        assertEquals("nonJvm", feRow.platformSet)
+    }
+
+    @Test
+    fun `full-platform nonAndroidMain includes backend`() {
+        val row = buildRows(
+            modulePath = ":core:foundation:common",
+            pluginId = "libs.plugins.snag.multiplatform.module",
+            sourceSets = listOf("nonAndroidMain"),
+        ).single()
+        assertEquals("nonAndroid_shared", row.platformSet)
+    }
+
+    @Test
+    fun `frontend-only nonAndroidMain excludes backend`() {
+        val row = buildRows(
+            modulePath = ":feat:projects:fe:driving:impl",
+            pluginId = "libs.plugins.snag.driving.frontend.multiplatform.module",
+            sourceSets = listOf("nonAndroidMain"),
+        ).single()
+        assertEquals("nonAndroid_fe", row.platformSet)
+    }
+
+    @Test
+    fun `androidApp with com dot android dot application reaches android only`() {
+        val row = SharingReportRowBuilder.buildRows(
+            modulePath = ":androidApp",
+            appliedPluginIds = listOf("com.android.application"),
+            sourceSetDirs = listOf(SourceSetDir("main", "/tmp/androidApp/src/main")),
+        ).single()
+        assertEquals("android", row.platformSet)
+        assertEquals("", row.pluginApplied)
+    }
+
+    @Test
+    fun `app module with no plugin at all has empty platform set`() {
+        val row = SharingReportRowBuilder.buildRows(
+            modulePath = ":androidApp",
+            appliedPluginIds = emptyList(),
+            sourceSetDirs = listOf(SourceSetDir("main", "/tmp/androidApp/src/main")),
+        ).single()
+        assertEquals("", row.platformSet)
+    }
+
+    @Test
+    fun `fe-scoped lib module applying the base multiplatform plugin still gets frontend reach`() {
+        // Regression: :lib:configuration:fe:api, :feat:shared:database:fe:test and similar
+        // modules in Snag apply `snag.multiplatform.module` directly even though their path
+        // carries platform=fe. The KMP plugin compiles a JVM artifact for them, but the
+        // platform-direction architectural rule forbids backend modules from depending on
+        // `fe` modules — so the jvmMain code can only ever be consumed by the frontend JVM
+        // desktop target. The reach must therefore be jvm_desktop, not jvm_shared.
+        val rows = buildRows(
+            modulePath = ":lib:configuration:fe:api",
+            pluginId = "libs.plugins.snag.multiplatform.module",
+            sourceSets = listOf("commonMain", "jvmMain"),
+        )
+        assertEquals("frontend", rows.first { it.sourceSet == "commonMain" }.platformSet)
+        assertEquals("jvm_desktop", rows.first { it.sourceSet == "jvmMain" }.platformSet)
+    }
+
+    @Test
+    fun `fe-scoped lib module nonWebMain collapses to nonWeb_fe`() {
+        val row = buildRows(
+            modulePath = ":lib:design:fe",
+            pluginId = "libs.plugins.snag.multiplatform.module",
+            sourceSets = listOf("nonWebMain"),
+        ).single()
+        assertEquals("nonWeb_fe", row.platformSet)
+    }
+
+    @Test
+    fun `be-scoped module applying base multiplatform plugin still gets backend reach`() {
+        // Symmetric case: a `be`-path module that for whatever reason applies the
+        // full-platform base plugin must still report backend reach — architecturally no
+        // frontend module can depend on it.
+        val row = buildRows(
+            modulePath = ":feat:sync:be:api",
+            pluginId = "libs.plugins.snag.multiplatform.module",
+            sourceSets = listOf("main"),
+        ).single()
+        assertEquals("backend", row.platformSet)
+    }
+
+    @Test
+    fun `common-platform module with full plugin keeps full reach`() {
+        // Positive control: :core:foundation:common applies the full-platform plugin AND has
+        // platform=common per path, so both signals agree — the backend is allowed to depend
+        // on it (it does, transitively via :core:foundation:be auto-wiring) — therefore its
+        // nonWebMain legitimately reaches nonWeb_shared.
+        val rows = buildRows(
+            modulePath = ":core:foundation:common",
+            pluginId = "libs.plugins.snag.multiplatform.module",
+            sourceSets = listOf("commonMain", "nonWebMain", "jvmMain"),
+        )
+        assertEquals("all", rows.first { it.sourceSet == "commonMain" }.platformSet)
+        assertEquals("nonWeb_shared", rows.first { it.sourceSet == "nonWebMain" }.platformSet)
+        assertEquals("jvm_shared", rows.first { it.sourceSet == "jvmMain" }.platformSet)
+    }
+
+    @Test
+    fun `test source sets get empty platform set across every plugin family`() {
+        val fullTest = buildRows(
+            modulePath = ":core:foundation:common",
+            pluginId = "libs.plugins.snag.multiplatform.module",
+            sourceSets = listOf("commonTest"),
+        ).single()
+        val feTest = buildRows(
+            modulePath = ":feat:projects:fe:driving:impl",
+            pluginId = "libs.plugins.snag.driving.frontend.multiplatform.module",
+            sourceSets = listOf("commonTest"),
+        ).single()
+        val backendTest = buildRows(
+            modulePath = ":feat:projects:be:driven:impl",
+            pluginId = "libs.plugins.snag.driven.backend.module",
+            sourceSets = listOf("test"),
+        ).single()
+        assertEquals("", fullTest.platformSet)
+        assertEquals("", feTest.platformSet)
+        assertEquals("", backendTest.platformSet)
+    }
+
     // ---------- Edge cases ----------
 
     @Test
     fun `empty source set list returns empty rows`() {
         val rows = SharingReportRowBuilder.buildRows(
             modulePath = ":feat:projects:business:model",
-            appliedSnagPluginIds = listOf("libs.plugins.snag.multiplatform.module"),
+            appliedPluginIds = listOf("libs.plugins.snag.multiplatform.module"),
             sourceSetDirs = emptyList(),
         )
         assertEquals(emptyList(), rows)
@@ -514,7 +823,7 @@ class SharingReportRowBuilderTest {
         // report the most specific applied plugin, not the most general.
         val row = SharingReportRowBuilder.buildRows(
             modulePath = ":feat:projects:fe:driving:impl",
-            appliedSnagPluginIds = listOf(
+            appliedPluginIds = listOf(
                 "libs.plugins.snag.multiplatform.module",
                 "libs.plugins.snag.frontend.multiplatform.module",
                 "libs.plugins.snag.driving.frontend.multiplatform.module",
@@ -528,7 +837,7 @@ class SharingReportRowBuilderTest {
     fun `stacked snag plugins pick the most specific even when order of inputs is reversed`() {
         val row = SharingReportRowBuilder.buildRows(
             modulePath = ":feat:users:be:driving:impl",
-            appliedSnagPluginIds = listOf(
+            appliedPluginIds = listOf(
                 "libs.plugins.snag.impl.driving.backend.module",
                 "libs.plugins.snag.backend.module",
             ),
@@ -541,7 +850,7 @@ class SharingReportRowBuilderTest {
     fun `non-canonical plugin id is filtered out and pluginApplied is blank`() {
         val rows = SharingReportRowBuilder.buildRows(
             modulePath = ":composeApp",
-            appliedSnagPluginIds = listOf("com.android.application", "org.jetbrains.kotlin.multiplatform"),
+            appliedPluginIds = listOf("com.android.application", "org.jetbrains.kotlin.multiplatform"),
             sourceSetDirs = listOf(SourceSetDir("commonMain", "/tmp/commonMain/kotlin")),
         )
         assertEquals("", rows.single().pluginApplied)
@@ -551,7 +860,7 @@ class SharingReportRowBuilderTest {
     fun `source set dir absolute path round-trips into the row`() {
         val row = SharingReportRowBuilder.buildRows(
             modulePath = ":core:foundation:common",
-            appliedSnagPluginIds = listOf("libs.plugins.snag.multiplatform.module"),
+            appliedPluginIds = listOf("libs.plugins.snag.multiplatform.module"),
             sourceSetDirs = listOf(SourceSetDir("commonMain", "/abs/path/core/foundation/common/src/commonMain/kotlin")),
         ).single()
         assertEquals("commonMain", row.sourceSet)
@@ -565,7 +874,7 @@ class SharingReportRowBuilderTest {
         sourceSets: List<String>,
     ): List<SharingReportRow> = SharingReportRowBuilder.buildRows(
         modulePath = modulePath,
-        appliedSnagPluginIds = listOfNotNull(pluginId),
+        appliedPluginIds = listOfNotNull(pluginId),
         sourceSetDirs = sourceSets.map { name ->
             SourceSetDir(name = name, absolutePath = "/tmp$modulePath/src/$name/kotlin")
         },

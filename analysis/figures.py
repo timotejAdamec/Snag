@@ -82,87 +82,102 @@ def derive_layer(row: pd.Series) -> str:
 
 
 # ---------------------------------------------------------------------------------------------
-# Source-set ordering (ascending platform reach)
+# Platform-set ordering (descending reach)
 # ---------------------------------------------------------------------------------------------
 #
-# Source sets are ordered left-to-right from "most shared" (commonMain) to "least shared"
-# (platform-specific main), then test source sets grouped on the right. The exact ordering
-# reflects the plan's narrative: LOC that sits in a more-shared source set contributes to
-# more platforms, so placing commonMain on the left gives the reader a left-to-right "reach
-# decreasing" reading axis.
+# The `platform_set` column emitted by SharingReportTask collapses the (plugin family × source
+# set) pair into a stable reach label. See build-logic/.../analysis/PlatformReach.kt for the
+# derivation. The heatmap columns are ordered left-to-right from "reaches the most platforms"
+# to "reaches the fewest" so the reader's eye follows the "shared-first" story axis: most
+# shared on the left, platform-specific on the right. The central distinction the thesis
+# cares about — `all` (6 platforms, fe+be shared) vs `frontend` (5 platforms, fe only) —
+# lives in the first two columns of the heatmap.
 
 
-SOURCE_SET_ORDER = [
-    "commonMain",
-    "nonWebMain",
-    "mobileMain",
-    "nonAndroidMain",
-    "nonJvmMain",
-    "webMain",
-    "androidMain",
-    "iosMain",
-    "jvmMain",
-    "jsMain",
-    "wasmJsMain",
-    "main",  # plain JVM backend
-    "commonTest",
-    "nonWebTest",
-    "mobileTest",
-    "nonAndroidTest",
-    "nonJvmTest",
-    "webTest",
-    "androidUnitTest",
-    "androidInstrumentedTest",
-    "iosTest",
-    "jvmTest",
-    "jsTest",
-    "wasmJsTest",
-    "test",
+PLATFORM_SET_ORDER = [
+    # 6-platform
+    "all",
+    # 5-platform
+    "frontend",
+    "nonAndroid_shared",
+    # 4-platform
+    "nonWeb_shared",
+    "nonAndroid_fe",
+    "nonJvm",
+    # 3-platform
+    "nonWeb_fe",
+    # 2-platform
+    "mobile",
+    "web",
+    "jvm_shared",
+    # 1-platform
+    "backend",
+    "jvm_desktop",
+    "android",
+    "ios",
+    "js",
+    "wasmJs",
 ]
 
 
-def order_source_sets(present: list[str]) -> list[str]:
-    ordered = [s for s in SOURCE_SET_ORDER if s in present]
-    extras = sorted(s for s in present if s not in SOURCE_SET_ORDER)
+PLATFORM_SET_REACH_COUNT = {
+    "all": 6,
+    "frontend": 5,
+    "nonAndroid_shared": 5,
+    "nonWeb_shared": 4,
+    "nonAndroid_fe": 4,
+    "nonJvm": 4,
+    "nonWeb_fe": 3,
+    "mobile": 2,
+    "web": 2,
+    "jvm_shared": 2,
+    "backend": 1,
+    "jvm_desktop": 1,
+    "android": 1,
+    "ios": 1,
+    "js": 1,
+    "wasmJs": 1,
+}
+
+
+def order_platform_sets(present: list[str]) -> list[str]:
+    ordered = [s for s in PLATFORM_SET_ORDER if s in present]
+    extras = sorted(s for s in present if s not in PLATFORM_SET_ORDER)
     return ordered + extras
 
 
 # ---------------------------------------------------------------------------------------------
-# Figure 4.2 — layer × source-set LOC heatmap
+# Figure 4.2 — layer × platform-set LOC heatmap
 # ---------------------------------------------------------------------------------------------
 
 
-def figure_layer_source_set_heatmap(df: pd.DataFrame) -> None:
-    production = df[~df["source_set"].str.contains("Test") & (df["source_set"] != "test")].copy()
+def figure_layer_platform_set_heatmap(df: pd.DataFrame) -> None:
+    production = df[df["platform_set"] != ""].copy()
     production["layer"] = production.apply(derive_layer, axis=1)
 
     matrix = production.pivot_table(
         index="layer",
-        columns="source_set",
+        columns="platform_set",
         values="kotlin_loc",
         aggfunc="sum",
         fill_value=0,
     )
 
     rows = [layer for layer in LAYER_ORDER if layer in matrix.index]
-    cols = order_source_sets(list(matrix.columns))
+    cols = order_platform_sets(list(matrix.columns))
     matrix = matrix.reindex(index=rows, columns=cols, fill_value=0)
 
     fig_height = max(4.5, 0.55 * len(rows) + 2.5)
-    fig_width = max(9.0, 0.72 * len(cols) + 2.0)
+    fig_width = max(9.0, 0.82 * len(cols) + 2.0)
     fig, ax = plt.subplots(figsize=(fig_width, fig_height))
 
     data = matrix.values
     im = ax.imshow(data, aspect="auto", cmap="YlOrRd")
 
-    ax.set_xticks(np.arange(len(cols)))
-    ax.set_xticklabels(cols, rotation=45, ha="right")
-    ax.set_yticks(np.arange(len(rows)))
-    ax.set_yticklabels(rows)
-    ax.set_xlabel("Source set")
+    ax.set_xlabel("Platform set (how many platforms the code reaches)")
     ax.set_ylabel("Architecture layer")
     ax.set_title(
-        "LOC per (architecture layer × source set) — production code",
+        "Production Kotlin LOC by (architecture layer × platform reach)",
         pad=14,
     )
 
@@ -180,12 +195,11 @@ def figure_layer_source_set_heatmap(df: pd.DataFrame) -> None:
     row_totals = data.sum(axis=1)
     grand_total = int(data.sum())
 
-    ax.set_xticks(
-        np.arange(len(cols)),
-        labels=[f"{c}\n{int(t):,}" for c, t in zip(cols, col_totals)],
-        rotation=45,
-        ha="right",
-    )
+    col_labels = [
+        f"{c}\n({PLATFORM_SET_REACH_COUNT.get(c, 0)}p)\n{int(t):,}"
+        for c, t in zip(cols, col_totals)
+    ]
+    ax.set_xticks(np.arange(len(cols)), labels=col_labels, rotation=45, ha="right")
     ax.set_yticks(
         np.arange(len(rows)),
         labels=[f"{r}  ({int(t):,})" for r, t in zip(rows, row_totals)],
@@ -206,8 +220,8 @@ def figure_layer_source_set_heatmap(df: pd.DataFrame) -> None:
 
     fig.tight_layout()
     FIGURES_DIR.mkdir(parents=True, exist_ok=True)
-    pdf_path = FIGURES_DIR / "fig_4_2_layer_sourceset_heatmap.pdf"
-    png_path = FIGURES_DIR / "fig_4_2_layer_sourceset_heatmap.png"
+    pdf_path = FIGURES_DIR / "fig_4_2_layer_platform_set_heatmap.pdf"
+    png_path = FIGURES_DIR / "fig_4_2_layer_platform_set_heatmap.png"
     fig.savefig(pdf_path)
     fig.savefig(png_path, dpi=200)
     plt.close(fig)
@@ -282,7 +296,7 @@ def figure_ripple_buckets(df: pd.DataFrame) -> None:
 
 def main() -> int:
     df = load_joined_table()
-    figure_layer_source_set_heatmap(df)
+    figure_layer_platform_set_heatmap(df)
     return 0
 
 

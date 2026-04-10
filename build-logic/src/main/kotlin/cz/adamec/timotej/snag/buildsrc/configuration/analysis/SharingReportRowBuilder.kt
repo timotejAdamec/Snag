@@ -59,19 +59,32 @@ internal data class SharingReportRow(
     val pluginApplied: String,
     val sourceSet: String,
     val sourceSetDir: String,
+    val platformSet: String,
 )
 
 internal object SharingReportRowBuilder {
 
+    /**
+     * Build one row per existing source-set directory for a single Gradle subproject.
+     *
+     * @param modulePath the Gradle project path (e.g. `:feat:projects:fe:business:model`).
+     * @param appliedPluginIds **all** plugin IDs applied to the module — both canonical Snag
+     *        convention plugins and auxiliary marker plugins such as `com.android.application`.
+     *        The builder filters this list twice: once to pick the most-specific Snag plugin
+     *        for the `plugin_applied` column, and once to derive the plugin family used in
+     *        `platform_set` computation.
+     * @param sourceSetDirs the on-disk source-set directories for the module.
+     */
     fun buildRows(
         modulePath: String,
-        appliedSnagPluginIds: List<String>,
+        appliedPluginIds: List<String>,
         sourceSetDirs: List<SourceSetDir>,
     ): List<SharingReportRow> {
         if (sourceSetDirs.isEmpty()) return emptyList()
 
         val classification = parseModulePath(modulePath).toClassification()
-        val pluginApplied = resolvePluginApplied(modulePath, appliedSnagPluginIds)
+        val pluginApplied = resolveSnagPluginApplied(appliedPluginIds)
+        val pluginFamily = pluginFamilyOf(appliedPluginIds)
 
         return sourceSetDirs.map { dir ->
             SharingReportRow(
@@ -84,15 +97,17 @@ internal object SharingReportRowBuilder {
                 pluginApplied = pluginApplied,
                 sourceSet = dir.name,
                 sourceSetDir = dir.absolutePath,
+                platformSet = platformSetLabel(
+                    pluginFamily = pluginFamily,
+                    modulePlatform = classification.platform,
+                    sourceSet = dir.name,
+                ),
             )
         }
     }
 
-    private fun resolvePluginApplied(
-        @Suppress("UNUSED_PARAMETER") modulePath: String,
-        appliedSnagPluginIds: List<String>,
-    ): String {
-        val applied = appliedSnagPluginIds.toSet()
+    private fun resolveSnagPluginApplied(appliedPluginIds: List<String>): String {
+        val applied = appliedPluginIds.toSet()
         return CANONICAL_SNAG_PLUGIN_IDS.lastOrNull { it in applied } ?: ""
     }
 }
