@@ -31,10 +31,10 @@ internal fun Project.configureBackendModule() {
             implementation(project(":core:foundation:be"))
         }
         if (path.startsWith(":feat") && !path.startsWith(":feat:sync") && path.contains(":be:driven:impl")) {
-            implementation(project(":feat:sync:be:api"))
+            implementation(project(":feat:sync:be:app:api"))
         }
         if (path.startsWith(":feat") && !path.startsWith(":feat:sync") && path.contains(":be:app:model")) {
-            api(project(":feat:sync:be:model"))
+            api(project(":feat:sync:be:app:model"))
         }
 
         for (dep in resolveHexagonalDependencies()) {

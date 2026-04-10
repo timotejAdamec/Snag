@@ -7,7 +7,7 @@ kotlin {
         commonMain {
             dependencies {
                 api(project(":feat:authentication:app:model"))
-                api(project(":feat:sync:model"))
+                api(project(":feat:sync:business:model"))
             }
         }
     }

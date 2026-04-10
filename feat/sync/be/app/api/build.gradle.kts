@@ -3,5 +3,5 @@ plugins {
 }
 
 dependencies {
-    api(projects.feat.sync.be.model)
+    api(projects.feat.sync.be.app.model)
 }
