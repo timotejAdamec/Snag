@@ -46,6 +46,7 @@ plugins {
 
 includeBuild("build-logic")
 include(":androidApp")
+include(":wearApp")
 include(":composeApp")
 include(":koinModulesAggregate:fe")
 include(":koinModulesAggregate:be")
