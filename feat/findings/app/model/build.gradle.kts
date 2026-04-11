@@ -6,7 +6,7 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                api(project(":feat:sync:model"))
+                api(project(":feat:sync:business:model"))
             }
         }
     }

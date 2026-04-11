@@ -82,7 +82,12 @@ internal fun Project.resolveHexagonalDependencies(): List<AutoWiredDependency> {
             result += AutoWiredDependency("$moduleDirectoryPath:api", DependencyScope.IMPLEMENTATION)
             if (path.contains(":app:")) {
                 val feOrBeDirectoryPath = moduleDirectoryPath.substringBeforeLast(":app")
-                result += AutoWiredDependency("$feOrBeDirectoryPath:ports", DependencyScope.IMPLEMENTATION)
+                if (hasFolderInPath(feOrBeDirectoryPath, "ports")) {
+                    result += AutoWiredDependency(
+                        projectPath = "$feOrBeDirectoryPath:ports",
+                        scope = DependencyScope.IMPLEMENTATION,
+                    )
+                }
             }
         }
 

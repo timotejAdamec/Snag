@@ -19,7 +19,7 @@ kotlin {
         commonMain.dependencies {
             implementation(project(":feat:authentication:fe:app:api"))
             implementation(project(":feat:sync:fe:app:api"))
-            implementation(project(":feat:sync:fe:model"))
+            implementation(project(":feat:sync:fe:app:model"))
             implementation(project(":feat:users:business:rules"))
         }
         commonTest {

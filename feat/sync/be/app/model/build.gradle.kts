@@ -3,5 +3,5 @@ plugins {
 }
 
 dependencies {
-    api(project(":feat:sync:model"))
+    api(project(":feat:sync:business:model"))
 }
