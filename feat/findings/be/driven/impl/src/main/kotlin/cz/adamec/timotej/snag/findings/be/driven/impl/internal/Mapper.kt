@@ -21,9 +21,9 @@ import cz.adamec.timotej.snag.feat.findings.business.FindingType
 import cz.adamec.timotej.snag.feat.findings.business.Importance
 import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
 import cz.adamec.timotej.snag.feat.findings.business.Term
-import cz.adamec.timotej.snag.feat.shared.database.be.ClassicFindingEntity
-import cz.adamec.timotej.snag.feat.shared.database.be.FindingEntity
-import cz.adamec.timotej.snag.feat.shared.database.be.FindingPhotoEntity
+import cz.adamec.timotej.snag.featuresShared.database.be.driven.api.ClassicFindingEntity
+import cz.adamec.timotej.snag.featuresShared.database.be.driven.api.FindingEntity
+import cz.adamec.timotej.snag.featuresShared.database.be.driven.api.FindingPhotoEntity
 
 internal fun FindingType.toEntityKey(): FindingTypeEntityKey =
     when (this) {

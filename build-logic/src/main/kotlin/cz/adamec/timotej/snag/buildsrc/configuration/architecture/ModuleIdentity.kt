@@ -44,6 +44,14 @@ internal data class FeatModule(
     val isRules: Boolean = false,
 ) : ModuleIdentity
 
+internal data class FeaturesSharedModule(
+    override val path: String,
+    val feature: String,
+    val platform: Platform?,
+    val hexLayer: HexLayer?,
+    val encapsulation: Encapsulation?,
+) : ModuleIdentity
+
 internal data class AppModule(
     override val path: String,
     val name: String,

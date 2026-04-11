@@ -35,7 +35,7 @@ private val ENCAPSULATIONS = mapOf(
 
 private val INFRA_PREFIXES = setOf("testInfra", "koinModulesAggregate")
 
-private val TOP_LEVEL_CATEGORIES = setOf("core", "lib", "feat")
+private val TOP_LEVEL_CATEGORIES = setOf("core", "lib", "feat", "featuresShared")
 
 private val RECOGNIZED_TOKENS = PLATFORMS.keys + HEX_LAYERS.keys + ENCAPSULATIONS.keys + "model" + "rules"
 
@@ -59,8 +59,37 @@ internal fun parseModulePath(path: String): ModuleIdentity {
         "core" -> parseCoreOrLib(path, rest, isCore = true)
         "lib" -> parseCoreOrLib(path, rest, isCore = false)
         "feat" -> parseFeat(path, rest)
+        "featuresShared" -> parseFeaturesShared(path, rest)
         else -> AppModule(path = path, name = segments.joinToString(":"))
     }
+}
+
+private fun parseFeaturesShared(path: String, rest: List<String>): FeaturesSharedModule {
+    val featureSegments = mutableListOf<String>()
+    var platform: Platform? = null
+    var hexLayer: HexLayer? = null
+    var encapsulation: Encapsulation? = null
+
+    for (segment in rest) {
+        when {
+            featureSegments.isNotEmpty() && platform == null && segment in PLATFORMS ->
+                platform = PLATFORMS[segment]
+            featureSegments.isNotEmpty() && hexLayer == null && segment in HEX_LAYERS ->
+                hexLayer = HEX_LAYERS[segment]
+            featureSegments.isNotEmpty() && encapsulation == null && segment in ENCAPSULATIONS ->
+                encapsulation = ENCAPSULATIONS[segment]
+            segment !in RECOGNIZED_TOKENS -> featureSegments += segment
+            featureSegments.isEmpty() -> featureSegments += segment
+        }
+    }
+
+    return FeaturesSharedModule(
+        path = path,
+        feature = featureSegments.joinToString(":"),
+        platform = platform,
+        hexLayer = hexLayer,
+        encapsulation = encapsulation,
+    )
 }
 
 private fun parseCoreOrLib(

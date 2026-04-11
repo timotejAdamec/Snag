@@ -20,8 +20,8 @@ dependencies {
     implementation(projects.feat.sync.be.app.impl)
     implementation(projects.lib.network.be.impl)
     implementation(projects.lib.storage.be.impl)
-    implementation(projects.feat.shared.storage.be)
-    implementation(projects.feat.shared.database.be.impl)
+    implementation(projects.featuresShared.storage.be.driven.impl)
+    implementation(projects.featuresShared.database.be.driven.impl)
     implementation(projects.core.business.rules.impl)
 
     // Authentication feature

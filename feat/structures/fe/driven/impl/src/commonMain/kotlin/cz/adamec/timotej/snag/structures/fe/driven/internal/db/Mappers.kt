@@ -13,9 +13,9 @@
 package cz.adamec.timotej.snag.structures.fe.driven.internal.db
 
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
-import cz.adamec.timotej.snag.feat.shared.database.fe.db.StructureEntity
 import cz.adamec.timotej.snag.feat.structures.app.model.AppStructure
 import cz.adamec.timotej.snag.feat.structures.app.model.AppStructureData
+import cz.adamec.timotej.snag.featuresShared.database.fe.driven.api.db.StructureEntity
 import kotlin.uuid.Uuid
 
 internal fun AppStructure.toEntity() =

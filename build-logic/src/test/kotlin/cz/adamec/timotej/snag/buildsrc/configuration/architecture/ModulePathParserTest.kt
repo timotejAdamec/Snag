@@ -223,37 +223,63 @@ class ParseModulePathTest {
     }
 
     @Test
-    fun `feat shared database fe impl`() {
-        val result = parseModulePath(":feat:shared:database:fe:impl")
-        assertIs<FeatModule>(result)
-        assertEquals("shared:database", result.feature)
+    fun `featuresShared database fe driven impl`() {
+        val result = parseModulePath(":featuresShared:database:fe:driven:impl")
+        assertIs<FeaturesSharedModule>(result)
+        assertEquals("database", result.feature)
         assertEquals(Platform.FE, result.platform)
+        assertEquals(HexLayer.DRIVEN, result.hexLayer)
         assertEquals(Encapsulation.IMPL, result.encapsulation)
     }
 
     @Test
-    fun `feat shared database fe api`() {
-        val result = parseModulePath(":feat:shared:database:fe:api")
-        assertIs<FeatModule>(result)
-        assertEquals("shared:database", result.feature)
+    fun `featuresShared database fe driven api`() {
+        val result = parseModulePath(":featuresShared:database:fe:driven:api")
+        assertIs<FeaturesSharedModule>(result)
+        assertEquals("database", result.feature)
         assertEquals(Platform.FE, result.platform)
+        assertEquals(HexLayer.DRIVEN, result.hexLayer)
         assertEquals(Encapsulation.API, result.encapsulation)
     }
 
     @Test
-    fun `feat shared storage be`() {
-        val result = parseModulePath(":feat:shared:storage:be")
-        assertIs<FeatModule>(result)
-        assertEquals("shared:storage", result.feature)
+    fun `featuresShared database be driven api`() {
+        val result = parseModulePath(":featuresShared:database:be:driven:api")
+        assertIs<FeaturesSharedModule>(result)
+        assertEquals("database", result.feature)
         assertEquals(Platform.BE, result.platform)
+        assertEquals(HexLayer.DRIVEN, result.hexLayer)
+        assertEquals(Encapsulation.API, result.encapsulation)
     }
 
     @Test
-    fun `feat shared storage fe`() {
-        val result = parseModulePath(":feat:shared:storage:fe")
-        assertIs<FeatModule>(result)
-        assertEquals("shared:storage", result.feature)
+    fun `featuresShared database be driven impl`() {
+        val result = parseModulePath(":featuresShared:database:be:driven:impl")
+        assertIs<FeaturesSharedModule>(result)
+        assertEquals("database", result.feature)
+        assertEquals(Platform.BE, result.platform)
+        assertEquals(HexLayer.DRIVEN, result.hexLayer)
+        assertEquals(Encapsulation.IMPL, result.encapsulation)
+    }
+
+    @Test
+    fun `featuresShared storage be driven impl`() {
+        val result = parseModulePath(":featuresShared:storage:be:driven:impl")
+        assertIs<FeaturesSharedModule>(result)
+        assertEquals("storage", result.feature)
+        assertEquals(Platform.BE, result.platform)
+        assertEquals(HexLayer.DRIVEN, result.hexLayer)
+        assertEquals(Encapsulation.IMPL, result.encapsulation)
+    }
+
+    @Test
+    fun `featuresShared storage fe driven impl`() {
+        val result = parseModulePath(":featuresShared:storage:fe:driven:impl")
+        assertIs<FeaturesSharedModule>(result)
+        assertEquals("storage", result.feature)
         assertEquals(Platform.FE, result.platform)
+        assertEquals(HexLayer.DRIVEN, result.hexLayer)
+        assertEquals(Encapsulation.IMPL, result.encapsulation)
     }
 
     @Test

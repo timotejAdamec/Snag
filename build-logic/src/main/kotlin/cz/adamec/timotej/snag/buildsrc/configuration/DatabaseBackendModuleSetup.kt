@@ -20,7 +20,7 @@ import org.gradle.kotlin.dsl.dependencies
 
 internal fun Project.configureDatabaseBackendModule() {
     dependencies {
-        implementation(project(":feat:shared:database:be:impl"))
+        implementation(project(":featuresShared:database:be:driven:api"))
         implementation(libs.library("exposed-core"))
         implementation(libs.library("exposed-dao"))
         implementation(libs.library("exposed-jdbc"))

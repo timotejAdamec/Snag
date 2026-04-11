@@ -15,9 +15,9 @@ package cz.adamec.timotej.snag.feat.inspections.be.driven.impl.internal
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.feat.inspections.be.model.BackendInspection
 import cz.adamec.timotej.snag.feat.inspections.be.ports.InspectionsDb
-import cz.adamec.timotej.snag.feat.shared.database.be.InspectionEntity
-import cz.adamec.timotej.snag.feat.shared.database.be.InspectionsTable
-import cz.adamec.timotej.snag.feat.shared.database.be.ProjectEntity
+import cz.adamec.timotej.snag.featuresShared.database.be.driven.api.InspectionEntity
+import cz.adamec.timotej.snag.featuresShared.database.be.driven.api.InspectionsTable
+import cz.adamec.timotej.snag.featuresShared.database.be.driven.api.ProjectEntity
 import cz.adamec.timotej.snag.sync.be.DeleteConflictResult
 import cz.adamec.timotej.snag.sync.be.ResolveConflictForDeleteUseCase
 import cz.adamec.timotej.snag.sync.be.ResolveConflictForSaveUseCase

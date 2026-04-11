@@ -14,8 +14,8 @@ package cz.adamec.timotej.snag.feat.inspections.fe.driven.internal.db
 
 import cz.adamec.timotej.snag.feat.inspections.app.model.AppInspection
 import cz.adamec.timotej.snag.feat.inspections.fe.driven.internal.LH
-import cz.adamec.timotej.snag.feat.shared.database.fe.db.InspectionEntity
-import cz.adamec.timotej.snag.feat.shared.database.fe.db.InspectionEntityQueries
+import cz.adamec.timotej.snag.featuresShared.database.fe.driven.api.db.InspectionEntity
+import cz.adamec.timotej.snag.featuresShared.database.fe.driven.api.db.InspectionEntityQueries
 import cz.adamec.timotej.snag.lib.database.fe.SqlDelightDbOps
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext

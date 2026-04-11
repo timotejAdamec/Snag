@@ -97,7 +97,9 @@ internal fun Project.resolveHexagonalDependencies(): List<AutoWiredDependency> {
 
         path.contains("driven") -> {
             val drivenDirectoryPath = moduleDirectoryPath.substringBeforeLast(":driven")
-            result += AutoWiredDependency("$drivenDirectoryPath:ports", DependencyScope.API)
+            if (hasFolderInPath(drivenDirectoryPath, "ports")) {
+                result += AutoWiredDependency("$drivenDirectoryPath:ports", DependencyScope.API)
+            }
         }
     }
 

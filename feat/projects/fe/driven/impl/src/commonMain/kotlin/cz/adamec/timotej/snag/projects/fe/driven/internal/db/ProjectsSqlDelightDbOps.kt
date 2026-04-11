@@ -12,8 +12,8 @@
 
 package cz.adamec.timotej.snag.projects.fe.driven.internal.db
 
-import cz.adamec.timotej.snag.feat.shared.database.fe.db.ProjectEntity
-import cz.adamec.timotej.snag.feat.shared.database.fe.db.ProjectEntityQueries
+import cz.adamec.timotej.snag.featuresShared.database.fe.driven.api.db.ProjectEntity
+import cz.adamec.timotej.snag.featuresShared.database.fe.driven.api.db.ProjectEntityQueries
 import cz.adamec.timotej.snag.lib.database.fe.SqlDelightDbOps
 import cz.adamec.timotej.snag.projects.app.model.AppProject
 import cz.adamec.timotej.snag.projects.fe.driven.internal.LH

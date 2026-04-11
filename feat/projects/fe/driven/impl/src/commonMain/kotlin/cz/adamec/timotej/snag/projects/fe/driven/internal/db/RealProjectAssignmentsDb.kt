@@ -15,7 +15,7 @@ package cz.adamec.timotej.snag.projects.fe.driven.internal.db
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
-import cz.adamec.timotej.snag.feat.shared.database.fe.db.ProjectAssignmentEntityQueries
+import cz.adamec.timotej.snag.featuresShared.database.fe.driven.api.db.ProjectAssignmentEntityQueries
 import cz.adamec.timotej.snag.projects.fe.driven.internal.LH
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectAssignmentsDb
 import kotlinx.coroutines.CoroutineDispatcher

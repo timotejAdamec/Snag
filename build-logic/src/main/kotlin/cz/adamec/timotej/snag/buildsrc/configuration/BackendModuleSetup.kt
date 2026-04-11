@@ -30,10 +30,10 @@ internal fun Project.configureBackendModule() {
         if (!path.startsWith(":core")) {
             implementation(project(":core:foundation:be"))
         }
-        if (path.startsWith(":feat") && !path.startsWith(":feat:sync") && path.contains(":be:driven:impl")) {
+        if (path.startsWith(":feat:") && !path.startsWith(":feat:sync") && path.contains(":be:driven:impl")) {
             implementation(project(":feat:sync:be:app:api"))
         }
-        if (path.startsWith(":feat") && !path.startsWith(":feat:sync") && path.contains(":be:app:model")) {
+        if (path.startsWith(":feat:") && !path.startsWith(":feat:sync") && path.contains(":be:app:model")) {
             api(project(":feat:sync:be:app:model"))
         }
 
