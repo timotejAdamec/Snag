@@ -180,6 +180,7 @@ snagBackendModule = { id = "libs.plugins.snag.backend.module" }
 snagDrivenBackendModule = { id = "libs.plugins.snag.driven.backend.module" }
 snagImplDrivingBackendModule = { id = "libs.plugins.snag.impl.driving.backend.module" }
 snagContractDrivingBackendMultiplatformModule = { id = "libs.plugins.snag.contract.driving.backend.multiplatform.module" }
+snagSharingReport = { id = "libs.plugins.snag.sharing.report" }
 
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 androidLibrary = { id = "com.android.library", version.ref = "agp" }

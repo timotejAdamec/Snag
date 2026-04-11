@@ -1,0 +1,6 @@
+# Python virtual environment for analysis scripts — recreate via
+#   python3 -m venv analysis/.venv && source analysis/.venv/bin/activate
+#   pip install -r analysis/requirements.txt
+.venv/
+__pycache__/
+*.pyc

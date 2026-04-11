@@ -55,6 +55,10 @@ gradlePlugin {
         id = libs.plugins.snagContractDrivingBackendMultiplatformModule.get().pluginId
         implementationClass = "cz.adamec.timotej.snag.buildsrc.plugins.ContractDrivingBackendMultiplatformModulePlugin"
     }
+    plugins.register("SnagSharingReportPlugin") {
+        id = libs.plugins.snagSharingReport.get().pluginId
+        implementationClass = "cz.adamec.timotej.snag.buildsrc.plugins.SharingReportPlugin"
+    }
 }
 
 dependencies {

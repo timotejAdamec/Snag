@@ -18,6 +18,7 @@ plugins {
     alias(libs.plugins.snagBackendModule) apply false
     alias(libs.plugins.snagImplDrivingBackendModule) apply false
     alias(libs.plugins.snagContractDrivingBackendMultiplatformModule) apply false
+    alias(libs.plugins.snagSharingReport)
 
     alias(libs.plugins.kotlinSerialization) apply false
     alias(libs.plugins.composeHotReload) apply false
