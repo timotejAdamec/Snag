@@ -89,3 +89,30 @@ def test_closure_downstream_sample_is_capped():
     sample = closure[":sink::commonMain"]["downstream_sample"]
     assert len(sample) <= dependency_closure.DOWNSTREAM_SAMPLE_CAP
     assert closure[":sink::commonMain"]["blast_radius_module"] == 30
+
+
+# ------------------------------- test configuration filter --------------------
+
+def test_test_configuration_filter_matches_standard_names():
+    f = dependency_closure._is_test_configuration
+    assert f("testImplementation") is True
+    assert f("testApi") is True
+    assert f("commonTestImplementation") is True
+    assert f("androidUnitTestImplementation") is True
+    assert f("androidInstrumentedTestImplementation") is True
+    assert f("iosTestImplementation") is True
+    assert f("jvmTestImplementation") is True
+    assert f("jsTestImplementation") is True
+    assert f("wasmJsTestImplementation") is True
+
+
+def test_test_configuration_filter_passes_through_production():
+    f = dependency_closure._is_test_configuration
+    assert f("implementation") is False
+    assert f("api") is False
+    assert f("commonMainImplementation") is False
+    assert f("androidMainImplementation") is False
+    assert f("iosMainImplementation") is False
+    assert f("jvmMainImplementation") is False
+    assert f("wasmJsMainImplementation") is False
+    assert f("commonMainApi") is False
