@@ -14,9 +14,9 @@ package cz.adamec.timotej.snag.projects.be.driven.impl.internal
 
 import cz.adamec.timotej.snag.authorization.business.UserRole
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
-import cz.adamec.timotej.snag.feat.shared.database.be.ProjectAssignmentsTable
-import cz.adamec.timotej.snag.feat.shared.database.be.UserEntity
-import cz.adamec.timotej.snag.feat.shared.database.be.UsersTable
+import cz.adamec.timotej.snag.featShared.database.be.driven.api.ProjectAssignmentsTable
+import cz.adamec.timotej.snag.featShared.database.be.driven.api.UserEntity
+import cz.adamec.timotej.snag.featShared.database.be.driven.api.UsersTable
 import cz.adamec.timotej.snag.projects.be.ports.ProjectAssignmentsDb
 import cz.adamec.timotej.snag.users.be.model.BackendUser
 import cz.adamec.timotej.snag.users.be.model.BackendUserData

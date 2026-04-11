@@ -15,7 +15,7 @@ package cz.adamec.timotej.snag.clients.be.driven.impl.internal
 import cz.adamec.timotej.snag.clients.be.model.BackendClient
 import cz.adamec.timotej.snag.clients.be.model.BackendClientData
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
-import cz.adamec.timotej.snag.feat.shared.database.be.ClientEntity
+import cz.adamec.timotej.snag.featShared.database.be.driven.api.ClientEntity
 
 internal fun ClientEntity.toModel(): BackendClient =
     BackendClientData(

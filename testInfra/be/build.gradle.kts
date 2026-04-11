@@ -24,7 +24,7 @@ dependencies {
     api(projects.feat.clients.be.driven.test)
     implementation(projects.koinModulesAggregate.be)
     implementation(projects.feat.authentication.be.driving.test)
-    implementation(projects.feat.shared.database.be.test)
+    implementation(projects.featShared.database.be.driven.test)
     implementation(projects.lib.storage.be.test)
     implementation(projects.feat.reports.be.driven.test)
 }

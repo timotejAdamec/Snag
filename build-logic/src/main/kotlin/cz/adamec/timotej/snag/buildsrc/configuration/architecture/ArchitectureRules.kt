@@ -29,8 +29,9 @@ internal fun checkDependency(
 private fun categoryRank(module: ModuleIdentity): Int? = when (module) {
     is CoreModule -> 0
     is LibModule -> 1
-    is FeatModule -> 2
-    is AppModule -> 3
+    is FeatSharedModule -> 2
+    is SingleFeatModule -> 3
+    is AppModule -> 4
     is InfraModule -> null
 }
 
@@ -55,7 +56,8 @@ internal fun checkCategoryDirection(
 private fun categoryName(module: ModuleIdentity): String = when (module) {
     is CoreModule -> "core/"
     is LibModule -> "lib/"
-    is FeatModule -> "feat/"
+    is FeatSharedModule -> "featShared/"
+    is SingleFeatModule -> "feat/"
     is AppModule -> "application"
     is InfraModule -> "infra"
 }
@@ -118,7 +120,7 @@ internal fun checkHexagonalDirection(
 ): Violation? {
     if (source !is FeatModule || target !is FeatModule) return null
     // Model modules are data containers — any layer can depend on them
-    if (target.isModel) return null
+    if (target is SingleFeatModule && target.isModel) return null
 
     val sourceLayer = source.hexLayer ?: return null
     val targetLayer = target.hexLayer ?: return null

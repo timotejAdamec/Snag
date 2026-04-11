@@ -12,8 +12,8 @@
 
 package cz.adamec.timotej.snag.users.fe.driven.internal.db
 
-import cz.adamec.timotej.snag.feat.shared.database.fe.db.UserEntity
-import cz.adamec.timotej.snag.feat.shared.database.fe.db.UserEntityQueries
+import cz.adamec.timotej.snag.featShared.database.fe.driven.api.db.UserEntity
+import cz.adamec.timotej.snag.featShared.database.fe.driven.api.db.UserEntityQueries
 import cz.adamec.timotej.snag.lib.database.fe.SqlDelightDbOps
 import cz.adamec.timotej.snag.users.app.model.AppUser
 import cz.adamec.timotej.snag.users.fe.driven.internal.LH

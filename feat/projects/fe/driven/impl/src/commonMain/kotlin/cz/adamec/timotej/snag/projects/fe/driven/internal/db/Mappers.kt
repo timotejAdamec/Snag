@@ -13,8 +13,8 @@
 package cz.adamec.timotej.snag.projects.fe.driven.internal.db
 
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
-import cz.adamec.timotej.snag.feat.shared.database.fe.db.ProjectEntity
-import cz.adamec.timotej.snag.feat.shared.database.fe.db.ProjectPhotoEntity
+import cz.adamec.timotej.snag.featShared.database.fe.driven.api.db.ProjectEntity
+import cz.adamec.timotej.snag.featShared.database.fe.driven.api.db.ProjectPhotoEntity
 import cz.adamec.timotej.snag.projects.app.model.AppProject
 import cz.adamec.timotej.snag.projects.app.model.AppProjectData
 import cz.adamec.timotej.snag.projects.app.model.AppProjectPhoto

@@ -17,8 +17,8 @@ import app.cash.sqldelight.coroutines.mapToList
 import app.cash.sqldelight.coroutines.mapToOneOrNull
 import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.feat.findings.app.model.AppFindingPhoto
-import cz.adamec.timotej.snag.feat.shared.database.fe.db.FindingPhotoEntity
-import cz.adamec.timotej.snag.feat.shared.database.fe.db.FindingPhotoEntityQueries
+import cz.adamec.timotej.snag.featShared.database.fe.driven.api.db.FindingPhotoEntity
+import cz.adamec.timotej.snag.featShared.database.fe.driven.api.db.FindingPhotoEntityQueries
 import cz.adamec.timotej.snag.findings.fe.driven.internal.LH
 import cz.adamec.timotej.snag.findings.fe.ports.FindingPhotosDb
 import cz.adamec.timotej.snag.lib.database.fe.safeDbWrite

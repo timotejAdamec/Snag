@@ -140,7 +140,7 @@ class ParseModulePathTest {
     @Test
     fun `feat projects business model`() {
         val result = parseModulePath(":feat:projects:business:model")
-        assertIs<FeatModule>(result)
+        assertIs<SingleFeatModule>(result)
         assertEquals("projects", result.feature)
         assertNull(result.platform)
         assertEquals(HexLayer.BUSINESS, result.hexLayer)
@@ -150,7 +150,7 @@ class ParseModulePathTest {
     @Test
     fun `feat projects business rules`() {
         val result = parseModulePath(":feat:projects:business:rules")
-        assertIs<FeatModule>(result)
+        assertIs<SingleFeatModule>(result)
         assertEquals("projects", result.feature)
         assertEquals(HexLayer.BUSINESS, result.hexLayer)
         assertTrue(result.isRules)
@@ -159,7 +159,7 @@ class ParseModulePathTest {
     @Test
     fun `feat projects app model`() {
         val result = parseModulePath(":feat:projects:app:model")
-        assertIs<FeatModule>(result)
+        assertIs<SingleFeatModule>(result)
         assertEquals("projects", result.feature)
         assertEquals(HexLayer.APP, result.hexLayer)
         assertTrue(result.isModel)
@@ -168,7 +168,7 @@ class ParseModulePathTest {
     @Test
     fun `feat projects fe app api`() {
         val result = parseModulePath(":feat:projects:fe:app:api")
-        assertIs<FeatModule>(result)
+        assertIs<SingleFeatModule>(result)
         assertEquals("projects", result.feature)
         assertEquals(Platform.FE, result.platform)
         assertEquals(HexLayer.APP, result.hexLayer)
@@ -178,7 +178,7 @@ class ParseModulePathTest {
     @Test
     fun `feat projects fe driving impl`() {
         val result = parseModulePath(":feat:projects:fe:driving:impl")
-        assertIs<FeatModule>(result)
+        assertIs<SingleFeatModule>(result)
         assertEquals("projects", result.feature)
         assertEquals(Platform.FE, result.platform)
         assertEquals(HexLayer.DRIVING, result.hexLayer)
@@ -188,7 +188,7 @@ class ParseModulePathTest {
     @Test
     fun `feat projects be driven test`() {
         val result = parseModulePath(":feat:projects:be:driven:test")
-        assertIs<FeatModule>(result)
+        assertIs<SingleFeatModule>(result)
         assertEquals("projects", result.feature)
         assertEquals(Platform.BE, result.platform)
         assertEquals(HexLayer.DRIVEN, result.hexLayer)
@@ -198,7 +198,7 @@ class ParseModulePathTest {
     @Test
     fun `feat projects fe ports`() {
         val result = parseModulePath(":feat:projects:fe:ports")
-        assertIs<FeatModule>(result)
+        assertIs<SingleFeatModule>(result)
         assertEquals("projects", result.feature)
         assertEquals(Platform.FE, result.platform)
         assertEquals(HexLayer.PORTS, result.hexLayer)
@@ -207,7 +207,7 @@ class ParseModulePathTest {
     @Test
     fun `feat projects contract`() {
         val result = parseModulePath(":feat:projects:contract")
-        assertIs<FeatModule>(result)
+        assertIs<SingleFeatModule>(result)
         assertEquals("projects", result.feature)
         assertEquals(Encapsulation.CONTRACT, result.encapsulation)
     }
@@ -215,7 +215,7 @@ class ParseModulePathTest {
     @Test
     fun `feat projects be app model`() {
         val result = parseModulePath(":feat:projects:be:app:model")
-        assertIs<FeatModule>(result)
+        assertIs<SingleFeatModule>(result)
         assertEquals("projects", result.feature)
         assertEquals(Platform.BE, result.platform)
         assertEquals(HexLayer.APP, result.hexLayer)
@@ -223,43 +223,69 @@ class ParseModulePathTest {
     }
 
     @Test
-    fun `feat shared database fe impl`() {
-        val result = parseModulePath(":feat:shared:database:fe:impl")
-        assertIs<FeatModule>(result)
-        assertEquals("shared:database", result.feature)
+    fun `featShared database fe driven impl`() {
+        val result = parseModulePath(":featShared:database:fe:driven:impl")
+        assertIs<FeatSharedModule>(result)
+        assertEquals("database", result.feature)
         assertEquals(Platform.FE, result.platform)
+        assertEquals(HexLayer.DRIVEN, result.hexLayer)
         assertEquals(Encapsulation.IMPL, result.encapsulation)
     }
 
     @Test
-    fun `feat shared database fe api`() {
-        val result = parseModulePath(":feat:shared:database:fe:api")
-        assertIs<FeatModule>(result)
-        assertEquals("shared:database", result.feature)
+    fun `featShared database fe driven api`() {
+        val result = parseModulePath(":featShared:database:fe:driven:api")
+        assertIs<FeatSharedModule>(result)
+        assertEquals("database", result.feature)
         assertEquals(Platform.FE, result.platform)
+        assertEquals(HexLayer.DRIVEN, result.hexLayer)
         assertEquals(Encapsulation.API, result.encapsulation)
     }
 
     @Test
-    fun `feat shared storage be`() {
-        val result = parseModulePath(":feat:shared:storage:be")
-        assertIs<FeatModule>(result)
-        assertEquals("shared:storage", result.feature)
+    fun `featShared database be driven api`() {
+        val result = parseModulePath(":featShared:database:be:driven:api")
+        assertIs<FeatSharedModule>(result)
+        assertEquals("database", result.feature)
         assertEquals(Platform.BE, result.platform)
+        assertEquals(HexLayer.DRIVEN, result.hexLayer)
+        assertEquals(Encapsulation.API, result.encapsulation)
     }
 
     @Test
-    fun `feat shared storage fe`() {
-        val result = parseModulePath(":feat:shared:storage:fe")
-        assertIs<FeatModule>(result)
-        assertEquals("shared:storage", result.feature)
+    fun `featShared database be driven impl`() {
+        val result = parseModulePath(":featShared:database:be:driven:impl")
+        assertIs<FeatSharedModule>(result)
+        assertEquals("database", result.feature)
+        assertEquals(Platform.BE, result.platform)
+        assertEquals(HexLayer.DRIVEN, result.hexLayer)
+        assertEquals(Encapsulation.IMPL, result.encapsulation)
+    }
+
+    @Test
+    fun `featShared storage be driven impl`() {
+        val result = parseModulePath(":featShared:storage:be:driven:impl")
+        assertIs<FeatSharedModule>(result)
+        assertEquals("storage", result.feature)
+        assertEquals(Platform.BE, result.platform)
+        assertEquals(HexLayer.DRIVEN, result.hexLayer)
+        assertEquals(Encapsulation.IMPL, result.encapsulation)
+    }
+
+    @Test
+    fun `featShared storage fe driven impl`() {
+        val result = parseModulePath(":featShared:storage:fe:driven:impl")
+        assertIs<FeatSharedModule>(result)
+        assertEquals("storage", result.feature)
         assertEquals(Platform.FE, result.platform)
+        assertEquals(HexLayer.DRIVEN, result.hexLayer)
+        assertEquals(Encapsulation.IMPL, result.encapsulation)
     }
 
     @Test
     fun `feat sync model - no platform`() {
         val result = parseModulePath(":feat:sync:model")
-        assertIs<FeatModule>(result)
+        assertIs<SingleFeatModule>(result)
         assertEquals("sync", result.feature)
         assertNull(result.platform)
         assertTrue(result.isModel)
@@ -268,7 +294,7 @@ class ParseModulePathTest {
     @Test
     fun `feat sync be api - no hex layer`() {
         val result = parseModulePath(":feat:sync:be:api")
-        assertIs<FeatModule>(result)
+        assertIs<SingleFeatModule>(result)
         assertEquals("sync", result.feature)
         assertEquals(Platform.BE, result.platform)
         assertEquals(Encapsulation.API, result.encapsulation)
@@ -278,7 +304,7 @@ class ParseModulePathTest {
     @Test
     fun `feat sync be impl`() {
         val result = parseModulePath(":feat:sync:be:impl")
-        assertIs<FeatModule>(result)
+        assertIs<SingleFeatModule>(result)
         assertEquals("sync", result.feature)
         assertEquals(Platform.BE, result.platform)
         assertEquals(Encapsulation.IMPL, result.encapsulation)
@@ -287,7 +313,7 @@ class ParseModulePathTest {
     @Test
     fun `feat sync be model`() {
         val result = parseModulePath(":feat:sync:be:model")
-        assertIs<FeatModule>(result)
+        assertIs<SingleFeatModule>(result)
         assertEquals("sync", result.feature)
         assertEquals(Platform.BE, result.platform)
         assertTrue(result.isModel)
@@ -296,7 +322,7 @@ class ParseModulePathTest {
     @Test
     fun `feat sync fe model`() {
         val result = parseModulePath(":feat:sync:fe:model")
-        assertIs<FeatModule>(result)
+        assertIs<SingleFeatModule>(result)
         assertEquals("sync", result.feature)
         assertEquals(Platform.FE, result.platform)
         assertTrue(result.isModel)
@@ -305,7 +331,7 @@ class ParseModulePathTest {
     @Test
     fun `feat sync fe app api`() {
         val result = parseModulePath(":feat:sync:fe:app:api")
-        assertIs<FeatModule>(result)
+        assertIs<SingleFeatModule>(result)
         assertEquals("sync", result.feature)
         assertEquals(Platform.FE, result.platform)
         assertEquals(HexLayer.APP, result.hexLayer)

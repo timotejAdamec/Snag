@@ -13,10 +13,10 @@
 package cz.adamec.timotej.snag.structures.be.driven.impl.internal
 
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
-import cz.adamec.timotej.snag.feat.shared.database.be.ProjectEntity
-import cz.adamec.timotej.snag.feat.shared.database.be.StructureEntity
-import cz.adamec.timotej.snag.feat.shared.database.be.StructuresTable
 import cz.adamec.timotej.snag.feat.structures.be.model.BackendStructure
+import cz.adamec.timotej.snag.featShared.database.be.driven.api.ProjectEntity
+import cz.adamec.timotej.snag.featShared.database.be.driven.api.StructureEntity
+import cz.adamec.timotej.snag.featShared.database.be.driven.api.StructuresTable
 import cz.adamec.timotej.snag.structures.be.ports.StructuresDb
 import cz.adamec.timotej.snag.sync.be.DeleteConflictResult
 import cz.adamec.timotej.snag.sync.be.ResolveConflictForDeleteUseCase

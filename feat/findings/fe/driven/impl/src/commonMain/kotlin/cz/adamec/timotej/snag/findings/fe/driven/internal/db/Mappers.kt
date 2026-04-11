@@ -23,10 +23,10 @@ import cz.adamec.timotej.snag.feat.findings.business.FindingType
 import cz.adamec.timotej.snag.feat.findings.business.Importance
 import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
 import cz.adamec.timotej.snag.feat.findings.business.Term
-import cz.adamec.timotej.snag.feat.shared.database.fe.db.FindingEntity
-import cz.adamec.timotej.snag.feat.shared.database.fe.db.FindingPhotoEntity
-import cz.adamec.timotej.snag.feat.shared.database.fe.db.SelectById
-import cz.adamec.timotej.snag.feat.shared.database.fe.db.SelectByStructureId
+import cz.adamec.timotej.snag.featShared.database.fe.driven.api.db.FindingEntity
+import cz.adamec.timotej.snag.featShared.database.fe.driven.api.db.FindingPhotoEntity
+import cz.adamec.timotej.snag.featShared.database.fe.driven.api.db.SelectById
+import cz.adamec.timotej.snag.featShared.database.fe.driven.api.db.SelectByStructureId
 import cz.adamec.timotej.snag.findings.fe.driven.internal.LH
 import kotlin.uuid.Uuid
 
