@@ -115,16 +115,15 @@ private fun hexLayerRank(layer: HexLayer?): Int? = when (layer) {
     null -> null
 }
 
-private data class HexInfo(
-    val path: String,
-    val feature: String,
-    val hexLayer: HexLayer?,
-    val isModel: Boolean,
-)
+private fun featureOf(module: ModuleIdentity): String? = when (module) {
+    is FeatModule -> module.feature
+    is FeatSharedModule -> module.feature
+    else -> null
+}
 
-private fun hexInfoOf(module: ModuleIdentity): HexInfo? = when (module) {
-    is FeatModule -> HexInfo(module.path, module.feature, module.hexLayer, module.isModel)
-    is FeatSharedModule -> HexInfo(module.path, module.feature, module.hexLayer, isModel = false)
+private fun hexLayerOf(module: ModuleIdentity): HexLayer? = when (module) {
+    is FeatModule -> module.hexLayer
+    is FeatSharedModule -> module.hexLayer
     else -> null
 }
 
@@ -132,24 +131,24 @@ internal fun checkHexagonalDirection(
     source: ModuleIdentity,
     target: ModuleIdentity,
 ): Violation? {
-    val sourceHex = hexInfoOf(source) ?: return null
-    val targetHex = hexInfoOf(target) ?: return null
+    val sourceFeature = featureOf(source) ?: return null
+    val targetFeature = featureOf(target) ?: return null
     // Model modules are data containers — any layer can depend on them
-    if (targetHex.isModel) return null
+    if (target is FeatModule && target.isModel) return null
 
-    val sourceLayer = sourceHex.hexLayer ?: return null
-    val targetLayer = targetHex.hexLayer ?: return null
+    val sourceLayer = hexLayerOf(source) ?: return null
+    val targetLayer = hexLayerOf(target) ?: return null
 
-    if (sourceHex.feature == targetHex.feature) {
-        return checkSameFeatureHexDirection(sourceHex, targetHex, sourceLayer, targetLayer)
+    if (sourceFeature == targetFeature) {
+        return checkSameFeatureHexDirection(source, target, sourceLayer, targetLayer)
     }
 
-    return checkCrossFeatureHexDirection(sourceHex, targetHex, sourceLayer, targetLayer)
+    return checkCrossFeatureHexDirection(source, target, sourceLayer, targetLayer)
 }
 
 private fun checkSameFeatureHexDirection(
-    source: HexInfo,
-    target: HexInfo,
+    source: ModuleIdentity,
+    target: ModuleIdentity,
     sourceLayer: HexLayer,
     targetLayer: HexLayer,
 ): Violation? {
@@ -179,8 +178,8 @@ private fun checkSameFeatureHexDirection(
 }
 
 private fun checkCrossFeatureHexDirection(
-    source: HexInfo,
-    target: HexInfo,
+    source: ModuleIdentity,
+    target: ModuleIdentity,
     sourceLayer: HexLayer,
     targetLayer: HexLayer,
 ): Violation? {
@@ -199,8 +198,8 @@ private fun checkCrossFeatureHexDirection(
 }
 
 private fun hexViolation(
-    source: HexInfo,
-    target: HexInfo,
+    source: ModuleIdentity,
+    target: ModuleIdentity,
     message: String,
 ) = Violation(
     ruleId = RuleId.HEXAGONAL_DIRECTION,
