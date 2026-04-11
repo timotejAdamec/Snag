@@ -5,28 +5,46 @@
 # Thesis: "Multiplatform snagging system with code sharing maximisation"
 # Czech Technical University in Prague — Faculty of Information Technology
 #
-# Computes the transitive downstream closure for every (module, source_set) unit in
-# `analysis/data/sharing_report_with_loc.csv`, using the edge list from
-# `build/reports/dependency_graph/dependency_graph.csv` produced by the Gradle
-# DependencyGraphTask.
+# Computes the scope-aware transitive downstream closure for every (module,
+# source_set) unit in `analysis/data/sharing_report_with_loc.csv`, using the
+# edge list from `build/reports/dependency_graph/dependency_graph.csv`
+# produced by the Gradle DependencyGraphTask.
+#
+# Semantic model: the closure respects Gradle's api vs implementation scope.
+# A reverse-walk from module M enumerates every direct consumer (any scope —
+# all of them rebuild when M's ABI changes), but only continues the walk past
+# a consumer whose dependency on the reached node is scope=api. An
+# implementation edge terminates forward propagation at that node — Gradle's
+# api/implementation contract hides the transitive dependency from the
+# consumer's own consumers.
+#
+# This directly implements Normalized Systems Theory's Action Version
+# Transparency: wherever a Snag convention plugin chose `implementation` over
+# `api`, the closure walk stops. Impl modules, testInfra, koinModulesAggregate,
+# and every other AVT seam act as natural sinks — no special-case list is
+# required, the api/impl split is honored directly.
 #
 # Two blast-radius numbers per unit:
-#   - blast_radius_module: count of transitive downstream modules. Exact.
-#   - blast_radius_unit:   count of transitive downstream (module, source_set) units.
-#                          Conservative upper bound — Kotlin Multiplatform intermediate
-#                          source sets do not expose distinct Gradle configurations, so
-#                          this metric treats every source set of every downstream module
-#                          as reachable. The §4.3 headline uses blast_radius_module; the
-#                          source-set-axis discussion cites blast_radius_unit with this
-#                          caveat.
+#   - blast_radius_module: count of transitive downstream modules reachable
+#                          via api-forwarding chains. Exact under the Gradle
+#                          api/implementation contract.
+#   - blast_radius_unit:   count of transitive downstream (module, source_set)
+#                          units. Upper bound — KMP intermediate source sets
+#                          do not expose distinct Gradle configurations, so
+#                          this metric counts every source set of every
+#                          downstream module. §4.3 headline uses
+#                          blast_radius_module; source-set-axis discussion
+#                          cites blast_radius_unit with this caveat.
 #
 # Output:
-#   analysis/data/dependency_closure.json — keyed by "f{module}::{source_set}" → dict
-#     with blast_radius_module (int), blast_radius_unit (int), downstream_sample
-#     (up to 20 downstream unit keys).
+#   analysis/data/dependency_closure.json — keyed by "f{module}::{source_set}"
+#     → dict with blast_radius_module (int), blast_radius_unit (int),
+#     downstream_sample (up to 20 downstream unit keys).
 #
-# Deterministic, idempotent. Pure stdlib — no third-party deps beyond what figures.py
-# already uses.
+# runtimeOnly edges are dropped at load time (not on the compile classpath).
+#
+# Deterministic, idempotent. Pure stdlib — no third-party deps beyond what
+# figures.py already uses.
 #
 # Usage: python analysis/dependency_closure.py
 
@@ -46,30 +64,19 @@ OUTPUT_JSON = SCRIPT_DIR / "data" / "dependency_closure.json"
 DOWNSTREAM_SAMPLE_CAP = 20
 
 
-def _is_test_configuration(configuration_name: str) -> bool:
-    """Test configurations produce reverse-closure cycles: core modules depend
-    on testInfra via testImplementation, and testInfra depends on feat test
-    fakes via commonMainImplementation — so reverse-walking from any feat
-    production unit drags core into the downstream set through the test graph.
+def _load_edges(path: Path) -> list[tuple[str, str, str]]:
+    """Returns list of (source_module, target_module, scope) edges.
 
-    For §4.3's blast-radius metric we want PRODUCTION impact: if a feat
-    module's commonMain changes, which other production units have to rebuild?
-    Test edges are filtered out here, not in the Gradle task, so the raw edge
-    CSV stays intact for alternative queries (e.g., test-impact analysis).
-
-    Matches any configuration whose name contains "test" or "Test". This
-    catches: testImplementation, commonTestImplementation, androidUnitTest*,
-    androidInstrumentedTest*, iosTest*, jvmTest*, jsTest*, wasmJsTest*,
-    and any future *Test* variants.
+    scope is one of {api, implementation} after filtering. runtimeOnly edges
+    are dropped: they aren't on the compile classpath so they don't contribute
+    to compile-time blast radius. Test configurations (commonTestImplementation,
+    testImplementation, etc.) are retained — their scope is "implementation",
+    which the scope-aware walk in _transitive_dependents correctly treats as
+    non-propagating. The previous explicit test-configuration filter is no
+    longer needed because the walk respects Gradle's api/implementation
+    contract natively: any reverse-walk that reaches a test-consuming node via
+    an implementation edge stops there, exactly as the semantics require.
     """
-    return "test" in configuration_name.lower()
-
-
-def _load_edges(path: Path) -> list[tuple[str, str]]:
-    """Returns list of (source_module, target_module) edges with test
-    configurations filtered out. source_configuration and scope columns are
-    used only for the test filter — closure itself operates on the module
-    pair, not the configuration."""
     if not path.is_file():
         sys.stderr.write(
             f"[dependency_closure] ERROR: {path} not found. "
@@ -77,24 +84,32 @@ def _load_edges(path: Path) -> list[tuple[str, str]]:
         )
         sys.exit(2)
 
-    edges: list[tuple[str, str]] = []
+    edges: list[tuple[str, str, str]] = []
     total = 0
-    filtered_test = 0
+    dropped_runtime = 0
+    dropped_blank = 0
     with path.open(newline="", encoding="utf-8") as f:
         reader = csv.DictReader(f)
         for row in reader:
             total += 1
-            if _is_test_configuration(row["source_configuration"]):
-                filtered_test += 1
+            scope = row["scope"]
+            if scope == "runtimeOnly":
+                dropped_runtime += 1
+                continue
+            if scope not in ("api", "implementation"):
+                # Defensive: the Gradle task only emits api/implementation/runtimeOnly,
+                # but a future config family with an unknown scope would land here.
+                dropped_blank += 1
                 continue
             src = row["source_module"]
             tgt = row["target_module"]
             if src == tgt:
                 continue
-            edges.append((src, tgt))
+            edges.append((src, tgt, scope))
     sys.stderr.write(
-        f"[dependency_closure] edges: {len(edges)} production "
-        f"(filtered {filtered_test} test edges from {total} total)\n"
+        f"[dependency_closure] edges: {len(edges)} compile-classpath "
+        f"(dropped {dropped_runtime} runtimeOnly, {dropped_blank} unknown-scope, "
+        f"from {total} total)\n"
     )
     return edges
 
@@ -118,48 +133,73 @@ def _load_units(path: Path) -> dict[str, list[str]]:
     return {module: sorted(ss_list) for module, ss_list in units.items()}
 
 
-def _build_reverse_graph(edges: list[tuple[str, str]]) -> dict[str, set[str]]:
-    """Returns target → set of direct upstream consumers. Inverts edges so we can
-    walk downstream from a module M by following reverse edges."""
-    reverse: dict[str, set[str]] = defaultdict(set)
-    for src, tgt in edges:
-        reverse[tgt].add(src)
+def _build_reverse_graph(
+    edges: list[tuple[str, str, str]],
+) -> dict[str, list[tuple[str, str]]]:
+    """Returns target → list of (source_module, scope) pairs. Inverts edges so
+    we can walk downstream from a module M by following reverse edges, and
+    keeps the scope of each reverse edge so the walk can decide whether to
+    propagate past each consumer."""
+    reverse: dict[str, list[tuple[str, str]]] = defaultdict(list)
+    for src, tgt, scope in edges:
+        reverse[tgt].append((src, scope))
     return reverse
 
 
 def _transitive_dependents(
     start_module: str,
-    reverse_graph: dict[str, set[str]],
-    memo: dict[str, frozenset[str]],
+    reverse_graph: dict[str, list[tuple[str, str]]],
 ) -> frozenset[str]:
-    """Transitive closure of dependents. Memoized. Excludes start_module itself."""
-    if start_module in memo:
-        return memo[start_module]
+    """Scope-aware transitive closure of dependents. Excludes start_module.
 
+    The walk enumerates every direct consumer (any scope — all of them
+    rebuild when start_module's ABI changes, because they all have it on
+    their compile classpath). It then continues the walk past a consumer
+    only if the consumer depends on its reached node via scope=api, which
+    means the consumer's own ABI includes the reached node's ABI and
+    therefore transitively includes start_module's ABI.
+
+    A scope=implementation edge terminates forward propagation at that
+    consumer: the consumer rebuilds (it is in the visited set), but the
+    consumer's own consumers are NOT reached via this chain, because
+    Gradle's api/implementation contract hides the transitive dependency.
+
+    This naturally implements Snag's Action Version Transparency: wherever
+    a convention plugin chose `implementation` over `api`, the walk stops.
+    No special-case sink list is needed — the api/impl split is honored
+    directly.
+
+    Memoization is intentionally NOT used: the per-start-module closure
+    depends on which edges are reachable via api-forwarding nodes from
+    this particular start, and those edges can change between starts. The
+    module count is small enough (~200 modules) that the repeated BFS is
+    cheap — a fresh walk per start.
+    """
     visited: set[str] = set()
     stack: list[str] = [start_module]
     while stack:
         current = stack.pop()
-        for upstream in reverse_graph.get(current, ()):
-            if upstream not in visited and upstream != start_module:
-                visited.add(upstream)
+        for (upstream, scope) in reverse_graph.get(current, ()):
+            if upstream == start_module or upstream in visited:
+                continue
+            visited.add(upstream)
+            if scope == "api":
                 stack.append(upstream)
-
-    result = frozenset(visited)
-    memo[start_module] = result
-    return result
+            # scope=implementation (and anything else non-api): upstream
+            # rebuilds but does not forward the transitive dependency to
+            # its own consumers. Do not push onto stack.
+    return frozenset(visited)
 
 
 def compute_closure(
-    edges: list[tuple[str, str]],
+    edges: list[tuple[str, str, str]],
     units: dict[str, list[str]],
 ) -> dict[str, dict]:
     reverse = _build_reverse_graph(edges)
-    memo: dict[str, frozenset[str]] = {}
 
     result: dict[str, dict] = {}
     for module, source_sets in sorted(units.items()):
-        dependents = _transitive_dependents(module, reverse, memo)
+        dependents = _transitive_dependents(module, reverse)
         blast_radius_module = len(dependents)
 
         # Conservative unit-level: count every source set of every downstream module.
