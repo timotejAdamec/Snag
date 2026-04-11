@@ -24,15 +24,8 @@ import cz.adamec.timotej.snag.buildsrc.configuration.architecture.ModuleIdentity
 import cz.adamec.timotej.snag.buildsrc.configuration.architecture.Platform
 import cz.adamec.timotej.snag.buildsrc.configuration.architecture.parseModulePath
 
-/**
- * Canonical Snag convention plugin IDs in **ascending specificity order**: the entries earlier
- * in the list are more general, later entries are more specific. Snag's convention plugins
- * stack — e.g. `snag.driving.frontend.multiplatform.module` internally applies
- * `snag.frontend.multiplatform.module` which in turn applies `snag.multiplatform.module` — so
- * `pluginManager.hasPlugin(...)` reports multiple matches for a single module. The row builder
- * picks the most specific match (the last entry in this list that is also applied) as the
- * `plugin_applied` cell.
- */
+// Ordered general → specific. Snag plugins stack, so `lastOrNull { applied }` picks the most
+// specific match for the `plugin_applied` cell.
 internal val CANONICAL_SNAG_PLUGIN_IDS = listOf(
     "libs.plugins.snag.multiplatform.module",
     "libs.plugins.snag.frontend.multiplatform.module",
@@ -65,17 +58,8 @@ internal data class SharingReportRow(
 
 internal object SharingReportRowBuilder {
 
-    /**
-     * Build one row per existing source-set directory for a single Gradle subproject.
-     *
-     * @param modulePath the Gradle project path (e.g. `:feat:projects:fe:business:model`).
-     * @param appliedPluginIds **all** plugin IDs applied to the module — both canonical Snag
-     *        convention plugins and auxiliary marker plugins such as `com.android.application`.
-     *        The builder filters this list twice: once to pick the most-specific Snag plugin
-     *        for the `plugin_applied` column, and once to derive the plugin family used in
-     *        `platform_set` computation.
-     * @param sourceSetDirs the on-disk source-set directories for the module.
-     */
+    // `appliedPluginIds` must include both Snag convention plugins and marker plugins
+    // (e.g. `com.android.application`) — both are probed during row construction.
     fun buildRows(
         modulePath: String,
         appliedPluginIds: List<String>,

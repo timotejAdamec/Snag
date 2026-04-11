@@ -47,11 +47,8 @@ private fun discoverSourceSetDirs(projectDir: File): List<SourceSetDir> {
     val srcDir = projectDir.resolve("src")
     if (!srcDir.isDirectory) return emptyList()
 
-    // Emit one entry per existing source-set directory, pointing at the source-set root rather
-    // than the `kotlin/` subdirectory. This keeps modules that contribute zero hand-written
-    // Kotlin (for example SQLDelight-only modules whose source lives in `src/commonMain/sqldelight`)
-    // visible in the report — they show up with zero Kotlin LOC after the tokei join, which is
-    // the correct answer.
+    // Point at the source-set root, not `kotlin/`, so SQLDelight-only modules still appear
+    // in the report (with zero Kotlin LOC after the tokei join).
     return srcDir.listFiles { file -> file.isDirectory }
         ?.map { sourceSetDir ->
             SourceSetDir(
