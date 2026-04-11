@@ -906,10 +906,29 @@ class SharingReportRowBuilderTest {
         val row = SharingReportRowBuilder.buildRows(
             modulePath = ":core:foundation:common",
             appliedPluginIds = listOf("libs.plugins.snag.multiplatform.module"),
-            sourceSetDirs = listOf(SourceSetDir("commonMain", "/abs/path/core/foundation/common/src/commonMain/kotlin")),
+            sourceSetDirs = listOf(
+                SourceSetDir(
+                    name = "commonMain",
+                    absolutePath = "/abs/path/core/foundation/common/src/commonMain",
+                    relativePath = "core/foundation/common/src/commonMain",
+                ),
+            ),
         ).single()
         assertEquals("commonMain", row.sourceSet)
-        assertEquals("/abs/path/core/foundation/common/src/commonMain/kotlin", row.sourceSetDir)
+        assertEquals("/abs/path/core/foundation/common/src/commonMain", row.sourceSetDir)
+        assertEquals("core/foundation/common/src/commonMain", row.sourceSetDirRel)
+    }
+
+    @Test
+    fun `source set dir relative path defaults to empty when not specified`() {
+        // Existing test fixtures omit relativePath. Phase 2 tooling derives the unit mapping
+        // from the Gradle-populated rel path, but the row builder itself must not require it.
+        val row = SharingReportRowBuilder.buildRows(
+            modulePath = ":feat:projects:fe:app:impl",
+            appliedPluginIds = listOf("libs.plugins.snag.frontend.multiplatform.module"),
+            sourceSetDirs = listOf(SourceSetDir("commonMain", "/tmp/fe/app/impl/src/commonMain")),
+        ).single()
+        assertEquals("", row.sourceSetDirRel)
     }
 
     // Helper that wraps the common path: single plugin (or none), derives source-set dirs from names.
@@ -917,11 +936,18 @@ class SharingReportRowBuilderTest {
         modulePath: String,
         pluginId: String?,
         sourceSets: List<String>,
-    ): List<SharingReportRow> = SharingReportRowBuilder.buildRows(
-        modulePath = modulePath,
-        appliedPluginIds = listOfNotNull(pluginId),
-        sourceSetDirs = sourceSets.map { name ->
-            SourceSetDir(name = name, absolutePath = "/tmp$modulePath/src/$name/kotlin")
-        },
-    )
+    ): List<SharingReportRow> {
+        val pathPart = modulePath.trimStart(':').replace(':', '/')
+        return SharingReportRowBuilder.buildRows(
+            modulePath = modulePath,
+            appliedPluginIds = listOfNotNull(pluginId),
+            sourceSetDirs = sourceSets.map { name ->
+                SourceSetDir(
+                    name = name,
+                    absolutePath = "/tmp/$pathPart/src/$name",
+                    relativePath = "$pathPart/src/$name",
+                )
+            },
+        )
+    }
 }

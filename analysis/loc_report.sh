@@ -74,14 +74,15 @@ mkdir -p "$DATA_DIR"
 # ---- per-source-set tokei walk ------------------------------------------------------------
 
 # Parse the sharing report. Columns: module_path, category, feature, platform, hex_layer,
-# encapsulation, plugin_applied, source_set, source_set_dir. All Snag module paths are safe
-# to parse with basic comma splitting — no embedded commas or quotes in the current codebase.
+# encapsulation, plugin_applied, source_set, source_set_dir, source_set_dir_rel, platform_set.
+# All Snag module paths are safe to parse with basic comma splitting — no embedded commas
+# or quotes in the current codebase.
 
 log "writing $LOC_PER_SS_CSV"
 printf 'module_path,source_set,kotlin_loc,kotlin_files\n' > "$LOC_PER_SS_CSV"
 
 ROW_COUNT=0
-while IFS=, read -r module_path category feature platform hex_layer encapsulation plugin_applied source_set source_set_dir platform_set; do
+while IFS=, read -r module_path category feature platform hex_layer encapsulation plugin_applied source_set source_set_dir source_set_dir_rel platform_set; do
   # Skip header.
   if [[ "$module_path" == "module_path" ]]; then continue; fi
 
