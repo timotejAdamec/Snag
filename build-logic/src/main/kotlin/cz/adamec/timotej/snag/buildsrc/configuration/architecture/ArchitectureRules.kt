@@ -30,7 +30,7 @@ private fun categoryRank(module: ModuleIdentity): Int? = when (module) {
     is CoreModule -> 0
     is LibModule -> 1
     is FeatSharedModule -> 2
-    is FeatModule -> 3
+    is SingleFeatModule -> 3
     is AppModule -> 4
     is InfraModule -> null
 }
@@ -57,7 +57,7 @@ private fun categoryName(module: ModuleIdentity): String = when (module) {
     is CoreModule -> "core/"
     is LibModule -> "lib/"
     is FeatSharedModule -> "featShared/"
-    is FeatModule -> "feat/"
+    is SingleFeatModule -> "feat/"
     is AppModule -> "application"
     is InfraModule -> "infra"
 }
@@ -66,7 +66,6 @@ private fun platformOf(module: ModuleIdentity): Platform? = when (module) {
     is CoreModule -> module.platform
     is LibModule -> module.platform
     is FeatModule -> module.platform
-    is FeatSharedModule -> module.platform
     is AppModule -> null
     is InfraModule -> null
 }
@@ -115,31 +114,18 @@ private fun hexLayerRank(layer: HexLayer?): Int? = when (layer) {
     null -> null
 }
 
-private fun featureOf(module: ModuleIdentity): String? = when (module) {
-    is FeatModule -> module.feature
-    is FeatSharedModule -> module.feature
-    else -> null
-}
-
-private fun hexLayerOf(module: ModuleIdentity): HexLayer? = when (module) {
-    is FeatModule -> module.hexLayer
-    is FeatSharedModule -> module.hexLayer
-    else -> null
-}
-
 internal fun checkHexagonalDirection(
     source: ModuleIdentity,
     target: ModuleIdentity,
 ): Violation? {
-    val sourceFeature = featureOf(source) ?: return null
-    val targetFeature = featureOf(target) ?: return null
+    if (source !is FeatModule || target !is FeatModule) return null
     // Model modules are data containers — any layer can depend on them
-    if (target is FeatModule && target.isModel) return null
+    if (target is SingleFeatModule && target.isModel) return null
 
-    val sourceLayer = hexLayerOf(source) ?: return null
-    val targetLayer = hexLayerOf(target) ?: return null
+    val sourceLayer = source.hexLayer ?: return null
+    val targetLayer = target.hexLayer ?: return null
 
-    if (sourceFeature == targetFeature) {
+    if (source.feature == target.feature) {
         return checkSameFeatureHexDirection(source, target, sourceLayer, targetLayer)
     }
 
@@ -147,8 +133,8 @@ internal fun checkHexagonalDirection(
 }
 
 private fun checkSameFeatureHexDirection(
-    source: ModuleIdentity,
-    target: ModuleIdentity,
+    source: FeatModule,
+    target: FeatModule,
     sourceLayer: HexLayer,
     targetLayer: HexLayer,
 ): Violation? {
@@ -178,8 +164,8 @@ private fun checkSameFeatureHexDirection(
 }
 
 private fun checkCrossFeatureHexDirection(
-    source: ModuleIdentity,
-    target: ModuleIdentity,
+    source: FeatModule,
+    target: FeatModule,
     sourceLayer: HexLayer,
     targetLayer: HexLayer,
 ): Violation? {
@@ -198,8 +184,8 @@ private fun checkCrossFeatureHexDirection(
 }
 
 private fun hexViolation(
-    source: ModuleIdentity,
-    target: ModuleIdentity,
+    source: FeatModule,
+    target: FeatModule,
     message: String,
 ) = Violation(
     ruleId = RuleId.HEXAGONAL_DIRECTION,
@@ -245,7 +231,6 @@ private fun encapsulationOf(module: ModuleIdentity): Encapsulation? = when (modu
     is CoreModule -> module.encapsulation
     is LibModule -> module.encapsulation
     is FeatModule -> module.encapsulation
-    is FeatSharedModule -> module.encapsulation
     is AppModule -> null
     is InfraModule -> null
 }

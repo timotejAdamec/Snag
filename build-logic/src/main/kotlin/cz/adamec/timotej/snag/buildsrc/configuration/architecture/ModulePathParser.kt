@@ -118,7 +118,7 @@ private fun parseCoreOrLib(
     }
 }
 
-private fun parseFeat(path: String, rest: List<String>): FeatModule {
+private fun parseFeat(path: String, rest: List<String>): SingleFeatModule {
     val featureSegments = mutableListOf<String>()
     var platform: Platform? = null
     var hexLayer: HexLayer? = null
@@ -142,7 +142,7 @@ private fun parseFeat(path: String, rest: List<String>): FeatModule {
         }
     }
 
-    return FeatModule(
+    return SingleFeatModule(
         path = path,
         feature = featureSegments.joinToString(":"),
         platform = platform,

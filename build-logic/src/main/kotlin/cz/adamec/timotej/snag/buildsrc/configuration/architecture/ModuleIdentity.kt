@@ -34,23 +34,30 @@ internal data class LibModule(
     val encapsulation: Encapsulation?,
 ) : ModuleIdentity
 
-internal data class FeatModule(
+internal sealed interface FeatModule : ModuleIdentity {
+    val feature: String
+    val platform: Platform?
+    val hexLayer: HexLayer?
+    val encapsulation: Encapsulation?
+}
+
+internal data class SingleFeatModule(
     override val path: String,
-    val feature: String,
-    val platform: Platform?,
-    val hexLayer: HexLayer?,
-    val encapsulation: Encapsulation?,
+    override val feature: String,
+    override val platform: Platform?,
+    override val hexLayer: HexLayer?,
+    override val encapsulation: Encapsulation?,
     val isModel: Boolean = false,
     val isRules: Boolean = false,
-) : ModuleIdentity
+) : FeatModule
 
 internal data class FeatSharedModule(
     override val path: String,
-    val feature: String,
-    val platform: Platform?,
-    val hexLayer: HexLayer?,
-    val encapsulation: Encapsulation?,
-) : ModuleIdentity
+    override val feature: String,
+    override val platform: Platform?,
+    override val hexLayer: HexLayer?,
+    override val encapsulation: Encapsulation?,
+) : FeatModule
 
 internal data class AppModule(
     override val path: String,
