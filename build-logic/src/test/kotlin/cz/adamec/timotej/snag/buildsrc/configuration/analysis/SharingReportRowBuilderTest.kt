@@ -362,16 +362,61 @@ class SharingReportRowBuilderTest {
         assertEquals("contract", row.encapsulation)
     }
 
+    // ---------- FeaturesSharedModule ----------
+
     @Test
-    fun `feat shared database be impl preserves multi-segment feature name`() {
+    fun `featuresShared database be driven api`() {
         val row = buildRows(
-            modulePath = ":feat:shared:database:be:impl",
-            pluginId = "libs.plugins.snag.driven.backend.module",
+            modulePath = ":featuresShared:database:be:driven:api",
+            pluginId = "libs.plugins.snag.backend.module",
             sourceSets = listOf("main"),
         ).single()
-        assertEquals("shared:database", row.feature)
+        assertEquals("featuresShared", row.category)
+        assertEquals("database", row.feature)
         assertEquals("be", row.platform)
-        assertEquals("", row.hexLayer)
+        assertEquals("driven", row.hexLayer)
+        assertEquals("api", row.encapsulation)
+    }
+
+    @Test
+    fun `featuresShared database be driven impl`() {
+        val row = buildRows(
+            modulePath = ":featuresShared:database:be:driven:impl",
+            pluginId = "libs.plugins.snag.backend.module",
+            sourceSets = listOf("main"),
+        ).single()
+        assertEquals("featuresShared", row.category)
+        assertEquals("database", row.feature)
+        assertEquals("be", row.platform)
+        assertEquals("driven", row.hexLayer)
+        assertEquals("impl", row.encapsulation)
+    }
+
+    @Test
+    fun `featuresShared storage fe driven impl`() {
+        val row = buildRows(
+            modulePath = ":featuresShared:storage:fe:driven:impl",
+            pluginId = "libs.plugins.snag.frontend.multiplatform.module",
+            sourceSets = listOf("commonMain"),
+        ).single()
+        assertEquals("featuresShared", row.category)
+        assertEquals("storage", row.feature)
+        assertEquals("fe", row.platform)
+        assertEquals("driven", row.hexLayer)
+        assertEquals("impl", row.encapsulation)
+    }
+
+    @Test
+    fun `featuresShared storage be driven impl`() {
+        val row = buildRows(
+            modulePath = ":featuresShared:storage:be:driven:impl",
+            pluginId = "libs.plugins.snag.backend.module",
+            sourceSets = listOf("main"),
+        ).single()
+        assertEquals("featuresShared", row.category)
+        assertEquals("storage", row.feature)
+        assertEquals("be", row.platform)
+        assertEquals("driven", row.hexLayer)
         assertEquals("impl", row.encapsulation)
     }
 
