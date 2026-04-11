@@ -236,7 +236,7 @@ def figure_layer_platform_set_heatmap(df: pd.DataFrame) -> None:
     grand_total = int(data.sum())
 
     col_labels = [
-        f"{c}\n({PLATFORM_SET_REACH_COUNT.get(c, 0)}p)\n{int(t):,}"
+        f"{int(t):,} ({PLATFORM_SET_REACH_COUNT.get(c, 0)}p) {c}"
         for c, t in zip(cols, col_totals)
     ]
     ax.set_xticks(np.arange(len(cols)), labels=col_labels, rotation=45, ha="right")
