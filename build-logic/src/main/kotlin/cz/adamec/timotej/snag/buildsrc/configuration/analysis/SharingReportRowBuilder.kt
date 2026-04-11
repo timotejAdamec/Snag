@@ -15,9 +15,9 @@ package cz.adamec.timotej.snag.buildsrc.configuration.analysis
 import cz.adamec.timotej.snag.buildsrc.configuration.architecture.AppModule
 import cz.adamec.timotej.snag.buildsrc.configuration.architecture.CoreModule
 import cz.adamec.timotej.snag.buildsrc.configuration.architecture.Encapsulation
-import cz.adamec.timotej.snag.buildsrc.configuration.architecture.FeatModule
 import cz.adamec.timotej.snag.buildsrc.configuration.architecture.FeatSharedModule
 import cz.adamec.timotej.snag.buildsrc.configuration.architecture.HexLayer
+import cz.adamec.timotej.snag.buildsrc.configuration.architecture.SingleFeatModule
 import cz.adamec.timotej.snag.buildsrc.configuration.architecture.InfraModule
 import cz.adamec.timotej.snag.buildsrc.configuration.architecture.LibModule
 import cz.adamec.timotej.snag.buildsrc.configuration.architecture.ModuleIdentity
@@ -136,7 +136,7 @@ private fun ModuleIdentity.toClassification(): Classification = when (this) {
         hexLayer = "",
         encapsulation = encapsulation.asCsv(),
     )
-    is FeatModule -> Classification(
+    is SingleFeatModule -> Classification(
         category = "feat",
         feature = feature,
         platform = platform.asCsv(),
