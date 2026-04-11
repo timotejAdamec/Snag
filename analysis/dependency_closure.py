@@ -46,9 +46,30 @@ OUTPUT_JSON = SCRIPT_DIR / "data" / "dependency_closure.json"
 DOWNSTREAM_SAMPLE_CAP = 20
 
 
+def _is_test_configuration(configuration_name: str) -> bool:
+    """Test configurations produce reverse-closure cycles: core modules depend
+    on testInfra via testImplementation, and testInfra depends on feat test
+    fakes via commonMainImplementation — so reverse-walking from any feat
+    production unit drags core into the downstream set through the test graph.
+
+    For §4.3's blast-radius metric we want PRODUCTION impact: if a feat
+    module's commonMain changes, which other production units have to rebuild?
+    Test edges are filtered out here, not in the Gradle task, so the raw edge
+    CSV stays intact for alternative queries (e.g., test-impact analysis).
+
+    Matches any configuration whose name contains "test" or "Test". This
+    catches: testImplementation, commonTestImplementation, androidUnitTest*,
+    androidInstrumentedTest*, iosTest*, jvmTest*, jsTest*, wasmJsTest*,
+    and any future *Test* variants.
+    """
+    return "test" in configuration_name.lower()
+
+
 def _load_edges(path: Path) -> list[tuple[str, str]]:
-    """Returns list of (source_module, target_module) edges. source_configuration and
-    scope columns are not needed for module-level closure computation."""
+    """Returns list of (source_module, target_module) edges with test
+    configurations filtered out. source_configuration and scope columns are
+    used only for the test filter — closure itself operates on the module
+    pair, not the configuration."""
     if not path.is_file():
         sys.stderr.write(
             f"[dependency_closure] ERROR: {path} not found. "
@@ -57,14 +78,24 @@ def _load_edges(path: Path) -> list[tuple[str, str]]:
         sys.exit(2)
 
     edges: list[tuple[str, str]] = []
+    total = 0
+    filtered_test = 0
     with path.open(newline="", encoding="utf-8") as f:
         reader = csv.DictReader(f)
         for row in reader:
+            total += 1
+            if _is_test_configuration(row["source_configuration"]):
+                filtered_test += 1
+                continue
             src = row["source_module"]
             tgt = row["target_module"]
             if src == tgt:
                 continue
             edges.append((src, tgt))
+    sys.stderr.write(
+        f"[dependency_closure] edges: {len(edges)} production "
+        f"(filtered {filtered_test} test edges from {total} total)\n"
+    )
     return edges
 
 
