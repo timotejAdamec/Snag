@@ -16,7 +16,7 @@ import cz.adamec.timotej.snag.buildsrc.configuration.architecture.AppModule
 import cz.adamec.timotej.snag.buildsrc.configuration.architecture.CoreModule
 import cz.adamec.timotej.snag.buildsrc.configuration.architecture.Encapsulation
 import cz.adamec.timotej.snag.buildsrc.configuration.architecture.FeatModule
-import cz.adamec.timotej.snag.buildsrc.configuration.architecture.FeaturesSharedModule
+import cz.adamec.timotej.snag.buildsrc.configuration.architecture.FeatSharedModule
 import cz.adamec.timotej.snag.buildsrc.configuration.architecture.HexLayer
 import cz.adamec.timotej.snag.buildsrc.configuration.architecture.InfraModule
 import cz.adamec.timotej.snag.buildsrc.configuration.architecture.LibModule
@@ -143,8 +143,8 @@ private fun ModuleIdentity.toClassification(): Classification = when (this) {
         hexLayer = hexLayer.asCsv(),
         encapsulation = encapsulation.asCsv(),
     )
-    is FeaturesSharedModule -> Classification(
-        category = "featuresShared",
+    is FeatSharedModule -> Classification(
+        category = "featShared",
         feature = feature,
         platform = platform.asCsv(),
         hexLayer = hexLayer.asCsv(),

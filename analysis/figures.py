@@ -56,15 +56,15 @@ def load_joined_table() -> pd.DataFrame:
 #
 # The heatmap's vertical axis groups each LOC row by a coarse "architectural role" label.
 # The `hex_layer` column emitted by SharingReportTask only fills in for hex-shaped modules
-# (feat + featuresShared), so we extend it with module-category fallbacks so every LOC row
+# (feat + featShared), so we extend it with module-category fallbacks so every LOC row
 # lands in exactly one row of the matrix:
 #
-# - feat and featuresShared modules with a hex layer → the hex layer name
+# - feat and featShared modules with a hex layer → the hex layer name
 #   (business / app / ports / driving / driven). Both categories share the same hex rows —
 #   the reader cares about the architectural layer, not whether a feature is per-feature
 #   business code or cross-feature infrastructure.
 # - feat or lib modules with encapsulation=contract → `contract`
-# - feat modules without either signal → `feat (other)`. **After the featuresShared restructure
+# - feat modules without either signal → `feat (other)`. **After the featShared restructure
 #   this row should regenerate empty** — it is kept in LAYER_ORDER as a regression tripwire so
 #   any module that drifts back into a non-hex shape is visible in the heatmap instead of being
 #   silently dropped by the reindex.
@@ -102,7 +102,7 @@ def derive_layer(row: pd.Series) -> str:
     hex_layer = row["hex_layer"]
     encapsulation = row["encapsulation"]
 
-    if category in ("feat", "featuresShared"):
+    if category in ("feat", "featShared"):
         if hex_layer:
             return hex_layer
         if encapsulation == "contract":

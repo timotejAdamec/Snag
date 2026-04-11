@@ -362,16 +362,16 @@ class SharingReportRowBuilderTest {
         assertEquals("contract", row.encapsulation)
     }
 
-    // ---------- FeaturesSharedModule ----------
+    // ---------- FeatSharedModule ----------
 
     @Test
-    fun `featuresShared database be driven api`() {
+    fun `featShared database be driven api`() {
         val row = buildRows(
-            modulePath = ":featuresShared:database:be:driven:api",
+            modulePath = ":featShared:database:be:driven:api",
             pluginId = "libs.plugins.snag.backend.module",
             sourceSets = listOf("main"),
         ).single()
-        assertEquals("featuresShared", row.category)
+        assertEquals("featShared", row.category)
         assertEquals("database", row.feature)
         assertEquals("be", row.platform)
         assertEquals("driven", row.hexLayer)
@@ -379,13 +379,13 @@ class SharingReportRowBuilderTest {
     }
 
     @Test
-    fun `featuresShared database be driven impl`() {
+    fun `featShared database be driven impl`() {
         val row = buildRows(
-            modulePath = ":featuresShared:database:be:driven:impl",
+            modulePath = ":featShared:database:be:driven:impl",
             pluginId = "libs.plugins.snag.backend.module",
             sourceSets = listOf("main"),
         ).single()
-        assertEquals("featuresShared", row.category)
+        assertEquals("featShared", row.category)
         assertEquals("database", row.feature)
         assertEquals("be", row.platform)
         assertEquals("driven", row.hexLayer)
@@ -393,13 +393,13 @@ class SharingReportRowBuilderTest {
     }
 
     @Test
-    fun `featuresShared storage fe driven impl`() {
+    fun `featShared storage fe driven impl`() {
         val row = buildRows(
-            modulePath = ":featuresShared:storage:fe:driven:impl",
+            modulePath = ":featShared:storage:fe:driven:impl",
             pluginId = "libs.plugins.snag.frontend.multiplatform.module",
             sourceSets = listOf("commonMain"),
         ).single()
-        assertEquals("featuresShared", row.category)
+        assertEquals("featShared", row.category)
         assertEquals("storage", row.feature)
         assertEquals("fe", row.platform)
         assertEquals("driven", row.hexLayer)
@@ -407,13 +407,13 @@ class SharingReportRowBuilderTest {
     }
 
     @Test
-    fun `featuresShared storage be driven impl`() {
+    fun `featShared storage be driven impl`() {
         val row = buildRows(
-            modulePath = ":featuresShared:storage:be:driven:impl",
+            modulePath = ":featShared:storage:be:driven:impl",
             pluginId = "libs.plugins.snag.backend.module",
             sourceSets = listOf("main"),
         ).single()
-        assertEquals("featuresShared", row.category)
+        assertEquals("featShared", row.category)
         assertEquals("storage", row.feature)
         assertEquals("be", row.platform)
         assertEquals("driven", row.hexLayer)
