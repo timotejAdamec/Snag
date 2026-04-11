@@ -16,8 +16,8 @@ import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import app.cash.sqldelight.coroutines.mapToOneOrNull
 import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
-import cz.adamec.timotej.snag.featuresShared.database.fe.driven.api.db.ProjectPhotoEntity
-import cz.adamec.timotej.snag.featuresShared.database.fe.driven.api.db.ProjectPhotoEntityQueries
+import cz.adamec.timotej.snag.featShared.database.fe.driven.api.db.ProjectPhotoEntity
+import cz.adamec.timotej.snag.featShared.database.fe.driven.api.db.ProjectPhotoEntityQueries
 import cz.adamec.timotej.snag.lib.database.fe.safeDbWrite
 import cz.adamec.timotej.snag.projects.app.model.AppProjectPhoto
 import cz.adamec.timotej.snag.projects.fe.driven.internal.LH

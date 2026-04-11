@@ -14,9 +14,9 @@ package cz.adamec.timotej.snag.findings.be.driven.impl.internal
 
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.feat.findings.be.model.BackendFindingPhoto
-import cz.adamec.timotej.snag.featuresShared.database.be.driven.api.FindingEntity
-import cz.adamec.timotej.snag.featuresShared.database.be.driven.api.FindingPhotoEntity
-import cz.adamec.timotej.snag.featuresShared.database.be.driven.api.FindingPhotosTable
+import cz.adamec.timotej.snag.featShared.database.be.driven.api.FindingEntity
+import cz.adamec.timotej.snag.featShared.database.be.driven.api.FindingPhotoEntity
+import cz.adamec.timotej.snag.featShared.database.be.driven.api.FindingPhotosTable
 import cz.adamec.timotej.snag.findings.be.ports.FindingPhotosDb
 import org.jetbrains.exposed.v1.core.and
 import org.jetbrains.exposed.v1.core.eq

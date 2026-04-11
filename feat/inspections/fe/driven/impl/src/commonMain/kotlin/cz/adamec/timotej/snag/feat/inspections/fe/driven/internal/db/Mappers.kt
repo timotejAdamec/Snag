@@ -15,7 +15,7 @@ package cz.adamec.timotej.snag.feat.inspections.fe.driven.internal.db
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.feat.inspections.app.model.AppInspection
 import cz.adamec.timotej.snag.feat.inspections.app.model.AppInspectionData
-import cz.adamec.timotej.snag.featuresShared.database.fe.driven.api.db.InspectionEntity
+import cz.adamec.timotej.snag.featShared.database.fe.driven.api.db.InspectionEntity
 import kotlin.uuid.Uuid
 
 internal fun AppInspection.toEntity() =

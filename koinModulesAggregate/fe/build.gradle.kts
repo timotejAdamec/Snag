@@ -22,8 +22,8 @@ kotlin {
             implementation(projects.core.foundation.fe)
             implementation(projects.lib.network.fe.impl)
             implementation(projects.lib.storage.fe.impl)
-            implementation(projects.featuresShared.database.fe.driven.impl)
-            implementation(projects.featuresShared.storage.fe.driven.impl)
+            implementation(projects.featShared.database.fe.driven.impl)
+            implementation(projects.featShared.storage.fe.driven.impl)
             implementation(projects.core.business.rules.impl)
 
             // Authentication

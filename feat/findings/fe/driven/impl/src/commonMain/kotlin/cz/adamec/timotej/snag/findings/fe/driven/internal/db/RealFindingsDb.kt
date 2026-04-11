@@ -23,11 +23,11 @@ import cz.adamec.timotej.snag.core.network.fe.OfflineFirstUpdateDataResult
 import cz.adamec.timotej.snag.feat.findings.app.model.AppFinding
 import cz.adamec.timotej.snag.feat.findings.business.FindingType
 import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
-import cz.adamec.timotej.snag.featuresShared.database.fe.driven.api.db.ClassicFindingEntityQueries
-import cz.adamec.timotej.snag.featuresShared.database.fe.driven.api.db.FindingCoordinateEntityQueries
-import cz.adamec.timotej.snag.featuresShared.database.fe.driven.api.db.FindingEntityQueries
-import cz.adamec.timotej.snag.featuresShared.database.fe.driven.api.db.SelectById
-import cz.adamec.timotej.snag.featuresShared.database.fe.driven.api.db.SelectByStructureId
+import cz.adamec.timotej.snag.featShared.database.fe.driven.api.db.ClassicFindingEntityQueries
+import cz.adamec.timotej.snag.featShared.database.fe.driven.api.db.FindingCoordinateEntityQueries
+import cz.adamec.timotej.snag.featShared.database.fe.driven.api.db.FindingEntityQueries
+import cz.adamec.timotej.snag.featShared.database.fe.driven.api.db.SelectById
+import cz.adamec.timotej.snag.featShared.database.fe.driven.api.db.SelectByStructureId
 import cz.adamec.timotej.snag.findings.fe.driven.internal.LH
 import cz.adamec.timotej.snag.findings.fe.ports.FindingsDb
 import cz.adamec.timotej.snag.lib.database.fe.safeDbWrite

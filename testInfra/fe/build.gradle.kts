@@ -19,7 +19,7 @@ kotlin {
         commonMain.dependencies {
             api(projects.testInfra.common)
             implementation(projects.koinModulesAggregate.fe)
-            implementation(projects.featuresShared.database.fe.driven.test)
+            implementation(projects.featShared.database.fe.driven.test)
             implementation(projects.feat.authentication.fe.driven.test)
             implementation(projects.feat.clients.fe.driven.test)
             implementation(projects.feat.findings.fe.driven.test)

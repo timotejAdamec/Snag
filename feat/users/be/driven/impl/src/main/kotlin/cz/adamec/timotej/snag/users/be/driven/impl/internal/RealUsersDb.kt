@@ -14,8 +14,8 @@ package cz.adamec.timotej.snag.users.be.driven.impl.internal
 
 import cz.adamec.timotej.snag.authorization.business.UserRole
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
-import cz.adamec.timotej.snag.featuresShared.database.be.driven.api.UserEntity
-import cz.adamec.timotej.snag.featuresShared.database.be.driven.api.UsersTable
+import cz.adamec.timotej.snag.featShared.database.be.driven.api.UserEntity
+import cz.adamec.timotej.snag.featShared.database.be.driven.api.UsersTable
 import cz.adamec.timotej.snag.users.be.model.BackendUser
 import cz.adamec.timotej.snag.users.be.ports.UsersDb
 import org.jetbrains.exposed.v1.core.eq

@@ -14,7 +14,7 @@ package cz.adamec.timotej.snag.users.fe.driven.internal.db
 
 import cz.adamec.timotej.snag.authorization.business.UserRole
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
-import cz.adamec.timotej.snag.featuresShared.database.fe.driven.api.db.UserEntity
+import cz.adamec.timotej.snag.featShared.database.fe.driven.api.db.UserEntity
 import cz.adamec.timotej.snag.users.app.model.AppUser
 import cz.adamec.timotej.snag.users.app.model.AppUserData
 import kotlin.uuid.Uuid

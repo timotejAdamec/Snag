@@ -22,8 +22,8 @@ import cz.adamec.timotej.snag.core.foundation.be.backendCoreModule
 import cz.adamec.timotej.snag.feat.inspections.be.app.impl.di.inspectionsAppModule
 import cz.adamec.timotej.snag.feat.inspections.be.driven.impl.di.inspectionsDrivenModule
 import cz.adamec.timotej.snag.feat.inspections.be.driving.impl.di.inspectionsDrivingModule
-import cz.adamec.timotej.snag.featuresShared.database.be.driven.impl.di.sharedDatabaseModule
-import cz.adamec.timotej.snag.featuresShared.storage.be.driven.impl.di.sharedStorageBeModule
+import cz.adamec.timotej.snag.featShared.database.be.driven.impl.di.sharedDatabaseModule
+import cz.adamec.timotej.snag.featShared.storage.be.driven.impl.di.sharedStorageBeModule
 import cz.adamec.timotej.snag.findings.be.app.impl.di.findingsAppModule
 import cz.adamec.timotej.snag.findings.be.driven.impl.di.findingsDrivenModule
 import cz.adamec.timotej.snag.findings.be.driving.impl.di.findingsDrivingModule

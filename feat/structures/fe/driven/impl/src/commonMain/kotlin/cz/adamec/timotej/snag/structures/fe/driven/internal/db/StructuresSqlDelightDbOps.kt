@@ -13,8 +13,8 @@
 package cz.adamec.timotej.snag.structures.fe.driven.internal.db
 
 import cz.adamec.timotej.snag.feat.structures.app.model.AppStructure
-import cz.adamec.timotej.snag.featuresShared.database.fe.driven.api.db.StructureEntity
-import cz.adamec.timotej.snag.featuresShared.database.fe.driven.api.db.StructureEntityQueries
+import cz.adamec.timotej.snag.featShared.database.fe.driven.api.db.StructureEntity
+import cz.adamec.timotej.snag.featShared.database.fe.driven.api.db.StructureEntityQueries
 import cz.adamec.timotej.snag.lib.database.fe.SqlDelightDbOps
 import cz.adamec.timotej.snag.structures.fe.driven.internal.LH
 import kotlinx.coroutines.CoroutineDispatcher

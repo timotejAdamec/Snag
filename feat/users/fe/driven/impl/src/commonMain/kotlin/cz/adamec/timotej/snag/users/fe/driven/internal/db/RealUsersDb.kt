@@ -15,7 +15,7 @@ package cz.adamec.timotej.snag.users.fe.driven.internal.db
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToOneOrNull
 import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
-import cz.adamec.timotej.snag.featuresShared.database.fe.driven.api.db.UserEntityQueries
+import cz.adamec.timotej.snag.featShared.database.fe.driven.api.db.UserEntityQueries
 import cz.adamec.timotej.snag.users.app.model.AppUser
 import cz.adamec.timotej.snag.users.fe.ports.UsersDb
 import kotlinx.coroutines.CoroutineDispatcher

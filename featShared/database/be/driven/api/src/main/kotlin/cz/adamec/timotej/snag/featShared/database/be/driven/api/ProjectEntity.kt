@@ -1,0 +1,33 @@
+/*
+ * Copyright (c) 2026 Timotej Adamec
+ * SPDX-License-Identifier: MIT
+ *
+ * This file is part of the thesis:
+ * "Multiplatform snagging system with code sharing maximisation"
+ *
+ * Czech Technical University in Prague
+ * Faculty of Information Technology
+ * Department of Software Engineering
+ */
+
+package cz.adamec.timotej.snag.featShared.database.be.driven.api
+
+import org.jetbrains.exposed.v1.core.dao.id.EntityID
+import org.jetbrains.exposed.v1.dao.UuidEntity
+import org.jetbrains.exposed.v1.dao.UuidEntityClass
+import kotlin.uuid.Uuid
+
+class ProjectEntity(
+    id: EntityID<Uuid>,
+) : UuidEntity(id) {
+    var name by ProjectsTable.name
+    var address by ProjectsTable.address
+    var client by ClientEntity optionalReferencedOn ProjectsTable.client
+    var creatorId by ProjectsTable.creatorId
+    var isClosed by ProjectsTable.isClosed
+    var updatedAt by ProjectsTable.updatedAt
+    var deletedAt by ProjectsTable.deletedAt
+    val structures by StructureEntity referrersOn StructuresTable.project
+
+    companion object : UuidEntityClass<ProjectEntity>(ProjectsTable)
+}

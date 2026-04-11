@@ -15,11 +15,11 @@ package cz.adamec.timotej.snag.findings.be.driven.impl.internal
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.feat.findings.be.model.BackendFinding
 import cz.adamec.timotej.snag.feat.findings.business.FindingType
-import cz.adamec.timotej.snag.featuresShared.database.be.driven.api.ClassicFindingEntity
-import cz.adamec.timotej.snag.featuresShared.database.be.driven.api.FindingCoordinateEntity
-import cz.adamec.timotej.snag.featuresShared.database.be.driven.api.FindingEntity
-import cz.adamec.timotej.snag.featuresShared.database.be.driven.api.FindingsTable
-import cz.adamec.timotej.snag.featuresShared.database.be.driven.api.StructureEntity
+import cz.adamec.timotej.snag.featShared.database.be.driven.api.ClassicFindingEntity
+import cz.adamec.timotej.snag.featShared.database.be.driven.api.FindingCoordinateEntity
+import cz.adamec.timotej.snag.featShared.database.be.driven.api.FindingEntity
+import cz.adamec.timotej.snag.featShared.database.be.driven.api.FindingsTable
+import cz.adamec.timotej.snag.featShared.database.be.driven.api.StructureEntity
 import cz.adamec.timotej.snag.findings.be.ports.FindingsDb
 import cz.adamec.timotej.snag.sync.be.DeleteConflictResult
 import cz.adamec.timotej.snag.sync.be.ResolveConflictForDeleteUseCase
