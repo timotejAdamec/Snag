@@ -30,20 +30,21 @@ internal fun Project.configureSharingReport() {
 
     gradle.projectsEvaluated {
         val probedPluginIds = CANONICAL_SNAG_PLUGIN_IDS + PLATFORM_MARKER_PLUGIN_IDS
+        val rootDir = rootProject.projectDir
         val inputs = rootProject.subprojects.map { subproject ->
             SharingReportSubprojectInput(
                 modulePath = subproject.path,
                 appliedPluginIds = probedPluginIds.filter { pluginId ->
                     subproject.pluginManager.hasPlugin(pluginId)
                 },
-                sourceSetDirs = discoverSourceSetDirs(subproject.projectDir),
+                sourceSetDirs = discoverSourceSetDirs(subproject.projectDir, rootDir),
             )
         }
         task.configure { subprojectInputs.set(inputs) }
     }
 }
 
-private fun discoverSourceSetDirs(projectDir: File): List<SourceSetDir> {
+private fun discoverSourceSetDirs(projectDir: File, rootDir: File): List<SourceSetDir> {
     val srcDir = projectDir.resolve("src")
     if (!srcDir.isDirectory) return emptyList()
 
@@ -54,6 +55,7 @@ private fun discoverSourceSetDirs(projectDir: File): List<SourceSetDir> {
             SourceSetDir(
                 name = sourceSetDir.name,
                 absolutePath = sourceSetDir.absolutePath,
+                relativePath = sourceSetDir.relativeTo(rootDir).invariantSeparatorsPath,
             )
         }
         ?.sortedBy { it.name }

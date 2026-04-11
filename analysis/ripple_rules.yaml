@@ -1,0 +1,85 @@
+# Copyright (c) 2026 Timotej Adamec
+# SPDX-License-Identifier: MIT
+#
+# Thesis: "Multiplatform snagging system with code sharing maximisation"
+# Czech Technical University in Prague — Faculty of Information Technology
+#
+# Ripple bucket classification rules. Consumed by analysis/feature_retro.py --stub
+# to pre-populate classifications/<change>.yaml. Every rule-matched unit records
+# the rule id under `source: rule:<id>` so a second reader can reproduce or
+# challenge the auto-classification; unmatched units become `unclassified` and
+# must be hand-classified before --finalize accepts the yaml.
+#
+# Rule semantics:
+#   - `id`              — stable identifier, referenced by `source: rule:<id>` in
+#                         classification files. Never reuse.
+#   - `bucket`          — one of: local | intrinsic | collateral.
+#   - `recurring`       — true if the file would be touched again for every future
+#                         change of the same kind (NS combinatorial anomaly site).
+#   - `reason`          — short human explanation, emitted into the classification.
+#   - `path_glob`       — fnmatch glob against repo-relative path. Required.
+#   - `module_glob`     — optional fnmatch glob against module path (e.g. ":feat:*").
+#                         Matches the unit's module if present.
+#   - `source_set`      — optional exact match on source set name (commonMain, main).
+#   - `change_kind`     — optional filter: only apply to changes of this kind.
+#                         One of: feature_remove | feature_add | entity_extend.
+#                         Omit to apply to all change kinds.
+#
+# Rules are evaluated in order; the first match wins. Keep the "most specific
+# first" ordering convention when adding new rules.
+
+version: 1
+
+rules:
+
+  # -------- Intrinsic: DI aggregation points ------------------------------------
+  - id: aggregation_koin_fe
+    bucket: intrinsic
+    recurring: true
+    reason: "FE Koin aggregation — each feature's DI module is listed here, every feature add/remove edits this file"
+    path_glob: "koinModulesAggregate/fe/**"
+
+  - id: aggregation_koin_be
+    bucket: intrinsic
+    recurring: true
+    reason: "BE Koin aggregation — each feature's DI module is listed here, every feature add/remove edits this file"
+    path_glob: "koinModulesAggregate/be/**"
+
+  # -------- Intrinsic: sync handler registry ------------------------------------
+  - id: sync_handler_registry
+    bucket: intrinsic
+    recurring: true
+    reason: "Sync handler registry — each syncable feature registers itself here"
+    path_glob: "**/sync/**SyncHandler*.kt"
+
+  - id: sync_entity_type_enum
+    bucket: intrinsic
+    recurring: true
+    reason: "Sync entity-type enum — each new syncable entity adds a variant"
+    path_glob: "**/sync/**SyncEntityType*.kt"
+
+  # -------- Intrinsic: dev/test data seeding ------------------------------------
+  - id: dev_data_seeder
+    bucket: intrinsic
+    recurring: false
+    reason: "Dev data seeder — enumerates feature entities, touched once per feature but not a combinatorial site (no business requirement that every feature seed dev data)"
+    path_glob: "server/src/main/kotlin/**/DevData*.kt"
+
+  # -------- Intrinsic: gradle plumbing ------------------------------------------
+  - id: settings_gradle
+    bucket: intrinsic
+    recurring: true
+    reason: "settings.gradle.kts — every module add/remove is listed here"
+    path_glob: "settings.gradle.kts"
+
+  # -------- Local: build files inside the change's own module tree ---------------
+  # These become local only when the module itself is local to the change under
+  # study; that's resolved per-change by feature_retro.py using the per-change
+  # "local_module_globs" list in the classification yaml. The rule below only
+  # catches build.gradle.kts edits in pre-existing modules, which are collateral
+  # unless the classification overrides them.
+  - id: build_gradle_collateral
+    bucket: collateral
+    recurring: false
+    reason: "build.gradle.kts edit in a pre-existing module — typically a new dependency or plugin declaration, avoidable if the convention plugins auto-wire it"
+    path_glob: "**/build.gradle.kts"

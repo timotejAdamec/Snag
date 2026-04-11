@@ -41,6 +41,10 @@ internal val CANONICAL_SNAG_PLUGIN_IDS = listOf(
 internal data class SourceSetDir(
     val name: String,
     val absolutePath: String,
+    // Repo-relative, forward-slash separators. Used by `analysis/feature_retro.py` for the
+    // path→unit longest-prefix mapping so the Python side does not have to reimplement the
+    // module path grammar. Defaulted for unit-test fixtures; populated by the Gradle setup.
+    val relativePath: String = "",
 ) : java.io.Serializable
 
 internal data class SharingReportRow(
@@ -53,6 +57,7 @@ internal data class SharingReportRow(
     val pluginApplied: String,
     val sourceSet: String,
     val sourceSetDir: String,
+    val sourceSetDirRel: String,
     val platformSet: String,
 )
 
@@ -82,6 +87,7 @@ internal object SharingReportRowBuilder {
                 pluginApplied = pluginApplied,
                 sourceSet = dir.name,
                 sourceSetDir = dir.absolutePath,
+                sourceSetDirRel = dir.relativePath,
                 platformSet = platformSetLabel(
                     pluginFamily = pluginFamily,
                     modulePlatform = classification.platform,

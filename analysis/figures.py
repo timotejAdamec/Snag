@@ -320,13 +320,129 @@ def figure_platform_reach_histogram(df: pd.DataFrame) -> None:
     """
 
 
-def figure_ripple_buckets(df: pd.DataFrame) -> None:
+RIPPLE_BUCKET_ORDER = ["local", "intrinsic", "collateral"]
+RIPPLE_BUCKET_COLORS = {
+    "local": "#4c72b0",       # calm blue — intrinsic cost of the change
+    "intrinsic": "#dd8452",   # warm orange — NS-required ripple sites
+    "collateral": "#c44e52",  # red — avoidable coupling, the anomaly to discuss
+}
+
+
+def figure_ripple_buckets() -> None:
+    """§4.3 stacked bar — one bar per studied change, segments = local / intrinsic /
+    collateral.
+
+    Consumes every `analysis/data/ripple_<change>_units.csv` produced by
+    feature_retro.py --finalize. Each change contributes one bar with file-count
+    segments; LOC-churn variant rendered as a companion plot underneath. Recurring
+    intrinsic unit count annotated per bar.
+
+    Skips gracefully when no ripple CSVs exist yet — Phase 2 writeup runs before
+    any case study data is committed, so the smoke pass must not fail here.
     """
-    Phase 4: stacked bar per studied change (inspections reverse removal, ProjectPhoto,
-    optional iOS-only extension, Wear OS experiment). Segments: local / intrinsic / collateral.
-    Consumes: per-change repair logs produced by feature_retro.py (Phase 2), not the sharing
-    report.
-    """
+    ripple_csvs = sorted(DATA_DIR.glob("ripple_*_units.csv"))
+    if not ripple_csvs:
+        print("figure_ripple_buckets: no ripple_*_units.csv found — skipping")
+        return
+
+    per_change_rows = []
+    for csv_path in ripple_csvs:
+        change_id = csv_path.stem.removeprefix("ripple_").removesuffix("_units")
+        df = pd.read_csv(csv_path, dtype=str).fillna("")
+        df["file_count"] = df["file_count"].astype(int)
+        df["loc_churn_sum"] = df["loc_churn_sum"].astype(int)
+        df["recurring_bool"] = df["recurring"].str.lower().isin({"true", "1"})
+
+        bucket_files = {b: 0 for b in RIPPLE_BUCKET_ORDER}
+        bucket_churn = {b: 0 for b in RIPPLE_BUCKET_ORDER}
+        for _, row in df.iterrows():
+            b = row["dominant_bucket"]
+            if b not in bucket_files:
+                continue
+            bucket_files[b] += int(row["file_count"])
+            bucket_churn[b] += int(row["loc_churn_sum"])
+
+        recurring_intrinsic_units = int(
+            ((df["dominant_bucket"] == "intrinsic") & df["recurring_bool"]).sum(),
+        )
+
+        per_change_rows.append(
+            {
+                "change_id": change_id,
+                "bucket_files": bucket_files,
+                "bucket_churn": bucket_churn,
+                "recurring_intrinsic_units": recurring_intrinsic_units,
+            },
+        )
+
+    fig, (ax_files, ax_churn) = plt.subplots(
+        2,
+        1,
+        figsize=(10, max(3, 1.2 * len(per_change_rows)) * 2),
+        sharey=True,
+    )
+
+    def _stacked_barh(ax, key: str, title: str, xlabel: str) -> None:
+        change_labels = [r["change_id"] for r in per_change_rows]
+        y_pos = np.arange(len(change_labels))
+        left = np.zeros(len(change_labels))
+        for bucket in RIPPLE_BUCKET_ORDER:
+            values = np.array([r[key][bucket] for r in per_change_rows])
+            ax.barh(
+                y_pos,
+                values,
+                left=left,
+                color=RIPPLE_BUCKET_COLORS[bucket],
+                label=bucket,
+                edgecolor="white",
+                linewidth=0.5,
+            )
+            for i, v in enumerate(values):
+                if v > 0:
+                    ax.text(
+                        left[i] + v / 2,
+                        y_pos[i],
+                        str(v),
+                        ha="center",
+                        va="center",
+                        fontsize=8,
+                        color="white",
+                    )
+            left += values
+
+        ax.set_yticks(y_pos)
+        ax.set_yticklabels(change_labels)
+        ax.invert_yaxis()
+        ax.set_xlabel(xlabel)
+        ax.set_title(title)
+        ax.grid(axis="x", linestyle=":", alpha=0.5)
+
+        # Annotate the recurring intrinsic unit count at the end of each bar.
+        for i, row in enumerate(per_change_rows):
+            total = sum(row[key].values())
+            ax.text(
+                total + max(1, total * 0.02),
+                y_pos[i],
+                f"  recur. intrinsic units = {row['recurring_intrinsic_units']}",
+                ha="left",
+                va="center",
+                fontsize=8,
+                color="#333",
+            )
+
+    _stacked_barh(ax_files, "bucket_files", "Ripple by file count", "files touched")
+    _stacked_barh(ax_churn, "bucket_churn", "Ripple by LOC churn", "LOC churn (added + removed)")
+
+    handles, labels = ax_files.get_legend_handles_labels()
+    fig.legend(handles, labels, loc="lower center", ncol=len(RIPPLE_BUCKET_ORDER), frameon=False)
+    fig.suptitle("Fig. 4.3 — Ripple decomposition per studied change", fontsize=12)
+    fig.tight_layout(rect=(0, 0.05, 1, 0.95))
+
+    FIGURES_DIR.mkdir(parents=True, exist_ok=True)
+    fig.savefig(FIGURES_DIR / "fig_4_3_ripple_buckets.pdf", bbox_inches="tight")
+    fig.savefig(FIGURES_DIR / "fig_4_3_ripple_buckets.png", dpi=200, bbox_inches="tight")
+    plt.close(fig)
+    print(f"figure_ripple_buckets: wrote {FIGURES_DIR / 'fig_4_3_ripple_buckets.pdf'}")
 
 
 # ---------------------------------------------------------------------------------------------
@@ -337,6 +453,7 @@ def figure_ripple_buckets(df: pd.DataFrame) -> None:
 def main() -> int:
     df = load_joined_table()
     figure_layer_platform_set_heatmap(df)
+    figure_ripple_buckets()
     return 0
 
 

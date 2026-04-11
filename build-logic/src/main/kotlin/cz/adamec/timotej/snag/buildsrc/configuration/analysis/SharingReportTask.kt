@@ -65,7 +65,7 @@ internal abstract class SharingReportTask : DefaultTask() {
 }
 
 private const val CSV_HEADER =
-    "module_path,category,feature,platform,hex_layer,encapsulation,plugin_applied,source_set,source_set_dir,platform_set"
+    "module_path,category,feature,platform,hex_layer,encapsulation,plugin_applied,source_set,source_set_dir,source_set_dir_rel,platform_set"
 
 private fun SharingReportRow.toCsv(): String = listOf(
     modulePath,
@@ -77,6 +77,7 @@ private fun SharingReportRow.toCsv(): String = listOf(
     pluginApplied,
     sourceSet,
     sourceSetDir,
+    sourceSetDirRel,
     platformSet,
 ).joinToString(",") { it.csvEscape() }
 
