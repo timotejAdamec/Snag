@@ -43,8 +43,8 @@ internal data class SourceSetDir(
     val absolutePath: String,
     // Repo-relative, forward-slash separators. Used by `analysis/feature_retro.py` for the
     // path→unit longest-prefix mapping so the Python side does not have to reimplement the
-    // module path grammar. Defaulted for unit-test fixtures; populated by the Gradle setup.
-    val relativePath: String = "",
+    // module path grammar.
+    val relativePath: String,
 ) : java.io.Serializable
 
 internal data class SharingReportRow(

@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.buildsrc.configuration.analysis
 
+import cz.adamec.timotej.snag.buildsrc.configuration.analysis.CsvWriter.csvEscape
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.ListProperty
@@ -48,17 +49,11 @@ internal abstract class SharingReportTask : DefaultTask() {
         }
 
         val output: File = outputCsv.get().asFile
-        output.parentFile.mkdirs()
-        if (output.exists()) output.delete()
-
-        output.bufferedWriter().use { writer ->
-            writer.append(CSV_HEADER)
-            writer.append('\n')
-            for (row in rows) {
-                writer.append(row.toCsv())
-                writer.append('\n')
-            }
-        }
+        CsvWriter.writeRows(
+            outputFile = output,
+            header = CSV_HEADER,
+            rows = rows.map { it.toCsv() },
+        )
 
         logger.lifecycle("SharingReport: wrote ${rows.size} rows to ${output.absolutePath}")
     }
@@ -80,10 +75,3 @@ private fun SharingReportRow.toCsv(): String = listOf(
     sourceSetDirRel,
     platformSet,
 ).joinToString(",") { it.csvEscape() }
-
-private fun String.csvEscape(): String {
-    val needsQuoting = contains(',') || contains('"') || contains('\n') || contains('\r')
-    if (!needsQuoting) return this
-    val escaped = replace("\"", "\"\"")
-    return "\"$escaped\""
-}

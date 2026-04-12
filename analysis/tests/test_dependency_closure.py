@@ -138,7 +138,6 @@ def test_snag_testinfra_implementation_chain_does_not_contaminate():
     }
     closure = dependency_closure.compute_closure(edges, units)
     assert closure[":feat:clients:fe:driven:test::commonMain"]["blast_radius_module"] == 1
-    # Verify core is NOT in the downstream sample — this was the original bug.
     sample = closure[":feat:clients:fe:driven:test::commonMain"]["downstream_sample"]
     assert all("core:foundation:fe" not in s for s in sample)
 

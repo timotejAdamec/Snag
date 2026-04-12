@@ -25,19 +25,20 @@ internal fun Project.configureDependencyGraph() {
         "DependencyGraph setup must be applied to the root project, was applied to $path"
     }
 
-    val task = tasks.register("dependencyGraphReport", DependencyGraphTask::class.java) {
+    tasks.register("dependencyGraphReport", DependencyGraphTask::class.java) {
         group = "reporting"
         description = "Emits per-(module × configuration) project dependency edges for thesis evaluation"
         outputCsv.set(
             layout.buildDirectory.file("reports/dependency_graph/dependency_graph.csv"),
         )
-    }
-
-    gradle.projectsEvaluated {
-        val collected = rootProject.subprojects.flatMap { subproject ->
-            collectProjectEdges(subproject)
-        }
-        task.configure { edges.set(collected) }
+        // Lazy sweep: provider is only realized when this task is in the requested
+        // graph. Invocations like `./gradlew check` that don't ask for
+        // `dependencyGraphReport` pay zero cost for the subprojects walk.
+        edges.set(
+            project.providers.provider {
+                rootProject.subprojects.flatMap { subproject -> collectProjectEdges(subproject) }
+            },
+        )
     }
 }
 

@@ -297,14 +297,13 @@ def apply_rules(
 ) -> Optional[tuple[str, bool, str, str]]:
     """Returns (bucket, recurring, source, reason) if a rule matches, else None."""
     # Local takes precedence over the rule file when a module is explicitly
-    # listed as local in the per-change classification yaml. This lets Case 1
-    # (reverse removal) mark the deleted :feat:inspections:* modules as local.
+    # listed as local in the per-change classification yaml.
     for glob in local_module_globs:
         if fnmatch.fnmatch(module_path, glob):
             return (
                 "local",
                 False,
-                f"hand:local_module_globs",
+                "hand:local_module_globs",
                 f"Unit inside a module declared local to this change ({glob})",
             )
 
@@ -331,14 +330,11 @@ def cmd_stub(args: argparse.Namespace) -> int:
 
     entries: list[ClassifiedEntry] = []
     for touched_file in touched:
-        # For deleted or modified files, resolve against the base snapshot; for
-        # added files, the path only exists at the experiment ref so the base
-        # snapshot won't find it. Fall back to longest-prefix against the new
-        # path anyway; if the file lives in a module the base snapshot doesn't
-        # know about, it is local-to-the-change by definition.
+        # Deleted and renamed files only exist under their old path in the base
+        # snapshot. Added files exist only at the experiment ref and will fall
+        # through the prefix match to `:root::non-module` unless the change
+        # classification lists their module in `local_module_globs`.
         lookup_path = touched_file.rename_from or touched_file.path
-        if touched_file.status == "D":
-            lookup_path = touched_file.rename_from or touched_file.path
         module_path, source_set = map_path_to_unit(lookup_path, snapshot)
 
         unit = f"{module_path}::{source_set}"

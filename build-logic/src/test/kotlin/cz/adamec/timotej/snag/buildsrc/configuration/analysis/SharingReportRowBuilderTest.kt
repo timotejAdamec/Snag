@@ -576,7 +576,13 @@ class SharingReportRowBuilderTest {
                 "libs.plugins.snag.frontend.multiplatform.module",
                 "libs.plugins.snag.driving.frontend.multiplatform.module",
             ),
-            sourceSetDirs = listOf(SourceSetDir("commonMain", "/tmp/composeApp/src/commonMain")),
+            sourceSetDirs = listOf(
+                SourceSetDir(
+                    name = "commonMain",
+                    absolutePath = "/tmp/composeApp/src/commonMain",
+                    relativePath = "composeApp/src/commonMain",
+                ),
+            ),
         ).single()
         assertEquals("frontend", row.platformSet)
     }
@@ -591,7 +597,13 @@ class SharingReportRowBuilderTest {
                 "libs.plugins.snag.backend.module",
                 "libs.plugins.snag.impl.driving.backend.module",
             ),
-            sourceSetDirs = listOf(SourceSetDir("main", "/tmp/feat/users/be/driving/impl/src/main")),
+            sourceSetDirs = listOf(
+                SourceSetDir(
+                    name = "main",
+                    absolutePath = "/tmp/feat/users/be/driving/impl/src/main",
+                    relativePath = "feat/users/be/driving/impl/src/main",
+                ),
+            ),
         ).single()
         assertEquals("backend", row.platformSet)
     }
@@ -607,7 +619,13 @@ class SharingReportRowBuilderTest {
                 "libs.plugins.snag.multiplatform.module",
                 "libs.plugins.snag.contract.driving.backend.multiplatform.module",
             ),
-            sourceSetDirs = listOf(SourceSetDir("commonMain", "/tmp/feat/clients/contract/src/commonMain")),
+            sourceSetDirs = listOf(
+                SourceSetDir(
+                    name = "commonMain",
+                    absolutePath = "/tmp/feat/clients/contract/src/commonMain",
+                    relativePath = "feat/clients/contract/src/commonMain",
+                ),
+            ),
         ).single()
         assertEquals("all", row.platformSet)
     }
@@ -755,7 +773,13 @@ class SharingReportRowBuilderTest {
         val row = SharingReportRowBuilder.buildRows(
             modulePath = ":androidApp",
             appliedPluginIds = listOf("com.android.application"),
-            sourceSetDirs = listOf(SourceSetDir("main", "/tmp/androidApp/src/main")),
+            sourceSetDirs = listOf(
+                SourceSetDir(
+                    name = "main",
+                    absolutePath = "/tmp/androidApp/src/main",
+                    relativePath = "androidApp/src/main",
+                ),
+            ),
         ).single()
         assertEquals("android", row.platformSet)
         assertEquals("", row.pluginApplied)
@@ -766,7 +790,13 @@ class SharingReportRowBuilderTest {
         val row = SharingReportRowBuilder.buildRows(
             modulePath = ":androidApp",
             appliedPluginIds = emptyList(),
-            sourceSetDirs = listOf(SourceSetDir("main", "/tmp/androidApp/src/main")),
+            sourceSetDirs = listOf(
+                SourceSetDir(
+                    name = "main",
+                    absolutePath = "/tmp/androidApp/src/main",
+                    relativePath = "androidApp/src/main",
+                ),
+            ),
         ).single()
         assertEquals("", row.platformSet)
     }
@@ -873,7 +903,13 @@ class SharingReportRowBuilderTest {
                 "libs.plugins.snag.frontend.multiplatform.module",
                 "libs.plugins.snag.driving.frontend.multiplatform.module",
             ),
-            sourceSetDirs = listOf(SourceSetDir("commonMain", "/tmp/commonMain/kotlin")),
+            sourceSetDirs = listOf(
+                SourceSetDir(
+                    name = "commonMain",
+                    absolutePath = "/tmp/feat/projects/fe/driving/impl/src/commonMain",
+                    relativePath = "feat/projects/fe/driving/impl/src/commonMain",
+                ),
+            ),
         ).single()
         assertEquals("libs.plugins.snag.driving.frontend.multiplatform.module", row.pluginApplied)
     }
@@ -886,7 +922,13 @@ class SharingReportRowBuilderTest {
                 "libs.plugins.snag.impl.driving.backend.module",
                 "libs.plugins.snag.backend.module",
             ),
-            sourceSetDirs = listOf(SourceSetDir("main", "/tmp/main/kotlin")),
+            sourceSetDirs = listOf(
+                SourceSetDir(
+                    name = "main",
+                    absolutePath = "/tmp/feat/users/be/driving/impl/src/main",
+                    relativePath = "feat/users/be/driving/impl/src/main",
+                ),
+            ),
         ).single()
         assertEquals("libs.plugins.snag.impl.driving.backend.module", row.pluginApplied)
     }
@@ -896,7 +938,13 @@ class SharingReportRowBuilderTest {
         val rows = SharingReportRowBuilder.buildRows(
             modulePath = ":composeApp",
             appliedPluginIds = listOf("com.android.application", "org.jetbrains.kotlin.multiplatform"),
-            sourceSetDirs = listOf(SourceSetDir("commonMain", "/tmp/commonMain/kotlin")),
+            sourceSetDirs = listOf(
+                SourceSetDir(
+                    name = "commonMain",
+                    absolutePath = "/tmp/composeApp/src/commonMain",
+                    relativePath = "composeApp/src/commonMain",
+                ),
+            ),
         )
         assertEquals("", rows.single().pluginApplied)
     }
@@ -917,18 +965,6 @@ class SharingReportRowBuilderTest {
         assertEquals("commonMain", row.sourceSet)
         assertEquals("/abs/path/core/foundation/common/src/commonMain", row.sourceSetDir)
         assertEquals("core/foundation/common/src/commonMain", row.sourceSetDirRel)
-    }
-
-    @Test
-    fun `source set dir relative path defaults to empty when not specified`() {
-        // Existing test fixtures omit relativePath. Phase 2 tooling derives the unit mapping
-        // from the Gradle-populated rel path, but the row builder itself must not require it.
-        val row = SharingReportRowBuilder.buildRows(
-            modulePath = ":feat:projects:fe:app:impl",
-            appliedPluginIds = listOf("libs.plugins.snag.frontend.multiplatform.module"),
-            sourceSetDirs = listOf(SourceSetDir("commonMain", "/tmp/fe/app/impl/src/commonMain")),
-        ).single()
-        assertEquals("", row.sourceSetDirRel)
     }
 
     // Helper that wraps the common path: single plugin (or none), derives source-set dirs from names.
