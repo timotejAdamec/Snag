@@ -12,19 +12,22 @@
 
 package cz.adamec.timotej.snag.buildsrc.configuration.analysis
 
+import cz.adamec.timotej.snag.buildsrc.configuration.analysis.CsvWriter.csvEscape
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.ListProperty
+import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 import java.io.File
+import java.io.Serializable
 
 internal data class DependencyEdgeInput(
     val sourceModule: String,
     val sourceConfiguration: String,
     val targetModule: String,
     val scope: String,
-) : java.io.Serializable {
+) : Serializable {
     companion object {
         private const val serialVersionUID: Long = 1L
     }
@@ -32,7 +35,7 @@ internal data class DependencyEdgeInput(
 
 internal abstract class DependencyGraphTask : DefaultTask() {
 
-    @get:org.gradle.api.tasks.Input
+    @get:Input
     abstract val edges: ListProperty<DependencyEdgeInput>
 
     @get:OutputFile
@@ -43,17 +46,11 @@ internal abstract class DependencyGraphTask : DefaultTask() {
         val rows = DependencyGraphFormatter.sort(edges.get())
 
         val output: File = outputCsv.get().asFile
-        output.parentFile.mkdirs()
-        if (output.exists()) output.delete()
-
-        output.bufferedWriter().use { writer ->
-            writer.append(DependencyGraphFormatter.CSV_HEADER)
-            writer.append('\n')
-            for (row in rows) {
-                writer.append(DependencyGraphFormatter.toCsv(row))
-                writer.append('\n')
-            }
-        }
+        CsvWriter.writeRows(
+            outputFile = output,
+            header = DependencyGraphFormatter.CSV_HEADER,
+            rows = rows.map { DependencyGraphFormatter.toCsv(it) },
+        )
 
         logger.lifecycle("DependencyGraph: wrote ${rows.size} edges to ${output.absolutePath}")
     }
@@ -98,11 +95,4 @@ internal object DependencyGraphFormatter {
 
     private val CONFIG_NAME_SUFFIXES = listOf("Implementation", "Api", "RuntimeOnly")
     private val PLAIN_CONFIG_NAMES = setOf("implementation", "api", "runtimeOnly")
-
-    private fun String.csvEscape(): String {
-        val needsQuoting = contains(',') || contains('"') || contains('\n') || contains('\r')
-        if (!needsQuoting) return this
-        val escaped = replace("\"", "\"\"")
-        return "\"$escaped\""
-    }
 }

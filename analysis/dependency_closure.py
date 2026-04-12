@@ -69,13 +69,9 @@ def _load_edges(path: Path) -> list[tuple[str, str, str]]:
 
     scope is one of {api, implementation} after filtering. runtimeOnly edges
     are dropped: they aren't on the compile classpath so they don't contribute
-    to compile-time blast radius. Test configurations (commonTestImplementation,
-    testImplementation, etc.) are retained — their scope is "implementation",
-    which the scope-aware walk in _transitive_dependents correctly treats as
-    non-propagating. The previous explicit test-configuration filter is no
-    longer needed because the walk respects Gradle's api/implementation
-    contract natively: any reverse-walk that reaches a test-consuming node via
-    an implementation edge stops there, exactly as the semantics require.
+    to compile-time blast radius. Test configurations are retained as
+    scope=implementation; the scope-aware walk correctly stops propagation at
+    those edges.
     """
     if not path.is_file():
         sys.stderr.write(

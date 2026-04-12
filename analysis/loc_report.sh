@@ -10,13 +10,6 @@
 # Kotlin LOC counts from tokei, producing the canonical evaluation table at
 # analysis/data/sharing_report_with_loc.csv.
 #
-# Pipeline:
-#   1. Verify tokei is installed and reports the pinned version.
-#   2. Read build/reports/sharing/sharing_report.csv.
-#   3. For each unique (module_path, source_set) pair, run tokei on the source_set_dir,
-#      extract Kotlin `code` and `files` counts.
-#   4. Write analysis/data/loc_per_source_set.csv and the joined table.
-#
 # Usage: analysis/loc_report.sh [--quiet]
 #
 # Run from the repository root. Exit codes: 0 success, 1 bad environment, 2 input missing.
@@ -71,81 +64,100 @@ fi
 
 mkdir -p "$DATA_DIR"
 
-# ---- per-source-set tokei walk ------------------------------------------------------------
+# ---- tokei walk + join ---------------------------------------------------------------------
+#
+# One tokei invocation over every unique source_set_dir from the sharing report. Tokei
+# aggregates Kotlin reports across all paths; we bucket each report back to its owning
+# source set via longest-prefix match on the absolute source_set_dir column, then join
+# the per-(module, source_set) LOC totals into the sharing report. Single subprocess
+# spawn replaces the previous per-source-set loop (~930 spawns → 1).
 
-# Parse the sharing report. Columns: module_path, category, feature, platform, hex_layer,
-# encapsulation, plugin_applied, source_set, source_set_dir, source_set_dir_rel, platform_set.
-# All Snag module paths are safe to parse with basic comma splitting — no embedded commas
-# or quotes in the current codebase.
-
-log "writing $LOC_PER_SS_CSV"
-printf 'module_path,source_set,kotlin_loc,kotlin_files\n' > "$LOC_PER_SS_CSV"
-
-ROW_COUNT=0
-while IFS=, read -r module_path category feature platform hex_layer encapsulation plugin_applied source_set source_set_dir source_set_dir_rel platform_set; do
-  # Skip header.
-  if [[ "$module_path" == "module_path" ]]; then continue; fi
-
-  if [[ ! -d "$source_set_dir" ]]; then
-    # Defensive: Gradle task should never emit a nonexistent directory. Skip with warning.
-    log "WARN: $source_set_dir does not exist (module $module_path source set $source_set) — skipping"
-    continue
-  fi
-
-  # tokei JSON output shape (v14):
-  #   { "Kotlin": { "code": N, "comments": N, "blanks": N, "reports": [ ... ] }, ... }
-  # Extract Kotlin.code and the length of Kotlin.reports. When there are no Kotlin files,
-  # the top-level "Kotlin" key is absent.
-  tokei_json=$(tokei --output json "$source_set_dir" 2>/dev/null || echo '{}')
-  kotlin_loc=$(echo "$tokei_json" | python3 -c '
-import json, sys
-data = json.load(sys.stdin)
-kotlin = data.get("Kotlin", {})
-print(kotlin.get("code", 0))
-')
-  kotlin_files=$(echo "$tokei_json" | python3 -c '
-import json, sys
-data = json.load(sys.stdin)
-kotlin = data.get("Kotlin", {})
-reports = kotlin.get("reports", [])
-print(len(reports))
-')
-
-  printf '%s,%s,%s,%s\n' "$module_path" "$source_set" "$kotlin_loc" "$kotlin_files" >> "$LOC_PER_SS_CSV"
-  ROW_COUNT=$((ROW_COUNT + 1))
-done < "$SHARING_REPORT_CSV"
-
-log "wrote $ROW_COUNT LOC rows"
-
-# ---- join ---------------------------------------------------------------------------------
-
-log "joining into $JOINED_CSV"
-python3 - "$SHARING_REPORT_CSV" "$LOC_PER_SS_CSV" "$JOINED_CSV" <<'PY'
+python3 - "$SHARING_REPORT_CSV" "$LOC_PER_SS_CSV" "$JOINED_CSV" "$QUIET" <<'PY'
 import csv
+import json
+import subprocess
 import sys
 
-sharing_path, loc_path, joined_path = sys.argv[1:4]
+sharing_path, loc_path, joined_path, quiet_flag = sys.argv[1:5]
+quiet = quiet_flag == "1"
 
-with open(loc_path, newline="", encoding="utf-8") as f:
-    loc_rows = list(csv.DictReader(f))
 
-loc_index = {
-    (row["module_path"], row["source_set"]): (int(row["kotlin_loc"]), int(row["kotlin_files"]))
-    for row in loc_rows
-}
+def log(msg: str) -> None:
+    if not quiet:
+        print(f"[loc_report] {msg}", file=sys.stderr)
 
-with open(sharing_path, newline="", encoding="utf-8") as f_in, \
-     open(joined_path, "w", newline="", encoding="utf-8") as f_out:
-    reader = csv.DictReader(f_in)
-    fieldnames = list(reader.fieldnames) + ["kotlin_loc", "kotlin_files"]
+
+with open(sharing_path, newline="", encoding="utf-8") as f:
+    sharing_rows = list(csv.DictReader(f))
+
+# Unique absolute source-set directories, skipping any that don't exist (defensive —
+# the Gradle task should never emit a nonexistent dir, but filesystem races can happen).
+unique_dirs: list[str] = []
+seen: set[str] = set()
+import os
+for row in sharing_rows:
+    d = row["source_set_dir"]
+    if d in seen:
+        continue
+    seen.add(d)
+    if os.path.isdir(d):
+        unique_dirs.append(d)
+    else:
+        log(f"WARN: {d} does not exist — skipping")
+
+log(f"running tokei over {len(unique_dirs)} source-set directories")
+result = subprocess.run(
+    ["tokei", "--output", "json", *unique_dirs],
+    capture_output=True,
+    text=True,
+    check=True,
+)
+tokei_data = json.loads(result.stdout)
+kotlin_reports = tokei_data.get("Kotlin", {}).get("reports", [])
+log(f"tokei produced {len(kotlin_reports)} Kotlin file reports")
+
+# Sort directories by length descending so the longest-prefix match wins when one
+# source-set dir is a parent of another (e.g. `src/commonMain` vs `src/commonMain/kotlin`).
+dirs_by_length = sorted(unique_dirs, key=len, reverse=True)
+
+# Aggregate code + file count per source-set dir via longest-prefix on each report's name.
+loc_by_dir: dict[str, int] = {d: 0 for d in unique_dirs}
+files_by_dir: dict[str, int] = {d: 0 for d in unique_dirs}
+for report in kotlin_reports:
+    name = report["name"]
+    for d in dirs_by_length:
+        if name == d or name.startswith(d + "/"):
+            loc_by_dir[d] += int(report["stats"]["code"])
+            files_by_dir[d] += 1
+            break
+
+# Line endings match the previous pipeline byte-for-byte, which keeps committed
+# data artifacts stable: loc_per_source_set used to be written by `printf '\n'`
+# in bash (LF); the joined file used csv.DictWriter with its RFC 4180 default (CRLF).
+with open(loc_path, "w", newline="", encoding="utf-8") as f:
+    writer = csv.writer(f, lineterminator="\n")
+    writer.writerow(["module_path", "source_set", "kotlin_loc", "kotlin_files"])
+    for row in sharing_rows:
+        d = row["source_set_dir"]
+        writer.writerow(
+            [
+                row["module_path"],
+                row["source_set"],
+                loc_by_dir.get(d, 0),
+                files_by_dir.get(d, 0),
+            ],
+        )
+log(f"wrote {loc_path}")
+
+with open(joined_path, "w", newline="", encoding="utf-8") as f_out:
+    fieldnames = list(sharing_rows[0].keys()) + ["kotlin_loc", "kotlin_files"]
     writer = csv.DictWriter(f_out, fieldnames=fieldnames)
     writer.writeheader()
-    for row in reader:
-        key = (row["module_path"], row["source_set"])
-        loc, files = loc_index.get(key, (0, 0))
-        row["kotlin_loc"] = str(loc)
-        row["kotlin_files"] = str(files)
-        writer.writerow(row)
+    for row in sharing_rows:
+        d = row["source_set_dir"]
+        out_row = dict(row)
+        out_row["kotlin_loc"] = str(loc_by_dir.get(d, 0))
+        out_row["kotlin_files"] = str(files_by_dir.get(d, 0))
+        writer.writerow(out_row)
+log(f"done: {joined_path}")
 PY
-
-log "done: $JOINED_CSV"

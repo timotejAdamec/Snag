@@ -20,27 +20,31 @@ internal fun Project.configureSharingReport() {
         "SharingReportPlugin must be applied to the root project, was applied to $path"
     }
 
-    val task = tasks.register("sharingReport", SharingReportTask::class.java) {
+    tasks.register("sharingReport", SharingReportTask::class.java) {
         group = "reporting"
         description = "Emits per-(module × source set) metadata CSV for thesis evaluation"
         outputCsv.set(
             layout.buildDirectory.file("reports/sharing/sharing_report.csv"),
         )
-    }
-
-    gradle.projectsEvaluated {
-        val probedPluginIds = CANONICAL_SNAG_PLUGIN_IDS + PLATFORM_MARKER_PLUGIN_IDS
-        val rootDir = rootProject.projectDir
-        val inputs = rootProject.subprojects.map { subproject ->
-            SharingReportSubprojectInput(
-                modulePath = subproject.path,
-                appliedPluginIds = probedPluginIds.filter { pluginId ->
-                    subproject.pluginManager.hasPlugin(pluginId)
-                },
-                sourceSetDirs = discoverSourceSetDirs(subproject.projectDir, rootDir),
-            )
-        }
-        task.configure { subprojectInputs.set(inputs) }
+        // Lazy sweep: the provider is evaluated only when this task's inputs are
+        // materialized (task execution or config-cache serialization for an invocation
+        // that actually requested the task). `./gradlew check` without `sharingReport`
+        // in the requested graph pays zero cost for the subproject walk.
+        subprojectInputs.set(
+            project.providers.provider {
+                val probedPluginIds = CANONICAL_SNAG_PLUGIN_IDS + PLATFORM_MARKER_PLUGIN_IDS
+                val rootDir = rootProject.projectDir
+                rootProject.subprojects.map { subproject ->
+                    SharingReportSubprojectInput(
+                        modulePath = subproject.path,
+                        appliedPluginIds = probedPluginIds.filter { pluginId ->
+                            subproject.pluginManager.hasPlugin(pluginId)
+                        },
+                        sourceSetDirs = discoverSourceSetDirs(subproject.projectDir, rootDir),
+                    )
+                }
+            },
+        )
     }
 }
 
