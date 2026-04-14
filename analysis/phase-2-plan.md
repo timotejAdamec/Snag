@@ -296,3 +296,340 @@ Skip without guilt if time-pressed; the primary (Case 1) + secondary (Case 2) + 
 - Refactoring any production code to *reduce* ripple — the measurement must reflect the architecture as it stands, not an idealized version.
 - A new `cloc`-based LOC counter — tokei is pinned and authoritative.
 - Porting `ripple_rules.yaml` into the Gradle build — it's author tooling, not part of `./gradlew check`.
+
+---
+---
+
+# Addendum (2026-04-14): Sharing-vs-evolvability duality + counterfactual commonization case study
+
+The sections below are appended after reviewing the Phase 1 + Phase 2 outputs against the thesis §Maximalizace sdílení kódu argument. They introduce one additional descriptive metric for §4.2 and one additional case study for §4.3/§4.6/§4.7 that together address a methodological gap the original Phase 2 plan did not foreground: *static metrics alone cannot prove correctness of scoping decisions, because sharing and evolvability show up as the same numbers read from opposite sides*. The addendum is the durable artifact of that design discussion and is intended to feed Phase 5 prose directly.
+
+## A. Methodological framing — why static metrics alone cannot make the thesis argument
+
+The thesis §Maximalizace sdílení kódu (lines 1714–1900 of `~/Ctu/dp-thesis-timotej-adamec/text/text.tex`) argues that **code must be placed at the multiplatform level that matches its semantic scope**. Over-sharing leaks higher-level specifics downward and forces all platforms to rebuild on changes that concern only one. Under-sharing duplicates common logic and invites drift. The "correct" placement is the level where the semantics of the code align with the platforms it reaches.
+
+The subtlety this addendum addresses is that **sharing and evolvability, measured statically, are the same numbers read from opposite sides of the same coin**.
+
+Consider any per-layer share ratio (LOC in platform-neutral source sets ÷ total LOC in the layer). The sharing view says "high share ratio in this layer is the architectural goal realized." The evolvability view says "high share ratio in this layer is a ripple surface — any change here is forced to ripple into every platform that pulls from this layer." The *same number* supports both readings simultaneously. Which reading is correct depends on whether the share matches the semantic boundary of the code in that layer, and **semantic fit is not visible from the filesystem**.
+
+Consequences for Kapitola 4:
+
+- A sharing-by-layer heatmap / share-ratio table (shipped in Phase 1) legitimately describes *what Snag looks like*. It cannot *by itself* prove that Snag's placement is correct, because the same table is compatible with both a correctly-scoped architecture and an overgeneralized one where the layer simply happens to have a lot of code-like logic crammed into `commonMain`.
+- The scope-aware blast radius (shipped in Phase 2 as `blast_radius_module` via `dependency_closure.py`) annotates each touched file with how many downstream modules would rebuild. This is useful for §4.3 repair-log annotations but suffers from the same symmetry: a high blast is bad if the sharing was wrong, necessary if the sharing was right.
+- Static numbers describe structure; they do not adjudicate whether that structure matches semantics. **Any thesis claim about correctness of scoping must come from a source other than the static per-layer share ratio.**
+
+This is not a weakness of the metrics — it is a structural feature of any purely-descriptive evaluation. The fix is methodological: the argument the thesis needs is **comparative**, not absolute. The comparison must fix the semantics (what code we are placing) and vary the placement (correct vs. overgeneralized), then measure the delta in a realistic evolution step.
+
+### Correction to an earlier framing
+
+An earlier draft of the Phase 2 plan's reasoning implicitly suggested that platform divergence lives in driving/driven adapter layers. That understates Snag's architecture. Snag explicitly places divergence at the **application layer** where the semantics demand it: `WebAddFindingPhotoUseCase` and `NonWebAddFindingPhotoUseCase` (thesis §2857) are use cases — application-layer contracts — with different return types (`OnlineDataResult` vs `OfflineFirstDataResult`). The semantic boundary is at the use-case contract itself, not the adapter that implements it. Platform divergence is legitimate wherever in the hexagonal stack the semantics diverge; the architecture does not stipulate a "lowest-layer-only" rule. The only rule is *match the divergence to the layer where the semantic difference appears* — which can be anywhere from driven/impl up through the application layer (and, in rare cases, the domain model itself, though Snag's design explicitly targets domain purity as the aspirational case).
+
+### What this addendum adds
+
+Two things:
+
+1. **One descriptive §4.2 metric: per-hexagonal-layer platform-specific LOC share.** A factual readout — "X% of `driving/impl` LOC lives in non-common source sets, Y% of `business/model` LOC does." It describes Snag's structure without claiming the structure is correct. Combined with the existing sharing heatmap and blast-radius table, it completes the Phase 1+2 descriptive picture of §4.2.
+
+2. **One counterfactual case study: commonize `AddFindingPhoto` (and, if possible as a replicate, `AddProjectPhoto`).** Take an existing correctly-scoped flow, force it into a single `commonMain` use case, adapt everything that breaks, then apply the same realistic web-specific evolution (adding an upload-progress callback) to both the correct branch and the commonized branch. Measure the ripple delta with the existing `feature_retro.py` + `dependency_closure.py` tooling AND author two theory-grounded qualitative critique files — one per branch. Numbers + critique together are the evidence; neither alone suffices because of the sharing/evolvability duality above.
+
+The descriptive metric supports §4.2; the counterfactual supports §4.3, §4.6, and the §4.7 headline. The methodological framing (duality of readings + necessity of counterfactual) lands in §4.2 introduction and §4.9 threats-to-validity.
+
+## B. Reasoning narrative — the discussion that produced this addendum
+
+This subsection preserves the key reasoning steps that led to the design below, in the order they emerged. It is written in narrative form so Phase 5 prose can draw from it directly. Bullet points and code references are intentional; the prose should not be stripped when translated to Czech.
+
+1. **Initial observation.** Reviewing the Phase 2 `dependency_closure.json` against the thesis §4.2 sharing claim, it was not obvious that the module-count blast radius answered the right question. Blast radius says "how many modules rebuild when X changes"; the thesis says "is X placed at the right multiplatform level." These are related but not the same question.
+
+2. **First attempt: LOC per leaf platform + reach coefficient.** Considered introducing a metric where `reach coefficient = sum of LOC projected onto leaf platforms / total unique LOC`. For a perfectly-sharing codebase, coefficient ≈ 6 (every line compiles for all 6 Snag leaves). For a fully-fragmented codebase, coefficient ≈ 1. Initially this seemed like the right headline number.
+
+3. **The duality emerges.** The reach coefficient fails because it conflates over-generalization and correct-sharing. A line that sits in `commonMain` of a FULL plugin contributes 6 to the sum regardless of whether it *should* be in commonMain. A codebase that force-shared everything would score higher than a codebase that correctly scopes — and "higher reach coefficient" is superficially "more sharing," but the thesis argues the forced-sharing codebase is *worse*. One number, two interpretations. Dropped the metric.
+
+4. **Generalization.** Any per-layer static sharing metric has the same problem. The sharing view ("high share = good") and the evolvability view ("high share = ripple surface") produce identical raw numbers. Which reading is correct is a function of semantic fit, and semantic fit is not observable from code alone. This is a structural property of descriptive measurement, not a flaw in any specific metric.
+
+5. **Concession to descriptiveness.** Per-layer sharing tables are still useful for §4.2, but they must be presented honestly as *descriptive, not probative*. The thesis prose for §4.2 should explicitly state that these tables show where Snag's code sits, not whether the sitting is correct. This is Part A below.
+
+6. **Searching for a probative metric.** The only way to break the duality is to fix the semantics and vary the placement. Fixing the semantics means picking a code region whose correct multiplatform level is not in dispute — ideally one where the type system already enforces the distinction. For Snag, `AddFindingPhoto` is perfect: native uses `OfflineFirstDataResult` and web uses `OnlineDataResult`; these are different Kotlin types the compiler enforces. Any common abstraction has to widen the return type, which is a type-level act the author cannot hide.
+
+7. **The counterfactual is a second case study.** Vary the placement by actually commonizing `AddFindingPhoto` on a branch. Apply the same realistic web-specific evolution (upload progress callback, because browsers support it via fetch/XHR and native offline-first doesn't need it) to both branches. Measure the ripple delta. The delta between branches is the claim's evidence. Numbers only — the critique concern is addressed in step 9.
+
+8. **Replication improves the counterfactual.** One counterfactual is a demonstration; two is a pattern. `AddProjectPhoto` is the natural replicate because it (likely) has the same offline/online asymmetry. If ProjectPhoto is currently not multiplatform-split, skip rather than fake a replicate.
+
+9. **Numbers alone are still dismissible.** A skeptical reader can say "you just commonized it badly; a better engineer would find a cleaner commonization." The defense is not more numbers; it is *theory-grounded qualitative observations*. If the commonization forces a sealed `PhotoUploadResult` return type, that is a textbook DVT violation regardless of the author's skill. If it forces an `if (isWeb)` branch in `commonMain`, that is a textbook SoC violation regardless of the author's skill. Normalized Systems Theory specifies the *shapes* of these anomalies; observing them in the counterfactual is evidence the violations are intrinsic to forcing commonization against a type-level semantic boundary, not accidental to the author's execution. Numbers + critique together break the rhetorical opening.
+
+10. **Honesty requirements.** The counterfactual must be "minimum honest forced commonization," not a straw man. The commonized version must be a plausible less-careful engineering choice a reviewer would recognize from real PRs. An `archCheck` failure on the commonized branch is data, not a problem to fix. Qualitative observations must cite file + line and a theory category, not vague reviewer preferences.
+
+11. **Framing for thesis prose.** §4.2 introduces the duality as a method note. §4.3 executes the counterfactual as a case study alongside Case 1/2/3. §4.6 maps NS theorems to the observed anomalies. §4.7 reads the numeric delta ratio as the headline. §4.9 threats-to-validity restates the duality and notes that the counterfactual is how the evaluation argues past it.
+
+## C. Part A — descriptive metric: per-hex-layer platform-specific LOC share
+
+### What it measures
+
+For each hexagonal layer (derived from the `hex_layer` column in `sharing_report_with_loc.csv`), partition its rows by whether the source set is `commonMain` / `main` (neutral) or one of the named platform-specific source sets (`nonWebMain`, `webMain`, `nonAndroidMain`, `nonJvmMain`, `mobileMain`, `androidMain`, `iosMain`, `jvmMain`, `jsMain`, `wasmJsMain`). Sum `kotlin_loc` in each partition. Report:
+
+- per-layer total LOC (numerator)
+- per-layer platform-specific LOC (subset)
+- per-layer platform-specific share (subset / numerator, as a %)
+- per-layer number of modules that have at least one platform-specific source set with non-zero LOC (the "divergence inventory" — how many modules in this layer actually exercised the multiplatform-level capability)
+
+Optionally broken down by platform-set label (`web` vs `mobile` vs `android` etc.) for a stacked bar.
+
+### Why it is descriptive only (and the thesis must say this)
+
+This metric does not prove correctness. It is compatible with at least three distinct architectural realities:
+- A correctly-scoped codebase where divergence lives in the layers where semantics diverge.
+- An overgeneralized codebase where everything sits in `commonMain` and the metric reads "~0% platform-specific" everywhere, which looks like perfect sharing but is actually hiding forced commonization.
+- An over-fragmented codebase where everything is duplicated across `androidMain`/`iosMain`/`jvmMain` and the metric reads "~100% platform-specific" everywhere, which looks like maximum scoping but is actually hiding combinatorial drift.
+
+The thesis §4.2 prose, when Phase 5 writes it, must explicitly state that this table is descriptive — it tells the reader where Snag's divergence lives, not whether it should live there. The counterfactual in Part D is what provides the "should" argument.
+
+### Implementation
+
+File: `analysis/figures.py`
+
+- Add `figure_layer_divergence()` that consumes `analysis/data/sharing_report_with_loc.csv`.
+- Aggregation key is the `hex_layer` column (already emitted by `SharingReportRowBuilder`). Rows with empty `hex_layer` (app modules, some libs) are grouped as `"other"`.
+- Two outputs:
+  - CSV `analysis/data/layer_divergence.csv` with columns `hex_layer, total_loc, platform_specific_loc, platform_specific_share, divergent_module_count, total_module_count`.
+  - PDF `analysis/figures/fig_4_2_layer_divergence.pdf` — stacked horizontal bar per layer, segments = commonMain / nonWebMain / webMain / other platform-specific; annotated with divergent_module_count.
+- Add unit test `analysis/tests/test_layer_divergence.py` with ~4 fixture-based cases: empty input, pure-common layer (share = 0%), pure-platform-specific layer (share = 100%), mixed layer (share matches hand-computed ratio).
+
+### Thesis §4.1 operationalization row
+
+Single new row under O1 in `~/Ctu/dp-thesis-timotej-adamec/text/text.tex` table `tab:eval-operacionalizace`:
+
+```latex
+O1 & Podíl platformně-specifického LOC podle vrstvy hexagonální architektury (deskriptivní, nevyvracející)
+   & SharingReport CSV $\bowtie$ tokei LOC
+   & \code{figures.py::figure\_layer\_divergence}
+   & TBD \\
+```
+
+Label explicitly says "deskriptivní, nevyvracející" so the reader knows the table is a readout, not a correctness claim.
+
+## D. Part B — counterfactual commonization case study (the actual argument)
+
+### Claim under test
+
+*If the `AddFindingPhoto` flow were commonized into a single `commonMain` use case — hiding the `OnlineDataResult` vs `OfflineFirstDataResult` semantic difference behind a forced common abstraction — then a realistic web-specific evolution would ripple into substantially more files, more modules, and more leaf platforms than it does with the existing correctly-scoped structure, AND the commonized branch would exhibit textbook NS-theorem anomalies (SoC, DVT, AVT, ISP violations) that the correctly-scoped branch does not.*
+
+The numeric delta between the correct and commonized branches, measured on the same evolution step, is the first half of the evidence. The qualitative observation list on the commonized branch, grouped under NS-theorem headings, is the second half. Neither alone is sufficient.
+
+### Target flow: `AddFindingPhoto`
+
+Confirmed structure from thesis §2857 (line 2857 of `text.tex`) and Snag source:
+
+- `NonWebAddFindingPhotoUseCase` lives in `feat/findings/fe/driving/impl/src/nonWebMain/.../` with return type `OfflineFirstDataResult`.
+- `WebAddFindingPhotoUseCase` lives in `feat/findings/fe/driving/impl/src/webMain/.../` with return type `OnlineDataResult`.
+- Platform-specific ViewModels (also in the respective non-common source sets) call the matching use case.
+- Domain model `Finding` and its photo associations live in `commonMain` — only the *upload action* has divergent semantics, not the data.
+
+Before starting the experiment, confirm this structure on the current main branch by:
+
+```
+grep -rn "AddFindingPhotoUseCase" feat/findings/ --include="*.kt"
+```
+
+Record the exact file paths + LOC on each side in a `facts.md` pinned to the experiment branch so the counterfactual has a precise "before" snapshot to compare against.
+
+### Replicate target: `AddProjectPhoto` (if structurally analogous)
+
+Check whether Snag's ProjectPhoto flow (introduced in commit `b5365d611`) has an analogous `NonWeb*` / `Web*` split. If yes, commonize it on the same experiment branch and report a second set of numbers. If no (e.g. if ProjectPhoto currently has only a non-web implementation and is not multiplatform at the same granularity), skip it and proceed with only the AddFindingPhoto counterfactual. Do not manufacture a replicate that does not exist.
+
+Pre-check command:
+
+```
+find feat/projects -name "*ProjectPhoto*" -type f
+```
+
+### Counterfactual branch design
+
+Branch: `experiment/commonize-photo` off current `main`.
+
+Steps:
+
+1. Create `AddFindingPhotoUseCase` interface in `feat/findings/app/model/src/commonMain/.../` (or wherever the app layer currently lives for findings). Return type must be a single shape that can accommodate both online and offline flows — the honest choice is a new sealed type `PhotoUploadResult` that wraps either variant, because the alternatives (picking one return type and papering over the other) lose information the upper layer needs. **Note in the commit message that this abstraction is deliberately forced — it exists only to test the counterfactual, not as a design proposal.**
+2. Remove `NonWebAddFindingPhotoUseCase` and `WebAddFindingPhotoUseCase`. Move their bodies into the implementation of the common use case, which now needs to internally select between the offline-first and online-only paths. Likely via a new `PhotoStoragePort` interface (commonMain) with `NonWebPhotoStoragePort` and `WebPhotoStoragePort` adapters in the respective driven source sets. Wire via Koin.
+3. Update both ViewModels (web and non-web) to call the new common use case. They now share more code but each must handle the sealed `PhotoUploadResult` variants appropriately.
+4. Run `./gradlew check --continue`. Fix every failure in one pass (per the `feedback_fix_all_before_rerun` memory). `archCheck` must pass on the final state — if the forced commonization triggers an `archCheck` violation, that violation itself is part of the counterfactual's cost and must be recorded, not worked around.
+5. Commit as one clean commit `refactor: commonize AddFindingPhoto (counterfactual)` on `experiment/commonize-photo`. The branch is never merged.
+
+Pitfalls the counterfactual must be honest about:
+- If commonization forces a `PhotoStoragePort` port split, count the port interface, its impls, and their Koin wiring as cost. They exist only because the upper layer was forced into `commonMain`.
+- If commonization forces the `Result` type to widen (sealed `PhotoUploadResult`), count the new type + every `when` exhaustive-match site on both branches.
+- Do not commonize too aggressively — the goal is "minimum honest forced commonization," not "worst possible commonization." A reader should agree that the commonized version is a plausible way a less-careful engineer would have written it, not a straw man.
+
+### Evolution step to apply to both branches
+
+**Chosen: add an upload-progress callback to the web photo upload path.** Realistic because (a) browsers support progress events via `XMLHttpRequest` / `fetch` streams, (b) native platforms currently don't need it because offline-first saves to disk immediately and syncs in the background — there is no foreground progress to report, and (c) it is a concrete per-platform semantic that over-commonized designs handle awkwardly.
+
+Apply on each branch:
+- On `main` → create `experiment/photo-progress-correct` containing only the progress-callback addition.
+- On `experiment/commonize-photo` → create `experiment/photo-progress-commonized` containing the equivalent change on top of the commonized structure.
+
+Both evolution branches must deliver the same user-visible behavior: web shows upload progress, native is unaffected.
+
+### Measurement — numeric
+
+For each of the two evolution branches:
+
+```
+python analysis/feature_retro.py \
+  --change photo-progress-<correct|commonized> \
+  --ref experiment/photo-progress-<correct|commonized> \
+  --base-ref <parent branch> \
+  --base-snapshot analysis/data/sharing_report_with_loc_base_<ref>_<sha>.csv \
+  --stub
+```
+
+Hand-classify the resulting YAML (expected to be small — a handful of files on the correct branch, larger on the commonized branch), then:
+
+```
+python analysis/feature_retro.py --change <same> --ref <same> --finalize
+```
+
+Which emits `analysis/data/ripple_photo-progress-<correct|commonized>_{files,units}.csv`.
+
+Numbers extracted from each CSV into a final comparison table:
+
+| Metric | Correct (current Snag) | Commonized (counterfactual) | Delta |
+| --- | --- | --- | --- |
+| Files touched | N1 | N2 | N2 − N1 |
+| Modules touched | M1 | M2 | M2 − M1 |
+| Source-set units touched | U1 | U2 | U2 − U1 |
+| Leaves rebuilt | L1 | L2 | L2 − L1 |
+| Sum of touched units' `blast_radius_module` | B1 | B2 | B2 − B1 |
+| LOC churn | C1 | C2 | C2 − C1 |
+| Intrinsic-recurring file count | I1 | I2 | I2 − I1 |
+
+The delta column is the numeric evidence. `L1` is expected to be 2 (js + wasmJs); `L2` is expected to be 6 (the change touches the commonMain use case contract, which every FE leaf + BE tests recompile against). A ratio `B2/B1` larger than ~5 would be a strong finding; smaller than ~2 would be a surprise and would need §4.3 prose to explain why.
+
+### Measurement — qualitative observations (the other half of the evidence)
+
+A skeptical reader can respond to any numeric delta with "maybe you commonized it poorly; a more skilled engineer would have found a cleaner commonization." The counterfactual has to defend against this critique. The defense is qualitative: name the specific NS-theorem anomaly shapes the commonization introduced. Anomaly shapes are specified in the theory (Mannaert, Verelst & De Bruyn, cited throughout §2) — they are not subjective reviewer preferences. If the commonization exhibits a textbook SoC, DVT, or AVT violation, that is evidence the violation is intrinsic to the forced commonization, not accidental to the author's execution.
+
+Two committed artifacts on the experiment branch, authored during the experiment:
+
+1. **`analysis/classifications/photo-correct_critique.md`** — short structured observation list on the *current* (correctly-scoped) Snag code, written by reading `feat/findings/fe/driving/impl/src/{nonWebMain,webMain}/` on `main` **before** the counterfactual starts. Focus: what the type system prevents, what cognitive load the current structure avoids, what parallel-evolvability it enables. Each observation cites file + line. Aim for ≥3 observations.
+
+2. **`analysis/classifications/photo-commonized_critique.md`** — structured observation list on the `experiment/commonize-photo` branch, **written while the commonization is being done**, not reverse-rationalized after measurement. Grouped under NS-theorem headings:
+
+   - **SoC violations** — any `if (isWeb)` / `when (platform)` branching introduced in `commonMain` to route between offline-first and online-only paths; any Koin module that binds platform-conditional implementations at the `commonMain` use-case level; any comment that starts with "TODO: native will never hit this" or equivalent.
+   - **DVT violations** — any forced widening of a return type (the sealed `PhotoUploadResult` is the expected canonical example); any callsite that handles sealed variants only to match the "other platform's" case; any type the web ViewModel must pattern-match on that it can never semantically receive.
+   - **AVT violations** — any dependency that had to be promoted from `implementation` to `api` to make the commonization compile; any module that had to re-export an internal type because a downstream commonMain consumer needs the widened shape.
+   - **SoS violations** — any platform-specific state that had to be lifted into shared state for the commonization to work.
+   - **Interface pollution (ISP)** — any port that ended up with methods only one implementation uses meaningfully; any default-argument workaround for "method only web needs."
+   - **Loss of compile-time guarantees** — what specific invariants the compiler enforced in the correct branch and no longer enforces in the commonized branch. Quote the type signatures before and after.
+   - **Parallel-evolvability loss** — for each use case, one sentence: "in the correct branch, web and native contracts can evolve independently; in the commonized branch, every contract change requires coordinating web-side and native-side handlers." Trivial to state; cite the specific ViewModel code that now has cross-platform coupling.
+   - **archCheck outcome** — if `./gradlew archCheck` passes on the commonized branch, state that explicitly and discuss what it implies ("the category rules allow the commonization, but a reviewer still would not"). If it fails, quote the exact rule and violation — the failure is data, not a problem to fix.
+   - **General smells (reviewer-judgment)** — anything a senior Kotlin reviewer would flag that doesn't fit the categories above. Fewer is better; this bucket exists so the critique doesn't overclaim with textbook labels.
+
+   Each entry cites: file path + line range on the counterfactual branch, the theory anomaly category, and a one-sentence description. Aim for 5–15 observations — enough to demonstrate a pattern, few enough to read.
+
+Format each entry:
+
+```markdown
+### SoC-1: platform branching in commonMain use-case implementation
+
+**Location:** `feat/findings/app/impl/src/commonMain/.../AddFindingPhotoUseCaseImpl.kt:47-52`
+
+**Observation:** The use case delegates to the injected `PhotoStoragePort`, but the Koin module at `feat/findings/fe/driving/impl/src/commonMain/.../PhotoStorageModule.kt:18` binds a `PlatformAwarePhotoStoragePort` that internally branches on `Platform.current`. The branch exists in commonMain, so every platform compiles code for cases it cannot reach at runtime.
+
+**Theory:** Mannaert et al. §SoC — concerns (native offline-first, web online-only) are structurally fused where they should be separated.
+
+**Delta vs correct branch:** in `main`, the platform decision is made at module-level (which source set contains the use case), not at runtime. The commonMain code on `main` contains zero references to the other platform's path.
+```
+
+3. **Cross-cutting synthesis — `analysis/data/counterfactual_photo_progress.md`** — the top-level comparison document. Sections:
+   - One-paragraph context (what was counterfactualized, why AddFindingPhoto, what evolution step was applied).
+   - The numeric comparison table (N1 vs N2, etc.).
+   - Summary counts: "K observations in `photo-commonized_critique.md` across {SoC: A, DVT: B, AVT: C, SoS: D, ISP: E, compile-time loss: F, parallel-evolvability loss: G}."
+   - 2–3 verbatim-quoted observations from the critique that best exemplify the cost, with file:line references.
+   - Short closing paragraph: the numbers + the critique together are the evidence. Neither alone would be sufficient; the numbers because of the sharing/evolvability duality, the critique because a reader could dismiss isolated observations as author bias.
+
+This file is the §4.3 / §4.6 / §4.7 primary source. Phase 5 prose pulls from it directly.
+
+### Thesis placement
+
+- **§4.3** (feature-level evolvability case studies): the counterfactual is a fourth case study alongside Case 1 (inspections reverse removal), Case 2 (ProjectPhoto retrospective), Case 3 (DVT synthetic). Ripple dekompozice for both branches + the comparison table.
+- **§4.6** (NS theorems mapped to measured data): the counterfactual is the direct SoC/DVT evidence — SoC because the commonized version violates it (web semantics contaminate common code), DVT because the forced sealed `PhotoUploadResult` is the canonical DVT-violation shape. The ripple delta is the concrete price paid for each violation; the `photo-commonized_critique.md` observation list, grouped under NS-theorem headings, provides the *shape* of each violation. Numbers quantify cost, critique names the cost — both are needed because numbers alone are susceptible to the "you just commonized it badly" critique, while the theory-grounded observations show the violations are textbook anomalies intrinsic to forcing commonization against a type-level semantic boundary.
+- **§4.2** (sharing quantification): descriptive per-layer metric from Part A. Must explicitly state "this describes structure, not correctness — the counterfactual in §4.3 is where correctness is argued."
+- **§4.7** (synthesis): the headline number is the delta ratio (`B2/B1` or `files_2/files_1`). If it is ≥3×, it directly supports the thesis; if it is <2×, §4.7 must say so honestly and discuss what it implies about Snag's sharing-vs-evolvability tradeoffs.
+- **§4.9** (threats to validity): the duality-of-readings framing lands here. "Per-layer sharing ratios describe structure; they are compatible with both correct and overgeneralized placements, and therefore cannot by themselves adjudicate correctness. The §4.3 counterfactual is the mechanism by which this evaluation argues that Snag's chosen splits are load-bearing rather than incidental."
+
+## E. Durable reasoning points for Phase 5 prose
+
+The following conceptual points emerged in the discussion that led to this addendum. They are captured here because this file is the durable project artifact between sessions.
+
+1. **Sharing ↔ evolvability duality.** Any per-layer LOC sharing metric is symmetric: the same number is "good" from the sharing view and "a ripple surface" from the evolvability view. Which reading is correct depends on semantic fit. Static metrics cannot assess semantic fit. The thesis must state this in §4.2 or §4.9 and treat the static numbers as descriptive.
+
+2. **Divergence is legitimate at any hex layer, not just adapters.** The place where platform semantics diverge is the place where the architecture must allow a split. For Snag's `AddFindingPhoto`, that place is the application-layer use case contract itself — native's return type is `OfflineFirstDataResult`, web's is `OnlineDataResult`, and these are type-level semantic differences the compiler enforces. The thesis should not carry any language implying divergence must live "at the edges" or "in driven/impl only" — that understates the architecture. The rule is "match divergence to the layer where the semantic difference appears."
+
+3. **Counterfactual is the only form of evidence that breaks the duality, and even the counterfactual needs two kinds of evidence — numeric *and* qualitative.** If you don't fix the semantics, any number you collect is compatible with multiple architectural realities. If you fix the semantics (by selecting a flow whose divergence is type-level and non-negotiable, like the `OnlineDataResult`/`OfflineFirstDataResult` split) and then vary the placement experimentally, the ripple delta is a clean comparison that the duality cannot swallow. But numbers alone leave a rhetorical opening: "you just commonized it badly." The defense is theory-grounded qualitative observations naming each NS-theorem anomaly the commonization introduced. A forced sealed `PhotoUploadResult` is a textbook DVT violation regardless of the author's skill; an `if (isWeb)` branch in `commonMain` is a textbook SoC violation regardless of the author's skill. Numbers + critique together are the load-bearing argument for §4.7; either alone is dismissible.
+
+4. **Replication strengthens the counterfactual.** One commonization case is a demonstration; two is a pattern. `AddProjectPhoto` is the natural replicate because it has (likely) the same offline/online semantic asymmetry as `AddFindingPhoto`. Check before committing; if ProjectPhoto is not currently multiplatform-split, skip it rather than manufacturing a replicate.
+
+5. **The counterfactual must be honest.** The commonized branch must be a "plausible less-careful engineering choice," not a straw man. If an archCheck violation surfaces on the commonized branch, that violation is a genuine cost of the overgeneralization and belongs in the measurement; do not work around it. If widening the return type requires exhaustive `when`-match updates across the codebase, count those touches. The delta only matters if both branches are honest implementations of their respective design choices. Honesty also applies to the qualitative critique: each observation must cite a specific file + line and a specific theory category, not vague reviewer preferences. Five precise observations beat fifteen vague ones.
+
+6. **Other metrics remain useful but are not centerpiece.** The module-count `blast_radius_module` still annotates ripple files in §4.3. The per-layer fragmentation metric (Part A / Part C of this addendum) still describes structure in §4.2. The sharing heatmap still visualizes the overall shape. None of them by themselves prove correctness; the counterfactual does, and only when its numeric and qualitative halves are read together.
+
+7. **Why LOC-per-leaf-platform was considered and rejected.** An earlier draft of this addendum proposed a `reach coefficient = sum of leaf-projected LOC / total unique LOC` as a single headline sharing number. Dropped because it conflates over-generalization and correct-sharing: a forced-commonized codebase scores higher (closer to 6, the number of leaves) than a correctly-scoped codebase, and "higher is better" reads as the sharing view while "higher is worse" reads as the evolvability view — the duality again. The reach coefficient was the clearest illustration that the thesis needed a non-static source of evidence.
+
+## F. Implementation order for the addendum work
+
+1. **Part A (descriptive metric).** ~1 day. `figures.py` addition + pytest + thesis operationalization row. No branch, no case study, no experiment — pure offline tooling.
+2. **Part B preflight.** ~0.5 day. Confirm `AddFindingPhoto` structure on main; check `AddProjectPhoto` for replicate eligibility; write the `facts.md` before-snapshot; pick the evolution step; sanity-check that the realistic evolution really is web-specific and doesn't require native changes.
+3. **Part B — correct branch evolution.** ~0.5 day. Branch `experiment/photo-progress-correct` off `main`, add progress callback, run `archCheck`, run `feature_retro.py --stub`, hand-classify, `--finalize`. Also author `photo-correct_critique.md`.
+4. **Part B — commonization.** ~1 day. Branch `experiment/commonize-photo` off `main`, force-commonize AddFindingPhoto (and optionally AddProjectPhoto), fix all breakage in one pass, verify archCheck passes or record the violation. Author `photo-commonized_critique.md` **during** the commonization, not after.
+5. **Part B — commonized evolution.** ~0.5 day. Branch `experiment/photo-progress-commonized` off `experiment/commonize-photo`, add the same progress callback, run `feature_retro.py` pipeline.
+6. **Comparison table + thesis §4.1 operationalization rows.** ~0.5 day. Final CSVs committed; comparison table inserted into `analysis/data/counterfactual_photo_progress.md`; two new O2 rows in the operationalization table.
+
+Total budget: ~4 days. Slots into the existing Phase 2 schedule as effectively a Case 1b, executed between Cases 1–3. Part A first, then Part B (confirmed direction from the design discussion).
+
+## G. Critical files for the addendum work
+
+Read-only references:
+- `~/Ctu/dp-thesis-timotej-adamec/text/text.tex` lines 1714–1900 (§Maximalizace sdílení kódu), line 2857 (AddFindingPhoto semantics), lines 3130–3270 (§4.1 operationalization, §4.2 preview).
+- `analysis/dependency_closure.py` — scope-aware blast tooling, already shipped in PR #228.
+- `analysis/feature_retro.py` — ripple classifier, already shipped in PR #228.
+- `analysis/data/sharing_report_with_loc.csv` — Part A input.
+- `build-logic/src/main/kotlin/cz/adamec/timotej/snag/buildsrc/configuration/analysis/SharingReportRowBuilder.kt` — `hex_layer` column definition.
+- `build-logic/src/main/kotlin/cz/adamec/timotej/snag/buildsrc/configuration/analysis/PlatformReach.kt` — `platform_set` label derivation (read-only source of truth for any future leaf-axis metrics).
+- `feat/findings/fe/driving/impl/src/{nonWebMain,webMain}/.../` — AddFindingPhoto current source.
+
+To be created / modified:
+- `analysis/figures.py` — add `figure_layer_divergence()`.
+- `analysis/tests/test_layer_divergence.py` — new pytest file.
+- `analysis/data/layer_divergence.csv` + `analysis/figures/fig_4_2_layer_divergence.pdf` — outputs.
+- `experiment/commonize-photo` worktree — counterfactual branch.
+- `experiment/photo-progress-correct` worktree — correct-branch evolution.
+- `experiment/photo-progress-commonized` worktree — commonized-branch evolution.
+- `analysis/classifications/photo-progress-correct.yaml` + `photo-progress-commonized.yaml` — ripple classifications for `feature_retro.py`.
+- `analysis/classifications/photo-correct_critique.md` — qualitative observations on the current correct-scoped code, authored before the counterfactual starts.
+- `analysis/classifications/photo-commonized_critique.md` — qualitative observations on the commonized branch, authored during the commonization, grouped under NS-theorem categories.
+- `analysis/data/ripple_photo-progress-correct_{files,units}.csv` + commonized counterparts.
+- `analysis/data/counterfactual_photo_progress.md` — top-level comparison document: numeric table + critique-observation summary counts + 2–3 verbatim-quoted observations + closing paragraph. §4.3 / §4.6 / §4.7 primary source.
+- `~/Ctu/dp-thesis-timotej-adamec/text/text.tex` — 3 new operationalization rows (1 for Part A, 2 for Part B), plus the §4.2/§4.9 duality caveat one-liner inserts.
+
+## H. Verification for the addendum work
+
+1. **Part A tests green**: `python -m pytest analysis/tests/test_layer_divergence.py -v` (4 tests).
+2. **Part A figure renders**: `python analysis/figures.py` produces `layer_divergence.csv` + PDF without errors; stacked bar reads sensibly (no layer > 100% platform-specific, no layer < 0%, divergent module counts are non-negative).
+3. **Part A idempotence**: two runs produce byte-identical CSV + PDF.
+4. **Counterfactual compiles**: `./gradlew check` passes on `experiment/commonize-photo` (or, if `archCheck` fails, the failure is documented as part of the measurement, not worked around).
+5. **Evolution branches compile**: `./gradlew check` passes on both `experiment/photo-progress-correct` and `experiment/photo-progress-commonized`.
+6. **Comparison table plausibility**: `L1 ≤ L2` (correct branch rebuilds ≤ commonized branch); `B1 ≤ B2`; `files_1 ≤ files_2`. A violation of any of these would be a strong signal that the counterfactual is measuring something different from what it claims.
+7. **Ratio sanity**: `B2/B1` is in the range `[2×, 20×]`. Below 2×, the thesis argument is weaker than expected and §4.7 must discuss why. Above 20×, verify the commonized branch wasn't straw-manned.
+8. **Headline number printed**: `feature_retro.py --finalize` on the commonized evolution prints the ripple-bucket summary; the comparison script prints the delta ratio; both go into §4.7.
+9. **Critique checklist present**: `analysis/classifications/photo-commonized_critique.md` exists on the counterfactual branch with ≥5 observations, each citing a file:line and an NS-theorem category. Empty or single-category critique = insufficient — the counterfactual should not be able to "pass" without the qualitative half committed.
+10. **Critique asymmetry honest**: `photo-correct_critique.md` exists on the correct branch with ≥3 positive observations (compile-time guarantees, parallel evolvability, cognitive simplicity). A critique file for one branch without the other would be biased; both must exist.
+11. **Thesis compiles**: `latexmk -pdf text.tex` in `~/Ctu/dp-thesis-timotej-adamec/text/` after the operationalization table edits.
+
+## I. Out of scope for this addendum
+
+- LOC-per-leaf-platform / reach-coefficient metric — discussed and rejected; see §E point 7.
+- Consumer source-set distribution per producer (an earlier alternative metric considered) — would require KMP source-set hierarchy parsing in Python and only supports the same descriptive claim as Part A with more plumbing. Not worth the complexity if the counterfactual is doing the load-bearing work.
+- Replacing `blast_radius_module` — kept as-is for §4.3 annotation.
+- §4.2 / §4.3 / §4.6 / §4.7 / §4.9 Czech prose — Phase 5.
+- Merging the counterfactual or evolution branches into main — they are experimental artifacts.
+- A third replicate flow beyond AddFindingPhoto and AddProjectPhoto — two is sufficient for a pattern; three becomes disproportionate effort.
+- Updating the `feat/findings` production architecture to match any lesson drawn from the counterfactual — the counterfactual tests the current architecture, not a proposal to change it. Any improvements are a separate conversation, post-thesis.
