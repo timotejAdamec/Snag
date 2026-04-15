@@ -33,7 +33,10 @@ internal class AddFindingPhotoUseCaseImpl(
     private val timestampProvider: TimestampProvider,
     private val uuidProvider: UuidProvider,
 ) : AddFindingPhotoUseCase {
-    override suspend operator fun invoke(request: AddFindingPhotoRequest): PhotoUploadResult<Uuid> {
+    override suspend operator fun invoke(
+        request: AddFindingPhotoRequest,
+        onProgress: (Float) -> Unit,
+    ): PhotoUploadResult<Uuid> {
         val photoId = uuidProvider.getUuid()
         val extension = request.fileName.substringAfterLast(delimiter = ".", missingDelimiterValue = "")
         val fileName = "$photoId.$extension"
@@ -45,6 +48,7 @@ internal class AddFindingPhotoUseCaseImpl(
                     bytes = request.bytes,
                     fileName = fileName,
                     directory = directory,
+                    onProgress = onProgress,
                 )
         ) {
             is PhotoUploadResult.Success -> {

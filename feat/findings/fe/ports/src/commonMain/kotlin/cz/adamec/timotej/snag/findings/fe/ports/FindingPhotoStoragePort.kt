@@ -19,5 +19,6 @@ interface FindingPhotoStoragePort {
         bytes: ByteArray,
         fileName: String,
         directory: String,
+        onProgress: (Float) -> Unit = {},
     ): PhotoUploadResult<String>
 }

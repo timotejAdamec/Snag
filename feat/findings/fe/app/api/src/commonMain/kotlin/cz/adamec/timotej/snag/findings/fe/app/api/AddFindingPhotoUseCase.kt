@@ -16,5 +16,8 @@ import cz.adamec.timotej.snag.core.network.fe.PhotoUploadResult
 import kotlin.uuid.Uuid
 
 interface AddFindingPhotoUseCase {
-    suspend operator fun invoke(request: AddFindingPhotoRequest): PhotoUploadResult<Uuid>
+    suspend operator fun invoke(
+        request: AddFindingPhotoRequest,
+        onProgress: (Float) -> Unit = {},
+    ): PhotoUploadResult<Uuid>
 }

@@ -26,7 +26,10 @@ internal class NonWebProjectPhotoStoragePort(
         bytes: ByteArray,
         fileName: String,
         directory: String,
+        onProgress: (Float) -> Unit,
     ): PhotoUploadResult<String> =
+        // ISP smell: native offline-first save-to-disk has no foreground progress.
+        // Parameter accepted to satisfy the port contract but ignored.
         try {
             val localPath =
                 localFileStorage.saveFile(

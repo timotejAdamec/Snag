@@ -38,6 +38,9 @@ import cz.adamec.timotej.snag.projects.fe.app.api.UpdateProjectPhotoDescriptionU
 import cz.adamec.timotej.snag.structures.fe.app.api.GetStructuresUseCase
 import cz.adamec.timotej.snag.users.fe.app.api.GetUsersUseCase
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlin.uuid.Uuid
@@ -87,6 +90,9 @@ internal class WebProjectDetailsViewModel(
         deleteProjectPhotoUseCase = deleteProjectPhotoUseCase,
         updateProjectPhotoDescriptionUseCase = updateProjectPhotoDescriptionUseCase,
     ) {
+    private val _uploadProgressFlow = MutableStateFlow<Float?>(null)
+    val uploadProgressFlow: StateFlow<Float?> = _uploadProgressFlow.asStateFlow()
+
     override fun collectJobs(): List<Job> = super.collectJobs() + listOf(collectCanModifyPhotos())
 
     private fun collectCanModifyPhotos(): Job =
@@ -110,7 +116,12 @@ internal class WebProjectDetailsViewModel(
                     projectId = projectId,
                     description = description,
                 )
-            when (addProjectPhotoUseCase(request)) {
+            val result =
+                addProjectPhotoUseCase(
+                    request = request,
+                    onProgress = { progress -> _uploadProgressFlow.value = progress },
+                )
+            when (result) {
                 is PhotoUploadResult.Success -> {
                     // Photo will appear via flow
                 }
@@ -127,6 +138,7 @@ internal class WebProjectDetailsViewModel(
                     errorEventsChannel.send(UiError.Unknown)
                 }
             }
+            _uploadProgressFlow.value = null
             vmState.update { it.copy(isAddingPhoto = false) }
         }
     }

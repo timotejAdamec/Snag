@@ -33,7 +33,10 @@ internal class AddProjectPhotoUseCaseImpl(
     private val timestampProvider: TimestampProvider,
     private val uuidProvider: UuidProvider,
 ) : AddProjectPhotoUseCase {
-    override suspend operator fun invoke(request: AddProjectPhotoRequest): PhotoUploadResult<Uuid> {
+    override suspend operator fun invoke(
+        request: AddProjectPhotoRequest,
+        onProgress: (Float) -> Unit,
+    ): PhotoUploadResult<Uuid> {
         val photoId = uuidProvider.getUuid()
         val extension =
             request.fileName.substringAfterLast(
@@ -49,6 +52,7 @@ internal class AddProjectPhotoUseCaseImpl(
                     bytes = request.bytes,
                     fileName = fileName,
                     directory = directory,
+                    onProgress = onProgress,
                 )
         ) {
             is PhotoUploadResult.Success -> {

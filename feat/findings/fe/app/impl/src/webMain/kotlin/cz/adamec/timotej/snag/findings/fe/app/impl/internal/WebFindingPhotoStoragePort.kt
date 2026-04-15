@@ -24,15 +24,17 @@ internal class WebFindingPhotoStoragePort(
         bytes: ByteArray,
         fileName: String,
         directory: String,
-    ): PhotoUploadResult<String> =
-        when (
-            val result =
-                remoteFileStorage.uploadFile(
-                    bytes = bytes,
-                    fileName = fileName,
-                    directory = directory,
-                )
-        ) {
+        onProgress: (Float) -> Unit,
+    ): PhotoUploadResult<String> {
+        onProgress(0f)
+        val result =
+            remoteFileStorage.uploadFile(
+                bytes = bytes,
+                fileName = fileName,
+                directory = directory,
+            )
+        onProgress(1f)
+        return when (result) {
             is OnlineDataResult.Success -> PhotoUploadResult.Success(data = result.data)
             OnlineDataResult.Failure.NetworkUnavailable -> PhotoUploadResult.NetworkUnavailable
             is OnlineDataResult.Failure.ProgrammerError ->
@@ -43,4 +45,5 @@ internal class WebFindingPhotoStoragePort(
                     message = result.message,
                 )
         }
+    }
 }
