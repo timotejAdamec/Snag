@@ -107,6 +107,32 @@ class WebAddProjectPhotoUseCaseImplTest : FrontendKoinInitializedTest() {
             assertTrue(fakeSyncQueue.getAllPending().isEmpty())
         }
 
+    @Test
+    fun `emits progress callback with start and end values`() =
+        runTest(testDispatcher) {
+            val progressEvents = mutableListOf<Float>()
+            val request =
+                AddProjectPhotoRequest(
+                    bytes = photoBytes,
+                    fileName = fileName,
+                    projectId = projectId,
+                    description = "Test",
+                )
+
+            val result =
+                useCase(
+                    request = request,
+                    onProgress = { progressEvents.add(it) },
+                )
+
+            assertIs<OnlineDataResult.Success<Uuid>>(result)
+            assertEquals(
+                listOf(0f, 1f),
+                progressEvents,
+                "Progress should emit 0f before upload and 1f after success",
+            )
+        }
+
     private suspend fun getSavedPhoto(id: Uuid): AppProjectPhoto {
         fakeProjectPhotosDb.forcedFailure = null
         val result = fakeProjectPhotosDb.getPhotoFlow(id).first()

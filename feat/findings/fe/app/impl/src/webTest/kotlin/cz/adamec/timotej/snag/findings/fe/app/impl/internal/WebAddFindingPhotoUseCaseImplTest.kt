@@ -151,4 +151,23 @@ class WebAddFindingPhotoUseCaseImplTest : FrontendKoinInitializedTest() {
                 "URL should end with .png extension, was: ${savedPhoto.url}",
             )
         }
+
+    @Test
+    fun `emits progress callback with start and end values`() =
+        runTest(testDispatcher) {
+            val progressEvents = mutableListOf<Float>()
+
+            val result =
+                useCase(
+                    request = createRequest(),
+                    onProgress = { progressEvents.add(it) },
+                )
+
+            assertIs<OnlineDataResult.Success<Uuid>>(result)
+            assertEquals(
+                listOf(0f, 1f),
+                progressEvents,
+                "Progress should emit 0f before upload and 1f after success",
+            )
+        }
 }

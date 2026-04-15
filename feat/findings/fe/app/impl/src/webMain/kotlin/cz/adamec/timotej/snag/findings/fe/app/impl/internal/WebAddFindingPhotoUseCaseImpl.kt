@@ -34,18 +34,23 @@ internal class WebAddFindingPhotoUseCaseImpl(
     private val timestampProvider: TimestampProvider,
     private val uuidProvider: UuidProvider,
 ) : WebAddFindingPhotoUseCase {
-    override suspend operator fun invoke(request: AddFindingPhotoRequest): OnlineDataResult<Uuid> {
+    override suspend operator fun invoke(
+        request: AddFindingPhotoRequest,
+        onProgress: (Float) -> Unit,
+    ): OnlineDataResult<Uuid> {
         val photoId = uuidProvider.getUuid()
         val extension = request.fileName.substringAfterLast(delimiter = ".", missingDelimiterValue = "")
         val fileName = "$photoId.$extension"
         val directory = "projects/${request.projectId}/findings/${request.findingId}/photos"
 
+        onProgress(0f)
         val uploadResult =
             remoteFileStorage.uploadFile(
                 bytes = request.bytes,
                 fileName = fileName,
                 directory = directory,
             )
+        onProgress(1f)
 
         return when (uploadResult) {
             is OnlineDataResult.Failure -> {

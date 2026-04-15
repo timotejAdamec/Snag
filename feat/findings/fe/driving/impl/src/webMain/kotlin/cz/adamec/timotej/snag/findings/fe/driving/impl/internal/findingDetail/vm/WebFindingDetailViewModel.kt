@@ -24,6 +24,9 @@ import cz.adamec.timotej.snag.findings.fe.app.api.WebAddFindingPhotoUseCase
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.projects.fe.app.api.CanEditProjectEntitiesUseCase
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlin.uuid.Uuid
@@ -47,6 +50,9 @@ internal class WebFindingDetailViewModel(
         getFindingPhotosUseCase = getFindingPhotosUseCase,
         deleteFindingPhotoUseCase = deleteFindingPhotoUseCase,
     ) {
+    private val _uploadProgressFlow = MutableStateFlow<Float?>(null)
+    val uploadProgressFlow: StateFlow<Float?> = _uploadProgressFlow.asStateFlow()
+
     override fun collectJobs(): List<Job> = super.collectJobs() + listOf(collectCanModifyPhotos())
 
     private fun collectCanModifyPhotos(): Job =
@@ -69,7 +75,12 @@ internal class WebFindingDetailViewModel(
                     findingId = findingId,
                     projectId = projectId,
                 )
-            when (webAddFindingPhotoUseCase(request)) {
+            val result =
+                webAddFindingPhotoUseCase(
+                    request = request,
+                    onProgress = { progress -> _uploadProgressFlow.value = progress },
+                )
+            when (result) {
                 is OnlineDataResult.Success -> {
                     // Photo will appear via flow
                 }
@@ -78,6 +89,7 @@ internal class WebFindingDetailViewModel(
                     errorEventsChannel.send(UiError.Unknown)
                 }
             }
+            _uploadProgressFlow.value = null
             vmState.update { it.copy(isAddingPhoto = false) }
         }
     }

@@ -16,5 +16,8 @@ import cz.adamec.timotej.snag.core.network.fe.OnlineDataResult
 import kotlin.uuid.Uuid
 
 interface WebAddFindingPhotoUseCase {
-    suspend operator fun invoke(request: AddFindingPhotoRequest): OnlineDataResult<Uuid>
+    suspend operator fun invoke(
+        request: AddFindingPhotoRequest,
+        onProgress: (Float) -> Unit = {},
+    ): OnlineDataResult<Uuid>
 }
