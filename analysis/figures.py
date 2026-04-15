@@ -270,6 +270,240 @@ def figure_layer_platform_set_heatmap(df: pd.DataFrame) -> None:
 
 
 # ---------------------------------------------------------------------------------------------
+# Figure 4.2 (part A) — per-hex-layer platform-specific LOC share
+# ---------------------------------------------------------------------------------------------
+#
+# Descriptive readout: for each hexagonal layer, what fraction of production Kotlin LOC lives
+# in named platform-specific source sets (webMain, nonWebMain, androidMain, iosMain, jvmMain,
+# and the rarer nonAndroidMain/nonJvmMain/mobileMain/jsMain/wasmJsMain) versus the neutral
+# source sets (commonMain / main).
+#
+# This metric is strictly descriptive. The same shape is compatible with correctly-scoped,
+# over-shared, and over-fragmented codebases — the thesis §4.2 prose must call it out as such
+# (see analysis/phase-2-plan.md §A on sharing/evolvability duality). The counterfactual in
+# Part D is where correctness is argued; this figure just shows where Snag's divergence lives.
+#
+# The neutral bucket collapses both `commonMain` (multiplatform) and `main` (BE-only jvmMain)
+# because both are the layer's "shared" source set from that module family's perspective.
+# A BE module with code in `main` is not platform-divergent — it only has one platform.
+
+NEUTRAL_SOURCE_SETS = frozenset({"commonMain", "main"})
+
+PLATFORM_SPECIFIC_SEGMENT_ORDER = [
+    "nonWebMain",
+    "webMain",
+    "nonAndroidMain",
+    "nonJvmMain",
+    "mobileMain",
+    "androidMain",
+    "iosMain",
+    "jvmMain",
+    "jsMain",
+    "wasmJsMain",
+]
+
+PLATFORM_SPECIFIC_SEGMENT_COLORS = {
+    "nonWebMain": "#dd8452",
+    "webMain": "#c44e52",
+    "nonAndroidMain": "#937860",
+    "nonJvmMain": "#8172b3",
+    "mobileMain": "#da8bc3",
+    "androidMain": "#55a868",
+    "iosMain": "#64b5cd",
+    "jvmMain": "#ccb974",
+    "jsMain": "#8c8c8c",
+    "wasmJsMain": "#4c4c4c",
+}
+
+NEUTRAL_SEGMENT_COLOR = "#4c72b0"  # calm blue, same family as ripple_buckets "local"
+
+_DIVERGENCE_COLUMNS = [
+    "hex_layer",
+    "total_loc",
+    "platform_specific_loc",
+    "platform_specific_share",
+    "divergent_module_count",
+    "total_module_count",
+]
+
+
+def compute_layer_divergence(df: pd.DataFrame) -> pd.DataFrame:
+    """Per-hex-layer aggregation of platform-specific LOC share.
+
+    Pure function over an already-loaded sharing report. Drops test source sets
+    and rows with empty `platform_set` (they carry no reach semantics). Empty
+    `hex_layer` rolls up into the `"other"` bucket so every production row lands
+    somewhere. Returns a DataFrame ordered by the hex rows of `LAYER_ORDER`
+    followed by `"other"` — rows are preserved even when empty so a missing
+    layer shows up as a zero row instead of vanishing.
+    """
+    if df.empty:
+        return pd.DataFrame(columns=_DIVERGENCE_COLUMNS)
+
+    prod = df.copy()
+    prod = prod[prod["platform_set"] != ""]
+    prod = prod[~prod["source_set"].str.endswith("Test")]
+    prod["layer"] = prod["hex_layer"].where(prod["hex_layer"] != "", "other")
+    prod["kotlin_loc"] = prod["kotlin_loc"].astype(int)
+    prod["is_platform_specific"] = ~prod["source_set"].isin(NEUTRAL_SOURCE_SETS)
+    prod["platform_specific_loc"] = prod["kotlin_loc"].where(prod["is_platform_specific"], 0)
+
+    layer_rows = [layer for layer in LAYER_ORDER if layer in {
+        "business", "app", "ports", "driving", "driven",
+    }]
+    layer_rows.append("other")
+
+    records: list[dict] = []
+    for layer in layer_rows:
+        subset = prod[prod["layer"] == layer]
+        total_loc = int(subset["kotlin_loc"].sum())
+        ps_loc = int(subset["platform_specific_loc"].sum())
+        share = ps_loc / total_loc if total_loc > 0 else 0.0
+        total_modules = subset["module_path"].nunique()
+        divergent_modules = (
+            subset[subset["is_platform_specific"] & (subset["kotlin_loc"] > 0)]
+            ["module_path"]
+            .nunique()
+        )
+        records.append({
+            "hex_layer": layer,
+            "total_loc": total_loc,
+            "platform_specific_loc": ps_loc,
+            "platform_specific_share": share,
+            "divergent_module_count": int(divergent_modules),
+            "total_module_count": int(total_modules),
+        })
+
+    return pd.DataFrame(records, columns=_DIVERGENCE_COLUMNS)
+
+
+def figure_layer_divergence(df: pd.DataFrame) -> None:
+    """Emit `layer_divergence.csv` + stacked-bar PDF/PNG for §4.2 Part A."""
+    agg = compute_layer_divergence(df)
+
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
+    csv_path = DATA_DIR / "layer_divergence.csv"
+    agg.to_csv(csv_path, index=False, lineterminator="\n")
+    print(f"wrote {csv_path}")
+
+    # Per-layer per-segment LOC for stacked-bar rendering.
+    prod = df[df["platform_set"] != ""].copy()
+    prod = prod[~prod["source_set"].str.endswith("Test")]
+    prod["layer"] = prod["hex_layer"].where(prod["hex_layer"] != "", "other")
+    prod["kotlin_loc"] = prod["kotlin_loc"].astype(int)
+    prod["segment"] = prod["source_set"].where(
+        ~prod["source_set"].isin(NEUTRAL_SOURCE_SETS),
+        "neutral",
+    )
+    seg_matrix = prod.pivot_table(
+        index="layer",
+        columns="segment",
+        values="kotlin_loc",
+        aggfunc="sum",
+        fill_value=0,
+    )
+
+    layers = list(agg["hex_layer"])
+    seg_matrix = seg_matrix.reindex(index=layers, fill_value=0)
+
+    segment_order = ["neutral"]
+    for seg in PLATFORM_SPECIFIC_SEGMENT_ORDER:
+        if seg in seg_matrix.columns and seg_matrix[seg].sum() > 0:
+            segment_order.append(seg)
+    extras = sorted(
+        c for c in seg_matrix.columns
+        if c not in segment_order and c != "neutral" and seg_matrix[c].sum() > 0
+    )
+    segment_order.extend(extras)
+    seg_matrix = seg_matrix.reindex(columns=segment_order, fill_value=0)
+
+    fig_height = max(4.5, 0.55 * len(layers) + 2.0)
+    fig, ax = plt.subplots(figsize=(11.0, fig_height))
+
+    y_pos = np.arange(len(layers))
+    left = np.zeros(len(layers))
+    for segment in segment_order:
+        values = seg_matrix[segment].to_numpy(dtype=int)
+        color = (
+            NEUTRAL_SEGMENT_COLOR
+            if segment == "neutral"
+            else PLATFORM_SPECIFIC_SEGMENT_COLORS.get(segment, "#777777")
+        )
+        label = "commonMain + main" if segment == "neutral" else segment
+        ax.barh(
+            y_pos,
+            values,
+            left=left,
+            color=color,
+            label=label,
+            edgecolor="white",
+            linewidth=0.5,
+        )
+        for i, v in enumerate(values):
+            if v >= max(1, int(seg_matrix.values.sum() * 0.01)):
+                ax.text(
+                    left[i] + v / 2,
+                    y_pos[i],
+                    f"{int(v):,}",
+                    ha="center",
+                    va="center",
+                    fontsize=8,
+                    color="white",
+                )
+        left += values
+
+    # Annotate each bar with "M/N modules divergent" + share percentage.
+    for i, (_, row) in enumerate(agg.iterrows()):
+        total = int(row["total_loc"])
+        share_pct = row["platform_specific_share"] * 100.0
+        annotation = (
+            f"  {int(row['divergent_module_count'])}/{int(row['total_module_count'])} modules "
+            f"divergent ({share_pct:.1f}% LOC)"
+        )
+        ax.text(
+            total + max(1, int(seg_matrix.values.sum() * 0.005)),
+            y_pos[i],
+            annotation,
+            ha="left",
+            va="center",
+            fontsize=8,
+            color="#333",
+        )
+
+    ax.set_yticks(y_pos, labels=layers)
+    ax.invert_yaxis()
+    ax.set_xlabel("Production Kotlin LOC")
+    ax.set_ylabel("Hexagonal layer")
+    ax.set_title(
+        "Per-hex-layer platform-specific LOC share (descriptive)",
+        pad=14,
+    )
+    ax.legend(loc="lower right", frameon=True, fontsize=8, ncol=2)
+    ax.grid(axis="x", linestyle=":", alpha=0.5)
+
+    grand_total = int(seg_matrix.values.sum())
+    fig.text(
+        0.99,
+        0.01,
+        f"Σ LOC = {grand_total:,}",
+        ha="right",
+        va="bottom",
+        fontsize=9,
+        style="italic",
+    )
+
+    fig.tight_layout()
+    FIGURES_DIR.mkdir(parents=True, exist_ok=True)
+    pdf_path = FIGURES_DIR / "fig_4_2_layer_divergence.pdf"
+    png_path = FIGURES_DIR / "fig_4_2_layer_divergence.png"
+    fig.savefig(pdf_path)
+    fig.savefig(png_path, dpi=200)
+    plt.close(fig)
+    print(f"wrote {pdf_path}")
+    print(f"wrote {png_path}")
+
+
+# ---------------------------------------------------------------------------------------------
 # Phase 4 figure stubs
 # ---------------------------------------------------------------------------------------------
 
@@ -453,6 +687,7 @@ def figure_ripple_buckets() -> None:
 def main() -> int:
     df = load_joined_table()
     figure_layer_platform_set_heatmap(df)
+    figure_layer_divergence(df)
     figure_ripple_buckets()
     return 0
 
