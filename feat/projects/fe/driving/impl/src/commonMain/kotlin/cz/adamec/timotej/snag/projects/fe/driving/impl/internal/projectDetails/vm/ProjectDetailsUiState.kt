@@ -12,7 +12,6 @@
 
 package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.vm
 
-import cz.adamec.timotej.snag.feat.inspections.app.model.AppInspection
 import cz.adamec.timotej.snag.feat.structures.app.model.AppStructure
 import cz.adamec.timotej.snag.projects.app.model.AppProject
 import cz.adamec.timotej.snag.projects.app.model.AppProjectPhoto
@@ -28,7 +27,6 @@ internal data class ProjectDetailsUiState(
     val isAddingPhoto: Boolean = false,
     val project: AppProject? = null,
     val structures: ImmutableList<AppStructure> = persistentListOf(),
-    val inspections: ImmutableList<AppInspection> = persistentListOf(),
     val photos: ImmutableList<AppProjectPhoto> = persistentListOf(),
     val assignedUsers: ImmutableList<AssignedUserItem> = persistentListOf(),
     val availableUsers: ImmutableList<AssignedUserItem> = persistentListOf(),
@@ -52,11 +50,6 @@ internal enum class ProjectDetailsUiStatus {
 }
 
 internal enum class StructuresUiStatus {
-    ERROR,
-    LOADED,
-}
-
-internal enum class InspectionsUiStatus {
     ERROR,
     LOADED,
 }

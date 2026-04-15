@@ -12,7 +12,6 @@
 
 package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.vm
 
-import cz.adamec.timotej.snag.feat.inspections.app.model.AppInspection
 import cz.adamec.timotej.snag.feat.structures.app.model.AppStructure
 import cz.adamec.timotej.snag.projects.app.model.AppProject
 import cz.adamec.timotej.snag.projects.app.model.AppProjectPhoto
@@ -25,14 +24,12 @@ import kotlin.uuid.Uuid
 internal data class ProjectDetailsVmState(
     val projectStatus: ProjectDetailsUiStatus = ProjectDetailsUiStatus.LOADING,
     val structureStatus: StructuresUiStatus = StructuresUiStatus.LOADED,
-    val inspectionStatus: InspectionsUiStatus = InspectionsUiStatus.LOADED,
     val isBeingDeleted: Boolean = false,
     val isDownloadingReport: Boolean = false,
     val isClosingOrReopening: Boolean = false,
     val isAddingPhoto: Boolean = false,
     val project: AppProject? = null,
     val structures: ImmutableList<AppStructure> = persistentListOf(),
-    val inspections: ImmutableList<AppInspection> = persistentListOf(),
     val photos: ImmutableList<AppProjectPhoto> = persistentListOf(),
     val canEditEntities: Boolean = false,
     val canCloseProject: Boolean = false,

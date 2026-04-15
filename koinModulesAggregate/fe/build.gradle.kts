@@ -59,12 +59,6 @@ kotlin {
             implementation(projects.feat.findings.fe.driving.impl)
             implementation(projects.feat.findings.fe.driven.impl)
 
-            // Inspections feature
-            implementation(projects.feat.inspections.fe.app.impl)
-            implementation(projects.feat.inspections.fe.driving.api)
-            implementation(projects.feat.inspections.fe.driving.impl)
-            implementation(projects.feat.inspections.fe.driven.impl)
-
             // Reports feature
             implementation(projects.feat.reports.fe.app.impl)
             implementation(projects.feat.reports.fe.driven.impl)

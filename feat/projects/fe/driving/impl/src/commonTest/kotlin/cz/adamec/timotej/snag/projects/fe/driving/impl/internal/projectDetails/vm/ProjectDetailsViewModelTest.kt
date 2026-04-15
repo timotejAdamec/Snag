@@ -17,12 +17,6 @@ import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.core.foundation.common.TimestampProvider
 import cz.adamec.timotej.snag.core.foundation.common.UuidProvider
 import cz.adamec.timotej.snag.core.network.fe.OnlineDataResult
-import cz.adamec.timotej.snag.feat.inspections.app.model.AppInspection
-import cz.adamec.timotej.snag.feat.inspections.app.model.AppInspectionData
-import cz.adamec.timotej.snag.feat.inspections.fe.app.api.GetInspectionsUseCase
-import cz.adamec.timotej.snag.feat.inspections.fe.app.api.SaveInspectionUseCase
-import cz.adamec.timotej.snag.feat.inspections.fe.driven.test.FakeInspectionsApi
-import cz.adamec.timotej.snag.feat.inspections.fe.driven.test.FakeInspectionsDb
 import cz.adamec.timotej.snag.feat.reports.fe.app.api.DownloadReportUseCase
 import cz.adamec.timotej.snag.feat.reports.fe.app.api.GetAvailableReportTypesFlowUseCase
 import cz.adamec.timotej.snag.feat.reports.fe.driven.test.FakeReportsApi
@@ -46,7 +40,6 @@ import cz.adamec.timotej.snag.projects.fe.driven.test.FakeProjectsApi
 import cz.adamec.timotej.snag.projects.fe.driven.test.FakeProjectsDb
 import cz.adamec.timotej.snag.reports.business.ReportType
 import cz.adamec.timotej.snag.structures.fe.app.api.GetStructuresUseCase
-import cz.adamec.timotej.snag.sync.fe.driven.test.FakeSyncQueue
 import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
 import cz.adamec.timotej.snag.users.app.model.AppUserData
 import cz.adamec.timotej.snag.users.fe.app.api.GetUsersUseCase
@@ -75,16 +68,11 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
     private val fakeProjectsDb: FakeProjectsDb by inject()
     private val fakeProjectAssignmentsDb: FakeProjectAssignmentsDb by inject()
     private val fakeUsersDb: FakeUsersDb by inject()
-    private val fakeInspectionsDb: FakeInspectionsDb by inject()
-    private val fakeInspectionsApi: FakeInspectionsApi by inject()
-    private val fakeSyncQueue: FakeSyncQueue by inject()
     private val fakeReportsApi: FakeReportsApi by inject()
 
     private val getProjectUseCase: GetProjectUseCase by inject()
     private val deleteProjectUseCase: DeleteProjectUseCase by inject()
     private val getStructuresUseCase: GetStructuresUseCase by inject()
-    private val getInspectionsUseCase: GetInspectionsUseCase by inject()
-    private val saveInspectionUseCase: SaveInspectionUseCase by inject()
     private val downloadReportUseCase: DownloadReportUseCase by inject()
     private val getAvailableReportTypesUseCase: GetAvailableReportTypesFlowUseCase by inject()
     private val setProjectClosedUseCase: SetProjectClosedUseCase by inject()
@@ -129,10 +117,8 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
             getProjectUseCase = getProjectUseCase,
             deleteProjectUseCase = deleteProjectUseCase,
             getStructuresUseCase = getStructuresUseCase,
-            getInspectionsUseCase = getInspectionsUseCase,
             downloadReportUseCase = downloadReportUseCase,
             getAvailableReportTypesUseCase = getAvailableReportTypesUseCase,
-            saveInspectionUseCase = saveInspectionUseCase,
             setProjectClosedUseCase = setProjectClosedUseCase,
             canEditProjectEntitiesUseCase = canEditProjectEntitiesUseCase,
             canCloseProjectUseCase = canCloseProjectUseCase,
@@ -154,30 +140,6 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
                 // no-op for existing tests
             }
         }
-
-    private fun seedInspection(
-        projectId: Uuid,
-        inspectionId: Uuid = Uuid.random(),
-        dateFrom: Timestamp? = null,
-        dateTo: Timestamp? = null,
-        participants: String? = "Alice",
-        climate: String? = "sunny",
-        note: String? = "note",
-    ): AppInspection {
-        val inspection =
-            AppInspectionData(
-                id = inspectionId,
-                projectId = projectId,
-                dateFrom = dateFrom,
-                dateTo = dateTo,
-                participants = participants,
-                climate = climate,
-                note = note,
-                updatedAt = Timestamp(10L),
-            )
-        fakeInspectionsDb.setInspection(inspection)
-        return inspection
-    }
 
     private fun seedProject(projectId: Uuid): AppProject {
         seedCurrentUser()
@@ -323,190 +285,6 @@ class ProjectDetailsViewModelTest : FrontendKoinInitializedTest() {
             assertTrue(viewModel.state.value.canDownloadReport)
             assertFalse(viewModel.state.value.isDownloadingReport)
             reportCollector.cancel()
-            subscriber.cancel()
-        }
-
-    @Test
-    fun `onStartInspection sets dateFrom to current timestamp`() =
-        runTest(testDispatcher) {
-            val projectId = Uuid.random()
-            val inspectionId = Uuid.random()
-            seedProject(projectId)
-            seedInspection(projectId = projectId, inspectionId = inspectionId)
-
-            val viewModel = createViewModel(projectId)
-            val subscriber = launch { viewModel.state.collect { } }
-            advanceUntilIdle()
-
-            viewModel.onStartInspection(inspectionId)
-            advanceUntilIdle()
-
-            val saved =
-                viewModel.state.value.inspections
-                    .find { it.id == inspectionId }
-            assertEquals(fixedNow, saved?.dateFrom)
-            subscriber.cancel()
-        }
-
-    @Test
-    fun `onStartInspection preserves existing fields`() =
-        runTest(testDispatcher) {
-            val projectId = Uuid.random()
-            val inspectionId = Uuid.random()
-            seedProject(projectId)
-            seedInspection(
-                projectId = projectId,
-                inspectionId = inspectionId,
-                dateTo = Timestamp(999L),
-                participants = "Bob",
-                climate = "rainy",
-                note = "my note",
-            )
-
-            val viewModel = createViewModel(projectId)
-            val subscriber = launch { viewModel.state.collect { } }
-            advanceUntilIdle()
-
-            viewModel.onStartInspection(inspectionId)
-            advanceUntilIdle()
-
-            val saved =
-                viewModel.state.value.inspections
-                    .find { it.id == inspectionId }
-            assertEquals(projectId, saved?.projectId)
-            assertEquals(Timestamp(999L), saved?.dateTo)
-            assertEquals("Bob", saved?.participants)
-            assertEquals("rainy", saved?.climate)
-            assertEquals("my note", saved?.note)
-            subscriber.cancel()
-        }
-
-    @Test
-    fun `onEndInspection sets dateTo to current timestamp`() =
-        runTest(testDispatcher) {
-            val projectId = Uuid.random()
-            val inspectionId = Uuid.random()
-            seedProject(projectId)
-            seedInspection(projectId = projectId, inspectionId = inspectionId, dateFrom = Timestamp(1L))
-
-            val viewModel = createViewModel(projectId)
-            val subscriber = launch { viewModel.state.collect { } }
-            advanceUntilIdle()
-
-            viewModel.onEndInspection(inspectionId)
-            advanceUntilIdle()
-
-            val saved =
-                viewModel.state.value.inspections
-                    .find { it.id == inspectionId }
-            assertEquals(fixedNow, saved?.dateTo)
-            subscriber.cancel()
-        }
-
-    @Test
-    fun `onEndInspection preserves existing dateFrom`() =
-        runTest(testDispatcher) {
-            val projectId = Uuid.random()
-            val inspectionId = Uuid.random()
-            val existingStartedAt = Timestamp(500L)
-            seedProject(projectId)
-            seedInspection(
-                projectId = projectId,
-                inspectionId = inspectionId,
-                dateFrom = existingStartedAt,
-            )
-
-            val viewModel = createViewModel(projectId)
-            val subscriber = launch { viewModel.state.collect { } }
-            advanceUntilIdle()
-
-            viewModel.onEndInspection(inspectionId)
-            advanceUntilIdle()
-
-            val saved =
-                viewModel.state.value.inspections
-                    .find { it.id == inspectionId }
-            assertEquals(existingStartedAt, saved?.dateFrom)
-            subscriber.cancel()
-        }
-
-    @Test
-    fun `onStartInspection does nothing for unknown inspection id`() =
-        runTest(testDispatcher) {
-            val projectId = Uuid.random()
-            seedProject(projectId)
-
-            val viewModel = createViewModel(projectId)
-            val subscriber = launch { viewModel.state.collect { } }
-            advanceUntilIdle()
-
-            viewModel.onStartInspection(Uuid.random())
-            advanceUntilIdle()
-
-            assertTrue(fakeSyncQueue.getAllPending().isEmpty())
-            subscriber.cancel()
-        }
-
-    @Test
-    fun `onEndInspection does nothing for unknown inspection id`() =
-        runTest(testDispatcher) {
-            val projectId = Uuid.random()
-            seedProject(projectId)
-
-            val viewModel = createViewModel(projectId)
-            val subscriber = launch { viewModel.state.collect { } }
-            advanceUntilIdle()
-
-            viewModel.onEndInspection(Uuid.random())
-            advanceUntilIdle()
-
-            assertTrue(fakeSyncQueue.getAllPending().isEmpty())
-            subscriber.cancel()
-        }
-
-    @Test
-    fun `onStartInspection syncs the inspection`() =
-        runTest(testDispatcher) {
-            val projectId = Uuid.random()
-            val inspectionId = Uuid.random()
-            seedProject(projectId)
-            seedInspection(projectId = projectId, inspectionId = inspectionId)
-
-            val viewModel = createViewModel(projectId)
-            val subscriber = launch { viewModel.state.collect { } }
-            advanceUntilIdle()
-
-            viewModel.onStartInspection(inspectionId)
-            advanceUntilIdle()
-
-            assertTrue(fakeSyncQueue.getAllPending().isEmpty())
-            val apiResult = fakeInspectionsApi.getInspections(projectId)
-            assertIs<OnlineDataResult.Success<List<AppInspection>>>(apiResult)
-            val synced = apiResult.data.find { it.id == inspectionId }
-            assertEquals(fixedNow, synced?.dateFrom)
-            subscriber.cancel()
-        }
-
-    @Test
-    fun `onEndInspection syncs the inspection`() =
-        runTest(testDispatcher) {
-            val projectId = Uuid.random()
-            val inspectionId = Uuid.random()
-            seedProject(projectId)
-            seedInspection(projectId = projectId, inspectionId = inspectionId, dateFrom = Timestamp(1L))
-
-            val viewModel = createViewModel(projectId)
-            val subscriber = launch { viewModel.state.collect { } }
-            advanceUntilIdle()
-
-            viewModel.onEndInspection(inspectionId)
-            advanceUntilIdle()
-
-            assertTrue(fakeSyncQueue.getAllPending().isEmpty())
-            val apiResult = fakeInspectionsApi.getInspections(projectId)
-            assertIs<OnlineDataResult.Success<List<AppInspection>>>(apiResult)
-            val synced = apiResult.data.find { it.id == inspectionId }
-            assertEquals(fixedNow, synced?.dateTo)
             subscriber.cancel()
         }
 

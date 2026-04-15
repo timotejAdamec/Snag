@@ -27,7 +27,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -62,7 +61,6 @@ import androidx.compose.ui.unit.dp
 import cz.adamec.timotej.snag.authorization.business.UserRole
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.core.foundation.common.UuidProvider
-import cz.adamec.timotej.snag.feat.inspections.fe.driving.api.InspectionCard
 import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureCard
 import cz.adamec.timotej.snag.lib.design.fe.button.AdaptiveTonalButton
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.BackNavigationIcon
@@ -86,8 +84,6 @@ import snag.feat.projects.fe.driving.impl.generated.resources.close_project
 import snag.feat.projects.fe.driving.impl.generated.resources.delete_project_confirmation_text
 import snag.feat.projects.fe.driving.impl.generated.resources.delete_project_confirmation_title
 import snag.feat.projects.fe.driving.impl.generated.resources.download_report
-import snag.feat.projects.fe.driving.impl.generated.resources.inspections_section_title
-import snag.feat.projects.fe.driving.impl.generated.resources.new_inspection
 import snag.feat.projects.fe.driving.impl.generated.resources.new_structure
 import snag.feat.projects.fe.driving.impl.generated.resources.project_assignments_title
 import snag.feat.projects.fe.driving.impl.generated.resources.project_not_found
@@ -99,7 +95,6 @@ import snag.lib.design.fe.generated.resources.ic_add
 import snag.lib.design.fe.generated.resources.ic_close
 import snag.lib.design.fe.generated.resources.ic_delete
 import snag.lib.design.fe.generated.resources.ic_edit
-import snag.lib.design.fe.generated.resources.ic_event_note
 import snag.lib.design.fe.generated.resources.ic_file_export
 import snag.lib.design.fe.generated.resources.ic_group
 import snag.lib.design.fe.generated.resources.ic_lock
@@ -114,10 +109,6 @@ internal fun ProjectDetailsContent(
     state: ProjectDetailsUiState,
     onNewStructureClick: () -> Unit,
     onStructureClick: (projectId: Uuid, structureId: Uuid) -> Unit,
-    onNewInspectionClick: () -> Unit,
-    onInspectionClick: (inspectionId: Uuid) -> Unit,
-    onStartInspection: (Uuid) -> Unit,
-    onEndInspection: (Uuid) -> Unit,
     onBack: () -> Unit,
     onEditClick: () -> Unit,
     onDelete: () -> Unit,
@@ -147,10 +138,6 @@ internal fun ProjectDetailsContent(
                     state = state,
                     onNewStructureClick = onNewStructureClick,
                     onStructureClick = onStructureClick,
-                    onNewInspectionClick = onNewInspectionClick,
-                    onInspectionClick = onInspectionClick,
-                    onStartInspection = onStartInspection,
-                    onEndInspection = onEndInspection,
                     onBack = onBack,
                     onEditClick = onEditClick,
                     onDelete = onDelete,
@@ -176,10 +163,6 @@ private fun LoadedProjectDetailsContent(
     state: ProjectDetailsUiState,
     onNewStructureClick: () -> Unit,
     onStructureClick: (projectId: Uuid, structureId: Uuid) -> Unit,
-    onNewInspectionClick: () -> Unit,
-    onInspectionClick: (inspectionId: Uuid) -> Unit,
-    onStartInspection: (Uuid) -> Unit,
-    onEndInspection: (Uuid) -> Unit,
     onBack: () -> Unit,
     onEditClick: () -> Unit,
     onDelete: () -> Unit,
@@ -311,63 +294,6 @@ private fun LoadedProjectDetailsContent(
                 }
                 item {
                     Spacer(modifier = Modifier.height(24.dp))
-                }
-                item {
-                    Row(
-                        modifier =
-                            Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 16.dp)
-                                .padding(bottom = 8.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Row(
-                            modifier = Modifier.weight(1f),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        ) {
-                            Icon(
-                                painter = painterResource(DesignRes.drawable.ic_event_note),
-                                contentDescription = stringResource(Res.string.inspections_section_title),
-                            )
-                            Text(
-                                text = stringResource(Res.string.inspections_section_title),
-                                style = MaterialTheme.typography.titleMedium,
-                            )
-                        }
-                        if (state.isProjectEditable) {
-                            AdaptiveTonalButton(
-                                onClick = onNewInspectionClick,
-                                icon = DesignRes.drawable.ic_add,
-                                label = stringResource(Res.string.new_inspection),
-                            )
-                        }
-                    }
-                }
-                item {
-                    LazyRow(
-                        horizontalArrangement = Arrangement.spacedBy(12.dp),
-                        contentPadding = PaddingValues(horizontal = 16.dp),
-                    ) {
-                        items(
-                            items = state.inspections,
-                            key = { it.id },
-                        ) { inspection ->
-                            InspectionCard(
-                                modifier = Modifier.width(200.dp),
-                                feInspection = inspection,
-                                onClick = {
-                                    onInspectionClick(inspection.id)
-                                },
-                                onStartClick = {
-                                    onStartInspection(inspection.id)
-                                },
-                                onEndClick = {
-                                    onEndInspection(inspection.id)
-                                },
-                                actionsEnabled = state.isProjectEditable,
-                            )
-                        }
-                    }
                 }
                 item {
                     Spacer(modifier = Modifier.height(24.dp))
@@ -637,10 +563,6 @@ private fun LoadedProjectDetailsContentPreview() {
                 ),
             onNewStructureClick = {},
             onStructureClick = { _, _ -> },
-            onNewInspectionClick = {},
-            onInspectionClick = {},
-            onStartInspection = {},
-            onEndInspection = {},
             onBack = {},
             onEditClick = {},
             onDelete = {},

@@ -50,7 +50,6 @@ dependencies {
     implementation(projects.feat.clients.be.ports)
     implementation(projects.feat.structures.be.ports)
     implementation(projects.feat.findings.be.ports)
-    implementation(projects.feat.inspections.be.ports)
     implementation(projects.feat.users.be.ports)
     implementation(projects.feat.users.business.model)
 

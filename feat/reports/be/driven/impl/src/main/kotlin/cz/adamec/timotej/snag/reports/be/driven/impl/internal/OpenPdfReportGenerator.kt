@@ -47,7 +47,7 @@ internal class OpenPdfReportGenerator : PdfReportGenerator {
         document.open()
 
         addCoverPage(document, data, type)
-        addInspectionsSection(document, data)
+        // REVERSE-REMOVAL: would call addInspectionsSection(document, data) here
         addStructureSections(document, data, type)
         addSummaryPage(document, data)
         if (type == ReportType.SERVICE_PROTOCOL) {
@@ -105,43 +105,10 @@ internal class OpenPdfReportGenerator : PdfReportGenerator {
         document.add(
             Paragraph(
                 "Structures: ${data.structures.size} | " +
-                    "Findings: ${data.findingsByStructure.values.sumOf { it.size }} | " +
-                    "Inspections: ${data.inspections.size}",
+                    "Findings: ${data.findingsByStructure.values.sumOf { it.size }}",
                 FONT_SMALL,
             ),
         )
-    }
-
-    private fun addInspectionsSection(
-        document: Document,
-        data: ProjectReportData,
-    ) {
-        if (data.inspections.isEmpty()) return
-
-        document.newPage()
-        document.add(Paragraph("Inspections", FONT_HEADING))
-        document.add(Paragraph("\n"))
-
-        val table = PdfPTable(TABLE_COLUMNS_INSPECTIONS)
-        table.widthPercentage = TABLE_WIDTH_PERCENT
-        table.setWidths(INSPECTIONS_TABLE_WIDTHS)
-
-        addHeaderCell(table, "Date from")
-        addHeaderCell(table, "Date to")
-        addHeaderCell(table, "Participants")
-        addHeaderCell(table, "Climate")
-        addHeaderCell(table, "Note")
-
-        data.inspections.forEach { inspection ->
-            val i = inspection
-            table.addCell(createCell(i.dateFrom?.let { formatTimestamp(it.value) } ?: "-"))
-            table.addCell(createCell(i.dateTo?.let { formatTimestamp(it.value) } ?: "-"))
-            table.addCell(createCell(i.participants ?: "-"))
-            table.addCell(createCell(i.climate ?: "-"))
-            table.addCell(createCell(i.note ?: "-"))
-        }
-
-        document.add(table)
     }
 
     private fun addStructureSections(
@@ -256,7 +223,6 @@ internal class OpenPdfReportGenerator : PdfReportGenerator {
 
         document.add(Paragraph("Total Structures: ${data.structures.size}", FONT_NORMAL))
         document.add(Paragraph("Total Findings: $totalFindings", FONT_NORMAL))
-        document.add(Paragraph("Total Inspections: ${data.inspections.size}", FONT_NORMAL))
         document.add(Paragraph("\n"))
 
         document.add(Paragraph("Findings by Type", FONT_SUBHEADING))
@@ -359,11 +325,9 @@ internal class OpenPdfReportGenerator : PdfReportGenerator {
         private val DATE_FORMATTER =
             DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm").withZone(ZoneId.systemDefault())
 
-        private val INSPECTIONS_TABLE_WIDTHS = floatArrayOf(2f, 2f, 2f, 2f, 3f)
         private val FINDINGS_TABLE_WIDTHS = floatArrayOf(0.5f, 2f, 3f, 1.5f)
         private val SIGNATURE_TABLE_WIDTHS = floatArrayOf(1f, 1f)
         private const val TABLE_WIDTH_PERCENT = 100f
-        private const val TABLE_COLUMNS_INSPECTIONS = 5
         private const val TABLE_COLUMNS_FINDINGS = 4
         private const val SIGNATURE_TABLE_COLUMNS = 2
         private const val CELL_PADDING = 5f

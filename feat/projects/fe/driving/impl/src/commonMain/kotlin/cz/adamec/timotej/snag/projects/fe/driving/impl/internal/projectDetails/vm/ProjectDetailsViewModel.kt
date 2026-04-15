@@ -18,9 +18,6 @@ import cz.adamec.timotej.snag.core.foundation.common.TimestampProvider
 import cz.adamec.timotej.snag.core.foundation.common.mapState
 import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.core.network.fe.OnlineDataResult
-import cz.adamec.timotej.snag.feat.inspections.fe.app.api.GetInspectionsUseCase
-import cz.adamec.timotej.snag.feat.inspections.fe.app.api.SaveInspectionUseCase
-import cz.adamec.timotej.snag.feat.inspections.fe.app.api.model.SaveInspectionRequest
 import cz.adamec.timotej.snag.feat.reports.fe.app.api.DownloadReportUseCase
 import cz.adamec.timotej.snag.feat.reports.fe.app.api.GetAvailableReportTypesFlowUseCase
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
@@ -60,10 +57,8 @@ internal abstract class ProjectDetailsViewModel(
     private val getProjectUseCase: GetProjectUseCase,
     private val deleteProjectUseCase: DeleteProjectUseCase,
     private val getStructuresUseCase: GetStructuresUseCase,
-    private val getInspectionsUseCase: GetInspectionsUseCase,
     private val downloadReportUseCase: DownloadReportUseCase,
     private val getAvailableReportTypesUseCase: GetAvailableReportTypesFlowUseCase,
-    private val saveInspectionUseCase: SaveInspectionUseCase,
     private val setProjectClosedUseCase: SetProjectClosedUseCase,
     private val canEditProjectEntitiesUseCase: CanEditProjectEntitiesUseCase,
     private val canCloseProjectUseCase: CanCloseProjectUseCase,
@@ -98,7 +93,6 @@ internal abstract class ProjectDetailsViewModel(
         listOf(
             collectProject(projectId),
             collectStructures(projectId),
-            collectInspections(projectId),
             collectCanEditEntities(projectId),
             collectCanCloseProject(projectId),
             collectCanAssignUsers(projectId),
@@ -158,29 +152,6 @@ internal abstract class ProjectDetailsViewModel(
                         vmState.update {
                             it.copy(
                                 structures = result.data.toImmutableList(),
-                            )
-                        }
-                    }
-                }
-            }
-        }
-
-    private fun collectInspections(projectId: Uuid) =
-        viewModelScope.launch {
-            getInspectionsUseCase(projectId).collect { result ->
-                when (result) {
-                    is OfflineFirstDataResult.ProgrammerError -> {
-                        vmState.update {
-                            it.copy(
-                                inspectionStatus = InspectionsUiStatus.ERROR,
-                            )
-                        }
-                        errorEventsChannel.send(UiError.Unknown)
-                    }
-                    is OfflineFirstDataResult.Success -> {
-                        vmState.update {
-                            it.copy(
-                                inspections = result.data.toImmutableList(),
                             )
                         }
                     }
@@ -344,44 +315,6 @@ internal abstract class ProjectDetailsViewModel(
                     deletedSuccessfullyEventChannel.send(Unit)
                 }
             }
-        }
-
-    fun onStartInspection(inspectionId: Uuid) =
-        viewModelScope.launch {
-            vmState.value.inspections
-                .find { it.id == inspectionId }
-                ?.let { insp ->
-                    saveInspectionUseCase(
-                        SaveInspectionRequest(
-                            id = insp.id,
-                            projectId = insp.projectId,
-                            dateFrom = timestampProvider.getNowTimestamp(),
-                            dateTo = insp.dateTo,
-                            participants = insp.participants,
-                            climate = insp.climate,
-                            note = insp.note,
-                        ),
-                    )
-                }
-        }
-
-    fun onEndInspection(inspectionId: Uuid) =
-        viewModelScope.launch {
-            vmState.value.inspections
-                .find { it.id == inspectionId }
-                ?.let { insp ->
-                    saveInspectionUseCase(
-                        SaveInspectionRequest(
-                            id = insp.id,
-                            projectId = insp.projectId,
-                            dateFrom = insp.dateFrom,
-                            dateTo = timestampProvider.getNowTimestamp(),
-                            participants = insp.participants,
-                            climate = insp.climate,
-                            note = insp.note,
-                        ),
-                    )
-                }
         }
 
     fun onToggleClose() =

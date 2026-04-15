@@ -23,8 +23,6 @@ import cz.adamec.timotej.snag.feat.findings.business.FindingType
 import cz.adamec.timotej.snag.feat.findings.business.Importance
 import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
 import cz.adamec.timotej.snag.feat.findings.business.Term
-import cz.adamec.timotej.snag.feat.inspections.be.model.BackendInspectionData
-import cz.adamec.timotej.snag.feat.inspections.be.ports.InspectionsDb
 import cz.adamec.timotej.snag.feat.structures.be.model.BackendStructureData
 import cz.adamec.timotej.snag.findings.be.ports.FindingPhotosDb
 import cz.adamec.timotej.snag.findings.be.ports.FindingsDb
@@ -47,7 +45,6 @@ internal class DevDataSeederConfiguration(
     private val structuresDb: StructuresDb,
     private val findingsDb: FindingsDb,
     private val findingPhotosDb: FindingPhotosDb,
-    private val inspectionsDb: InspectionsDb,
     private val usersDb: UsersDb,
     private val timestampProvider: TimestampProvider,
 ) : KtorServerConfiguration {
@@ -60,7 +57,6 @@ internal class DevDataSeederConfiguration(
             seedStructures()
             seedFindings()
             seedFindingPhotos()
-            seedInspections()
         }
     }
 
@@ -348,53 +344,6 @@ internal class DevDataSeederConfiguration(
         ).forEach { findingPhotosDb.savePhoto(it) }
     }
 
-    @Suppress("MagicNumber", "UnderscoresInNumericLiterals")
-    private suspend fun seedInspections() {
-        val now = timestampProvider.getNowTimestamp()
-        listOf(
-            BackendInspectionData(
-                id = Uuid.parse(INSPECTION_1),
-                projectId = Uuid.parse(PROJECT_1),
-                dateFrom = Timestamp(now.value - 7200000),
-                dateTo = Timestamp(now.value - 3600000),
-                participants = "Jan Novak, Petr Svoboda",
-                climate = "Sunny, 22C",
-                note = "Initial site walkthrough completed.",
-                updatedAt = now,
-            ),
-            BackendInspectionData(
-                id = Uuid.parse(INSPECTION_2),
-                projectId = Uuid.parse(PROJECT_1),
-                dateFrom = Timestamp(now.value - 1800000),
-                dateTo = null,
-                participants = "Jan Novak",
-                climate = null,
-                note = null,
-                updatedAt = now,
-            ),
-            BackendInspectionData(
-                id = Uuid.parse(INSPECTION_3),
-                projectId = Uuid.parse(PROJECT_2),
-                dateFrom = Timestamp(now.value - 86400000),
-                dateTo = Timestamp(now.value - 82800000),
-                participants = "Marie Kralova, Tomas Benes",
-                climate = "Overcast, 15C",
-                note = "Follow-up inspection after plumbing fixes.",
-                updatedAt = now,
-            ),
-            BackendInspectionData(
-                id = Uuid.parse(INSPECTION_4),
-                projectId = Uuid.parse(PROJECT_3),
-                dateFrom = null,
-                dateTo = null,
-                participants = null,
-                climate = null,
-                note = null,
-                updatedAt = now,
-            ),
-        ).forEach { inspectionsDb.saveInspection(it) }
-    }
-
     private companion object {
         private const val USER_1 = "00000000-0000-0000-0005-000000000001"
         private const val USER_2 = "00000000-0000-0000-0005-000000000002"
@@ -425,10 +374,6 @@ internal class DevDataSeederConfiguration(
         private const val FINDING_PHOTO_4 = "00000000-0000-0000-0006-000000000004"
         private const val FINDING_PHOTO_5 = "00000000-0000-0000-0006-000000000005"
         private const val FINDING_PHOTO_6 = "00000000-0000-0000-0006-000000000006"
-        private const val INSPECTION_1 = "00000000-0000-0000-0004-000000000001"
-        private const val INSPECTION_2 = "00000000-0000-0000-0004-000000000002"
-        private const val INSPECTION_3 = "00000000-0000-0000-0004-000000000003"
-        private const val INSPECTION_4 = "00000000-0000-0000-0004-000000000004"
 
         private const val FLOOR_PLAN_URL_1 =
             "https://wpmedia.roomsketcher.com/content/uploads/2022/01/06145940/What-is-a-floor-plan-with-dimensions.png"

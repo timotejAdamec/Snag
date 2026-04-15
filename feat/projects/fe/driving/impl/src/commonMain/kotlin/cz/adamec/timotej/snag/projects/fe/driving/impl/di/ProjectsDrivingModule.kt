@@ -18,8 +18,6 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.ui.Modifier
 import androidx.navigation3.scene.DialogSceneStrategy
 import cz.adamec.timotej.snag.clients.fe.driving.api.ClientCreationRouteFactory
-import cz.adamec.timotej.snag.feat.inspections.fe.driving.api.InspectionCreationRouteFactory
-import cz.adamec.timotej.snag.feat.inspections.fe.driving.api.InspectionEditRouteFactory
 import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureCreationRouteFactory
 import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureDetailRouteFactory
 import cz.adamec.timotej.snag.lib.design.fe.dialog.fullscreenDialogProperties
@@ -135,8 +133,6 @@ internal inline fun <reified T : ProjectDetailRoute> Module.projectDetailsScreen
         val newStructureRouteFactory = koinInject<StructureCreationRouteFactory>()
         val structureDetailRouteFactory = koinInject<StructureDetailRouteFactory>()
         val projectEditRouteFactory = koinInject<ProjectEditRouteFactory>()
-        val newInspectionRouteFactory = koinInject<InspectionCreationRouteFactory>()
-        val inspectionEditRouteFactory = koinInject<InspectionEditRouteFactory>()
         val projectAssignmentsRouteFactory = koinInject<ProjectAssignmentsRouteFactory>()
         ProjectDetailsScreen(
             projectId = route.projectId,
@@ -152,14 +148,6 @@ internal inline fun <reified T : ProjectDetailRoute> Module.projectDetailsScreen
                         structureId = structureId,
                     ),
                 )
-            },
-            onNewInspectionClick = {
-                val backStack = get<ProjectsBackStack>()
-                backStack.value.add(newInspectionRouteFactory.create(route.projectId))
-            },
-            onInspectionClick = { inspectionId ->
-                val backStack = get<ProjectsBackStack>()
-                backStack.value.add(inspectionEditRouteFactory.create(inspectionId))
             },
             onBack = {
                 val backStack = get<ProjectsBackStack>()

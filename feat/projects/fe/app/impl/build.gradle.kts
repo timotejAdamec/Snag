@@ -19,7 +19,6 @@ kotlin {
         commonMain.dependencies {
             implementation(project(":feat:projects:business:rules"))
             implementation(project(":feat:structures:fe:app:api"))
-            implementation(project(":feat:inspections:fe:app:api"))
             implementation(project(":feat:users:fe:app:api"))
             implementation(project(":feat:sync:fe:app:api"))
             implementation(project(":feat:sync:fe:app:model"))

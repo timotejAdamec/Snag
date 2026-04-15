@@ -14,7 +14,6 @@ package cz.adamec.timotej.snag.reports.be.ports
 
 import cz.adamec.timotej.snag.clients.be.model.BackendClient
 import cz.adamec.timotej.snag.feat.findings.be.model.BackendFinding
-import cz.adamec.timotej.snag.feat.inspections.be.model.BackendInspection
 import cz.adamec.timotej.snag.feat.structures.be.model.BackendStructure
 import cz.adamec.timotej.snag.projects.be.model.BackendProject
 
@@ -23,5 +22,4 @@ data class ProjectReportData(
     val client: BackendClient?,
     val structures: List<BackendStructure>,
     val findingsByStructure: Map<BackendStructure, List<BackendFinding>>,
-    val inspections: List<BackendInspection>,
 )

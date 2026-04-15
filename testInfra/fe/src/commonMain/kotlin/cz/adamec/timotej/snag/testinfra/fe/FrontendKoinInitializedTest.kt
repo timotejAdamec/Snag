@@ -15,7 +15,6 @@ package cz.adamec.timotej.snag.testinfra.fe
 import cz.adamec.timotej.snag.authentication.fe.driven.test.authenticationFeDrivenTestModule
 import cz.adamec.timotej.snag.clients.fe.driven.test.clientsFeDrivenTestModule
 import cz.adamec.timotej.snag.di.aggregate.fe.frontendModulesAggregate
-import cz.adamec.timotej.snag.feat.inspections.fe.driven.test.inspectionsFeDrivenTestModule
 import cz.adamec.timotej.snag.feat.reports.fe.driven.test.reportsFeDrivenTestModule
 import cz.adamec.timotej.snag.featShared.database.fe.driven.test.sharedDatabaseFeTestModule
 import cz.adamec.timotej.snag.findings.fe.driven.test.findingsFeDrivenTestModule
@@ -36,7 +35,6 @@ abstract class FrontendKoinInitializedTest : KoinInitializedTest() {
             authenticationFeDrivenTestModule,
             clientsFeDrivenTestModule,
             findingsFeDrivenTestModule,
-            inspectionsFeDrivenTestModule,
             projectsFeDrivenTestModule,
             reportsFeDrivenTestModule,
             structuresFeDrivenTestModule,

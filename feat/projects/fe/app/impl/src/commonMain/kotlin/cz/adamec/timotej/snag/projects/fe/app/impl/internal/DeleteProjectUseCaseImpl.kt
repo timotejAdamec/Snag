@@ -14,7 +14,6 @@ package cz.adamec.timotej.snag.projects.fe.app.impl.internal
 
 import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.core.network.fe.log
-import cz.adamec.timotej.snag.feat.inspections.fe.app.api.CascadeDeleteLocalInspectionsByProjectIdUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.CascadeDeleteLocalAssignmentsByProjectIdUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.CascadeDeleteLocalProjectPhotosByProjectIdUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.DeleteProjectUseCase
@@ -30,13 +29,12 @@ class DeleteProjectUseCaseImpl(
     private val projectsDb: ProjectsDb,
     private val enqueueSyncDeleteUseCase: EnqueueSyncDeleteUseCase,
     private val cascadeDeleteLocalStructuresByProjectIdUseCase: CascadeDeleteLocalStructuresByProjectIdUseCase,
-    private val cascadeDeleteLocalInspectionsByProjectIdUseCase: CascadeDeleteLocalInspectionsByProjectIdUseCase,
     private val cascadeDeleteLocalAssignmentsByProjectIdUseCase: CascadeDeleteLocalAssignmentsByProjectIdUseCase,
     private val cascadeDeleteLocalProjectPhotosByProjectIdUseCase: CascadeDeleteLocalProjectPhotosByProjectIdUseCase,
 ) : DeleteProjectUseCase {
     override suspend operator fun invoke(projectId: Uuid): OfflineFirstDataResult<Unit> {
         cascadeDeleteLocalStructuresByProjectIdUseCase(projectId)
-        cascadeDeleteLocalInspectionsByProjectIdUseCase(projectId)
+        // REVERSE-REMOVAL: would invoke CascadeDeleteLocalInspectionsByProjectIdUseCase here
         cascadeDeleteLocalAssignmentsByProjectIdUseCase(projectId)
         cascadeDeleteLocalProjectPhotosByProjectIdUseCase(projectId)
         return projectsDb

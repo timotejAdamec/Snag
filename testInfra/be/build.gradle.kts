@@ -20,7 +20,6 @@ dependencies {
     api(projects.feat.projects.be.driven.test)
     api(projects.feat.structures.be.driven.test)
     api(projects.feat.findings.be.driven.test)
-    api(projects.feat.inspections.be.driven.test)
     api(projects.feat.clients.be.driven.test)
     implementation(projects.koinModulesAggregate.be)
     implementation(projects.feat.authentication.be.driving.test)

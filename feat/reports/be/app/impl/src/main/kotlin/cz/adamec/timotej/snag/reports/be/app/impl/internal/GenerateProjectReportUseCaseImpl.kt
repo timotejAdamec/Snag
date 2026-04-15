@@ -13,7 +13,6 @@
 package cz.adamec.timotej.snag.reports.be.app.impl.internal
 
 import cz.adamec.timotej.snag.clients.be.app.api.GetClientUseCase
-import cz.adamec.timotej.snag.feat.inspections.be.app.api.GetInspectionsUseCase
 import cz.adamec.timotej.snag.findings.be.app.api.GetFindingsUseCase
 import cz.adamec.timotej.snag.projects.be.app.api.GetProjectUseCase
 import cz.adamec.timotej.snag.reports.be.app.api.GenerateProjectReportUseCase
@@ -31,7 +30,6 @@ internal class GenerateProjectReportUseCaseImpl(
     private val getClientUseCase: GetClientUseCase,
     private val getStructuresUseCase: GetStructuresUseCase,
     private val getFindingsUseCase: GetFindingsUseCase,
-    private val getInspectionsUseCase: GetInspectionsUseCase,
     private val pdfReportGenerator: PdfReportGenerator,
 ) : GenerateProjectReportUseCase {
     override suspend operator fun invoke(
@@ -48,15 +46,13 @@ internal class GenerateProjectReportUseCaseImpl(
             structures.associateWith { structure ->
                 getFindingsUseCase(structure.id).filter { it.deletedAt == null }
             }
-        val inspections =
-            getInspectionsUseCase(projectId).filter { it.deletedAt == null }
+        // REVERSE-REMOVAL: would fetch inspections via GetInspectionsUseCase here
         val reportData =
             ProjectReportData(
                 project = backendProject,
                 client = backendClient,
                 structures = structures,
                 findingsByStructure = findingsByStructure,
-                inspections = inspections,
             )
 
         val bytes = pdfReportGenerator.generate(reportData, type)

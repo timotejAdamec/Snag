@@ -36,7 +36,6 @@ internal fun ProjectDetailsVmState.toUiState(): ProjectDetailsUiState {
         isAddingPhoto = isAddingPhoto,
         project = project,
         structures = structures,
-        inspections = inspections,
         photos = photos,
         assignedUsers = assignedUsers,
         availableUsers = availableUsers,

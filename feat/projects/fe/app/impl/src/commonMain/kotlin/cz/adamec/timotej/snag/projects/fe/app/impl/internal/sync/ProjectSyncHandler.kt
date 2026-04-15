@@ -16,7 +16,6 @@ import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.core.foundation.common.TimestampProvider
 import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
 import cz.adamec.timotej.snag.core.network.fe.OnlineDataResult
-import cz.adamec.timotej.snag.feat.inspections.fe.app.api.CascadeRestoreLocalInspectionsByProjectIdUseCase
 import cz.adamec.timotej.snag.projects.app.model.AppProject
 import cz.adamec.timotej.snag.projects.fe.app.api.CascadeRestoreLocalAssignmentsByProjectIdUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.CascadeRestoreLocalProjectPhotosByProjectIdUseCase
@@ -34,7 +33,6 @@ internal class ProjectSyncHandler(
     private val projectsApi: ProjectsApi,
     private val projectsDb: ProjectsDb,
     private val cascadeRestoreLocalStructuresByProjectIdUseCase: CascadeRestoreLocalStructuresByProjectIdUseCase,
-    private val cascadeRestoreLocalInspectionsByProjectIdUseCase: CascadeRestoreLocalInspectionsByProjectIdUseCase,
     private val cascadeRestoreLocalAssignmentsByProjectIdUseCase: CascadeRestoreLocalAssignmentsByProjectIdUseCase,
     private val cascadeRestoreLocalProjectPhotosByProjectIdUseCase: CascadeRestoreLocalProjectPhotosByProjectIdUseCase,
     timestampProvider: TimestampProvider,
@@ -57,7 +55,7 @@ internal class ProjectSyncHandler(
     override suspend fun onDeleteRejected(entityId: Uuid) {
         coroutineScope {
             launch { cascadeRestoreLocalStructuresByProjectIdUseCase(entityId) }
-            launch { cascadeRestoreLocalInspectionsByProjectIdUseCase(entityId) }
+            // REVERSE-REMOVAL: would launch cascadeRestoreLocalInspectionsByProjectIdUseCase here
             launch { cascadeRestoreLocalAssignmentsByProjectIdUseCase(entityId) }
             launch { cascadeRestoreLocalProjectPhotosByProjectIdUseCase(entityId) }
         }

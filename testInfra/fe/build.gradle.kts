@@ -23,7 +23,6 @@ kotlin {
             implementation(projects.feat.authentication.fe.driven.test)
             implementation(projects.feat.clients.fe.driven.test)
             implementation(projects.feat.findings.fe.driven.test)
-            implementation(projects.feat.inspections.fe.driven.test)
             implementation(projects.feat.projects.fe.driven.test)
             implementation(projects.feat.reports.fe.driven.test)
             implementation(projects.feat.structures.fe.driven.test)

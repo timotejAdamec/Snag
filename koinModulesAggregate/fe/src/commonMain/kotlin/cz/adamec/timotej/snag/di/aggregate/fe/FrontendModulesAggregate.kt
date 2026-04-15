@@ -22,10 +22,6 @@ import cz.adamec.timotej.snag.clients.fe.driving.impl.di.clientsDrivingImplModul
 import cz.adamec.timotej.snag.core.business.rules.impl.di.sharedRulesModule
 import cz.adamec.timotej.snag.core.foundation.fe.di.frontendCoreModule
 import cz.adamec.timotej.snag.feat.findings.fe.driving.api.di.findingsDrivingApiModule
-import cz.adamec.timotej.snag.feat.inspections.fe.app.impl.di.inspectionsAppModule
-import cz.adamec.timotej.snag.feat.inspections.fe.driven.di.inspectionsDrivenModule
-import cz.adamec.timotej.snag.feat.inspections.fe.driving.api.di.inspectionsDrivingApiModule
-import cz.adamec.timotej.snag.feat.inspections.fe.driving.impl.di.inspectionsDrivingImplModule
 import cz.adamec.timotej.snag.feat.reports.fe.app.impl.di.reportsAppModule
 import cz.adamec.timotej.snag.feat.reports.fe.driven.di.reportsDrivenModule
 import cz.adamec.timotej.snag.feat.structures.fe.driving.api.di.structuresDrivingApiModule
@@ -84,10 +80,6 @@ val frontendModulesAggregate =
             findingsDrivingApiModule,
             findingsDrivingImplModule,
             findingsDrivenModule,
-            inspectionsAppModule,
-            inspectionsDrivingApiModule,
-            inspectionsDrivingImplModule,
-            inspectionsDrivenModule,
             reportsAppModule,
             reportsRulesModule,
             reportsDrivenModule,

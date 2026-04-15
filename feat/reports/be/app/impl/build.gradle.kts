@@ -7,7 +7,6 @@ dependencies {
     implementation(project(":feat:clients:be:app:api"))
     implementation(project(":feat:structures:be:app:api"))
     implementation(project(":feat:findings:be:app:api"))
-    implementation(project(":feat:inspections:be:app:api"))
     implementation(project(":feat:users:be:app:api"))
     implementation(project(":feat:reports:business:rules"))
     testImplementation(project(":feat:reports:be:driven:test"))
