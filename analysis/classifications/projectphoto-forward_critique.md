@@ -18,6 +18,8 @@ Czech Technical University in Prague — Faculty of Information Technology
 - churn:  **local = 4265, intrinsic = 1, collateral = 162** (total 4428 ≡ 4183 insertions + 245 deletions)
 - **recurring intrinsic units = 1** — the BE schema registry (AllTables.kt)
 
+**Source-set annotation.** `commonMain` units are suffixed `[FE]` (frontend-only KMP reach — 5 FE targets) or `[FE+BE]` (full-platform reach, compiles to the backend JVM server too). Other source-set names (`main`, `androidMain`, `iosMain`, `nonWebMain`, `webMain`, etc.) are unambiguous and pass through unannotated. The distinction matters for SoC fan-out reading — a `::commonMain[FE]` ripple never crosses the BE↔FE boundary, whereas a `::commonMain[FE+BE]` one does.
+
 Minimum three observations required. Four are recorded: three named sites plus one positive observation about what the change did *not* touch.
 
 ---

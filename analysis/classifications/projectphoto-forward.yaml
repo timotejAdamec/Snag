@@ -10,7 +10,8 @@ repair_log:
   bucket: collateral
   recurring: false
   source: hand
-  reason: Cross-feature refactor — findings use case now delegates to the new shared CanModifyProjectFilesUseCase introduced for ProjectPhoto. Incidental coupling cleanup done during the feature addition, not a recurring registry site.
+  reason: Cross-feature refactor — findings use case now delegates to the new shared CanModifyProjectFilesUseCase introduced
+    for ProjectPhoto. Incidental coupling cleanup done during the feature addition, not a recurring registry site.
 - file: feat/findings/fe/app/impl/src/webTest/kotlin/cz/adamec/timotej/snag/findings/fe/app/impl/internal/CanModifyFindingPhotosUseCaseImplTest.kt
   unit: :feat:findings:fe:app:impl::webTest
   status: D
@@ -18,9 +19,10 @@ repair_log:
   bucket: collateral
   recurring: false
   source: hand
-  reason: Test file deleted because the refactored findings use case became pure delegation (no independent logic left to test). Collateral to the delegation refactor above.
+  reason: Test file deleted because the refactored findings use case became pure delegation (no independent logic left to
+    test). Collateral to the delegation refactor above.
 - file: feat/projects/app/model/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/app/model/AppProjectPhoto.kt
-  unit: :feat:projects:app:model::commonMain
+  unit: :feat:projects:app:model::commonMain[FE+BE]
   status: A
   loc_churn: 30
   bucket: local
@@ -188,7 +190,7 @@ repair_log:
   source: hand:local_module_globs
   reason: Unit inside a module declared local to this change (:feat:projects:*)
 - file: feat/projects/business/model/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/business/ProjectPhoto.kt
-  unit: :feat:projects:business:model::commonMain
+  unit: :feat:projects:business:model::commonMain[FE+BE]
   status: A
   loc_churn: 25
   bucket: local
@@ -196,7 +198,7 @@ repair_log:
   source: hand:local_module_globs
   reason: Unit inside a module declared local to this change (:feat:projects:*)
 - file: feat/projects/contract/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/contract/DeleteProjectPhotoApiDto.kt
-  unit: :feat:projects:contract::commonMain
+  unit: :feat:projects:contract::commonMain[FE+BE]
   status: A
   loc_churn: 21
   bucket: local
@@ -204,7 +206,7 @@ repair_log:
   source: hand:local_module_globs
   reason: Unit inside a module declared local to this change (:feat:projects:*)
 - file: feat/projects/contract/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/contract/ProjectPhotoApiDto.kt
-  unit: :feat:projects:contract::commonMain
+  unit: :feat:projects:contract::commonMain[FE+BE]
   status: A
   loc_churn: 27
   bucket: local
@@ -212,7 +214,7 @@ repair_log:
   source: hand:local_module_globs
   reason: Unit inside a module declared local to this change (:feat:projects:*)
 - file: feat/projects/contract/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/contract/PutProjectPhotoApiDto.kt
-  unit: :feat:projects:contract::commonMain
+  unit: :feat:projects:contract::commonMain[FE+BE]
   status: A
   loc_churn: 25
   bucket: local
@@ -220,7 +222,7 @@ repair_log:
   source: hand:local_module_globs
   reason: Unit inside a module declared local to this change (:feat:projects:*)
 - file: feat/projects/fe/app/api/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/app/api/AddProjectPhotoRequest.kt
-  unit: :feat:projects:fe:app:api::commonMain
+  unit: :feat:projects:fe:app:api::commonMain[FE]
   status: A
   loc_churn: 22
   bucket: local
@@ -228,7 +230,7 @@ repair_log:
   source: hand:local_module_globs
   reason: Unit inside a module declared local to this change (:feat:projects:*)
 - file: feat/projects/fe/app/api/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/app/api/CanModifyProjectFilesUseCase.kt
-  unit: :feat:projects:fe:app:api::commonMain
+  unit: :feat:projects:fe:app:api::commonMain[FE]
   status: A
   loc_churn: 20
   bucket: local
@@ -236,7 +238,7 @@ repair_log:
   source: hand:local_module_globs
   reason: Unit inside a module declared local to this change (:feat:projects:*)
 - file: feat/projects/fe/app/api/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/app/api/CascadeDeleteLocalProjectPhotosByProjectIdUseCase.kt
-  unit: :feat:projects:fe:app:api::commonMain
+  unit: :feat:projects:fe:app:api::commonMain[FE]
   status: A
   loc_churn: 19
   bucket: local
@@ -244,7 +246,7 @@ repair_log:
   source: hand:local_module_globs
   reason: Unit inside a module declared local to this change (:feat:projects:*)
 - file: feat/projects/fe/app/api/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/app/api/CascadeRestoreLocalProjectPhotosByProjectIdUseCase.kt
-  unit: :feat:projects:fe:app:api::commonMain
+  unit: :feat:projects:fe:app:api::commonMain[FE]
   status: A
   loc_churn: 19
   bucket: local
@@ -252,7 +254,7 @@ repair_log:
   source: hand:local_module_globs
   reason: Unit inside a module declared local to this change (:feat:projects:*)
 - file: feat/projects/fe/app/api/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/app/api/DeleteProjectPhotoUseCase.kt
-  unit: :feat:projects:fe:app:api::commonMain
+  unit: :feat:projects:fe:app:api::commonMain[FE]
   status: A
   loc_churn: 20
   bucket: local
@@ -260,7 +262,7 @@ repair_log:
   source: hand:local_module_globs
   reason: Unit inside a module declared local to this change (:feat:projects:*)
 - file: feat/projects/fe/app/api/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/app/api/GetProjectPhotosUseCase.kt
-  unit: :feat:projects:fe:app:api::commonMain
+  unit: :feat:projects:fe:app:api::commonMain[FE]
   status: A
   loc_churn: 22
   bucket: local
@@ -268,7 +270,7 @@ repair_log:
   source: hand:local_module_globs
   reason: Unit inside a module declared local to this change (:feat:projects:*)
 - file: feat/projects/fe/app/api/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/app/api/UpdateProjectPhotoDescriptionUseCase.kt
-  unit: :feat:projects:fe:app:api::commonMain
+  unit: :feat:projects:fe:app:api::commonMain[FE]
   status: A
   loc_churn: 23
   bucket: local
@@ -298,10 +300,10 @@ repair_log:
   bucket: collateral
   recurring: false
   source: rule:build_gradle_collateral
-  reason: "build.gradle.kts edit in a pre-existing module \u2014 typically a new dependency or plugin declaration, avoidable\
-    \ if the convention plugins auto-wire it"
+  reason: build.gradle.kts edit in a pre-existing module — typically a new dependency or plugin declaration, avoidable if
+    the convention plugins auto-wire it
 - file: feat/projects/fe/app/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/app/impl/di/ProjectsAppModule.kt
-  unit: :feat:projects:fe:app:impl::commonMain
+  unit: :feat:projects:fe:app:impl::commonMain[FE]
   status: M
   loc_churn: 21
   bucket: local
@@ -309,7 +311,7 @@ repair_log:
   source: hand:local_module_globs
   reason: Unit inside a module declared local to this change (:feat:projects:*)
 - file: feat/projects/fe/app/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/app/impl/internal/CascadeDeleteLocalProjectPhotosByProjectIdUseCaseImpl.kt
-  unit: :feat:projects:fe:app:impl::commonMain
+  unit: :feat:projects:fe:app:impl::commonMain[FE]
   status: A
   loc_churn: 25
   bucket: local
@@ -317,7 +319,7 @@ repair_log:
   source: hand:local_module_globs
   reason: Unit inside a module declared local to this change (:feat:projects:*)
 - file: feat/projects/fe/app/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/app/impl/internal/CascadeRestoreLocalProjectPhotosByProjectIdUseCaseImpl.kt
-  unit: :feat:projects:fe:app:impl::commonMain
+  unit: :feat:projects:fe:app:impl::commonMain[FE]
   status: A
   loc_churn: 48
   bucket: local
@@ -325,7 +327,7 @@ repair_log:
   source: hand:local_module_globs
   reason: Unit inside a module declared local to this change (:feat:projects:*)
 - file: feat/projects/fe/app/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/app/impl/internal/DeleteProjectPhotoUseCaseImpl.kt
-  unit: :feat:projects:fe:app:impl::commonMain
+  unit: :feat:projects:fe:app:impl::commonMain[FE]
   status: A
   loc_churn: 57
   bucket: local
@@ -333,7 +335,7 @@ repair_log:
   source: hand:local_module_globs
   reason: Unit inside a module declared local to this change (:feat:projects:*)
 - file: feat/projects/fe/app/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/app/impl/internal/DeleteProjectUseCaseImpl.kt
-  unit: :feat:projects:fe:app:impl::commonMain
+  unit: :feat:projects:fe:app:impl::commonMain[FE]
   status: M
   loc_churn: 3
   bucket: local
@@ -341,7 +343,7 @@ repair_log:
   source: hand:local_module_globs
   reason: Unit inside a module declared local to this change (:feat:projects:*)
 - file: feat/projects/fe/app/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/app/impl/internal/GetProjectPhotosUseCaseImpl.kt
-  unit: :feat:projects:fe:app:impl::commonMain
+  unit: :feat:projects:fe:app:impl::commonMain[FE]
   status: A
   loc_churn: 46
   bucket: local
@@ -349,7 +351,7 @@ repair_log:
   source: hand:local_module_globs
   reason: Unit inside a module declared local to this change (:feat:projects:*)
 - file: feat/projects/fe/app/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/app/impl/internal/UpdateProjectPhotoDescriptionUseCaseImpl.kt
-  unit: :feat:projects:fe:app:impl::commonMain
+  unit: :feat:projects:fe:app:impl::commonMain[FE]
   status: A
   loc_churn: 74
   bucket: local
@@ -357,7 +359,7 @@ repair_log:
   source: hand:local_module_globs
   reason: Unit inside a module declared local to this change (:feat:projects:*)
 - file: feat/projects/fe/app/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/app/impl/internal/sync/ProjectPhotoPullSyncHandler.kt
-  unit: :feat:projects:fe:app:impl::commonMain
+  unit: :feat:projects:fe:app:impl::commonMain[FE]
   status: A
   loc_churn: 63
   bucket: local
@@ -365,7 +367,7 @@ repair_log:
   source: hand:local_module_globs
   reason: Unit inside a module declared local to this change (:feat:projects:*)
 - file: feat/projects/fe/app/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/app/impl/internal/sync/ProjectPhotoSyncEntityType.kt
-  unit: :feat:projects:fe:app:impl::commonMain
+  unit: :feat:projects:fe:app:impl::commonMain[FE]
   status: A
   loc_churn: 15
   bucket: local
@@ -373,7 +375,7 @@ repair_log:
   source: hand:local_module_globs
   reason: Unit inside a module declared local to this change (:feat:projects:*)
 - file: feat/projects/fe/app/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/app/impl/internal/sync/ProjectSyncHandler.kt
-  unit: :feat:projects:fe:app:impl::commonMain
+  unit: :feat:projects:fe:app:impl::commonMain[FE]
   status: M
   loc_churn: 3
   bucket: local
@@ -541,7 +543,7 @@ repair_log:
   source: hand:local_module_globs
   reason: Unit inside a module declared local to this change (:feat:projects:*)
 - file: feat/projects/fe/driven/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/driven/di/ProjectsDrivenModule.kt
-  unit: :feat:projects:fe:driven:impl::commonMain
+  unit: :feat:projects:fe:driven:impl::commonMain[FE]
   status: M
   loc_churn: 11
   bucket: local
@@ -549,7 +551,7 @@ repair_log:
   source: hand:local_module_globs
   reason: Unit inside a module declared local to this change (:feat:projects:*)
 - file: feat/projects/fe/driven/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/driven/internal/api/Mappers.kt
-  unit: :feat:projects:fe:driven:impl::commonMain
+  unit: :feat:projects:fe:driven:impl::commonMain[FE]
   status: M
   loc_churn: 29
   bucket: local
@@ -557,7 +559,7 @@ repair_log:
   source: hand:local_module_globs
   reason: Unit inside a module declared local to this change (:feat:projects:*)
 - file: feat/projects/fe/driven/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/driven/internal/api/RealProjectPhotosApi.kt
-  unit: :feat:projects:fe:driven:impl::commonMain
+  unit: :feat:projects:fe:driven:impl::commonMain[FE]
   status: A
   loc_churn: 96
   bucket: local
@@ -565,7 +567,7 @@ repair_log:
   source: hand:local_module_globs
   reason: Unit inside a module declared local to this change (:feat:projects:*)
 - file: feat/projects/fe/driven/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/driven/internal/db/Mappers.kt
-  unit: :feat:projects:fe:driven:impl::commonMain
+  unit: :feat:projects:fe:driven:impl::commonMain[FE]
   status: M
   loc_churn: 12
   bucket: local
@@ -573,7 +575,7 @@ repair_log:
   source: hand:local_module_globs
   reason: Unit inside a module declared local to this change (:feat:projects:*)
 - file: feat/projects/fe/driven/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/driven/internal/db/RealProjectPhotosDb.kt
-  unit: :feat:projects:fe:driven:impl::commonMain
+  unit: :feat:projects:fe:driven:impl::commonMain[FE]
   status: A
   loc_churn: 95
   bucket: local
@@ -581,7 +583,7 @@ repair_log:
   source: hand:local_module_globs
   reason: Unit inside a module declared local to this change (:feat:projects:*)
 - file: feat/projects/fe/driven/test/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/driven/test/FakeProjectPhotosApi.kt
-  unit: :feat:projects:fe:driven:test::commonMain
+  unit: :feat:projects:fe:driven:test::commonMain[FE]
   status: A
   loc_churn: 61
   bucket: local
@@ -589,7 +591,7 @@ repair_log:
   source: hand:local_module_globs
   reason: Unit inside a module declared local to this change (:feat:projects:*)
 - file: feat/projects/fe/driven/test/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/driven/test/FakeProjectPhotosDb.kt
-  unit: :feat:projects:fe:driven:test::commonMain
+  unit: :feat:projects:fe:driven:test::commonMain[FE]
   status: A
   loc_churn: 46
   bucket: local
@@ -597,7 +599,7 @@ repair_log:
   source: hand:local_module_globs
   reason: Unit inside a module declared local to this change (:feat:projects:*)
 - file: feat/projects/fe/driven/test/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/driven/test/FakeProjectsApi.kt
-  unit: :feat:projects:fe:driven:test::commonMain
+  unit: :feat:projects:fe:driven:test::commonMain[FE]
   status: M
   loc_churn: 6
   bucket: local
@@ -605,7 +607,7 @@ repair_log:
   source: hand:local_module_globs
   reason: Unit inside a module declared local to this change (:feat:projects:*)
 - file: feat/projects/fe/driven/test/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/driven/test/ProjectsFeDrivenTestModule.kt
-  unit: :feat:projects:fe:driven:test::commonMain
+  unit: :feat:projects:fe:driven:test::commonMain[FE]
   status: M
   loc_churn: 4
   bucket: local
@@ -613,7 +615,7 @@ repair_log:
   source: hand:local_module_globs
   reason: Unit inside a module declared local to this change (:feat:projects:*)
 - file: feat/projects/fe/driving/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/driving/impl/di/ProjectsDrivingModule.kt
-  unit: :feat:projects:fe:driving:impl::commonMain
+  unit: :feat:projects:fe:driving:impl::commonMain[FE]
   status: M
   loc_churn: 22
   bucket: local
@@ -621,7 +623,7 @@ repair_log:
   source: hand:local_module_globs
   reason: Unit inside a module declared local to this change (:feat:projects:*)
 - file: feat/projects/fe/driving/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/driving/impl/internal/projectDetails/vm/Mapper.kt
-  unit: :feat:projects:fe:driving:impl::commonMain
+  unit: :feat:projects:fe:driving:impl::commonMain[FE]
   status: M
   loc_churn: 3
   bucket: local
@@ -629,7 +631,7 @@ repair_log:
   source: hand:local_module_globs
   reason: Unit inside a module declared local to this change (:feat:projects:*)
 - file: feat/projects/fe/driving/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/driving/impl/internal/projectDetails/vm/ProjectDetailsUiState.kt
-  unit: :feat:projects:fe:driving:impl::commonMain
+  unit: :feat:projects:fe:driving:impl::commonMain[FE]
   status: M
   loc_churn: 4
   bucket: local
@@ -637,7 +639,7 @@ repair_log:
   source: hand:local_module_globs
   reason: Unit inside a module declared local to this change (:feat:projects:*)
 - file: feat/projects/fe/driving/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/driving/impl/internal/projectDetails/vm/ProjectDetailsViewModel.kt
-  unit: :feat:projects:fe:driving:impl::commonMain
+  unit: :feat:projects:fe:driving:impl::commonMain[FE]
   status: M
   loc_churn: 92
   bucket: local
@@ -645,7 +647,7 @@ repair_log:
   source: hand:local_module_globs
   reason: Unit inside a module declared local to this change (:feat:projects:*)
 - file: feat/projects/fe/driving/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/driving/impl/internal/projectDetails/vm/ProjectDetailsVmState.kt
-  unit: :feat:projects:fe:driving:impl::commonMain
+  unit: :feat:projects:fe:driving:impl::commonMain[FE]
   status: M
   loc_churn: 4
   bucket: local
@@ -701,7 +703,7 @@ repair_log:
   source: hand:local_module_globs
   reason: Unit inside a module declared local to this change (:feat:projects:*)
 - file: feat/projects/fe/ports/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/ports/ProjectPhotosApi.kt
-  unit: :feat:projects:fe:ports::commonMain
+  unit: :feat:projects:fe:ports::commonMain[FE]
   status: A
   loc_churn: 43
   bucket: local
@@ -709,7 +711,7 @@ repair_log:
   source: hand:local_module_globs
   reason: Unit inside a module declared local to this change (:feat:projects:*)
 - file: feat/projects/fe/ports/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/ports/ProjectPhotosDb.kt
-  unit: :feat:projects:fe:ports::commonMain
+  unit: :feat:projects:fe:ports::commonMain[FE]
   status: A
   loc_churn: 30
   bucket: local
@@ -724,7 +726,9 @@ repair_log:
   recurring: true
   ns_theorem: DVT
   source: hand
-  reason: BE schema registry — `allTables` array enumerates every Exposed Table in the schema. Each new persistent entity forces exactly one line here. Classical DVT combinatorial anomaly site (data-version transparency is broken at the aggregation point).
+  reason: BE schema registry — `allTables` array enumerates every Exposed Table in the schema. Each new persistent entity
+    forces exactly one line here. Classical DVT combinatorial anomaly site (data-version transparency is broken at the aggregation
+    point).
 - file: feat/shared/database/be/impl/src/main/kotlin/cz/adamec/timotej/snag/feat/shared/database/be/DbConstants.kt
   unit: :root::non-module
   status: A
@@ -732,7 +736,9 @@ repair_log:
   bucket: local
   recurring: false
   source: hand
-  reason: New shared-constants file (holds URL_MAX_LENGTH extracted from FindingsTable during ProjectPhoto to deduplicate the constant between ProjectPhotos and FindingPhotos tables). Fresh file, not a recurring registry site — a one-time AVT-oriented refactor incidental to the feature addition.
+  reason: New shared-constants file (holds URL_MAX_LENGTH extracted from FindingsTable during ProjectPhoto to deduplicate
+    the constant between ProjectPhotos and FindingPhotos tables). Fresh file, not a recurring registry site — a one-time AVT-oriented
+    refactor incidental to the feature addition.
 - file: feat/shared/database/be/impl/src/main/kotlin/cz/adamec/timotej/snag/feat/shared/database/be/FindingsTable.kt
   unit: :root::non-module
   status: M
@@ -740,7 +746,8 @@ repair_log:
   bucket: collateral
   recurring: false
   source: hand
-  reason: Removed the local `URL_MAX_LENGTH` const after extracting it to shared DbConstants. Incidental AVT-oriented cleanup forced by the ProjectPhoto addition's need to reuse the same limit.
+  reason: Removed the local `URL_MAX_LENGTH` const after extracting it to shared DbConstants. Incidental AVT-oriented cleanup
+    forced by the ProjectPhoto addition's need to reuse the same limit.
 - file: feat/shared/database/be/impl/src/main/kotlin/cz/adamec/timotej/snag/feat/shared/database/be/ProjectPhotoEntity.kt
   unit: :root::non-module
   status: A
@@ -748,7 +755,9 @@ repair_log:
   bucket: local
   recurring: false
   source: hand
-  reason: New Exposed DAO entity class for ProjectPhoto. Lives under feat/shared/database/be (schema module) but is feature-local in content — unit fallback to `:root::non-module` is the known drift artifact from `feat/shared` being moved to `:featuresShared` in commit dc0d9b8a2 post-b5365d611.
+  reason: New Exposed DAO entity class for ProjectPhoto. Lives under feat/shared/database/be (schema module) but is feature-local
+    in content — unit fallback to `:root::non-module` is the known drift artifact from `feat/shared` being moved to `:featuresShared`
+    in commit dc0d9b8a2 post-b5365d611.
 - file: feat/shared/database/be/impl/src/main/kotlin/cz/adamec/timotej/snag/feat/shared/database/be/ProjectPhotosTable.kt
   unit: :root::non-module
   status: A
@@ -756,7 +765,8 @@ repair_log:
   bucket: local
   recurring: false
   source: hand
-  reason: New Exposed Table class for `project_photos` with FK to projects + FK reference to the uploader. Feature-local in content despite the `:root::non-module` unit fallback (drift from post-commit module move).
+  reason: New Exposed Table class for `project_photos` with FK to projects + FK reference to the uploader. Feature-local in
+    content despite the `:root::non-module` unit fallback (drift from post-commit module move).
 - file: feat/shared/database/fe/api/src/commonMain/sqldelight/cz/adamec/timotej/snag/feat/shared/database/fe/db/ProjectPhotoEntity.sq
   unit: :root::non-module
   status: A
@@ -764,4 +774,5 @@ repair_log:
   bucket: local
   recurring: false
   source: hand
-  reason: New SQLDelight schema file for the FE ProjectPhoto mirror table. Feature-local in content despite the `:root::non-module` unit fallback.
+  reason: New SQLDelight schema file for the FE ProjectPhoto mirror table. Feature-local in content despite the `:root::non-module`
+    unit fallback.

@@ -847,6 +847,7 @@ These items are permanently captured in Phase 2 repo artifacts and Phase 5 prose
 - **Case 1 §4.6 headline.** `recurring intrinsic units = 6` (4 distinct NS anomaly sites after collapsing the build.gradle.kts path→unit artifact). Captured in the critique file, in the Case 1 commit message, and reproducible via `python analysis/feature_retro.py --change inspections-reverse-removal --ref experiment/remove-inspections --base-ref main --base-snapshot analysis/data/sharing_report_with_loc_base_main_e076e89e5.csv --change-kind feature_remove --finalize` stdout.
 - **Case 1 experiment branch.** `experiment/remove-inspections` on the main Snag repo — never merged, retained for reproducibility until Phase 5 writeup completes. Worktree at `.claude/worktrees/remove-inspections`. HEAD `dbb86f525`.
 - **Case 1 base-ref snapshot.** `analysis/data/sharing_report_with_loc_base_main_e076e89e5.csv` — captured once (copy of the pre-Case-1 state of `sharing_report_with_loc.csv`) so `feature_retro.py` can resolve deleted `feat/inspections/**` paths against it on every future rerun.
+- **commonMain platform-reach disambiguation in ripple artifacts.** `feature_retro.py` annotates `commonMain` as `commonMain[FE+BE]` (full-platform reach, compiles to the backend JVM server) or `commonMain[FE]` (frontend-only KMP reach) based on the sharing report's `platform_set` column; Case 1 + Case 2 yamls, CSVs, and critiques are backfilled. §4.7 cross-case table cites the annotated unit IDs so BE↔FE boundary crossings are explicit in the evidence.
 
 ### K.3 Update protocol
 
