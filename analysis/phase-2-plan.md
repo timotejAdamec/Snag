@@ -106,7 +106,8 @@ repair_log:
 
 - **Classification default is rule-driven, unmatched is unclassified.** `feature_retro.py --stub` runs every changed file through `ripple_rules.yaml`; rule-matched entries get `bucket: <rule-result>`, `source: rule:<rule_id>`, `reason: <rule.reason>` auto-populated. Unmatched entries get `bucket: unclassified` and require a hand-written `reason` + explicit `source: hand`. `--finalize` rejects any entry still `unclassified`.
 - Every classification has either a `rule:<id>` trail or a hand-written justification, so git blame on the yaml bisects rule vs judgment for any row.
-- Fields present per entry: `file, unit, status (A/M/D/R), loc_churn, bucket, recurring, source, reason`. Renames collapse to a single entry with `file: "old → new"` and inherit the new location's rule match; `file_count: 95` matches `git show --stat` *after* renames are collapsed — verification check 2 accounts for this.
+- Fields present per entry: `file, unit, status (A/M/D/R), loc_churn, bucket, recurring, source, reason, ns_theorem (optional)`. The `ns_theorem` field takes one of `SoC | DVT | AVT | SoS | ISP | general` and is populated during hand-classification for every `bucket: intrinsic` entry that has `recurring: true`. It names the NS-theorem anomaly each recurring site represents, so §4.6 can cite the recurring-intrinsic count as theory-grounded evidence rather than a rule-matching tautology. `--finalize` **warns** on missing `ns_theorem` on recurring-intrinsic entries but does not reject — the schema can migrate incrementally without breaking already-finalized case files. A later enforcement pass tightens to reject once all cases have shipped. See Part J of the addendum for the cross-case harmonization that introduced this field.
+- Renames collapse to a single entry with `file: "old → new"` and inherit the new location's rule match; `file_count: 95` matches `git show --stat` *after* renames are collapsed — verification check 2 accounts for this.
 
 ### E. `analysis/feature_retro.py`
 
@@ -144,15 +145,17 @@ Implement the stub `figure_ripple_buckets()` to consume `analysis/data/ripple_*.
 
 ## Case study execution
 
-**Explicit Phase 2 day budget** (~7 working days). Case 4 is gated — execute only if Cases 1–3 are done and classified by end of day 7.
+**Revised Phase 2 day budget** (~12 working days, up from the original ~7). The growth reflects (a) Case 1b (counterfactual commonization) added by the addendum, and (b) Case 4 elevation from optional to recommended. Case 4 is now recommended for ship unless Cases 1 + 1b + 2 + 3 are still incomplete at end of day 11.
 
 | Day | Work |
 |---|---|
-| 1–2 | Tooling: `DependencyGraphTask`, `SharingReportRowBuilder` rel-path edit, `dependency_closure.py`, `feature_retro.py`, `ripple_rules.yaml` scaffold, `figures.py` Phase 2 additions, pytest suite. |
-| 3 | **Case 2 — ProjectPhoto retrospective.** Dry run for the tooling — no repair work, pure classification. **Gate:** `feature_retro.py` collapsed-rename file count must equal `git show --stat b5365d611` (95 files, or 95 minus detected renames). Mismatch = tooling bug; fix before Case 1. |
-| 4–6 | **Case 1 — inspections reverse removal.** Worktree, deletion, repair, classification. |
-| 7 | **Case 3 — DVT synthetic test on Client.** Mechanical: half-day implementation, half-day classification + round-trip test. |
-| (gate) | **Case 4 — iOS-only Project extension.** Only if Cases 1–3 are complete by end of day 7. Skip without guilt. |
+| 1–2 | Tooling: `DependencyGraphTask`, `SharingReportRowBuilder` rel-path edit, `dependency_closure.py`, `feature_retro.py`, `ripple_rules.yaml` scaffold, `figures.py` Phase 2 additions, pytest suite. **(Shipped in PR #228.)** |
+| 2.5 | **Addendum Part A (layer-divergence descriptive metric).** `figure_layer_divergence()` + pytest + thesis op row. |
+| 3 | **Case 2 — ProjectPhoto retrospective.** Tooling gate + descriptive illustration (non-probative per reframing). **Gate:** collapsed-rename file count ≡ `git show --stat b5365d611`. |
+| 4–6 | **Case 1 — inspections reverse removal.** Worktree, deletion, repair, classification + critique file. |
+| 7–10 | **Case 1b — counterfactual commonization of AddFindingPhoto.** Preflight + correct-branch evolution + commonization + commonized-branch evolution + critique files + comparison table. (See addendum Part F for the detailed schedule inside this 4-day slot.) |
+| 11 | **Case 3 — DVT synthetic test on Client.** Half-day implementation, half-day classification + round-trip test + critique file. |
+| 12 | **Case 4 — iOS-only Project extension (recommended).** Analogous to Case 3. Skip only if days 3–11 overran. |
 
 ### Case 1 — Primary: `feat/inspections` reverse removal
 
@@ -166,19 +169,28 @@ Implement the stub `figure_ripple_buckets()` to consume `analysis/data/ripple_*.
 5. Repair file-by-file. **Do not take shortcuts** — if a use case is missing, replace the call with a comment-marker `// REVERSE-REMOVAL: would invoke InspectionsUseCase` or delete the surrounding logic honestly; a shortcut that masks a real touchpoint is a measurement artifact and must be flagged in the yaml.
 6. Rerun `./gradlew check --continue` until green.
 7. `python analysis/feature_retro.py --change inspections-reverse-removal --ref experiment/remove-inspections --base-ref main --base-snapshot analysis/data/sharing_report_with_loc_base_main_<sha>.csv --stub`
-8. Hand-classify every `unclassified` unit in `classifications/inspections-reverse-removal.yaml` into local/intrinsic/collateral + recurring flag + reason. Rule-matched entries are pre-populated and only need review.
+8. Hand-classify every `unclassified` unit in `classifications/inspections-reverse-removal.yaml` into local/intrinsic/collateral + recurring flag + reason. Rule-matched entries are pre-populated and only need review. **For every entry where `bucket: intrinsic` and `recurring: true`, set `ns_theorem` to the NS anomaly category the site represents (e.g. `koinModulesAggregate` → SoC, `*SyncHandler.kt` registry → SoC, `DevDataSeeder` → DVT, test-infrastructure enumeration → ISP). See the Part J cross-case guide in the addendum for the labeling conventions.**
 9. `python analysis/feature_retro.py --change inspections-reverse-removal --ref experiment/remove-inspections --finalize`
-10. **Branch is never merged.** Worktree is kept for reproducibility until Phase 5 writeup completes, then removed.
+10. **Author the critique file.** Write `analysis/classifications/inspections-reverse-removal_critique.md` by synthesizing every `recurring: true, bucket: intrinsic` entry from the finalized yaml into a prose observation grouped under NS-theorem headings (SoC / DVT / AVT / SoS / ISP / general). Same format as Case 1b's `photo-commonized_critique.md` in the addendum: each entry cites file:line, names the theorem, gives a one-sentence description. Minimum 5 observations; if the yaml has fewer than 5 recurring-intrinsic entries, include non-recurring intrinsic entries that are nevertheless theory-named (e.g. an `archCheck`-surface violation the repair created). This file is §4.6's primary source for Case 1.
+11. **Branch is never merged.** Worktree is kept for reproducibility until Phase 5 writeup completes, then removed.
 
-### Case 2 — Secondary: ProjectPhoto retrospective (commit `b5365d611`)
+### Case 2 — Secondary: ProjectPhoto retrospective (commit `b5365d611`) — DESCRIPTIVE, NON-PROBATIVE
 
-From scouting: 95 files, 4183 insertions, ~91% inside `feat/projects/*` (intra-feature extension), 6% in `feat/shared/database/*` (schema registration), 2% in `feat/findings/*` (refactor).
+From scouting: 95 files, 4183 insertions. The rough shape is dominated by intra-feature extension within `feat/projects/*`, with schema-registry touches in `feat/shared/database/*` and a minor refactor in `feat/findings/*`.
+
+**Purpose of Case 2 is strictly two-fold** and the thesis prose in §4.3 must say this out loud so Case 2 is not misread as a correctness claim:
+
+1. **Tooling gate / dry run.** Before Case 1 runs against a worktree with active repair work, `feature_retro.py` is validated end-to-end on a historical commit where the diff is already known. The gate is collapsed-rename file count ≡ `git show --stat b5365d611`. Mismatch = longest-prefix unit mapping bug; fix before Case 1.
+2. **Descriptive illustration.** §4.3 cites the resulting ripple decomposition as a concrete example of what a real feature addition in Snag actually touched — useful for the reader's intuition about the shape of evolvability in practice. **It is not probative.** Per the Part A methodological note in the addendum, any distribution is compatible with multiple architectural realities; Case 2 shows what *did* happen, not whether what happened was correct. The counterfactual Case 1b is where correctness is argued.
+
+No expected-shape prediction is committed before running, to avoid confirmation bias. Whatever distribution falls out is reported honestly.
 
 **Procedure:**
 1. `python analysis/feature_retro.py --change projectphoto-forward --ref b5365d611 --base-ref b5365d611~1 --stub`
-2. Hand-classify in `classifications/projectphoto-forward.yaml`.
+2. Hand-classify in `classifications/projectphoto-forward.yaml`. For every `bucket: intrinsic` entry with `recurring: true`, set `ns_theorem` per Part J conventions (schema registry sites → DVT, feature-registration aggregation → SoC, etc.).
 3. `python analysis/feature_retro.py --change projectphoto-forward --ref b5365d611 --base-ref b5365d611~1 --finalize`
-4. Expected shape per §4.3 narrative: local ≈ 91%, intrinsic ≈ 8% (schema registry + findings refactor pattern), collateral ≈ 1%. If the numbers come out differently, the discussion in §4.3 covers the surprise honestly.
+4. **Author the critique file.** Write `analysis/classifications/projectphoto-forward_critique.md` with a prose observation list grouped under NS-theorem headings, same format as Case 1b's `photo-commonized_critique.md`. Minimum 3 observations (Case 2 is descriptive; 3 named anomaly sites is enough to illustrate the shape). Each cites file:line on commit `b5365d611`. This file is §4.3's descriptive-illustration primary source.
+5. **Explicit method note in the yaml commit message:** "Case 2 is a tooling gate + descriptive illustration; it is not cited as correctness evidence. See Part A of the phase-2-plan.md addendum for the methodological framing."
 
 ### Case 3 — Synthetic: DVT test scenario
 
@@ -247,14 +259,39 @@ Any of the following touches is an anomaly the §4.6 discussion must name. Commi
 3. **Sub-experiment 3a.** Add the shared attribute at `feat/clients/business/model/.../Client.kt` only, with a default. Run `./gradlew check`. Record every touched file outside `feat/clients/business/model/**` in the yaml. Decide per file whether it was necessary (contract + storage carriers) or an anomaly (redeclaration at a lower layer).
 4. **Sub-experiment 3b.** On the same branch, add the BE-only attribute at `feat/clients/be/app/model/.../BackendClient(Data).kt` only, with a default. Run `./gradlew check`. Record every touched file outside `feat/clients/be/**` as an anomaly (everything FE-facing should remain untouched).
 5. Round-trip serialization test: author a small Kotlin test (in `feat/clients/contract/src/commonTest/`) that deserializes a JSON payload **without** the new shared-attribute field (3a) and a payload **with** it, asserting both parse and round-trip. Only 3a needs this — the 3b BE-only field never reaches the wire. Committed on the experiment branch only.
-6. `python analysis/feature_retro.py --change dvt-client-field --ref experiment/dvt-client-field --stub` → hand-review → `--finalize`. The §4.6 headline numbers printed to stdout are: `3a non-essential touches = N1` and `3b upward-bleed touches = N2`.
-7. Branch kept, not merged.
+6. `python analysis/feature_retro.py --change dvt-client-field --ref experiment/dvt-client-field --stub` → hand-review → `--finalize`. The §4.6 headline numbers printed to stdout are: `3a non-essential touches = N1` and `3b upward-bleed touches = N2`. During hand-review, set `ns_theorem: DVT` on every recurring-intrinsic entry (Case 3 is DVT-specific by construction); any non-DVT anomaly observed in passing (e.g. an ISP violation in a test fixture) should be labeled with its actual theorem.
+7. **Author the critique file.** Translate the locked anomaly taxonomy table into `analysis/classifications/dvt-client-field_critique.md` as a prose observation list, one entry per observed anomaly from 3a and 3b, grouped under DVT sub-headings (mechanism 1 / mechanism 2 / cross-theorem notes) for internal organization and then aligned to the top-level SoC/DVT/AVT/SoS/ISP/general heading structure used across the other critique files. Each entry cites the specific file:line of the actual touch, names the DVT mechanism that failed, and gives a one-sentence description. Same format as Case 1b's `photo-commonized_critique.md`. §4.6 primary source for Case 3.
+8. Branch kept, not merged.
 
-### Case 4 — Optional tertiary: iOS-only Project extension
+### Case 4 — Recommended tertiary: iOS-only Project extension (platform-axis counterfactual)
 
-Only execute if Phase 2 calendar allows. Procedure analogous to Case 3 but on a different branch, targeting `Project` with an `iosCacheLocalPath: String?` field introduced in `feat/projects/business/model/src/iosMain/...` as an `IosProject` interface extending the shared `Project`. The test is whether *zero files in commonMain* need to change — if any commonMain touch is forced, it's a platform-axis anomaly and goes into §4.6 discussion.
+**Elevated from optional to recommended ship** after the addendum's methodological discussion. Rationale: the thesis evidence for §4.6 comes from three distinct counterfactual axes, and each axis tests a different aspect of "correct scoping" that the others cannot substitute for:
 
-Skip without guilt if time-pressed; the primary (Case 1) + secondary (Case 2) + DVT synthetic (Case 3) cover §4.3 + §4.6 sufficiently.
+| Counterfactual axis | Case | What it tests |
+|---|---|---|
+| Hex-layer axis (correct vs commonized placement at the application layer) | Case 1b (addendum) | SoC / DVT / AVT / ISP via forced commonization of AddFindingPhoto |
+| Data-version axis (field added, DVT mechanism absorbs or doesn't) | Case 3 (3a + 3b) | DVT mechanisms 1 and 2 |
+| Platform axis (platform-specific code added, multiplatform-level containment absorbs or doesn't) | **Case 4** | SoC / DVT on the multiplatform-level dimension |
+
+Skipping Case 4 leaves the platform axis uncovered. It is cheap (~1 day) and methodologically analogous to Case 3, so the cost of shipping it is proportionate to the thesis value it adds. Skip only if Cases 1 + 1b + 2 + 3 are all still incomplete at end of day 7 — otherwise ship.
+
+**Target:** `Project` entity. Introduce an iOS-only field `iosCacheLocalPath: String?` via a new `IosProject` interface in `feat/projects/business/model/src/iosMain/.../` that extends the shared `Project` interface. The field semantically belongs only at the iOS level (iOS file system cache path has no meaning on other platforms).
+
+**Claim under test:** *Zero files in `commonMain` (of any `feat/projects/**` module) should require modification. Any forced `commonMain` touch is a platform-axis anomaly.*
+
+**Procedure:**
+1. `git worktree add .claude/worktrees/ios-only-project experiment/ios-only-project-field` off `main`.
+2. Commit the stub `classifications/ios-only-project-field.yaml` with the anomaly taxonomy populated **before** writing any code — same discipline as Case 3. Taxonomy:
+   - ANY touch in `feat/projects/**/src/commonMain/**` → SoC violation (platform concern leaking into platform-agnostic code). **Critical.**
+   - ANY touch in `feat/projects/**/src/nonWebMain/**` or any non-iOS-specific source set → SoC violation (iOS concern leaking into broader multiplatform level). **Critical.**
+   - ANY touch outside `feat/projects/**` (e.g. in another feature or in `koinModulesAggregate`) → SoC violation (cross-feature platform coupling). **High.**
+   - FE SQLDelight migration for a native-only column on iOS target → **not an anomaly** (schema evolution legitimately requires a migration).
+3. Add the iOS-only field: new `IosProject` interface + `IosProjectData` data class in `feat/projects/business/model/src/iosMain/.../`, with a default for the new field. Do not touch the shared `Project.kt` or any other source set initially.
+4. Run `./gradlew check --continue`. Fix every failure in one pass. Every fix outside `feat/projects/**/src/iosMain/**` is recorded as an anomaly in the yaml against the locked taxonomy. `archCheck` must pass on the final state or its violation is itself recorded as data.
+5. `python analysis/feature_retro.py --change ios-only-project-field --ref experiment/ios-only-project-field --stub` → hand-review → `--finalize`. §4.6 headline number printed to stdout: `commonMain forced touches = N` and `non-iOS-source-set forced touches = M`.
+6. During hand-review, set `ns_theorem` on every anomaly entry — primarily SoC (platform concern leak) with DVT as secondary for any field-enumeration sites.
+7. **Author the critique file.** Write `analysis/classifications/ios-only-project-field_critique.md` with the observation list grouped under NS-theorem headings (same format as Case 1b's). Each entry cites the file:line forced to change and names why it is an anomaly on the platform axis. Minimum observation count: **all** anomaly touches must be listed — if the count is zero (ideal case), the file still exists with a one-paragraph "zero forced touches observed; architecture contained the iOS-only attribute at the iOS source set as predicted" note. A zero-count critique file is strong evidence; an empty or missing critique file is not.
+8. Branch kept, not merged.
 
 ---
 
@@ -633,3 +670,142 @@ To be created / modified:
 - Merging the counterfactual or evolution branches into main — they are experimental artifacts.
 - A third replicate flow beyond AddFindingPhoto and AddProjectPhoto — two is sufficient for a pattern; three becomes disproportionate effort.
 - Updating the `feat/findings` production architecture to match any lesson drawn from the counterfactual — the counterfactual tests the current architecture, not a proposal to change it. Any improvements are a separate conversation, post-thesis.
+
+## J. Cross-case harmonization (verification of original Phase 2 cases against addendum principles)
+
+This section captures the findings of verifying the original Phase 2 cases (1, 2, 3, 4 from the sections above) against the addendum's methodological principles (duality of static metrics, necessity of comparative evidence, requirement for numeric + theory-grounded qualitative observation halves, correction that divergence is legitimate at any hex layer, NS-theorem labeling vocabulary). The verification produced a set of edits to each original case — those edits are already applied in the sections above; this subsection is the durable record of *why* the edits were made and *what* they accomplish.
+
+### J.1 Alignment summary per case
+
+| Case | Duality addressed | Comparative structure | Numeric + qualitative | NS theorem labels | Verdict |
+|---|---|---|---|---|---|
+| 1 — inspections reverse removal | Weakly (implicit baseline only) | Weak (before/after = coupling, not scoping) | Was pure numeric → **now + critique file** | Was missing → **now required via `ns_theorem` field + critique file** | Aligned after edits; keep |
+| 2 — ProjectPhoto retrospective | No (by design, descriptive) | None (by design) | Was pure numeric → **now + critique file** | Was missing → **now required** | Aligned as *explicitly descriptive* after edits; keep, reframe applied |
+| 3 — DVT synthetic Client | Yes (theoretical baseline: DVT predicts zero anomalies) | Present (locked anomaly taxonomy) | Already had both (taxonomy table) → **now + critique file for format uniformity** | Implicit → **now explicit DVT labels + cross-theorem notes** | Strongly aligned; minor format harmonization applied |
+| 1b — counterfactual commonization | Yes (empirical baseline: correct vs commonized branch) | Present (two branches) | Both halves from the start | Explicit from the start | Addendum-native; no edit needed |
+| 4 — iOS-only Project extension | Yes (theoretical baseline: zero commonMain touches) | Present (locked taxonomy) | Was light → **now + critique file** | Was missing → **now required** | **Elevated from optional to recommended; ship** |
+
+All five cases (1, 1b, 2, 3, 4) now satisfy the addendum's methodological requirements. No case was dropped. Cases 1 and 2 needed the most adjustment (qualitative halves were missing); Case 1b was addendum-native; Case 3 was already strongly aligned and needed only format harmonization; Case 4 was well-aligned in spirit but undersold — elevating it provides the platform-axis counterfactual without which §4.6 would be missing one leg of the triangulated evidence.
+
+### J.2 `ns_theorem` field — schema extension
+
+The `classifications/<change>.yaml` schema gains an optional `ns_theorem` field on repair-log entries, documented in the Schema D section above. This subsection expands the labeling conventions.
+
+**When the field is required.** Every repair-log entry with `bucket: intrinsic` and `recurring: true` must have `ns_theorem` set during hand-classification. For non-recurring intrinsic entries and for collateral/local entries, the field is optional but encouraged where the entry names a known NS anomaly.
+
+**Allowed values.** Exactly one of:
+
+- `SoC` — Separation of Concerns. The touched site fuses two or more concerns that the theory says should be separated. Common Snag shapes: `koinModulesAggregate/**` (module identity fused with DI registration), `*SyncHandler.kt` registry (feature identity fused with sync routing), `settings.gradle.kts` (build-graph membership fused with module identity).
+- `DVT` — Data Version Transparency. The touched site enumerates field-level knowledge of a data structure that the theory says should be version-transparent. Common Snag shapes: `DevDataSeeder` (seeder enumerates entity fields), FE SQLDelight column migrations that mirror backend fields, `testInfra/**` fixtures that construct entity `Data` classes positionally.
+- `AVT` — Action Version Transparency. The touched site forwards a dependency version it should hide. Common Snag shapes: an `api`-scope module dependency that should have been `implementation`; a module that re-exports an internal type because a downstream commonMain consumer needs it; any Gradle edge promoted from `implementation` to `api` to make a commonization compile (expected only in Case 1b).
+- `SoS` — Separation of State. The touched site fuses platform-specific state with shared state. Common Snag shapes: a `commonMain` holder lifted from platform-specific scope, a Koin single-scoped provider that hides platform divergence.
+- `ISP` — Interface Segregation Principle (not one of the four NS theorems, but a related anomaly category). The touched site is a port or interface that carries methods only one implementation uses meaningfully, or uses default arguments to paper over a "method only web needs" shape. Common Snag shapes: any port that ended up with `fun onProgress(...) = Unit` default implementations.
+- `general` — reviewer-judgment anomalies that don't fit the above. Use sparingly; fewer generic labels is better. If more than ~20% of a critique file's observations land in `general`, the labeling discipline is too loose and needs review.
+
+**Labeling in the yaml.** One-line per entry:
+
+```yaml
+repair_log:
+  - file: "koinModulesAggregate/fe/src/commonMain/.../FrontendModulesAggregate.kt"
+    unit: ":koinModulesAggregate:fe::commonMain"
+    status: M
+    loc_churn: 12
+    bucket: intrinsic
+    recurring: true
+    source: "rule:aggregation_koin"
+    reason: "Feature DI registration; every new feature adds a line here"
+    ns_theorem: SoC
+```
+
+The `reason` field stays free-form; `ns_theorem` is the controlled-vocabulary category. Both are read by the critique-file author during step "Author the critique file" of each case.
+
+**Enforcement.** `feature_retro.py --finalize` emits a warning on every recurring-intrinsic entry missing `ns_theorem`, but does not fail the run. This lets the schema migrate incrementally — finalized yaml files from earlier runs keep working until their next re-finalize pass. After all Phase 2 cases have shipped and are labeled, a follow-up tightening changes the warning to a reject; that tightening is out of scope for Phase 2 itself.
+
+### J.3 Critique file matrix
+
+Every case produces one `<change_id>_critique.md` file. Format is the Part D observation list from the addendum (file:line citation + NS-theorem heading + one-sentence description). Case 1b produces two critique files (one per branch) because it is the only case with a paired correct/counterfactual comparison.
+
+| Case | Critique file path | Authored when | Content source | Minimum observation count |
+|---|---|---|---|---|
+| 1 | `analysis/classifications/inspections-reverse-removal_critique.md` | After `--finalize` of Case 1 yaml | Synthesis of recurring-intrinsic entries from the yaml | 5 |
+| 2 | `analysis/classifications/projectphoto-forward_critique.md` | After `--finalize` of Case 2 yaml | Synthesis of intrinsic entries from the yaml | 3 (descriptive illustration) |
+| 1b correct | `analysis/classifications/photo-correct_critique.md` | Before counterfactual starts | Read of `feat/findings/fe/driving/impl/src/{nonWebMain,webMain}/` on `main` | 3 (positive observations) |
+| 1b commonized | `analysis/classifications/photo-commonized_critique.md` | During commonization (not after) | Observations as they arise during the forced commonization | 5 |
+| 3 | `analysis/classifications/dvt-client-field_critique.md` | After `--finalize` of Case 3 yaml | Translation of locked anomaly taxonomy into prose observations | All observed anomalies; zero-anomaly case states "zero forced touches observed" explicitly |
+| 4 | `analysis/classifications/ios-only-project-field_critique.md` | After `--finalize` of Case 4 yaml | All observed commonMain / non-iOS-source-set touches | All observed; zero-count case states "zero forced touches observed" explicitly |
+
+Six critique files total. Format convergence across §4.6 sources is the point: Phase 5 prose can pull from any of them with the same heading structure and citation style, without needing per-case adapters.
+
+**Format anchor.** The Part D format block in the addendum (`### SoC-1: platform branching in commonMain use-case implementation`) is the canonical template. All six critique files use it.
+
+### J.4 §4.7 four-headline coordination
+
+The original Phase 2 plan had one §4.7 headline number: "N recurring intrinsic units." The addendum added another: "delta ratio B2/B1 from the counterfactual." This verification adds two more, producing **four complementary headlines** that together constitute the §4.7 synthesis:
+
+1. **Recurring intrinsic units across Cases 1+2** (combined). *Descriptive combinatorial-effect count.* Shows that the aggregate number of "every feature has to touch this spot" sites in Snag is bounded, not combinatorial. Drawn from the intrinsic-recurring entries in both cases' yaml + critique files.
+2. **Case 1b delta ratio (B2/B1, files_2/files_1)** across the counterfactual commonization. *Empirical counterfactual evidence on the hex-layer axis.* Shows that the correct scoping is load-bearing: forcing commonization at the application layer produces a measurable blast-radius multiplier for a realistic evolution step.
+3. **Case 3 anomaly counts (3a: N1, 3b: N2)**. *Theoretical counterfactual evidence on the data-version axis.* Shows that DVT mechanisms (layered/level model isolation + default absorption) absorb field additions as the theory predicts, or, if they don't, names the specific absorption failures.
+4. **Case 4 forced-commonMain-touches count**. *Theoretical counterfactual evidence on the platform axis.* Shows that the multiplatform-level hierarchy contains iOS-only concerns at the iOS source set as the theory predicts, or names the specific containment failures.
+
+**Triangulation, not redundancy.** Each headline tests a distinct aspect of "correct scoping":
+
+- #1 is descriptive; it answers "is the combinatorial effect bounded in practice?"
+- #2 is empirical-comparative on the hex-layer axis; it answers "does the placement at the application layer materially affect evolvability cost?"
+- #3 is theory-comparative on the data-version axis; it answers "do DVT mechanisms absorb data changes as predicted?"
+- #4 is theory-comparative on the platform axis; it answers "does the multiplatform-level hierarchy contain platform-specific changes as predicted?"
+
+Collapsing any one of these into the others would lose a distinct claim. §4.7 prose presents them in that order — descriptive first to set the scene, then the three counterfactual axes — and closes with a synthesis paragraph noting that agreement across the four headlines is the thesis's strongest available evidence that correct scoping is not incidental.
+
+### J.5 Prose role assignment per §
+
+The verification tightens the §-assignments originally sketched in the addendum. All original cases and Case 1b feed specific sections; nothing is used twice for the same purpose.
+
+**§4.2 — Sharing quantification:**
+- Phase 1 sharing heatmap (existing)
+- Part A layer-divergence metric (addendum) — descriptive per-layer platform-specific LOC share
+- Method note: explicitly label both as *descriptive, non-probative*, with forward reference to §4.3 / §4.9 for correctness argument
+
+**§4.3 — Feature-level evolvability case studies:**
+- Case 1 (inspections reverse removal) — primary combinatorial-effect evidence + NS-labeled intrinsic-recurring findings
+- Case 2 (ProjectPhoto retrospective) — *descriptive illustration*, explicitly non-probative
+- Case 1b (counterfactual commonization) — empirical counterfactual on the hex-layer axis
+- Case 4 (iOS-only Project) — theoretical counterfactual on the platform axis
+- Ripple decomposition (local/intrinsic/collateral) as the shared format across all four cases
+
+**§4.6 — NS theorems mapped to measured data:**
+- **SoC:** Case 1b critique (commonMain branching introduced by commonization), Case 1 critique (koinModulesAggregate, SyncHandler registry), Case 4 critique (any forced commonMain touch)
+- **DVT:** Case 3 (primary), Case 1b critique (forced sealed `PhotoUploadResult`), Case 2 critique (schema registry)
+- **AVT:** Case 1b critique (any `implementation` → `api` promotion forced by commonization). If Case 1b produces zero AVT observations, that is a finding — the existing architecture already honored AVT, and the counterfactual could not escape it.
+- **SoS:** any state-lifting observations from Case 1b critique. Likely small or zero; if so, note that Case 3's mechanism-1 framing already covered the state axis indirectly.
+- **ISP:** Case 1b critique (any port method only one implementation uses meaningfully)
+- Critique files are primary sources; yaml classifications are supporting evidence
+
+**§4.7 — Results synthesis:**
+- Four headlines from §J.4 above
+- Closing synthesis paragraph on triangulation
+
+**§4.9 — Threats to validity:**
+- **Duality caveat**, applied explicitly to Cases 1 and 2: their static numbers are compatible with multiple architectural realities and do not by themselves adjudicate correctness
+- Cases 1b, 3, 4 named as the counterfactual mechanisms that break the duality — and the reader is told that the thesis rests on these three comparative structures agreeing with each other, not on any single one
+- Honesty-of-counterfactual caveats: the commonized branch in Case 1b must be a plausible less-careful engineering choice, not a straw man; Cases 3 and 4 use theoretical rather than empirical baselines and the precision of the "zero anomalies expected" claim rests on the thesis's statement of what DVT and multiplatform-level containment guarantee
+
+### J.6 Verification additions for the cross-case work
+
+The addendum's verification section §H already covers Case 1b. This subsection adds the verification items that cover the rest of the cross-case harmonization.
+
+1. **`ns_theorem` field present on every recurring-intrinsic entry.** Across the finalized yaml files for Cases 1, 2, 3, 4, every entry with `bucket: intrinsic` and `recurring: true` has a non-empty `ns_theorem` value from the allowed set. `feature_retro.py --finalize` prints a warning line per missing label; verification passes iff every recurring-intrinsic entry across all cases is labeled.
+2. **Six critique files committed.** The matrix in §J.3 lists six file paths. All six must exist on their respective experiment branches (or on the corresponding `experiment/*` worktree for Cases 1, 1b, 3, 4; or on the feature branch that commits Case 2's retrospective classification). Each file has the minimum observation count from the §J.3 matrix and uses the Part D format anchor.
+3. **Case 4 ships unless explicitly cancelled.** Elevation from "optional" to "recommended" means the default is ship. Cancellation requires an explicit note in the PR B description naming which of Cases 1 + 1b + 2 + 3 overran and why. Silent omission of Case 4 is not allowed by the revised plan.
+4. **Case 2 commit message carries the non-probative note.** The git commit that lands `classifications/projectphoto-forward.yaml` and its critique file must include the sentence "Case 2 is a tooling gate + descriptive illustration; it is not cited as correctness evidence." This forces the reframing into the repo's durable record so a future reader cannot accidentally cite Case 2 as probative.
+5. **§J.4 headline numbers printed to stdout.** Each case's `feature_retro.py --finalize` run prints its respective headline line to stdout; the comparison script for Case 1b prints the delta ratio. A Phase 5 prose author can copy the four headlines verbatim from four terminal outputs without re-deriving them.
+6. **Critique file SoC/DVT/AVT/SoS/ISP heading coverage.** Across the six critique files taken together, every NS theorem heading (SoC, DVT, AVT, SoS, ISP) appears at least once. If a heading is entirely absent, §4.6 has a gap: either the theorem was not exercised by any case (honest finding to note in §4.9) or the critique files under-reported. Determine which, and document.
+
+### J.7 What this verification did NOT change
+
+For future-me reading this: some things were considered and intentionally kept as-is.
+
+- **Case 1's "recurring intrinsic" methodology stays.** The addendum could have pushed Case 1 to be converted into a full before/after counterfactual, but that would have required a second Case 1 on a different feature (for empirical replication) and doubled its cost. Instead, Case 1 stays a single observational experiment with the recurring-intrinsic headline, and its §4.6 evidence is strengthened by critique-file NS labels rather than by structural replication.
+- **Case 2 is not dropped.** Descriptive evidence still has value when it is honest about being descriptive. Case 2 serves both as a tooling gate (catches `feature_retro.py` bugs before they reach Case 1's active repair work) and as §4.3 intuition-builder ("here is what a real feature addition in Snag actually touched").
+- **Case 3 stays DVT-focused.** Broadening Case 3 to test SoC/AVT/SoS/ISP in addition to DVT would dilute it. DVT has a specific theoretical baseline (layered/level model isolation + default absorption mechanisms from §Návrh DVT); adding broader theorem tests would require separate experiments with separate baselines.
+- **`blast_radius_module` stays the file-annotation metric in §4.3.** Kept as-is for its original purpose. The addendum and this verification did not replace it.
+- **Phase 5 Czech prose remains out of scope for Phase 2.** All the §4.3 / §4.6 / §4.7 / §4.9 assignments in this addendum + verification are structural (which case feeds which section), not prose. Writing the Czech is the Phase 5 job and has its own plan.
