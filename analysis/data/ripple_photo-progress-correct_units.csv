@@ -1,0 +1,9 @@
+unit,module_path,source_set,file_count,loc_churn_sum,dominant_bucket,recurring,blast_radius_module,blast_radius_unit
+:feat:findings:fe:app:api::webMain,:feat:findings:fe:app:api,webMain,1,5,local,False,4,16
+:feat:findings:fe:app:impl::webMain,:feat:findings:fe:app:impl,webMain,1,7,local,False,3,9
+:feat:findings:fe:app:impl::webTest,:feat:findings:fe:app:impl,webTest,1,19,local,False,3,9
+:feat:findings:fe:driving:impl::webMain,:feat:findings:fe:driving:impl,webMain,1,14,local,False,1,1
+:feat:projects:fe:app:api::webMain,:feat:projects:fe:app:api,webMain,1,5,local,False,7,30
+:feat:projects:fe:app:impl::webMain,:feat:projects:fe:app:impl,webMain,1,7,local,False,4,13
+:feat:projects:fe:app:impl::webTest,:feat:projects:fe:app:impl,webTest,1,26,local,False,4,13
+:feat:projects:fe:driving:impl::webMain,:feat:projects:fe:driving:impl,webMain,1,14,local,False,2,8

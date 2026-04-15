@@ -1,0 +1,101 @@
+change_id: photo-progress-commonized
+ref: experiment/photo-progress-commonized
+base_ref: experiment/commonize-photo
+base_sharing_snapshot: analysis/data/sharing_report_with_loc_base_commonize-photo_70b7910cb.csv
+repair_log:
+- file: feat/findings/fe/app/api/src/commonMain/kotlin/cz/adamec/timotej/snag/findings/fe/app/api/AddFindingPhotoUseCase.kt
+  unit: :feat:findings:fe:app:api::commonMain[FE]
+  status: M
+  loc_churn: 5
+  bucket: local
+  recurring: false
+  source: hand
+  reason: 'commonMain use-case interface signature widening on the commonized base. Forced by the counterfactual commonization — on main, this would have been a webMain-only edit (see photo-progress-correct.yaml).'
+- file: feat/findings/fe/app/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/findings/fe/app/impl/internal/AddFindingPhotoUseCaseImpl.kt
+  unit: :feat:findings:fe:app:impl::commonMain[FE]
+  status: M
+  loc_churn: 6
+  bucket: local
+  recurring: false
+  source: hand
+  reason: 'commonMain use-case impl threads onProgress to the port. Forced by commonization.'
+- file: feat/findings/fe/app/impl/src/nonWebMain/kotlin/cz/adamec/timotej/snag/findings/fe/app/impl/internal/NonWebFindingPhotoStoragePort.kt
+  unit: :feat:findings:fe:app:impl::nonWebMain
+  status: M
+  loc_churn: 3
+  bucket: local
+  recurring: false
+  source: hand
+  reason: 'NonWeb port impl forced to accept onProgress param it cannot use (ISP smell — annotated inline in source). On main, this file does not exist; nonWeb path goes directly to LocalFileStorage in NonWebAddFindingPhotoUseCaseImpl.'
+- file: feat/findings/fe/app/impl/src/webMain/kotlin/cz/adamec/timotej/snag/findings/fe/app/impl/internal/WebFindingPhotoStoragePort.kt
+  unit: :feat:findings:fe:app:impl::webMain
+  status: M
+  loc_churn: 21
+  bucket: local
+  recurring: false
+  source: hand
+  reason: 'Web port impl threads onProgress: emits synthetic 0f / 1f around remoteFileStorage.uploadFile (RemoteFileStorage signature unchanged, same as on correct branch).'
+- file: feat/findings/fe/driving/impl/src/webMain/kotlin/cz/adamec/timotej/snag/findings/fe/driving/impl/internal/findingDetail/vm/WebFindingDetailViewModel.kt
+  unit: :feat:findings:fe:driving:impl::webMain
+  status: M
+  loc_churn: 14
+  bucket: local
+  recurring: false
+  source: hand
+  reason: 'Web VM passes non-default onProgress callback + exposes uploadProgressFlow StateFlow. Same shape of edit as on photo-progress-correct, no semantic difference at this site.'
+- file: feat/findings/fe/ports/src/commonMain/kotlin/cz/adamec/timotej/snag/findings/fe/ports/FindingPhotoStoragePort.kt
+  unit: :feat:findings:fe:ports::commonMain[FE]
+  status: M
+  loc_churn: 1
+  bucket: local
+  recurring: false
+  source: hand
+  reason: 'Port interface signature widening — onProgress added with default = {}. AVT cost: this widening recompiles every downstream FE target (5 leaves) of the ports module.'
+- file: feat/projects/fe/app/api/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/app/api/AddProjectPhotoUseCase.kt
+  unit: :feat:projects:fe:app:api::commonMain[FE]
+  status: M
+  loc_churn: 5
+  bucket: local
+  recurring: false
+  source: hand
+  reason: 'Mirror of findings AddFindingPhotoUseCase commonMain signature widening.'
+- file: feat/projects/fe/app/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/app/impl/internal/AddProjectPhotoUseCaseImpl.kt
+  unit: :feat:projects:fe:app:impl::commonMain[FE]
+  status: M
+  loc_churn: 6
+  bucket: local
+  recurring: false
+  source: hand
+  reason: 'Mirror of findings AddFindingPhotoUseCaseImpl edit.'
+- file: feat/projects/fe/app/impl/src/nonWebMain/kotlin/cz/adamec/timotej/snag/projects/fe/app/impl/internal/NonWebProjectPhotoStoragePort.kt
+  unit: :feat:projects:fe:app:impl::nonWebMain
+  status: M
+  loc_churn: 3
+  bucket: local
+  recurring: false
+  source: hand
+  reason: 'Mirror of findings NonWeb port impl ISP-smell edit.'
+- file: feat/projects/fe/app/impl/src/webMain/kotlin/cz/adamec/timotej/snag/projects/fe/app/impl/internal/WebProjectPhotoStoragePort.kt
+  unit: :feat:projects:fe:app:impl::webMain
+  status: M
+  loc_churn: 21
+  bucket: local
+  recurring: false
+  source: hand
+  reason: 'Mirror of findings Web port impl progress threading.'
+- file: feat/projects/fe/driving/impl/src/webMain/kotlin/cz/adamec/timotej/snag/projects/fe/driving/impl/internal/projectDetails/vm/WebProjectDetailsViewModel.kt
+  unit: :feat:projects:fe:driving:impl::webMain
+  status: M
+  loc_churn: 14
+  bucket: local
+  recurring: false
+  source: hand
+  reason: 'Mirror of findings Web VM uploadProgressFlow exposure.'
+- file: feat/projects/fe/ports/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/ports/ProjectPhotoStoragePort.kt
+  unit: :feat:projects:fe:ports::commonMain[FE]
+  status: M
+  loc_churn: 1
+  bucket: local
+  recurring: false
+  source: hand
+  reason: 'Mirror of findings FindingPhotoStoragePort signature widening.'
