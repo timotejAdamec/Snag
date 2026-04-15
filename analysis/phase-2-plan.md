@@ -809,3 +809,61 @@ For future-me reading this: some things were considered and intentionally kept a
 - **Case 3 stays DVT-focused.** Broadening Case 3 to test SoC/AVT/SoS/ISP in addition to DVT would dilute it. DVT has a specific theoretical baseline (layered/level model isolation + default absorption mechanisms from §Návrh DVT); adding broader theorem tests would require separate experiments with separate baselines.
 - **`blast_radius_module` stays the file-annotation metric in §4.3.** Kept as-is for its original purpose. The addendum and this verification did not replace it.
 - **Phase 5 Czech prose remains out of scope for Phase 2.** All the §4.3 / §4.6 / §4.7 / §4.9 assignments in this addendum + verification are structural (which case feeds which section), not prose. Writing the Czech is the Phase 5 job and has its own plan.
+
+---
+
+## K. Pending thesis-repo edits (rollup checklist)
+
+**Scope.** This section is a single-page index of every edit Phase 2 work has accumulated against `~/Ctu/dp-thesis-timotej-adamec/text/text.tex` that has not yet been made. Phase 5 prose is **not** in this list (out of scope). What is in this list: mechanical LaTeX edits — operationalization-table rows and one-sentence caveat inserts — whose content is fully decided in Phase 2 but whose landing is deferred so thesis-repo commits stay bundled and small.
+
+Whenever a Phase 2 part ships in this repo, this section should be updated: either the item moves to "done" (if the thesis edit was made in the same session) or it stays pending with the source-of-truth pointer updated. The point is that a Phase 5 author opening this plan can find every pending thesis edit in one place without grepping across §A–§J.
+
+### K.1 Pending edits
+
+| ID | §-target | What to insert | Source of truth | Status |
+|---|---|---|---|---|
+| **T-1** | §4.1 `tab:eval-operacionalizace` | O1 row: "Podíl platformně-specifického LOC podle vrstvy hexagonální architektury (deskriptivní, nevyvracející)" — tooling cite `figures.py::figure_layer_divergence` — dataset cite SharingReport CSV ⋈ tokei LOC | `phase-2-plan.md` lines 433–444 (exact LaTeX spec) | **Pending**. Deferred intentionally: will land together with T-2 + T-3 in one thesis-repo commit once Part B also has its op rows ready. |
+| **T-2** | §4.1 `tab:eval-operacionalizace` | O2a row: Part B correct-branch ripple bucket counts (AddFindingPhoto progress-callback realistic evolution) — tooling cite `feature_retro.py` — dataset cite `analysis/data/ripple_photo-progress-correct_*.csv` | `phase-2-plan.md` §F + §G (to be drafted in Part B preflight) | **Pending**. Part B not yet run; row cannot be written until the branch exists. |
+| **T-3** | §4.1 `tab:eval-operacionalizace` | O2b row: Part B commonized-branch ripple bucket counts (forced commonMain placement) — tooling cite `feature_retro.py` — dataset cite `analysis/data/ripple_photo-progress-commonized_*.csv` | `phase-2-plan.md` §F + §G (to be drafted in Part B preflight) | **Pending**. Part B not yet run. |
+| **T-4** | §4.2 introduction | One-sentence method note: "Metriky tabulky jsou deskriptivní — stejné hodnoty jsou kompatibilní s více architektonickými scénáři (správným, nadgeneralizovaným, fragmentovaným); korektnost rozvahy je argumentována protipříkladem v §4.3 a kaveáty v §4.9." (Czech phrasing by Phase 5 author; sentence content locked by the addendum.) | `phase-2-plan.md` §E line 600 (duality framing), §J.5 line 766 (explicit method-note requirement) | **Pending**. One-liner, belongs in the same thesis-repo commit as T-1..T-3. |
+| **T-5** | §4.9 threats-to-validity | One-sentence caveat restating the duality framing: that per-layer sharing ratios describe structure, not correctness, and that the §4.3 counterfactual is the mechanism by which correctness is argued. | `phase-2-plan.md` §J.5 line 789, §E line 600 | **Pending**. Same bundled commit as T-4. |
+
+### K.2 Already captured (no thesis-repo action needed)
+
+These items are permanently captured in Phase 2 repo artifacts and Phase 5 prose can pull from them directly without any intermediate thesis-repo edit:
+
+- **Part A data + figure.** `analysis/data/layer_divergence.csv`, `analysis/figures/fig_4_2_layer_divergence.pdf/png` — shipped in commit `6905cca15`. §4.2 table + figure pull from here.
+- **Case 2 §4.3 primary source.** `analysis/classifications/projectphoto-forward_critique.md` — shipped in commit `550fd426b`. Four observations, NS-theorem-headed.
+- **Case 2 §4.6 DVT citation.** Inside the Case 2 critique file, Obs 1 cites `AllTables.kt:24` as the schema-registry DVT site. §4.6 DVT bullet (per §J.5 line 777) uses this observation.
+- **Case 2 §4.7 headline** (`recurring intrinsic units = 1`). Captured in commit `550fd426b` message, critique file, and reproducible any time via `python analysis/feature_retro.py --change projectphoto-forward --base-ref b5365d611~1 --ref b5365d611 --finalize` stdout. §4.7 prose copies the number verbatim.
+- **Case 2 non-probative audit sentence.** Commit `550fd426b` message contains the exact sentence required by §J.6 item 4: "Case 2 is a tooling gate + descriptive illustration; it is not cited as correctness evidence." The repo's durable record carries the reframing so a future reader cannot accidentally cite Case 2 as probative.
+- **§4.3 / §4.6 / §4.7 / §4.9 artifact-to-section map.** `phase-2-plan.md` §J.5 lines 763–790 is the definitive map of which repo artifact feeds which thesis section. Phase 5 author reads §J.5 first, then pulls from the listed artifacts.
+
+### K.3 Update protocol
+
+Every time a Phase 2 part ships in this repo:
+
+1. Check §K.1: does this part unblock any pending thesis edit? If yes, either (a) make the edit now in one thesis-repo commit and move the row to §K.2, or (b) leave it pending and update the "Source of truth" column if the spec has moved.
+2. Check §K.2: does this part produce a new already-captured artifact Phase 5 will need? Add a row.
+3. Never silently drop a §K.1 item. If a pending edit is no longer wanted (e.g. the op row becomes obsolete), delete the row with a one-line reason on the same commit.
+
+### K.4 Planned thesis-repo commits
+
+Current plan is **one bundled commit** in `~/Ctu/dp-thesis-timotej-adamec/` once Part B ships:
+
+```
+[J:MEP-0] §4.1 Phase 2 operationalization rows + §4.2/§4.9 duality caveats
+
+- §4.1 tab:eval-operacionalizace: add O1 (Part A), O2a (Part B correct),
+  O2b (Part B commonized) rows with tooling + dataset citations.
+- §4.2 introduction: add one-sentence method note framing per-layer
+  metrics as descriptive, forward-ref to §4.3 / §4.9.
+- §4.9 threats-to-validity: add one-sentence duality caveat.
+
+Content decided in Phase 2 (see analysis/phase-2-plan.md §K of the
+Snag repo on branch chore/phase-2-ripple-tooling). This commit is
+mechanical LaTeX insertion; Czech phrasing for the one-liners is the
+Phase 5 prose author's final judgment call.
+```
+
+This commit runs after Part B completes and before Phase 2 ships its final PR. If Part B gets delayed past Phase 2 PR merge, split: land T-1, T-4, T-5 as one commit (Part A + caveats), and T-2, T-3 as a second commit when Part B data exists.
