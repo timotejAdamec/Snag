@@ -14,11 +14,11 @@ from feature_retro import PrefixRow, Rule, TouchedFile
 def _snapshot() -> list[PrefixRow]:
     # Deliberately unsorted on input — map_path_to_unit uses the sorted copy.
     rows = [
-        PrefixRow(":feat:projects:business:model", "commonMain", "feat/projects/business/model/src/commonMain"),
-        PrefixRow(":feat:projects:fe:app:impl", "commonMain", "feat/projects/fe/app/impl/src/commonMain"),
-        PrefixRow(":feat:projects:fe:app:impl", "androidMain", "feat/projects/fe/app/impl/src/androidMain"),
-        PrefixRow(":core:foundation:common", "commonMain", "core/foundation/common/src/commonMain"),
-        PrefixRow(":koinModulesAggregate:fe", "commonMain", "koinModulesAggregate/fe/src/commonMain"),
+        PrefixRow(":feat:projects:business:model", "commonMain", "feat/projects/business/model/src/commonMain", platform_set="all"),
+        PrefixRow(":feat:projects:fe:app:impl", "commonMain", "feat/projects/fe/app/impl/src/commonMain", platform_set="frontend"),
+        PrefixRow(":feat:projects:fe:app:impl", "androidMain", "feat/projects/fe/app/impl/src/androidMain", platform_set="android"),
+        PrefixRow(":core:foundation:common", "commonMain", "core/foundation/common/src/commonMain", platform_set="all"),
+        PrefixRow(":koinModulesAggregate:fe", "commonMain", "koinModulesAggregate/fe/src/commonMain", platform_set="frontend"),
     ]
     rows.sort(key=lambda r: len(r.source_set_dir_rel), reverse=True)
     return rows
@@ -26,44 +26,48 @@ def _snapshot() -> list[PrefixRow]:
 
 def test_longest_prefix_picks_more_specific_module():
     snapshot = _snapshot()
-    module, source_set = feature_retro.map_path_to_unit(
+    module, source_set, platform_set = feature_retro.map_path_to_unit(
         "feat/projects/fe/app/impl/src/commonMain/kotlin/cz/.../ProjectSyncHandler.kt",
         snapshot,
     )
     assert module == ":feat:projects:fe:app:impl"
     assert source_set == "commonMain"
+    assert platform_set == "frontend"
 
 
 def test_longest_prefix_distinguishes_source_sets_in_same_module():
     snapshot = _snapshot()
-    module, source_set = feature_retro.map_path_to_unit(
+    module, source_set, platform_set = feature_retro.map_path_to_unit(
         "feat/projects/fe/app/impl/src/androidMain/kotlin/.../AndroidThing.kt",
         snapshot,
     )
     assert module == ":feat:projects:fe:app:impl"
     assert source_set == "androidMain"
+    assert platform_set == "android"
 
 
 def test_longest_prefix_for_unrelated_core_module():
     snapshot = _snapshot()
-    module, source_set = feature_retro.map_path_to_unit(
+    module, source_set, platform_set = feature_retro.map_path_to_unit(
         "core/foundation/common/src/commonMain/kotlin/.../Timestamp.kt",
         snapshot,
     )
     assert module == ":core:foundation:common"
     assert source_set == "commonMain"
+    assert platform_set == "all"
 
 
 def test_settings_gradle_falls_back_to_root_settings():
     snapshot = _snapshot()
-    module, source_set = feature_retro.map_path_to_unit("settings.gradle.kts", snapshot)
+    module, source_set, platform_set = feature_retro.map_path_to_unit("settings.gradle.kts", snapshot)
     assert module == ":root"
     assert source_set == "settings"
+    assert platform_set == ""
 
 
 def test_unknown_path_falls_back_to_root_non_module():
     snapshot = _snapshot()
-    module, source_set = feature_retro.map_path_to_unit(
+    module, source_set, platform_set = feature_retro.map_path_to_unit(
         "feat/brand-new-feature/src/commonMain/kotlin/Thing.kt",
         snapshot,
     )
@@ -72,12 +76,77 @@ def test_unknown_path_falls_back_to_root_non_module():
     # handles this via --local-module-globs instead.
     assert module == ":root"
     assert source_set == "non-module"
+    assert platform_set == ""
 
 
 def test_docs_fall_back_to_root_non_module():
     snapshot = _snapshot()
-    module, _ = feature_retro.map_path_to_unit("docs/architecture.md", snapshot)
+    module, _, _ = feature_retro.map_path_to_unit("docs/architecture.md", snapshot)
     assert module == ":root"
+
+
+# ------------------------------- commonMain annotation -------------------------
+
+def test_annotate_common_main_fe_plus_be():
+    # Full-platform KMP modules (contract, business/model, app/model) reach the
+    # backend JVM server in addition to all FE targets.
+    assert feature_retro._annotate_common_main("commonMain", "all") == "commonMain[FE+BE]"
+
+
+def test_annotate_common_main_fe_only():
+    # Frontend-only KMP modules reach 5 FE targets, never the backend.
+    assert feature_retro._annotate_common_main("commonMain", "frontend") == "commonMain[FE]"
+
+
+def test_annotate_main_passthrough():
+    # Backend `main` and Android app `main` are already unambiguous by name.
+    assert feature_retro._annotate_common_main("main", "backend") == "main"
+    assert feature_retro._annotate_common_main("main", "android") == "main"
+
+
+def test_annotate_android_main_passthrough():
+    # Platform-specific FE source sets carry their reach in the name.
+    assert feature_retro._annotate_common_main("androidMain", "android") == "androidMain"
+    assert feature_retro._annotate_common_main("iosMain", "ios") == "iosMain"
+    assert feature_retro._annotate_common_main("nonWebMain", "nonWeb_fe") == "nonWebMain"
+
+
+def test_annotate_common_main_defensive_unknown():
+    # Snapshot rows from a future tooling version may emit unexpected labels;
+    # surface them rather than silently dropping to an opaque "commonMain".
+    assert feature_retro._annotate_common_main("commonMain", "") == "commonMain[?unknown]"
+    assert feature_retro._annotate_common_main("commonMain", "jvm_shared") == "commonMain[?jvm_shared]"
+
+
+def test_closure_key_strips_annotation():
+    # Dependency closure JSON is keyed by raw `::commonMain` unit IDs; the
+    # annotated unit used in yaml/CSVs must strip its `[FE]` / `[FE+BE]` suffix
+    # before looking up blast radius.
+    assert feature_retro._closure_key(":feat:projects:fe:app:impl::commonMain[FE]") == ":feat:projects:fe:app:impl::commonMain"
+    assert feature_retro._closure_key(":feat:projects:contract::commonMain[FE+BE]") == ":feat:projects:contract::commonMain"
+    # Unannotated units pass through (main, androidMain, settings, non-module).
+    assert feature_retro._closure_key(":server::main") == ":server::main"
+    assert feature_retro._closure_key(":feat:projects:fe:app:impl::androidMain") == ":feat:projects:fe:app:impl::androidMain"
+    assert feature_retro._closure_key(":root::settings") == ":root::settings"
+
+
+def test_resolve_unit_end_to_end_annotates_common_main():
+    snapshot = _snapshot()
+    # FE+BE contract-like module (mapped as `business:model` with platform_set=all).
+    module, source_set, platform_set = feature_retro.map_path_to_unit(
+        "feat/projects/business/model/src/commonMain/kotlin/.../Project.kt",
+        snapshot,
+    )
+    annotated = feature_retro._annotate_common_main(source_set, platform_set)
+    assert f"{module}::{annotated}" == ":feat:projects:business:model::commonMain[FE+BE]"
+
+    # FE-only module.
+    module, source_set, platform_set = feature_retro.map_path_to_unit(
+        "feat/projects/fe/app/impl/src/commonMain/kotlin/.../ProjectSyncHandler.kt",
+        snapshot,
+    )
+    annotated = feature_retro._annotate_common_main(source_set, platform_set)
+    assert f"{module}::{annotated}" == ":feat:projects:fe:app:impl::commonMain[FE]"
 
 
 # ------------------------------- rename path normalization ---------------------

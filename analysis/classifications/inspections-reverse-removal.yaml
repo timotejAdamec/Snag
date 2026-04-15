@@ -13,7 +13,7 @@ repair_log:
   reason: build.gradle.kts edit in a pre-existing module — typically a new dependency or plugin declaration, avoidable if
     the convention plugins auto-wire it
 - file: feat/inspections/app/model/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/app/model/AppInspection.kt
-  unit: :feat:inspections:app:model::commonMain
+  unit: :feat:inspections:app:model::commonMain[FE+BE]
   status: D
   loc_churn: 21
   bucket: local
@@ -301,7 +301,7 @@ repair_log:
   reason: build.gradle.kts edit in a pre-existing module — typically a new dependency or plugin declaration, avoidable if
     the convention plugins auto-wire it
 - file: feat/inspections/business/model/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/business/Inspection.kt
-  unit: :feat:inspections:business:model::commonMain
+  unit: :feat:inspections:business:model::commonMain[FE+BE]
   status: D
   loc_churn: 20
   bucket: local
@@ -318,7 +318,7 @@ repair_log:
   reason: build.gradle.kts edit in a pre-existing module — typically a new dependency or plugin declaration, avoidable if
     the convention plugins auto-wire it
 - file: feat/inspections/contract/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/contract/DeleteInspectionApiDto.kt
-  unit: :feat:inspections:contract::commonMain
+  unit: :feat:inspections:contract::commonMain[FE+BE]
   status: D
   loc_churn: 21
   bucket: local
@@ -326,7 +326,7 @@ repair_log:
   source: hand:local_module_globs
   reason: Unit inside a module declared local to this change (:feat:inspections:*)
 - file: feat/inspections/contract/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/contract/InspectionApiDto.kt
-  unit: :feat:inspections:contract::commonMain
+  unit: :feat:inspections:contract::commonMain[FE+BE]
   status: D
   loc_churn: 30
   bucket: local
@@ -334,7 +334,7 @@ repair_log:
   source: hand:local_module_globs
   reason: Unit inside a module declared local to this change (:feat:inspections:*)
 - file: feat/inspections/contract/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/contract/PutInspectionApiDto.kt
-  unit: :feat:inspections:contract::commonMain
+  unit: :feat:inspections:contract::commonMain[FE+BE]
   status: D
   loc_churn: 28
   bucket: local
@@ -351,7 +351,7 @@ repair_log:
   reason: build.gradle.kts edit in a pre-existing module — typically a new dependency or plugin declaration, avoidable if
     the convention plugins auto-wire it
 - file: feat/inspections/fe/app/api/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/app/api/CascadeDeleteLocalInspectionsByProjectIdUseCase.kt
-  unit: :feat:inspections:fe:app:api::commonMain
+  unit: :feat:inspections:fe:app:api::commonMain[FE]
   status: D
   loc_churn: 19
   bucket: local
@@ -359,7 +359,7 @@ repair_log:
   source: hand:local_module_globs
   reason: Unit inside a module declared local to this change (:feat:inspections:*)
 - file: feat/inspections/fe/app/api/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/app/api/CascadeRestoreLocalInspectionsByProjectIdUseCase.kt
-  unit: :feat:inspections:fe:app:api::commonMain
+  unit: :feat:inspections:fe:app:api::commonMain[FE]
   status: D
   loc_churn: 19
   bucket: local
@@ -367,7 +367,7 @@ repair_log:
   source: hand:local_module_globs
   reason: Unit inside a module declared local to this change (:feat:inspections:*)
 - file: feat/inspections/fe/app/api/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/app/api/DeleteInspectionUseCase.kt
-  unit: :feat:inspections:fe:app:api::commonMain
+  unit: :feat:inspections:fe:app:api::commonMain[FE]
   status: D
   loc_churn: 20
   bucket: local
@@ -375,7 +375,7 @@ repair_log:
   source: hand:local_module_globs
   reason: Unit inside a module declared local to this change (:feat:inspections:*)
 - file: feat/inspections/fe/app/api/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/app/api/GetInspectionUseCase.kt
-  unit: :feat:inspections:fe:app:api::commonMain
+  unit: :feat:inspections:fe:app:api::commonMain[FE]
   status: D
   loc_churn: 22
   bucket: local
@@ -383,7 +383,7 @@ repair_log:
   source: hand:local_module_globs
   reason: Unit inside a module declared local to this change (:feat:inspections:*)
 - file: feat/inspections/fe/app/api/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/app/api/GetInspectionsUseCase.kt
-  unit: :feat:inspections:fe:app:api::commonMain
+  unit: :feat:inspections:fe:app:api::commonMain[FE]
   status: D
   loc_churn: 22
   bucket: local
@@ -391,7 +391,7 @@ repair_log:
   source: hand:local_module_globs
   reason: Unit inside a module declared local to this change (:feat:inspections:*)
 - file: feat/inspections/fe/app/api/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/app/api/SaveInspectionUseCase.kt
-  unit: :feat:inspections:fe:app:api::commonMain
+  unit: :feat:inspections:fe:app:api::commonMain[FE]
   status: D
   loc_churn: 21
   bucket: local
@@ -399,7 +399,7 @@ repair_log:
   source: hand:local_module_globs
   reason: Unit inside a module declared local to this change (:feat:inspections:*)
 - file: feat/inspections/fe/app/api/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/app/api/model/SaveInspectionRequest.kt
-  unit: :feat:inspections:fe:app:api::commonMain
+  unit: :feat:inspections:fe:app:api::commonMain[FE]
   status: D
   loc_churn: 26
   bucket: local
@@ -416,7 +416,7 @@ repair_log:
   reason: build.gradle.kts edit in a pre-existing module — typically a new dependency or plugin declaration, avoidable if
     the convention plugins auto-wire it
 - file: feat/inspections/fe/app/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/app/impl/di/InspectionsAppModule.kt
-  unit: :feat:inspections:fe:app:impl::commonMain
+  unit: :feat:inspections:fe:app:impl::commonMain[FE]
   status: D
   loc_churn: 45
   bucket: local
@@ -424,7 +424,7 @@ repair_log:
   source: hand:local_module_globs
   reason: Unit inside a module declared local to this change (:feat:inspections:*)
 - file: feat/inspections/fe/app/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/app/impl/internal/CascadeDeleteLocalInspectionsByProjectIdUseCaseImpl.kt
-  unit: :feat:inspections:fe:app:impl::commonMain
+  unit: :feat:inspections:fe:app:impl::commonMain[FE]
   status: D
   loc_churn: 25
   bucket: local
@@ -432,7 +432,7 @@ repair_log:
   source: hand:local_module_globs
   reason: Unit inside a module declared local to this change (:feat:inspections:*)
 - file: feat/inspections/fe/app/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/app/impl/internal/CascadeRestoreLocalInspectionsByProjectIdUseCaseImpl.kt
-  unit: :feat:inspections:fe:app:impl::commonMain
+  unit: :feat:inspections:fe:app:impl::commonMain[FE]
   status: D
   loc_churn: 33
   bucket: local
@@ -440,7 +440,7 @@ repair_log:
   source: hand:local_module_globs
   reason: Unit inside a module declared local to this change (:feat:inspections:*)
 - file: feat/inspections/fe/app/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/app/impl/internal/DeleteInspectionUseCaseImpl.kt
-  unit: :feat:inspections:fe:app:impl::commonMain
+  unit: :feat:inspections:fe:app:impl::commonMain[FE]
   status: D
   loc_churn: 46
   bucket: local
@@ -448,7 +448,7 @@ repair_log:
   source: hand:local_module_globs
   reason: Unit inside a module declared local to this change (:feat:inspections:*)
 - file: feat/inspections/fe/app/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/app/impl/internal/GetInspectionUseCaseImpl.kt
-  unit: :feat:inspections:fe:app:impl::commonMain
+  unit: :feat:inspections:fe:app:impl::commonMain[FE]
   status: D
   loc_churn: 30
   bucket: local
@@ -456,7 +456,7 @@ repair_log:
   source: hand:local_module_globs
   reason: Unit inside a module declared local to this change (:feat:inspections:*)
 - file: feat/inspections/fe/app/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/app/impl/internal/GetInspectionsUseCaseImpl.kt
-  unit: :feat:inspections:fe:app:impl::commonMain
+  unit: :feat:inspections:fe:app:impl::commonMain[FE]
   status: D
   loc_churn: 54
   bucket: local
@@ -464,7 +464,7 @@ repair_log:
   source: hand:local_module_globs
   reason: Unit inside a module declared local to this change (:feat:inspections:*)
 - file: feat/inspections/fe/app/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/app/impl/internal/LH.kt
-  unit: :feat:inspections:fe:app:impl::commonMain
+  unit: :feat:inspections:fe:app:impl::commonMain[FE]
   status: D
   loc_churn: 19
   bucket: local
@@ -472,7 +472,7 @@ repair_log:
   source: hand:local_module_globs
   reason: Unit inside a module declared local to this change (:feat:inspections:*)
 - file: feat/inspections/fe/app/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/app/impl/internal/SaveInspectionUseCaseImpl.kt
-  unit: :feat:inspections:fe:app:impl::commonMain
+  unit: :feat:inspections:fe:app:impl::commonMain[FE]
   status: D
   loc_churn: 66
   bucket: local
@@ -480,7 +480,7 @@ repair_log:
   source: hand:local_module_globs
   reason: Unit inside a module declared local to this change (:feat:inspections:*)
 - file: feat/inspections/fe/app/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/app/impl/internal/sync/InspectionPullSyncHandler.kt
-  unit: :feat:inspections:fe:app:impl::commonMain
+  unit: :feat:inspections:fe:app:impl::commonMain[FE]
   status: D
   loc_churn: 63
   bucket: local
@@ -488,7 +488,7 @@ repair_log:
   source: hand:local_module_globs
   reason: Unit inside a module declared local to this change (:feat:inspections:*)
 - file: feat/inspections/fe/app/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/app/impl/internal/sync/InspectionSyncEntityType.kt
-  unit: :feat:inspections:fe:app:impl::commonMain
+  unit: :feat:inspections:fe:app:impl::commonMain[FE]
   status: D
   loc_churn: 15
   bucket: local
@@ -496,7 +496,7 @@ repair_log:
   source: hand:local_module_globs
   reason: Unit inside a module declared local to this change (:feat:inspections:*)
 - file: feat/inspections/fe/app/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/app/impl/internal/sync/InspectionSyncHandler.kt
-  unit: :feat:inspections:fe:app:impl::commonMain
+  unit: :feat:inspections:fe:app:impl::commonMain[FE]
   status: D
   loc_churn: 46
   bucket: local
@@ -545,7 +545,7 @@ repair_log:
   reason: build.gradle.kts edit in a pre-existing module — typically a new dependency or plugin declaration, avoidable if
     the convention plugins auto-wire it
 - file: feat/inspections/fe/driven/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/driven/di/InspectionsDrivenModule.kt
-  unit: :feat:inspections:fe:driven:impl::commonMain
+  unit: :feat:inspections:fe:driven:impl::commonMain[FE]
   status: D
   loc_churn: 35
   bucket: local
@@ -553,7 +553,7 @@ repair_log:
   source: hand:local_module_globs
   reason: Unit inside a module declared local to this change (:feat:inspections:*)
 - file: feat/inspections/fe/driven/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/driven/internal/LH.kt
-  unit: :feat:inspections:fe:driven:impl::commonMain
+  unit: :feat:inspections:fe:driven:impl::commonMain[FE]
   status: D
   loc_churn: 19
   bucket: local
@@ -561,7 +561,7 @@ repair_log:
   source: hand:local_module_globs
   reason: Unit inside a module declared local to this change (:feat:inspections:*)
 - file: feat/inspections/fe/driven/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/driven/internal/api/Mappers.kt
-  unit: :feat:inspections:fe:driven:impl::commonMain
+  unit: :feat:inspections:fe:driven:impl::commonMain[FE]
   status: D
   loc_churn: 41
   bucket: local
@@ -569,7 +569,7 @@ repair_log:
   source: hand:local_module_globs
   reason: Unit inside a module declared local to this change (:feat:inspections:*)
 - file: feat/inspections/fe/driven/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/driven/internal/api/RealInspectionsApi.kt
-  unit: :feat:inspections:fe:driven:impl::commonMain
+  unit: :feat:inspections:fe:driven:impl::commonMain[FE]
   status: D
   loc_churn: 121
   bucket: local
@@ -577,7 +577,7 @@ repair_log:
   source: hand:local_module_globs
   reason: Unit inside a module declared local to this change (:feat:inspections:*)
 - file: feat/inspections/fe/driven/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/driven/internal/db/InspectionsSqlDelightDbOps.kt
-  unit: :feat:inspections:fe:driven:impl::commonMain
+  unit: :feat:inspections:fe:driven:impl::commonMain[FE]
   status: D
   loc_churn: 52
   bucket: local
@@ -585,7 +585,7 @@ repair_log:
   source: hand:local_module_globs
   reason: Unit inside a module declared local to this change (:feat:inspections:*)
 - file: feat/inspections/fe/driven/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/driven/internal/db/Mappers.kt
-  unit: :feat:inspections:fe:driven:impl::commonMain
+  unit: :feat:inspections:fe:driven:impl::commonMain[FE]
   status: D
   loc_churn: 43
   bucket: local
@@ -593,7 +593,7 @@ repair_log:
   source: hand:local_module_globs
   reason: Unit inside a module declared local to this change (:feat:inspections:*)
 - file: feat/inspections/fe/driven/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/driven/internal/db/RealInspectionsDb.kt
-  unit: :feat:inspections:fe:driven:impl::commonMain
+  unit: :feat:inspections:fe:driven:impl::commonMain[FE]
   status: D
   loc_churn: 37
   bucket: local
@@ -610,7 +610,7 @@ repair_log:
   reason: build.gradle.kts edit in a pre-existing module — typically a new dependency or plugin declaration, avoidable if
     the convention plugins auto-wire it
 - file: feat/inspections/fe/driven/test/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/driven/test/FakeInspectionsApi.kt
-  unit: :feat:inspections:fe:driven:test::commonMain
+  unit: :feat:inspections:fe:driven:test::commonMain[FE]
   status: D
   loc_churn: 64
   bucket: local
@@ -618,7 +618,7 @@ repair_log:
   source: hand:local_module_globs
   reason: Unit inside a module declared local to this change (:feat:inspections:*)
 - file: feat/inspections/fe/driven/test/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/driven/test/FakeInspectionsDb.kt
-  unit: :feat:inspections:fe:driven:test::commonMain
+  unit: :feat:inspections:fe:driven:test::commonMain[FE]
   status: D
   loc_churn: 51
   bucket: local
@@ -626,7 +626,7 @@ repair_log:
   source: hand:local_module_globs
   reason: Unit inside a module declared local to this change (:feat:inspections:*)
 - file: feat/inspections/fe/driven/test/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/driven/test/InspectionsFeDrivenTestModule.kt
-  unit: :feat:inspections:fe:driven:test::commonMain
+  unit: :feat:inspections:fe:driven:test::commonMain[FE]
   status: D
   loc_churn: 25
   bucket: local
@@ -643,7 +643,7 @@ repair_log:
   reason: build.gradle.kts edit in a pre-existing module — typically a new dependency or plugin declaration, avoidable if
     the convention plugins auto-wire it
 - file: feat/inspections/fe/driving/api/src/commonMain/composeResources/values/strings.xml
-  unit: :feat:inspections:fe:driving:api::commonMain
+  unit: :feat:inspections:fe:driving:api::commonMain[FE]
   status: D
   loc_churn: 21
   bucket: local
@@ -651,7 +651,7 @@ repair_log:
   source: hand:local_module_globs
   reason: Unit inside a module declared local to this change (:feat:inspections:*)
 - file: feat/inspections/fe/driving/api/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/driving/api/InspectionCard.kt
-  unit: :feat:inspections:fe:driving:api::commonMain
+  unit: :feat:inspections:fe:driving:api::commonMain[FE]
   status: D
   loc_churn: 410
   bucket: local
@@ -659,7 +659,7 @@ repair_log:
   source: hand:local_module_globs
   reason: Unit inside a module declared local to this change (:feat:inspections:*)
 - file: feat/inspections/fe/driving/api/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/driving/api/InspectionRoutes.kt
-  unit: :feat:inspections:fe:driving:api::commonMain
+  unit: :feat:inspections:fe:driving:api::commonMain[FE]
   status: D
   loc_churn: 32
   bucket: local
@@ -667,7 +667,7 @@ repair_log:
   source: hand:local_module_globs
   reason: Unit inside a module declared local to this change (:feat:inspections:*)
 - file: feat/inspections/fe/driving/api/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/driving/api/di/InspectionsDrivingApiModule.kt
-  unit: :feat:inspections:fe:driving:api::commonMain
+  unit: :feat:inspections:fe:driving:api::commonMain[FE]
   status: D
   loc_churn: 23
   bucket: local
@@ -724,7 +724,7 @@ repair_log:
   reason: build.gradle.kts edit in a pre-existing module — typically a new dependency or plugin declaration, avoidable if
     the convention plugins auto-wire it
 - file: feat/inspections/fe/driving/impl/src/commonMain/composeResources/values/strings.xml
-  unit: :feat:inspections:fe:driving:impl::commonMain
+  unit: :feat:inspections:fe:driving:impl::commonMain[FE]
   status: D
   loc_churn: 23
   bucket: local
@@ -732,7 +732,7 @@ repair_log:
   source: hand:local_module_globs
   reason: Unit inside a module declared local to this change (:feat:inspections:*)
 - file: feat/inspections/fe/driving/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/driving/impl/di/InspectionsDrivingModule.kt
-  unit: :feat:inspections:fe:driving:impl::commonMain
+  unit: :feat:inspections:fe:driving:impl::commonMain[FE]
   status: D
   loc_churn: 100
   bucket: local
@@ -740,7 +740,7 @@ repair_log:
   source: hand:local_module_globs
   reason: Unit inside a module declared local to this change (:feat:inspections:*)
 - file: feat/inspections/fe/driving/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/driving/impl/internal/ui/InspectionEditContent.kt
-  unit: :feat:inspections:fe:driving:impl::commonMain
+  unit: :feat:inspections:fe:driving:impl::commonMain[FE]
   status: D
   loc_churn: 414
   bucket: local
@@ -748,7 +748,7 @@ repair_log:
   source: hand:local_module_globs
   reason: Unit inside a module declared local to this change (:feat:inspections:*)
 - file: feat/inspections/fe/driving/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/driving/impl/internal/ui/InspectionEditScreen.kt
-  unit: :feat:inspections:fe:driving:impl::commonMain
+  unit: :feat:inspections:fe:driving:impl::commonMain[FE]
   status: D
   loc_churn: 95
   bucket: local
@@ -756,7 +756,7 @@ repair_log:
   source: hand:local_module_globs
   reason: Unit inside a module declared local to this change (:feat:inspections:*)
 - file: feat/inspections/fe/driving/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/driving/impl/internal/ui/TimestampExtensions.kt
-  unit: :feat:inspections:fe:driving:impl::commonMain
+  unit: :feat:inspections:fe:driving:impl::commonMain[FE]
   status: D
   loc_churn: 26
   bucket: local
@@ -764,7 +764,7 @@ repair_log:
   source: hand:local_module_globs
   reason: Unit inside a module declared local to this change (:feat:inspections:*)
 - file: feat/inspections/fe/driving/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/driving/impl/internal/ui/components/DateTimePickerField.kt
-  unit: :feat:inspections:fe:driving:impl::commonMain
+  unit: :feat:inspections:fe:driving:impl::commonMain[FE]
   status: D
   loc_churn: 242
   bucket: local
@@ -772,7 +772,7 @@ repair_log:
   source: hand:local_module_globs
   reason: Unit inside a module declared local to this change (:feat:inspections:*)
 - file: feat/inspections/fe/driving/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/driving/impl/internal/ui/components/InspectionDeletionAlertDialog.kt
-  unit: :feat:inspections:fe:driving:impl::commonMain
+  unit: :feat:inspections:fe:driving:impl::commonMain[FE]
   status: D
   loc_churn: 57
   bucket: local
@@ -780,7 +780,7 @@ repair_log:
   source: hand:local_module_globs
   reason: Unit inside a module declared local to this change (:feat:inspections:*)
 - file: feat/inspections/fe/driving/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/driving/impl/internal/vm/InspectionEditUiState.kt
-  unit: :feat:inspections:fe:driving:impl::commonMain
+  unit: :feat:inspections:fe:driving:impl::commonMain[FE]
   status: D
   loc_churn: 24
   bucket: local
@@ -788,7 +788,7 @@ repair_log:
   source: hand:local_module_globs
   reason: Unit inside a module declared local to this change (:feat:inspections:*)
 - file: feat/inspections/fe/driving/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/driving/impl/internal/vm/InspectionEditViewModel.kt
-  unit: :feat:inspections:fe:driving:impl::commonMain
+  unit: :feat:inspections:fe:driving:impl::commonMain[FE]
   status: D
   loc_churn: 176
   bucket: local
@@ -796,7 +796,7 @@ repair_log:
   source: hand:local_module_globs
   reason: Unit inside a module declared local to this change (:feat:inspections:*)
 - file: feat/inspections/fe/driving/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/driving/impl/internal/vm/InspectionEditVmState.kt
-  unit: :feat:inspections:fe:driving:impl::commonMain
+  unit: :feat:inspections:fe:driving:impl::commonMain[FE]
   status: D
   loc_churn: 27
   bucket: local
@@ -804,7 +804,7 @@ repair_log:
   source: hand:local_module_globs
   reason: Unit inside a module declared local to this change (:feat:inspections:*)
 - file: feat/inspections/fe/driving/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/driving/impl/internal/vm/Mapper.kt
-  unit: :feat:inspections:fe:driving:impl::commonMain
+  unit: :feat:inspections:fe:driving:impl::commonMain[FE]
   status: D
   loc_churn: 23
   bucket: local
@@ -853,7 +853,7 @@ repair_log:
   reason: build.gradle.kts edit in a pre-existing module — typically a new dependency or plugin declaration, avoidable if
     the convention plugins auto-wire it
 - file: feat/inspections/fe/ports/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/ports/InspectionsApi.kt
-  unit: :feat:inspections:fe:ports::commonMain
+  unit: :feat:inspections:fe:ports::commonMain[FE]
   status: D
   loc_churn: 44
   bucket: local
@@ -861,7 +861,7 @@ repair_log:
   source: hand:local_module_globs
   reason: Unit inside a module declared local to this change (:feat:inspections:*)
 - file: feat/inspections/fe/ports/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/ports/InspectionsDb.kt
-  unit: :feat:inspections:fe:ports::commonMain
+  unit: :feat:inspections:fe:ports::commonMain[FE]
   status: D
   loc_churn: 32
   bucket: local
@@ -878,7 +878,7 @@ repair_log:
   reason: build.gradle.kts edit in a pre-existing module — typically a new dependency or plugin declaration, avoidable if
     the convention plugins auto-wire it
 - file: feat/projects/fe/app/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/app/impl/internal/DeleteProjectUseCaseImpl.kt
-  unit: :feat:projects:fe:app:impl::commonMain
+  unit: :feat:projects:fe:app:impl::commonMain[FE]
   status: M
   loc_churn: 4
   bucket: collateral
@@ -887,7 +887,7 @@ repair_log:
   reason: Direct import of CascadeDeleteLocalInspectionsByProjectIdUseCase — cross-feature coupling; avoidable via a projects-defined
     cross-feature port for cascade cleanup
 - file: feat/projects/fe/app/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/app/impl/internal/sync/ProjectPullSyncHandler.kt
-  unit: :feat:projects:fe:app:impl::commonMain
+  unit: :feat:projects:fe:app:impl::commonMain[FE]
   status: M
   loc_churn: 4
   bucket: collateral
@@ -897,7 +897,7 @@ repair_log:
     rule misfired. The touch here is because the handler calls CascadeDeleteLocalInspectionsByProjectIdUseCase inside its
     applyChange Deleted branch (cross-feature cascade, collateral). Note rule mis-match for follow-up ripple_rules.yaml tightening.
 - file: feat/projects/fe/app/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/app/impl/internal/sync/ProjectSyncHandler.kt
-  unit: :feat:projects:fe:app:impl::commonMain
+  unit: :feat:projects:fe:app:impl::commonMain[FE]
   status: M
   loc_churn: 4
   bucket: collateral
@@ -916,7 +916,7 @@ repair_log:
   reason: build.gradle.kts edit in a pre-existing module — typically a new dependency or plugin declaration, avoidable if
     the convention plugins auto-wire it
 - file: feat/projects/fe/driving/impl/src/commonMain/composeResources/values/strings.xml
-  unit: :feat:projects:fe:driving:impl::commonMain
+  unit: :feat:projects:fe:driving:impl::commonMain[FE]
   status: M
   loc_churn: 2
   bucket: collateral
@@ -925,7 +925,7 @@ repair_log:
   reason: Removed inspections_section_title and new_inspection strings — UI copy previously embedded in feat/projects for
     the inspections section
 - file: feat/projects/fe/driving/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/driving/impl/di/ProjectsDrivingModule.kt
-  unit: :feat:projects:fe:driving:impl::commonMain
+  unit: :feat:projects:fe:driving:impl::commonMain[FE]
   status: M
   loc_churn: 12
   bucket: collateral
@@ -934,7 +934,7 @@ repair_log:
   reason: 'Navigation wiring: InspectionCreationRouteFactory and InspectionEditRouteFactory bindings + onNewInspectionClick/onInspectionClick
     callbacks removed'
 - file: feat/projects/fe/driving/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/driving/impl/internal/projectDetails/ui/ProjectDetailsContent.kt
-  unit: :feat:projects:fe:driving:impl::commonMain
+  unit: :feat:projects:fe:driving:impl::commonMain[FE]
   status: M
   loc_churn: 78
   bucket: collateral
@@ -942,7 +942,7 @@ repair_log:
   source: hand
   reason: 'UI embed: InspectionCard composable section with section header, LazyRow, and start/end callbacks removed'
 - file: feat/projects/fe/driving/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/driving/impl/internal/projectDetails/ui/ProjectDetailsScreen.kt
-  unit: :feat:projects:fe:driving:impl::commonMain
+  unit: :feat:projects:fe:driving:impl::commonMain[FE]
   status: M
   loc_churn: 6
   bucket: collateral
@@ -950,7 +950,7 @@ repair_log:
   source: hand
   reason: onNewInspectionClick/onInspectionClick callback parameters removed from ProjectDetailsScreen function signature
 - file: feat/projects/fe/driving/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/driving/impl/internal/projectDetails/vm/Mapper.kt
-  unit: :feat:projects:fe:driving:impl::commonMain
+  unit: :feat:projects:fe:driving:impl::commonMain[FE]
   status: M
   loc_churn: 1
   bucket: collateral
@@ -958,7 +958,7 @@ repair_log:
   source: hand
   reason: Removed inspections = inspections field from VmState→UiState mapping
 - file: feat/projects/fe/driving/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/driving/impl/internal/projectDetails/vm/ProjectDetailsUiState.kt
-  unit: :feat:projects:fe:driving:impl::commonMain
+  unit: :feat:projects:fe:driving:impl::commonMain[FE]
   status: M
   loc_churn: 7
   bucket: collateral
@@ -966,7 +966,7 @@ repair_log:
   source: hand
   reason: Removed inspections field (ImmutableList<AppInspection>) + InspectionsUiStatus enum from the UI state data class
 - file: feat/projects/fe/driving/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/driving/impl/internal/projectDetails/vm/ProjectDetailsViewModel.kt
-  unit: :feat:projects:fe:driving:impl::commonMain
+  unit: :feat:projects:fe:driving:impl::commonMain[FE]
   status: M
   loc_churn: 67
   bucket: collateral
@@ -975,7 +975,7 @@ repair_log:
   reason: 'Major: removed GetInspectionsUseCase/SaveInspectionUseCase constructor params, collectInspections job, onStartInspection/onEndInspection
     methods, and inspection-related VmState fields'
 - file: feat/projects/fe/driving/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/driving/impl/internal/projectDetails/vm/ProjectDetailsVmState.kt
-  unit: :feat:projects:fe:driving:impl::commonMain
+  unit: :feat:projects:fe:driving:impl::commonMain[FE]
   status: M
   loc_churn: 3
   bucket: collateral
@@ -1096,7 +1096,7 @@ repair_log:
   reason: FE Koin aggregation — each feature's DI module is listed here, every feature add/remove edits this file
   ns_theorem: SoC
 - file: koinModulesAggregate/fe/src/commonMain/kotlin/cz/adamec/timotej/snag/di/aggregate/fe/FrontendModulesAggregate.kt
-  unit: :koinModulesAggregate:fe::commonMain
+  unit: :koinModulesAggregate:fe::commonMain[FE]
   status: M
   loc_churn: 8
   bucket: intrinsic
@@ -1152,7 +1152,7 @@ repair_log:
   reason: build.gradle.kts edit in a pre-existing module — typically a new dependency or plugin declaration, avoidable if
     the convention plugins auto-wire it
 - file: testInfra/fe/src/commonMain/kotlin/cz/adamec/timotej/snag/testinfra/fe/FrontendKoinInitializedTest.kt
-  unit: :testInfra:fe::commonMain
+  unit: :testInfra:fe::commonMain[FE]
   status: M
   loc_churn: 2
   bucket: intrinsic

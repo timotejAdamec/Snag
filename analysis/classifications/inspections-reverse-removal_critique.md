@@ -18,16 +18,18 @@ Czech Technical University in Prague — Faculty of Information Technology
 - churn:  **local = 5281, intrinsic = 99, collateral = 691** (total 6071 ≡ LOC additions + removals captured via `git diff --numstat -M`)
 - **recurring intrinsic units = 6** — the §4.6 headline and the §4.7 cross-case roll-up input for Case 1.
 
+**Source-set annotation.** `commonMain` units are suffixed `[FE]` (frontend-only KMP reach — 5 FE targets) or `[FE+BE]` (full-platform reach, compiles to the backend JVM server too). Other source-set names (`main`, `androidMain`, `iosMain`, `nonWebMain`, `webMain`, etc.) are unambiguous and pass through unannotated. The distinction matters for SoC fan-out reading — a `::commonMain[FE]` ripple never crosses the BE↔FE boundary, whereas a `::commonMain[FE+BE]` one does.
+
 **What "recurring intrinsic units = 6" counts.** The `feature_retro.py` finalize script counts any `(module, source_set)` unit containing ≥1 entry classified as `intrinsic` AND with `recurring = True` at the unit level. Aggregated CSV (`ripple_inspections-reverse-removal_units.csv`): the 6 units are
 
 | Unit | ns_theorem | Site |
 |---|---|---|
 | `:koinModulesAggregate:be::main` | SoC | `BackendModulesAggregate.kt` imports + `includes` list |
-| `:koinModulesAggregate:fe::commonMain` | SoC | `FrontendModulesAggregate.kt` imports + `includes` list |
+| `:koinModulesAggregate:fe::commonMain[FE]` | SoC | `FrontendModulesAggregate.kt` imports + `includes` list |
 | `:root::non-module` | SoC | `koinModulesAggregate/{be,fe}/build.gradle.kts` — same anomaly as the two rows above, counted separately because `build.gradle.kts` files fall outside any `source_set_dir_rel` prefix and resolve to the literal `:root::non-module` fallback. This is a *path→unit* artifact of the longest-prefix resolver, not a distinct anomaly site; §4.6 prose should treat the two Koin-aggregate `.kt` + their `build.gradle.kts` pairs as one SoC site per layer (BE/FE). |
 | `:root::settings` | SoC | `settings.gradle.kts:165–181` — 17 `include(":feat:inspections:*")` lines |
 | `:server::main` | DVT | `DevDataSeederConfiguration.kt` — constructor param + `seedInspections()` method |
-| `:testInfra:fe::commonMain` | ISP | `FrontendKoinInitializedTest.kt` — `koinModules()` enumeration |
+| `:testInfra:fe::commonMain[FE]` | ISP | `FrontendKoinInitializedTest.kt` — `koinModules()` enumeration |
 
 So six unit rows = four distinct NS anomaly sites after collapsing the Koin-aggregate path→unit artifact. §4.6 prose cites **5** observations below (one per NS site, plus a positive/contrast observation on where the ripple did *not* combinatorially propagate), which is above the `phase-2-plan.md:174` minimum of 5.
 
@@ -83,7 +85,7 @@ Every Gradle submodule in the project must be listed in `settings.gradle.kts` by
 
 `FrontendKoinInitializedTest` is an abstract test base class that every feature-level FE test inherits from. Its `koinModules()` override enumerates every feature's `fe:driven:test` module so the Koin graph is fully satisfiable during tests. `feat/inspections` added itself as one import + one list entry. Removing the feature required deleting exactly those two lines. The touch is small (2 LOC) but it is a *hard* recurring site: a new feature whose FE tests need a driven-test module cannot compile without editing this file.
 
-**NS-theorem property exercised:** **ISP (Interface Segregation Principle), recurring — applied to test infrastructure fan-in.** The base class acts as a single point of test-side dependency injection for the entire FE test suite. Every new feature's tests implicitly depend on this base, and every feature adds exactly one entry. ISP would call for per-feature test bases that each include only that feature's driven-test module plus the shared infra — Snag does not adopt that pattern, so this site remains combinatorial. The classifier has no rule targeting this file (test-infra aggregation is not a rule category in `ripple_rules.yaml` at this time); the classification is hand-applied with `source: hand, ns_theorem: ISP` in the yaml, with rationale recorded. The unit `:testInfra:fe::commonMain` also has the largest downstream blast radius among the Case 1 recurring-intrinsic sites: `blast_radius_module = 74`, `blast_radius_unit = 160` — editing this file triggers recompilation of every feature's FE test set.
+**NS-theorem property exercised:** **ISP (Interface Segregation Principle), recurring — applied to test infrastructure fan-in.** The base class acts as a single point of test-side dependency injection for the entire FE test suite. Every new feature's tests implicitly depend on this base, and every feature adds exactly one entry. ISP would call for per-feature test bases that each include only that feature's driven-test module plus the shared infra — Snag does not adopt that pattern, so this site remains combinatorial. The classifier has no rule targeting this file (test-infra aggregation is not a rule category in `ripple_rules.yaml` at this time); the classification is hand-applied with `source: hand, ns_theorem: ISP` in the yaml, with rationale recorded. The unit `:testInfra:fe::commonMain[FE]` also has the largest downstream blast radius among the Case 1 recurring-intrinsic sites: `blast_radius_module = 74`, `blast_radius_unit = 160` — editing this file triggers recompilation of every feature's FE test set.
 
 ---
 
@@ -102,10 +104,10 @@ Worth recording in a correctness-evidence critique because the absence is what t
 | Obs | NS theorem | Unit(s) | Site | Churn | Recurring |
 |---|---|---|---|---|---|
 | 1 | SoC | `:koinModulesAggregate:be::main` | `BackendModulesAggregate.kt:22–24,72–74` | 6 | yes |
-| 2 | SoC | `:koinModulesAggregate:fe::commonMain` + `:root::non-module` (build.gradle.kts artifact) | `FrontendModulesAggregate.kt:25–28,87–90` | 8 | yes |
+| 2 | SoC | `:koinModulesAggregate:fe::commonMain[FE]` + `:root::non-module` (build.gradle.kts artifact) | `FrontendModulesAggregate.kt:25–28,87–90` | 8 | yes |
 | 3 | SoC | `:root::settings` | `settings.gradle.kts:165–181` | 17 | yes |
 | 4 | DVT | `:server::main` | `DevDataSeederConfiguration.kt:26–27,50,63,352–396,428–431` (hand-overridden to recurring:true) | 55 | yes |
-| 5 | ISP | `:testInfra:fe::commonMain` | `FrontendKoinInitializedTest.kt:18,39` (hand-classified, no matching rule) | 2 | yes |
+| 5 | ISP | `:testInfra:fe::commonMain[FE]` | `FrontendKoinInitializedTest.kt:18,39` (hand-classified, no matching rule) | 2 | yes |
 | 6 | SoC (contrast) | 89 local files | `feat/inspections/**` — 87% of total churn is absorbed by the feature's own module tree | 5281 | — |
 
 **Correctness reading for §4.6:** Reverse-removing a 17-module ~6000-LOC feature from Snag touches 139 files, of which 89 (64%) are local to the deleted feature itself, 43 (31%) are collateral cross-feature coupling concentrated in two feature consumers, and 7 (5%) are intrinsic — aggregating to 6 unit-level recurring-intrinsic sites, which after collapsing one path→unit artifact corresponds to **4 distinct NS anomaly sites** (2× SoC Koin aggregation, 1× SoC settings.gradle.kts, 1× DVT dev-data seeder, 1× ISP test infra). All four sites are well-known structural aggregation points that NS theory predicts *a priori*; none of them is a surprise site specific to the inspections feature. The 43 collateral files, while non-trivial, are bounded by the specific cross-feature responsibilities inspections accumulated (cascade deletion policy, PDF report section, project details UI embed) — they do not grow combinatorially with feature count. Taken together, this measured shape is consistent with "feature addition/removal is not combinatorial": the combinatorial sites exist, they are enumerable, and they are what theory predicts. This does not prove the architecture is optimal — a stricter cross-feature port convention would empty the collateral bucket — but it does operationalize the non-combinatorial claim the thesis §4.6 makes.

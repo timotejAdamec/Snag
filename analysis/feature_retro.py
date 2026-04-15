@@ -60,6 +60,7 @@ class PrefixRow:
     module_path: str
     source_set: str
     source_set_dir_rel: str  # trailing slash stripped for prefix match
+    platform_set: str = ""   # from sharing report; disambiguates commonMain reach
 
 
 @dataclass
@@ -121,6 +122,7 @@ def load_base_snapshot(path: Path) -> list[PrefixRow]:
                     module_path=row["module_path"],
                     source_set=row["source_set"],
                     source_set_dir_rel=rel.rstrip("/"),
+                    platform_set=(row.get("platform_set") or "").strip(),
                 ),
             )
     # Longest prefix first — guarantees we never match `feat/projects/business` when
@@ -268,21 +270,45 @@ def _normalize_rename_path(path_field: str) -> str:
 
 # ------------------------------- mapping --------------------------------------
 
-def map_path_to_unit(path: str, snapshot: list[PrefixRow]) -> tuple[str, str]:
-    """Longest-prefix match. Returns (module_path, source_set) or a fallback unit."""
+def map_path_to_unit(path: str, snapshot: list[PrefixRow]) -> tuple[str, str, str]:
+    """Longest-prefix match. Returns (module_path, source_set, platform_set) or a fallback.
+    `platform_set` is empty for fallback rows (repo-root files, unknown paths)."""
     for row in snapshot:
         prefix = row.source_set_dir_rel
         if path == prefix or path.startswith(prefix + "/"):
-            return row.module_path, row.source_set
+            return row.module_path, row.source_set, row.platform_set
 
     # Literal fallbacks for repo-root files that don't live under a source set.
     if path == "settings.gradle.kts" or path.startswith("settings.gradle"):
-        return ":root", "settings"
+        return ":root", "settings", ""
     if path.startswith("build-logic/"):
-        return ":build-logic", "non-module"
+        return ":build-logic", "non-module", ""
     if path.startswith(".github/") or path.startswith("docs/") or path.startswith("analysis/"):
-        return ":root", "non-module"
-    return ":root", "non-module"
+        return ":root", "non-module", ""
+    return ":root", "non-module", ""
+
+
+def _annotate_common_main(source_set: str, platform_set: str) -> str:
+    """`commonMain` alone is ambiguous — a :fe: module's commonMain reaches 5 FE
+    targets, while a contract/business/model module's commonMain also reaches the
+    backend JVM server. Suffix the label so downstream artifacts carry that reach.
+    Other source sets pass through unchanged."""
+    if source_set != "commonMain":
+        return source_set
+    label = {
+        "all": "[FE+BE]",
+        "frontend": "[FE]",
+    }.get(platform_set, f"[?{platform_set or 'unknown'}]")
+    return f"commonMain{label}"
+
+
+_ANNOTATION_SUFFIX_RE = re.compile(r"::commonMain\[[^]]*\]$")
+
+
+def _closure_key(unit: str) -> str:
+    """Dependency closure JSON is keyed by raw unit IDs (`::commonMain`), without
+    the platform-reach annotation. Strip the suffix for lookup."""
+    return _ANNOTATION_SUFFIX_RE.sub("::commonMain", unit)
 
 
 # ------------------------------- classification --------------------------------
@@ -335,10 +361,11 @@ def cmd_stub(args: argparse.Namespace) -> int:
         # through the prefix match to `:root::non-module` unless the change
         # classification lists their module in `local_module_globs`.
         lookup_path = touched_file.rename_from or touched_file.path
-        module_path, source_set = map_path_to_unit(lookup_path, snapshot)
+        module_path, source_set, platform_set = map_path_to_unit(lookup_path, snapshot)
 
-        unit = f"{module_path}::{source_set}"
-        blast = closure.get(unit, {})
+        annotated_source_set = _annotate_common_main(source_set, platform_set)
+        unit = f"{module_path}::{annotated_source_set}"
+        blast = closure.get(_closure_key(unit), {})
 
         display_path = (
             f"{touched_file.rename_from} -> {touched_file.path}"
@@ -427,7 +454,7 @@ def cmd_finalize(args: argparse.Namespace) -> int:
         )
         for entry in repair_log:
             unit = entry["unit"]
-            blast = closure.get(unit, {})
+            blast = closure.get(_closure_key(unit), {})
             writer.writerow(
                 [
                     entry["file"],
@@ -484,7 +511,7 @@ def cmd_finalize(args: argparse.Namespace) -> int:
             agg = aggregated[unit]
             dominant = max(agg["bucket_counts"].items(), key=lambda kv: kv[1])[0]
             module_path, _, source_set = unit.partition("::")
-            blast = closure.get(unit, {})
+            blast = closure.get(_closure_key(unit), {})
             writer.writerow(
                 [
                     unit,
@@ -551,7 +578,7 @@ def write_stub_yaml(
         ],
     }
     with path.open("w", encoding="utf-8") as f:
-        yaml.safe_dump(payload, f, sort_keys=False, width=120)
+        yaml.safe_dump(payload, f, sort_keys=False, width=120, allow_unicode=True)
 
 
 # ------------------------------- cli -------------------------------------------
