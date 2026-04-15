@@ -1,0 +1,1163 @@
+change_id: inspections-reverse-removal
+ref: experiment/remove-inspections
+base_ref: main
+base_sharing_snapshot: analysis/data/sharing_report_with_loc_base_main_e076e89e5.csv
+repair_log:
+- file: feat/inspections/app/model/build.gradle.kts
+  unit: :root::non-module
+  status: D
+  loc_churn: 13
+  bucket: collateral
+  recurring: false
+  source: rule:build_gradle_collateral
+  reason: build.gradle.kts edit in a pre-existing module — typically a new dependency or plugin declaration, avoidable if
+    the convention plugins auto-wire it
+- file: feat/inspections/app/model/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/app/model/AppInspection.kt
+  unit: :feat:inspections:app:model::commonMain
+  status: D
+  loc_churn: 21
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/be/app/api/build.gradle.kts
+  unit: :root::non-module
+  status: D
+  loc_churn: 3
+  bucket: collateral
+  recurring: false
+  source: rule:build_gradle_collateral
+  reason: build.gradle.kts edit in a pre-existing module — typically a new dependency or plugin declaration, avoidable if
+    the convention plugins auto-wire it
+- file: feat/inspections/be/app/api/src/main/kotlin/cz/adamec/timotej/snag/feat/inspections/be/app/api/DeleteInspectionUseCase.kt
+  unit: :feat:inspections:be:app:api::main
+  status: D
+  loc_churn: 20
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/be/app/api/src/main/kotlin/cz/adamec/timotej/snag/feat/inspections/be/app/api/GetInspectionUseCase.kt
+  unit: :feat:inspections:be:app:api::main
+  status: D
+  loc_churn: 20
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/be/app/api/src/main/kotlin/cz/adamec/timotej/snag/feat/inspections/be/app/api/GetInspectionsModifiedSinceUseCase.kt
+  unit: :feat:inspections:be:app:api::main
+  status: D
+  loc_churn: 20
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/be/app/api/src/main/kotlin/cz/adamec/timotej/snag/feat/inspections/be/app/api/GetInspectionsUseCase.kt
+  unit: :feat:inspections:be:app:api::main
+  status: D
+  loc_churn: 20
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/be/app/api/src/main/kotlin/cz/adamec/timotej/snag/feat/inspections/be/app/api/SaveInspectionUseCase.kt
+  unit: :feat:inspections:be:app:api::main
+  status: D
+  loc_churn: 19
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/be/app/api/src/main/kotlin/cz/adamec/timotej/snag/feat/inspections/be/app/api/model/DeleteInspectionRequest.kt
+  unit: :feat:inspections:be:app:api::main
+  status: D
+  loc_churn: 21
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/be/app/api/src/main/kotlin/cz/adamec/timotej/snag/feat/inspections/be/app/api/model/GetInspectionsModifiedSinceRequest.kt
+  unit: :feat:inspections:be:app:api::main
+  status: D
+  loc_churn: 21
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/be/app/impl/build.gradle.kts
+  unit: :root::non-module
+  status: D
+  loc_churn: 11
+  bucket: collateral
+  recurring: false
+  source: rule:build_gradle_collateral
+  reason: build.gradle.kts edit in a pre-existing module — typically a new dependency or plugin declaration, avoidable if
+    the convention plugins auto-wire it
+- file: feat/inspections/be/app/impl/src/main/kotlin/cz/adamec/timotej/snag/feat/inspections/be/app/impl/di/InspectionsAppModule.kt
+  unit: :feat:inspections:be:app:impl::main
+  status: D
+  loc_churn: 36
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/be/app/impl/src/main/kotlin/cz/adamec/timotej/snag/feat/inspections/be/app/impl/internal/DeleteInspectionUseCaseImpl.kt
+  unit: :feat:inspections:be:app:impl::main
+  status: D
+  loc_churn: 49
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/be/app/impl/src/main/kotlin/cz/adamec/timotej/snag/feat/inspections/be/app/impl/internal/GetInspectionUseCaseImpl.kt
+  unit: :feat:inspections:be:app:impl::main
+  status: D
+  loc_churn: 30
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/be/app/impl/src/main/kotlin/cz/adamec/timotej/snag/feat/inspections/be/app/impl/internal/GetInspectionsModifiedSinceUseCaseImpl.kt
+  unit: :feat:inspections:be:app:impl::main
+  status: D
+  loc_churn: 39
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/be/app/impl/src/main/kotlin/cz/adamec/timotej/snag/feat/inspections/be/app/impl/internal/GetInspectionsUseCaseImpl.kt
+  unit: :feat:inspections:be:app:impl::main
+  status: D
+  loc_churn: 30
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/be/app/impl/src/main/kotlin/cz/adamec/timotej/snag/feat/inspections/be/app/impl/internal/LH.kt
+  unit: :feat:inspections:be:app:impl::main
+  status: D
+  loc_churn: 19
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/be/app/impl/src/main/kotlin/cz/adamec/timotej/snag/feat/inspections/be/app/impl/internal/SaveInspectionUseCaseImpl.kt
+  unit: :feat:inspections:be:app:impl::main
+  status: D
+  loc_churn: 46
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/be/app/impl/src/test/kotlin/cz/adamec/timotej/snag/feat/inspections/be/app/impl/internal/DeleteInspectionUseCaseImplTest.kt
+  unit: :feat:inspections:be:app:impl::test
+  status: D
+  loc_churn: 86
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/be/app/impl/src/test/kotlin/cz/adamec/timotej/snag/feat/inspections/be/app/impl/internal/SaveInspectionUseCaseImplTest.kt
+  unit: :feat:inspections:be:app:impl::test
+  status: D
+  loc_churn: 87
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/be/app/model/build.gradle.kts
+  unit: :root::non-module
+  status: D
+  loc_churn: 3
+  bucket: collateral
+  recurring: false
+  source: rule:build_gradle_collateral
+  reason: build.gradle.kts edit in a pre-existing module — typically a new dependency or plugin declaration, avoidable if
+    the convention plugins auto-wire it
+- file: feat/inspections/be/app/model/src/main/kotlin/cz/adamec/timotej/snag/feat/inspections/be/model/BackendInspection.kt
+  unit: :feat:inspections:be:app:model::main
+  status: D
+  loc_churn: 24
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/be/driven/impl/build.gradle.kts
+  unit: :root::non-module
+  status: D
+  loc_churn: 3
+  bucket: collateral
+  recurring: false
+  source: rule:build_gradle_collateral
+  reason: build.gradle.kts edit in a pre-existing module — typically a new dependency or plugin declaration, avoidable if
+    the convention plugins auto-wire it
+- file: feat/inspections/be/driven/impl/src/main/kotlin/cz/adamec/timotej/snag/feat/inspections/be/driven/impl/di/InspectionsDrivenModule.kt
+  unit: :feat:inspections:be:driven:impl::main
+  status: D
+  loc_churn: 24
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/be/driven/impl/src/main/kotlin/cz/adamec/timotej/snag/feat/inspections/be/driven/impl/internal/Mapper.kt
+  unit: :feat:inspections:be:driven:impl::main
+  status: D
+  loc_churn: 30
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/be/driven/impl/src/main/kotlin/cz/adamec/timotej/snag/feat/inspections/be/driven/impl/internal/RealInspectionsDb.kt
+  unit: :feat:inspections:be:driven:impl::main
+  status: D
+  loc_churn: 141
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/be/driven/test/build.gradle.kts
+  unit: :root::non-module
+  status: D
+  loc_churn: 19
+  bucket: collateral
+  recurring: false
+  source: rule:build_gradle_collateral
+  reason: build.gradle.kts edit in a pre-existing module — typically a new dependency or plugin declaration, avoidable if
+    the convention plugins auto-wire it
+- file: feat/inspections/be/driven/test/src/main/kotlin/cz/adamec/timotej/snag/feat/inspections/be/driven/test/InspectionsDbTestExtensions.kt
+  unit: :feat:inspections:be:driven:test::main
+  status: D
+  loc_churn: 45
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/be/driving/impl/build.gradle.kts
+  unit: :root::non-module
+  status: D
+  loc_churn: 17
+  bucket: collateral
+  recurring: false
+  source: rule:build_gradle_collateral
+  reason: build.gradle.kts edit in a pre-existing module — typically a new dependency or plugin declaration, avoidable if
+    the convention plugins auto-wire it
+- file: feat/inspections/be/driving/impl/src/main/kotlin/cz/adamec/timotej/snag/feat/inspections/be/driving/impl/di/InspectionsDrivingModule.kt
+  unit: :feat:inspections:be:driving:impl::main
+  status: D
+  loc_churn: 24
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/be/driving/impl/src/main/kotlin/cz/adamec/timotej/snag/feat/inspections/be/driving/impl/internal/InspectionsRoute.kt
+  unit: :feat:inspections:be:driving:impl::main
+  status: D
+  loc_churn: 120
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/be/driving/impl/src/main/kotlin/cz/adamec/timotej/snag/feat/inspections/be/driving/impl/internal/Mapper.kt
+  unit: :feat:inspections:be:driving:impl::main
+  status: D
+  loc_churn: 44
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/be/driving/impl/src/test/kotlin/cz/adamec/timotej/snag/feat/inspections/be/driving/impl/internal/InspectionsRouteTest.kt
+  unit: :feat:inspections:be:driving:impl::test
+  status: D
+  loc_churn: 205
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/be/ports/build.gradle.kts
+  unit: :root::non-module
+  status: D
+  loc_churn: 3
+  bucket: collateral
+  recurring: false
+  source: rule:build_gradle_collateral
+  reason: build.gradle.kts edit in a pre-existing module — typically a new dependency or plugin declaration, avoidable if
+    the convention plugins auto-wire it
+- file: feat/inspections/be/ports/src/main/kotlin/cz/adamec/timotej/snag/feat/inspections/be/ports/InspectionsDb.kt
+  unit: :feat:inspections:be:ports::main
+  status: D
+  loc_churn: 35
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/business/model/build.gradle.kts
+  unit: :root::non-module
+  status: D
+  loc_churn: 3
+  bucket: collateral
+  recurring: false
+  source: rule:build_gradle_collateral
+  reason: build.gradle.kts edit in a pre-existing module — typically a new dependency or plugin declaration, avoidable if
+    the convention plugins auto-wire it
+- file: feat/inspections/business/model/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/business/Inspection.kt
+  unit: :feat:inspections:business:model::commonMain
+  status: D
+  loc_churn: 20
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/contract/build.gradle.kts
+  unit: :root::non-module
+  status: D
+  loc_churn: 3
+  bucket: collateral
+  recurring: false
+  source: rule:build_gradle_collateral
+  reason: build.gradle.kts edit in a pre-existing module — typically a new dependency or plugin declaration, avoidable if
+    the convention plugins auto-wire it
+- file: feat/inspections/contract/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/contract/DeleteInspectionApiDto.kt
+  unit: :feat:inspections:contract::commonMain
+  status: D
+  loc_churn: 21
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/contract/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/contract/InspectionApiDto.kt
+  unit: :feat:inspections:contract::commonMain
+  status: D
+  loc_churn: 30
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/contract/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/contract/PutInspectionApiDto.kt
+  unit: :feat:inspections:contract::commonMain
+  status: D
+  loc_churn: 28
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/fe/app/api/build.gradle.kts
+  unit: :root::non-module
+  status: D
+  loc_churn: 15
+  bucket: collateral
+  recurring: false
+  source: rule:build_gradle_collateral
+  reason: build.gradle.kts edit in a pre-existing module — typically a new dependency or plugin declaration, avoidable if
+    the convention plugins auto-wire it
+- file: feat/inspections/fe/app/api/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/app/api/CascadeDeleteLocalInspectionsByProjectIdUseCase.kt
+  unit: :feat:inspections:fe:app:api::commonMain
+  status: D
+  loc_churn: 19
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/fe/app/api/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/app/api/CascadeRestoreLocalInspectionsByProjectIdUseCase.kt
+  unit: :feat:inspections:fe:app:api::commonMain
+  status: D
+  loc_churn: 19
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/fe/app/api/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/app/api/DeleteInspectionUseCase.kt
+  unit: :feat:inspections:fe:app:api::commonMain
+  status: D
+  loc_churn: 20
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/fe/app/api/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/app/api/GetInspectionUseCase.kt
+  unit: :feat:inspections:fe:app:api::commonMain
+  status: D
+  loc_churn: 22
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/fe/app/api/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/app/api/GetInspectionsUseCase.kt
+  unit: :feat:inspections:fe:app:api::commonMain
+  status: D
+  loc_churn: 22
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/fe/app/api/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/app/api/SaveInspectionUseCase.kt
+  unit: :feat:inspections:fe:app:api::commonMain
+  status: D
+  loc_churn: 21
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/fe/app/api/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/app/api/model/SaveInspectionRequest.kt
+  unit: :feat:inspections:fe:app:api::commonMain
+  status: D
+  loc_churn: 26
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/fe/app/impl/build.gradle.kts
+  unit: :root::non-module
+  status: D
+  loc_churn: 30
+  bucket: collateral
+  recurring: false
+  source: rule:build_gradle_collateral
+  reason: build.gradle.kts edit in a pre-existing module — typically a new dependency or plugin declaration, avoidable if
+    the convention plugins auto-wire it
+- file: feat/inspections/fe/app/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/app/impl/di/InspectionsAppModule.kt
+  unit: :feat:inspections:fe:app:impl::commonMain
+  status: D
+  loc_churn: 45
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/fe/app/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/app/impl/internal/CascadeDeleteLocalInspectionsByProjectIdUseCaseImpl.kt
+  unit: :feat:inspections:fe:app:impl::commonMain
+  status: D
+  loc_churn: 25
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/fe/app/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/app/impl/internal/CascadeRestoreLocalInspectionsByProjectIdUseCaseImpl.kt
+  unit: :feat:inspections:fe:app:impl::commonMain
+  status: D
+  loc_churn: 33
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/fe/app/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/app/impl/internal/DeleteInspectionUseCaseImpl.kt
+  unit: :feat:inspections:fe:app:impl::commonMain
+  status: D
+  loc_churn: 46
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/fe/app/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/app/impl/internal/GetInspectionUseCaseImpl.kt
+  unit: :feat:inspections:fe:app:impl::commonMain
+  status: D
+  loc_churn: 30
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/fe/app/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/app/impl/internal/GetInspectionsUseCaseImpl.kt
+  unit: :feat:inspections:fe:app:impl::commonMain
+  status: D
+  loc_churn: 54
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/fe/app/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/app/impl/internal/LH.kt
+  unit: :feat:inspections:fe:app:impl::commonMain
+  status: D
+  loc_churn: 19
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/fe/app/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/app/impl/internal/SaveInspectionUseCaseImpl.kt
+  unit: :feat:inspections:fe:app:impl::commonMain
+  status: D
+  loc_churn: 66
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/fe/app/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/app/impl/internal/sync/InspectionPullSyncHandler.kt
+  unit: :feat:inspections:fe:app:impl::commonMain
+  status: D
+  loc_churn: 63
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/fe/app/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/app/impl/internal/sync/InspectionSyncEntityType.kt
+  unit: :feat:inspections:fe:app:impl::commonMain
+  status: D
+  loc_churn: 15
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/fe/app/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/app/impl/internal/sync/InspectionSyncHandler.kt
+  unit: :feat:inspections:fe:app:impl::commonMain
+  status: D
+  loc_churn: 46
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/fe/app/impl/src/commonTest/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/app/impl/internal/CascadeDeleteLocalInspectionsByProjectIdUseCaseImplTest.kt
+  unit: :feat:inspections:fe:app:impl::commonTest
+  status: D
+  loc_churn: 83
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/fe/app/impl/src/commonTest/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/app/impl/internal/CascadeRestoreLocalInspectionsByProjectIdUseCaseImplTest.kt
+  unit: :feat:inspections:fe:app:impl::commonTest
+  status: D
+  loc_churn: 88
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/fe/app/impl/src/commonTest/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/app/impl/internal/DeleteInspectionUseCaseImplTest.kt
+  unit: :feat:inspections:fe:app:impl::commonTest
+  status: D
+  loc_churn: 94
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/fe/app/impl/src/commonTest/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/app/impl/internal/SaveInspectionUseCaseImplTest.kt
+  unit: :feat:inspections:fe:app:impl::commonTest
+  status: D
+  loc_churn: 183
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/fe/driven/impl/build.gradle.kts
+  unit: :root::non-module
+  status: D
+  loc_churn: 16
+  bucket: collateral
+  recurring: false
+  source: rule:build_gradle_collateral
+  reason: build.gradle.kts edit in a pre-existing module — typically a new dependency or plugin declaration, avoidable if
+    the convention plugins auto-wire it
+- file: feat/inspections/fe/driven/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/driven/di/InspectionsDrivenModule.kt
+  unit: :feat:inspections:fe:driven:impl::commonMain
+  status: D
+  loc_churn: 35
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/fe/driven/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/driven/internal/LH.kt
+  unit: :feat:inspections:fe:driven:impl::commonMain
+  status: D
+  loc_churn: 19
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/fe/driven/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/driven/internal/api/Mappers.kt
+  unit: :feat:inspections:fe:driven:impl::commonMain
+  status: D
+  loc_churn: 41
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/fe/driven/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/driven/internal/api/RealInspectionsApi.kt
+  unit: :feat:inspections:fe:driven:impl::commonMain
+  status: D
+  loc_churn: 121
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/fe/driven/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/driven/internal/db/InspectionsSqlDelightDbOps.kt
+  unit: :feat:inspections:fe:driven:impl::commonMain
+  status: D
+  loc_churn: 52
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/fe/driven/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/driven/internal/db/Mappers.kt
+  unit: :feat:inspections:fe:driven:impl::commonMain
+  status: D
+  loc_churn: 43
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/fe/driven/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/driven/internal/db/RealInspectionsDb.kt
+  unit: :feat:inspections:fe:driven:impl::commonMain
+  status: D
+  loc_churn: 37
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/fe/driven/test/build.gradle.kts
+  unit: :root::non-module
+  status: D
+  loc_churn: 3
+  bucket: collateral
+  recurring: false
+  source: rule:build_gradle_collateral
+  reason: build.gradle.kts edit in a pre-existing module — typically a new dependency or plugin declaration, avoidable if
+    the convention plugins auto-wire it
+- file: feat/inspections/fe/driven/test/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/driven/test/FakeInspectionsApi.kt
+  unit: :feat:inspections:fe:driven:test::commonMain
+  status: D
+  loc_churn: 64
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/fe/driven/test/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/driven/test/FakeInspectionsDb.kt
+  unit: :feat:inspections:fe:driven:test::commonMain
+  status: D
+  loc_churn: 51
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/fe/driven/test/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/driven/test/InspectionsFeDrivenTestModule.kt
+  unit: :feat:inspections:fe:driven:test::commonMain
+  status: D
+  loc_churn: 25
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/fe/driving/api/build.gradle.kts
+  unit: :root::non-module
+  status: D
+  loc_churn: 27
+  bucket: collateral
+  recurring: false
+  source: rule:build_gradle_collateral
+  reason: build.gradle.kts edit in a pre-existing module — typically a new dependency or plugin declaration, avoidable if
+    the convention plugins auto-wire it
+- file: feat/inspections/fe/driving/api/src/commonMain/composeResources/values/strings.xml
+  unit: :feat:inspections:fe:driving:api::commonMain
+  status: D
+  loc_churn: 21
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/fe/driving/api/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/driving/api/InspectionCard.kt
+  unit: :feat:inspections:fe:driving:api::commonMain
+  status: D
+  loc_churn: 410
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/fe/driving/api/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/driving/api/InspectionRoutes.kt
+  unit: :feat:inspections:fe:driving:api::commonMain
+  status: D
+  loc_churn: 32
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/fe/driving/api/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/driving/api/di/InspectionsDrivingApiModule.kt
+  unit: :feat:inspections:fe:driving:api::commonMain
+  status: D
+  loc_churn: 23
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/fe/driving/api/src/nonWebMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/driving/api/NonWebInspectionsRoute.kt
+  unit: :feat:inspections:fe:driving:api::nonWebMain
+  status: D
+  loc_churn: 37
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/fe/driving/api/src/nonWebMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/driving/api/di/InspectionsDrivingApiModule.nonWeb.kt
+  unit: :feat:inspections:fe:driving:api::nonWebMain
+  status: D
+  loc_churn: 26
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/fe/driving/api/src/webMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/driving/api/InspectionsBrowserHistoryFragmentBuilder.kt
+  unit: :feat:inspections:fe:driving:api::webMain
+  status: D
+  loc_churn: 38
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/fe/driving/api/src/webMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/driving/api/WebInspectionsRoute.kt
+  unit: :feat:inspections:fe:driving:api::webMain
+  status: D
+  loc_churn: 45
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/fe/driving/api/src/webMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/driving/api/di/InspectionsDrivingApiModule.web.kt
+  unit: :feat:inspections:fe:driving:api::webMain
+  status: D
+  loc_churn: 30
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/fe/driving/impl/build.gradle.kts
+  unit: :root::non-module
+  status: D
+  loc_churn: 36
+  bucket: collateral
+  recurring: false
+  source: rule:build_gradle_collateral
+  reason: build.gradle.kts edit in a pre-existing module — typically a new dependency or plugin declaration, avoidable if
+    the convention plugins auto-wire it
+- file: feat/inspections/fe/driving/impl/src/commonMain/composeResources/values/strings.xml
+  unit: :feat:inspections:fe:driving:impl::commonMain
+  status: D
+  loc_churn: 23
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/fe/driving/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/driving/impl/di/InspectionsDrivingModule.kt
+  unit: :feat:inspections:fe:driving:impl::commonMain
+  status: D
+  loc_churn: 100
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/fe/driving/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/driving/impl/internal/ui/InspectionEditContent.kt
+  unit: :feat:inspections:fe:driving:impl::commonMain
+  status: D
+  loc_churn: 414
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/fe/driving/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/driving/impl/internal/ui/InspectionEditScreen.kt
+  unit: :feat:inspections:fe:driving:impl::commonMain
+  status: D
+  loc_churn: 95
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/fe/driving/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/driving/impl/internal/ui/TimestampExtensions.kt
+  unit: :feat:inspections:fe:driving:impl::commonMain
+  status: D
+  loc_churn: 26
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/fe/driving/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/driving/impl/internal/ui/components/DateTimePickerField.kt
+  unit: :feat:inspections:fe:driving:impl::commonMain
+  status: D
+  loc_churn: 242
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/fe/driving/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/driving/impl/internal/ui/components/InspectionDeletionAlertDialog.kt
+  unit: :feat:inspections:fe:driving:impl::commonMain
+  status: D
+  loc_churn: 57
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/fe/driving/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/driving/impl/internal/vm/InspectionEditUiState.kt
+  unit: :feat:inspections:fe:driving:impl::commonMain
+  status: D
+  loc_churn: 24
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/fe/driving/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/driving/impl/internal/vm/InspectionEditViewModel.kt
+  unit: :feat:inspections:fe:driving:impl::commonMain
+  status: D
+  loc_churn: 176
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/fe/driving/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/driving/impl/internal/vm/InspectionEditVmState.kt
+  unit: :feat:inspections:fe:driving:impl::commonMain
+  status: D
+  loc_churn: 27
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/fe/driving/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/driving/impl/internal/vm/Mapper.kt
+  unit: :feat:inspections:fe:driving:impl::commonMain
+  status: D
+  loc_churn: 23
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/fe/driving/impl/src/commonTest/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/driving/impl/internal/vm/InspectionEditMapperTest.kt
+  unit: :feat:inspections:fe:driving:impl::commonTest
+  status: D
+  loc_churn: 91
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/fe/driving/impl/src/commonTest/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/driving/impl/internal/vm/InspectionEditViewModelTest.kt
+  unit: :feat:inspections:fe:driving:impl::commonTest
+  status: D
+  loc_churn: 297
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/fe/driving/impl/src/nonWebMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/driving/impl/di/InspectionsDrivingModule.nonWeb.kt
+  unit: :feat:inspections:fe:driving:impl::nonWebMain
+  status: D
+  loc_churn: 23
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/fe/driving/impl/src/webMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/driving/impl/di/InspectionsDrivingModule.web.kt
+  unit: :feat:inspections:fe:driving:impl::webMain
+  status: D
+  loc_churn: 23
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/fe/ports/build.gradle.kts
+  unit: :root::non-module
+  status: D
+  loc_churn: 3
+  bucket: collateral
+  recurring: false
+  source: rule:build_gradle_collateral
+  reason: build.gradle.kts edit in a pre-existing module — typically a new dependency or plugin declaration, avoidable if
+    the convention plugins auto-wire it
+- file: feat/inspections/fe/ports/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/ports/InspectionsApi.kt
+  unit: :feat:inspections:fe:ports::commonMain
+  status: D
+  loc_churn: 44
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/inspections/fe/ports/src/commonMain/kotlin/cz/adamec/timotej/snag/feat/inspections/fe/ports/InspectionsDb.kt
+  unit: :feat:inspections:fe:ports::commonMain
+  status: D
+  loc_churn: 32
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:inspections:*)
+- file: feat/projects/fe/app/impl/build.gradle.kts
+  unit: :root::non-module
+  status: M
+  loc_churn: 1
+  bucket: collateral
+  recurring: false
+  source: rule:build_gradle_collateral
+  reason: build.gradle.kts edit in a pre-existing module — typically a new dependency or plugin declaration, avoidable if
+    the convention plugins auto-wire it
+- file: feat/projects/fe/app/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/app/impl/internal/DeleteProjectUseCaseImpl.kt
+  unit: :feat:projects:fe:app:impl::commonMain
+  status: M
+  loc_churn: 4
+  bucket: collateral
+  recurring: false
+  source: hand
+  reason: Direct import of CascadeDeleteLocalInspectionsByProjectIdUseCase — cross-feature coupling; avoidable via a projects-defined
+    cross-feature port for cascade cleanup
+- file: feat/projects/fe/app/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/app/impl/internal/sync/ProjectPullSyncHandler.kt
+  unit: :feat:projects:fe:app:impl::commonMain
+  status: M
+  loc_churn: 4
+  bucket: collateral
+  recurring: false
+  source: hand
+  reason: ProjectPullSyncHandler is feat/projects' own pull sync handler, not a central registry — the sync_handler_registry
+    rule misfired. The touch here is because the handler calls CascadeDeleteLocalInspectionsByProjectIdUseCase inside its
+    applyChange Deleted branch (cross-feature cascade, collateral). Note rule mis-match for follow-up ripple_rules.yaml tightening.
+- file: feat/projects/fe/app/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/app/impl/internal/sync/ProjectSyncHandler.kt
+  unit: :feat:projects:fe:app:impl::commonMain
+  status: M
+  loc_churn: 4
+  bucket: collateral
+  recurring: false
+  source: hand
+  reason: ProjectSyncHandler is feat/projects' OWN sync handler, not a central registry — the sync_handler_registry rule misfired.
+    The touch here is because the handler invokes CascadeRestoreLocalInspectionsByProjectIdUseCase in its onDeleteRejected
+    path (cross-feature cascade, collateral). Note rule mis-match for follow-up ripple_rules.yaml tightening.
+- file: feat/projects/fe/driving/impl/build.gradle.kts
+  unit: :root::non-module
+  status: M
+  loc_churn: 3
+  bucket: collateral
+  recurring: false
+  source: rule:build_gradle_collateral
+  reason: build.gradle.kts edit in a pre-existing module — typically a new dependency or plugin declaration, avoidable if
+    the convention plugins auto-wire it
+- file: feat/projects/fe/driving/impl/src/commonMain/composeResources/values/strings.xml
+  unit: :feat:projects:fe:driving:impl::commonMain
+  status: M
+  loc_churn: 2
+  bucket: collateral
+  recurring: false
+  source: hand
+  reason: Removed inspections_section_title and new_inspection strings — UI copy previously embedded in feat/projects for
+    the inspections section
+- file: feat/projects/fe/driving/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/driving/impl/di/ProjectsDrivingModule.kt
+  unit: :feat:projects:fe:driving:impl::commonMain
+  status: M
+  loc_churn: 12
+  bucket: collateral
+  recurring: false
+  source: hand
+  reason: 'Navigation wiring: InspectionCreationRouteFactory and InspectionEditRouteFactory bindings + onNewInspectionClick/onInspectionClick
+    callbacks removed'
+- file: feat/projects/fe/driving/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/driving/impl/internal/projectDetails/ui/ProjectDetailsContent.kt
+  unit: :feat:projects:fe:driving:impl::commonMain
+  status: M
+  loc_churn: 78
+  bucket: collateral
+  recurring: false
+  source: hand
+  reason: 'UI embed: InspectionCard composable section with section header, LazyRow, and start/end callbacks removed'
+- file: feat/projects/fe/driving/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/driving/impl/internal/projectDetails/ui/ProjectDetailsScreen.kt
+  unit: :feat:projects:fe:driving:impl::commonMain
+  status: M
+  loc_churn: 6
+  bucket: collateral
+  recurring: false
+  source: hand
+  reason: onNewInspectionClick/onInspectionClick callback parameters removed from ProjectDetailsScreen function signature
+- file: feat/projects/fe/driving/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/driving/impl/internal/projectDetails/vm/Mapper.kt
+  unit: :feat:projects:fe:driving:impl::commonMain
+  status: M
+  loc_churn: 1
+  bucket: collateral
+  recurring: false
+  source: hand
+  reason: Removed inspections = inspections field from VmState→UiState mapping
+- file: feat/projects/fe/driving/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/driving/impl/internal/projectDetails/vm/ProjectDetailsUiState.kt
+  unit: :feat:projects:fe:driving:impl::commonMain
+  status: M
+  loc_churn: 7
+  bucket: collateral
+  recurring: false
+  source: hand
+  reason: Removed inspections field (ImmutableList<AppInspection>) + InspectionsUiStatus enum from the UI state data class
+- file: feat/projects/fe/driving/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/driving/impl/internal/projectDetails/vm/ProjectDetailsViewModel.kt
+  unit: :feat:projects:fe:driving:impl::commonMain
+  status: M
+  loc_churn: 67
+  bucket: collateral
+  recurring: false
+  source: hand
+  reason: 'Major: removed GetInspectionsUseCase/SaveInspectionUseCase constructor params, collectInspections job, onStartInspection/onEndInspection
+    methods, and inspection-related VmState fields'
+- file: feat/projects/fe/driving/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/driving/impl/internal/projectDetails/vm/ProjectDetailsVmState.kt
+  unit: :feat:projects:fe:driving:impl::commonMain
+  status: M
+  loc_churn: 3
+  bucket: collateral
+  recurring: false
+  source: hand
+  reason: Removed inspections, inspectionStatus fields + InspectionsUiStatus enum
+- file: feat/projects/fe/driving/impl/src/commonTest/kotlin/cz/adamec/timotej/snag/projects/fe/driving/impl/internal/projectDetails/vm/ProjectDetailsViewModelTest.kt
+  unit: :feat:projects:fe:driving:impl::commonTest
+  status: M
+  loc_churn: 222
+  bucket: collateral
+  recurring: false
+  source: hand
+  reason: Removed 7 inspection-related test cases (onStartInspection/onEndInspection variants), FakeInspections{Db,Api} injections,
+    and the seedInspection helper
+- file: feat/projects/fe/driving/impl/src/nonWebMain/kotlin/cz/adamec/timotej/snag/projects/fe/driving/impl/di/ProjectsDrivingModule.nonWeb.kt
+  unit: :feat:projects:fe:driving:impl::nonWebMain
+  status: M
+  loc_churn: 2
+  bucket: collateral
+  recurring: false
+  source: hand
+  reason: 'NonWebProjectDetailsViewModel construction: removed getInspectionsUseCase and saveInspectionUseCase Koin get()
+    calls'
+- file: feat/projects/fe/driving/impl/src/nonWebMain/kotlin/cz/adamec/timotej/snag/projects/fe/driving/impl/internal/projectDetails/vm/NonWebProjectDetailsViewModel.kt
+  unit: :feat:projects:fe:driving:impl::nonWebMain
+  status: M
+  loc_churn: 6
+  bucket: collateral
+  recurring: false
+  source: hand
+  reason: 'NonWeb VM: removed inspection use case constructor params and super() delegation'
+- file: feat/projects/fe/driving/impl/src/webMain/kotlin/cz/adamec/timotej/snag/projects/fe/driving/impl/di/ProjectsDrivingModule.web.kt
+  unit: :feat:projects:fe:driving:impl::webMain
+  status: M
+  loc_churn: 2
+  bucket: collateral
+  recurring: false
+  source: hand
+  reason: 'WebProjectDetailsViewModel construction: removed getInspectionsUseCase and saveInspectionUseCase Koin get() calls'
+- file: feat/projects/fe/driving/impl/src/webMain/kotlin/cz/adamec/timotej/snag/projects/fe/driving/impl/internal/projectDetails/vm/WebProjectDetailsViewModel.kt
+  unit: :feat:projects:fe:driving:impl::webMain
+  status: M
+  loc_churn: 6
+  bucket: collateral
+  recurring: false
+  source: hand
+  reason: 'Web VM: removed inspection use case constructor params and super() delegation'
+- file: feat/reports/be/app/impl/build.gradle.kts
+  unit: :root::non-module
+  status: M
+  loc_churn: 1
+  bucket: collateral
+  recurring: false
+  source: rule:build_gradle_collateral
+  reason: build.gradle.kts edit in a pre-existing module — typically a new dependency or plugin declaration, avoidable if
+    the convention plugins auto-wire it
+- file: feat/reports/be/app/impl/src/main/kotlin/cz/adamec/timotej/snag/reports/be/app/impl/internal/GenerateProjectReportUseCaseImpl.kt
+  unit: :feat:reports:be:app:impl::main
+  status: M
+  loc_churn: 6
+  bucket: collateral
+  recurring: false
+  source: hand
+  reason: Removed GetInspectionsUseCase constructor param and the inspections fetch inside the report generator; reports feature
+    depended cross-feature on inspections for passport PDF data
+- file: feat/reports/be/driven/impl/src/main/kotlin/cz/adamec/timotej/snag/reports/be/driven/impl/internal/OpenPdfReportGenerator.kt
+  unit: :feat:reports:be:driven:impl::main
+  status: M
+  loc_churn: 40
+  bucket: collateral
+  recurring: false
+  source: hand
+  reason: 'PDF report generator: removed addInspectionsSection function, inspection table column constants, and cover-page/summary-page
+    inspection counts'
+- file: feat/reports/be/ports/build.gradle.kts
+  unit: :root::non-module
+  status: M
+  loc_churn: 1
+  bucket: collateral
+  recurring: false
+  source: rule:build_gradle_collateral
+  reason: build.gradle.kts edit in a pre-existing module — typically a new dependency or plugin declaration, avoidable if
+    the convention plugins auto-wire it
+- file: feat/reports/be/ports/src/main/kotlin/cz/adamec/timotej/snag/reports/be/ports/ProjectReportData.kt
+  unit: :feat:reports:be:ports::main
+  status: M
+  loc_churn: 2
+  bucket: collateral
+  recurring: false
+  source: hand
+  reason: 'Removed inspections: List<BackendInspection> field from the report data class (cross-feature model leak into reports)'
+- file: koinModulesAggregate/be/build.gradle.kts
+  unit: :root::non-module
+  status: M
+  loc_churn: 5
+  bucket: intrinsic
+  recurring: true
+  source: rule:aggregation_koin_be
+  reason: BE Koin aggregation — each feature's DI module is listed here, every feature add/remove edits this file
+  ns_theorem: SoC
+- file: koinModulesAggregate/be/src/main/kotlin/cz/adamec/timotej/snag/di/aggregate/be/BackendModulesAggregate.kt
+  unit: :koinModulesAggregate:be::main
+  status: M
+  loc_churn: 6
+  bucket: intrinsic
+  recurring: true
+  source: rule:aggregation_koin_be
+  reason: BE Koin aggregation — each feature's DI module is listed here, every feature add/remove edits this file
+  ns_theorem: SoC
+- file: koinModulesAggregate/fe/build.gradle.kts
+  unit: :root::non-module
+  status: M
+  loc_churn: 6
+  bucket: intrinsic
+  recurring: true
+  source: rule:aggregation_koin_fe
+  reason: FE Koin aggregation — each feature's DI module is listed here, every feature add/remove edits this file
+  ns_theorem: SoC
+- file: koinModulesAggregate/fe/src/commonMain/kotlin/cz/adamec/timotej/snag/di/aggregate/fe/FrontendModulesAggregate.kt
+  unit: :koinModulesAggregate:fe::commonMain
+  status: M
+  loc_churn: 8
+  bucket: intrinsic
+  recurring: true
+  source: rule:aggregation_koin_fe
+  reason: FE Koin aggregation — each feature's DI module is listed here, every feature add/remove edits this file
+  ns_theorem: SoC
+- file: server/build.gradle.kts
+  unit: :root::non-module
+  status: M
+  loc_churn: 1
+  bucket: collateral
+  recurring: false
+  source: rule:build_gradle_collateral
+  reason: build.gradle.kts edit in a pre-existing module — typically a new dependency or plugin declaration, avoidable if
+    the convention plugins auto-wire it
+- file: server/src/main/kotlin/cz/adamec/timotej/snag/impl/internal/DevDataSeederConfiguration.kt
+  unit: :server::main
+  status: M
+  loc_churn: 55
+  bucket: intrinsic
+  recurring: true
+  source: hand
+  reason: Dev-data seeder enumerates every feature's entity (constructor param + seed*() call per feature); overridden from
+    rule's recurring:false because every new entity forces a touch — a combinatorial DVT site. Note rule discrepancy for follow-up
+    ripple_rules.yaml edit.
+  ns_theorem: DVT
+- file: settings.gradle.kts
+  unit: :root::settings
+  status: M
+  loc_churn: 17
+  bucket: intrinsic
+  recurring: true
+  source: rule:settings_gradle
+  reason: settings.gradle.kts — every module add/remove is listed here
+  ns_theorem: SoC
+- file: testInfra/be/build.gradle.kts
+  unit: :root::non-module
+  status: M
+  loc_churn: 1
+  bucket: collateral
+  recurring: false
+  source: rule:build_gradle_collateral
+  reason: build.gradle.kts edit in a pre-existing module — typically a new dependency or plugin declaration, avoidable if
+    the convention plugins auto-wire it
+- file: testInfra/fe/build.gradle.kts
+  unit: :root::non-module
+  status: M
+  loc_churn: 1
+  bucket: collateral
+  recurring: false
+  source: rule:build_gradle_collateral
+  reason: build.gradle.kts edit in a pre-existing module — typically a new dependency or plugin declaration, avoidable if
+    the convention plugins auto-wire it
+- file: testInfra/fe/src/commonMain/kotlin/cz/adamec/timotej/snag/testinfra/fe/FrontendKoinInitializedTest.kt
+  unit: :testInfra:fe::commonMain
+  status: M
+  loc_churn: 2
+  bucket: intrinsic
+  recurring: true
+  source: hand
+  reason: Test infrastructure base class enumerates every feature's driven-test module in its koinModules() list; every new
+    feature forces an addition here — an ISP-flavored aggregation site (test infra fan-in)
+  ns_theorem: ISP

@@ -827,6 +827,11 @@ Whenever a Phase 2 part ships in this repo, this section should be updated: eith
 | **T-3** | §4.1 `tab:eval-operacionalizace` | O2b row: Part B commonized-branch ripple bucket counts (forced commonMain placement) — tooling cite `feature_retro.py` — dataset cite `analysis/data/ripple_photo-progress-commonized_*.csv` | `phase-2-plan.md` §F + §G (to be drafted in Part B preflight) | **Pending**. Part B not yet run. |
 | **T-4** | §4.2 introduction | One-sentence method note: "Metriky tabulky jsou deskriptivní — stejné hodnoty jsou kompatibilní s více architektonickými scénáři (správným, nadgeneralizovaným, fragmentovaným); korektnost rozvahy je argumentována protipříkladem v §4.3 a kaveáty v §4.9." (Czech phrasing by Phase 5 author; sentence content locked by the addendum.) | `phase-2-plan.md` §E line 600 (duality framing), §J.5 line 766 (explicit method-note requirement) | **Pending**. One-liner, belongs in the same thesis-repo commit as T-1..T-3. |
 | **T-5** | §4.9 threats-to-validity | One-sentence caveat restating the duality framing: that per-layer sharing ratios describe structure, not correctness, and that the §4.3 counterfactual is the mechanism by which correctness is argued. | `phase-2-plan.md` §J.5 line 789, §E line 600 | **Pending**. Same bundled commit as T-4. |
+| **T-6** | §4.6 "Případová studie 1 — reverzní odstranění feat/inspections" (primary source) | Prose synthesis of the NS-theorem-grouped observations in the Case 1 critique file. Six observations: 2× SoC Koin aggregation (Obs 1, 2), 1× SoC settings.gradle.kts (Obs 3), 1× DVT dev-data seeder (Obs 4), 1× ISP test-infra (Obs 5), 1× contrast on the 89 local files (Obs 6). | `analysis/classifications/inspections-reverse-removal_critique.md` (shipped with Case 1) | **Pending**. Prose authoring is Phase 5; the critique file is the definitive source. |
+| **T-7** | §4.6 headline number | `N = 6` recurring-intrinsic units (corresponds to 4 distinct NS anomaly sites after collapsing the `:root::non-module` path→unit artifact for build.gradle.kts files). Also report files local/intrinsic/collateral = 89/7/43 and churn 5281/99/691. | `--finalize` stdout + `analysis/data/ripple_inspections-reverse-removal_units.csv` | **Pending**. Phase 5 copies the number verbatim from the critique headline block. |
+| **T-8** | §4.7 cross-case roll-up table | Row for Case 1: `recurring_intrinsic = 6 (4 distinct sites)`, `collateral = 43`, `local = 89`, `churn_total = 6071`. Alongside Case 2's row (1/4/90, ProjectPhoto). | `analysis/data/ripple_inspections-reverse-removal_units.csv` + Case 2's equivalent CSV | **Pending**. Phase 5 writes the table after all cases land. |
+| **T-9** | §4.1 `tab:eval-operacionalizace` | O3 row: "Ripple rozklad reverzního odstranění feature feat/inspections do lokálního, intrinsického a kolaterálního kbelíku s počtem rekurentních intrinsických anomálií podle NS teorému" — tooling cite `feature_retro.py` — dataset cite `analysis/data/ripple_inspections-reverse-removal_*.csv`. Corresponds to the primary-evidence op for §4.6. | Case 1 shipment (this plan's Step 11) | **Pending**. Belongs in the same bundled thesis-repo commit as T-1..T-5 and T-10. |
+| **T-10** | §4.6 methodological caveat one-liner | *"Případová studie 1 je citována jako důkaz správnosti; per framing Part A v `analysis/phase-2-plan.md`, tvrzení zní 'kombinatorické dotyky jsou ohraničeny vyjmenovanými NS anomálními místy', nikoli 'architektura je optimální'."* (Czech phrasing by Phase 5 author; content locked here and in the Case 1 critique file header.) | `analysis/classifications/inspections-reverse-removal_critique.md` method note (shipped with Case 1) | **Pending**. Same bundled commit as T-4, T-5. |
 
 ### K.2 Already captured (no thesis-repo action needed)
 
@@ -838,6 +843,10 @@ These items are permanently captured in Phase 2 repo artifacts and Phase 5 prose
 - **Case 2 §4.7 headline** (`recurring intrinsic units = 1`). Captured in commit `550fd426b` message, critique file, and reproducible any time via `python analysis/feature_retro.py --change projectphoto-forward --base-ref b5365d611~1 --ref b5365d611 --finalize` stdout. §4.7 prose copies the number verbatim.
 - **Case 2 non-probative audit sentence.** Commit `550fd426b` message contains the exact sentence required by §J.6 item 4: "Case 2 is a tooling gate + descriptive illustration; it is not cited as correctness evidence." The repo's durable record carries the reframing so a future reader cannot accidentally cite Case 2 as probative.
 - **§4.3 / §4.6 / §4.7 / §4.9 artifact-to-section map.** `phase-2-plan.md` §J.5 lines 763–790 is the definitive map of which repo artifact feeds which thesis section. Phase 5 author reads §J.5 first, then pulls from the listed artifacts.
+- **Case 1 §4.6 primary source.** `analysis/classifications/inspections-reverse-removal_critique.md` — shipped alongside Case 1 yaml + CSVs on branch `chore/phase-2-ripple-tooling`. Six NS-theorem-grouped observations, correctness-evidence method note, headline numbers block. §4.6 prose (T-6 above) pulls directly from this file.
+- **Case 1 §4.6 headline.** `recurring intrinsic units = 6` (4 distinct NS anomaly sites after collapsing the build.gradle.kts path→unit artifact). Captured in the critique file, in the Case 1 commit message, and reproducible via `python analysis/feature_retro.py --change inspections-reverse-removal --ref experiment/remove-inspections --base-ref main --base-snapshot analysis/data/sharing_report_with_loc_base_main_e076e89e5.csv --change-kind feature_remove --finalize` stdout.
+- **Case 1 experiment branch.** `experiment/remove-inspections` on the main Snag repo — never merged, retained for reproducibility until Phase 5 writeup completes. Worktree at `.claude/worktrees/remove-inspections`. HEAD `dbb86f525`.
+- **Case 1 base-ref snapshot.** `analysis/data/sharing_report_with_loc_base_main_e076e89e5.csv` — captured once (copy of the pre-Case-1 state of `sharing_report_with_loc.csv`) so `feature_retro.py` can resolve deleted `feat/inspections/**` paths against it on every future rerun.
 
 ### K.3 Update protocol
 
@@ -852,12 +861,16 @@ Every time a Phase 2 part ships in this repo:
 Current plan is **one bundled commit** in `~/Ctu/dp-thesis-timotej-adamec/` once Part B ships:
 
 ```
-[J:MEP-0] §4.1 Phase 2 operationalization rows + §4.2/§4.9 duality caveats
+[J:MEP-0] §4.1 Phase 2 operationalization rows + §4.2/§4.6/§4.9 caveats
 
 - §4.1 tab:eval-operacionalizace: add O1 (Part A), O2a (Part B correct),
-  O2b (Part B commonized) rows with tooling + dataset citations.
+  O2b (Part B commonized), O3 (Case 1 ripple) rows with tooling + dataset
+  citations.
 - §4.2 introduction: add one-sentence method note framing per-layer
   metrics as descriptive, forward-ref to §4.3 / §4.9.
+- §4.6 introduction: add one-sentence method note pointing to the
+  Case 1 critique file as the correctness-evidence source and stating
+  the "combinatorial touches are bounded" framing verbatim.
 - §4.9 threats-to-validity: add one-sentence duality caveat.
 
 Content decided in Phase 2 (see analysis/phase-2-plan.md §K of the
@@ -866,4 +879,4 @@ mechanical LaTeX insertion; Czech phrasing for the one-liners is the
 Phase 5 prose author's final judgment call.
 ```
 
-This commit runs after Part B completes and before Phase 2 ships its final PR. If Part B gets delayed past Phase 2 PR merge, split: land T-1, T-4, T-5 as one commit (Part A + caveats), and T-2, T-3 as a second commit when Part B data exists.
+This commit runs after Part B completes and before Phase 2 ships its final PR. If Part B gets delayed past Phase 2 PR merge, split: land T-1, T-4, T-5, T-9, T-10 as one commit (Part A + Case 1 + caveats), and T-2, T-3 as a second commit when Part B data exists. T-6, T-7, T-8 are Phase 5 prose edits (not mechanical inserts) and stay out of this bundle.
