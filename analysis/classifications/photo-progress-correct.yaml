@@ -1,0 +1,69 @@
+change_id: photo-progress-correct
+ref: experiment/photo-progress-correct
+base_ref: main
+base_sharing_snapshot: analysis/data/sharing_report_with_loc_base_main_e076e89e5.csv
+repair_log:
+- file: feat/findings/fe/app/api/src/webMain/kotlin/cz/adamec/timotej/snag/findings/fe/app/api/WebAddFindingPhotoUseCase.kt
+  unit: :feat:findings:fe:app:api::webMain
+  status: M
+  loc_churn: 5
+  bucket: local
+  recurring: false
+  source: hand
+  reason: 'Web-only use-case interface signature widening (added onProgress callback param). Feature-internal, stays inside webMain — the progress semantics are web-specific.'
+- file: feat/findings/fe/app/impl/src/webMain/kotlin/cz/adamec/timotej/snag/findings/fe/app/impl/internal/WebAddFindingPhotoUseCaseImpl.kt
+  unit: :feat:findings:fe:app:impl::webMain
+  status: M
+  loc_churn: 7
+  bucket: local
+  recurring: false
+  source: hand
+  reason: 'Web-only impl: threads onProgress callback, emits start/end events around remoteFileStorage.uploadFile. Feature-internal.'
+- file: feat/findings/fe/app/impl/src/webTest/kotlin/cz/adamec/timotej/snag/findings/fe/app/impl/internal/WebAddFindingPhotoUseCaseImplTest.kt
+  unit: :feat:findings:fe:app:impl::webTest
+  status: M
+  loc_churn: 19
+  bucket: local
+  recurring: false
+  source: hand
+  reason: 'Web-only test: added progress-emission test. Feature-internal.'
+- file: feat/findings/fe/driving/impl/src/webMain/kotlin/cz/adamec/timotej/snag/findings/fe/driving/impl/internal/findingDetail/vm/WebFindingDetailViewModel.kt
+  unit: :feat:findings:fe:driving:impl::webMain
+  status: M
+  loc_churn: 14
+  bucket: local
+  recurring: false
+  source: hand
+  reason: 'Web-only VM: added uploadProgressFlow StateFlow + progress callback wiring. Feature-internal; no commonMain state touched.'
+- file: feat/projects/fe/app/api/src/webMain/kotlin/cz/adamec/timotej/snag/projects/fe/app/api/WebAddProjectPhotoUseCase.kt
+  unit: :feat:projects:fe:app:api::webMain
+  status: M
+  loc_churn: 5
+  bucket: local
+  recurring: false
+  source: hand
+  reason: 'Web-only use-case interface signature widening (mirror of findings). Feature-internal.'
+- file: feat/projects/fe/app/impl/src/webMain/kotlin/cz/adamec/timotej/snag/projects/fe/app/impl/internal/WebAddProjectPhotoUseCaseImpl.kt
+  unit: :feat:projects:fe:app:impl::webMain
+  status: M
+  loc_churn: 7
+  bucket: local
+  recurring: false
+  source: hand
+  reason: 'Web-only impl (mirror of findings). Feature-internal.'
+- file: feat/projects/fe/app/impl/src/webTest/kotlin/cz/adamec/timotej/snag/projects/fe/app/impl/internal/WebAddProjectPhotoUseCaseImplTest.kt
+  unit: :feat:projects:fe:app:impl::webTest
+  status: M
+  loc_churn: 26
+  bucket: local
+  recurring: false
+  source: hand
+  reason: 'Web-only test (mirror of findings). Feature-internal.'
+- file: feat/projects/fe/driving/impl/src/webMain/kotlin/cz/adamec/timotej/snag/projects/fe/driving/impl/internal/projectDetails/vm/WebProjectDetailsViewModel.kt
+  unit: :feat:projects:fe:driving:impl::webMain
+  status: M
+  loc_churn: 14
+  bucket: local
+  recurring: false
+  source: hand
+  reason: 'Web-only VM (mirror of findings). Feature-internal.'
