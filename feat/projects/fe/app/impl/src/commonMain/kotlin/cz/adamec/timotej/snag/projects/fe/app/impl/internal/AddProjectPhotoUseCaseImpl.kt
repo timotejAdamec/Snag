@@ -14,27 +14,26 @@ package cz.adamec.timotej.snag.projects.fe.app.impl.internal
 
 import cz.adamec.timotej.snag.core.foundation.common.TimestampProvider
 import cz.adamec.timotej.snag.core.foundation.common.UuidProvider
-import cz.adamec.timotej.snag.core.network.fe.OnlineDataResult
-import cz.adamec.timotej.snag.core.network.fe.log
-import cz.adamec.timotej.snag.core.storage.fe.RemoteFileStorage
+import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
+import cz.adamec.timotej.snag.core.network.fe.PhotoUploadResult
 import cz.adamec.timotej.snag.projects.app.model.AppProjectPhotoData
 import cz.adamec.timotej.snag.projects.fe.app.api.AddProjectPhotoRequest
-import cz.adamec.timotej.snag.projects.fe.app.api.WebAddProjectPhotoUseCase
-import cz.adamec.timotej.snag.projects.fe.app.impl.internal.LH.logger
+import cz.adamec.timotej.snag.projects.fe.app.api.AddProjectPhotoUseCase
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.sync.PROJECT_PHOTO_SYNC_ENTITY_TYPE
+import cz.adamec.timotej.snag.projects.fe.ports.ProjectPhotoStoragePort
 import cz.adamec.timotej.snag.projects.fe.ports.ProjectPhotosDb
 import cz.adamec.timotej.snag.sync.fe.app.api.EnqueueSyncSaveUseCase
 import cz.adamec.timotej.snag.sync.fe.app.api.model.EnqueueSyncSaveRequest
 import kotlin.uuid.Uuid
 
-internal class WebAddProjectPhotoUseCaseImpl(
-    private val remoteFileStorage: RemoteFileStorage,
+internal class AddProjectPhotoUseCaseImpl(
+    private val projectPhotoStoragePort: ProjectPhotoStoragePort,
     private val projectPhotosDb: ProjectPhotosDb,
     private val enqueueSyncSaveUseCase: EnqueueSyncSaveUseCase,
     private val timestampProvider: TimestampProvider,
     private val uuidProvider: UuidProvider,
-) : WebAddProjectPhotoUseCase {
-    override suspend operator fun invoke(request: AddProjectPhotoRequest): OnlineDataResult<Uuid> {
+) : AddProjectPhotoUseCase {
+    override suspend operator fun invoke(request: AddProjectPhotoRequest): PhotoUploadResult<Uuid> {
         val photoId = uuidProvider.getUuid()
         val extension =
             request.fileName.substringAfterLast(
@@ -44,43 +43,50 @@ internal class WebAddProjectPhotoUseCaseImpl(
         val fileName = "$photoId.$extension"
         val directory = "projects/${request.projectId}/photos"
 
-        val uploadResult =
-            remoteFileStorage.uploadFile(
-                bytes = request.bytes,
-                fileName = fileName,
-                directory = directory,
-            )
-
-        return when (uploadResult) {
-            is OnlineDataResult.Failure -> {
-                logger.log(
-                    offlineFirstDataResult = uploadResult,
-                    additionalInfo = "WebAddProjectPhotoUseCase, remoteFileStorage.uploadFile failed",
+        return when (
+            val uploadResult =
+                projectPhotoStoragePort.uploadPhoto(
+                    bytes = request.bytes,
+                    fileName = fileName,
+                    directory = directory,
                 )
-                uploadResult
-            }
-
-            is OnlineDataResult.Success -> {
-                val remoteUrl = uploadResult.data
+        ) {
+            is PhotoUploadResult.Success -> {
                 val photo =
                     AppProjectPhotoData(
                         id = photoId,
                         projectId = request.projectId,
-                        url = remoteUrl,
+                        url = uploadResult.data,
                         description = request.description,
                         updatedAt = timestampProvider.getNowTimestamp(),
                     )
+                when (val dbResult = projectPhotosDb.savePhoto(photo)) {
+                    is OfflineFirstDataResult.Success -> {
+                        enqueueSyncSaveUseCase(
+                            EnqueueSyncSaveRequest(
+                                entityTypeId = PROJECT_PHOTO_SYNC_ENTITY_TYPE,
+                                entityId = photoId,
+                            ),
+                        )
+                        PhotoUploadResult.Success(photoId)
+                    }
 
-                projectPhotosDb.savePhoto(photo)
+                    is OfflineFirstDataResult.ProgrammerError -> {
+                        PhotoUploadResult.ProgrammerError(throwable = dbResult.throwable)
+                    }
+                }
+            }
 
-                enqueueSyncSaveUseCase(
-                    EnqueueSyncSaveRequest(
-                        entityTypeId = PROJECT_PHOTO_SYNC_ENTITY_TYPE,
-                        entityId = photoId,
-                    ),
-                )
+            is PhotoUploadResult.ProgrammerError -> {
+                uploadResult
+            }
 
-                OnlineDataResult.Success(photoId)
+            is PhotoUploadResult.NetworkUnavailable -> {
+                uploadResult
+            }
+
+            is PhotoUploadResult.UserMessageError -> {
+                uploadResult
             }
         }
     }

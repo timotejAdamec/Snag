@@ -14,13 +14,14 @@ package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.
 
 import androidx.lifecycle.viewModelScope
 import cz.adamec.timotej.snag.core.foundation.common.TimestampProvider
-import cz.adamec.timotej.snag.core.network.fe.OnlineDataResult
+import cz.adamec.timotej.snag.core.network.fe.PhotoUploadResult
 import cz.adamec.timotej.snag.feat.inspections.fe.app.api.GetInspectionsUseCase
 import cz.adamec.timotej.snag.feat.inspections.fe.app.api.SaveInspectionUseCase
 import cz.adamec.timotej.snag.feat.reports.fe.app.api.DownloadReportUseCase
 import cz.adamec.timotej.snag.feat.reports.fe.app.api.GetAvailableReportTypesFlowUseCase
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.projects.fe.app.api.AddProjectPhotoRequest
+import cz.adamec.timotej.snag.projects.fe.app.api.AddProjectPhotoUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.AssignUserToProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.CanAssignUserToProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.CanCloseProjectUseCase
@@ -34,7 +35,6 @@ import cz.adamec.timotej.snag.projects.fe.app.api.GetProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.RemoveUserFromProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.SetProjectClosedUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.UpdateProjectPhotoDescriptionUseCase
-import cz.adamec.timotej.snag.projects.fe.app.api.WebAddProjectPhotoUseCase
 import cz.adamec.timotej.snag.structures.fe.app.api.GetStructuresUseCase
 import cz.adamec.timotej.snag.users.fe.app.api.GetUsersUseCase
 import kotlinx.coroutines.Job
@@ -63,7 +63,7 @@ internal class WebProjectDetailsViewModel(
     getProjectPhotosUseCase: GetProjectPhotosUseCase,
     deleteProjectPhotoUseCase: DeleteProjectPhotoUseCase,
     updateProjectPhotoDescriptionUseCase: UpdateProjectPhotoDescriptionUseCase,
-    private val webAddProjectPhotoUseCase: WebAddProjectPhotoUseCase,
+    private val addProjectPhotoUseCase: AddProjectPhotoUseCase,
     private val canModifyProjectFilesUseCase: CanModifyProjectFilesUseCase,
 ) : ProjectDetailsViewModel(
         projectId = projectId,
@@ -110,12 +110,20 @@ internal class WebProjectDetailsViewModel(
                     projectId = projectId,
                     description = description,
                 )
-            when (webAddProjectPhotoUseCase(request)) {
-                is OnlineDataResult.Success -> {
+            when (addProjectPhotoUseCase(request)) {
+                is PhotoUploadResult.Success -> {
                     // Photo will appear via flow
                 }
 
-                is OnlineDataResult.Failure -> {
+                is PhotoUploadResult.ProgrammerError -> {
+                    errorEventsChannel.send(UiError.Unknown)
+                }
+
+                is PhotoUploadResult.NetworkUnavailable -> {
+                    errorEventsChannel.send(UiError.Unknown)
+                }
+
+                is PhotoUploadResult.UserMessageError -> {
                     errorEventsChannel.send(UiError.Unknown)
                 }
             }

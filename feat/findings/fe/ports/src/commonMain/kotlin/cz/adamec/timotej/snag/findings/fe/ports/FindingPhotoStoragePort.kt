@@ -10,11 +10,14 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.findings.fe.app.api
+package cz.adamec.timotej.snag.findings.fe.ports
 
-import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
-import kotlin.uuid.Uuid
+import cz.adamec.timotej.snag.core.network.fe.PhotoUploadResult
 
-interface NonWebAddFindingPhotoUseCase {
-    suspend operator fun invoke(request: AddFindingPhotoRequest): OfflineFirstDataResult<Uuid>
+interface FindingPhotoStoragePort {
+    suspend fun uploadPhoto(
+        bytes: ByteArray,
+        fileName: String,
+        directory: String,
+    ): PhotoUploadResult<String>
 }

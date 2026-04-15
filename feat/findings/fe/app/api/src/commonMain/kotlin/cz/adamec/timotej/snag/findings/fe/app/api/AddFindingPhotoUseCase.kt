@@ -12,9 +12,9 @@
 
 package cz.adamec.timotej.snag.findings.fe.app.api
 
-import cz.adamec.timotej.snag.core.network.fe.OnlineDataResult
+import cz.adamec.timotej.snag.core.network.fe.PhotoUploadResult
 import kotlin.uuid.Uuid
 
-interface WebAddFindingPhotoUseCase {
-    suspend operator fun invoke(request: AddFindingPhotoRequest): OnlineDataResult<Uuid>
+interface AddFindingPhotoUseCase {
+    suspend operator fun invoke(request: AddFindingPhotoRequest): PhotoUploadResult<Uuid>
 }

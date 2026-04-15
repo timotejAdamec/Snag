@@ -52,7 +52,7 @@ internal actual val platformModule =
                 getProjectPhotosUseCase = get(),
                 deleteProjectPhotoUseCase = get(),
                 updateProjectPhotoDescriptionUseCase = get(),
-                nonWebAddProjectPhotoUseCase = get(),
+                addProjectPhotoUseCase = get(),
             )
         }
     }

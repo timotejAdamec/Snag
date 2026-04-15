@@ -37,7 +37,7 @@ internal actual val platformModule =
                 canEditProjectEntitiesUseCase = get(),
                 getFindingPhotosUseCase = get(),
                 deleteFindingPhotoUseCase = get(),
-                nonWebAddFindingPhotoUseCase = get(),
+                addFindingPhotoUseCase = get(),
             )
         }
     }

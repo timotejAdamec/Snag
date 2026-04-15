@@ -17,6 +17,7 @@ import cz.adamec.timotej.snag.projects.business.CanAccessProjectRule
 import cz.adamec.timotej.snag.projects.business.CanAssignUserToProjectRule
 import cz.adamec.timotej.snag.projects.business.CanCloseProjectRule
 import cz.adamec.timotej.snag.projects.business.CanCreateProjectRule
+import cz.adamec.timotej.snag.projects.fe.app.api.AddProjectPhotoUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.AssignUserToProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.CanAssignUserToProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.CanCloseProjectUseCase
@@ -37,6 +38,7 @@ import cz.adamec.timotej.snag.projects.fe.app.api.RemoveUserFromProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.SaveProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.SetProjectClosedUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.UpdateProjectPhotoDescriptionUseCase
+import cz.adamec.timotej.snag.projects.fe.app.impl.internal.AddProjectPhotoUseCaseImpl
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.AssignUserToProjectUseCaseImpl
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.CanAssignUserToProjectUseCaseImpl
 import cz.adamec.timotej.snag.projects.fe.app.impl.internal.CanCloseProjectUseCaseImpl
@@ -71,6 +73,7 @@ import org.koin.dsl.module
 val projectsAppModule =
     module {
         includes(projectsAppPlatformModule)
+        factoryOf(::AddProjectPhotoUseCaseImpl) bind AddProjectPhotoUseCase::class
         factoryOf(::GetProjectsUseCaseImpl) bind GetProjectsUseCase::class
         factoryOf(::GetProjectUseCaseImpl) bind GetProjectUseCase::class
         factoryOf(::SaveProjectUseCaseImpl) bind SaveProjectUseCase::class

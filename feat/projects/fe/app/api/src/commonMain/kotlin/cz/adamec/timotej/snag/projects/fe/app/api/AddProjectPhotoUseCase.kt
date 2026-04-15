@@ -12,9 +12,9 @@
 
 package cz.adamec.timotej.snag.projects.fe.app.api
 
-import cz.adamec.timotej.snag.core.network.fe.OnlineDataResult
+import cz.adamec.timotej.snag.core.network.fe.PhotoUploadResult
 import kotlin.uuid.Uuid
 
-interface WebAddProjectPhotoUseCase {
-    suspend operator fun invoke(request: AddProjectPhotoRequest): OnlineDataResult<Uuid>
+interface AddProjectPhotoUseCase {
+    suspend operator fun invoke(request: AddProjectPhotoRequest): PhotoUploadResult<Uuid>
 }

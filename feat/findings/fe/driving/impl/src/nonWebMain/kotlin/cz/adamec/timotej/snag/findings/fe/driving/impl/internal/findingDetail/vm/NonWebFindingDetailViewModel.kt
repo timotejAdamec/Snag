@@ -13,13 +13,13 @@
 package cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetail.vm
 
 import androidx.lifecycle.viewModelScope
-import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
+import cz.adamec.timotej.snag.core.network.fe.PhotoUploadResult
 import cz.adamec.timotej.snag.findings.fe.app.api.AddFindingPhotoRequest
+import cz.adamec.timotej.snag.findings.fe.app.api.AddFindingPhotoUseCase
 import cz.adamec.timotej.snag.findings.fe.app.api.DeleteFindingPhotoUseCase
 import cz.adamec.timotej.snag.findings.fe.app.api.DeleteFindingUseCase
 import cz.adamec.timotej.snag.findings.fe.app.api.GetFindingPhotosUseCase
 import cz.adamec.timotej.snag.findings.fe.app.api.GetFindingUseCase
-import cz.adamec.timotej.snag.findings.fe.app.api.NonWebAddFindingPhotoUseCase
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.projects.fe.app.api.CanEditProjectEntitiesUseCase
 import kotlinx.coroutines.flow.update
@@ -34,7 +34,7 @@ internal class NonWebFindingDetailViewModel(
     canEditProjectEntitiesUseCase: CanEditProjectEntitiesUseCase,
     getFindingPhotosUseCase: GetFindingPhotosUseCase,
     deleteFindingPhotoUseCase: DeleteFindingPhotoUseCase,
-    private val nonWebAddFindingPhotoUseCase: NonWebAddFindingPhotoUseCase,
+    private val addFindingPhotoUseCase: AddFindingPhotoUseCase,
 ) : FindingDetailViewModel(
         findingId = findingId,
         projectId = projectId,
@@ -57,13 +57,25 @@ internal class NonWebFindingDetailViewModel(
                     findingId = findingId,
                     projectId = projectId,
                 )
-            when (nonWebAddFindingPhotoUseCase(request)) {
-                is OfflineFirstDataResult.ProgrammerError -> {
+            when (addFindingPhotoUseCase(request)) {
+                is PhotoUploadResult.Success -> {
+                    // Photo will appear via flow
+                }
+
+                is PhotoUploadResult.ProgrammerError -> {
                     errorEventsChannel.send(UiError.Unknown)
                 }
 
-                is OfflineFirstDataResult.Success -> {
-                    // Photo will appear via flow
+                is PhotoUploadResult.NetworkUnavailable -> {
+                    // Unreachable on native offline-first path (no network involved),
+                    // but the sealed `when` must be exhaustive because the common
+                    // AddFindingPhotoUseCase return type fuses both platforms.
+                    errorEventsChannel.send(UiError.Unknown)
+                }
+
+                is PhotoUploadResult.UserMessageError -> {
+                    // Unreachable on native offline-first path; see above.
+                    errorEventsChannel.send(UiError.Unknown)
                 }
             }
             vmState.update { it.copy(isAddingPhoto = false) }

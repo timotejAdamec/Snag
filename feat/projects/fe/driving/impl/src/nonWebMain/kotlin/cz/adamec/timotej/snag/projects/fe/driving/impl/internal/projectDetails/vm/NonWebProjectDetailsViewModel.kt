@@ -14,13 +14,14 @@ package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.
 
 import androidx.lifecycle.viewModelScope
 import cz.adamec.timotej.snag.core.foundation.common.TimestampProvider
-import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
+import cz.adamec.timotej.snag.core.network.fe.PhotoUploadResult
 import cz.adamec.timotej.snag.feat.inspections.fe.app.api.GetInspectionsUseCase
 import cz.adamec.timotej.snag.feat.inspections.fe.app.api.SaveInspectionUseCase
 import cz.adamec.timotej.snag.feat.reports.fe.app.api.DownloadReportUseCase
 import cz.adamec.timotej.snag.feat.reports.fe.app.api.GetAvailableReportTypesFlowUseCase
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.projects.fe.app.api.AddProjectPhotoRequest
+import cz.adamec.timotej.snag.projects.fe.app.api.AddProjectPhotoUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.AssignUserToProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.CanAssignUserToProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.CanCloseProjectUseCase
@@ -30,7 +31,6 @@ import cz.adamec.timotej.snag.projects.fe.app.api.DeleteProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.GetProjectAssignmentsUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.GetProjectPhotosUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.GetProjectUseCase
-import cz.adamec.timotej.snag.projects.fe.app.api.NonWebAddProjectPhotoUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.RemoveUserFromProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.SetProjectClosedUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.UpdateProjectPhotoDescriptionUseCase
@@ -61,7 +61,7 @@ internal class NonWebProjectDetailsViewModel(
     getProjectPhotosUseCase: GetProjectPhotosUseCase,
     deleteProjectPhotoUseCase: DeleteProjectPhotoUseCase,
     updateProjectPhotoDescriptionUseCase: UpdateProjectPhotoDescriptionUseCase,
-    private val nonWebAddProjectPhotoUseCase: NonWebAddProjectPhotoUseCase,
+    private val addProjectPhotoUseCase: AddProjectPhotoUseCase,
 ) : ProjectDetailsViewModel(
         projectId = projectId,
         getProjectUseCase = getProjectUseCase,
@@ -98,13 +98,23 @@ internal class NonWebProjectDetailsViewModel(
                     projectId = projectId,
                     description = description,
                 )
-            when (nonWebAddProjectPhotoUseCase(request)) {
-                is OfflineFirstDataResult.ProgrammerError -> {
+            when (addProjectPhotoUseCase(request)) {
+                is PhotoUploadResult.Success -> {
+                    // Photo will appear via flow
+                }
+
+                is PhotoUploadResult.ProgrammerError -> {
                     errorEventsChannel.send(UiError.Unknown)
                 }
 
-                is OfflineFirstDataResult.Success -> {
-                    // Photo will appear via flow
+                is PhotoUploadResult.NetworkUnavailable -> {
+                    // Unreachable on native offline-first path; sealed when-exhaustiveness forced.
+                    errorEventsChannel.send(UiError.Unknown)
+                }
+
+                is PhotoUploadResult.UserMessageError -> {
+                    // Unreachable on native offline-first path; see above.
+                    errorEventsChannel.send(UiError.Unknown)
                 }
             }
             vmState.update { it.copy(isAddingPhoto = false) }

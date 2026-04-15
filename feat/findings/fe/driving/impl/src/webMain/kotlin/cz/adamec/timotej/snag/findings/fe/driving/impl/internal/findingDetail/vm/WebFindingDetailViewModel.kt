@@ -13,14 +13,14 @@
 package cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetail.vm
 
 import androidx.lifecycle.viewModelScope
-import cz.adamec.timotej.snag.core.network.fe.OnlineDataResult
+import cz.adamec.timotej.snag.core.network.fe.PhotoUploadResult
 import cz.adamec.timotej.snag.findings.fe.app.api.AddFindingPhotoRequest
+import cz.adamec.timotej.snag.findings.fe.app.api.AddFindingPhotoUseCase
 import cz.adamec.timotej.snag.findings.fe.app.api.CanModifyFindingPhotosUseCase
 import cz.adamec.timotej.snag.findings.fe.app.api.DeleteFindingPhotoUseCase
 import cz.adamec.timotej.snag.findings.fe.app.api.DeleteFindingUseCase
 import cz.adamec.timotej.snag.findings.fe.app.api.GetFindingPhotosUseCase
 import cz.adamec.timotej.snag.findings.fe.app.api.GetFindingUseCase
-import cz.adamec.timotej.snag.findings.fe.app.api.WebAddFindingPhotoUseCase
 import cz.adamec.timotej.snag.lib.design.fe.error.UiError
 import cz.adamec.timotej.snag.projects.fe.app.api.CanEditProjectEntitiesUseCase
 import kotlinx.coroutines.Job
@@ -36,7 +36,7 @@ internal class WebFindingDetailViewModel(
     canEditProjectEntitiesUseCase: CanEditProjectEntitiesUseCase,
     getFindingPhotosUseCase: GetFindingPhotosUseCase,
     deleteFindingPhotoUseCase: DeleteFindingPhotoUseCase,
-    private val webAddFindingPhotoUseCase: WebAddFindingPhotoUseCase,
+    private val addFindingPhotoUseCase: AddFindingPhotoUseCase,
     private val canModifyFindingPhotosUseCase: CanModifyFindingPhotosUseCase,
 ) : FindingDetailViewModel(
         findingId = findingId,
@@ -69,12 +69,20 @@ internal class WebFindingDetailViewModel(
                     findingId = findingId,
                     projectId = projectId,
                 )
-            when (webAddFindingPhotoUseCase(request)) {
-                is OnlineDataResult.Success -> {
+            when (addFindingPhotoUseCase(request)) {
+                is PhotoUploadResult.Success -> {
                     // Photo will appear via flow
                 }
 
-                is OnlineDataResult.Failure -> {
+                is PhotoUploadResult.ProgrammerError -> {
+                    errorEventsChannel.send(UiError.Unknown)
+                }
+
+                is PhotoUploadResult.NetworkUnavailable -> {
+                    errorEventsChannel.send(UiError.Unknown)
+                }
+
+                is PhotoUploadResult.UserMessageError -> {
                     errorEventsChannel.send(UiError.Unknown)
                 }
             }
