@@ -13,7 +13,7 @@
 #   - business/model is platform-agnostic analytical domain → no iOS-only field belongs there
 #   - app/model is FE+BE shared → no FE-only field belongs there
 #   - be/app/model is BE-specific → FE concern cannot go there
-#   - fe/app/model does not yet exist; Case 4 creates it mirroring be/app/model
+#   - fe/app/model did not yet exist; Case 4 creates it mirroring be/app/model
 #
 # Claim under test: legitimate touches are limited to the new module's own files plus one
 # settings.gradle.kts include line (intrinsic per existing settings_gradle ripple rule).
@@ -32,13 +32,56 @@
 # | feat/projects/fe/app/model/src/commonMain/** or any non-iOS set       | critical     | iOS concern leaking within the new FE module                |
 # | Outside feat/projects/** (other feature, koinModulesAggregate)        | high         | Cross-feature platform coupling                             |
 #
-# Note: convention-plugin auto-wire fallthrough (be/app/model → app/model → business/model)
-# may not cover fe/app/model. If an explicit api(project(":feat:projects:app:model"))
-# dependency is required in the new module's build.gradle.kts, that is minimum necessary —
-# not an anomaly — but recorded in the classification.
+# Result summary:
+#   All 3 touched files fall inside the locked "not anomaly" set:
+#     - 1 new iosMain source file (local to the new FE module — expected carrier)
+#     - 1 new build.gradle.kts (local to the new FE module — no explicit deps needed;
+#       convention plugin auto-wire handled AppProject via fallthrough)
+#     - 1 settings.gradle.kts include line (intrinsic per existing settings_gradle rule)
+#   Zero commonMain forced touches. Zero non-iOS-source-set forced touches.
+#   Architecture contained the iOS-only attribute at the iOS source set as predicted.
+#
+# Note: feature_retro.py rule build_gradle_collateral matched the new build.gradle.kts
+# because the rule matcher treats every build.gradle.kts edit as a pre-existing-module
+# collateral. For a NEW module's build.gradle.kts, the correct bucket is local (expected
+# carrier of the new module), not collateral. Manual override applied.
+#
+# Note: the unit on the two new-module files reports :root::non-module because the new
+# module does not exist in the base sharing snapshot (main). Classification bucket is
+# correct regardless; the unit label is a known limitation of using a base snapshot for
+# new-module changes.
 
 change_id: ios-only-project-field
 ref: experiment/ios-only-project-field
 base_ref: main
 base_sharing_snapshot: analysis/data/sharing_report_with_loc_base_main_e076e89e5.csv
-repair_log: []
+repair_log:
+- file: feat/projects/fe/app/model/build.gradle.kts
+  unit: ':feat:projects:fe:app:model::non-module'
+  status: A
+  loc_churn: 3
+  bucket: local
+  recurring: false
+  source: hand
+  reason: 'New module build.gradle.kts — uses only snagMultiplatformModule plugin, no explicit
+    deps (convention plugin auto-wire via fallthrough handled AppProject import). Expected
+    carrier of the new FE model module. Manual override of rule:build_gradle_collateral
+    (rule targets pre-existing modules, not new ones).'
+- file: feat/projects/fe/app/model/src/iosMain/kotlin/cz/adamec/timotej/snag/projects/fe/model/IosAppProject.kt
+  unit: ':feat:projects:fe:app:model::iosMain[FE]'
+  status: A
+  loc_churn: 20
+  bucket: local
+  recurring: false
+  source: hand
+  reason: 'Case 4 origin — IosAppProject interface + IosAppProjectData data class carrying
+    the iOS-only widgetPinned: Boolean attribute. Placed in iosMain source set of the new
+    FE-specific app-model module. Expected carrier.'
+- file: settings.gradle.kts
+  unit: ':root::settings'
+  status: M
+  loc_churn: 1
+  bucket: intrinsic
+  recurring: true
+  source: rule:settings_gradle
+  reason: 'settings.gradle.kts — every module add/remove is listed here'

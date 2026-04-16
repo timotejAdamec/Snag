@@ -155,7 +155,7 @@ Implement the stub `figure_ripple_buckets()` to consume `analysis/data/ripple_*.
 | 4–6 | **Case 1 — inspections reverse removal.** Worktree, deletion, repair, classification + critique file. | DONE |
 | 7–10 | **Case 1b — counterfactual commonization of AddFindingPhoto.** Preflight + correct-branch evolution + commonization + commonized-branch evolution + critique files + comparison table. (See addendum Part F for the detailed schedule inside this 4-day slot.) | DONE |
 | 11 | **Case 3 — DVT (Data Version Transparency) synthetic test on Client.** Half-day implementation, half-day classification + round-trip test. | DONE |
-| 12 | **Case 4 — iOS-only Project extension (recommended).** Analogous to Case 3. Skip only if days 3–11 overran. | PENDING |
+| 12 | **Case 4 — iOS-only Project extension (recommended).** Analogous to Case 3. Skip only if days 3–11 overran. | DONE |
 
 ### Case 1 — Primary: `feat/inspections` reverse removal
 
@@ -856,6 +856,8 @@ These items are permanently captured in Phase 2 repo artifacts and Phase 5 prose
 - **Case 1b base snapshot.** `analysis/data/sharing_report_with_loc_base_commonize-photo_70b7910cb.csv` — generated via `./gradlew sharingReport` on the commonize-photo worktree, then enriched with `source_set_dir_rel` + zero-padded LOC columns via inline Python (the commonize-photo branch's build-logic predates the chore-branch's wider schema; enrichment script is one-shot, not committed).
 
 - **Case 3 DVT synthetic test.** `analysis/classifications/dvt-client-field.yaml` — anomaly taxonomy locked before experiment, 17 entries hand-classified. `analysis/data/ripple_dvt-client-field_{files,units}.csv`. Headline: **0 anomalies** (3a non-essential touches = 0, 3b upward-bleed touches = 0), 1 recurring intrinsic unit (test fixture `seedTestClient`). Experiment branch `experiment/dvt-client-field`. Both DVT mechanisms confirmed: (1) inheritance carries shared `ico` field through `Client → AppClient → BackendClient` without redeclaration at intermediate interfaces; (2) defaults absorb at all existing construction sites (zero caller edits). BE-only `adminNote` has zero upward bleed into business/model, app/model, contract, or FE layers.
+
+- **Case 4 iOS-only platform extension.** `analysis/classifications/ios-only-project-field.yaml` — anomaly taxonomy locked before experiment, 3 entries hand-classified. `analysis/classifications/ios-only-project-field_critique.md` — zero-count critique file with SoC-0 observation + honesty claim. `analysis/data/ripple_ios-only-project-field_{files,units}.csv`. Headline: **0 anomalies** (commonMain forced touches = 0, non-iOS-source-set forced touches = 0, cross-feature forced touches = 0), 1 recurring intrinsic unit (`:root::settings` — settings.gradle.kts include line). Experiment branch `experiment/ios-only-project-field`. Architecture contained the iOS-only `widgetPinned: Boolean` attribute entirely in a new FE-specific `feat/projects/fe/app/model/` module (mirroring the existing `be/app/model/` pattern) with one file in `iosMain`. Convention-plugin auto-wire fallthrough handled the `AppProject` dependency without explicit declaration. `platform_extend` added to `feature_retro.py` CHANGE_KINDS for semantic correctness.
 
 ### K.3 Update protocol
 
