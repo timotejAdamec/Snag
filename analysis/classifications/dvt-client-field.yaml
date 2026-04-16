@@ -1,0 +1,38 @@
+# Case 3 — DVT (Data Version Transparency) synthetic test on Client entity
+#
+# Anomaly taxonomy locked BEFORE running ./gradlew check on the experiment branch.
+# Any file classified as an anomaly here was defined as such before observing the result.
+#
+# Sub-experiment 3a: shared attribute (ico: String?) added at Client.kt (business model).
+#   Tests downward propagation via inheritance — AppClient/BackendClient should NOT
+#   need a new abstract redeclaration; only concrete data classes override with default.
+#
+# Sub-experiment 3b: BE-only attribute (adminNote: String?) added at BackendClient.kt.
+#   Tests upward containment — nothing in business/model, app/model, contract, or FE
+#   layers should need to change.
+#
+# Anomaly taxonomy (from analysis/phase-2-plan.md §Case 3):
+#
+# | Touch                                          | Applies to | Severity | Why anomaly                                      |
+# |------------------------------------------------|------------|----------|--------------------------------------------------|
+# | Layer/level above where attribute belongs       | 3a         | critical | Mechanism (1) layer/level isolation failed        |
+# | Forced edit to existing caller construction     | 3a + 3b    | critical | Mechanism (2) default absorption failed           |
+# | koinModulesAggregate/**                         | 3a + 3b    | high     | DI wiring enumerates field-level concerns         |
+# | feat/sync/** or *SyncHandler*.kt               | 3a + 3b    | critical | Sync layer not field-transparent                  |
+# | Different feature's module                      | 3a + 3b    | high     | Client not encapsulated behind its port           |
+# | :contract module other than clients/contract    | 3a + 3b    | high     | DTO sharing leaks                                 |
+# | testInfra/**                                    | 3a + 3b    | low      | Test fixtures enumerate entity fields             |
+# | FE SQLDelight .sqm or BE schema migration       | 3a / 3b    | not      | Schema evolution legitimately requires migration  |
+#
+# For 3b specifically, ANY touch in these paths is an anomaly:
+#   - feat/clients/business/model/**  (upward bleed to shared model)
+#   - feat/clients/app/model/**       (upward bleed to app model)
+#   - feat/clients/contract/**        (BE-only attribute on wire contract)
+#   - feat/clients/fe/**              (FE forced to know BE-internal concept)
+#   - FE SQLDelight ClientEntity.sq   (FE schema change for BE-only field)
+
+change_id: dvt-client-field
+ref: experiment/dvt-client-field
+base_ref: main
+base_sharing_snapshot: analysis/data/sharing_report_with_loc_base_main_e076e89e5.csv
+repair_log: []
