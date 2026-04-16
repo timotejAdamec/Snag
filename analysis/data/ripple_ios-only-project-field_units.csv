@@ -1,0 +1,4 @@
+unit,module_path,source_set,file_count,loc_churn_sum,dominant_bucket,recurring,blast_radius_module,blast_radius_unit
+:feat:projects:fe:app:model::iosMain[FE],:feat:projects:fe:app:model,iosMain[FE],1,20,local,False,0,0
+:feat:projects:fe:app:model::non-module,:feat:projects:fe:app:model,non-module,1,3,local,False,0,0
+:root::settings,:root,settings,1,1,intrinsic,True,0,0
