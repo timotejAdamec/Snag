@@ -50,7 +50,7 @@ DEFAULT_BASE_SNAPSHOT = DATA_DIR / "sharing_report_with_loc.csv"
 DEFAULT_CLOSURE_JSON = DATA_DIR / "dependency_closure.json"
 
 BUCKETS = {"local", "intrinsic", "collateral", "unclassified"}
-CHANGE_KINDS = {"feature_remove", "feature_add", "entity_extend"}
+CHANGE_KINDS = {"feature_remove", "feature_add", "entity_extend", "platform_extend"}
 
 
 # ------------------------------- data types ------------------------------------
