@@ -1,0 +1,44 @@
+# Case 4 — iOS-only Project extension (platform-axis counterfactual)
+#
+# Anomaly taxonomy locked BEFORE running ./gradlew check on the experiment branch.
+# Any file classified as an anomaly here was defined as such before observing the result.
+#
+# Synthetic change: create new module feat/projects/fe/app/model/ (mirroring be/app/model/
+# pattern) with a single IosAppProject interface + IosAppProjectData data class in iosMain.
+# Interface extends shared AppProject and adds widgetPinned: Boolean — iOS home screen
+# widget pinning (WidgetKit is Apple-only; Android widgets have different semantics,
+# web has no widgets).
+#
+# Layer rationale:
+#   - business/model is platform-agnostic analytical domain → no iOS-only field belongs there
+#   - app/model is FE+BE shared → no FE-only field belongs there
+#   - be/app/model is BE-specific → FE concern cannot go there
+#   - fe/app/model does not yet exist; Case 4 creates it mirroring be/app/model
+#
+# Claim under test: legitimate touches are limited to the new module's own files plus one
+# settings.gradle.kts include line (intrinsic per existing settings_gradle ripple rule).
+# Any touch elsewhere is a platform-axis SoC anomaly.
+#
+# Anomaly taxonomy:
+#
+# | Touch                                                                 | Severity     | Why anomaly                                                 |
+# |-----------------------------------------------------------------------|--------------|-------------------------------------------------------------|
+# | New feat/projects/fe/app/model/**                                     | not anomaly  | Expected carrier of the FE-iOS-only attribute               |
+# | settings.gradle.kts include for new module                            | not anomaly  | Covered by existing settings_gradle ripple rule (intrinsic) |
+# | feat/projects/**/src/commonMain/** (existing modules)                 | critical     | Platform concern leaking into platform-agnostic code        |
+# | feat/projects/business/model/**                                       | critical     | Platform/FE concern leaking to domain layer                 |
+# | feat/projects/app/model/**                                            | critical     | FE-iOS concern leaking to FE+BE shared layer                |
+# | feat/projects/be/**                                                   | critical     | FE concern leaking to BE                                    |
+# | feat/projects/fe/app/model/src/commonMain/** or any non-iOS set       | critical     | iOS concern leaking within the new FE module                |
+# | Outside feat/projects/** (other feature, koinModulesAggregate)        | high         | Cross-feature platform coupling                             |
+#
+# Note: convention-plugin auto-wire fallthrough (be/app/model → app/model → business/model)
+# may not cover fe/app/model. If an explicit api(project(":feat:projects:app:model"))
+# dependency is required in the new module's build.gradle.kts, that is minimum necessary —
+# not an anomaly — but recorded in the classification.
+
+change_id: ios-only-project-field
+ref: experiment/ios-only-project-field
+base_ref: main
+base_sharing_snapshot: analysis/data/sharing_report_with_loc_base_main_e076e89e5.csv
+repair_log: []
