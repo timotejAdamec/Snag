@@ -855,6 +855,8 @@ These items are permanently captured in Phase 2 repo artifacts and Phase 5 prose
 - **Case 1b ripple artifacts.** `analysis/data/ripple_photo-progress-correct_{files,units}.csv` (8 files / 97 LOC, all local) + `analysis/data/ripple_photo-progress-commonized_{files,units}.csv` (12 files / 100 LOC, all local). Reproducible via `python analysis/feature_retro.py --change <name> --ref <branch> --base-ref <parent> --base-snapshot <snapshot> --change-kind feature_add --finalize`.
 - **Case 1b base snapshot.** `analysis/data/sharing_report_with_loc_base_commonize-photo_70b7910cb.csv` — generated via `./gradlew sharingReport` on the commonize-photo worktree, then enriched with `source_set_dir_rel` + zero-padded LOC columns via inline Python (the commonize-photo branch's build-logic predates the chore-branch's wider schema; enrichment script is one-shot, not committed).
 
+- **Case 3 DVT synthetic test.** `analysis/classifications/dvt-client-field.yaml` — anomaly taxonomy locked before experiment, 17 entries hand-classified. `analysis/data/ripple_dvt-client-field_{files,units}.csv`. Headline: **0 anomalies** (3a non-essential touches = 0, 3b upward-bleed touches = 0), 1 recurring intrinsic unit (test fixture `seedTestClient`). Experiment branch `experiment/dvt-client-field`. Both DVT mechanisms confirmed: (1) inheritance carries shared `ico` field through `Client → AppClient → BackendClient` without redeclaration at intermediate interfaces; (2) defaults absorb at all existing construction sites (zero caller edits). BE-only `adminNote` has zero upward bleed into business/model, app/model, contract, or FE layers.
+
 ### K.3 Update protocol
 
 Every time a Phase 2 part ships in this repo:
