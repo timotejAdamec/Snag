@@ -147,15 +147,15 @@ Implement the stub `figure_ripple_buckets()` to consume `analysis/data/ripple_*.
 
 **Revised Phase 2 day budget** (~12 working days, up from the original ~7). The growth reflects (a) Case 1b (counterfactual commonization) added by the addendum, and (b) Case 4 elevation from optional to recommended. Case 4 is now recommended for ship unless Cases 1 + 1b + 2 + 3 are still incomplete at end of day 11.
 
-| Day | Work |
-|---|---|
-| 1–2 | Tooling: `DependencyGraphTask`, `SharingReportRowBuilder` rel-path edit, `dependency_closure.py`, `feature_retro.py`, `ripple_rules.yaml` scaffold, `figures.py` Phase 2 additions, pytest suite. **(Shipped in PR #228.)** |
-| 2.5 | **Addendum Part A (layer-divergence descriptive metric).** `figure_layer_divergence()` + pytest + thesis op row. |
-| 3 | **Case 2 — ProjectPhoto retrospective.** Tooling gate + descriptive illustration (non-probative per reframing). **Gate:** collapsed-rename file count ≡ `git show --stat b5365d611`. |
-| 4–6 | **Case 1 — inspections reverse removal.** Worktree, deletion, repair, classification + critique file. |
-| 7–10 | **Case 1b — counterfactual commonization of AddFindingPhoto.** Preflight + correct-branch evolution + commonization + commonized-branch evolution + critique files + comparison table. (See addendum Part F for the detailed schedule inside this 4-day slot.) |
-| 11 | **Case 3 — DVT synthetic test on Client.** Half-day implementation, half-day classification + round-trip test + critique file. |
-| 12 | **Case 4 — iOS-only Project extension (recommended).** Analogous to Case 3. Skip only if days 3–11 overran. |
+| Day | Work | Status |
+|---|---|---|
+| 1–2 | Tooling: `DependencyGraphTask`, `SharingReportRowBuilder` rel-path edit, `dependency_closure.py`, `feature_retro.py`, `ripple_rules.yaml` scaffold, `figures.py` Phase 2 additions, pytest suite. **(Shipped in PR #228.)** | DONE |
+| 2.5 | **Addendum Part A (layer-divergence descriptive metric).** `figure_layer_divergence()` + pytest + thesis op row. | DONE |
+| 3 | **Case 2 — ProjectPhoto retrospective.** Tooling gate + descriptive illustration (non-probative per reframing). **Gate:** collapsed-rename file count ≡ `git show --stat b5365d611`. | DONE |
+| 4–6 | **Case 1 — inspections reverse removal.** Worktree, deletion, repair, classification + critique file. | DONE |
+| 7–10 | **Case 1b — counterfactual commonization of AddFindingPhoto.** Preflight + correct-branch evolution + commonization + commonized-branch evolution + critique files + comparison table. (See addendum Part F for the detailed schedule inside this 4-day slot.) | DONE |
+| 11 | **Case 3 — DVT (Data Version Transparency) synthetic test on Client.** Half-day implementation, half-day classification + round-trip test. | DONE |
+| 12 | **Case 4 — iOS-only Project extension (recommended).** Analogous to Case 3. Skip only if days 3–11 overran. | PENDING |
 
 ### Case 1 — Primary: `feat/inspections` reverse removal
 
