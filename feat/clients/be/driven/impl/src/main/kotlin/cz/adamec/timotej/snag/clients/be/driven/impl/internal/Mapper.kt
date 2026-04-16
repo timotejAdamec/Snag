@@ -24,6 +24,8 @@ internal fun ClientEntity.toModel(): BackendClient =
         address = address,
         phoneNumber = phoneNumber,
         email = email,
+        ico = ico,
+        adminNote = adminNote,
         updatedAt = Timestamp(updatedAt),
         deletedAt = deletedAt?.let { Timestamp(it) },
     )

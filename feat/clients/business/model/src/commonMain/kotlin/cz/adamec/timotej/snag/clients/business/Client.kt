@@ -12,4 +12,6 @@ interface Client {
     val phoneNumber: String?
 
     val email: String?
+
+    val ico: String?
 }

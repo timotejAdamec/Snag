@@ -62,6 +62,8 @@ internal class RealClientsDb(
                         existing.address = client.address
                         existing.phoneNumber = client.phoneNumber
                         existing.email = client.email
+                        existing.ico = client.ico
+                        existing.adminNote = client.adminNote
                         existing.updatedAt = client.updatedAt.value
                         existing.deletedAt = client.deletedAt?.value
                     } else {
@@ -70,6 +72,8 @@ internal class RealClientsDb(
                             address = client.address
                             phoneNumber = client.phoneNumber
                             email = client.email
+                            ico = client.ico
+                            adminNote = client.adminNote
                             updatedAt = client.updatedAt.value
                             deletedAt = client.deletedAt?.value
                         }

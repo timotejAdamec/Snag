@@ -25,6 +25,7 @@ internal fun BackendClient.toDto() =
         address = address,
         phoneNumber = phoneNumber,
         email = email,
+        ico = ico,
         updatedAt = updatedAt,
         deletedAt = deletedAt,
     )
@@ -36,5 +37,6 @@ internal fun PutClientApiDto.toModel(id: Uuid): BackendClient =
         address = address,
         phoneNumber = phoneNumber,
         email = email,
+        ico = ico,
         updatedAt = updatedAt,
     )

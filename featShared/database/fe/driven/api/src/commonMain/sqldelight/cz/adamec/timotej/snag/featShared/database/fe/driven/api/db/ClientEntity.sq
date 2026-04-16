@@ -4,17 +4,19 @@ CREATE TABLE IF NOT EXISTS ClientEntity (
     address TEXT,
     phoneNumber TEXT,
     email TEXT,
-    updatedAt INTEGER NOT NULL
+    updatedAt INTEGER NOT NULL,
+    ico TEXT
 );
 
 save:
-INSERT INTO ClientEntity(id, name, address, phoneNumber, email, updatedAt)
+INSERT INTO ClientEntity(id, name, address, phoneNumber, email, ico, updatedAt)
 VALUES ?
 ON CONFLICT(id) DO UPDATE SET
     name = excluded.name,
     address = excluded.address,
     phoneNumber = excluded.phoneNumber,
     email = excluded.email,
+    ico = excluded.ico,
     updatedAt = excluded.updatedAt;
 
 selectAll:

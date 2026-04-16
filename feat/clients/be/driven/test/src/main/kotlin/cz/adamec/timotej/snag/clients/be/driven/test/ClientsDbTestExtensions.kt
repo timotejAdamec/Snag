@@ -25,6 +25,8 @@ suspend fun ClientsDb.seedTestClient(
     address: String? = "Test Address",
     phoneNumber: String? = null,
     email: String? = "client@example.com",
+    ico: String? = null,
+    adminNote: String? = null,
     updatedAt: Timestamp = Timestamp(1L),
 ) {
     saveClient(
@@ -34,6 +36,8 @@ suspend fun ClientsDb.seedTestClient(
             address = address,
             phoneNumber = phoneNumber,
             email = email,
+            ico = ico,
+            adminNote = adminNote,
             updatedAt = updatedAt,
         ),
     )

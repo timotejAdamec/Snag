@@ -24,6 +24,7 @@ internal fun ClientApiDto.toModel(): AppClient =
         address = address,
         phoneNumber = phoneNumber,
         email = email,
+        ico = ico,
         updatedAt = updatedAt,
     )
 
@@ -33,5 +34,6 @@ internal fun AppClient.toPutApiDto() =
         address = address,
         phoneNumber = phoneNumber,
         email = email,
+        ico = ico,
         updatedAt = updatedAt,
     )

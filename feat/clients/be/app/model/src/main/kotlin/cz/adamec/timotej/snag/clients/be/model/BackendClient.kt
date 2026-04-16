@@ -9,7 +9,9 @@ import kotlin.uuid.Uuid
 interface BackendClient :
     AppClient,
     MutableVersioned,
-    SoftDeletable
+    SoftDeletable {
+    val adminNote: String?
+}
 
 data class BackendClientData(
     override val id: Uuid,
@@ -17,6 +19,8 @@ data class BackendClientData(
     override val address: String?,
     override val phoneNumber: String?,
     override val email: String?,
+    override val ico: String? = null,
+    override val adminNote: String? = null,
     override val updatedAt: Timestamp,
     override val deletedAt: Timestamp? = null,
 ) : BackendClient

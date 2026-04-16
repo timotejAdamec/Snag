@@ -21,5 +21,6 @@ data class PutClientApiDto(
     val address: String? = null,
     val phoneNumber: String? = null,
     val email: String? = null,
+    val ico: String? = null,
     val updatedAt: Timestamp,
 )

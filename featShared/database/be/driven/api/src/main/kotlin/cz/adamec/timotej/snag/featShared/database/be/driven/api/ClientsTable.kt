@@ -21,6 +21,8 @@ object ClientsTable : UuidTable("clients") {
     val address = varchar("address", VARCHAR_MAX_LENGTH).nullable()
     val phoneNumber = varchar("phone_number", VARCHAR_MAX_LENGTH).nullable()
     val email = varchar("email", VARCHAR_MAX_LENGTH).nullable()
+    val ico = varchar("ico", VARCHAR_MAX_LENGTH).nullable()
+    val adminNote = varchar("admin_note", VARCHAR_MAX_LENGTH).nullable()
     val updatedAt = long("updated_at")
     val deletedAt = long("deleted_at").nullable()
 }

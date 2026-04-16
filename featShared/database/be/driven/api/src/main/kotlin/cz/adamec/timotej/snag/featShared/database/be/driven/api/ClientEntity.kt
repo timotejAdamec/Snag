@@ -24,6 +24,8 @@ class ClientEntity(
     var address by ClientsTable.address
     var phoneNumber by ClientsTable.phoneNumber
     var email by ClientsTable.email
+    var ico by ClientsTable.ico
+    var adminNote by ClientsTable.adminNote
     var updatedAt by ClientsTable.updatedAt
     var deletedAt by ClientsTable.deletedAt
 

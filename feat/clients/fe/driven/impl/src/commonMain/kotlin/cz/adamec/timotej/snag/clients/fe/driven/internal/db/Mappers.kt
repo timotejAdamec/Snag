@@ -25,6 +25,7 @@ internal fun AppClient.toEntity() =
         address = address,
         phoneNumber = phoneNumber,
         email = email,
+        ico = ico,
         updatedAt = updatedAt.value,
     )
 
@@ -35,5 +36,6 @@ internal fun ClientEntity.toModel(): AppClient =
         address = address,
         phoneNumber = phoneNumber,
         email = email,
+        ico = ico,
         updatedAt = Timestamp(updatedAt),
     )

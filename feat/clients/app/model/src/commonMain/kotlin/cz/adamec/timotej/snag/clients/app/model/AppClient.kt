@@ -15,5 +15,6 @@ data class AppClientData(
     override val address: String?,
     override val phoneNumber: String?,
     override val email: String?,
+    override val ico: String? = null,
     override val updatedAt: Timestamp,
 ) : AppClient

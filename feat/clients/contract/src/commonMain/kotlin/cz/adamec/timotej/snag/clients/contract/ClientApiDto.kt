@@ -23,6 +23,7 @@ data class ClientApiDto(
     val address: String? = null,
     val phoneNumber: String? = null,
     val email: String? = null,
+    val ico: String? = null,
     val updatedAt: Timestamp,
     val deletedAt: Timestamp? = null,
 )
