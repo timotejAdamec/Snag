@@ -30,9 +30,162 @@
 #   - feat/clients/contract/**        (BE-only attribute on wire contract)
 #   - feat/clients/fe/**              (FE forced to know BE-internal concept)
 #   - FE SQLDelight ClientEntity.sq   (FE schema change for BE-only field)
+#
+# Result summary:
+#   3a anomalies (non-essential touches): 0
+#   3b anomalies (upward-bleed touches): 0
+#   All 17 files are either local (necessary carrier changes) or intrinsic (test fixtures).
+#   No use cases, ViewModels, DI modules, sync handlers, or cross-feature files touched.
+#   Mechanism (1) — inheritance carries shared field without redeclaration at intermediate interfaces.
+#   Mechanism (2) — defaults absorb at all existing construction sites (zero caller edits).
 
 change_id: dvt-client-field
 ref: experiment/dvt-client-field
 base_ref: main
 base_sharing_snapshot: analysis/data/sharing_report_with_loc_base_main_e076e89e5.csv
-repair_log: []
+repair_log:
+# --- 3a: shared attribute (ico) — business model origin, carried by inheritance ---
+- file: feat/clients/business/model/src/commonMain/kotlin/cz/adamec/timotej/snag/clients/business/Client.kt
+  unit: ':feat:clients:business:model::commonMain[FE+BE]'
+  status: M
+  loc_churn: 2
+  bucket: local
+  recurring: false
+  source: hand
+  reason: '3a origin — new val ico: String? added to base Client interface'
+- file: feat/clients/app/model/src/commonMain/kotlin/cz/adamec/timotej/snag/clients/app/model/AppClient.kt
+  unit: ':feat:clients:app:model::commonMain[FE+BE]'
+  status: M
+  loc_churn: 1
+  bucket: local
+  recurring: false
+  source: hand
+  reason: '3a — AppClientData adds override val ico with default null (mechanism 2: default absorption)'
+- file: feat/clients/contract/src/commonMain/kotlin/cz/adamec/timotej/snag/clients/contract/ClientApiDto.kt
+  unit: ':feat:clients:contract::commonMain[FE+BE]'
+  status: M
+  loc_churn: 1
+  bucket: local
+  recurring: false
+  source: hand
+  reason: '3a — wire DTO gains ico field for API transfer'
+- file: feat/clients/contract/src/commonMain/kotlin/cz/adamec/timotej/snag/clients/contract/PutClientApiDto.kt
+  unit: ':feat:clients:contract::commonMain[FE+BE]'
+  status: M
+  loc_churn: 1
+  bucket: local
+  recurring: false
+  source: hand
+  reason: '3a — create/update DTO gains ico field for API transfer'
+- file: feat/clients/fe/driven/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/clients/fe/driven/internal/api/Mappers.kt
+  unit: ':feat:clients:fe:driven:impl::commonMain[FE]'
+  status: M
+  loc_churn: 2
+  bucket: local
+  recurring: false
+  source: hand
+  reason: '3a — FE API mapper threads ico between DTO and model'
+- file: feat/clients/fe/driven/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/clients/fe/driven/internal/db/Mappers.kt
+  unit: ':feat:clients:fe:driven:impl::commonMain[FE]'
+  status: M
+  loc_churn: 2
+  bucket: local
+  recurring: false
+  source: hand
+  reason: '3a — FE DB mapper threads ico between SQLDelight entity and model'
+- file: featShared/database/fe/driven/api/src/commonMain/sqldelight/cz/adamec/timotej/snag/featShared/database/fe/driven/api/db/ClientEntity.sq
+  unit: ':featShared:database:fe:driven:api::commonMain[FE]'
+  status: M
+  loc_churn: 6
+  bucket: local
+  recurring: false
+  source: hand
+  reason: '3a — FE SQLDelight schema adds ico column, updates save statement'
+- file: featShared/database/fe/driven/api/src/commonMain/sqldelight/cz/adamec/timotej/snag/featShared/database/fe/driven/api/db/2.sqm
+  unit: ':featShared:database:fe:driven:api::commonMain[FE]'
+  status: A
+  loc_churn: 1
+  bucket: local
+  recurring: false
+  source: hand
+  reason: '3a — FE SQLDelight migration for ico column (ALTER TABLE ADD COLUMN)'
+- file: featShared/database/fe/driven/api/src/commonMain/sqldelight/cz/adamec/timotej/snag/featShared/database/fe/driven/api/schemas/3.db
+  unit: ':featShared:database:fe:driven:api::commonMain[FE]'
+  status: A
+  loc_churn: 0
+  bucket: local
+  recurring: false
+  source: hand
+  reason: '3a — auto-generated SQLDelight schema snapshot after migration'
+# --- 3a + 3b: BE storage layer (both ico and adminNote flow through here) ---
+- file: featShared/database/be/driven/api/src/main/kotlin/cz/adamec/timotej/snag/featShared/database/be/driven/api/ClientsTable.kt
+  unit: ':featShared:database:be:driven:api::main'
+  status: M
+  loc_churn: 2
+  bucket: local
+  recurring: false
+  source: hand
+  reason: '3a+3b — BE Exposed table gains ico and adminNote columns'
+- file: featShared/database/be/driven/api/src/main/kotlin/cz/adamec/timotej/snag/featShared/database/be/driven/api/ClientEntity.kt
+  unit: ':featShared:database:be:driven:api::main'
+  status: M
+  loc_churn: 2
+  bucket: local
+  recurring: false
+  source: hand
+  reason: '3a+3b — BE Exposed DAO entity gains ico and adminNote properties'
+# --- 3a + 3b: BE model + mappers + DB impl ---
+- file: feat/clients/be/app/model/src/main/kotlin/cz/adamec/timotej/snag/clients/be/model/BackendClient.kt
+  unit: ':feat:clients:be:app:model::main'
+  status: M
+  loc_churn: 6
+  bucket: local
+  recurring: false
+  source: hand
+  reason: '3a — BackendClientData adds override val ico with default (inheritance);
+    3b — BackendClient interface + BackendClientData gain adminNote with default'
+- file: feat/clients/be/driven/impl/src/main/kotlin/cz/adamec/timotej/snag/clients/be/driven/impl/internal/Mapper.kt
+  unit: ':feat:clients:be:driven:impl::main'
+  status: M
+  loc_churn: 2
+  bucket: local
+  recurring: false
+  source: hand
+  reason: '3a+3b — BE driven mapper threads ico and adminNote from Exposed entity to BackendClientData'
+- file: feat/clients/be/driven/impl/src/main/kotlin/cz/adamec/timotej/snag/clients/be/driven/impl/internal/RealClientsDb.kt
+  unit: ':feat:clients:be:driven:impl::main'
+  status: M
+  loc_churn: 4
+  bucket: local
+  recurring: false
+  source: hand
+  reason: '3a+3b — RealClientsDb.saveClient threads ico and adminNote in update and insert paths'
+- file: feat/clients/be/driving/impl/src/main/kotlin/cz/adamec/timotej/snag/clients/be/driving/impl/internal/Mapper.kt
+  unit: ':feat:clients:be:driving:impl::main'
+  status: M
+  loc_churn: 2
+  bucket: local
+  recurring: false
+  source: hand
+  reason: '3a — BE driving mapper threads ico between BackendClient and DTO (adminNote stays BE-internal,
+    not on wire DTO)'
+# --- Test infrastructure ---
+- file: feat/clients/be/driven/test/src/main/kotlin/cz/adamec/timotej/snag/clients/be/driven/test/ClientsDbTestExtensions.kt
+  unit: ':feat:clients:be:driven:test::main'
+  status: M
+  loc_churn: 4
+  bucket: intrinsic
+  recurring: true
+  source: hand
+  reason: 'Test fixture seedTestClient enumerates BackendClientData fields — touched on every entity
+    extension (low severity per anomaly taxonomy: testInfra/** category)'
+# --- New test (part of the experiment) ---
+- file: feat/clients/contract/src/commonTest/kotlin/cz/adamec/timotej/snag/clients/contract/ClientApiDtoSerializationTest.kt
+  unit: ':root::non-module'
+  status: A
+  loc_churn: 64
+  bucket: local
+  recurring: false
+  source: hand
+  reason: '3a — round-trip serialization test verifying backwards-compatible JSON parsing with/without
+    ico field'
