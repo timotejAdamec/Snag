@@ -868,6 +868,8 @@ These items are permanently captured in Phase 2 repo artifacts and Phase 5 prose
 
 - **Phase 2 mechanical thesis commit.** `analysis/data-for-thesis/phase-2-mechanical-edit-plan.md` — drop-in playbook describing every §K.1 T-row's landing target + verbatim content. Actually executed in thesis-repo commit `99afdce` on `feat/phase2-vyhodnoceni-draft` (MR !65): §4.1 operationalization table gained O1 layer-divergence row, O2a/O2b photo-progress rows, and headline-number fills for Case 1 / Case 2 / Case 3 / Case 4 O2 rows (branch-name corrections included); §4.2 intro gained duality method-note; §4.6 gained T-10 caveat, three new `\subsection{}` blocks for Cases 1 / 3 / 4, and a Case 1b comparison table + commonized-critique anchor quote replacing the existing `\todo{}`; §4.7 gained cross-case roll-up table (`tab:eval-cross-case-rollup`) covering all five cases; §4.9 gained duality caveat. Thesis `lualatex` build verified: 176 pages clean, no errors. Czech one-sentence caveats (T-4/T-5/T-10) landed as placeholders; Phase 5 prose author owns the final wording.
 
+- **Case 1b dedicated op-row (§L.1 follow-up).** Thesis-repo commit `13fcfa5` on `feat/phase2-vyhodnoceni-draft`, ahead of `99afdce`. §4.1 `tab:eval-operacionalizace` gained a new O2 row (after O2b) extracting the Case 1b paired-branch delta as a first-class metric — $B_2/B_1 = 2{,}0\times$ blast radius na modul; soubory $1{,}5\times$; moduly $1{,}33\times$; zdrojové sady $1{,}5\times$; přeložené FE listy $3\times$; LOC churn $1{,}03\times$ — matching the §J.4 treatment of the Case 1b delta as a distinct §4.7 headline alongside Cases 1, 3, 4 (each of which already had its own op-row). O2b value cell trimmed to the raw bucket count (`12 souborů / 100 LOC / vše local`) so the numeric delta ratio lives only in the dedicated row; the phrase `kvantifikuje cenu sjednocení jako $B_2/B_1$` in O2b's metric column stays as the cross-reference pointer to the new row. Thesis `lualatex` build verified: 177 pages clean, no pagination shift, no new warnings beyond the pre-existing U+FFFC noise. Czech phrasing is placeholder; Phase 5 prose author may refine wording.
+
 ### K.3 Update protocol
 
 Every time a Phase 2 part ships in this repo:
@@ -909,7 +911,7 @@ Rollup checklist as of MR !65 `3a85e0b`. Grouped by owner-bucket; check off as i
 
 ### L.1 Analysis artefacts (this repo, `chore/phase-2-ripple-tooling`)
 
-- [ ] **§4.1 op-table row for Case 1b paired-branch counterfactual.** Flagged in MR !65 description as follow-up candidate (`§5.1 Operacionalizační tabulka nemá řádek pro Case 1b paired-branch counterfactual`). Decide whether to add a dedicated row or fold into existing O2a/O2b rows.
+- [x] **§4.1 op-table row for Case 1b paired-branch counterfactual.** Flagged in MR !65 description as follow-up candidate (`§5.1 Operacionalizační tabulka nemá řádek pro Case 1b paired-branch counterfactual`). **Resolved as dedicated row.** Landed in thesis-repo commit `13fcfa5` on `feat/phase2-vyhodnoceni-draft`: new O2 row after O2b extracting $B_2/B_1 = 2{,}0\times$ and the other ratio headlines; O2b value cell trimmed to raw bucket count to remove duplication. See §K.2 pointer entry for Phase 5 authors.
 - [ ] **Submission-SHA pipeline rerun.** On the final submission SHA: `./gradlew sharingReport`, `analysis/loc_report.sh`, and `feature_retro.py --finalize` for each of the five cases. Commit regenerated `analysis/data/*.csv`. This is the gating step for every `\todo{numbers}` in §4.2, §4.3, §4.7.
 
 ### L.2 Phase 3 — Wear OS live experiment (§4.4)
