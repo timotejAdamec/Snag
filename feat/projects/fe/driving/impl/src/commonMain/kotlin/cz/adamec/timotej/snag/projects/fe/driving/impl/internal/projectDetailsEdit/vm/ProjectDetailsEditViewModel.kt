@@ -38,7 +38,7 @@ import snag.lib.design.fe.generated.resources.Res
 import snag.lib.design.fe.generated.resources.error_field_required
 import kotlin.uuid.Uuid
 
-internal class ProjectDetailsEditViewModel(
+class ProjectDetailsEditViewModel(
     @InjectedParam private val projectId: Uuid?,
     private val getProjectUseCase: GetProjectUseCase,
     private val saveProjectUseCase: SaveProjectUseCase,

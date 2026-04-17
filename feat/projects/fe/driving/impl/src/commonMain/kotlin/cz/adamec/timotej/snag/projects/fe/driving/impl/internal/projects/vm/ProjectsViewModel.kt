@@ -30,7 +30,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 
-internal class ProjectsViewModel(
+class ProjectsViewModel(
     private val getProjectsUseCase: GetProjectsUseCase,
     private val canCreateProjectUseCase: CanCreateProjectUseCase,
 ) : ViewModel() {

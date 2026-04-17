@@ -40,7 +40,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlin.uuid.Uuid
 
-internal class NonWebProjectDetailsViewModel(
+class NonWebProjectDetailsViewModel(
     projectId: Uuid,
     getProjectUseCase: GetProjectUseCase,
     deleteProjectUseCase: DeleteProjectUseCase,

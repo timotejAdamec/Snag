@@ -17,7 +17,7 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import org.jetbrains.compose.resources.StringResource
 
-internal data class ProjectDetailsEditUiState(
+data class ProjectDetailsEditUiState(
     val projectName: String = "",
     val projectAddress: String = "",
     val selectedClientName: String = "",

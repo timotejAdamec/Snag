@@ -19,7 +19,7 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlin.uuid.Uuid
 
 @Immutable
-internal data class ProjectAssignmentsUiState(
+data class ProjectAssignmentsUiState(
     val assignedUsers: ImmutableList<AssignedUserItem> = persistentListOf(),
     val availableUsers: ImmutableList<AssignedUserItem> = persistentListOf(),
     val canManageAssignments: Boolean = false,
@@ -27,7 +27,7 @@ internal data class ProjectAssignmentsUiState(
 )
 
 @Immutable
-internal data class AssignedUserItem(
+data class AssignedUserItem(
     val id: Uuid,
     val email: String,
     val role: UserRole?,

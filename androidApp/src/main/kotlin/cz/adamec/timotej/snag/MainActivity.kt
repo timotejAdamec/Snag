@@ -18,7 +18,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
-import cz.adamec.timotej.snag.authentication.fe.driven.mobile.di.authenticationDrivenMobileModule
+import cz.adamec.timotej.snag.authentication.fe.driven.nonwear.di.authenticationDrivenNonWearModule
 import org.koin.dsl.module
 import org.publicvalue.multiplatform.oidc.ExperimentalOpenIdConnect
 import org.publicvalue.multiplatform.oidc.appsupport.AndroidCodeAuthFlowFactory
@@ -40,7 +40,7 @@ class MainActivity : ComponentActivity() {
                         single<ComponentActivity> { this@MainActivity }
                         single<CodeAuthFlowFactory> { codeAuthFlowFactory }
                     },
-                    authenticationDrivenMobileModule,
+                    authenticationDrivenNonWearModule,
                 ),
             )
         }

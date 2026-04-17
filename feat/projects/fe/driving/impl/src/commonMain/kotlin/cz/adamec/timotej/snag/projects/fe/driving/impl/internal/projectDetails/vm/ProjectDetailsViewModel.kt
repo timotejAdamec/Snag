@@ -55,7 +55,7 @@ import kotlinx.coroutines.launch
 import kotlin.uuid.Uuid
 
 @Suppress("TooManyFunctions")
-internal abstract class ProjectDetailsViewModel(
+abstract class ProjectDetailsViewModel(
     protected val projectId: Uuid,
     private val getProjectUseCase: GetProjectUseCase,
     private val deleteProjectUseCase: DeleteProjectUseCase,
@@ -77,7 +77,7 @@ internal abstract class ProjectDetailsViewModel(
     private val deleteProjectPhotoUseCase: DeleteProjectPhotoUseCase,
     private val updateProjectPhotoDescriptionUseCase: UpdateProjectPhotoDescriptionUseCase,
 ) : ViewModel() {
-    protected val vmState: MutableStateFlow<ProjectDetailsVmState> =
+    internal val vmState: MutableStateFlow<ProjectDetailsVmState> =
         MutableStateFlow(ProjectDetailsVmState())
             .launchWhileSubscribed(scope = viewModelScope) {
                 collectJobs()
@@ -85,7 +85,7 @@ internal abstract class ProjectDetailsViewModel(
     val state: StateFlow<ProjectDetailsUiState> =
         vmState.mapState { it.toUiState() }
 
-    protected val errorEventsChannel = Channel<UiError>()
+    internal val errorEventsChannel = Channel<UiError>()
     val errorsFlow = errorEventsChannel.receiveAsFlow()
 
     private val deletedSuccessfullyEventChannel = Channel<Unit>()

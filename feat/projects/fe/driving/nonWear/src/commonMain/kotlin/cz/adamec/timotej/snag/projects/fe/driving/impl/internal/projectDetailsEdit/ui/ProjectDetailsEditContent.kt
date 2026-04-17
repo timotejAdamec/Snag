@@ -1,0 +1,179 @@
+/*
+ * Copyright (c) 2026 Timotej Adamec
+ * SPDX-License-Identifier: MIT
+ *
+ * This file is part of the thesis:
+ * "Multiplatform snagging system with code sharing maximisation"
+ *
+ * Czech Technical University in Prague
+ * Faculty of Information Technology
+ * Department of Software Engineering
+ */
+
+package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetailsEdit.ui
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
+import cz.adamec.timotej.snag.lib.design.fe.dialog.FullScreenDialogMeasurements
+import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetailsEdit.ui.components.ClientDropdown
+import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetailsEdit.vm.ProjectDetailsEditUiState
+import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
+import snag.feat.projects.fe.driving.nonwear.generated.resources.Res
+import snag.feat.projects.fe.driving.nonwear.generated.resources.new_project
+import snag.feat.projects.fe.driving.nonwear.generated.resources.project_address_label
+import snag.feat.projects.fe.driving.nonwear.generated.resources.project_name_label
+import snag.feat.projects.fe.driving.nonwear.generated.resources.required
+import snag.lib.design.fe.generated.resources.close
+import snag.lib.design.fe.generated.resources.ic_close
+import snag.lib.design.fe.generated.resources.ic_location
+import snag.lib.design.fe.generated.resources.save
+import kotlin.uuid.Uuid
+import snag.lib.design.fe.generated.resources.Res as DesignRes
+
+@Suppress("LongMethod")
+@Composable
+internal fun ProjectDetailsEditContent(
+    projectId: Uuid?,
+    state: ProjectDetailsEditUiState,
+    snackbarHostState: SnackbarHostState,
+    onProjectNameChange: (String) -> Unit,
+    onProjectAddressChange: (String) -> Unit,
+    onSelectClient: (Uuid, String) -> Unit,
+    onClearClient: () -> Unit,
+    onCreateNewClientClick: () -> Unit,
+    onSaveClick: () -> Unit,
+    onCancelClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Scaffold(
+        modifier = modifier,
+        topBar = {
+            TopAppBar(
+                modifier =
+                    Modifier
+                        .fillMaxWidth(),
+                title = {
+                    val text =
+                        if (projectId == null && state.projectName.isBlank()) {
+                            stringResource(Res.string.new_project)
+                        } else {
+                            state.projectName
+                        }
+                    Text(
+                        modifier =
+                            Modifier.padding(
+                                end = 4.dp,
+                            ),
+                        text = text,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                },
+                navigationIcon = {
+                    IconButton(
+                        onClick = onCancelClick,
+                    ) {
+                        Icon(
+                            painter = painterResource(DesignRes.drawable.ic_close),
+                            contentDescription = stringResource(DesignRes.string.close),
+                        )
+                    }
+                },
+                actions = {
+                    Button(
+                        enabled = state.canSave,
+                        onClick = onSaveClick,
+                    ) {
+                        Text(
+                            text = stringResource(DesignRes.string.save),
+                        )
+                    }
+                },
+                contentPadding =
+                    PaddingValues(
+                        end = FullScreenDialogMeasurements.HorizontalPadding,
+                    ),
+            )
+        },
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState)
+        },
+    ) { paddingValues ->
+        Column(
+            modifier =
+                Modifier
+                    .padding(paddingValues)
+                    .padding(horizontal = FullScreenDialogMeasurements.HorizontalPadding)
+                    .consumeWindowInsets(paddingValues),
+            verticalArrangement = Arrangement.spacedBy(FullScreenDialogMeasurements.ElementSpacing),
+        ) {
+            OutlinedTextField(
+                modifier =
+                    Modifier
+                        .fillMaxWidth(),
+                label = { Text(text = stringResource(Res.string.project_name_label) + "*") },
+                isError = state.projectNameError != null,
+                supportingText = {
+                    Text(
+                        text =
+                            state.projectNameError?.let { stringResource(it) }
+                                ?: stringResource(Res.string.required) + "*",
+                    )
+                },
+                value = state.projectName,
+                onValueChange = {
+                    onProjectNameChange(it)
+                },
+            )
+            OutlinedTextField(
+                modifier =
+                    Modifier
+                        .fillMaxWidth(),
+                label = { Text(text = stringResource(Res.string.project_address_label) + "*") },
+                isError = state.projectAddressError != null,
+                supportingText = {
+                    Text(
+                        text =
+                            state.projectAddressError?.let { stringResource(it) }
+                                ?: stringResource(Res.string.required) + "*",
+                    )
+                },
+                value = state.projectAddress,
+                onValueChange = {
+                    onProjectAddressChange(it)
+                },
+                leadingIcon = {
+                    Icon(
+                        painter = painterResource(DesignRes.drawable.ic_location),
+                        contentDescription = "Address",
+                    )
+                },
+            )
+            ClientDropdown(
+                selectedClientName = state.selectedClientName,
+                availableClients = state.availableClients,
+                onSelectClient = onSelectClient,
+                onClearClient = onClearClient,
+                onCreateNewClientClick = onCreateNewClientClick,
+            )
+        }
+    }
+}

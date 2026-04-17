@@ -21,7 +21,7 @@ import cz.adamec.timotej.snag.reports.business.ReportType
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
-internal data class ProjectDetailsUiState(
+data class ProjectDetailsUiState(
     val projectStatus: ProjectDetailsUiStatus = ProjectDetailsUiStatus.LOADING,
     val isDownloadingReport: Boolean = false,
     val isClosingOrReopening: Boolean = false,
@@ -43,7 +43,7 @@ internal data class ProjectDetailsUiState(
     val creatorEmail: String? = null,
 )
 
-internal enum class ProjectDetailsUiStatus {
+enum class ProjectDetailsUiStatus {
     ERROR,
     NOT_FOUND,
     LOADING,
@@ -51,12 +51,12 @@ internal enum class ProjectDetailsUiStatus {
     DELETED,
 }
 
-internal enum class StructuresUiStatus {
+enum class StructuresUiStatus {
     ERROR,
     LOADED,
 }
 
-internal enum class InspectionsUiStatus {
+enum class InspectionsUiStatus {
     ERROR,
     LOADED,
 }

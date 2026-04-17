@@ -33,7 +33,7 @@ import kotlinx.coroutines.launch
 import org.koin.core.annotation.InjectedParam
 import kotlin.uuid.Uuid
 
-internal class ProjectAssignmentsViewModel(
+class ProjectAssignmentsViewModel(
     @InjectedParam private val projectId: Uuid,
     private val getProjectAssignmentsUseCase: GetProjectAssignmentsUseCase,
     private val getUsersUseCase: GetUsersUseCase,

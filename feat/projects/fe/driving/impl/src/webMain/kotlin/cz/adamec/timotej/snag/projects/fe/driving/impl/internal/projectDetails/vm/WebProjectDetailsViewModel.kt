@@ -42,7 +42,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlin.uuid.Uuid
 
-internal class WebProjectDetailsViewModel(
+class WebProjectDetailsViewModel(
     projectId: Uuid,
     getProjectUseCase: GetProjectUseCase,
     deleteProjectUseCase: DeleteProjectUseCase,
