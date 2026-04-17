@@ -929,7 +929,7 @@ Rollup checklist as of MR !65 `3a85e0b`. Grouped by owner-bucket; check off as i
 
 ### L.2 Phase 3 — Wear OS live experiment (§4.4)
 
-Out of scope for Phase 2. Requires its own plan doc before starting.
+Out of scope for Phase 2. Plan doc: [`analysis/phase-3-plan.md`](phase-3-plan.md) (on `chore/phase-2-ripple-tooling`). Implementation lands on `experiment/wearos-feasibility-spike`.
 
 - [ ] Feasibility spike (thesis L3261 `% TODO`).
 - [ ] One Wear-native screen wired to shared use cases.
