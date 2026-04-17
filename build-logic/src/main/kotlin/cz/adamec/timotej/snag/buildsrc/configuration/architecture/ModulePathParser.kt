@@ -31,6 +31,11 @@ private val ENCAPSULATIONS = mapOf(
     "impl" to Encapsulation.IMPL,
     "test" to Encapsulation.TEST,
     "contract" to Encapsulation.CONTRACT,
+    // Platform-variant sibling modules under an existing hex layer.
+    // Treated as IMPL for encapsulation-direction rules; they are parallel
+    // impls selected by the consuming platform app (phone vs Wear Android).
+    "nonWear" to Encapsulation.IMPL,
+    "wear" to Encapsulation.IMPL,
 )
 
 private val INFRA_PREFIXES = setOf("testInfra", "koinModulesAggregate")
