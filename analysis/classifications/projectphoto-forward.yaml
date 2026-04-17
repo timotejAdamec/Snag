@@ -1,0 +1,778 @@
+change_id: projectphoto-forward
+ref: b5365d611
+base_ref: b5365d611~1
+base_sharing_snapshot: /Users/timotej.adamec/StudioProjects/Snag/.claude/worktrees/phase2-ripple-tooling/analysis/data/sharing_report_with_loc.csv
+repair_log:
+- file: feat/findings/fe/app/impl/src/webMain/kotlin/cz/adamec/timotej/snag/findings/fe/app/impl/internal/CanModifyFindingPhotosUseCaseImpl.kt
+  unit: :feat:findings:fe:app:impl::webMain
+  status: M
+  loc_churn: 16
+  bucket: collateral
+  recurring: false
+  source: hand
+  reason: Cross-feature refactor — findings use case now delegates to the new shared CanModifyProjectFilesUseCase introduced
+    for ProjectPhoto. Incidental coupling cleanup done during the feature addition, not a recurring registry site.
+- file: feat/findings/fe/app/impl/src/webTest/kotlin/cz/adamec/timotej/snag/findings/fe/app/impl/internal/CanModifyFindingPhotosUseCaseImplTest.kt
+  unit: :feat:findings:fe:app:impl::webTest
+  status: D
+  loc_churn: 142
+  bucket: collateral
+  recurring: false
+  source: hand
+  reason: Test file deleted because the refactored findings use case became pure delegation (no independent logic left to
+    test). Collateral to the delegation refactor above.
+- file: feat/projects/app/model/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/app/model/AppProjectPhoto.kt
+  unit: :feat:projects:app:model::commonMain[FE+BE]
+  status: A
+  loc_churn: 30
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:projects:*)
+- file: feat/projects/be/app/api/src/main/kotlin/cz/adamec/timotej/snag/projects/be/app/api/DeleteProjectPhotoUseCase.kt
+  unit: :feat:projects:be:app:api::main
+  status: A
+  loc_churn: 20
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:projects:*)
+- file: feat/projects/be/app/api/src/main/kotlin/cz/adamec/timotej/snag/projects/be/app/api/GetProjectPhotosModifiedSinceUseCase.kt
+  unit: :feat:projects:be:app:api::main
+  status: A
+  loc_churn: 20
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:projects:*)
+- file: feat/projects/be/app/api/src/main/kotlin/cz/adamec/timotej/snag/projects/be/app/api/SaveProjectPhotoUseCase.kt
+  unit: :feat:projects:be:app:api::main
+  status: A
+  loc_churn: 19
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:projects:*)
+- file: feat/projects/be/app/api/src/main/kotlin/cz/adamec/timotej/snag/projects/be/app/api/model/DeleteProjectPhotoRequest.kt
+  unit: :feat:projects:be:app:api::main
+  status: A
+  loc_churn: 21
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:projects:*)
+- file: feat/projects/be/app/api/src/main/kotlin/cz/adamec/timotej/snag/projects/be/app/api/model/GetProjectPhotosModifiedSinceRequest.kt
+  unit: :feat:projects:be:app:api::main
+  status: A
+  loc_churn: 21
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:projects:*)
+- file: feat/projects/be/app/impl/src/main/kotlin/cz/adamec/timotej/snag/projects/be/app/impl/di/ProjectsAppModule.kt
+  unit: :feat:projects:be:app:impl::main
+  status: M
+  loc_churn: 9
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:projects:*)
+- file: feat/projects/be/app/impl/src/main/kotlin/cz/adamec/timotej/snag/projects/be/app/impl/internal/DeleteProjectPhotoUseCaseImpl.kt
+  unit: :feat:projects:be:app:impl::main
+  status: A
+  loc_churn: 43
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:projects:*)
+- file: feat/projects/be/app/impl/src/main/kotlin/cz/adamec/timotej/snag/projects/be/app/impl/internal/GetProjectPhotosModifiedSinceUseCaseImpl.kt
+  unit: :feat:projects:be:app:impl::main
+  status: A
+  loc_churn: 28
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:projects:*)
+- file: feat/projects/be/app/impl/src/main/kotlin/cz/adamec/timotej/snag/projects/be/app/impl/internal/SaveProjectPhotoUseCaseImpl.kt
+  unit: :feat:projects:be:app:impl::main
+  status: A
+  loc_churn: 46
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:projects:*)
+- file: feat/projects/be/app/impl/src/test/kotlin/cz/adamec/timotej/snag/projects/be/app/impl/internal/CanAccessProjectUseCaseImplTest.kt
+  unit: :feat:projects:be:app:impl::test
+  status: M
+  loc_churn: 54
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:projects:*)
+- file: feat/projects/be/app/impl/src/test/kotlin/cz/adamec/timotej/snag/projects/be/app/impl/internal/SaveProjectPhotoUseCaseImplTest.kt
+  unit: :feat:projects:be:app:impl::test
+  status: A
+  loc_churn: 113
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:projects:*)
+- file: feat/projects/be/app/model/src/main/kotlin/cz/adamec/timotej/snag/projects/be/model/BackendProjectPhoto.kt
+  unit: :feat:projects:be:app:model::main
+  status: A
+  loc_churn: 33
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:projects:*)
+- file: feat/projects/be/driven/impl/src/main/kotlin/cz/adamec/timotej/snag/projects/be/driven/impl/di/ProjectsDrivenModule.kt
+  unit: :feat:projects:be:driven:impl::main
+  status: M
+  loc_churn: 3
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:projects:*)
+- file: feat/projects/be/driven/impl/src/main/kotlin/cz/adamec/timotej/snag/projects/be/driven/impl/internal/Mapper.kt
+  unit: :feat:projects:be:driven:impl::main
+  status: M
+  loc_churn: 13
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:projects:*)
+- file: feat/projects/be/driven/impl/src/main/kotlin/cz/adamec/timotej/snag/projects/be/driven/impl/internal/RealProjectPhotosDb.kt
+  unit: :feat:projects:be:driven:impl::main
+  status: A
+  loc_churn: 122
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:projects:*)
+- file: feat/projects/be/driven/test/src/main/kotlin/cz/adamec/timotej/snag/projects/be/driven/test/ProjectPhotosDbTestExtensions.kt
+  unit: :feat:projects:be:driven:test::main
+  status: A
+  loc_churn: 40
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:projects:*)
+- file: feat/projects/be/driving/impl/src/main/kotlin/cz/adamec/timotej/snag/projects/be/driving/impl/di/ProjectsDrivingModule.kt
+  unit: :feat:projects:be:driving:impl::main
+  status: M
+  loc_churn: 2
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:projects:*)
+- file: feat/projects/be/driving/impl/src/main/kotlin/cz/adamec/timotej/snag/projects/be/driving/impl/internal/Mapper.kt
+  unit: :feat:projects:be:driving:impl::main
+  status: M
+  loc_churn: 26
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:projects:*)
+- file: feat/projects/be/driving/impl/src/main/kotlin/cz/adamec/timotej/snag/projects/be/driving/impl/internal/ProjectPhotosRoute.kt
+  unit: :feat:projects:be:driving:impl::main
+  status: A
+  loc_churn: 118
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:projects:*)
+- file: feat/projects/be/ports/src/main/kotlin/cz/adamec/timotej/snag/projects/be/ports/ProjectPhotosDb.kt
+  unit: :feat:projects:be:ports::main
+  status: A
+  loc_churn: 31
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:projects:*)
+- file: feat/projects/business/model/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/business/ProjectPhoto.kt
+  unit: :feat:projects:business:model::commonMain[FE+BE]
+  status: A
+  loc_churn: 25
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:projects:*)
+- file: feat/projects/contract/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/contract/DeleteProjectPhotoApiDto.kt
+  unit: :feat:projects:contract::commonMain[FE+BE]
+  status: A
+  loc_churn: 21
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:projects:*)
+- file: feat/projects/contract/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/contract/ProjectPhotoApiDto.kt
+  unit: :feat:projects:contract::commonMain[FE+BE]
+  status: A
+  loc_churn: 27
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:projects:*)
+- file: feat/projects/contract/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/contract/PutProjectPhotoApiDto.kt
+  unit: :feat:projects:contract::commonMain[FE+BE]
+  status: A
+  loc_churn: 25
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:projects:*)
+- file: feat/projects/fe/app/api/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/app/api/AddProjectPhotoRequest.kt
+  unit: :feat:projects:fe:app:api::commonMain[FE]
+  status: A
+  loc_churn: 22
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:projects:*)
+- file: feat/projects/fe/app/api/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/app/api/CanModifyProjectFilesUseCase.kt
+  unit: :feat:projects:fe:app:api::commonMain[FE]
+  status: A
+  loc_churn: 20
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:projects:*)
+- file: feat/projects/fe/app/api/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/app/api/CascadeDeleteLocalProjectPhotosByProjectIdUseCase.kt
+  unit: :feat:projects:fe:app:api::commonMain[FE]
+  status: A
+  loc_churn: 19
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:projects:*)
+- file: feat/projects/fe/app/api/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/app/api/CascadeRestoreLocalProjectPhotosByProjectIdUseCase.kt
+  unit: :feat:projects:fe:app:api::commonMain[FE]
+  status: A
+  loc_churn: 19
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:projects:*)
+- file: feat/projects/fe/app/api/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/app/api/DeleteProjectPhotoUseCase.kt
+  unit: :feat:projects:fe:app:api::commonMain[FE]
+  status: A
+  loc_churn: 20
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:projects:*)
+- file: feat/projects/fe/app/api/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/app/api/GetProjectPhotosUseCase.kt
+  unit: :feat:projects:fe:app:api::commonMain[FE]
+  status: A
+  loc_churn: 22
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:projects:*)
+- file: feat/projects/fe/app/api/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/app/api/UpdateProjectPhotoDescriptionUseCase.kt
+  unit: :feat:projects:fe:app:api::commonMain[FE]
+  status: A
+  loc_churn: 23
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:projects:*)
+- file: feat/projects/fe/app/api/src/nonWebMain/kotlin/cz/adamec/timotej/snag/projects/fe/app/api/NonWebAddProjectPhotoUseCase.kt
+  unit: :feat:projects:fe:app:api::nonWebMain
+  status: A
+  loc_churn: 20
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:projects:*)
+- file: feat/projects/fe/app/api/src/webMain/kotlin/cz/adamec/timotej/snag/projects/fe/app/api/WebAddProjectPhotoUseCase.kt
+  unit: :feat:projects:fe:app:api::webMain
+  status: A
+  loc_churn: 20
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:projects:*)
+- file: feat/projects/fe/app/impl/build.gradle.kts
+  unit: :root::non-module
+  status: M
+  loc_churn: 2
+  bucket: collateral
+  recurring: false
+  source: rule:build_gradle_collateral
+  reason: build.gradle.kts edit in a pre-existing module — typically a new dependency or plugin declaration, avoidable if
+    the convention plugins auto-wire it
+- file: feat/projects/fe/app/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/app/impl/di/ProjectsAppModule.kt
+  unit: :feat:projects:fe:app:impl::commonMain[FE]
+  status: M
+  loc_churn: 21
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:projects:*)
+- file: feat/projects/fe/app/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/app/impl/internal/CascadeDeleteLocalProjectPhotosByProjectIdUseCaseImpl.kt
+  unit: :feat:projects:fe:app:impl::commonMain[FE]
+  status: A
+  loc_churn: 25
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:projects:*)
+- file: feat/projects/fe/app/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/app/impl/internal/CascadeRestoreLocalProjectPhotosByProjectIdUseCaseImpl.kt
+  unit: :feat:projects:fe:app:impl::commonMain[FE]
+  status: A
+  loc_churn: 48
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:projects:*)
+- file: feat/projects/fe/app/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/app/impl/internal/DeleteProjectPhotoUseCaseImpl.kt
+  unit: :feat:projects:fe:app:impl::commonMain[FE]
+  status: A
+  loc_churn: 57
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:projects:*)
+- file: feat/projects/fe/app/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/app/impl/internal/DeleteProjectUseCaseImpl.kt
+  unit: :feat:projects:fe:app:impl::commonMain[FE]
+  status: M
+  loc_churn: 3
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:projects:*)
+- file: feat/projects/fe/app/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/app/impl/internal/GetProjectPhotosUseCaseImpl.kt
+  unit: :feat:projects:fe:app:impl::commonMain[FE]
+  status: A
+  loc_churn: 46
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:projects:*)
+- file: feat/projects/fe/app/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/app/impl/internal/UpdateProjectPhotoDescriptionUseCaseImpl.kt
+  unit: :feat:projects:fe:app:impl::commonMain[FE]
+  status: A
+  loc_churn: 74
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:projects:*)
+- file: feat/projects/fe/app/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/app/impl/internal/sync/ProjectPhotoPullSyncHandler.kt
+  unit: :feat:projects:fe:app:impl::commonMain[FE]
+  status: A
+  loc_churn: 63
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:projects:*)
+- file: feat/projects/fe/app/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/app/impl/internal/sync/ProjectPhotoSyncEntityType.kt
+  unit: :feat:projects:fe:app:impl::commonMain[FE]
+  status: A
+  loc_churn: 15
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:projects:*)
+- file: feat/projects/fe/app/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/app/impl/internal/sync/ProjectSyncHandler.kt
+  unit: :feat:projects:fe:app:impl::commonMain[FE]
+  status: M
+  loc_churn: 3
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:projects:*)
+- file: feat/projects/fe/app/impl/src/commonTest/kotlin/cz/adamec/timotej/snag/projects/fe/app/impl/internal/CascadeRestoreLocalProjectPhotosByProjectIdUseCaseImplTest.kt
+  unit: :feat:projects:fe:app:impl::commonTest
+  status: A
+  loc_churn: 103
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:projects:*)
+- file: feat/projects/fe/app/impl/src/commonTest/kotlin/cz/adamec/timotej/snag/projects/fe/app/impl/internal/DeleteProjectPhotoUseCaseImplTest.kt
+  unit: :feat:projects:fe:app:impl::commonTest
+  status: A
+  loc_churn: 84
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:projects:*)
+- file: feat/projects/fe/app/impl/src/commonTest/kotlin/cz/adamec/timotej/snag/projects/fe/app/impl/internal/DeleteProjectUseCaseImplTest.kt
+  unit: :feat:projects:fe:app:impl::commonTest
+  status: M
+  loc_churn: 28
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:projects:*)
+- file: feat/projects/fe/app/impl/src/commonTest/kotlin/cz/adamec/timotej/snag/projects/fe/app/impl/internal/UpdateProjectPhotoDescriptionUseCaseImplTest.kt
+  unit: :feat:projects:fe:app:impl::commonTest
+  status: A
+  loc_churn: 94
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:projects:*)
+- file: feat/projects/fe/app/impl/src/commonTest/kotlin/cz/adamec/timotej/snag/projects/fe/app/impl/internal/sync/ProjectPhotoPullSyncHandlerTest.kt
+  unit: :feat:projects:fe:app:impl::commonTest
+  status: A
+  loc_churn: 106
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:projects:*)
+- file: feat/projects/fe/app/impl/src/commonTest/kotlin/cz/adamec/timotej/snag/projects/fe/app/impl/internal/sync/ProjectSyncHandlerTest.kt
+  unit: :feat:projects:fe:app:impl::commonTest
+  status: A
+  loc_churn: 169
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:projects:*)
+- file: feat/projects/fe/app/impl/src/nonWebMain/kotlin/cz/adamec/timotej/snag/projects/fe/app/impl/di/ProjectsAppModule.nonWeb.kt
+  unit: :feat:projects:fe:app:impl::nonWebMain
+  status: A
+  loc_churn: 31
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:projects:*)
+- file: feat/projects/fe/app/impl/src/nonWebMain/kotlin/cz/adamec/timotej/snag/projects/fe/app/impl/internal/NonWebAddProjectPhotoUseCaseImpl.kt
+  unit: :feat:projects:fe:app:impl::nonWebMain
+  status: A
+  loc_churn: 88
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:projects:*)
+- file: feat/projects/fe/app/impl/src/nonWebMain/kotlin/cz/adamec/timotej/snag/projects/fe/app/impl/internal/NonWebCanModifyProjectFilesUseCaseImpl.kt
+  unit: :feat:projects:fe:app:impl::nonWebMain
+  status: A
+  loc_churn: 27
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:projects:*)
+- file: feat/projects/fe/app/impl/src/nonWebMain/kotlin/cz/adamec/timotej/snag/projects/fe/app/impl/internal/sync/NonWebProjectPhotoSyncHandler.kt
+  unit: :feat:projects:fe:app:impl::nonWebMain
+  status: A
+  loc_churn: 90
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:projects:*)
+- file: feat/projects/fe/app/impl/src/nonWebTest/kotlin/cz/adamec/timotej/snag/projects/fe/app/impl/internal/NonWebAddProjectPhotoUseCaseImplTest.kt
+  unit: :feat:projects:fe:app:impl::nonWebTest
+  status: A
+  loc_churn: 131
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:projects:*)
+- file: feat/projects/fe/app/impl/src/nonWebTest/kotlin/cz/adamec/timotej/snag/projects/fe/app/impl/internal/NonWebCanModifyProjectFilesUseCaseImplTest.kt
+  unit: :feat:projects:fe:app:impl::nonWebTest
+  status: A
+  loc_churn: 83
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:projects:*)
+- file: feat/projects/fe/app/impl/src/nonWebTest/kotlin/cz/adamec/timotej/snag/projects/fe/app/impl/internal/sync/NonWebProjectPhotoSyncHandlerTest.kt
+  unit: :feat:projects:fe:app:impl::nonWebTest
+  status: A
+  loc_churn: 203
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:projects:*)
+- file: feat/projects/fe/app/impl/src/webMain/kotlin/cz/adamec/timotej/snag/projects/fe/app/impl/di/ProjectsAppModule.web.kt
+  unit: :feat:projects:fe:app:impl::webMain
+  status: A
+  loc_churn: 31
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:projects:*)
+- file: feat/projects/fe/app/impl/src/webMain/kotlin/cz/adamec/timotej/snag/projects/fe/app/impl/internal/WebAddProjectPhotoUseCaseImpl.kt
+  unit: :feat:projects:fe:app:impl::webMain
+  status: A
+  loc_churn: 87
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:projects:*)
+- file: feat/projects/fe/app/impl/src/webMain/kotlin/cz/adamec/timotej/snag/projects/fe/app/impl/internal/WebCanModifyProjectFilesUseCaseImpl.kt
+  unit: :feat:projects:fe:app:impl::webMain
+  status: A
+  loc_churn: 34
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:projects:*)
+- file: feat/projects/fe/app/impl/src/webMain/kotlin/cz/adamec/timotej/snag/projects/fe/app/impl/internal/sync/WebProjectPhotoSyncHandler.kt
+  unit: :feat:projects:fe:app:impl::webMain
+  status: A
+  loc_churn: 51
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:projects:*)
+- file: feat/projects/fe/app/impl/src/webTest/kotlin/cz/adamec/timotej/snag/projects/fe/app/impl/internal/WebAddProjectPhotoUseCaseImplTest.kt
+  unit: :feat:projects:fe:app:impl::webTest
+  status: A
+  loc_churn: 115
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:projects:*)
+- file: feat/projects/fe/app/impl/src/webTest/kotlin/cz/adamec/timotej/snag/projects/fe/app/impl/internal/WebCanModifyProjectFilesUseCaseImplTest.kt
+  unit: :feat:projects:fe:app:impl::webTest
+  status: A
+  loc_churn: 115
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:projects:*)
+- file: feat/projects/fe/app/impl/src/webTest/kotlin/cz/adamec/timotej/snag/projects/fe/app/impl/internal/sync/WebProjectPhotoSyncHandlerTest.kt
+  unit: :feat:projects:fe:app:impl::webTest
+  status: A
+  loc_churn: 122
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:projects:*)
+- file: feat/projects/fe/driven/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/driven/di/ProjectsDrivenModule.kt
+  unit: :feat:projects:fe:driven:impl::commonMain[FE]
+  status: M
+  loc_churn: 11
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:projects:*)
+- file: feat/projects/fe/driven/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/driven/internal/api/Mappers.kt
+  unit: :feat:projects:fe:driven:impl::commonMain[FE]
+  status: M
+  loc_churn: 29
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:projects:*)
+- file: feat/projects/fe/driven/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/driven/internal/api/RealProjectPhotosApi.kt
+  unit: :feat:projects:fe:driven:impl::commonMain[FE]
+  status: A
+  loc_churn: 96
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:projects:*)
+- file: feat/projects/fe/driven/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/driven/internal/db/Mappers.kt
+  unit: :feat:projects:fe:driven:impl::commonMain[FE]
+  status: M
+  loc_churn: 12
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:projects:*)
+- file: feat/projects/fe/driven/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/driven/internal/db/RealProjectPhotosDb.kt
+  unit: :feat:projects:fe:driven:impl::commonMain[FE]
+  status: A
+  loc_churn: 95
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:projects:*)
+- file: feat/projects/fe/driven/test/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/driven/test/FakeProjectPhotosApi.kt
+  unit: :feat:projects:fe:driven:test::commonMain[FE]
+  status: A
+  loc_churn: 61
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:projects:*)
+- file: feat/projects/fe/driven/test/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/driven/test/FakeProjectPhotosDb.kt
+  unit: :feat:projects:fe:driven:test::commonMain[FE]
+  status: A
+  loc_churn: 46
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:projects:*)
+- file: feat/projects/fe/driven/test/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/driven/test/FakeProjectsApi.kt
+  unit: :feat:projects:fe:driven:test::commonMain[FE]
+  status: M
+  loc_churn: 6
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:projects:*)
+- file: feat/projects/fe/driven/test/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/driven/test/ProjectsFeDrivenTestModule.kt
+  unit: :feat:projects:fe:driven:test::commonMain[FE]
+  status: M
+  loc_churn: 4
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:projects:*)
+- file: feat/projects/fe/driving/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/driving/impl/di/ProjectsDrivingModule.kt
+  unit: :feat:projects:fe:driving:impl::commonMain[FE]
+  status: M
+  loc_churn: 22
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:projects:*)
+- file: feat/projects/fe/driving/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/driving/impl/internal/projectDetails/vm/Mapper.kt
+  unit: :feat:projects:fe:driving:impl::commonMain[FE]
+  status: M
+  loc_churn: 3
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:projects:*)
+- file: feat/projects/fe/driving/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/driving/impl/internal/projectDetails/vm/ProjectDetailsUiState.kt
+  unit: :feat:projects:fe:driving:impl::commonMain[FE]
+  status: M
+  loc_churn: 4
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:projects:*)
+- file: feat/projects/fe/driving/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/driving/impl/internal/projectDetails/vm/ProjectDetailsViewModel.kt
+  unit: :feat:projects:fe:driving:impl::commonMain[FE]
+  status: M
+  loc_churn: 92
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:projects:*)
+- file: feat/projects/fe/driving/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/driving/impl/internal/projectDetails/vm/ProjectDetailsVmState.kt
+  unit: :feat:projects:fe:driving:impl::commonMain[FE]
+  status: M
+  loc_churn: 4
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:projects:*)
+- file: feat/projects/fe/driving/impl/src/commonTest/kotlin/cz/adamec/timotej/snag/projects/fe/driving/impl/internal/projectDetails/vm/ProjectDetailsMapperTest.kt
+  unit: :feat:projects:fe:driving:impl::commonTest
+  status: M
+  loc_churn: 49
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:projects:*)
+- file: feat/projects/fe/driving/impl/src/commonTest/kotlin/cz/adamec/timotej/snag/projects/fe/driving/impl/internal/projectDetails/vm/ProjectDetailsViewModelTest.kt
+  unit: :feat:projects:fe:driving:impl::commonTest
+  status: M
+  loc_churn: 23
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:projects:*)
+- file: feat/projects/fe/driving/impl/src/nonWebMain/kotlin/cz/adamec/timotej/snag/projects/fe/driving/impl/di/ProjectsDrivingModule.nonWeb.kt
+  unit: :feat:projects:fe:driving:impl::nonWebMain
+  status: M
+  loc_churn: 29
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:projects:*)
+- file: feat/projects/fe/driving/impl/src/nonWebMain/kotlin/cz/adamec/timotej/snag/projects/fe/driving/impl/internal/projectDetails/vm/NonWebProjectDetailsViewModel.kt
+  unit: :feat:projects:fe:driving:impl::nonWebMain
+  status: A
+  loc_churn: 113
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:projects:*)
+- file: feat/projects/fe/driving/impl/src/webMain/kotlin/cz/adamec/timotej/snag/projects/fe/driving/impl/di/ProjectsDrivingModule.web.kt
+  unit: :feat:projects:fe:driving:impl::webMain
+  status: M
+  loc_churn: 30
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:projects:*)
+- file: feat/projects/fe/driving/impl/src/webMain/kotlin/cz/adamec/timotej/snag/projects/fe/driving/impl/internal/projectDetails/vm/WebProjectDetailsViewModel.kt
+  unit: :feat:projects:fe:driving:impl::webMain
+  status: A
+  loc_churn: 125
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:projects:*)
+- file: feat/projects/fe/ports/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/ports/ProjectPhotosApi.kt
+  unit: :feat:projects:fe:ports::commonMain[FE]
+  status: A
+  loc_churn: 43
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:projects:*)
+- file: feat/projects/fe/ports/src/commonMain/kotlin/cz/adamec/timotej/snag/projects/fe/ports/ProjectPhotosDb.kt
+  unit: :feat:projects:fe:ports::commonMain[FE]
+  status: A
+  loc_churn: 30
+  bucket: local
+  recurring: false
+  source: hand:local_module_globs
+  reason: Unit inside a module declared local to this change (:feat:projects:*)
+- file: feat/shared/database/be/impl/src/main/kotlin/cz/adamec/timotej/snag/feat/shared/database/be/AllTables.kt
+  unit: :root::non-module
+  status: M
+  loc_churn: 1
+  bucket: intrinsic
+  recurring: true
+  ns_theorem: DVT
+  source: hand
+  reason: BE schema registry — `allTables` array enumerates every Exposed Table in the schema. Each new persistent entity
+    forces exactly one line here. Classical DVT combinatorial anomaly site (data-version transparency is broken at the aggregation
+    point).
+- file: feat/shared/database/be/impl/src/main/kotlin/cz/adamec/timotej/snag/feat/shared/database/be/DbConstants.kt
+  unit: :root::non-module
+  status: A
+  loc_churn: 15
+  bucket: local
+  recurring: false
+  source: hand
+  reason: New shared-constants file (holds URL_MAX_LENGTH extracted from FindingsTable during ProjectPhoto to deduplicate
+    the constant between ProjectPhotos and FindingPhotos tables). Fresh file, not a recurring registry site — a one-time AVT-oriented
+    refactor incidental to the feature addition.
+- file: feat/shared/database/be/impl/src/main/kotlin/cz/adamec/timotej/snag/feat/shared/database/be/FindingsTable.kt
+  unit: :root::non-module
+  status: M
+  loc_churn: 2
+  bucket: collateral
+  recurring: false
+  source: hand
+  reason: Removed the local `URL_MAX_LENGTH` const after extracting it to shared DbConstants. Incidental AVT-oriented cleanup
+    forced by the ProjectPhoto addition's need to reuse the same limit.
+- file: feat/shared/database/be/impl/src/main/kotlin/cz/adamec/timotej/snag/feat/shared/database/be/ProjectPhotoEntity.kt
+  unit: :root::non-module
+  status: A
+  loc_churn: 30
+  bucket: local
+  recurring: false
+  source: hand
+  reason: New Exposed DAO entity class for ProjectPhoto. Lives under feat/shared/database/be (schema module) but is feature-local
+    in content — unit fallback to `:root::non-module` is the known drift artifact from `feat/shared` being moved to `:featuresShared`
+    in commit dc0d9b8a2 post-b5365d611.
+- file: feat/shared/database/be/impl/src/main/kotlin/cz/adamec/timotej/snag/feat/shared/database/be/ProjectPhotosTable.kt
+  unit: :root::non-module
+  status: A
+  loc_churn: 23
+  bucket: local
+  recurring: false
+  source: hand
+  reason: New Exposed Table class for `project_photos` with FK to projects + FK reference to the uploader. Feature-local in
+    content despite the `:root::non-module` unit fallback (drift from post-commit module move).
+- file: feat/shared/database/fe/api/src/commonMain/sqldelight/cz/adamec/timotej/snag/feat/shared/database/fe/db/ProjectPhotoEntity.sq
+  unit: :root::non-module
+  status: A
+  loc_churn: 28
+  bucket: local
+  recurring: false
+  source: hand
+  reason: New SQLDelight schema file for the FE ProjectPhoto mirror table. Feature-local in content despite the `:root::non-module`
+    unit fallback.

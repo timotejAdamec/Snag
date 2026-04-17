@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.buildsrc.plugins
 
+import cz.adamec.timotej.snag.buildsrc.configuration.analysis.configureDependencyGraph
 import cz.adamec.timotej.snag.buildsrc.configuration.analysis.configureSharingReport
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -20,5 +21,6 @@ import org.gradle.api.Project
 internal class SharingReportPlugin : Plugin<Project> {
     override fun apply(target: Project) = with(target) {
         configureSharingReport()
+        configureDependencyGraph()
     }
 }
