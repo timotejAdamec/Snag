@@ -20,7 +20,7 @@ import org.koin.core.module.Module
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
-internal val OIDC_REDIRECT_URI_QUALIFIER = named("oidcRedirectUri")
+val OIDC_REDIRECT_URI_QUALIFIER = named("oidcRedirectUri")
 
 internal expect val platformModule: Module
 
