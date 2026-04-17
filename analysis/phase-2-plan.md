@@ -912,7 +912,20 @@ Rollup checklist as of MR !65 `3a85e0b`. Grouped by owner-bucket; check off as i
 ### L.1 Analysis artefacts (this repo, `chore/phase-2-ripple-tooling`)
 
 - [x] **§4.1 op-table row for Case 1b paired-branch counterfactual.** Flagged in MR !65 description as follow-up candidate (`§5.1 Operacionalizační tabulka nemá řádek pro Case 1b paired-branch counterfactual`). **Resolved as dedicated row.** Landed in thesis-repo commit `13fcfa5` on `feat/phase2-vyhodnoceni-draft`: new O2 row after O2b extracting $B_2/B_1 = 2{,}0\times$ and the other ratio headlines; O2b value cell trimmed to raw bucket count to remove duplication. See §K.2 pointer entry for Phase 5 authors.
-- [ ] **Submission-SHA pipeline rerun.** On the final submission SHA: `./gradlew sharingReport`, `analysis/loc_report.sh`, and `feature_retro.py --finalize` for each of the five cases. Commit regenerated `analysis/data/*.csv`. This is the gating step for every `\todo{numbers}` in §4.2, §4.3, §4.7.
+- [x] **Submission-SHA pipeline rerun.** On the final submission SHA: `./gradlew sharingReport`, `analysis/loc_report.sh`, and `feature_retro.py --finalize` for each of the five cases. Commit regenerated `analysis/data/*.csv`. This is the gating step for every `\todo{numbers}` in §4.2, §4.3, §4.7.
+
+  **Submission SHA:** `668da1697656f20e8ef54f1c4818b9af89827b14` (chore/phase-2-ripple-tooling, pre-this-commit). tokei 14.0.0. Date: 2026-04-17. Gradle `sharingReport` + `dependencyGraphReport` reported UP-TO-DATE (no module-tree change between prior run at 2026-04-12 and submission SHA — intervening commits were phase-2-plan text only). `loc_report.sh` + `dependency_closure.py` re-emitted byte-identical outputs to the committed `analysis/data/*.csv`; no CSV diff resulted — the existing committed baseline already is the submission-SHA baseline. Drift guard (zero-blast-radius ratio per ripple_*_files.csv) passed 0.000 for all six cases.
+
+  Per-case headlines (from `feature_retro.py --finalize` stdout at submission SHA) — feeds thesis \todo markers at L3245 (§4.2), L3254 (§4.3), L3351 (§4.7):
+
+  | change_id | files L | I | C | churn L | I | C | recurring intrinsic units |
+  |---|---:|---:|---:|---:|---:|---:|---:|
+  | inspections-reverse-removal | 89 | 7 | 43 | 5281 | 99 | 691 | **6** |
+  | photo-progress-correct | 8 | 0 | 0 | 97 | 0 | 0 | **0** |
+  | photo-progress-commonized | 12 | 0 | 0 | 100 | 0 | 0 | **0** |
+  | projectphoto-forward | 90 | 1 | 4 | 4265 | 1 | 162 | **1** |
+  | dvt-client-field | 16 | 1 | 0 | 98 | 4 | 0 | **1** |
+  | ios-only-project-field | 2 | 1 | 0 | 23 | 1 | 0 | **1** |
 
 ### L.2 Phase 3 — Wear OS live experiment (§4.4)
 
