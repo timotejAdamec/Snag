@@ -900,3 +900,49 @@ Phase 5 prose author's final judgment call.
 ```
 
 This commit runs after Part B completes and before Phase 2 ships its final PR. If Part B gets delayed past Phase 2 PR merge, split: land T-1, T-4, T-5, T-9, T-10 as one commit (Part A + Case 1 + caveats), and T-2, T-3 as a second commit when Part B data exists. T-6, T-7, T-8 are Phase 5 prose edits (not mechanical inserts) and stay out of this bundle.
+
+---
+
+## L. Remaining work to complete §4 Vyhodnocení
+
+Rollup checklist as of MR !65 `3a85e0b`. Grouped by owner-bucket; check off as items ship.
+
+### L.1 Analysis artefacts (this repo, `chore/phase-2-ripple-tooling`)
+
+- [ ] **§4.1 op-table row for Case 1b paired-branch counterfactual.** Flagged in MR !65 description as follow-up candidate (`§5.1 Operacionalizační tabulka nemá řádek pro Case 1b paired-branch counterfactual`). Decide whether to add a dedicated row or fold into existing O2a/O2b rows.
+- [ ] **Submission-SHA pipeline rerun.** On the final submission SHA: `./gradlew sharingReport`, `analysis/loc_report.sh`, and `feature_retro.py --finalize` for each of the five cases. Commit regenerated `analysis/data/*.csv`. This is the gating step for every `\todo{numbers}` in §4.2, §4.3, §4.7.
+
+### L.2 Phase 3 — Wear OS live experiment (§4.4)
+
+Out of scope for Phase 2. Requires its own plan doc before starting.
+
+- [ ] Feasibility spike (thesis L3261 `% TODO`).
+- [ ] One Wear-native screen wired to shared use cases.
+- [ ] Ripple decomposition + per-module-tree scaling test.
+- [ ] One emulator screenshot (`images/wear-os-*.png`).
+
+### L.3 Phase 5 — Czech prose (thesis repo, `feat/phase2-vyhodnoceni-draft` or later branch)
+
+Placeholder sections awaiting prose (thesis `text/text.tex`):
+
+- [ ] §4.1 `subsec:eval-nastroje` — tokei/pipeline method paragraph (L3231 TODO).
+- [ ] §4.1 `subsec:eval-hrozby-uvod` — threats preview (L3236 TODO).
+- [ ] §4.1 `archCheck` verbatim output on submission SHA (L3168 TODO).
+- [ ] §4.3 full Czech prose (deferred per §329 of this plan).
+- [ ] §4.5 Analýza technologických švů — port enumeration tied to AVT (L3266 TODO).
+- [ ] §4.6 Czech prose refinement over Phase 2 placeholders (T-6 / T-13 / T-14 areas).
+- [ ] §4.8 Komparativní kontext — literature review (L3356 TODO).
+- [ ] §4.9 further threats detail beyond current one-sentence caveats.
+
+`\todo{}` margin markers awaiting numbers from the §L.1 submission-SHA rerun:
+
+- [ ] §4.2 headline share-ratio table + layer × source-set heatmap (L3245).
+- [ ] §4.3 ripple decomposition tables for Case 1 and Case 2 (L3254).
+- [ ] §4.7 concrete headline numbers in all three synthesis paragraphs (L3351).
+
+### L.4 Gating order
+
+1. Complete §L.2 Wear OS experiment (its own phase); land §4.4 artefacts.
+2. Pick submission SHA; run §L.1 pipeline rerun; land regenerated CSVs on `chore/phase-2-ripple-tooling`.
+3. Phase 5 prose pass on the thesis branch fills every `\todo{numbers}` and each `% TODO`-marked section at once, referencing §J.5 artefact-to-section map and the §K.2 already-captured pointers.
+4. Final `latexmk` build, thesis PR to `main`, merge MR !65.
