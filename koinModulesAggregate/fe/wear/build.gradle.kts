@@ -17,11 +17,11 @@ plugins {
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            api(projects.koinModulesAggregate.fe)
-            implementation(projects.feat.projects.fe.driving.wear)
+            api(projects.koinModulesAggregate.fe.common)
+            implementation(projects.feat.projects.fe.wear.driving)
         }
         androidMain.dependencies {
-            implementation(projects.feat.authentication.fe.driven.wear)
+            implementation(projects.feat.authentication.fe.wear.driven)
         }
     }
 }

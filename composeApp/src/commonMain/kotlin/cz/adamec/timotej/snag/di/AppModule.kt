@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.di
 
-import cz.adamec.timotej.snag.di.aggregate.fe.frontendModulesAggregate
+import cz.adamec.timotej.snag.di.aggregate.fe.common.frontendModulesCommonAggregate
 import cz.adamec.timotej.snag.di.aggregate.fe.nonwear.frontendModulesNonWearAggregate
 import cz.adamec.timotej.snag.logging.loggerModule
 import org.koin.core.module.Module
@@ -22,7 +22,7 @@ val appModule =
     module {
         includes(
             platformModule,
-            frontendModulesAggregate,
+            frontendModulesCommonAggregate,
             frontendModulesNonWearAggregate,
             loggerModule,
             mainModule,

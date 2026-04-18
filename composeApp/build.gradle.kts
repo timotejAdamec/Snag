@@ -46,7 +46,7 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            implementation(projects.koinModulesAggregate.fe)
+            implementation(projects.koinModulesAggregate.fe.common)
             implementation(projects.koinModulesAggregate.fe.nonWear)
             implementation(projects.lib.design.fe)
             implementation(projects.feat.authentication.fe.driving.api)
@@ -57,7 +57,7 @@ kotlin {
         }
         commonTest.dependencies {
             implementation(projects.feat.findings.fe.ports)
-            implementation(projects.feat.projects.fe.driving.impl)
+            implementation(projects.feat.projects.fe.common.driving)
         }
         jvmMain.dependencies {
             implementation(compose.desktop.currentOs)

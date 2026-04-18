@@ -34,6 +34,7 @@ private val ENCAPSULATIONS = mapOf(
 )
 
 private val PLATFORM_VARIANTS = mapOf(
+    "common" to PlatformVariant.COMMON,
     "nonWear" to PlatformVariant.NON_WEAR,
     "wear" to PlatformVariant.WEAR,
 )

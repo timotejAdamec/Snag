@@ -1,0 +1,71 @@
+/*
+ * Copyright (c) 2026 Timotej Adamec
+ * SPDX-License-Identifier: MIT
+ *
+ * This file is part of the thesis:
+ * "Multiplatform snagging system with code sharing maximisation"
+ *
+ * Czech Technical University in Prague
+ * Faculty of Information Technology
+ * Department of Software Engineering
+ */
+
+package cz.adamec.timotej.snag.projects.fe.common.driving.internal.projects.vm
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import cz.adamec.timotej.snag.core.foundation.common.mapState
+import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
+import cz.adamec.timotej.snag.lib.design.fe.error.UiError
+import cz.adamec.timotej.snag.lib.design.fe.state.launchWhileSubscribed
+import cz.adamec.timotej.snag.projects.fe.app.api.CanCreateProjectUseCase
+import cz.adamec.timotej.snag.projects.fe.app.api.GetProjectsUseCase
+import kotlinx.collections.immutable.toPersistentList
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.update
+
+class ProjectsViewModel(
+    private val getProjectsUseCase: GetProjectsUseCase,
+    private val canCreateProjectUseCase: CanCreateProjectUseCase,
+) : ViewModel() {
+    private val vmState: MutableStateFlow<ProjectsVmState> =
+        MutableStateFlow(ProjectsVmState())
+            .launchWhileSubscribed(scope = viewModelScope) {
+                listOf(collectProjects(), collectCanCreateProject())
+            }
+    val state: StateFlow<ProjectsUiState> =
+        vmState.mapState { it.toUiState() }
+
+    private val errorEventsChannel = Channel<UiError>()
+    val errorsFlow = errorEventsChannel.receiveAsFlow()
+
+    private fun collectProjects(): Job =
+        getProjectsUseCase()
+            .map { projectsDataResult ->
+                when (projectsDataResult) {
+                    is OfflineFirstDataResult.ProgrammerError -> {
+                        errorEventsChannel.send(UiError.Unknown)
+                    }
+
+                    is OfflineFirstDataResult.Success -> {
+                        vmState.update {
+                            it.copy(
+                                projects = projectsDataResult.data.toPersistentList(),
+                            )
+                        }
+                    }
+                }
+            }.launchIn(viewModelScope)
+
+    private fun collectCanCreateProject(): Job =
+        canCreateProjectUseCase()
+            .map { canCreate ->
+                vmState.update { it.copy(canCreateProject = canCreate) }
+            }.launchIn(viewModelScope)
+}

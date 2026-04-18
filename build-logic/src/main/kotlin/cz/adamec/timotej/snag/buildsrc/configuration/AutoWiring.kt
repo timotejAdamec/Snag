@@ -90,9 +90,13 @@ internal fun Project.resolveHexagonalDependencies(): List<AutoWiredDependency> {
             result += AutoWiredDependency("$moduleDirectoryPath:api", DependencyScope.IMPLEMENTATION)
         }
 
-        path.contains("driven") -> {
-            val drivenDirectoryPath = moduleDirectoryPath.substringBeforeLast(":driven")
-            result += AutoWiredDependency("$drivenDirectoryPath:ports", DependencyScope.API)
+        path.contains(":driven") -> {
+            val beforeDriven = path.substringBefore(":driven")
+            val featureFePath = beforeDriven
+                .removeSuffix(":common")
+                .removeSuffix(":nonWear")
+                .removeSuffix(":wear")
+            result += AutoWiredDependency("$featureFePath:ports", DependencyScope.API)
         }
     }
 

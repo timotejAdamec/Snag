@@ -176,10 +176,10 @@ class ParseModulePathTest {
     }
 
     @Test
-    fun `feat projects fe driving impl`() {
-        val result = parseModulePath(":feat:projects:fe:driving:impl")
+    fun `feat clients fe driving impl`() {
+        val result = parseModulePath(":feat:clients:fe:driving:impl")
         assertIs<FeatModule>(result)
-        assertEquals("projects", result.feature)
+        assertEquals("clients", result.feature)
         assertEquals(Platform.FE, result.platform)
         assertEquals(HexLayer.DRIVING, result.hexLayer)
         assertEquals(Encapsulation.IMPL, result.encapsulation)
@@ -196,8 +196,19 @@ class ParseModulePathTest {
     }
 
     @Test
-    fun `feat projects fe driving nonWear`() {
-        val result = parseModulePath(":feat:projects:fe:driving:nonWear")
+    fun `feat projects fe common driving`() {
+        val result = parseModulePath(":feat:projects:fe:common:driving")
+        assertIs<FeatModule>(result)
+        assertEquals("projects", result.feature)
+        assertEquals(Platform.FE, result.platform)
+        assertEquals(HexLayer.DRIVING, result.hexLayer)
+        assertEquals(PlatformVariant.COMMON, result.platformVariant)
+        assertNull(result.encapsulation)
+    }
+
+    @Test
+    fun `feat projects fe nonWear driving`() {
+        val result = parseModulePath(":feat:projects:fe:nonWear:driving")
         assertIs<FeatModule>(result)
         assertEquals("projects", result.feature)
         assertEquals(Platform.FE, result.platform)
@@ -207,8 +218,8 @@ class ParseModulePathTest {
     }
 
     @Test
-    fun `feat projects fe driving wear`() {
-        val result = parseModulePath(":feat:projects:fe:driving:wear")
+    fun `feat projects fe wear driving`() {
+        val result = parseModulePath(":feat:projects:fe:wear:driving")
         assertIs<FeatModule>(result)
         assertEquals("projects", result.feature)
         assertEquals(Platform.FE, result.platform)
@@ -218,8 +229,19 @@ class ParseModulePathTest {
     }
 
     @Test
-    fun `feat authentication fe driven nonWear`() {
-        val result = parseModulePath(":feat:authentication:fe:driven:nonWear")
+    fun `feat authentication fe common driven`() {
+        val result = parseModulePath(":feat:authentication:fe:common:driven")
+        assertIs<FeatModule>(result)
+        assertEquals("authentication", result.feature)
+        assertEquals(Platform.FE, result.platform)
+        assertEquals(HexLayer.DRIVEN, result.hexLayer)
+        assertEquals(PlatformVariant.COMMON, result.platformVariant)
+        assertNull(result.encapsulation)
+    }
+
+    @Test
+    fun `feat authentication fe nonWear driven`() {
+        val result = parseModulePath(":feat:authentication:fe:nonWear:driven")
         assertIs<FeatModule>(result)
         assertEquals("authentication", result.feature)
         assertEquals(Platform.FE, result.platform)
@@ -229,8 +251,8 @@ class ParseModulePathTest {
     }
 
     @Test
-    fun `feat authentication fe driven wear`() {
-        val result = parseModulePath(":feat:authentication:fe:driven:wear")
+    fun `feat authentication fe wear driven`() {
+        val result = parseModulePath(":feat:authentication:fe:wear:driven")
         assertIs<FeatModule>(result)
         assertEquals("authentication", result.feature)
         assertEquals(Platform.FE, result.platform)
@@ -385,10 +407,10 @@ class ParseModulePathTest {
     }
 
     @Test
-    fun `koinModulesAggregate fe`() {
-        val result = parseModulePath(":koinModulesAggregate:fe")
+    fun `koinModulesAggregate fe common`() {
+        val result = parseModulePath(":koinModulesAggregate:fe:common")
         assertIs<InfraModule>(result)
-        assertEquals("koinModulesAggregate:fe", result.name)
+        assertEquals("koinModulesAggregate:fe:common", result.name)
     }
 
     @Test

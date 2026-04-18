@@ -19,11 +19,11 @@ kotlin {
         commonMain.dependencies {
             // Common aggregate provides truly-shared wiring; the non-Wear
             // aggregate layers phone/iOS/web/JVM variants on top.
-            api(projects.koinModulesAggregate.fe)
-            implementation(projects.feat.projects.fe.driving.nonWear)
+            api(projects.koinModulesAggregate.fe.common)
+            implementation(projects.feat.projects.fe.nonWear.driving)
         }
         androidMain.dependencies {
-            implementation(projects.feat.authentication.fe.driven.nonWear)
+            implementation(projects.feat.authentication.fe.nonWear.driven)
         }
     }
 }

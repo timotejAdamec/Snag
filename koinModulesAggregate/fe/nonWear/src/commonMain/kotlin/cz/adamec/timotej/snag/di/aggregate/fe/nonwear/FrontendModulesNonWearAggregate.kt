@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.di.aggregate.fe.nonwear
 
-import cz.adamec.timotej.snag.projects.fe.driving.nonwear.di.projectsDrivingNonWearModule
+import cz.adamec.timotej.snag.projects.fe.nonwear.driving.di.projectsDrivingNonWearModule
 import org.koin.core.module.Module
 import org.koin.dsl.module
 

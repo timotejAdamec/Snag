@@ -15,7 +15,7 @@ package cz.adamec.timotej.snag.buildsrc.configuration.architecture
 internal enum class Platform { FE, BE, COMMON }
 internal enum class HexLayer { BUSINESS, APP, DRIVING, DRIVEN, PORTS }
 internal enum class Encapsulation { API, IMPL, TEST, CONTRACT }
-internal enum class PlatformVariant { NON_WEAR, WEAR }
+internal enum class PlatformVariant { COMMON, NON_WEAR, WEAR }
 
 internal sealed interface ModuleIdentity {
     val path: String

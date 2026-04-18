@@ -45,7 +45,7 @@ class CategoryDirectionRuleTest {
 
     @Test
     fun `feat depending on app is a violation`() {
-        val source = parseModulePath(":feat:projects:fe:driving:impl")
+        val source = parseModulePath(":feat:clients:fe:driving:impl")
         val target = parseModulePath(":androidApp")
         val violation = checkCategoryDirection(source, target)
         assertEquals(RuleId.CATEGORY_DIRECTION, violation?.ruleId)
@@ -53,7 +53,7 @@ class CategoryDirectionRuleTest {
 
     @Test
     fun `feat depending on lib is allowed`() {
-        val source = parseModulePath(":feat:projects:fe:driving:impl")
+        val source = parseModulePath(":feat:clients:fe:driving:impl")
         val target = parseModulePath(":lib:design:fe")
         assertNull(checkCategoryDirection(source, target))
     }
@@ -75,7 +75,7 @@ class CategoryDirectionRuleTest {
     @Test
     fun `app depending on feat is allowed`() {
         val source = parseModulePath(":androidApp")
-        val target = parseModulePath(":feat:projects:fe:driving:impl")
+        val target = parseModulePath(":feat:clients:fe:driving:impl")
         assertNull(checkCategoryDirection(source, target))
     }
 
@@ -181,7 +181,7 @@ class PlatformDirectionRuleTest {
 
     @Test
     fun `same platform is allowed`() {
-        val source = parseModulePath(":feat:projects:fe:driving:impl")
+        val source = parseModulePath(":feat:clients:fe:driving:impl")
         val target = parseModulePath(":feat:projects:fe:app:api")
         assertNull(checkPlatformDirection(source, target))
     }
@@ -220,7 +220,7 @@ class PlatformDirectionRuleTest {
     @Test
     fun `app module is not checked`() {
         val source = parseModulePath(":androidApp")
-        val target = parseModulePath(":feat:projects:fe:driving:impl")
+        val target = parseModulePath(":feat:clients:fe:driving:impl")
         assertNull(checkPlatformDirection(source, target))
     }
 
@@ -238,7 +238,7 @@ class HexagonalDirectionRuleTest {
 
     @Test
     fun `driving depending on app is allowed`() {
-        val source = parseModulePath(":feat:projects:fe:driving:impl")
+        val source = parseModulePath(":feat:clients:fe:driving:impl")
         val target = parseModulePath(":feat:projects:fe:app:api")
         assertNull(checkHexagonalDirection(source, target))
     }
@@ -312,7 +312,7 @@ class HexagonalDirectionRuleTest {
 
     @Test
     fun `driving depending on driven is a violation`() {
-        val source = parseModulePath(":feat:projects:fe:driving:impl")
+        val source = parseModulePath(":feat:clients:fe:driving:impl")
         val target = parseModulePath(":feat:projects:fe:driven:impl")
         val violation = checkHexagonalDirection(source, target)
         assertEquals(RuleId.HEXAGONAL_DIRECTION, violation?.ruleId)
@@ -328,7 +328,7 @@ class HexagonalDirectionRuleTest {
 
     @Test
     fun `driving depending on ports is a violation`() {
-        val source = parseModulePath(":feat:projects:fe:driving:impl")
+        val source = parseModulePath(":feat:clients:fe:driving:impl")
         val target = parseModulePath(":feat:projects:fe:ports")
         val violation = checkHexagonalDirection(source, target)
         assertEquals(RuleId.HEXAGONAL_DIRECTION, violation?.ruleId)
@@ -472,7 +472,7 @@ class CheckDependencyCombinerTest {
 
     @Test
     fun `valid dependency produces no violations`() {
-        val source = parseModulePath(":feat:projects:fe:driving:impl")
+        val source = parseModulePath(":feat:clients:fe:driving:impl")
         val target = parseModulePath(":feat:projects:fe:app:api")
         assertTrue(checkDependency(source, target).isEmpty())
     }
@@ -490,7 +490,7 @@ class CheckDependencyCombinerTest {
     fun `multiple violations can be produced`() {
         // app:api depending on driving:impl violates both hexagonal and encapsulation rules
         val source = parseModulePath(":feat:projects:fe:app:api")
-        val target = parseModulePath(":feat:projects:fe:driving:impl")
+        val target = parseModulePath(":feat:clients:fe:driving:impl")
         val violations = checkDependency(source, target)
         assertTrue(violations.size >= 2)
         assertTrue(violations.any { it.ruleId == RuleId.HEXAGONAL_DIRECTION })

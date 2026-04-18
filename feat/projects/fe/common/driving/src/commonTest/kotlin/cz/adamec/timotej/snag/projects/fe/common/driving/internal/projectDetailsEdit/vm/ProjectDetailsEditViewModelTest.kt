@@ -1,0 +1,370 @@
+/*
+ * Copyright (c) 2026 Timotej Adamec
+ * SPDX-License-Identifier: MIT
+ *
+ * This file is part of the thesis:
+ * "Multiplatform snagging system with code sharing maximisation"
+ *
+ * Czech Technical University in Prague
+ * Faculty of Information Technology
+ * Department of Software Engineering
+ */
+
+package cz.adamec.timotej.snag.projects.fe.common.driving.internal.projectDetailsEdit.vm
+
+import cz.adamec.timotej.snag.authorization.business.UserRole
+import cz.adamec.timotej.snag.clients.app.model.AppClientData
+import cz.adamec.timotej.snag.clients.fe.app.api.GetClientsUseCase
+import cz.adamec.timotej.snag.clients.fe.driven.test.FakeClientsDb
+import cz.adamec.timotej.snag.core.foundation.common.Timestamp
+import cz.adamec.timotej.snag.core.foundation.common.UuidProvider
+import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
+import cz.adamec.timotej.snag.lib.design.fe.error.UiError
+import cz.adamec.timotej.snag.projects.app.model.AppProject
+import cz.adamec.timotej.snag.projects.app.model.AppProjectData
+import cz.adamec.timotej.snag.projects.fe.app.api.CanCreateProjectUseCase
+import cz.adamec.timotej.snag.projects.fe.app.api.CanEditProjectEntitiesUseCase
+import cz.adamec.timotej.snag.projects.fe.app.api.GetProjectUseCase
+import cz.adamec.timotej.snag.projects.fe.app.api.SaveProjectUseCase
+import cz.adamec.timotej.snag.projects.fe.driven.test.FakeProjectAssignmentsDb
+import cz.adamec.timotej.snag.projects.fe.driven.test.FakeProjectsDb
+import cz.adamec.timotej.snag.testinfra.fe.FrontendKoinInitializedTest
+import cz.adamec.timotej.snag.users.app.model.AppUserData
+import cz.adamec.timotej.snag.users.fe.driven.test.FakeUsersDb
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.runTest
+import org.koin.test.inject
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertIs
+import kotlin.test.assertNotNull
+import kotlin.test.assertNull
+import kotlin.uuid.Uuid
+
+@OptIn(ExperimentalCoroutinesApi::class)
+class ProjectDetailsEditViewModelTest : FrontendKoinInitializedTest() {
+    private val currentUserId = Uuid.parse("00000000-0000-0000-0005-000000000001")
+
+    private val fakeProjectsDb: FakeProjectsDb by inject()
+    private val fakeProjectAssignmentsDb: FakeProjectAssignmentsDb by inject()
+    private val fakeUsersDb: FakeUsersDb by inject()
+    private val fakeClientsDb: FakeClientsDb by inject()
+    private val getProjectUseCase: GetProjectUseCase by inject()
+    private val saveProjectUseCase: SaveProjectUseCase by inject()
+    private val getClientsUseCase: GetClientsUseCase by inject()
+    private val canCreateProjectUseCase: CanCreateProjectUseCase by inject()
+    private val canEditProjectEntitiesUseCase: CanEditProjectEntitiesUseCase by inject()
+
+    private fun seedCurrentUser() {
+        fakeUsersDb.setUser(
+            AppUserData(
+                id = currentUserId,
+                authProviderId = "mock-auth-provider-id",
+                email = "admin@test.com",
+                role = UserRole.ADMINISTRATOR,
+                updatedAt = Timestamp(0L),
+            ),
+        )
+    }
+
+    private fun createViewModel(projectId: Uuid? = null) =
+        ProjectDetailsEditViewModel(
+            projectId = projectId,
+            getProjectUseCase = getProjectUseCase,
+            saveProjectUseCase = saveProjectUseCase,
+            getClientsUseCase = getClientsUseCase,
+            canCreateProjectUseCase = canCreateProjectUseCase,
+            canEditProjectEntitiesUseCase = canEditProjectEntitiesUseCase,
+        )
+
+    @Test
+    fun `initial state is empty when projectId is null`() =
+        runTest(testDispatcher) {
+            seedCurrentUser()
+            val viewModel = createViewModel(projectId = null)
+
+            assertEquals("", viewModel.state.value.projectName)
+            assertEquals("", viewModel.state.value.projectAddress)
+            assertEquals("", viewModel.state.value.selectedClientName)
+        }
+
+    @Test
+    fun `loading project data updates state when projectId is provided`() =
+        runTest(testDispatcher) {
+            seedCurrentUser()
+            val projectId = Uuid.random()
+            val project =
+                AppProjectData(
+                    id = projectId,
+                    name = "Test Project",
+                    address = "Test Address",
+                    creatorId = UuidProvider.getUuid(),
+                    updatedAt = Timestamp(10L),
+                )
+            fakeProjectsDb.setProject(project)
+            fakeProjectAssignmentsDb.setAssignments(projectId, setOf(currentUserId))
+
+            val viewModel = createViewModel(projectId = projectId)
+
+            advanceUntilIdle()
+
+            assertEquals("Test Project", viewModel.state.value.projectName)
+            assertEquals("Test Address", viewModel.state.value.projectAddress)
+        }
+
+    @Test
+    fun `onProjectNameChange updates state`() =
+        runTest(testDispatcher) {
+            seedCurrentUser()
+            val viewModel = createViewModel()
+
+            viewModel.onProjectNameChange("New Name")
+
+            assertEquals("New Name", viewModel.state.value.projectName)
+        }
+
+    @Test
+    fun `onProjectAddressChange updates state`() =
+        runTest(testDispatcher) {
+            seedCurrentUser()
+            val viewModel = createViewModel()
+
+            viewModel.onProjectAddressChange("New Address")
+
+            assertEquals("New Address", viewModel.state.value.projectAddress)
+        }
+
+    @Test
+    fun `onSaveProject with empty name shows inline error`() =
+        runTest(testDispatcher) {
+            seedCurrentUser()
+            val viewModel = createViewModel()
+            val subscriber = launch { viewModel.state.collect { } }
+            advanceUntilIdle()
+            viewModel.onProjectAddressChange("Address")
+
+            viewModel.onSaveProject()
+            advanceUntilIdle()
+
+            assertNotNull(viewModel.state.value.projectNameError)
+            assertNull(viewModel.state.value.projectAddressError)
+            subscriber.cancel()
+        }
+
+    @Test
+    fun `onSaveProject with empty address shows inline error`() =
+        runTest(testDispatcher) {
+            seedCurrentUser()
+            val viewModel = createViewModel()
+            val subscriber = launch { viewModel.state.collect { } }
+            advanceUntilIdle()
+            viewModel.onProjectNameChange("Name")
+
+            viewModel.onSaveProject()
+            advanceUntilIdle()
+
+            assertNotNull(viewModel.state.value.projectAddressError)
+            assertNull(viewModel.state.value.projectNameError)
+            subscriber.cancel()
+        }
+
+    @Test
+    fun `editing field clears its error`() =
+        runTest(testDispatcher) {
+            seedCurrentUser()
+            val viewModel = createViewModel()
+            val subscriber = launch { viewModel.state.collect { } }
+            advanceUntilIdle()
+
+            viewModel.onSaveProject()
+            advanceUntilIdle()
+            assertNotNull(viewModel.state.value.projectNameError)
+            assertNotNull(viewModel.state.value.projectAddressError)
+
+            viewModel.onProjectNameChange("N")
+            assertNull(viewModel.state.value.projectNameError)
+
+            viewModel.onProjectAddressChange("A")
+            assertNull(viewModel.state.value.projectAddressError)
+            subscriber.cancel()
+        }
+
+    @Test
+    fun `onSaveProject successful sends save event`() =
+        runTest(testDispatcher) {
+            seedCurrentUser()
+            val viewModel = createViewModel()
+            val subscriber = launch { viewModel.state.collect { } }
+            advanceUntilIdle()
+            viewModel.onProjectNameChange("Name")
+            viewModel.onProjectAddressChange("Address")
+
+            viewModel.onSaveProject()
+
+            val savedId = viewModel.saveEventFlow.first()
+
+            // Verify project is saved in DB
+            val savedProjectResult = fakeProjectsDb.getProjectFlow(savedId).first()
+            assertIs<OfflineFirstDataResult.Success<AppProject?>>(savedProjectResult)
+            val savedProject = savedProjectResult.data
+            assertEquals("Name", savedProject?.name)
+            assertEquals("Address", savedProject?.address)
+            subscriber.cancel()
+        }
+
+    @Test
+    fun `onSaveProject failure sends error`() =
+        runTest(testDispatcher) {
+            seedCurrentUser()
+            val viewModel = createViewModel()
+            val subscriber = launch { viewModel.state.collect { } }
+            advanceUntilIdle()
+            viewModel.onProjectNameChange("Name")
+            viewModel.onProjectAddressChange("Address")
+
+            fakeProjectsDb.forcedFailure = OfflineFirstDataResult.ProgrammerError(RuntimeException("Failed"))
+
+            viewModel.onSaveProject()
+
+            val error = viewModel.errorsFlow.first()
+            assertIs<UiError.Unknown>(error)
+            subscriber.cancel()
+        }
+
+    @Test
+    fun `clients are loaded into state`() =
+        runTest(testDispatcher) {
+            seedCurrentUser()
+            val clientId = Uuid.random()
+            fakeClientsDb.setClient(
+                AppClientData(
+                    id = clientId,
+                    name = "ACME Corp",
+                    address = null,
+                    phoneNumber = null,
+                    email = null,
+                    updatedAt = Timestamp(10L),
+                ),
+            )
+
+            val viewModel = createViewModel()
+            val subscriber = launch { viewModel.state.collect { } }
+            advanceUntilIdle()
+
+            val clients = viewModel.state.value.availableClients
+            assertEquals(1, clients.size)
+            assertEquals("ACME Corp", clients[0].name)
+            subscriber.cancel()
+        }
+
+    @Test
+    fun `selecting a client updates state`() =
+        runTest(testDispatcher) {
+            seedCurrentUser()
+            val clientId = Uuid.random()
+            val viewModel = createViewModel()
+
+            viewModel.onClientSelected(clientId, "ACME Corp")
+
+            assertEquals("ACME Corp", viewModel.state.value.selectedClientName)
+        }
+
+    @Test
+    fun `clearing client selection updates state`() =
+        runTest(testDispatcher) {
+            seedCurrentUser()
+            val clientId = Uuid.random()
+            val viewModel = createViewModel()
+            viewModel.onClientSelected(clientId, "ACME Corp")
+
+            viewModel.onClientCleared()
+
+            assertEquals("", viewModel.state.value.selectedClientName)
+        }
+
+    @Test
+    fun `saving project with client includes clientId`() =
+        runTest(testDispatcher) {
+            seedCurrentUser()
+            val clientId = Uuid.random()
+            val viewModel = createViewModel()
+            val subscriber = launch { viewModel.state.collect { } }
+            advanceUntilIdle()
+            viewModel.onProjectNameChange("Name")
+            viewModel.onProjectAddressChange("Address")
+            viewModel.onClientSelected(clientId, "ACME Corp")
+
+            viewModel.onSaveProject()
+
+            val savedId = viewModel.saveEventFlow.first()
+            val savedProjectResult = fakeProjectsDb.getProjectFlow(savedId).first()
+            assertIs<OfflineFirstDataResult.Success<AppProject?>>(savedProjectResult)
+            assertEquals(clientId, savedProjectResult.data?.clientId)
+            subscriber.cancel()
+        }
+
+    @Test
+    fun `editing project with clientId pre-selects client`() =
+        runTest(testDispatcher) {
+            seedCurrentUser()
+            val projectId = Uuid.random()
+            val clientId = Uuid.random()
+            fakeClientsDb.setClient(
+                AppClientData(
+                    id = clientId,
+                    name = "ACME Corp",
+                    address = null,
+                    phoneNumber = null,
+                    email = null,
+                    updatedAt = Timestamp(10L),
+                ),
+            )
+            fakeProjectsDb.setProject(
+                AppProjectData(
+                    id = projectId,
+                    name = "Test Project",
+                    address = "Test Address",
+                    clientId = clientId,
+                    creatorId = UuidProvider.getUuid(),
+                    updatedAt = Timestamp(10L),
+                ),
+            )
+            fakeProjectAssignmentsDb.setAssignments(projectId, setOf(currentUserId))
+
+            val viewModel = createViewModel(projectId = projectId)
+            val subscriber = launch { viewModel.state.collect { } }
+            advanceUntilIdle()
+
+            assertEquals("ACME Corp", viewModel.state.value.selectedClientName)
+            subscriber.cancel()
+        }
+
+    @Test
+    fun `onClientCreated selects newly created client`() =
+        runTest(testDispatcher) {
+            seedCurrentUser()
+            val clientId = Uuid.random()
+            fakeClientsDb.setClient(
+                AppClientData(
+                    id = clientId,
+                    name = "New Client",
+                    address = null,
+                    phoneNumber = null,
+                    email = null,
+                    updatedAt = Timestamp(10L),
+                ),
+            )
+
+            val viewModel = createViewModel()
+            val subscriber = launch { viewModel.state.collect { } }
+            advanceUntilIdle()
+
+            viewModel.onClientCreated(clientId)
+
+            assertEquals("New Client", viewModel.state.value.selectedClientName)
+            subscriber.cancel()
+        }
+}
