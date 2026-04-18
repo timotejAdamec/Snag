@@ -1,0 +1,227 @@
+/*
+ * Copyright (c) 2026 Timotej Adamec
+ * SPDX-License-Identifier: MIT
+ *
+ * This file is part of the thesis:
+ * "Multiplatform snagging system with code sharing maximisation"
+ *
+ * Czech Technical University in Prague
+ * Faculty of Information Technology
+ * Department of Software Engineering
+ */
+
+package cz.adamec.timotej.snag.projects.fe.driving.nonwear.di
+
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.ui.Modifier
+import androidx.navigation3.scene.DialogSceneStrategy
+import cz.adamec.timotej.snag.clients.fe.driving.api.ClientCreationRouteFactory
+import cz.adamec.timotej.snag.feat.inspections.fe.driving.api.InspectionCreationRouteFactory
+import cz.adamec.timotej.snag.feat.inspections.fe.driving.api.InspectionEditRouteFactory
+import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureCreationRouteFactory
+import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureDetailRouteFactory
+import cz.adamec.timotej.snag.lib.design.fe.dialog.fullscreenDialogProperties
+import cz.adamec.timotej.snag.lib.design.fe.scenes.ContentPaneSceneMetadata
+import cz.adamec.timotej.snag.lib.navigation.fe.SnagBackStack
+import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectAssignmentsRoute
+import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectAssignmentsRouteFactory
+import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectCreationRoute
+import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectDetailRoute
+import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectDetailRouteFactory
+import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectEditRoute
+import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectEditRouteFactory
+import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectsBackStack
+import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectsNavRoute
+import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectsNavigation
+import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectsRoute
+import cz.adamec.timotej.snag.projects.fe.driving.nonwear.internal.projectAssignments.ui.ProjectAssignmentsScreen
+import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectAssignments.vm.ProjectAssignmentsViewModel
+import cz.adamec.timotej.snag.projects.fe.driving.nonwear.internal.projectDetails.ui.ProjectDetailsScreen
+import cz.adamec.timotej.snag.projects.fe.driving.nonwear.internal.projectDetailsEdit.ui.ProjectDetailsEditScreen
+import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetailsEdit.vm.ProjectDetailsEditViewModel
+import cz.adamec.timotej.snag.projects.fe.driving.nonwear.internal.projects.ui.ProjectsScreen
+import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projects.vm.ProjectsViewModel
+import org.koin.compose.koinInject
+import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.module.Module
+import org.koin.core.module.dsl.viewModel
+import org.koin.core.module.dsl.viewModelOf
+import org.koin.core.scope.Scope
+import org.koin.dsl.bind
+import org.koin.dsl.module
+import org.koin.dsl.navigation3.navigation
+import kotlin.uuid.Uuid
+
+internal inline fun <reified T : ProjectsRoute> Module.projectsScreenNavigation() =
+    navigation<T> {
+        val projectDetailRouteFactory = koinInject<ProjectDetailRouteFactory>()
+        ProjectsScreen(
+            modifier = Modifier.fillMaxSize(),
+            viewModel = koinViewModel(),
+            onNewProjectClick = {
+                val backStack = get<ProjectsBackStack>()
+                val projectCreationRoute = get<ProjectCreationRoute>()
+                backStack.value.add(projectCreationRoute)
+            },
+            onProjectClick = {
+                val backStack = get<ProjectsBackStack>()
+                val projectDetailRoute = projectDetailRouteFactory.create(it)
+                backStack.value.add(projectDetailRoute)
+            },
+        )
+    }
+
+@Suppress("FunctionNameMaxLength")
+internal inline fun <reified T : ProjectCreationRoute> Module.projectCreationScreenNavigation() =
+    navigation<T>(
+        metadata = DialogSceneStrategy.dialog(fullscreenDialogProperties()),
+    ) { _ ->
+        val projectDetailRouteFactory = koinInject<ProjectDetailRouteFactory>()
+        ProjectDetailsEditScreenInjection(
+            onSaveProject = { savedProjectId ->
+                val backStack = get<ProjectsBackStack>()
+                val destinationRoute = projectDetailRouteFactory.create(savedProjectId)
+                backStack.removeLastSafely()
+                backStack.value.add(destinationRoute)
+            },
+        )
+    }
+
+internal inline fun <reified T : ProjectEditRoute> Module.projectEditScreenNavigation() =
+    navigation<T>(
+        metadata = DialogSceneStrategy.dialog(fullscreenDialogProperties()),
+    ) { route ->
+        ProjectDetailsEditScreenInjection(
+            projectId = route.projectId,
+            onSaveProject = { _ ->
+                val backStack = get<ProjectsBackStack>()
+                backStack.removeLastSafely()
+            },
+        )
+    }
+
+@Composable
+@Suppress("FunctionNameMaxLength")
+private fun Scope.ProjectDetailsEditScreenInjection(
+    projectId: Uuid? = null,
+    onSaveProject: (savedProjectId: Uuid) -> Unit,
+) {
+    val clientCreationRouteFactory = koinInject<ClientCreationRouteFactory>()
+    ProjectDetailsEditScreen(
+        projectId = projectId,
+        onSaveProject = { savedProjectId ->
+            onSaveProject(savedProjectId)
+        },
+        onCancelClick = {
+            val backStack = get<ProjectsBackStack>()
+            backStack.removeLastSafely()
+        },
+        onNavigateToClientCreation = { onCreated ->
+            val backStack = get<ProjectsBackStack>()
+            backStack.value.add(
+                clientCreationRouteFactory.create(
+                    onCreated = onCreated,
+                    onDismiss = { backStack.removeLastSafely() },
+                ),
+            )
+        },
+    )
+}
+
+internal inline fun <reified T : ProjectDetailRoute> Module.projectDetailsScreenNavigation() =
+    navigation<T> { route ->
+        val newStructureRouteFactory = koinInject<StructureCreationRouteFactory>()
+        val structureDetailRouteFactory = koinInject<StructureDetailRouteFactory>()
+        val projectEditRouteFactory = koinInject<ProjectEditRouteFactory>()
+        val newInspectionRouteFactory = koinInject<InspectionCreationRouteFactory>()
+        val inspectionEditRouteFactory = koinInject<InspectionEditRouteFactory>()
+        val projectAssignmentsRouteFactory = koinInject<ProjectAssignmentsRouteFactory>()
+        ProjectDetailsScreen(
+            projectId = route.projectId,
+            onNewStructureClick = {
+                val backStack = get<ProjectsBackStack>()
+                backStack.value.add(newStructureRouteFactory.create(route.projectId))
+            },
+            onStructureClick = { projectId, structureId ->
+                val backStack = get<ProjectsBackStack>()
+                backStack.value.add(
+                    structureDetailRouteFactory.create(
+                        projectId = projectId,
+                        structureId = structureId,
+                    ),
+                )
+            },
+            onNewInspectionClick = {
+                val backStack = get<ProjectsBackStack>()
+                backStack.value.add(newInspectionRouteFactory.create(route.projectId))
+            },
+            onInspectionClick = { inspectionId ->
+                val backStack = get<ProjectsBackStack>()
+                backStack.value.add(inspectionEditRouteFactory.create(inspectionId))
+            },
+            onBack = {
+                val backStack = get<ProjectsBackStack>()
+                backStack.removeLastSafely()
+            },
+            onEditClick = {
+                val backStack = get<ProjectsBackStack>()
+                backStack.value.add(projectEditRouteFactory.create(route.projectId))
+            },
+            onManageAssignmentsClick = {
+                val backStack = get<ProjectsBackStack>()
+                backStack.value.add(projectAssignmentsRouteFactory.create(route.projectId))
+            },
+        )
+    }
+
+internal inline fun <reified T : ProjectAssignmentsRoute> Module.projectAssignmentsNavigation() =
+    navigation<T> { route ->
+        ProjectAssignmentsScreen(
+            projectId = route.projectId,
+            onBack = {
+                val backStack = get<ProjectsBackStack>()
+                backStack.removeLastSafely()
+            },
+        )
+    }
+
+val projectsDrivingNonWearModule =
+    module {
+        includes(platformModule)
+
+        navigation<ProjectsNavRoute>(
+            metadata = ContentPaneSceneMetadata.skip(),
+        ) {
+            ProjectsNavigation()
+        }
+        single {
+            ProjectsBackStack(
+                value = mutableStateListOf(get<ProjectsRoute>()),
+            )
+        } bind SnagBackStack::class
+        viewModelOf(::ProjectsViewModel)
+        viewModel { (projectId: Uuid?) ->
+            ProjectDetailsEditViewModel(
+                projectId = projectId,
+                getProjectUseCase = get(),
+                saveProjectUseCase = get(),
+                getClientsUseCase = get(),
+                canCreateProjectUseCase = get(),
+                canEditProjectEntitiesUseCase = get(),
+            )
+        }
+        viewModel { (projectId: Uuid) ->
+            ProjectAssignmentsViewModel(
+                projectId = projectId,
+                getProjectAssignmentsUseCase = get(),
+                getUsersUseCase = get(),
+                canAssignUserToProjectUseCase = get(),
+                assignUserToProjectUseCase = get(),
+                removeUserFromProjectUseCase = get(),
+            )
+        }
+    }
+
+internal expect val platformModule: Module

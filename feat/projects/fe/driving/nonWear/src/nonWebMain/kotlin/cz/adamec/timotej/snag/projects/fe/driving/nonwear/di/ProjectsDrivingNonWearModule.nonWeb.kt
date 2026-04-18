@@ -1,0 +1,58 @@
+/*
+ * Copyright (c) 2026 Timotej Adamec
+ * SPDX-License-Identifier: MIT
+ *
+ * This file is part of the thesis:
+ * "Multiplatform snagging system with code sharing maximisation"
+ *
+ * Czech Technical University in Prague
+ * Faculty of Information Technology
+ * Department of Software Engineering
+ */
+
+package cz.adamec.timotej.snag.projects.fe.driving.nonwear.di
+
+import cz.adamec.timotej.snag.projects.fe.driving.api.NonWebProjectAssignmentsRoute
+import cz.adamec.timotej.snag.projects.fe.driving.api.NonWebProjectCreationRoute
+import cz.adamec.timotej.snag.projects.fe.driving.api.NonWebProjectDetailRoute
+import cz.adamec.timotej.snag.projects.fe.driving.api.NonWebProjectEditRoute
+import cz.adamec.timotej.snag.projects.fe.driving.api.NonWebProjectsRoute
+import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.vm.NonWebProjectDetailsViewModel
+import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.vm.ProjectDetailsViewModel
+import org.koin.core.module.dsl.viewModel
+import org.koin.dsl.module
+import kotlin.uuid.Uuid
+
+internal actual val platformModule =
+    module {
+        projectsScreenNavigation<NonWebProjectsRoute>()
+        projectCreationScreenNavigation<NonWebProjectCreationRoute>()
+        projectEditScreenNavigation<NonWebProjectEditRoute>()
+        projectDetailsScreenNavigation<NonWebProjectDetailRoute>()
+        projectAssignmentsNavigation<NonWebProjectAssignmentsRoute>()
+        viewModel<ProjectDetailsViewModel> { (projectId: Uuid) ->
+            NonWebProjectDetailsViewModel(
+                projectId = projectId,
+                getProjectUseCase = get(),
+                deleteProjectUseCase = get(),
+                getStructuresUseCase = get(),
+                getInspectionsUseCase = get(),
+                downloadReportUseCase = get(),
+                getAvailableReportTypesUseCase = get(),
+                saveInspectionUseCase = get(),
+                setProjectClosedUseCase = get(),
+                canEditProjectEntitiesUseCase = get(),
+                canCloseProjectUseCase = get(),
+                canAssignUserToProjectUseCase = get(),
+                getProjectAssignmentsUseCase = get(),
+                getUsersUseCase = get(),
+                assignUserToProjectUseCase = get(),
+                removeUserFromProjectUseCase = get(),
+                timestampProvider = get(),
+                getProjectPhotosUseCase = get(),
+                deleteProjectPhotoUseCase = get(),
+                updateProjectPhotoDescriptionUseCase = get(),
+                nonWebAddProjectPhotoUseCase = get(),
+            )
+        }
+    }
