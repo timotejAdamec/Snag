@@ -864,6 +864,8 @@ These items are permanently captured in Phase 2 repo artifacts and Phase 5 prose
 
 - **Case 3 DVT synthetic test.** `analysis/classifications/dvt-client-field.yaml` — anomaly taxonomy locked before experiment, 17 entries hand-classified. `analysis/classifications/dvt-client-field_critique.md` — zero-count critique file with DVT-0 + DVT-1 + derivative SoC-0 observations, honesty claim covering both DVT mechanisms. `analysis/data/ripple_dvt-client-field_{files,units}.csv`. Headline: **0 anomalies** (3a non-essential touches = 0, 3b upward-bleed touches = 0, forced caller edits = 0), 1 recurring intrinsic unit (test fixture `seedTestClient`), files local/intrinsic/collateral = 16/1/0, churn 98/4/0 = 102 LOC. Experiment branch `experiment/dvt-client-field`. Both DVT mechanisms confirmed: (1) inheritance carries shared `ico` field through `Client → AppClient → BackendClient` without redeclaration at intermediate interfaces; (2) defaults absorb at all existing construction sites (zero caller edits). BE-only `adminNote` has zero upward bleed into business/model, app/model, contract, or FE layers.
 
+- **Case 5 Wear OS live experiment (`change_kind: platform_extend`).** `analysis/classifications/wearos-project-list.yaml` — 105 entries hand-classified via `analysis/classify_wearos.py`. `analysis/classifications/wearos-project-list_critique.md` — P1–P7 prediction status, 8 NS-theorem-tagged observations, §D6b A–J procedure log, §4.4 verdict. `analysis/data/ripple_wearos-project-list_{files,units,by_module_tree}.csv` + `analysis/figures/fig_4_4_wear_ripple_by_module_tree.pdf`. Headline: **5 local / 24 intrinsic / 76 collateral files**, **227/917/728 LOC**, **3 recurring intrinsic units**. Pure-logic layers (`business/`, `app/`, `core/`, pure `lib/`, `feat/*/fe/{app,ports,contract,model}`) all unchanged — P1 confirmed. P3 confirmed (`AuthTokenProvider` port substituted unchanged). P4 partially falsified (single `FrontendModulesAggregate` split into common/nonWear/wear variants — D8). P2 graded falsification (visibility widening of `OidcAuthTokenProvider` + `MockAuthTokenProvider` from `internal` to `public` so per-variant siblings can bind them; one semantic edit at `composeApp/src/commonMain/.../AppModule.kt` to consume the variant-split aggregate). Experiment branch `experiment/wearos-feasibility-spike` (HEAD `4f98d9fd6` post step 7); kept long-lived per `thesis-evaluation-plan.md` Risk 5.
+
 - **Case 4 iOS-only platform extension.** `analysis/classifications/ios-only-project-field.yaml` — anomaly taxonomy locked before experiment, 3 entries hand-classified. `analysis/classifications/ios-only-project-field_critique.md` — zero-count critique file with SoC-0 observation + honesty claim. `analysis/data/ripple_ios-only-project-field_{files,units}.csv`. Headline: **0 anomalies** (commonMain forced touches = 0, non-iOS-source-set forced touches = 0, cross-feature forced touches = 0), 1 recurring intrinsic unit (`:root::settings` — settings.gradle.kts include line). Experiment branch `experiment/ios-only-project-field`. Architecture contained the iOS-only `widgetPinned: Boolean` attribute entirely in a new FE-specific `feat/projects/fe/app/model/` module (mirroring the existing `be/app/model/` pattern) with one file in `iosMain`. Convention-plugin auto-wire fallthrough handled the `AppProject` dependency without explicit declaration. `platform_extend` added to `feature_retro.py` CHANGE_KINDS for semantic correctness.
 
 - **Phase 2 mechanical thesis commit.** `analysis/data-for-thesis/phase-2-mechanical-edit-plan.md` — drop-in playbook describing every §K.1 T-row's landing target + verbatim content. Actually executed in thesis-repo commit `99afdce` on `feat/phase2-vyhodnoceni-draft` (MR !65): §4.1 operationalization table gained O1 layer-divergence row, O2a/O2b photo-progress rows, and headline-number fills for Case 1 / Case 2 / Case 3 / Case 4 O2 rows (branch-name corrections included); §4.2 intro gained duality method-note; §4.6 gained T-10 caveat, three new `\subsection{}` blocks for Cases 1 / 3 / 4, and a Case 1b comparison table + commonized-critique anchor quote replacing the existing `\todo{}`; §4.7 gained cross-case roll-up table (`tab:eval-cross-case-rollup`) covering all five cases; §4.9 gained duality caveat. Thesis `lualatex` build verified: 176 pages clean, no errors. Czech one-sentence caveats (T-4/T-5/T-10) landed as placeholders; Phase 5 prose author owns the final wording.
@@ -929,12 +931,12 @@ Rollup checklist as of MR !65 `3a85e0b`. Grouped by owner-bucket; check off as i
 
 ### L.2 Phase 3 — Wear OS live experiment (§4.4)
 
-Out of scope for Phase 2. Plan doc: [`analysis/phase-3-plan.md`](phase-3-plan.md) (on `chore/phase-2-ripple-tooling`). Implementation lands on `experiment/wearos-feasibility-spike`.
+Plan doc: [`analysis/phase-3-plan.md`](phase-3-plan.md) (on `chore/phase-2-ripple-tooling`). Implementation lands on `experiment/wearos-feasibility-spike` (HEAD `4f98d9fd6` after step 7).
 
-- [ ] Feasibility spike (thesis L3261 `% TODO`).
-- [ ] One Wear-native screen wired to shared use cases.
-- [ ] Ripple decomposition + per-module-tree scaling test.
-- [ ] One emulator screenshot (`images/wear-os-*.png`).
+- [x] Feasibility spike (thesis L3261 `% TODO`). Phase 0 stub + Phase 3 live wiring complete.
+- [x] One Wear-native screen wired to shared use cases. `WearProjectList` (Wear Compose Material 1 `ScalingLazyColumn` + `Chip`) consumes shared `ProjectsViewModel` from `:feat:projects:fe:common:driving`. Auth bridge: `WearAuthTokenProvider` + `RealWearAuthFlow` substitute under existing `AuthTokenProvider` port.
+- [x] Ripple decomposition + per-module-tree scaling test. Artefacts: `analysis/data/ripple_wearos-project-list_{files,units,by_module_tree}.csv`, `analysis/classifications/wearos-project-list.yaml`, `analysis/classifications/wearos-project-list_critique.md`, `analysis/figures/fig_4_4_wear_ripple_by_module_tree.pdf`. Headline: L/I/C = 5/24/76 files, 227/917/728 LOC; 3 recurring intrinsic units; pure-logic layers untouched (P1 holds); P4 partially falsified (Koin aggregate split forced by variant boundary).
+- [ ] One emulator screenshot (`images/wear-os-*.png`). Manual step — pending paired-emulator round-trip.
 
 ### L.3 Phase 5 — Czech prose (thesis repo, `feat/phase2-vyhodnoceni-draft` or later branch)
 
@@ -957,7 +959,7 @@ Placeholder sections awaiting prose (thesis `text/text.tex`):
 
 ### L.4 Gating order
 
-1. Complete §L.2 Wear OS experiment (its own phase); land §4.4 artefacts.
+1. ~~Complete §L.2 Wear OS experiment (its own phase); land §4.4 artefacts.~~ **Done except for emulator screenshot.** §4.4 numeric/critique artefacts land via Case 5 (see §K.2 entry).
 2. Pick submission SHA; run §L.1 pipeline rerun; land regenerated CSVs on `chore/phase-2-ripple-tooling`.
 3. Phase 5 prose pass on the thesis branch fills every `\todo{numbers}` and each `% TODO`-marked section at once, referencing §J.5 artefact-to-section map and the §K.2 already-captured pointers.
 4. Final `latexmk` build, thesis PR to `main`, merge MR !65.

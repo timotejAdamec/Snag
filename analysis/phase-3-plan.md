@@ -1,5 +1,9 @@
 # Phase 3 — Wear OS live experiment (thesis §4.4)
 
+> **Status (2026-04-19): executed steps 1–8.** Step 9 (emulator screenshot) and step 12 (thesis §4.4 prose) are pending. As-built outcome lives in [`analysis/classifications/wearos-project-list_critique.md`](classifications/wearos-project-list_critique.md) and [`analysis/wearos_experiment.md`](wearos_experiment.md) §"Phase 3 — Live experiment".
+>
+> **Naming reconciliation.** The text below (D2–D6) was approved with a `mobile`/`wear` sibling vocabulary. Mid-execution (D8) the user directed renaming `mobile` → `nonWear` and adopting the variant-first layout (variant namespace OUTER, hex-layer INNER). Read `mobile` as `nonWear` and `parent impl` as `common` sibling when reading D2–D6.
+
 ## Context
 
 `analysis/phase-2-plan.md` §L.2 lists four unchecked items that gate the thesis `% TODO` at `~/Ctu/dp-thesis-timotej-adamec/text/text.tex` L3247 for chapter 4.4:
