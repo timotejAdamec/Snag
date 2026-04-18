@@ -139,4 +139,33 @@ APK produced at `wearApp/build/outputs/apk/debug/wearApp-debug.apk`.
 
 ## Phase 3 — Live experiment
 
-(To be filled in once Phase 3 begins.)
+### Outcome (steps 5–8 complete, 9 manual)
+
+Plan: `analysis/phase-3-plan.md`. Implementation lands on `experiment/wearos-feasibility-spike` (HEAD `4f98d9fd6`). `./gradlew check` green from repo root.
+
+#### What was built
+
+- **Variant-first module layout (D8).** `feat/authentication/fe/{common,nonWear,wear}/driven/` and `feat/projects/fe/{common,nonWear,wear}/driving/`. Aggregates analogously: `koinModulesAggregate/fe/{common,nonWear,wear}`. Three `PlatformVariant` tokens recognised by the `ModulePathParser` ArchCheck rule.
+- **Wear OAuth via `RemoteAuthClient` (PKCE).** `feat/authentication/fe/wear/driven` hosts `WearAuthTokenProvider` + `WearAuthFlow` interface (commonMain, KMP-pure, fully unit-tested) and `RealWearAuthFlow` (androidMain, wraps `RemoteAuthClient` + raw Ktor token-exchange POST). The existing `AuthTokenProvider` port is **not edited**.
+- **Wear-native `WearProjectList`.** `feat/projects/fe/wear/driving` Composable using Wear Compose Material 1 (`ScalingLazyColumn` + `Chip` per project, `CircularProgressIndicator` while loading). Consumes shared `ProjectsViewModel` from `:feat:projects:fe:common:driving` (no widening required — VM was already public).
+- **`:wearApp` real composition.** Replaces the Phase 0 `implementation(projects.composeApp)` shortcut with explicit deps. Boots Koin via `KoinApplication { modules(wearAppModule) }` where `wearAppModule = frontendModulesCommonAggregate + frontendModulesWearAggregate`. `WearAuthenticationGate` observes `AuthTokenProvider.authState` and routes Unauthenticated → sign-in chip; Authenticated → `WearProjectList`.
+
+#### Architectural findings (full critique in `analysis/classifications/wearos-project-list_critique.md`)
+
+- **P1 (pure-logic layers compile unchanged) — HOLDS.** `business/`, `app/`, `core/`, pure `lib/`, all `feat/*/fe/{app,ports,contract,model}` — zero LOC churn.
+- **P3 (port substitution alone for auth) — HOLDS.** `AuthTokenProvider` interface untouched. AVT confirmed for the auth port.
+- **P4 (Koin aggregate loads unchanged) — PARTIALLY FALSIFIED.** Single `FrontendModulesAggregate` had to split into common/nonWear/wear variants (D8). Pre-Phase-3 aggregator was implicitly phone-only.
+- **P2 (no edits to existing modules) — graded falsification.** Kotlin `internal` classes (`OidcAuthTokenProvider`, `MockAuthTokenProvider`) widened to `public` so per-variant Koin modules can bind them; `composeApp/src/commonMain/.../AppModule.kt` rewritten to consume the variant-split aggregate.
+- **P7 (per-module review labour invisible in numeric ripple) — HOLDS.** ~140 KMP modules semantically reviewed under §D6b actions B/D/E; 138 ended at 0 LOC. The "0 LOC = 0 cost" framing must be refused in §4.4 prose.
+
+#### Numeric headlines
+
+- L/I/C files = **5 / 24 / 76**, LOC churn = **227 / 917 / 728**.
+- 3 recurring intrinsic units (`koinModulesAggregate/fe/wear/.../platformWearModule.android.kt`, `feat/projects/fe/wear/driving/...`, `feat/authentication/fe/wear/driven/...`) — each repeats per future Wear-ported feature.
+- Per-tree scaling: `feat/` 74 files, `koinModulesAggregate/` 14, `wearApp/` 6, `build-logic/` 5, `composeApp/` 2, `testInfra/` 2, `gradle/` 1, `settings.gradle.kts` 1. **Zero in `core/`, `lib/`, `app/`, `business/`, `androidApp/`, `server/`.**
+
+#### Pending
+
+- **Step 9 (manual):** paired phone+Wear emulator round-trip, sign in via `RemoteAuthClient`, capture `images/wear-os-project-list.png` for thesis §4.4.
+- **Step 12 (manual sign-off):** thesis §4.4 prose fill at `text/text.tex` L3247.
+- **Future-work hole:** Wear runtime not exercised for non-auth driven adapters (database, sync, storage). P5 confirmed only at compile time.

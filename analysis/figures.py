@@ -684,11 +684,68 @@ def figure_ripple_buckets() -> None:
 # ---------------------------------------------------------------------------------------------
 
 
+def figure_wearos_ripple_by_module_tree() -> None:
+    """§4.4 bar chart — top-level repo trees on x, files+LOC churn on y, for the
+    Wear OS platform-extension experiment.
+
+    Consumes analysis/data/ripple_wearos-project-list_by_module_tree.csv produced
+    by analysis/scaling_by_module_tree.py. Skips gracefully when missing.
+    """
+    csv_path = DATA_DIR / "ripple_wearos-project-list_by_module_tree.csv"
+    if not csv_path.exists():
+        print(f"figure_wearos_ripple_by_module_tree: {csv_path.name} not found — skipping")
+        return
+
+    df = pd.read_csv(csv_path)
+    df = df.sort_values("file_count", ascending=False).reset_index(drop=True)
+
+    fig, (ax_files, ax_loc) = plt.subplots(2, 1, figsize=(9, 6), sharex=True)
+
+    trees = df["tree"].tolist()
+    x_pos = np.arange(len(trees))
+    bar_width = 0.7
+
+    intrinsic = df["intrinsic_files"].to_numpy()
+    collateral = df["collateral_files"].to_numpy()
+    local = df["local_files"].to_numpy()
+
+    ax_files.bar(x_pos, intrinsic, bar_width, color=RIPPLE_BUCKET_COLORS["intrinsic"], label="intrinsic")
+    ax_files.bar(x_pos, collateral, bar_width, bottom=intrinsic,
+                 color=RIPPLE_BUCKET_COLORS["collateral"], label="collateral")
+    ax_files.bar(x_pos, local, bar_width, bottom=intrinsic + collateral,
+                 color=RIPPLE_BUCKET_COLORS["local"], label="local")
+    ax_files.set_ylabel("files touched")
+    ax_files.set_title("Fig. 4.4 — Wear OS extension ripple by repo tree")
+    ax_files.grid(axis="y", linestyle=":", alpha=0.5)
+    ax_files.legend(loc="upper right", frameon=False, fontsize=9)
+
+    for i, total in enumerate(df["file_count"]):
+        ax_files.text(x_pos[i], total + 1, str(total), ha="center", va="bottom", fontsize=8)
+
+    ax_loc.bar(x_pos, df["loc_churn"], bar_width, color="#888")
+    ax_loc.set_ylabel("LOC churn (added + removed)")
+    ax_loc.set_xticks(x_pos)
+    ax_loc.set_xticklabels(trees, rotation=30, ha="right")
+    ax_loc.grid(axis="y", linestyle=":", alpha=0.5)
+
+    for i, loc in enumerate(df["loc_churn"]):
+        ax_loc.text(x_pos[i], loc + max(df["loc_churn"]) * 0.02, str(loc),
+                    ha="center", va="bottom", fontsize=8)
+
+    fig.tight_layout()
+    FIGURES_DIR.mkdir(parents=True, exist_ok=True)
+    fig.savefig(FIGURES_DIR / "fig_4_4_wear_ripple_by_module_tree.pdf", bbox_inches="tight")
+    fig.savefig(FIGURES_DIR / "fig_4_4_wear_ripple_by_module_tree.png", dpi=200, bbox_inches="tight")
+    plt.close(fig)
+    print(f"figure_wearos_ripple_by_module_tree: wrote {FIGURES_DIR / 'fig_4_4_wear_ripple_by_module_tree.pdf'}")
+
+
 def main() -> int:
     df = load_joined_table()
     figure_layer_platform_set_heatmap(df)
     figure_layer_divergence(df)
     figure_ripple_buckets()
+    figure_wearos_ripple_by_module_tree()
     return 0
 
 
