@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.structures.fe.driven.internal.db
 
+import app.cash.sqldelight.async.coroutines.awaitAsList
 import cz.adamec.timotej.snag.feat.structures.app.model.AppStructure
 import cz.adamec.timotej.snag.featShared.database.fe.driven.api.db.StructureEntity
 import cz.adamec.timotej.snag.featShared.database.fe.driven.api.db.StructureEntityQueries
@@ -41,7 +42,7 @@ internal class StructuresSqlDelightDbOps(
         withContext(ioDispatcher) {
             queries
                 .selectIdsByProjectId(projectId.toString())
-                .executeAsList()
+                .awaitAsList()
                 .map { Uuid.parse(it) }
         }
 

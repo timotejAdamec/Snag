@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.projects.fe.driven.internal.db
 
+import app.cash.sqldelight.async.coroutines.awaitAsOne
 import cz.adamec.timotej.snag.featShared.database.fe.driven.api.db.ProjectEntity
 import cz.adamec.timotej.snag.featShared.database.fe.driven.api.db.ProjectEntityQueries
 import cz.adamec.timotej.snag.lib.database.fe.SqlDelightDbOps
@@ -40,6 +41,6 @@ internal class ProjectsSqlDelightDbOps(
         withContext(ioDispatcher) {
             queries
                 .existsByClientId(clientId.toString())
-                .executeAsOne()
+                .awaitAsOne()
         }
 }

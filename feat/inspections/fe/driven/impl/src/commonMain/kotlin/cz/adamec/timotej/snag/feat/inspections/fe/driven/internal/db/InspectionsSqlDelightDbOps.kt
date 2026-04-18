@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.feat.inspections.fe.driven.internal.db
 
+import app.cash.sqldelight.async.coroutines.awaitAsList
 import cz.adamec.timotej.snag.feat.inspections.app.model.AppInspection
 import cz.adamec.timotej.snag.feat.inspections.fe.driven.internal.LH
 import cz.adamec.timotej.snag.featShared.database.fe.driven.api.db.InspectionEntity
@@ -41,7 +42,7 @@ internal class InspectionsSqlDelightDbOps(
         withContext(ioDispatcher) {
             queries
                 .selectIdsByProjectId(projectId.toString())
-                .executeAsList()
+                .awaitAsList()
                 .map { Uuid.parse(it) }
         }
 

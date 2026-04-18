@@ -25,8 +25,14 @@ internal class SqlDelightDatabaseInitializer(
     private val schema: SqlSchema<QueryResult.AsyncValue<Unit>>,
     private val defaultDispatcher: CoroutineDispatcher,
 ) : Initializer {
+    override val priority: Int get() = DATABASE_INITIALIZER_PRIORITY
+
     override suspend fun init() =
         withContext(defaultDispatcher) {
             schema.awaitCreate(databaseDriver)
         }
+
+    private companion object {
+        const val DATABASE_INITIALIZER_PRIORITY = -100
+    }
 }

@@ -64,7 +64,7 @@ fun InitializeInitializers(
     val composeInitializers = getKoin().getAll<ComposeInitializer>()
     composeInitializers.forEach { it.init() }
 
-    val initializers = getKoin().getAll<Initializer>()
+    val initializers = getKoin().getAll<Initializer>().sortedBy { it.priority }
     var isInitialized by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
         initializers.forEach { it.init() }
