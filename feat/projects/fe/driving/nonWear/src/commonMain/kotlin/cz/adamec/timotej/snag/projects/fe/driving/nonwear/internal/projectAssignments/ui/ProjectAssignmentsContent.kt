@@ -43,10 +43,10 @@ import cz.adamec.timotej.snag.lib.design.fe.scaffold.CollapsableTopAppBarScaffol
 import cz.adamec.timotej.snag.lib.design.fe.scenes.StatusBarAwareDragHandle
 import cz.adamec.timotej.snag.lib.design.fe.theme.SnagPreview
 import cz.adamec.timotej.snag.lib.design.fe.theme.SnagTheme
-import cz.adamec.timotej.snag.projects.fe.driving.nonwear.internal.projectAssignments.ui.components.AddUserBottomSheetContent
-import cz.adamec.timotej.snag.projects.fe.driving.nonwear.internal.projectAssignments.ui.components.AssignedUserListItem
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectAssignments.vm.AssignedUserItem
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectAssignments.vm.ProjectAssignmentsUiState
+import cz.adamec.timotej.snag.projects.fe.driving.nonwear.internal.projectAssignments.ui.components.AddUserBottomSheetContent
+import cz.adamec.timotej.snag.projects.fe.driving.nonwear.internal.projectAssignments.ui.components.AssignedUserListItem
 import kotlinx.collections.immutable.persistentListOf
 import org.jetbrains.compose.resources.stringResource
 import snag.feat.projects.fe.driving.nonwear.generated.resources.Res

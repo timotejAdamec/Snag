@@ -36,13 +36,13 @@ import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectsBackStack
 import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectsNavRoute
 import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectsNavigation
 import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectsRoute
-import cz.adamec.timotej.snag.projects.fe.driving.nonwear.internal.projectAssignments.ui.ProjectAssignmentsScreen
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectAssignments.vm.ProjectAssignmentsViewModel
+import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetailsEdit.vm.ProjectDetailsEditViewModel
+import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projects.vm.ProjectsViewModel
+import cz.adamec.timotej.snag.projects.fe.driving.nonwear.internal.projectAssignments.ui.ProjectAssignmentsScreen
 import cz.adamec.timotej.snag.projects.fe.driving.nonwear.internal.projectDetails.ui.ProjectDetailsScreen
 import cz.adamec.timotej.snag.projects.fe.driving.nonwear.internal.projectDetailsEdit.ui.ProjectDetailsEditScreen
-import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetailsEdit.vm.ProjectDetailsEditViewModel
 import cz.adamec.timotej.snag.projects.fe.driving.nonwear.internal.projects.ui.ProjectsScreen
-import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projects.vm.ProjectsViewModel
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.module.Module

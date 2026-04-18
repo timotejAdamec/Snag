@@ -39,7 +39,6 @@ kotlin {
             implementation(projects.feat.projects.fe.app.impl)
             implementation(projects.feat.projects.fe.driving.api)
             implementation(projects.feat.projects.fe.driving.impl)
-            implementation(projects.feat.projects.fe.driving.nonWear)
             implementation(projects.feat.projects.fe.driven.impl)
 
             // Structures feature

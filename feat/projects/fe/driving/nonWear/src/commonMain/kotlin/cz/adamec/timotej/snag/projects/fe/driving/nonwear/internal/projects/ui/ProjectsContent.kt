@@ -26,8 +26,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import cz.adamec.timotej.snag.lib.design.fe.button.AdaptiveTonalButton
 import cz.adamec.timotej.snag.lib.design.fe.scaffold.CollapsableTopAppBarScaffold
-import cz.adamec.timotej.snag.projects.fe.driving.nonwear.internal.projects.ui.components.ProjectListItem
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projects.vm.ProjectsUiState
+import cz.adamec.timotej.snag.projects.fe.driving.nonwear.internal.projects.ui.components.ProjectListItem
 import org.jetbrains.compose.resources.stringResource
 import snag.feat.projects.fe.driving.nonwear.generated.resources.Res
 import snag.feat.projects.fe.driving.nonwear.generated.resources.new_project

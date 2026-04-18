@@ -71,12 +71,12 @@ import cz.adamec.timotej.snag.lib.design.fe.scenes.StatusBarAwareDragHandle
 import cz.adamec.timotej.snag.lib.design.fe.theme.SnagPreview
 import cz.adamec.timotej.snag.lib.design.fe.theme.SnagTheme
 import cz.adamec.timotej.snag.projects.app.model.AppProjectData
-import cz.adamec.timotej.snag.projects.fe.driving.nonwear.internal.projectAssignments.ui.components.AddUserBottomSheetContent
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectAssignments.vm.AssignedUserItem
-import cz.adamec.timotej.snag.projects.fe.driving.nonwear.internal.projectDetails.ui.components.CreatorInfo
-import cz.adamec.timotej.snag.projects.fe.driving.nonwear.internal.projectDetails.ui.components.ReportTypePickerDialog
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.vm.ProjectDetailsUiState
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.vm.ProjectDetailsUiStatus
+import cz.adamec.timotej.snag.projects.fe.driving.nonwear.internal.projectAssignments.ui.components.AddUserBottomSheetContent
+import cz.adamec.timotej.snag.projects.fe.driving.nonwear.internal.projectDetails.ui.components.CreatorInfo
+import cz.adamec.timotej.snag.projects.fe.driving.nonwear.internal.projectDetails.ui.components.ReportTypePickerDialog
 import cz.adamec.timotej.snag.reports.business.ReportType
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource

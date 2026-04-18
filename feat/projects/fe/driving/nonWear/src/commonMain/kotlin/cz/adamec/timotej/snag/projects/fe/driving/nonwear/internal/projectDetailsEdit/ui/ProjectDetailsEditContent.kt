@@ -32,8 +32,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import cz.adamec.timotej.snag.lib.design.fe.dialog.FullScreenDialogMeasurements
-import cz.adamec.timotej.snag.projects.fe.driving.nonwear.internal.projectDetailsEdit.ui.components.ClientDropdown
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetailsEdit.vm.ProjectDetailsEditUiState
+import cz.adamec.timotej.snag.projects.fe.driving.nonwear.internal.projectDetailsEdit.ui.components.ClientDropdown
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import snag.feat.projects.fe.driving.nonwear.generated.resources.Res

@@ -89,7 +89,6 @@ android {
 
 dependencies {
     implementation(projects.composeApp)
-    implementation(projects.feat.authentication.fe.driven.nonWear)
     implementation(libs.koin.core)
     implementation(libs.oidc.appsupport)
     implementation(libs.androidx.activity.compose)
