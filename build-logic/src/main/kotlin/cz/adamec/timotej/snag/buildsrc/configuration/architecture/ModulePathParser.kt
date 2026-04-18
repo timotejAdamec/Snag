@@ -31,18 +31,19 @@ private val ENCAPSULATIONS = mapOf(
     "impl" to Encapsulation.IMPL,
     "test" to Encapsulation.TEST,
     "contract" to Encapsulation.CONTRACT,
-    // Platform-variant sibling modules under an existing hex layer.
-    // Treated as IMPL for encapsulation-direction rules; they are parallel
-    // impls selected by the consuming platform app (phone vs Wear Android).
-    "nonWear" to Encapsulation.IMPL,
-    "wear" to Encapsulation.IMPL,
+)
+
+private val PLATFORM_VARIANTS = mapOf(
+    "nonWear" to PlatformVariant.NON_WEAR,
+    "wear" to PlatformVariant.WEAR,
 )
 
 private val INFRA_PREFIXES = setOf("testInfra", "koinModulesAggregate")
 
 private val TOP_LEVEL_CATEGORIES = setOf("core", "lib", "feat")
 
-private val RECOGNIZED_TOKENS = PLATFORMS.keys + HEX_LAYERS.keys + ENCAPSULATIONS.keys + "model" + "rules"
+private val RECOGNIZED_TOKENS =
+    PLATFORMS.keys + HEX_LAYERS.keys + ENCAPSULATIONS.keys + PLATFORM_VARIANTS.keys + "model" + "rules"
 
 internal fun parseModulePath(path: String): ModuleIdentity {
     val segments = path.removePrefix(":").split(":")
@@ -99,6 +100,7 @@ private fun parseFeat(path: String, rest: List<String>): FeatModule {
     var platform: Platform? = null
     var hexLayer: HexLayer? = null
     var encapsulation: Encapsulation? = null
+    var platformVariant: PlatformVariant? = null
     var isModel = false
     var isRules = false
 
@@ -110,6 +112,8 @@ private fun parseFeat(path: String, rest: List<String>): FeatModule {
                 hexLayer = HEX_LAYERS[segment]
             featureSegments.isNotEmpty() && encapsulation == null && segment in ENCAPSULATIONS ->
                 encapsulation = ENCAPSULATIONS[segment]
+            featureSegments.isNotEmpty() && platformVariant == null && segment in PLATFORM_VARIANTS ->
+                platformVariant = PLATFORM_VARIANTS[segment]
             featureSegments.isNotEmpty() && segment == "model" -> isModel = true
             featureSegments.isNotEmpty() && segment == "rules" -> isRules = true
             segment !in RECOGNIZED_TOKENS -> featureSegments += segment
@@ -124,6 +128,7 @@ private fun parseFeat(path: String, rest: List<String>): FeatModule {
         platform = platform,
         hexLayer = hexLayer,
         encapsulation = encapsulation,
+        platformVariant = platformVariant,
         isModel = isModel,
         isRules = isRules,
     )

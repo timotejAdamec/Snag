@@ -196,6 +196,50 @@ class ParseModulePathTest {
     }
 
     @Test
+    fun `feat projects fe driving nonWear`() {
+        val result = parseModulePath(":feat:projects:fe:driving:nonWear")
+        assertIs<FeatModule>(result)
+        assertEquals("projects", result.feature)
+        assertEquals(Platform.FE, result.platform)
+        assertEquals(HexLayer.DRIVING, result.hexLayer)
+        assertEquals(PlatformVariant.NON_WEAR, result.platformVariant)
+        assertNull(result.encapsulation)
+    }
+
+    @Test
+    fun `feat projects fe driving wear`() {
+        val result = parseModulePath(":feat:projects:fe:driving:wear")
+        assertIs<FeatModule>(result)
+        assertEquals("projects", result.feature)
+        assertEquals(Platform.FE, result.platform)
+        assertEquals(HexLayer.DRIVING, result.hexLayer)
+        assertEquals(PlatformVariant.WEAR, result.platformVariant)
+        assertNull(result.encapsulation)
+    }
+
+    @Test
+    fun `feat authentication fe driven nonWear`() {
+        val result = parseModulePath(":feat:authentication:fe:driven:nonWear")
+        assertIs<FeatModule>(result)
+        assertEquals("authentication", result.feature)
+        assertEquals(Platform.FE, result.platform)
+        assertEquals(HexLayer.DRIVEN, result.hexLayer)
+        assertEquals(PlatformVariant.NON_WEAR, result.platformVariant)
+        assertNull(result.encapsulation)
+    }
+
+    @Test
+    fun `feat authentication fe driven wear`() {
+        val result = parseModulePath(":feat:authentication:fe:driven:wear")
+        assertIs<FeatModule>(result)
+        assertEquals("authentication", result.feature)
+        assertEquals(Platform.FE, result.platform)
+        assertEquals(HexLayer.DRIVEN, result.hexLayer)
+        assertEquals(PlatformVariant.WEAR, result.platformVariant)
+        assertNull(result.encapsulation)
+    }
+
+    @Test
     fun `feat projects fe ports`() {
         val result = parseModulePath(":feat:projects:fe:ports")
         assertIs<FeatModule>(result)
