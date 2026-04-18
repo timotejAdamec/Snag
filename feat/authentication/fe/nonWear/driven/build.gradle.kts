@@ -19,6 +19,8 @@ kotlin {
         commonMain.dependencies {
             implementation(projects.feat.authentication.fe.common.driven)
             implementation(projects.lib.configuration.fe.api)
+            implementation(libs.oidc.appsupport)
+            implementation(libs.oidc.tokenstore)
         }
     }
 }

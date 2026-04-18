@@ -25,14 +25,10 @@ android {
     defaultConfig {
         applicationId = "$SNAG_NAMESPACE.wear"
         // Wear Compose Material 1.5.x requires minSdk 25; phone modules use minSdk 24.
-        // The constraint is local to the wearApp module — no shared code change required.
         minSdk = 25
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = SnagVersioning.versionCode(project).get()
         versionName = SnagVersioning.versionName(project).get()
-        // OIDC library transitively pulled in via :composeApp declares an intent filter
-        // template requiring this placeholder. The wearApp does not perform OAuth flows in
-        // the spike, but the placeholder must be provided to satisfy the manifest merger.
         manifestPlaceholders["oidcRedirectScheme"] = "snag"
     }
 
@@ -63,9 +59,28 @@ android {
 }
 
 dependencies {
-    implementation(projects.composeApp)
-    implementation(libs.koin.core)
+    // Shared Koin graph + platform-variant aggregate (Wear).
+    implementation(projects.koinModulesAggregate.fe.common)
+    implementation(projects.koinModulesAggregate.fe.wear)
+
+    // Feature surface imported directly by wearApp source files.
+    implementation(projects.feat.projects.fe.wear.driving)
+    implementation(projects.feat.authentication.fe.ports)
+    implementation(projects.core.foundation.fe)
+
+    // Compose runtime + Wear UI stack.
     implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.wear.compose.material)
     implementation(libs.androidx.wear.compose.foundation)
+
+    // Koin runtime for wear composition.
+    implementation(libs.koin.core)
+    implementation(libs.koin.android)
+    implementation(libs.koin.compose)
+    implementation(libs.koin.compose.viewmodel)
+
+    // Structured logging.
+    implementation(libs.kermit)
+    implementation(libs.kermit.koin)
 }

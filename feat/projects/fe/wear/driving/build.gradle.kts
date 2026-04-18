@@ -22,5 +22,15 @@ kotlin {
                 implementation(project(":feat:projects:fe:app:api"))
             }
         }
+        androidMain {
+            dependencies {
+                implementation(libs.androidx.wear.compose.material)
+                implementation(libs.androidx.wear.compose.foundation)
+                implementation(libs.koin.core)
+                implementation(libs.koin.compose)
+                implementation(libs.koin.compose.viewmodel)
+                implementation(libs.androidx.lifecycle.runtime.compose)
+            }
+        }
     }
 }

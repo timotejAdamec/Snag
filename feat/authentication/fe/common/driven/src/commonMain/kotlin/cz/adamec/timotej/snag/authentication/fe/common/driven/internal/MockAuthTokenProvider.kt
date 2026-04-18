@@ -18,7 +18,7 @@ import cz.adamec.timotej.snag.authentication.fe.ports.AuthTokenProvider
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-internal class MockAuthTokenProvider : AuthTokenProvider {
+class MockAuthTokenProvider : AuthTokenProvider {
     private val _authState =
         MutableStateFlow<AuthState>(
             AuthState.Authenticated(authProviderId = MOCK_AUTH_PROVIDER_ID),

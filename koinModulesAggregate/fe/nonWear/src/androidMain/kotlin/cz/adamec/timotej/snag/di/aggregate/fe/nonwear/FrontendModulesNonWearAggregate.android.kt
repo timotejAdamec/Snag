@@ -12,11 +12,7 @@
 
 package cz.adamec.timotej.snag.di.aggregate.fe.nonwear
 
-import cz.adamec.timotej.snag.authentication.fe.nonwear.driven.di.authenticationDrivenNonWearModule
 import org.koin.core.module.Module
 import org.koin.dsl.module
 
-internal actual val platformNonWearModule: Module =
-    module {
-        includes(authenticationDrivenNonWearModule)
-    }
+internal actual val platformNonWearModule: Module = module { }

@@ -18,9 +18,9 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             api(projects.koinModulesAggregate.fe.common)
-            implementation(projects.feat.projects.fe.wear.driving)
         }
         androidMain.dependencies {
+            implementation(projects.feat.projects.fe.wear.driving)
             implementation(projects.feat.authentication.fe.wear.driven)
         }
     }

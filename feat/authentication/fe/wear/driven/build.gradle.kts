@@ -19,6 +19,16 @@ kotlin {
         commonMain.dependencies {
             implementation(projects.feat.authentication.fe.common.driven)
             implementation(projects.lib.configuration.fe.api)
+            implementation(libs.oidc.appsupport)
+            implementation(libs.oidc.tokenstore)
+            implementation(libs.oidc.ktor)
+            implementation(libs.ktor.client.core)
+            implementation(libs.ktor.client.content.negotiation)
+            implementation(libs.ktor.serialization.kotlinx.json)
+        }
+        androidMain.dependencies {
+            implementation(libs.androidx.wear.phone.interactions)
+            implementation(libs.ktor.client.okhttp)
         }
     }
 }

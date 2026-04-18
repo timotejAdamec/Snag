@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.di.aggregate.fe.nonwear
 
+import cz.adamec.timotej.snag.authentication.fe.nonwear.driven.di.authenticationDrivenNonWearModule
 import cz.adamec.timotej.snag.projects.fe.nonwear.driving.di.projectsDrivingNonWearModule
 import org.koin.core.module.Module
 import org.koin.dsl.module
@@ -20,6 +21,7 @@ val frontendModulesNonWearAggregate =
     module {
         includes(
             projectsDrivingNonWearModule,
+            authenticationDrivenNonWearModule,
             platformNonWearModule,
         )
     }

@@ -12,8 +12,15 @@
 
 package cz.adamec.timotej.snag.di.aggregate.fe.wear
 
+import cz.adamec.timotej.snag.authentication.fe.wear.driven.di.authenticationDrivenWearModule
+import cz.adamec.timotej.snag.projects.fe.wear.driving.di.projectsDrivingWearModule
 import org.koin.core.module.Module
 import org.koin.dsl.module
 
-// Wear-specific driven adapters land here in Phase 3 step 5 (WearOidcExecutorAdapter).
-internal actual val platformWearModule: Module = module { }
+internal actual val platformWearModule: Module =
+    module {
+        includes(
+            authenticationDrivenWearModule,
+            projectsDrivingWearModule,
+        )
+    }

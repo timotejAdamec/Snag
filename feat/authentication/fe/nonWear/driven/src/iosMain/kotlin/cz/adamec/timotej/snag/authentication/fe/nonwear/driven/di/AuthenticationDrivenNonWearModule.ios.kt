@@ -12,11 +12,7 @@
 
 package cz.adamec.timotej.snag.authentication.fe.nonwear.driven.di
 
-import cz.adamec.timotej.snag.authentication.fe.common.driven.di.OIDC_REDIRECT_URI_QUALIFIER
-import cz.adamec.timotej.snag.configuration.fe.MobileRunConfig
+import org.koin.core.module.Module
 import org.koin.dsl.module
 
-val authenticationDrivenNonWearModule =
-    module {
-        single(qualifier = OIDC_REDIRECT_URI_QUALIFIER) { MobileRunConfig.redirectUri }
-    }
+internal actual val platformNonWearAuthModule: Module = module { }

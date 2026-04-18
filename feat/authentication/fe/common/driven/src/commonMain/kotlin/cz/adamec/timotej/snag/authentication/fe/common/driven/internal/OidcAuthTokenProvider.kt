@@ -24,7 +24,7 @@ import org.publicvalue.multiplatform.oidc.tokenstore.TokenStore
 import org.publicvalue.multiplatform.oidc.types.CodeChallengeMethod
 import org.publicvalue.multiplatform.oidc.types.Jwt
 
-internal class OidcAuthTokenProvider(
+class OidcAuthTokenProvider(
     private val tokenStore: TokenStore,
     private val authFlowFactory: CodeAuthFlowFactory,
     redirectUri: String,

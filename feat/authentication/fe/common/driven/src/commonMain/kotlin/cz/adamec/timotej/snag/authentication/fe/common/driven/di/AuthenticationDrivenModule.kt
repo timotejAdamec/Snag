@@ -12,10 +12,6 @@
 
 package cz.adamec.timotej.snag.authentication.fe.common.driven.di
 
-import cz.adamec.timotej.snag.authentication.fe.common.driven.internal.MockAuthTokenProvider
-import cz.adamec.timotej.snag.authentication.fe.common.driven.internal.OidcAuthTokenProvider
-import cz.adamec.timotej.snag.authentication.fe.ports.AuthTokenProvider
-import cz.adamec.timotej.snag.configuration.common.RunConfig
 import org.koin.core.module.Module
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
@@ -27,15 +23,4 @@ internal expect val platformModule: Module
 val authenticationDrivenCommonModule =
     module {
         includes(platformModule)
-        single<AuthTokenProvider> {
-            if (RunConfig.mockAuth) {
-                MockAuthTokenProvider()
-            } else {
-                OidcAuthTokenProvider(
-                    tokenStore = get(),
-                    authFlowFactory = get(),
-                    redirectUri = get(qualifier = OIDC_REDIRECT_URI_QUALIFIER),
-                )
-            }
-        }
     }

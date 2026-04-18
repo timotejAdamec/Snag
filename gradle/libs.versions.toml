@@ -15,6 +15,7 @@ composeMultiplatform = "1.11.0-alpha04" # Update skiko version when updating thi
 composeMultiplatformAdaptive = "1.3.0-alpha06"
 wearComposeMaterial = "1.5.3"
 wearComposeFoundation = "1.5.3"
+wearPhoneInteractions = "1.1.0"
 skiko = "0.144.4"
 navigation3 = "1.1.0-alpha04"
 navigation3-browser = "0.3.1"
@@ -137,6 +138,7 @@ compose-components-uiToolingPreview = { group = "org.jetbrains.compose.component
 
 androidx-wear-compose-material = { group = "androidx.wear.compose", name = "compose-material", version.ref = "wearComposeMaterial" }
 androidx-wear-compose-foundation = { group = "androidx.wear.compose", name = "compose-foundation", version.ref = "wearComposeFoundation" }
+androidx-wear-phone-interactions = { group = "androidx.wear", name = "wear-phone-interactions", version.ref = "wearPhoneInteractions" }
 
 navigation3-ui = { group = "org.jetbrains.androidx.navigation3", name = "navigation3-ui", version.ref = "navigation3" }
 navigation3-viewmodel = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-viewmodel-navigation3", version.ref = "androidx-lifecycle" }

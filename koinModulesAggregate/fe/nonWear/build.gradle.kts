@@ -21,8 +21,6 @@ kotlin {
             // aggregate layers phone/iOS/web/JVM variants on top.
             api(projects.koinModulesAggregate.fe.common)
             implementation(projects.feat.projects.fe.nonWear.driving)
-        }
-        androidMain.dependencies {
             implementation(projects.feat.authentication.fe.nonWear.driven)
         }
     }
