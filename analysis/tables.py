@@ -263,23 +263,337 @@ def _render_measurement_log_wearos() -> str:
 
 
 # ---------------------------------------------------------------------------
+# Renderer: sharing_report
+# ---------------------------------------------------------------------------
+#
+# Input: analysis/data/sharing_report_with_loc.csv (311 rows, one per
+# (module × source set) after joining SharingReport with tokei LOC counts).
+# Column schema matches text/appendix.tex §B.1:
+#   module_path, category, platform, hex_layer, encapsulation, feature,
+#   plugin_applied, targets_compiled (=platform_set in CSV), source_set,
+#   source_set_loc_kotlin (=kotlin_loc in CSV),
+#   source_set_file_count (=kotlin_files in CSV).
+# The `category` column is used as a grouping header (same pattern as the
+# wear measurement log groups by top-level tree), leaving ten value columns
+# inside each group. source_set_dir and source_set_dir_rel are dropped; the
+# appendix reader can re-derive them from module_path + source_set.
+# Output: a landscape longtable grouped by category so a single appendix
+# section can hold the full 311-row report without splitting.
+
+_SHARING_CSV = DATA_DIR / "sharing_report_with_loc.csv"
+
+_SHARING_CATEGORY_ORDER = ("app", "core", "lib", "feat", "featShared", "infra")
+
+_SHARING_CATEGORY_LABEL = {
+    "app": "app",
+    "core": "core",
+    "lib": "lib",
+    "feat": "feat",
+    "featShared": "featShared",
+    "infra": "infra",
+}
+
+
+def _short_plugin(s: str) -> str:
+    """Strip the leading ``libs.plugins.`` namespace that every Snag plugin
+    alias carries, so the plugin column in sharing_report stays readable."""
+    if not s:
+        return ""
+    prefix = "libs.plugins."
+    if s.startswith(prefix):
+        return s[len(prefix):]
+    return s
+
+
+def _render_sharing_report() -> str:
+    rows: list[dict[str, str]] = []
+    with _SHARING_CSV.open(encoding="utf-8") as f:
+        rows = list(csv.DictReader(f))
+
+    lines: list[str] = []
+    lines.append(r"\begin{landscape}")
+    lines.append(r"\begingroup")
+    lines.append(r"\scriptsize")
+    lines.append(r"\setlength{\tabcolsep}{3pt}")
+    col_spec = (
+        r"p{0.20\linewidth}"  # module_path
+        r"p{0.05\linewidth}"  # platform
+        r"p{0.06\linewidth}"  # hex_layer
+        r"p{0.05\linewidth}"  # encapsulation
+        r"p{0.08\linewidth}"  # feature
+        r"p{0.19\linewidth}"  # plugin_applied
+        r"p{0.08\linewidth}"  # targets_compiled (platform_set)
+        r"p{0.11\linewidth}"  # source_set
+        r"r"                  # source_set_loc_kotlin
+        r"r"                  # source_set_file_count
+    )
+    lines.append(r"\begin{longtable}{@{}" + col_spec + r"@{}}")
+    lines.append(
+        r"\caption{Plný výstup \code{sharingReport} rozšířený o~LOC "
+        r"na~úrovni source setu (\code{sharing\_report\_with\_loc.csv}). "
+        r"Řádky seskupeny podle kategorie modulu; v~rámci skupiny seřazeny "
+        r"lexikograficky podle cesty modulu a~názvu source setu.}"
+        r"\label{tab:appendix-sharing-report}\\"
+    )
+    headers = (
+        r"\textbf{Modul} & \textbf{Platf.} & \textbf{Vrstva} & \textbf{Enk.} & "
+        r"\textbf{Feature} & \textbf{Plugin} & \textbf{Cíle} & "
+        r"\textbf{Source set} & \textbf{LOC} & \textbf{Soub.} \\"
+    )
+    lines.append(r"\toprule")
+    lines.append(headers)
+    lines.append(r"\midrule")
+    lines.append(r"\endfirsthead")
+    lines.append(r"\toprule")
+    lines.append(headers)
+    lines.append(r"\midrule")
+    lines.append(r"\endhead")
+    lines.append(r"\bottomrule")
+    lines.append(r"\endfoot")
+
+    by_cat: dict[str, list[dict[str, str]]] = {}
+    for r in rows:
+        by_cat.setdefault(r["category"], []).append(r)
+    seen: set[str] = set()
+    ordered: list[str] = []
+    for c in _SHARING_CATEGORY_ORDER:
+        if c in by_cat:
+            ordered.append(c)
+            seen.add(c)
+    for c in sorted(by_cat.keys()):
+        if c not in seen:
+            ordered.append(c)
+
+    for cat in ordered:
+        group = sorted(
+            by_cat[cat],
+            key=lambda r: (r["module_path"], r["source_set"]),
+        )
+        loc_total = sum(int(r.get("kotlin_loc", "0") or 0) for r in group)
+        files_total = sum(int(r.get("kotlin_files", "0") or 0) for r in group)
+        label = _SHARING_CATEGORY_LABEL.get(cat, cat)
+        lines.append(
+            r"\multicolumn{10}{@{}l@{}}{\textbf{"
+            + code(label)
+            + r"}"
+            + f" -- {len(group)} zdrojových sad, {loc_total} LOC, {files_total} souborů"
+            + r"} \\"
+        )
+        for r in group:
+            lines.append(
+                path_texttt(r["module_path"])
+                + " & "
+                + latex_escape(r.get("platform", "") or "")
+                + " & "
+                + latex_escape(r.get("hex_layer", "") or "")
+                + " & "
+                + latex_escape(r.get("encapsulation", "") or "")
+                + " & "
+                + latex_escape(r.get("feature", "") or "")
+                + " & "
+                + path_texttt(_short_plugin(r.get("plugin_applied", "") or ""))
+                + " & "
+                + latex_escape(r.get("platform_set", "") or "")
+                + " & "
+                + latex_escape(r.get("source_set", "") or "")
+                + " & "
+                + (r.get("kotlin_loc", "0") or "0")
+                + " & "
+                + (r.get("kotlin_files", "0") or "0")
+                + r" \\"
+            )
+        lines.append(r"\addlinespace")
+
+    lines.append(r"\end{longtable}")
+    lines.append(r"\endgroup")
+    lines.append(r"\end{landscape}")
+    return "\n".join(lines) + "\n"
+
+
+# ---------------------------------------------------------------------------
+# Renderer: repair_log_inspections
+# ---------------------------------------------------------------------------
+#
+# Input: analysis/data/ripple_inspections-reverse-removal_files.csv (139
+# rows, one per file touched during the reverse-removal experiment on
+# `experiment/remove-inspections`). The units-level sibling CSV is a useful
+# rollup but loses the `reason` column that maps to §B.3's `justification`
+# contract, so the file-level view is the authoritative source here.
+# Column schema matches text/appendix.tex §B.3:
+#   module, source_set, layer, encapsulation, ripple_bucket,
+#   recurring_or_fixed, loc_changed, justification.
+# `layer` and `encapsulation` are derived from the module_path component of
+# the `unit` column (e.g. `:feat:inspections:be:app:api` -> layer=app,
+# encapsulation=api). Rows where the module is :root (non-module touches
+# such as settings.gradle.kts, build.gradle.kts at the repo root) get empty
+# layer/encapsulation. Output: a portrait longtable grouped by module so the
+# appendix reader can trace §4.2 prose claims back to individual file
+# touches.
+
+_INSPECTIONS_FILES_CSV = DATA_DIR / "ripple_inspections-reverse-removal_files.csv"
+
+_LAYER_TOKENS = frozenset(
+    ("app", "ports", "driven", "driving", "contract", "rules", "business")
+)
+_ENCAP_TOKENS = frozenset(("api", "impl", "model", "test"))
+
+
+def _parse_layer_encap(module_path: str) -> tuple[str, str]:
+    """Infer (layer, encapsulation) from a Gradle module coordinate like
+    ``:feat:inspections:be:app:api``. Returns ("", "") for meta coordinates
+    like ``:root`` or unrecognised shapes."""
+    if not module_path or module_path == ":root":
+        return ("", "")
+    segs = [s for s in module_path.split(":") if s]
+    if not segs:
+        return ("", "")
+    last = segs[-1]
+    if last in _ENCAP_TOKENS:
+        encap = last
+        layer = segs[-2] if len(segs) >= 2 and segs[-2] in _LAYER_TOKENS else ""
+        return (layer, encap)
+    if last in _LAYER_TOKENS:
+        return (last, "")
+    return ("", "")
+
+
+def _split_unit(unit: str) -> tuple[str, str]:
+    """Split a `unit` coordinate `:mod:path::source_set` into its two halves.
+    Returns ("", "") on the sentinel `:root::non-module` or malformed input
+    only for the module half; the source_set half is always the tail."""
+    if "::" not in unit:
+        return (unit, "")
+    module_path, source_set = unit.split("::", 1)
+    return (module_path, source_set)
+
+
+def _render_repair_log_inspections() -> str:
+    rows: list[dict[str, str]] = []
+    with _INSPECTIONS_FILES_CSV.open(encoding="utf-8") as f:
+        rows = list(csv.DictReader(f))
+
+    lines: list[str] = []
+    lines.append(r"\begingroup")
+    lines.append(r"\scriptsize")
+    lines.append(r"\setlength{\tabcolsep}{3pt}")
+    col_spec = (
+        r"p{0.17\linewidth}"  # module
+        r"p{0.09\linewidth}"  # source_set
+        r"p{0.06\linewidth}"  # layer
+        r"p{0.05\linewidth}"  # encapsulation
+        r"p{0.04\linewidth}"  # ripple_bucket (L/I/C)
+        r"p{0.03\linewidth}"  # recurring flag
+        r"r"                  # loc_changed
+        r"p{0.46\linewidth}"  # justification
+    )
+    lines.append(r"\begin{longtable}{@{}" + col_spec + r"@{}}")
+    lines.append(
+        r"\caption{Repair log reverse-removal experimentu \code{feat/inspections} "
+        r"(\code{ripple\_inspections-reverse-removal\_files.csv}). "
+        r"Jeden řádek na každý soubor dotčený při ručním spravení kompilace po~odstranění "
+        r"feature větve \code{experiment/remove-inspections}; řádky seskupeny podle "
+        r"modulu a~v~rámci skupiny seřazeny podle cesty souboru. Sloupce vrstva "
+        r"a~enkapsulace jsou odvozeny z~modulového koordinátu. "
+        r"Bucket: L=local, I=intrinsic, C=collateral.}"
+        r"\label{tab:appendix-repair-log-inspections}\\"
+    )
+    headers = (
+        r"\textbf{Modul} & \textbf{Source set} & \textbf{Vrstva} & \textbf{Enk.} & "
+        r"\textbf{Bkt.} & \textbf{Opak.} & \textbf{LOC} & \textbf{Zdůvodnění} \\"
+    )
+    lines.append(r"\toprule")
+    lines.append(headers)
+    lines.append(r"\midrule")
+    lines.append(r"\endfirsthead")
+    lines.append(r"\toprule")
+    lines.append(headers)
+    lines.append(r"\midrule")
+    lines.append(r"\endhead")
+    lines.append(r"\bottomrule")
+    lines.append(r"\endfoot")
+
+    _BUCKET_LABEL = {"local": "L", "intrinsic": "I", "collateral": "C"}
+
+    by_module: dict[str, list[dict[str, str]]] = {}
+    for r in rows:
+        module_path, _source_set = _split_unit(r.get("unit", ""))
+        by_module.setdefault(module_path, []).append(r)
+
+    for module_path in sorted(by_module.keys()):
+        group = sorted(by_module[module_path], key=lambda r: r.get("file", ""))
+        layer, encap = _parse_layer_encap(module_path)
+        loc_total = sum(int(r.get("loc_churn", "0") or 0) for r in group)
+        header_label = module_path if module_path else "(root)"
+        lines.append(
+            r"\multicolumn{8}{@{}l@{}}{\textbf{"
+            + code(header_label)
+            + r"}"
+            + f" -- {len(group)} souborů, {loc_total} LOC"
+            + (f", vrstva=\\code{{{latex_escape(layer)}}}" if layer else "")
+            + (f", enk.=\\code{{{latex_escape(encap)}}}" if encap else "")
+            + r"} \\"
+        )
+        for r in group:
+            unit_module, unit_source_set = _split_unit(r.get("unit", ""))
+            bucket = _BUCKET_LABEL.get(r.get("bucket", ""), r.get("bucket", ""))
+            recurring = (
+                r"\checkmark" if r.get("recurring", "False") == "True" else ""
+            )
+            loc = r.get("loc_churn", "0") or "0"
+            reason = r.get("reason", "") or ""
+            lines.append(
+                path_texttt(r.get("file", ""))
+                + " & "
+                + latex_escape(unit_source_set)
+                + " & "
+                + latex_escape(layer)
+                + " & "
+                + latex_escape(encap)
+                + " & "
+                + bucket
+                + " & "
+                + recurring
+                + " & "
+                + loc
+                + " & "
+                + latex_escape(reason)
+                + r" \\"
+            )
+        lines.append(r"\addlinespace")
+
+    lines.append(r"\end{longtable}")
+    lines.append(r"\endgroup")
+    return "\n".join(lines) + "\n"
+
+
+# ---------------------------------------------------------------------------
 # Renderer dispatch
 # ---------------------------------------------------------------------------
 
 
 def register_renderers() -> dict[str, Renderer]:
     # Phase 3 scope: measurement_log_wearos.
-    # Phase 5 scope (appendix placeholders still on % TODO in text/appendix.tex):
-    #   - sharing_report           (analysis/data/sharing_report_with_loc.csv)
+    # Phase 5 pass 1: sharing_report + repair_log_inspections.
+    # Phase 5 remaining (appendix placeholders still on % TODO in text/appendix.tex):
     #   - loc_per_feature          (analysis/data/loc_per_source_set.csv + derived)
-    #   - repair_log_inspections   (analysis/data/ripple_inspections-reverse-removal_*.csv)
     #   - repair_log_projectphoto  (analysis/data/ripple_projectphoto-forward_*.csv)
-    # Each gets its own _render_<name>() and a Renderer(...) line below when Phase 5 lands.
+    # Each gets its own _render_<name>() and a Renderer(...) line below when its
+    # column layout is finalised.
     registry = {
         "measurement_log_wearos": Renderer(
             name="measurement_log_wearos",
             render=_render_measurement_log_wearos,
             inputs=(_WEAROS_FILES_CSV,),
+        ),
+        "sharing_report": Renderer(
+            name="sharing_report",
+            render=_render_sharing_report,
+            inputs=(_SHARING_CSV,),
+        ),
+        "repair_log_inspections": Renderer(
+            name="repair_log_inspections",
+            render=_render_repair_log_inspections,
+            inputs=(_INSPECTIONS_FILES_CSV,),
         ),
     }
     return registry
