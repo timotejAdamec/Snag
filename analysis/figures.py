@@ -719,7 +719,7 @@ def figure_wearos_ripple_by_module_tree() -> None:
     df = pd.read_csv(csv_path)
     df = df.sort_values("file_count", ascending=False).reset_index(drop=True)
 
-    fig, (ax_files, ax_loc) = plt.subplots(2, 1, figsize=(9, 6), sharex=True)
+    fig, (ax_files, ax_loc) = plt.subplots(2, 1, figsize=(9, 7.5), sharex=True)
 
     trees = df["tree"].tolist()
     x_pos = np.arange(len(trees))
@@ -739,8 +739,13 @@ def figure_wearos_ripple_by_module_tree() -> None:
     ax_files.grid(axis="y", linestyle=":", alpha=0.5)
     ax_files.legend(loc="upper right", frameon=False, fontsize=9)
 
+    # Headroom above the tallest bar so value labels stay inside the axes
+    # frame (matplotlib's bar autoscale does not reserve space for text).
+    max_files = int(df["file_count"].max())
     for i, total in enumerate(df["file_count"]):
-        ax_files.text(x_pos[i], total + 1, str(total), ha="center", va="bottom", fontsize=8)
+        ax_files.text(x_pos[i], total + max_files * 0.02, str(total),
+                      ha="center", va="bottom", fontsize=8)
+    ax_files.set_ylim(top=max_files * 1.15)
 
     ax_loc.bar(x_pos, df["loc_churn"], bar_width, color="#888")
     ax_loc.set_ylabel("LOC churn (přidáno + odebráno)")
@@ -748,9 +753,11 @@ def figure_wearos_ripple_by_module_tree() -> None:
     ax_loc.set_xticklabels(trees, rotation=30, ha="right")
     ax_loc.grid(axis="y", linestyle=":", alpha=0.5)
 
+    max_loc = int(df["loc_churn"].max())
     for i, loc in enumerate(df["loc_churn"]):
-        ax_loc.text(x_pos[i], loc + max(df["loc_churn"]) * 0.02, str(loc),
+        ax_loc.text(x_pos[i], loc + max_loc * 0.02, str(loc),
                     ha="center", va="bottom", fontsize=8)
+    ax_loc.set_ylim(top=max_loc * 1.12)
 
     fig.tight_layout()
     FIGURES_DIR.mkdir(parents=True, exist_ok=True)
