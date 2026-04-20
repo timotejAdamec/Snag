@@ -25,7 +25,7 @@ import cz.adamec.timotej.snag.clients.fe.driving.api.ClientCreationRouteFactory
 import cz.adamec.timotej.snag.clients.fe.driving.api.ClientEditRouteFactory
 import cz.adamec.timotej.snag.clients.fe.driving.api.ClientsRoute
 import cz.adamec.timotej.snag.clients.fe.driving.api.ClientsRouteFactory
-import cz.adamec.timotej.snag.lib.navigation.fe.SnagNavDisplay
+import cz.adamec.timotej.snag.lib.design.fe.navigation.SnagNavDisplay
 import cz.adamec.timotej.snag.users.fe.driving.api.UsersRoute
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource

@@ -20,8 +20,8 @@ import cz.adamec.timotej.snag.feat.findings.fe.driving.api.FindingsListRouteFact
 import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureDetailBackStack
 import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureDetailNavRoute
 import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureFloorPlanRouteFactory
+import cz.adamec.timotej.snag.lib.design.fe.navigation.SnagNavDisplay
 import cz.adamec.timotej.snag.lib.design.fe.scenes.MapListDetailSceneStrategy
-import cz.adamec.timotej.snag.lib.navigation.fe.SnagNavDisplay
 import org.koin.compose.koinInject
 import kotlin.uuid.Uuid
 

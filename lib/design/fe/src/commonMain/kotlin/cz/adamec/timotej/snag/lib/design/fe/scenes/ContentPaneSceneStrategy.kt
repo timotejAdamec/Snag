@@ -28,8 +28,8 @@ import cz.adamec.timotej.snag.lib.design.fe.layout.systemBarsPaddingCoerceAtLeas
 /**
  * Wraps single-pane scenes in a [ContentPane] on wide screens.
  *
- * Should be placed AFTER [DialogSceneStrategy][androidx.navigation3.scene.DialogSceneStrategy]
- * in the strategy list so dialog entries are handled first and don't get wrapped.
+ * Should be placed AFTER the dialog scene strategy in the strategy list so dialog
+ * entries are handled first and don't get wrapped.
  */
 class ContentPaneSceneStrategy<T : Any> : SceneStrategy<T> {
     @Suppress("ReturnCount")
