@@ -30,6 +30,8 @@ android {
         versionCode = SnagVersioning.versionCode(project).get()
         versionName = SnagVersioning.versionName(project).get()
         manifestPlaceholders["oidcRedirectScheme"] = "snag"
+        val wearSeedMode = findProperty("snag.wear.seed")?.toString()?.toBooleanStrictOrNull() == true
+        buildConfigField("boolean", "SEED_MODE", wearSeedMode.toString())
     }
 
     packaging {
@@ -55,6 +57,7 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
@@ -65,8 +68,14 @@ dependencies {
 
     // Feature surface imported directly by wearApp source files.
     implementation(projects.feat.projects.fe.wear.driving)
+    implementation(projects.feat.projects.fe.app.api)
+    implementation(projects.feat.projects.fe.common.driving)
+    implementation(projects.feat.projects.app.model)
+    implementation(projects.feat.projects.business.model)
     implementation(projects.feat.authentication.fe.ports)
     implementation(projects.core.foundation.fe)
+    implementation(projects.core.foundation.common)
+    implementation(projects.core.network.fe)
 
     // Compose runtime + Wear UI stack.
     implementation(libs.androidx.activity.compose)

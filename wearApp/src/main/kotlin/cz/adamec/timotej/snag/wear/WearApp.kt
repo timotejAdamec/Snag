@@ -27,16 +27,19 @@ import co.touchlab.kermit.Logger
 import co.touchlab.kermit.koin.KermitKoinLogger
 import cz.adamec.timotej.snag.core.foundation.fe.Initializer
 import cz.adamec.timotej.snag.projects.fe.wear.driving.WearProjectList
+import cz.adamec.timotej.snag.wear.seed.wearSeedModule
 import org.koin.compose.KoinApplication
 import org.koin.compose.getKoin
+import org.koin.core.module.Module
 import org.koin.dsl.koinConfiguration
 
 @Composable
 fun WearApp() {
+    val rootModule: Module = if (BuildConfig.SEED_MODE) wearSeedModule else wearAppModule
     KoinApplication(
         configuration =
             koinConfiguration {
-                modules(wearAppModule)
+                modules(rootModule)
                 logger(KermitKoinLogger(Logger.withTag("Koin")))
             },
     ) {
