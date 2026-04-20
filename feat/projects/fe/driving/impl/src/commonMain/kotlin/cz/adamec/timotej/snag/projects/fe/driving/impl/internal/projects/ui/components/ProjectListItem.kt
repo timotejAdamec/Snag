@@ -28,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
@@ -58,8 +59,11 @@ internal fun ProjectListItem(
         headlineContent = {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
+                    modifier = Modifier.weight(weight = 1f, fill = false),
                     text = project.name,
                     style = MaterialTheme.typography.titleLargeEmphasized,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
                 )
                 if (isClosed) {
                     Spacer(modifier = Modifier.width(8.dp))
@@ -107,6 +111,30 @@ internal fun ProjectListItemPreview() {
                     name = "Project A",
                     address = "Client A",
                     creatorId = UuidProvider.getUuid(),
+                    updatedAt = Timestamp(0L),
+                ),
+            onClick = {},
+        )
+    }
+}
+
+@Composable
+@Preview
+internal fun ProjectListItemClosedPreview() {
+    SnagPreview {
+        ProjectListItem(
+            modifier =
+                Modifier.size(
+                    width = 400.dp,
+                    height = 100.dp,
+                ),
+            project =
+                AppProjectData(
+                    id = UuidProvider.getUuid(),
+                    name = "Project A",
+                    address = "Client A",
+                    creatorId = UuidProvider.getUuid(),
+                    isClosed = true,
                     updatedAt = Timestamp(0L),
                 ),
             onClick = {},
