@@ -16,7 +16,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
-import androidx.navigation3.scene.DialogSceneStrategy
 import androidx.navigation3.scene.SceneStrategy
 import androidx.navigation3.ui.NavDisplay
 import androidx.navigationevent.NavigationEventInfo
@@ -36,7 +35,7 @@ fun SnagNavDisplay(
         onBack = { backStack.removeLastSafely() },
         entryProvider = koinEntryProvider<SnagNavRoute>(),
         sceneStrategies =
-            listOf<SceneStrategy<SnagNavRoute>>(DialogSceneStrategy()) + additionalSceneStrategies,
+            listOf<SceneStrategy<SnagNavRoute>>(InlineDialogSceneStrategy()) + additionalSceneStrategies,
         entryDecorators =
             listOf(
                 rememberSaveableStateHolderNavEntryDecorator(),
