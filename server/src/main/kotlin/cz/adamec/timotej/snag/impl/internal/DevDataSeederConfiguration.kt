@@ -431,7 +431,9 @@ internal class DevDataSeederConfiguration(
         private const val INSPECTION_4 = "00000000-0000-0000-0004-000000000004"
 
         private const val FLOOR_PLAN_URL_1 =
-            "https://wpmedia.roomsketcher.com/content/uploads/2022/01/06145940/What-is-a-floor-plan-with-dimensions.png"
+            "https://storage.googleapis.com/snag-bucket-dev/projects/" +
+                    "00000000-0000-0000-0000-000000000001/structures/" +
+                    "00000000-0000-0000-0001-000000000001/019dabac-f533-73d2-9f9d-27eadb7eed0c.png"
         private const val FLOOR_PLAN_URL_6 =
             "https://storage.googleapis.com/snag-bucket-dev/projects/" +
                 "00000000-0000-0000-0000-000000000001/structures/" +
