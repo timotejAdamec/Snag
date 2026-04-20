@@ -10,7 +10,7 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.lib.navigation.fe
+package cz.adamec.timotej.snag.lib.design.fe.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -21,6 +21,9 @@ import androidx.navigation3.ui.NavDisplay
 import androidx.navigationevent.NavigationEventInfo
 import androidx.navigationevent.compose.NavigationEventHandler
 import androidx.navigationevent.compose.rememberNavigationEventState
+import cz.adamec.timotej.snag.lib.design.fe.scenes.InlineDialogSceneStrategy
+import cz.adamec.timotej.snag.lib.navigation.fe.SnagBackStack
+import cz.adamec.timotej.snag.lib.navigation.fe.SnagNavRoute
 import org.koin.compose.navigation3.koinEntryProvider
 
 @Composable

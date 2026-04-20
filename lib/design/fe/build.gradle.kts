@@ -18,6 +18,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(projects.lib.configuration.fe.api)
+            implementation(projects.lib.routing.fe)
         }
     }
 }
