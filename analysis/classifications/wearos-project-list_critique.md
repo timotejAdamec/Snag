@@ -24,7 +24,7 @@ Recurring intrinsic units = **3** (each future Wear-ported feature edits these t
 
 | tree                       | files | loc | intrinsic | collateral | local |
 |----------------------------|------:|----:|----------:|-----------:|------:|
-| `feat/`                    |    74 | 1189 |        13 |         61 |     0 |
+| `feat/`                    |    74 | 1189 |         9 |         65 |     0 |
 | `koinModulesAggregate/`    |    14 |  272 |        14 |          0 |     0 |
 | `wearApp/`                 |     6 |  254 |         0 |          1 |     5 |
 | `build-logic/`             |     5 |  123 |         0 |          5 |     0 |
@@ -35,7 +35,7 @@ Recurring intrinsic units = **3** (each future Wear-ported feature edits these t
 
 **Trees with zero churn:** `core/`, `lib/`, `app/`, `business/`, `androidApp/`, `server/`. Pure-logic + infrastructure-free + backend layers all unchanged.
 
-`feat/` numbers are dominated by D8 git renames (file moves with no semantic edit): the 76 collateral entries include the auth driven/impl → common/driven rename pair (10 files) and the projects driving/impl → nonWear/driving rename pair (~30 files).
+`feat/` numbers are dominated by D8 git renames (file moves with no semantic edit): the 65 `feat/` collateral entries (of 76 collateral total) include the auth driven/impl → common/driven rename pair (10 files) and the projects driving/impl → nonWear/driving rename pair (~30 files).
 
 ## 3. Predictions vs. observed
 
