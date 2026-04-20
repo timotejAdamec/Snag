@@ -359,15 +359,12 @@ def compute_layer_divergence(df: pd.DataFrame) -> pd.DataFrame:
     prod = df.copy()
     prod = prod[prod["platform_set"] != ""]
     prod = prod[~prod["source_set"].str.endswith("Test")]
-    prod["layer"] = prod["hex_layer"].where(prod["hex_layer"] != "", "other")
+    prod["layer"] = prod.apply(derive_layer, axis=1)
     prod["kotlin_loc"] = prod["kotlin_loc"].astype(int)
     prod["is_platform_specific"] = ~prod["source_set"].isin(NEUTRAL_SOURCE_SETS)
     prod["platform_specific_loc"] = prod["kotlin_loc"].where(prod["is_platform_specific"], 0)
 
-    layer_rows = [layer for layer in LAYER_ORDER if layer in {
-        "business", "app", "ports", "driving", "driven",
-    }]
-    layer_rows.append("other")
+    layer_rows = list(LAYER_ORDER)
 
     records: list[dict] = []
     for layer in layer_rows:
@@ -405,7 +402,7 @@ def figure_layer_divergence(df: pd.DataFrame) -> None:
     # Per-layer per-segment LOC for stacked-bar rendering.
     prod = df[df["platform_set"] != ""].copy()
     prod = prod[~prod["source_set"].str.endswith("Test")]
-    prod["layer"] = prod["hex_layer"].where(prod["hex_layer"] != "", "other")
+    prod["layer"] = prod.apply(derive_layer, axis=1)
     prod["kotlin_loc"] = prod["kotlin_loc"].astype(int)
     def _classify_segment(row: pd.Series) -> str:
         spec = NEUTRAL_SEGMENT_SPEC.get((row["source_set"], row["platform_set"]))
