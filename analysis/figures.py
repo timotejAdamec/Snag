@@ -283,11 +283,29 @@ def figure_layer_platform_set_heatmap(df: pd.DataFrame) -> None:
 # (see analysis/phase-2-plan.md §A on sharing/evolvability duality). The counterfactual in
 # Part D is where correctness is argued; this figure just shows where Snag's divergence lives.
 #
-# The neutral bucket collapses both `commonMain` (multiplatform) and `main` (BE-only jvmMain)
-# because both are the layer's "shared" source set from that module family's perspective.
-# A BE module with code in `main` is not platform-divergent — it only has one platform.
+# The *share metric* treats both `commonMain` (multiplatform) and `main` (BE-only jvmMain)
+# as the layer's "shared" source set — `is_platform_specific` is the complement of
+# `source_set ∈ NEUTRAL_SOURCE_SETS`. A BE module with code in `main` is not platform-
+# divergent (it only has one platform), and a KMP module's commonMain is inherently shared.
+#
+# The *visual breakdown* goes further: commonMain in a FULL-family (fe+be) module reaches
+# six platforms, commonMain in a FRONTEND-family module reaches five, and BE `main` reaches
+# one. Collapsing those under a single legend entry hides the reach difference that makes
+# the figure interesting. `NEUTRAL_SEGMENT_SPEC` below keyed on `(source_set, platform_set)`
+# breaks the neutral bucket into three visually distinct segments; rows that don't match
+# any entry fall through to their raw source-set name and pick up platform-specific colours.
 
 NEUTRAL_SOURCE_SETS = frozenset({"commonMain", "main"})
+
+# (source_set, platform_set) -> (segment id, legend label, colour)
+NEUTRAL_SEGMENT_SPEC: dict[tuple[str, str], tuple[str, str, str]] = {
+    ("commonMain", "all"):      ("commonMain_all", "commonMain · all (6p fe+be)",  "#2d3e5e"),
+    ("commonMain", "frontend"): ("commonMain_fe",  "commonMain · frontend (5p fe)", "#4c72b0"),
+    ("main",       "backend"):  ("main_be",        "main · backend (1p be)",        "#8aa4c8"),
+}
+NEUTRAL_SEGMENT_ORDER = ["commonMain_all", "commonMain_fe", "main_be"]
+NEUTRAL_SEGMENT_COLORS = {seg_id: colour for (seg_id, _, colour) in NEUTRAL_SEGMENT_SPEC.values()}
+NEUTRAL_SEGMENT_LABELS = {seg_id: label for (seg_id, label, _) in NEUTRAL_SEGMENT_SPEC.values()}
 
 PLATFORM_SPECIFIC_SEGMENT_ORDER = [
     "nonWebMain",
@@ -314,8 +332,6 @@ PLATFORM_SPECIFIC_SEGMENT_COLORS = {
     "jsMain": "#8c8c8c",
     "wasmJsMain": "#4c4c4c",
 }
-
-NEUTRAL_SEGMENT_COLOR = "#4c72b0"  # calm blue, same family as ripple_buckets "local"
 
 _DIVERGENCE_COLUMNS = [
     "hex_layer",
@@ -391,10 +407,11 @@ def figure_layer_divergence(df: pd.DataFrame) -> None:
     prod = prod[~prod["source_set"].str.endswith("Test")]
     prod["layer"] = prod["hex_layer"].where(prod["hex_layer"] != "", "other")
     prod["kotlin_loc"] = prod["kotlin_loc"].astype(int)
-    prod["segment"] = prod["source_set"].where(
-        ~prod["source_set"].isin(NEUTRAL_SOURCE_SETS),
-        "neutral",
-    )
+    def _classify_segment(row: pd.Series) -> str:
+        spec = NEUTRAL_SEGMENT_SPEC.get((row["source_set"], row["platform_set"]))
+        return spec[0] if spec is not None else row["source_set"]
+
+    prod["segment"] = prod.apply(_classify_segment, axis=1)
     seg_matrix = prod.pivot_table(
         index="layer",
         columns="segment",
@@ -406,13 +423,16 @@ def figure_layer_divergence(df: pd.DataFrame) -> None:
     layers = list(agg["hex_layer"])
     seg_matrix = seg_matrix.reindex(index=layers, fill_value=0)
 
-    segment_order = ["neutral"]
+    segment_order: list[str] = []
+    for seg in NEUTRAL_SEGMENT_ORDER:
+        if seg in seg_matrix.columns and seg_matrix[seg].sum() > 0:
+            segment_order.append(seg)
     for seg in PLATFORM_SPECIFIC_SEGMENT_ORDER:
         if seg in seg_matrix.columns and seg_matrix[seg].sum() > 0:
             segment_order.append(seg)
     extras = sorted(
         c for c in seg_matrix.columns
-        if c not in segment_order and c != "neutral" and seg_matrix[c].sum() > 0
+        if c not in segment_order and seg_matrix[c].sum() > 0
     )
     segment_order.extend(extras)
     seg_matrix = seg_matrix.reindex(columns=segment_order, fill_value=0)
@@ -424,12 +444,11 @@ def figure_layer_divergence(df: pd.DataFrame) -> None:
     left = np.zeros(len(layers))
     for segment in segment_order:
         values = seg_matrix[segment].to_numpy(dtype=int)
-        color = (
-            NEUTRAL_SEGMENT_COLOR
-            if segment == "neutral"
-            else PLATFORM_SPECIFIC_SEGMENT_COLORS.get(segment, "#777777")
+        color = NEUTRAL_SEGMENT_COLORS.get(
+            segment,
+            PLATFORM_SPECIFIC_SEGMENT_COLORS.get(segment, "#777777"),
         )
-        label = "commonMain + main" if segment == "neutral" else segment
+        label = NEUTRAL_SEGMENT_LABELS.get(segment, segment)
         ax.barh(
             y_pos,
             values,
