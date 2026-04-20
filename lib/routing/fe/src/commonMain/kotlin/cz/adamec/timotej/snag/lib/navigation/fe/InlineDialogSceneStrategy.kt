@@ -37,7 +37,12 @@ import androidx.navigation3.scene.SceneStrategyScope
  * Workaround kept until Compose Multiplatform fixes the cross-tree
  * `movableContentOf` issue. Verified still crashing on
  * navigation3 1.1.0-alpha04 + compose-multiplatform 1.11.0-alpha04.
- * When fixed upstream: delete this file and revert `SnagNavDisplay` to
+ *
+ * To verify whether upstream has fixed it: temporarily swap this strategy
+ * back to `DialogSceneStrategy()` in `SnagNavDisplay`, then open a project
+ * in edit mode and tap "new client" — if the client creation dialog opens
+ * cleanly on iOS, web, and Android (no crash, no flicker), the upstream
+ * fix has landed. In that case, delete this file and keep
  * `DialogSceneStrategy()`.
  */
 internal class InlineDialogSceneStrategy<T : Any> : SceneStrategy<T> {
