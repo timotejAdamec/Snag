@@ -29,6 +29,7 @@
 from __future__ import annotations
 
 import csv
+import re
 import sys
 from dataclasses import dataclass
 from pathlib import Path
@@ -64,7 +65,19 @@ def latex_escape(s: str) -> str:
         return ""
     out = []
     for ch in s:
-        out.append(_LATEX_ESCAPES.get(ch, ch))
+        if ch == "_":
+            # Emit \_ followed by an \allowbreak so snake_case identifiers
+            # wrap naturally inside narrow p{} columns (the alternative -- a
+            # single unbreakable \_ -- pushes cells like ``jvm_desktop`` out
+            # of ~16mm landscape columns).
+            out.append(r"\_\allowbreak{}")
+        elif ch == "[":
+            # Break opportunity just before the bracket so source-set labels
+            # like ``commonMain[FE+BE]`` wrap onto two lines in narrow p{}
+            # columns without an unbreakable overflow.
+            out.append(r"\allowbreak{}[")
+        else:
+            out.append(_LATEX_ESCAPES.get(ch, ch))
     return "".join(out)
 
 
@@ -73,17 +86,29 @@ def code(s: str) -> str:
     return r"\code{" + latex_escape(s) + "}"
 
 
+_CAMEL_SPLIT = re.compile(r"(?<=[a-z])(?=[A-Z])")
+
+
 def path_texttt(s: str) -> str:
-    """Render a (potentially long) file path as wrappable \\texttt{} with
-    \\allowbreak at each / and -> separator. Keeps monospace but lets LaTeX
-    break long paths inside p{} columns so the measurement log fits the page."""
+    """Render a (potentially long) identifier as wrappable \\texttt{} with
+    \\allowbreak at common separators. Keeps monospace but lets LaTeX break
+    long strings inside narrow p{} columns instead of overflowing.
+
+    Break opportunities are inserted after each ``/`` (filesystem paths),
+    each ``:`` (Gradle module coordinates), each ``.`` (dot-separated
+    identifiers such as plugin aliases), at camelCase boundaries (so long
+    class names like ``GetInspectionsModifiedSinceUseCase`` wrap), and
+    after the git rename arrow ``-> `` (rendered as ``-\\textgreater{} ``
+    post-escape)."""
     escaped = latex_escape(s)
-    # Insert a break opportunity after each forward slash and after the git
-    # rename arrow " -> " (now escaped as " -\textgreater{} "). This keeps
-    # the visible text unchanged but lets LaTeX break long paths inside
-    # narrow p{} columns instead of overflowing.
     broken = escaped.replace("/", r"/\allowbreak{}")
+    broken = broken.replace(":", r":\allowbreak{}")
+    broken = broken.replace(".", r".\allowbreak{}")
     broken = broken.replace(r" -\textgreater{} ", r" -\textgreater{}\allowbreak{} ")
+    # camelCase boundary breaks are safe: none of the latex_escape output
+    # sequences (\_\allowbreak{}, \textbackslash{}, \textgreater{}, ...)
+    # contain a lowercase->uppercase transition.
+    broken = _CAMEL_SPLIT.sub(r"\\allowbreak{}", broken)
     return r"\texttt{" + broken + "}"
 
 
@@ -473,18 +498,19 @@ def _render_repair_log_inspections() -> str:
         rows = list(csv.DictReader(f))
 
     lines: list[str] = []
+    lines.append(r"\begin{landscape}")
     lines.append(r"\begingroup")
     lines.append(r"\scriptsize")
     lines.append(r"\setlength{\tabcolsep}{3pt}")
     col_spec = (
-        r"p{0.17\linewidth}"  # module
-        r"p{0.09\linewidth}"  # source_set
-        r"p{0.06\linewidth}"  # layer
+        r"p{0.21\linewidth}"  # module (widest: holds Kotlin class-file paths)
+        r"p{0.07\linewidth}"  # source_set
+        r"p{0.05\linewidth}"  # layer
         r"p{0.05\linewidth}"  # encapsulation
-        r"p{0.04\linewidth}"  # ripple_bucket (L/I/C)
-        r"p{0.03\linewidth}"  # recurring flag
-        r"r"                  # loc_changed
-        r"p{0.46\linewidth}"  # justification
+        r"p{0.03\linewidth}"  # ripple_bucket (L/I/C)
+        r"p{0.04\linewidth}"  # recurring flag
+        r"p{0.04\linewidth}"  # loc_changed (fixed-width to pin total <=1)
+        r"p{0.43\linewidth}"  # justification
     )
     lines.append(r"\begin{longtable}{@{}" + col_spec + r"@{}}")
     lines.append(
@@ -563,6 +589,7 @@ def _render_repair_log_inspections() -> str:
 
     lines.append(r"\end{longtable}")
     lines.append(r"\endgroup")
+    lines.append(r"\end{landscape}")
     return "\n".join(lines) + "\n"
 
 
