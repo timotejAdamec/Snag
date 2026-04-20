@@ -364,7 +364,11 @@ def compute_layer_divergence(df: pd.DataFrame) -> pd.DataFrame:
     prod["is_platform_specific"] = ~prod["source_set"].isin(NEUTRAL_SOURCE_SETS)
     prod["platform_specific_loc"] = prod["kotlin_loc"].where(prod["is_platform_specific"], 0)
 
-    layer_rows = list(LAYER_ORDER)
+    # Keep heatmap parity: only emit rows that carry LOC. `feat (other)` is a
+    # regression tripwire in LAYER_ORDER -- if featShared ever drifts back into
+    # a non-hex shape the row materialises here and in the heatmap together.
+    present_layers = set(prod["layer"].unique())
+    layer_rows = [layer for layer in LAYER_ORDER if layer in present_layers]
 
     records: list[dict] = []
     for layer in layer_rows:
