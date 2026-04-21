@@ -36,40 +36,40 @@ rules:
   - id: aggregation_koin_fe
     bucket: intrinsic
     recurring: true
-    reason: "FE Koin aggregation — each feature's DI module is listed here, every feature add/remove edits this file"
+    reason: "Agregace Koin FE — DI modul každé funkcionality je zde vyjmenován, každé přidání/odebrání funkcionality tento soubor upravuje"
     path_glob: "koinModulesAggregate/fe/**"
 
   - id: aggregation_koin_be
     bucket: intrinsic
     recurring: true
-    reason: "BE Koin aggregation — each feature's DI module is listed here, every feature add/remove edits this file"
+    reason: "Agregace Koin BE — DI modul každé funkcionality je zde vyjmenován, každé přidání/odebrání funkcionality tento soubor upravuje"
     path_glob: "koinModulesAggregate/be/**"
 
   # -------- Intrinsic: sync handler registry ------------------------------------
   - id: sync_handler_registry
     bucket: intrinsic
     recurring: true
-    reason: "Sync handler registry — each syncable feature registers itself here"
+    reason: "Registr sync handlerů — každá synchronizovatelná funkcionalita se zde registruje"
     path_glob: "**/sync/**SyncHandler*.kt"
 
   - id: sync_entity_type_enum
     bucket: intrinsic
     recurring: true
-    reason: "Sync entity-type enum — each new syncable entity adds a variant"
+    reason: "Sync entity-type enum — každá nová synchronizovatelná entita přidává variantu"
     path_glob: "**/sync/**SyncEntityType*.kt"
 
   # -------- Intrinsic: dev/test data seeding ------------------------------------
   - id: dev_data_seeder
     bucket: intrinsic
     recurring: false
-    reason: "Dev data seeder — enumerates feature entities, touched once per feature but not a combinatorial site (no business requirement that every feature seed dev data)"
+    reason: "Seeder vývojových dat — enumeruje entity funkcionalit, upraven jednou per funkcionalitu, ale není kombinatorickým místem (žádný business požadavek, aby každá funkcionalita seedovala vývojová data)"
     path_glob: "server/src/main/kotlin/**/DevData*.kt"
 
   # -------- Intrinsic: gradle plumbing ------------------------------------------
   - id: settings_gradle
     bucket: intrinsic
     recurring: true
-    reason: "settings.gradle.kts — every module add/remove is listed here"
+    reason: "settings.gradle.kts — každé přidání/odebrání modulu je zde vyjmenováno"
     path_glob: "settings.gradle.kts"
 
   # -------- Local: build files inside the change's own module tree ---------------
@@ -81,5 +81,5 @@ rules:
   - id: build_gradle_collateral
     bucket: collateral
     recurring: false
-    reason: "build.gradle.kts edit in a pre-existing module — typically a new dependency or plugin declaration, avoidable if the convention plugins auto-wire it"
+    reason: "Úprava build.gradle.kts ve stávajícím modulu — typicky nová závislost nebo deklarace pluginu, odbouratelné pokud konvenční pluginy autowire"
     path_glob: "**/build.gradle.kts"
