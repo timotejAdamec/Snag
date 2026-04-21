@@ -3,6 +3,15 @@ ref: experiment/wearos-feasibility-spike
 base_ref: 7fb6e2b27
 base_sharing_snapshot: analysis/data/sharing_report_with_loc_base_main_e076e89e5.csv
 repair_log:
+- file: analysis/wearos_experiment.md
+  unit: :root::non-module
+  status: M
+  loc_churn: 44
+  bucket: local
+  recurring: false
+  source: hand:wearos_classifier
+  reason: Evaluation log for the Wear OS experiment (thesis §4.4 evidence). Local to the experiment analysis artifacts, not
+    shipped to users.
 - file: build-logic/src/main/kotlin/cz/adamec/timotej/snag/buildsrc/configuration/AutoWiring.kt
   unit: :build-logic::non-module
   status: M
@@ -78,7 +87,7 @@ repair_log:
 - file: feat/authentication/fe/driven/impl/build.gradle.kts -> feat/authentication/fe/common/driven/build.gradle.kts
   unit: :root::non-module
   status: R
-  loc_churn: 0
+  loc_churn: 1
   bucket: collateral
   recurring: false
   source: rule:build_gradle_collateral
@@ -105,35 +114,35 @@ repair_log:
   reason: 'Mobile-extraction paralelní modul: obsahuje vazbu AuthTokenProvider dříve nadměrně sdílenou v common. Opakuje se
     u každé funkcionality vyžadující per-platform vazbu.'
 - file: feat/authentication/fe/driven/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/authentication/fe/driven/internal/LH.kt
-    -> feat/authentication/fe/common/driven/src/commonMain/kotlin/cz/adamec/timotej/snag/authentication/fe/common/driven/internal/LH.kt
+    -> feat/authentication/fe/nonWear/driven/src/commonMain/kotlin/cz/adamec/timotej/snag/authentication/fe/nonwear/driven/internal/LH.kt
   unit: :feat:authentication:fe:driven:impl::commonMain[FE]
   status: R
   loc_churn: 2
   bucket: collateral
   recurring: false
   source: hand:wearos_classifier
-  reason: 'Git rename: feat/authentication/fe/driven/impl → feat/authentication/fe/common/driven (variant-first refaktoring
-    D8). Strukturální, bez změny sémantiky kódu.'
+  reason: 'Git rename: feat/authentication/fe/driven/impl → feat/authentication/fe/nonWear/driven (D8 mobile-extraction).
+    Strukturální, bez změny sémantiky kódu.'
 - file: feat/authentication/fe/driven/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/authentication/fe/driven/internal/MockAuthTokenProvider.kt
-    -> feat/authentication/fe/common/driven/src/commonMain/kotlin/cz/adamec/timotej/snag/authentication/fe/common/driven/internal/MockAuthTokenProvider.kt
+    -> feat/authentication/fe/nonWear/driven/src/commonMain/kotlin/cz/adamec/timotej/snag/authentication/fe/nonwear/driven/internal/MockAuthTokenProvider.kt
   unit: :feat:authentication:fe:driven:impl::commonMain[FE]
   status: R
-  loc_churn: 6
+  loc_churn: 4
   bucket: collateral
   recurring: false
   source: hand:wearos_classifier
-  reason: 'Git rename: feat/authentication/fe/driven/impl → feat/authentication/fe/common/driven (variant-first refaktoring
-    D8). Strukturální, bez změny sémantiky kódu.'
+  reason: 'Git rename: feat/authentication/fe/driven/impl → feat/authentication/fe/nonWear/driven (D8 mobile-extraction).
+    Strukturální, bez změny sémantiky kódu.'
 - file: feat/authentication/fe/driven/impl/src/commonMain/kotlin/cz/adamec/timotej/snag/authentication/fe/driven/internal/OidcAuthTokenProvider.kt
-    -> feat/authentication/fe/common/driven/src/commonMain/kotlin/cz/adamec/timotej/snag/authentication/fe/common/driven/internal/OidcAuthTokenProvider.kt
+    -> feat/authentication/fe/nonWear/driven/src/commonMain/kotlin/cz/adamec/timotej/snag/authentication/fe/nonwear/driven/internal/OidcAuthTokenProvider.kt
   unit: :feat:authentication:fe:driven:impl::commonMain[FE]
   status: R
-  loc_churn: 6
+  loc_churn: 4
   bucket: collateral
   recurring: false
   source: hand:wearos_classifier
-  reason: 'Git rename: feat/authentication/fe/driven/impl → feat/authentication/fe/common/driven (variant-first refaktoring
-    D8). Strukturální, bez změny sémantiky kódu.'
+  reason: 'Git rename: feat/authentication/fe/driven/impl → feat/authentication/fe/nonWear/driven (D8 mobile-extraction).
+    Strukturální, bez změny sémantiky kódu.'
 - file: feat/authentication/fe/driven/impl/src/iosMain/kotlin/cz/adamec/timotej/snag/authentication/fe/driven/di/AuthenticationDrivenModule.ios.kt
     -> feat/authentication/fe/common/driven/src/iosMain/kotlin/cz/adamec/timotej/snag/authentication/fe/common/driven/di/AuthenticationDrivenModule.ios.kt
   unit: :feat:authentication:fe:driven:impl::iosMain
@@ -187,7 +196,7 @@ repair_log:
 - file: feat/authentication/fe/nonWear/driven/build.gradle.kts
   unit: :root::non-module
   status: A
-  loc_churn: 26
+  loc_churn: 27
   bucket: collateral
   recurring: false
   source: rule:build_gradle_collateral
@@ -939,7 +948,7 @@ repair_log:
 - file: wearApp/build.gradle.kts
   unit: :root::non-module
   status: M
-  loc_churn: 27
+  loc_churn: 36
   bucket: local
   recurring: false
   source: hand:wearos_classifier
@@ -963,7 +972,7 @@ repair_log:
 - file: wearApp/src/main/kotlin/cz/adamec/timotej/snag/wear/WearApp.kt
   unit: :root::non-module
   status: A
-  loc_churn: 82
+  loc_churn: 85
   bucket: local
   recurring: false
   source: hand:wearos_classifier
@@ -980,6 +989,38 @@ repair_log:
   unit: :root::non-module
   status: A
   loc_churn: 66
+  bucket: local
+  recurring: false
+  source: hand:wearos_classifier
+  reason: Kompoziční shell Wear OS platform-app — lokální v rámci modulu nové platformy.
+- file: wearApp/src/main/kotlin/cz/adamec/timotej/snag/wear/seed/FakeAuthTokenProvider.kt
+  unit: :root::non-module
+  status: A
+  loc_churn: 31
+  bucket: local
+  recurring: false
+  source: hand:wearos_classifier
+  reason: Kompoziční shell Wear OS platform-app — lokální v rámci modulu nové platformy.
+- file: wearApp/src/main/kotlin/cz/adamec/timotej/snag/wear/seed/FakeCanCreateProjectUseCase.kt
+  unit: :root::non-module
+  status: A
+  loc_churn: 21
+  bucket: local
+  recurring: false
+  source: hand:wearos_classifier
+  reason: Kompoziční shell Wear OS platform-app — lokální v rámci modulu nové platformy.
+- file: wearApp/src/main/kotlin/cz/adamec/timotej/snag/wear/seed/FakeGetProjectsUseCase.kt
+  unit: :root::non-module
+  status: A
+  loc_churn: 60
+  bucket: local
+  recurring: false
+  source: hand:wearos_classifier
+  reason: Kompoziční shell Wear OS platform-app — lokální v rámci modulu nové platformy.
+- file: wearApp/src/main/kotlin/cz/adamec/timotej/snag/wear/seed/WearSeedModule.kt
+  unit: :root::non-module
+  status: A
+  loc_churn: 28
   bucket: local
   recurring: false
   source: hand:wearos_classifier
