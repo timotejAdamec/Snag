@@ -11,6 +11,6 @@ unit,module_path,source_set,file_count,loc_churn_sum,dominant_bucket,recurring,b
 :feat:projects:fe:driving:impl::nonWebMain,:feat:projects:fe:driving:impl,nonWebMain,3,12,collateral,False,2,8
 :feat:projects:fe:driving:impl::webMain,:feat:projects:fe:driving:impl,webMain,3,12,collateral,False,2,8
 :koinModulesAggregate:fe::commonMain[FE],:koinModulesAggregate:fe,commonMain[FE],1,10,intrinsic,True,2,8
-:root::non-module,:root,non-module,42,1414,intrinsic,True,0,0
+:root::non-module,:root,non-module,42,1414,local,True,0,0
 :root::settings,:root,settings,1,12,intrinsic,True,0,0
 :testInfra:fe::commonMain[FE],:testInfra:fe,commonMain[FE],1,6,collateral,False,74,160

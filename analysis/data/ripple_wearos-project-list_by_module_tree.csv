@@ -1,7 +1,7 @@
 tree,file_count,loc_churn,intrinsic_files,collateral_files,local_files
-feat/,74,1189,9,65,0
-koinModulesAggregate/,14,272,14,0,0
-wearApp/,6,254,0,1,5
+feat/,74,1189,0,63,11
+koinModulesAggregate/,14,272,8,0,6
+wearApp/,6,254,0,0,6
 build-logic/,5,123,0,5,0
 composeApp/,2,11,0,2,0
 testInfra/,2,9,0,2,0
