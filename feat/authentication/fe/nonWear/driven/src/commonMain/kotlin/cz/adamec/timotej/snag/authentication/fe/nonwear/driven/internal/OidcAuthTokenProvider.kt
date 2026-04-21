@@ -10,9 +10,9 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.authentication.fe.common.driven.internal
+package cz.adamec.timotej.snag.authentication.fe.nonwear.driven.internal
 
-import cz.adamec.timotej.snag.authentication.fe.common.driven.internal.LH.logger
+import cz.adamec.timotej.snag.authentication.fe.nonwear.driven.internal.LH.logger
 import cz.adamec.timotej.snag.authentication.fe.ports.AuthState
 import cz.adamec.timotej.snag.authentication.fe.ports.AuthTokenProvider
 import cz.adamec.timotej.snag.configuration.common.RunConfig
@@ -24,7 +24,7 @@ import org.publicvalue.multiplatform.oidc.tokenstore.TokenStore
 import org.publicvalue.multiplatform.oidc.types.CodeChallengeMethod
 import org.publicvalue.multiplatform.oidc.types.Jwt
 
-class OidcAuthTokenProvider(
+internal class OidcAuthTokenProvider(
     private val tokenStore: TokenStore,
     private val authFlowFactory: CodeAuthFlowFactory,
     redirectUri: String,

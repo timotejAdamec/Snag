@@ -10,15 +10,15 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.authentication.fe.common.driven.internal
+package cz.adamec.timotej.snag.authentication.fe.nonwear.driven.internal
 
-import cz.adamec.timotej.snag.authentication.fe.common.driven.internal.LH.logger
+import cz.adamec.timotej.snag.authentication.fe.nonwear.driven.internal.LH.logger
 import cz.adamec.timotej.snag.authentication.fe.ports.AuthState
 import cz.adamec.timotej.snag.authentication.fe.ports.AuthTokenProvider
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-class MockAuthTokenProvider : AuthTokenProvider {
+internal class MockAuthTokenProvider : AuthTokenProvider {
     private val _authState =
         MutableStateFlow<AuthState>(
             AuthState.Authenticated(authProviderId = MOCK_AUTH_PROVIDER_ID),

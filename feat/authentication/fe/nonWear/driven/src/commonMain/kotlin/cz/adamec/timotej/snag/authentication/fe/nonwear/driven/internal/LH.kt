@@ -10,7 +10,7 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.authentication.fe.common.driven.internal
+package cz.adamec.timotej.snag.authentication.fe.nonwear.driven.internal
 
 import co.touchlab.kermit.Logger
 

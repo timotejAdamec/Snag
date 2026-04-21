@@ -13,8 +13,8 @@
 package cz.adamec.timotej.snag.authentication.fe.nonwear.driven.di
 
 import cz.adamec.timotej.snag.authentication.fe.common.driven.di.OIDC_REDIRECT_URI_QUALIFIER
-import cz.adamec.timotej.snag.authentication.fe.common.driven.internal.MockAuthTokenProvider
-import cz.adamec.timotej.snag.authentication.fe.common.driven.internal.OidcAuthTokenProvider
+import cz.adamec.timotej.snag.authentication.fe.nonwear.driven.internal.MockAuthTokenProvider
+import cz.adamec.timotej.snag.authentication.fe.nonwear.driven.internal.OidcAuthTokenProvider
 import cz.adamec.timotej.snag.authentication.fe.ports.AuthTokenProvider
 import cz.adamec.timotej.snag.configuration.common.RunConfig
 import org.koin.core.module.Module
