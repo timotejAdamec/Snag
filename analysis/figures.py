@@ -214,10 +214,10 @@ def figure_layer_platform_set_heatmap(df: pd.DataFrame) -> None:
     data = matrix.values
     im = ax.imshow(data, aspect="auto", cmap="YlOrRd")
 
-    ax.set_xlabel("Platform set (how many platforms the code reaches)")
-    ax.set_ylabel("Architecture layer")
+    ax.set_xlabel("Sada platforem (počet platforem, na které kód zasahuje)")
+    ax.set_ylabel("Vrstva architektury")
     ax.set_title(
-        "Production Kotlin LOC by (architecture layer × platform reach)",
+        "Produkční Kotlin LOC (vrstva architektury × dosah platforem)",
         pad=14,
     )
 
@@ -299,9 +299,9 @@ NEUTRAL_SOURCE_SETS = frozenset({"commonMain", "main"})
 
 # (source_set, platform_set) -> (segment id, legend label, colour)
 NEUTRAL_SEGMENT_SPEC: dict[tuple[str, str], tuple[str, str, str]] = {
-    ("commonMain", "all"):      ("commonMain_all", "commonMain · all (6p fe+be)",  "#2d3e5e"),
-    ("commonMain", "frontend"): ("commonMain_fe",  "commonMain · frontend (5p fe)", "#4c72b0"),
-    ("main",       "backend"):  ("main_be",        "main · backend (1p be)",        "#8aa4c8"),
+    ("commonMain", "all"):      ("commonMain_all", "commonMain · vše (6p fe+be)",    "#2d3e5e"),
+    ("commonMain", "frontend"): ("commonMain_fe",  "commonMain · frontend (5p fe)",  "#4c72b0"),
+    ("main",       "backend"):  ("main_be",        "main · backend (1p be)",         "#8aa4c8"),
 }
 NEUTRAL_SEGMENT_ORDER = ["commonMain_all", "commonMain_fe", "main_be"]
 NEUTRAL_SEGMENT_COLORS = {seg_id: colour for (seg_id, _, colour) in NEUTRAL_SEGMENT_SPEC.values()}
@@ -477,8 +477,8 @@ def figure_layer_divergence(df: pd.DataFrame) -> None:
         total = int(row["total_loc"])
         share_pct = row["platform_specific_share"] * 100.0
         annotation = (
-            f"  {int(row['divergent_module_count'])}/{int(row['total_module_count'])} modules "
-            f"divergent ({share_pct:.1f}% LOC)"
+            f"  {int(row['divergent_module_count'])}/{int(row['total_module_count'])} "
+            f"modulů divergentních ({share_pct:.1f}% LOC)"
         )
         ax.text(
             total + max(1, int(seg_matrix.values.sum() * 0.005)),
@@ -492,10 +492,10 @@ def figure_layer_divergence(df: pd.DataFrame) -> None:
 
     ax.set_yticks(y_pos, labels=layers)
     ax.invert_yaxis()
-    ax.set_xlabel("Production Kotlin LOC")
-    ax.set_ylabel("Hexagonal layer")
+    ax.set_xlabel("Produkční Kotlin LOC")
+    ax.set_ylabel("Hexagonální vrstva")
     ax.set_title(
-        "Per-hex-layer platform-specific LOC share (descriptive)",
+        "Podíl platformně-specifického LOC v hexagonální vrstvě (deskriptivně)",
         pad=14,
     )
     ax.legend(loc="lower right", frameon=True, fontsize=8, ncol=2)
@@ -677,19 +677,19 @@ def figure_ripple_buckets() -> None:
             ax.text(
                 total + max(1, total * 0.02),
                 y_pos[i],
-                f"  recur. intrinsic units = {row['recurring_intrinsic_units']}",
+                f"  opak. intrinsic jednotky = {row['recurring_intrinsic_units']}",
                 ha="left",
                 va="center",
                 fontsize=8,
                 color="#333",
             )
 
-    _stacked_barh(ax_files, "bucket_files", "Ripple by file count", "files touched")
-    _stacked_barh(ax_churn, "bucket_churn", "Ripple by LOC churn", "LOC churn (added + removed)")
+    _stacked_barh(ax_files, "bucket_files", "Ripple podle počtu souborů", "zasaženo souborů")
+    _stacked_barh(ax_churn, "bucket_churn", "Ripple podle LOC churn", "LOC churn (přidáno + odebráno)")
 
     handles, labels = ax_files.get_legend_handles_labels()
     fig.legend(handles, labels, loc="lower center", ncol=len(RIPPLE_BUCKET_ORDER), frameon=False)
-    fig.suptitle("Fig. 4.3 — Ripple decomposition per studied change", fontsize=12)
+    fig.suptitle("Obr. 4.3 — Ripple dekompozice pro každou zkoumanou změnu", fontsize=12)
     fig.tight_layout(rect=(0, 0.05, 1, 0.95))
 
     FIGURES_DIR.mkdir(parents=True, exist_ok=True)
@@ -734,8 +734,8 @@ def figure_wearos_ripple_by_module_tree() -> None:
                  color=RIPPLE_BUCKET_COLORS["collateral"], label="collateral")
     ax_files.bar(x_pos, local, bar_width, bottom=intrinsic + collateral,
                  color=RIPPLE_BUCKET_COLORS["local"], label="local")
-    ax_files.set_ylabel("files touched")
-    ax_files.set_title("Fig. 4.4 — Wear OS extension ripple by repo tree")
+    ax_files.set_ylabel("zasaženo souborů")
+    ax_files.set_title("Obr. 4.4 — Ripple rozšíření Wear OS podle stromu repozitáře")
     ax_files.grid(axis="y", linestyle=":", alpha=0.5)
     ax_files.legend(loc="upper right", frameon=False, fontsize=9)
 
@@ -743,7 +743,7 @@ def figure_wearos_ripple_by_module_tree() -> None:
         ax_files.text(x_pos[i], total + 1, str(total), ha="center", va="bottom", fontsize=8)
 
     ax_loc.bar(x_pos, df["loc_churn"], bar_width, color="#888")
-    ax_loc.set_ylabel("LOC churn (added + removed)")
+    ax_loc.set_ylabel("LOC churn (přidáno + odebráno)")
     ax_loc.set_xticks(x_pos)
     ax_loc.set_xticklabels(trees, rotation=30, ha="right")
     ax_loc.grid(axis="y", linestyle=":", alpha=0.5)
