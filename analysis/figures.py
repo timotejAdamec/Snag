@@ -565,13 +565,239 @@ def figure_wearos_before_after(df: pd.DataFrame) -> None:
     """
 
 
+# ---------------------------------------------------------------------------------------------
+# Structural sharing score — per-module classification by applied plugin family
+# ---------------------------------------------------------------------------------------------
+#
+# A "platform-neutral plugin" is one of the KMP multiplatform plugins in PlatformReach.kt:
+# their applied-id contains the substring `multiplatform.module`. Single-target plugins
+# (backend JVM, Android application) and modules that apply no Snag plugin (e.g. :androidApp
+# top-level shell) are classified as platform-specific.
+#
+# A module is counted in the denominator only when it has at least one production row with
+# non-zero LOC — consistent with compute_layer_divergence's filter discipline.
+
+
+def _is_multiplatform_plugin(plugin_applied: str) -> bool:
+    return "multiplatform.module" in plugin_applied
+
+
+_STRUCTURAL_SCORE_COLUMNS = ["layer", "multiplatform_modules", "total_modules", "share"]
+
+
+def compute_structural_sharing_score(df: pd.DataFrame) -> pd.DataFrame:
+    """Per-layer and global fraction of modules whose plugin is KMP multiplatform.
+
+    Returns one row per hex layer that has any production LOC, plus a final
+    `"(celkem)"` row carrying the global ratio. The per-layer `share` is local
+    (layer's multiplatform count / layer's total count); the global row uses
+    the grand totals.
+    """
+    empty_result = pd.DataFrame(
+        [{"layer": "(celkem)", "multiplatform_modules": 0, "total_modules": 0, "share": 0.0}],
+        columns=_STRUCTURAL_SCORE_COLUMNS,
+    )
+    if df.empty:
+        return empty_result
+
+    prod = df.copy()
+    prod = prod[prod["platform_set"] != ""]
+    prod = prod[~prod["source_set"].str.endswith("Test")]
+    prod["kotlin_loc"] = prod["kotlin_loc"].astype(int)
+    prod = prod[prod["kotlin_loc"] > 0]
+    if prod.empty:
+        return empty_result
+
+    prod["layer"] = prod.apply(derive_layer, axis=1)
+    prod["is_multiplatform"] = prod["plugin_applied"].map(_is_multiplatform_plugin)
+
+    per_module = (
+        prod.groupby("module_path", as_index=False)
+        .agg(
+            layer=("layer", "first"),
+            is_multiplatform=("is_multiplatform", "max"),
+        )
+    )
+
+    records: list[dict] = []
+    present_layers = set(per_module["layer"].unique())
+    for layer in [*LAYER_ORDER, "other"]:
+        if layer not in present_layers:
+            continue
+        subset = per_module[per_module["layer"] == layer]
+        total = int(len(subset))
+        mp = int(subset["is_multiplatform"].sum())
+        share = mp / total if total > 0 else 0.0
+        records.append({
+            "layer": layer,
+            "multiplatform_modules": mp,
+            "total_modules": total,
+            "share": share,
+        })
+
+    grand_total = int(len(per_module))
+    grand_mp = int(per_module["is_multiplatform"].sum())
+    grand_share = grand_mp / grand_total if grand_total > 0 else 0.0
+    records.append({
+        "layer": "(celkem)",
+        "multiplatform_modules": grand_mp,
+        "total_modules": grand_total,
+        "share": grand_share,
+    })
+
+    return pd.DataFrame(records, columns=_STRUCTURAL_SCORE_COLUMNS)
+
+
+def write_structural_sharing_score(df: pd.DataFrame) -> None:
+    """Write `data/structural_sharing_score.csv` for §4.2 Part C.
+
+    This metric is a single headline number plus a per-layer decomposition; the
+    §4.2 prose cites it inline. No dedicated figure is produced — the per-layer
+    breakdown would duplicate the divergent-module-count annotation already on
+    `fig_4_2_layer_divergence`. The CSV is the canonical artefact; §A.2 of the
+    appendix mentions it alongside the full sharing report.
+    """
+    agg = compute_structural_sharing_score(df)
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
+    csv_path = DATA_DIR / "structural_sharing_score.csv"
+    agg.to_csv(csv_path, index=False, lineterminator="\n")
+    print(f"wrote {csv_path}")
+
+
+_REACH_HISTOGRAM_COLUMNS = ["reach", "kotlin_loc", "source_set_count", "share"]
+
+
+def compute_platform_reach_histogram(df: pd.DataFrame) -> pd.DataFrame:
+    """Bucket production Kotlin LOC by the number of platforms a source set reaches.
+
+    The `platform_set` column emitted by SharingReportTask already carries the
+    (plugin family × source set) reach label — `PLATFORM_SET_REACH_COUNT` maps
+    it back to an integer 1..6. Rows with empty `platform_set`, test source
+    sets, or unknown reach labels are dropped (they carry no reach semantics).
+
+    The output is stable-shaped: reach buckets 1..6 are always present, so a
+    bucket with zero LOC materialises as a 0 row instead of vanishing. `share`
+    is each bucket's fraction of the grand total (sums to 1.0 when there is
+    any LOC, and is uniformly 0 for empty input).
+    """
+    bins = [1, 2, 3, 4, 5, 6]
+    if df.empty:
+        return pd.DataFrame(
+            [{"reach": r, "kotlin_loc": 0, "source_set_count": 0, "share": 0.0} for r in bins],
+            columns=_REACH_HISTOGRAM_COLUMNS,
+        )
+
+    prod = df.copy()
+    prod = prod[prod["platform_set"] != ""]
+    prod = prod[~prod["source_set"].str.endswith("Test")]
+    prod["kotlin_loc"] = prod["kotlin_loc"].astype(int)
+    prod["reach"] = prod["platform_set"].map(PLATFORM_SET_REACH_COUNT)
+    prod = prod[prod["reach"].notna()]
+    prod["reach"] = prod["reach"].astype(int)
+
+    total = int(prod["kotlin_loc"].sum())
+    records: list[dict] = []
+    for r in bins:
+        subset = prod[prod["reach"] == r]
+        loc = int(subset["kotlin_loc"].sum())
+        share = loc / total if total > 0 else 0.0
+        records.append({
+            "reach": r,
+            "kotlin_loc": loc,
+            "source_set_count": int(len(subset)),
+            "share": share,
+        })
+    return pd.DataFrame(records, columns=_REACH_HISTOGRAM_COLUMNS)
+
+
+# ---------------------------------------------------------------------------------------------
+# Figure 4.2 (part B) — LOC distribution by platform reach (1..6)
+# ---------------------------------------------------------------------------------------------
+#
+# Reach-count histogram: x = 6..1 (most-shared on the left, platform-specific on the right),
+# y = Kotlin LOC in that bucket. The 6-bucket is the fe+be shared `commonMain`, the 5-bucket is
+# frontend-only `commonMain`, the 1-bucket is platform-specific tail (backend `main`, webMain,
+# iosMain, androidMain …). The share metric (percentage of production LOC) is annotated on
+# each bar to give §4.2 a headline "N % of the code reaches K platforms" sentence per row.
+
+
+REACH_BUCKET_LABELS: dict[int, str] = {
+    6: "6 (vše: fe+be)",
+    5: "5 (frontend)",
+    4: "4 (nonWeb fe+be, nonAndroid fe, nonJvm)",
+    3: "3 (nonWeb fe)",
+    2: "2 (mobile, web, jvm shared)",
+    1: "1 (platformně specifické)",
+}
+
+REACH_BUCKET_COLORS: dict[int, str] = {
+    6: "#2d3e5e",
+    5: "#4c72b0",
+    4: "#5aa4d4",
+    3: "#8fbdd9",
+    2: "#dd8452",
+    1: "#c44e52",
+}
+
+
 def figure_platform_reach_histogram(df: pd.DataFrame) -> None:
-    """
-    Phase 4: histogram — x = number of platforms a line reaches (1..6), y = LOC.
-    Requires a source-set → platform reach mapping parameterized by plugin_applied:
-    full-platform plugins map commonMain → 6, frontend-only plugins map commonMain → 5,
-    backend plugins map main → 1 (jvm backend only).
-    """
+    """Emit `fig_4_2_platform_reach_histogram.{pdf,png}` for §4.2 Part B."""
+    agg = compute_platform_reach_histogram(df)
+    total = int(agg["kotlin_loc"].sum())
+
+    # Display in descending reach (most-shared at top) so the eye follows the
+    # same "shared-first" axis as the §4.2 heatmap.
+    agg_desc = agg.sort_values("reach", ascending=False).reset_index(drop=True)
+
+    fig, ax = plt.subplots(figsize=(9.5, 4.2))
+    y_pos = np.arange(len(agg_desc))
+
+    colors = [REACH_BUCKET_COLORS[int(r)] for r in agg_desc["reach"]]
+    ax.barh(y_pos, agg_desc["kotlin_loc"], color=colors, edgecolor="white", linewidth=0.6)
+
+    labels = [REACH_BUCKET_LABELS[int(r)] for r in agg_desc["reach"]]
+    ax.set_yticks(y_pos, labels=labels)
+    ax.invert_yaxis()
+    ax.set_xlabel("Produkční Kotlin LOC")
+    ax.set_ylabel("Dosah (počet platforem)")
+    ax.set_title("Distribuce LOC podle počtu platforem, na které zdrojový kód zasahuje", pad=14)
+    ax.grid(axis="x", linestyle=":", alpha=0.5)
+
+    max_loc = int(agg_desc["kotlin_loc"].max()) if total > 0 else 0
+    for i, (_, row) in enumerate(agg_desc.iterrows()):
+        loc = int(row["kotlin_loc"])
+        share_pct = row["share"] * 100.0
+        if loc == 0:
+            annotation = "0 LOC"
+        else:
+            annotation = f"{loc:,} LOC ({share_pct:.1f}%)"
+        ax.text(
+            loc + max(1, int(max_loc * 0.01)) if max_loc > 0 else 0.1,
+            y_pos[i],
+            annotation,
+            ha="left",
+            va="center",
+            fontsize=9,
+            color="#333",
+        )
+    if max_loc > 0:
+        ax.set_xlim(right=max_loc * 1.18)
+
+    fig.text(
+        0.99, 0.01,
+        f"Σ LOC = {total:,}",
+        ha="right", va="bottom", fontsize=9, style="italic",
+    )
+
+    fig.tight_layout()
+    FIGURES_DIR.mkdir(parents=True, exist_ok=True)
+    pdf_path = FIGURES_DIR / "fig_4_2_platform_reach_histogram.pdf"
+    png_path = FIGURES_DIR / "fig_4_2_platform_reach_histogram.png"
+    fig.savefig(pdf_path)
+    fig.savefig(png_path, dpi=200)
+    plt.close(fig)
+    print(f"wrote {pdf_path}")
+    print(f"wrote {png_path}")
 
 
 RIPPLE_BUCKET_ORDER = ["local", "intrinsic", "collateral"]
@@ -771,6 +997,8 @@ def main() -> int:
     df = load_joined_table()
     figure_layer_platform_set_heatmap(df)
     figure_layer_divergence(df)
+    figure_platform_reach_histogram(df)
+    write_structural_sharing_score(df)
     figure_ripple_buckets()
     figure_wearos_ripple_by_module_tree()
     return 0
