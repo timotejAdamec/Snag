@@ -473,6 +473,7 @@ def figure_layer_divergence(df: pd.DataFrame) -> None:
         left += values
 
     # Annotate each bar with "M/N modules divergent" + share percentage.
+    max_total = int(agg["total_loc"].max()) if not agg.empty else 0
     for i, (_, row) in enumerate(agg.iterrows()):
         total = int(row["total_loc"])
         share_pct = row["platform_specific_share"] * 100.0
@@ -489,6 +490,11 @@ def figure_layer_divergence(df: pd.DataFrame) -> None:
             fontsize=8,
             color="#333",
         )
+
+    # Reserve headroom on the right so the per-bar annotations stay inside the
+    # axes frame (the annotations can be ~40 chars wide for the widest layers).
+    if max_total > 0:
+        ax.set_xlim(right=max_total * 1.55)
 
     ax.set_yticks(y_pos, labels=layers)
     ax.invert_yaxis()
@@ -781,7 +787,7 @@ def figure_platform_reach_histogram(df: pd.DataFrame) -> None:
             color="#333",
         )
     if max_loc > 0:
-        ax.set_xlim(right=max_loc * 1.18)
+        ax.set_xlim(right=max_loc * 1.32)
 
     fig.text(
         0.99, 0.01,
@@ -898,8 +904,10 @@ def figure_ripple_buckets() -> None:
         ax.grid(axis="x", linestyle=":", alpha=0.5)
 
         # Annotate the recurring intrinsic unit count at the end of each bar.
+        totals = [sum(r[key].values()) for r in per_change_rows]
+        max_total = max(totals) if totals else 0
         for i, row in enumerate(per_change_rows):
-            total = sum(row[key].values())
+            total = totals[i]
             ax.text(
                 total + max(1, total * 0.02),
                 y_pos[i],
@@ -909,6 +917,11 @@ def figure_ripple_buckets() -> None:
                 fontsize=8,
                 color="#333",
             )
+
+        # Reserve headroom on the right so the "opak. intrinsic jednotky = N"
+        # annotation stays inside the axes frame for the widest bars.
+        if max_total > 0:
+            ax.set_xlim(right=max_total * 1.30)
 
     _stacked_barh(ax_files, "bucket_files", "Ripple podle počtu souborů", "zasaženo souborů")
     _stacked_barh(ax_churn, "bucket_churn", "Ripple podle LOC churn", "LOC churn (přidáno + odebráno)")
