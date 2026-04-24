@@ -28,4 +28,4 @@ unit,module_path,source_set,file_count,loc_churn_sum,dominant_bucket,recurring,b
 :feat:projects:fe:driving:impl::nonWebMain,:feat:projects:fe:driving:impl,nonWebMain,2,142,local,False,2,8
 :feat:projects:fe:driving:impl::webMain,:feat:projects:fe:driving:impl,webMain,2,155,local,False,2,8
 :feat:projects:fe:ports::commonMain[FE],:feat:projects:fe:ports,commonMain[FE],2,73,local,False,11,32
-:root::non-module,:root,non-module,7,101,intrinsic,True,0,0
+:root::non-module,:root,non-module,7,101,local,True,0,0

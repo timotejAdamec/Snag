@@ -754,38 +754,36 @@ repair_log:
   unit: :root::non-module
   status: A
   loc_churn: 30
-  bucket: intrinsic
-  recurring: true
-  ns_theorem: DVT
+  bucket: local
+  recurring: false
   source: hand
-  reason: Feature-specific Exposed DAO entity forced to live in the shared `:feat:shared:database:be:impl` module by the
-    centralized BE schema architecture (DVT anti-pattern). Every new persistent entity adds an analogous file to this same
-    module at a known location with the same naming convention — a recurring intrinsic site. Reclassified from local →
-    intrinsic/recurring/DVT (r2) after scope narrowing to `:feat:projects:*` (see `projectphoto-forward_critique.md`
-    §Reclassification note r2). Unit fallback to `:root::non-module` remains a drift artifact from the `feat/shared` →
-    `:featuresShared` move in commit dc0d9b8a2 post-b5365d611.
+  reason: Per-entity feature-specific Exposed DAO. NEW file created as part of ProjectPhoto's schema. Fails the methodology's
+    recurring test — future features create their own `XxxEntity.kt` files rather than re-editing this one, so this file
+    receives no "similar edit at each future addition". Physically lives in the shared `:feat:shared:database:be:impl`
+    module by centralized BE schema convention (see SoC gravity note in `projectphoto-forward_critique.md` Obs 1), but
+    constitutes local feature content by the strict intrinsic definition. Reclassified intrinsic → local (r3, 2026-04-24);
+    only `AllTables.kt` remains as true recurring DVT. Unit fallback to `:root::non-module` is a drift artifact from the
+    `feat/shared` → `:featuresShared` move in commit dc0d9b8a2 post-b5365d611.
 - file: feat/shared/database/be/impl/src/main/kotlin/cz/adamec/timotej/snag/feat/shared/database/be/ProjectPhotosTable.kt
   unit: :root::non-module
   status: A
   loc_churn: 23
-  bucket: intrinsic
-  recurring: true
-  ns_theorem: DVT
+  bucket: local
+  recurring: false
   source: hand
-  reason: Feature-specific Exposed Table (`project_photos` with FKs) forced to live in the shared `:feat:shared:database:be:impl`
-    module by the centralized BE schema architecture. Every new persistent entity adds an analogous Table file to this same
-    module — recurring DVT aggregation site. Reclassified from local → intrinsic/recurring/DVT (r2) after scope narrowing
-    to `:feat:projects:*` (see `projectphoto-forward_critique.md` §Reclassification note r2).
+  reason: Per-entity feature-specific Exposed `Table` (`project_photos` with FKs). NEW file, not recurring — future entities
+    create their own `XxxTable.kt` files, not re-edits of this one. Physical placement in the shared
+    `:feat:shared:database:be:impl` module is a SoC gravity artifact (centralized BE schema convention), separate from
+    the recurring DVT pattern which is confined to `AllTables.kt`. Reclassified intrinsic → local (r3, 2026-04-24); see
+    `projectphoto-forward_critique.md` Obs 1.
 - file: feat/shared/database/fe/api/src/commonMain/sqldelight/cz/adamec/timotej/snag/feat/shared/database/fe/db/ProjectPhotoEntity.sq
   unit: :root::non-module
   status: A
   loc_churn: 28
-  bucket: intrinsic
-  recurring: true
-  ns_theorem: DVT
+  bucket: local
+  recurring: false
   source: hand
-  reason: Feature-specific SQLDelight mirror schema forced to live in the shared `:feat:shared:database:fe:api` module by
-    the centralized FE schema architecture. Every new persistent entity adds an analogous `.sq` file to this same module —
-    recurring DVT aggregation site (FE counterpart to the BE `:feat:shared:database:be:impl` intrinsic). Reclassified from
-    local → intrinsic/recurring/DVT (r2) after scope narrowing to `:feat:projects:*` (see
-    `projectphoto-forward_critique.md` §Reclassification note r2).
+  reason: Per-entity feature-specific SQLDelight mirror schema. NEW file, not recurring — future entities create their own
+    `.sq` files, not re-edits of this one. Physical placement in the shared `:feat:shared:database:fe:api` module is a SoC
+    gravity artifact (centralized FE schema convention), not a recurring DVT site. Reclassified intrinsic → local (r3,
+    2026-04-24); see `projectphoto-forward_critique.md` Obs 1.
