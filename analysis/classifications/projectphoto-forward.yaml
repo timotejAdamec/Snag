@@ -733,12 +733,14 @@ repair_log:
   unit: :root::non-module
   status: A
   loc_churn: 15
-  bucket: local
+  bucket: collateral
   recurring: false
   source: hand
-  reason: New shared-constants file (holds URL_MAX_LENGTH extracted from FindingsTable during ProjectPhoto to deduplicate
-    the constant between ProjectPhotos and FindingPhotos tables). Fresh file, not a recurring registry site — a one-time AVT-oriented
-    refactor incidental to the feature addition.
+  reason: One-time AVT-oriented extraction of `URL_MAX_LENGTH` from FindingsTable into a new shared constants file to deduplicate
+    the limit between ProjectPhotos and FindingPhotos tables. Not required by ProjectPhoto itself (the feature could have
+    declared the constant locally); done as cross-feature cleanup during the feature addition. Reclassified from local →
+    collateral (r2) after scope narrowing to `:feat:projects:*` (see `projectphoto-forward_critique.md` §Reclassification
+    note r2).
 - file: feat/shared/database/be/impl/src/main/kotlin/cz/adamec/timotej/snag/feat/shared/database/be/FindingsTable.kt
   unit: :root::non-module
   status: M
@@ -755,9 +757,13 @@ repair_log:
   bucket: local
   recurring: false
   source: hand
-  reason: New Exposed DAO entity class for ProjectPhoto. Lives under feat/shared/database/be (schema module) but is feature-local
-    in content — unit fallback to `:root::non-module` is the known drift artifact from `feat/shared` being moved to `:featuresShared`
-    in commit dc0d9b8a2 post-b5365d611.
+  reason: Per-entity feature-specific Exposed DAO. NEW file created as part of ProjectPhoto's schema. Fails the methodology's
+    recurring test — future features create their own `XxxEntity.kt` files rather than re-editing this one, so this file
+    receives no "similar edit at each future addition". Physically lives in the shared `:feat:shared:database:be:impl`
+    module by centralized BE schema convention (see SoC gravity note in `projectphoto-forward_critique.md` Obs 1), but
+    constitutes local feature content by the strict intrinsic definition. Reclassified intrinsic → local (r3, 2026-04-24);
+    only `AllTables.kt` remains as true recurring DVT. Unit fallback to `:root::non-module` is a drift artifact from the
+    `feat/shared` → `:featuresShared` move in commit dc0d9b8a2 post-b5365d611.
 - file: feat/shared/database/be/impl/src/main/kotlin/cz/adamec/timotej/snag/feat/shared/database/be/ProjectPhotosTable.kt
   unit: :root::non-module
   status: A
@@ -765,8 +771,11 @@ repair_log:
   bucket: local
   recurring: false
   source: hand
-  reason: New Exposed Table class for `project_photos` with FK to projects + FK reference to the uploader. Feature-local in
-    content despite the `:root::non-module` unit fallback (drift from post-commit module move).
+  reason: Per-entity feature-specific Exposed `Table` (`project_photos` with FKs). NEW file, not recurring — future entities
+    create their own `XxxTable.kt` files, not re-edits of this one. Physical placement in the shared
+    `:feat:shared:database:be:impl` module is a SoC gravity artifact (centralized BE schema convention), separate from
+    the recurring DVT pattern which is confined to `AllTables.kt`. Reclassified intrinsic → local (r3, 2026-04-24); see
+    `projectphoto-forward_critique.md` Obs 1.
 - file: feat/shared/database/fe/api/src/commonMain/sqldelight/cz/adamec/timotej/snag/feat/shared/database/fe/db/ProjectPhotoEntity.sq
   unit: :root::non-module
   status: A
@@ -774,5 +783,7 @@ repair_log:
   bucket: local
   recurring: false
   source: hand
-  reason: New SQLDelight schema file for the FE ProjectPhoto mirror table. Feature-local in content despite the `:root::non-module`
-    unit fallback.
+  reason: Per-entity feature-specific SQLDelight mirror schema. NEW file, not recurring — future entities create their own
+    `.sq` files, not re-edits of this one. Physical placement in the shared `:feat:shared:database:fe:api` module is a SoC
+    gravity artifact (centralized FE schema convention), not a recurring DVT site. Reclassified intrinsic → local (r3,
+    2026-04-24); see `projectphoto-forward_critique.md` Obs 1.
