@@ -20,6 +20,10 @@ kotlin {
             implementation(projects.lib.configuration.fe.api)
             implementation(projects.lib.routing.fe)
         }
+        jvmMain.dependencies {
+            implementation(projects.lib.storage.fe.api)
+            implementation(libs.ktor.client.okhttp)
+        }
     }
 }
 

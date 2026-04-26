@@ -60,9 +60,6 @@ kotlin {
         }
         jvmMain.dependencies {
             implementation(compose.desktop.currentOs)
-            implementation(projects.lib.configuration.fe.api)
-            implementation(projects.lib.storage.fe.api)
-            implementation(libs.ktor.client.okhttp)
         }
         val webMain by getting {
             dependencies {

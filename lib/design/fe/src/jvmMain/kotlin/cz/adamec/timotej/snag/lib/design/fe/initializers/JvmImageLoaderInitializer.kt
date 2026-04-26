@@ -10,7 +10,7 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.initializer
+package cz.adamec.timotej.snag.lib.design.fe.initializers
 
 import androidx.compose.runtime.Composable
 import coil3.ImageLoader
@@ -30,17 +30,17 @@ import io.ktor.client.engine.okhttp.OkHttp
 import okio.Path.Companion.toOkioPath
 import java.io.File
 
-internal class SnagDesktopImageLoaderInitializer : ComposeInitializer {
+internal class JvmImageLoaderInitializer : ComposeInitializer {
     @Composable
     override fun init() {
         SingletonImageLoader.setSafe { context ->
-            createSnagDesktopImageLoader(context = context)
+            createJvmImageLoader(context = context)
         }
     }
 }
 
 @OptIn(ExperimentalCoilApi::class)
-private fun createSnagDesktopImageLoader(context: PlatformContext): ImageLoader {
+private fun createJvmImageLoader(context: PlatformContext): ImageLoader {
     val baseDir =
         resolveJvmAppDataDir(
             osName = System.getProperty("os.name").orEmpty(),
