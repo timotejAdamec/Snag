@@ -12,7 +12,7 @@
 
 package cz.adamec.timotej.snag.lib.database.fe
 
-import cz.adamec.timotej.snag.core.foundation.fe.resolveJvmAppDataDir
+import cz.adamec.timotej.snag.lib.storage.fe.api.resolveJvmAppDataDir
 
 internal fun resolveJvmAppDatabasePath(
     osName: String,

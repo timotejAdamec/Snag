@@ -10,7 +10,7 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.core.foundation.fe
+package cz.adamec.timotej.snag.lib.storage.fe.api
 
 fun resolveJvmAppDataDir(
     osName: String,
