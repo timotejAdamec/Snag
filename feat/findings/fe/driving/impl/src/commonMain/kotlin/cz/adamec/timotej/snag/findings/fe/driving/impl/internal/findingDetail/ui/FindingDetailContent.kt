@@ -61,23 +61,23 @@ import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetail.ui
 import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetail.ui.components.TermLabel
 import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetail.vm.FindingDetailUiState
 import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetail.vm.FindingDetailUiStatus
-import cz.adamec.timotej.snag.lib.design.fe.scenes.LocalIsInSheet
-import cz.adamec.timotej.snag.lib.design.fe.theme.SnagPreview
-import cz.adamec.timotej.snag.lib.design.fe.theme.SnagTheme
+import cz.adamec.timotej.snag.lib.design.fe.api.scenes.LocalIsInSheet
+import cz.adamec.timotej.snag.lib.design.fe.api.theme.SnagPreview
+import cz.adamec.timotej.snag.lib.design.fe.api.theme.SnagTheme
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 import snag.feat.findings.fe.driving.impl.generated.resources.Res
 import snag.feat.findings.fe.driving.impl.generated.resources.coordinate_count
 import snag.feat.findings.fe.driving.impl.generated.resources.finding_not_found_message
-import snag.lib.design.fe.generated.resources.close
-import snag.lib.design.fe.generated.resources.delete
-import snag.lib.design.fe.generated.resources.edit
-import snag.lib.design.fe.generated.resources.ic_close
-import snag.lib.design.fe.generated.resources.ic_delete
-import snag.lib.design.fe.generated.resources.ic_edit
+import snag.lib.design.fe.api.generated.resources.close
+import snag.lib.design.fe.api.generated.resources.delete
+import snag.lib.design.fe.api.generated.resources.edit
+import snag.lib.design.fe.api.generated.resources.ic_close
+import snag.lib.design.fe.api.generated.resources.ic_delete
+import snag.lib.design.fe.api.generated.resources.ic_edit
 import kotlin.uuid.Uuid
-import snag.lib.design.fe.generated.resources.Res as DesignRes
+import snag.lib.design.fe.api.generated.resources.Res as DesignRes
 
 @Suppress("LongMethod", "CognitiveComplexMethod")
 @Composable

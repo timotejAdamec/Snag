@@ -25,10 +25,10 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import snag.feat.projects.fe.driving.impl.generated.resources.Res
 import snag.feat.projects.fe.driving.impl.generated.resources.remove_user_from_project
-import snag.lib.design.fe.generated.resources.ic_delete
-import snag.lib.design.fe.generated.resources.ic_person
+import snag.lib.design.fe.api.generated.resources.ic_delete
+import snag.lib.design.fe.api.generated.resources.ic_person
 import kotlin.uuid.Uuid
-import snag.lib.design.fe.generated.resources.Res as DesignRes
+import snag.lib.design.fe.api.generated.resources.Res as DesignRes
 
 @Composable
 internal fun AssignedUserListItem(

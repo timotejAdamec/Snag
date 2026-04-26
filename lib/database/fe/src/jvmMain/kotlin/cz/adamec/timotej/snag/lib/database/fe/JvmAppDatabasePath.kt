@@ -12,6 +12,8 @@
 
 package cz.adamec.timotej.snag.lib.database.fe
 
+import cz.adamec.timotej.snag.lib.storage.fe.api.resolveJvmAppDataDir
+
 internal fun resolveJvmAppDatabasePath(
     osName: String,
     userHome: String,
@@ -21,14 +23,12 @@ internal fun resolveJvmAppDatabasePath(
     dbName: String,
 ): String {
     val baseDir =
-        when {
-            osName.contains(other = "mac", ignoreCase = true) ||
-                osName.contains(other = "darwin", ignoreCase = true) ->
-                "$userHome/Library/Application Support"
-            osName.contains(other = "win", ignoreCase = true) ->
-                appData?.takeIf { it.isNotBlank() } ?: "$userHome/AppData/Roaming"
-            else ->
-                xdgDataHome?.takeIf { it.isNotBlank() } ?: "$userHome/.local/share"
-        }
-    return "$baseDir/$appId/$dbName"
+        resolveJvmAppDataDir(
+            osName = osName,
+            userHome = userHome,
+            appData = appData,
+            xdgDataHome = xdgDataHome,
+            appId = appId,
+        )
+    return "$baseDir/$dbName"
 }

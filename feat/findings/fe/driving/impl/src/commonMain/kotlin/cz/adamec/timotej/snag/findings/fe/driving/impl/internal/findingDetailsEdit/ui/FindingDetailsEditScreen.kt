@@ -28,10 +28,10 @@ import androidx.window.core.layout.WindowSizeClass
 import cz.adamec.timotej.snag.feat.findings.business.FindingTypeKey
 import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
 import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetailsEdit.vm.FindingDetailsEditViewModel
-import cz.adamec.timotej.snag.lib.design.fe.adaptive.isScreenLarge
-import cz.adamec.timotej.snag.lib.design.fe.dialog.dialogPadding
-import cz.adamec.timotej.snag.lib.design.fe.error.ShowSnackbarOnError
-import cz.adamec.timotej.snag.lib.design.fe.events.ObserveAsEvents
+import cz.adamec.timotej.snag.lib.design.fe.api.adaptive.isScreenLarge
+import cz.adamec.timotej.snag.lib.design.fe.api.dialog.dialogPadding
+import cz.adamec.timotej.snag.lib.design.fe.api.error.ShowSnackbarOnError
+import cz.adamec.timotej.snag.lib.design.fe.api.events.ObserveAsEvents
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 import kotlin.uuid.Uuid

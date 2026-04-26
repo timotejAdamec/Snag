@@ -45,7 +45,7 @@ internal fun Project.configureComposeMultiplatformModule() {
             }
             commonMain.dependencies {
                 if (!path.contains("design") && !path.contains("routing")) {
-                    implementation(project(":lib:design:fe"))
+                    implementation(project(":lib:design:fe:api"))
                     implementation(project(":lib:routing:fe"))
                 }
                 implementation(library("compose-runtime"))

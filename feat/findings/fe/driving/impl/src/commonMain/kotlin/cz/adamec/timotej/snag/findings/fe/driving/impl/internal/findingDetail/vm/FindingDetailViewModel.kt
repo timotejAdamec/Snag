@@ -20,9 +20,9 @@ import cz.adamec.timotej.snag.findings.fe.app.api.DeleteFindingPhotoUseCase
 import cz.adamec.timotej.snag.findings.fe.app.api.DeleteFindingUseCase
 import cz.adamec.timotej.snag.findings.fe.app.api.GetFindingPhotosUseCase
 import cz.adamec.timotej.snag.findings.fe.app.api.GetFindingUseCase
-import cz.adamec.timotej.snag.lib.design.fe.error.UiError
-import cz.adamec.timotej.snag.lib.design.fe.error.UiError.Unknown
-import cz.adamec.timotej.snag.lib.design.fe.state.launchWhileSubscribed
+import cz.adamec.timotej.snag.lib.design.fe.api.error.UiError
+import cz.adamec.timotej.snag.lib.design.fe.api.error.UiError.Unknown
+import cz.adamec.timotej.snag.lib.design.fe.api.state.launchWhileSubscribed
 import cz.adamec.timotej.snag.projects.fe.app.api.CanEditProjectEntitiesUseCase
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel

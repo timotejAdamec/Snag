@@ -40,8 +40,8 @@ import cz.adamec.timotej.snag.core.foundation.common.TimestampProvider
 import cz.adamec.timotej.snag.core.foundation.common.toLocalDateTime
 import cz.adamec.timotej.snag.feat.inspections.app.model.AppInspection
 import cz.adamec.timotej.snag.feat.inspections.app.model.AppInspectionData
-import cz.adamec.timotej.snag.lib.design.fe.theme.SnagPreview
-import cz.adamec.timotej.snag.lib.design.fe.theme.SnagTheme
+import cz.adamec.timotej.snag.lib.design.fe.api.theme.SnagPreview
+import cz.adamec.timotej.snag.lib.design.fe.api.theme.SnagTheme
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.painterResource
@@ -55,14 +55,14 @@ import snag.feat.inspections.fe.driving.api.generated.resources.inspection_state
 import snag.feat.inspections.fe.driving.api.generated.resources.inspection_state_in_progress
 import snag.feat.inspections.fe.driving.api.generated.resources.inspection_state_not_started
 import snag.feat.inspections.fe.driving.api.generated.resources.inspection_state_scheduled
-import snag.lib.design.fe.generated.resources.ic_event_available
-import snag.lib.design.fe.generated.resources.ic_group
-import snag.lib.design.fe.generated.resources.ic_play_arrow_filled
-import snag.lib.design.fe.generated.resources.ic_schedule
-import snag.lib.design.fe.generated.resources.ic_stop_filled
+import snag.lib.design.fe.api.generated.resources.ic_event_available
+import snag.lib.design.fe.api.generated.resources.ic_group
+import snag.lib.design.fe.api.generated.resources.ic_play_arrow_filled
+import snag.lib.design.fe.api.generated.resources.ic_schedule
+import snag.lib.design.fe.api.generated.resources.ic_stop_filled
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
-import snag.lib.design.fe.generated.resources.Res as DesignRes
+import snag.lib.design.fe.api.generated.resources.Res as DesignRes
 
 private enum class CardStatus {
     NOT_STARTED,

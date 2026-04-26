@@ -34,7 +34,7 @@ import cz.adamec.timotej.snag.featShared.storage.fe.driven.impl.di.sharedStorage
 import cz.adamec.timotej.snag.findings.fe.app.impl.di.findingsAppModule
 import cz.adamec.timotej.snag.findings.fe.driven.di.findingsDrivenModule
 import cz.adamec.timotej.snag.findings.fe.driving.impl.di.findingsDrivingImplModule
-import cz.adamec.timotej.snag.lib.design.fe.di.designModule
+import cz.adamec.timotej.snag.lib.design.fe.impl.di.designModule
 import cz.adamec.timotej.snag.lib.storage.fe.impl.di.fileStorageModule
 import cz.adamec.timotej.snag.network.fe.impl.di.networkModule
 import cz.adamec.timotej.snag.projects.fe.app.impl.di.projectsAppModule

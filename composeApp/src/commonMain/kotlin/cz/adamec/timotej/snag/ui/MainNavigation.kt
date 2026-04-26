@@ -13,8 +13,8 @@
 package cz.adamec.timotej.snag.ui
 
 import androidx.compose.runtime.Composable
-import cz.adamec.timotej.snag.lib.design.fe.navigation.SnagNavDisplay
-import cz.adamec.timotej.snag.lib.design.fe.scenes.ContentPaneSceneStrategy
+import cz.adamec.timotej.snag.lib.design.fe.api.navigation.SnagNavDisplay
+import cz.adamec.timotej.snag.lib.design.fe.api.scenes.ContentPaneSceneStrategy
 import org.koin.compose.koinInject
 
 @Composable

@@ -16,7 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import cz.adamec.timotej.snag.lib.design.fe.error.ShowSnackbarOnError
+import cz.adamec.timotej.snag.lib.design.fe.api.error.ShowSnackbarOnError
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projects.vm.ProjectsViewModel
 import org.koin.compose.viewmodel.koinViewModel
 import kotlin.uuid.Uuid

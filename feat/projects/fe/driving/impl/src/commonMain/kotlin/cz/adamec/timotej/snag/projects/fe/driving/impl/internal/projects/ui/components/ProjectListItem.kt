@@ -33,13 +33,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.core.foundation.common.UuidProvider
-import cz.adamec.timotej.snag.lib.design.fe.theme.SnagPreview
+import cz.adamec.timotej.snag.lib.design.fe.api.theme.SnagPreview
 import cz.adamec.timotej.snag.projects.app.model.AppProject
 import cz.adamec.timotej.snag.projects.app.model.AppProjectData
 import org.jetbrains.compose.resources.painterResource
-import snag.lib.design.fe.generated.resources.ic_chevron_right
-import snag.lib.design.fe.generated.resources.ic_lock
-import snag.lib.design.fe.generated.resources.Res as DesignRes
+import snag.lib.design.fe.api.generated.resources.ic_chevron_right
+import snag.lib.design.fe.api.generated.resources.ic_lock
+import snag.lib.design.fe.api.generated.resources.Res as DesignRes
 
 private const val CLOSED_ALPHA = 0.6f
 

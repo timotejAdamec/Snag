@@ -23,7 +23,7 @@ import cz.adamec.timotej.snag.clients.fe.driving.impl.internal.clientDetailsEdit
 import cz.adamec.timotej.snag.clients.fe.driving.impl.internal.clientDetailsEdit.vm.ClientDetailsEditViewModel
 import cz.adamec.timotej.snag.clients.fe.driving.impl.internal.clients.ui.ClientsScreen
 import cz.adamec.timotej.snag.clients.fe.driving.impl.internal.clients.vm.ClientsViewModel
-import cz.adamec.timotej.snag.lib.design.fe.dialog.fullscreenDialogProperties
+import cz.adamec.timotej.snag.lib.design.fe.api.dialog.fullscreenDialogProperties
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.viewModel
 import org.koin.core.module.dsl.viewModelOf

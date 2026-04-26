@@ -52,6 +52,16 @@
 # SLF4J service provider
 -keep class * implements org.slf4j.spi.SLF4JServiceProvider { *; }
 
+# Coil 3 image loader: ServiceLoader targets, fetchers and decoders rely on
+# reflection / generic type info; minification can strip them silently and
+# break image loading in release builds.
+-keep class coil3.** { *; }
+-keepclassmembers class coil3.** { *; }
+-dontwarn coil3.**
+-keep class * implements coil3.util.ServiceLoaderComponentRegistry$Registrar { *; }
+-keep class com.github.panpf.zoomimage.** { *; }
+-dontwarn com.github.panpf.zoomimage.**
+
 # --- General ---
 -dontwarn kotlin.**
 -dontwarn org.koin.**

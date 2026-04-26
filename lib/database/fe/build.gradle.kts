@@ -29,6 +29,7 @@ kotlin {
         }
         jvmMain.dependencies {
             implementation(libs.sqldelight.jvm.driver)
+            implementation(projects.lib.storage.fe.api)
         }
         webMain.dependencies {
             implementation(libs.sqldelight.web.driver)

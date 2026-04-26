@@ -25,15 +25,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import cz.adamec.timotej.snag.clients.fe.driving.impl.internal.clients.ui.components.ClientListItem
 import cz.adamec.timotej.snag.clients.fe.driving.impl.internal.clients.vm.ClientsUiState
-import cz.adamec.timotej.snag.lib.design.fe.button.AdaptiveTonalButton
-import cz.adamec.timotej.snag.lib.design.fe.scaffold.CollapsableTopAppBarScaffold
+import cz.adamec.timotej.snag.lib.design.fe.api.button.AdaptiveTonalButton
+import cz.adamec.timotej.snag.lib.design.fe.api.scaffold.CollapsableTopAppBarScaffold
 import org.jetbrains.compose.resources.stringResource
 import snag.feat.clients.fe.driving.impl.generated.resources.Res
 import snag.feat.clients.fe.driving.impl.generated.resources.clients_title
 import snag.feat.clients.fe.driving.impl.generated.resources.new_client
-import snag.lib.design.fe.generated.resources.ic_add
+import snag.lib.design.fe.api.generated.resources.ic_add
 import kotlin.uuid.Uuid
-import snag.lib.design.fe.generated.resources.Res as DesignRes
+import snag.lib.design.fe.api.generated.resources.Res as DesignRes
 
 @Composable
 internal fun ClientsContent(

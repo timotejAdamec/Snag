@@ -17,9 +17,9 @@ import androidx.lifecycle.viewModelScope
 import cz.adamec.timotej.snag.clients.fe.app.api.GetClientsUseCase
 import cz.adamec.timotej.snag.core.foundation.common.mapState
 import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
-import cz.adamec.timotej.snag.lib.design.fe.error.UiError
-import cz.adamec.timotej.snag.lib.design.fe.error.UiError.Unknown
-import cz.adamec.timotej.snag.lib.design.fe.state.launchWhileSubscribed
+import cz.adamec.timotej.snag.lib.design.fe.api.error.UiError
+import cz.adamec.timotej.snag.lib.design.fe.api.error.UiError.Unknown
+import cz.adamec.timotej.snag.lib.design.fe.api.state.launchWhileSubscribed
 import cz.adamec.timotej.snag.projects.fe.app.api.CanCreateProjectUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.CanEditProjectEntitiesUseCase
 import cz.adamec.timotej.snag.projects.fe.app.api.GetProjectUseCase
@@ -34,8 +34,8 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.core.annotation.InjectedParam
-import snag.lib.design.fe.generated.resources.Res
-import snag.lib.design.fe.generated.resources.error_field_required
+import snag.lib.design.fe.api.generated.resources.Res
+import snag.lib.design.fe.api.generated.resources.error_field_required
 import kotlin.uuid.Uuid
 
 internal class ProjectDetailsEditViewModel(

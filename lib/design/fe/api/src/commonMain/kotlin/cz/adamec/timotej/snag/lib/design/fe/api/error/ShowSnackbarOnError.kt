@@ -1,0 +1,42 @@
+/*
+ * Copyright (c) 2026 Timotej Adamec
+ * SPDX-License-Identifier: MIT
+ *
+ * This file is part of the thesis:
+ * "Multiplatform snagging system with code sharing maximisation"
+ *
+ * Czech Technical University in Prague
+ * Faculty of Information Technology
+ * Department of Software Engineering
+ */
+
+package cz.adamec.timotej.snag.lib.design.fe.api.error
+
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
+import cz.adamec.timotej.snag.lib.design.fe.api.events.ObserveAsEvents
+import cz.adamec.timotej.snag.lib.design.fe.api.scaffold.LocalAppScaffoldState
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
+
+@Composable
+fun ShowSnackbarOnError(
+    uiErrorsFlow: Flow<UiError>,
+    snackbarHostState: SnackbarHostState = LocalAppScaffoldState.current.snackbarHostState,
+    scope: CoroutineScope = rememberCoroutineScope(),
+) {
+    ObserveAsEvents(
+        eventsFlow = uiErrorsFlow,
+        onEvent = { uiError ->
+            scope.launch {
+                snackbarHostState.showSnackbar(
+                    message = uiError.toInformativeMessage(),
+                    duration = SnackbarDuration.Long,
+                )
+            }
+        },
+    )
+}

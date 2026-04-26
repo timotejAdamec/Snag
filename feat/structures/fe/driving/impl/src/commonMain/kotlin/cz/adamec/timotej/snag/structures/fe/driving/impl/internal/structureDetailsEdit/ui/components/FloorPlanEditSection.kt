@@ -36,8 +36,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
-import cz.adamec.timotej.snag.lib.design.fe.button.OutlinedIconTextButton
-import cz.adamec.timotej.snag.lib.design.fe.theme.SnagPreview
+import cz.adamec.timotej.snag.lib.design.fe.api.button.OutlinedIconTextButton
+import cz.adamec.timotej.snag.lib.design.fe.api.theme.SnagPreview
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import snag.feat.structures.fe.driving.impl.generated.resources.Res
@@ -46,11 +46,11 @@ import snag.feat.structures.fe.driving.impl.generated.resources.error_loading_im
 import snag.feat.structures.fe.driving.impl.generated.resources.floor_plan
 import snag.feat.structures.fe.driving.impl.generated.resources.remove
 import snag.feat.structures.fe.driving.impl.generated.resources.upload
-import snag.lib.design.fe.generated.resources.ic_close
-import snag.lib.design.fe.generated.resources.ic_edit
-import snag.lib.design.fe.generated.resources.ic_error
-import snag.lib.design.fe.generated.resources.ic_upload
-import snag.lib.design.fe.generated.resources.Res as DesignRes
+import snag.lib.design.fe.api.generated.resources.ic_close
+import snag.lib.design.fe.api.generated.resources.ic_edit
+import snag.lib.design.fe.api.generated.resources.ic_error
+import snag.lib.design.fe.api.generated.resources.ic_upload
+import snag.lib.design.fe.api.generated.resources.Res as DesignRes
 
 private const val ASPECT_RATIO_WIDTH = 16f
 private const val ASPECT_RATIO_HEIGHT = 9f

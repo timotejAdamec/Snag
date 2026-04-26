@@ -49,9 +49,9 @@ import androidx.compose.ui.unit.dp
 import cz.adamec.timotej.snag.feat.findings.business.FindingTypeKey
 import cz.adamec.timotej.snag.feat.findings.business.RelativeCoordinate
 import cz.adamec.timotej.snag.feat.findings.fe.driving.api.FindingTypePickerDialog
-import cz.adamec.timotej.snag.lib.design.fe.scaffold.BackNavigationIcon
-import cz.adamec.timotej.snag.lib.design.fe.scenes.LocalSheetPeekHeight
-import cz.adamec.timotej.snag.lib.design.fe.theme.SnagTheme
+import cz.adamec.timotej.snag.lib.design.fe.api.scaffold.BackNavigationIcon
+import cz.adamec.timotej.snag.lib.design.fe.api.scenes.LocalSheetPeekHeight
+import cz.adamec.timotej.snag.lib.design.fe.api.theme.SnagTheme
 import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.floorPlan.ui.components.FloorPlanAddPlaceholder
 import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.floorPlan.ui.components.FloorPlanWithPins
 import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.floorPlan.ui.components.StructureDeletionAlertDialog
@@ -61,12 +61,12 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import snag.feat.structures.fe.driving.impl.generated.resources.Res
 import snag.feat.structures.fe.driving.impl.generated.resources.structure_not_found
-import snag.lib.design.fe.generated.resources.delete
-import snag.lib.design.fe.generated.resources.edit
-import snag.lib.design.fe.generated.resources.ic_delete
-import snag.lib.design.fe.generated.resources.ic_edit
+import snag.lib.design.fe.api.generated.resources.delete
+import snag.lib.design.fe.api.generated.resources.edit
+import snag.lib.design.fe.api.generated.resources.ic_delete
+import snag.lib.design.fe.api.generated.resources.ic_edit
 import kotlin.uuid.Uuid
-import snag.lib.design.fe.generated.resources.Res as DesignRes
+import snag.lib.design.fe.api.generated.resources.Res as DesignRes
 
 @Composable
 internal fun StructureFloorPlanContent(

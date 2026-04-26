@@ -25,7 +25,7 @@ import cz.adamec.timotej.snag.clients.fe.driving.api.ClientCreationRouteFactory
 import cz.adamec.timotej.snag.clients.fe.driving.api.ClientEditRouteFactory
 import cz.adamec.timotej.snag.clients.fe.driving.api.ClientsRoute
 import cz.adamec.timotej.snag.clients.fe.driving.api.ClientsRouteFactory
-import cz.adamec.timotej.snag.lib.design.fe.navigation.SnagNavDisplay
+import cz.adamec.timotej.snag.lib.design.fe.api.navigation.SnagNavDisplay
 import cz.adamec.timotej.snag.users.fe.driving.api.UsersRoute
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -33,11 +33,11 @@ import org.koin.compose.koinInject
 import snag.composeapp.generated.resources.Res
 import snag.composeapp.generated.resources.clients_tab_title
 import snag.composeapp.generated.resources.users_tab_title
-import snag.lib.design.fe.generated.resources.ic_engineering
-import snag.lib.design.fe.generated.resources.ic_engineering_filled
-import snag.lib.design.fe.generated.resources.ic_work
-import snag.lib.design.fe.generated.resources.ic_work_filled
-import snag.lib.design.fe.generated.resources.Res as DesignRes
+import snag.lib.design.fe.api.generated.resources.ic_engineering
+import snag.lib.design.fe.api.generated.resources.ic_engineering_filled
+import snag.lib.design.fe.api.generated.resources.ic_work
+import snag.lib.design.fe.api.generated.resources.ic_work_filled
+import snag.lib.design.fe.api.generated.resources.Res as DesignRes
 
 private const val USERS_TAB_INDEX = 0
 private const val CLIENTS_TAB_INDEX = 1

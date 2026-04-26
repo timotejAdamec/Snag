@@ -18,7 +18,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshotFlow
 import com.github.terrakok.navigation3.browser.HierarchicalBrowserNavigation
-import cz.adamec.timotej.snag.lib.design.fe.initializer.ComposeInitializer
+import cz.adamec.timotej.snag.lib.design.fe.api.initializer.ComposeInitializer
 import cz.adamec.timotej.snag.lib.navigation.fe.BrowserHistoryFragmentBuilder
 import cz.adamec.timotej.snag.lib.navigation.fe.SnagBackStack
 import kotlinx.coroutines.flow.filterNotNull
