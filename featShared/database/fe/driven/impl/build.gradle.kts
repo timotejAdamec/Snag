@@ -19,6 +19,7 @@ kotlin {
         commonMain.dependencies {
             implementation(project(":core:foundation:fe"))
             implementation(project(":lib:database:fe"))
+            implementation(project(":lib:configuration:fe:api"))
         }
     }
 }

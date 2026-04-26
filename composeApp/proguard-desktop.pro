@@ -38,6 +38,17 @@
 -keep class org.sqlite.** { *; }
 -keep class * implements java.sql.Driver { *; }
 
+# OkHttp + okio: ProGuard's optimizer may specialize Okio.buffer(Sink) into a
+# variant whose declared return type RealBufferedSink mismatches the actual
+# returned BufferedSink, producing a JVM VerifyError on first network IO.
+# Pin these libraries from optimization to keep their bytecode signatures intact.
+-keep class okio.** { *; }
+-keepclassmembers class okio.** { *; }
+-keep class okhttp3.** { *; }
+-keepclassmembers class okhttp3.** { *; }
+-dontwarn okio.**
+-dontwarn okhttp3.**
+
 # SLF4J service provider
 -keep class * implements org.slf4j.spi.SLF4JServiceProvider { *; }
 
