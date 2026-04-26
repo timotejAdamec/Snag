@@ -47,9 +47,9 @@ import cz.adamec.timotej.snag.core.foundation.common.toLocalDateTime
 import cz.adamec.timotej.snag.feat.inspections.fe.driving.impl.internal.ui.components.DateTimePickerField
 import cz.adamec.timotej.snag.feat.inspections.fe.driving.impl.internal.ui.components.InspectionDeletionAlertDialog
 import cz.adamec.timotej.snag.feat.inspections.fe.driving.impl.internal.vm.InspectionEditUiState
-import cz.adamec.timotej.snag.lib.design.fe.dialog.FullScreenDialogMeasurements
-import cz.adamec.timotej.snag.lib.design.fe.dialog.TimePickerDialog
-import cz.adamec.timotej.snag.lib.design.fe.theme.SnagPreview
+import cz.adamec.timotej.snag.lib.design.fe.api.dialog.FullScreenDialogMeasurements
+import cz.adamec.timotej.snag.lib.design.fe.api.dialog.TimePickerDialog
+import cz.adamec.timotej.snag.lib.design.fe.api.theme.SnagPreview
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import snag.feat.inspections.fe.driving.impl.generated.resources.Res
@@ -60,19 +60,19 @@ import snag.feat.inspections.fe.driving.impl.generated.resources.new_inspection
 import snag.feat.inspections.fe.driving.impl.generated.resources.not_set
 import snag.feat.inspections.fe.driving.impl.generated.resources.note_label
 import snag.feat.inspections.fe.driving.impl.generated.resources.participants_label
-import snag.lib.design.fe.generated.resources.cancel
-import snag.lib.design.fe.generated.resources.close
-import snag.lib.design.fe.generated.resources.delete
-import snag.lib.design.fe.generated.resources.ic_close
-import snag.lib.design.fe.generated.resources.ic_delete
-import snag.lib.design.fe.generated.resources.ic_event_available
-import snag.lib.design.fe.generated.resources.ic_group
-import snag.lib.design.fe.generated.resources.ic_notes
-import snag.lib.design.fe.generated.resources.ic_schedule
-import snag.lib.design.fe.generated.resources.ic_thermostat
-import snag.lib.design.fe.generated.resources.ok
-import snag.lib.design.fe.generated.resources.save
-import snag.lib.design.fe.generated.resources.Res as DesignRes
+import snag.lib.design.fe.api.generated.resources.cancel
+import snag.lib.design.fe.api.generated.resources.close
+import snag.lib.design.fe.api.generated.resources.delete
+import snag.lib.design.fe.api.generated.resources.ic_close
+import snag.lib.design.fe.api.generated.resources.ic_delete
+import snag.lib.design.fe.api.generated.resources.ic_event_available
+import snag.lib.design.fe.api.generated.resources.ic_group
+import snag.lib.design.fe.api.generated.resources.ic_notes
+import snag.lib.design.fe.api.generated.resources.ic_schedule
+import snag.lib.design.fe.api.generated.resources.ic_thermostat
+import snag.lib.design.fe.api.generated.resources.ok
+import snag.lib.design.fe.api.generated.resources.save
+import snag.lib.design.fe.api.generated.resources.Res as DesignRes
 
 private sealed interface PickerStep {
     data object None : PickerStep

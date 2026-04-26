@@ -24,17 +24,17 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import cz.adamec.timotej.snag.lib.design.fe.button.AdaptiveTonalButton
-import cz.adamec.timotej.snag.lib.design.fe.scaffold.CollapsableTopAppBarScaffold
+import cz.adamec.timotej.snag.lib.design.fe.api.button.AdaptiveTonalButton
+import cz.adamec.timotej.snag.lib.design.fe.api.scaffold.CollapsableTopAppBarScaffold
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projects.ui.components.ProjectListItem
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projects.vm.ProjectsUiState
 import org.jetbrains.compose.resources.stringResource
 import snag.feat.projects.fe.driving.impl.generated.resources.Res
 import snag.feat.projects.fe.driving.impl.generated.resources.new_project
 import snag.feat.projects.fe.driving.impl.generated.resources.projects_title
-import snag.lib.design.fe.generated.resources.ic_add
+import snag.lib.design.fe.api.generated.resources.ic_add
 import kotlin.uuid.Uuid
-import snag.lib.design.fe.generated.resources.Res as DesignRes
+import snag.lib.design.fe.api.generated.resources.Res as DesignRes
 
 @Composable
 internal fun ProjectsContent(

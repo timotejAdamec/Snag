@@ -31,7 +31,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import cz.adamec.timotej.snag.lib.design.fe.dialog.FullScreenDialogMeasurements
+import cz.adamec.timotej.snag.lib.design.fe.api.dialog.FullScreenDialogMeasurements
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetailsEdit.ui.components.ClientDropdown
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetailsEdit.vm.ProjectDetailsEditUiState
 import org.jetbrains.compose.resources.painterResource
@@ -41,12 +41,12 @@ import snag.feat.projects.fe.driving.impl.generated.resources.new_project
 import snag.feat.projects.fe.driving.impl.generated.resources.project_address_label
 import snag.feat.projects.fe.driving.impl.generated.resources.project_name_label
 import snag.feat.projects.fe.driving.impl.generated.resources.required
-import snag.lib.design.fe.generated.resources.close
-import snag.lib.design.fe.generated.resources.ic_close
-import snag.lib.design.fe.generated.resources.ic_location
-import snag.lib.design.fe.generated.resources.save
+import snag.lib.design.fe.api.generated.resources.close
+import snag.lib.design.fe.api.generated.resources.ic_close
+import snag.lib.design.fe.api.generated.resources.ic_location
+import snag.lib.design.fe.api.generated.resources.save
 import kotlin.uuid.Uuid
-import snag.lib.design.fe.generated.resources.Res as DesignRes
+import snag.lib.design.fe.api.generated.resources.Res as DesignRes
 
 @Suppress("LongMethod")
 @Composable

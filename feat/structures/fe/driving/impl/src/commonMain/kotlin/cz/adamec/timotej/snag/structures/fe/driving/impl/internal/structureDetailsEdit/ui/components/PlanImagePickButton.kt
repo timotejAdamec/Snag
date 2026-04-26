@@ -17,9 +17,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import cz.adamec.timotej.snag.lib.design.fe.button.ButtonSize
-import cz.adamec.timotej.snag.lib.design.fe.button.OutlinedIconTextButton
-import cz.adamec.timotej.snag.lib.design.fe.button.TonalIconTextButton
+import cz.adamec.timotej.snag.lib.design.fe.api.button.ButtonSize
+import cz.adamec.timotej.snag.lib.design.fe.api.button.OutlinedIconTextButton
+import cz.adamec.timotej.snag.lib.design.fe.api.button.TonalIconTextButton
 import io.github.vinceglb.filekit.dialogs.FileKitType
 import io.github.vinceglb.filekit.dialogs.compose.rememberFilePickerLauncher
 import io.github.vinceglb.filekit.name

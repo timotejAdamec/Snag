@@ -64,12 +64,12 @@ import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.core.foundation.common.UuidProvider
 import cz.adamec.timotej.snag.feat.inspections.fe.driving.api.InspectionCard
 import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureCard
-import cz.adamec.timotej.snag.lib.design.fe.button.AdaptiveTonalButton
-import cz.adamec.timotej.snag.lib.design.fe.scaffold.BackNavigationIcon
-import cz.adamec.timotej.snag.lib.design.fe.scaffold.CollapsableTopAppBarScaffold
-import cz.adamec.timotej.snag.lib.design.fe.scenes.StatusBarAwareDragHandle
-import cz.adamec.timotej.snag.lib.design.fe.theme.SnagPreview
-import cz.adamec.timotej.snag.lib.design.fe.theme.SnagTheme
+import cz.adamec.timotej.snag.lib.design.fe.api.button.AdaptiveTonalButton
+import cz.adamec.timotej.snag.lib.design.fe.api.scaffold.BackNavigationIcon
+import cz.adamec.timotej.snag.lib.design.fe.api.scaffold.CollapsableTopAppBarScaffold
+import cz.adamec.timotej.snag.lib.design.fe.api.scenes.StatusBarAwareDragHandle
+import cz.adamec.timotej.snag.lib.design.fe.api.theme.SnagPreview
+import cz.adamec.timotej.snag.lib.design.fe.api.theme.SnagTheme
 import cz.adamec.timotej.snag.projects.app.model.AppProjectData
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectAssignments.ui.components.AddUserBottomSheetContent
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectAssignments.vm.AssignedUserItem
@@ -93,21 +93,21 @@ import snag.feat.projects.fe.driving.impl.generated.resources.project_assignment
 import snag.feat.projects.fe.driving.impl.generated.resources.project_not_found
 import snag.feat.projects.fe.driving.impl.generated.resources.reopen_project
 import snag.feat.projects.fe.driving.impl.generated.resources.structures_section_title
-import snag.lib.design.fe.generated.resources.delete
-import snag.lib.design.fe.generated.resources.edit
-import snag.lib.design.fe.generated.resources.ic_add
-import snag.lib.design.fe.generated.resources.ic_close
-import snag.lib.design.fe.generated.resources.ic_delete
-import snag.lib.design.fe.generated.resources.ic_edit
-import snag.lib.design.fe.generated.resources.ic_event_note
-import snag.lib.design.fe.generated.resources.ic_file_export
-import snag.lib.design.fe.generated.resources.ic_group
-import snag.lib.design.fe.generated.resources.ic_lock
-import snag.lib.design.fe.generated.resources.ic_lock_open
-import snag.lib.design.fe.generated.resources.ic_person
-import snag.lib.design.fe.generated.resources.ic_space_dashboard
+import snag.lib.design.fe.api.generated.resources.delete
+import snag.lib.design.fe.api.generated.resources.edit
+import snag.lib.design.fe.api.generated.resources.ic_add
+import snag.lib.design.fe.api.generated.resources.ic_close
+import snag.lib.design.fe.api.generated.resources.ic_delete
+import snag.lib.design.fe.api.generated.resources.ic_edit
+import snag.lib.design.fe.api.generated.resources.ic_event_note
+import snag.lib.design.fe.api.generated.resources.ic_file_export
+import snag.lib.design.fe.api.generated.resources.ic_group
+import snag.lib.design.fe.api.generated.resources.ic_lock
+import snag.lib.design.fe.api.generated.resources.ic_lock_open
+import snag.lib.design.fe.api.generated.resources.ic_person
+import snag.lib.design.fe.api.generated.resources.ic_space_dashboard
 import kotlin.uuid.Uuid
-import snag.lib.design.fe.generated.resources.Res as DesignRes
+import snag.lib.design.fe.api.generated.resources.Res as DesignRes
 
 @Composable
 internal fun ProjectDetailsContent(

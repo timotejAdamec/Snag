@@ -21,8 +21,8 @@ import androidx.compose.ui.Modifier
 import cz.adamec.timotej.snag.authorization.business.UserRole
 import cz.adamec.timotej.snag.users.fe.driving.impl.internal.userManagement.vm.UserItem
 import org.jetbrains.compose.resources.painterResource
-import snag.lib.design.fe.generated.resources.ic_person
-import snag.lib.design.fe.generated.resources.Res as DesignRes
+import snag.lib.design.fe.api.generated.resources.ic_person
+import snag.lib.design.fe.api.generated.resources.Res as DesignRes
 
 @Composable
 internal fun UserListItem(

@@ -22,8 +22,8 @@ import cz.adamec.timotej.snag.feat.inspections.fe.driving.api.InspectionCreation
 import cz.adamec.timotej.snag.feat.inspections.fe.driving.api.InspectionEditRouteFactory
 import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureCreationRouteFactory
 import cz.adamec.timotej.snag.feat.structures.fe.driving.api.StructureDetailRouteFactory
-import cz.adamec.timotej.snag.lib.design.fe.dialog.fullscreenDialogProperties
-import cz.adamec.timotej.snag.lib.design.fe.scenes.ContentPaneSceneMetadata
+import cz.adamec.timotej.snag.lib.design.fe.api.dialog.fullscreenDialogProperties
+import cz.adamec.timotej.snag.lib.design.fe.api.scenes.ContentPaneSceneMetadata
 import cz.adamec.timotej.snag.lib.navigation.fe.SnagBackStack
 import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectAssignmentsRoute
 import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectAssignmentsRouteFactory

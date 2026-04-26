@@ -24,8 +24,8 @@ import cz.adamec.timotej.snag.core.business.rules.api.EmailFormatRule
 import cz.adamec.timotej.snag.core.business.rules.api.PhoneNumberRule
 import cz.adamec.timotej.snag.core.foundation.common.mapState
 import cz.adamec.timotej.snag.core.network.fe.OfflineFirstDataResult
-import cz.adamec.timotej.snag.lib.design.fe.error.UiError
-import cz.adamec.timotej.snag.lib.design.fe.error.UiError.Unknown
+import cz.adamec.timotej.snag.lib.design.fe.api.error.UiError
+import cz.adamec.timotej.snag.lib.design.fe.api.error.UiError.Unknown
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -34,10 +34,10 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.core.annotation.InjectedParam
-import snag.lib.design.fe.generated.resources.Res
-import snag.lib.design.fe.generated.resources.error_field_required
-import snag.lib.design.fe.generated.resources.error_invalid_email
-import snag.lib.design.fe.generated.resources.error_invalid_phone
+import snag.lib.design.fe.api.generated.resources.Res
+import snag.lib.design.fe.api.generated.resources.error_field_required
+import snag.lib.design.fe.api.generated.resources.error_invalid_email
+import snag.lib.design.fe.api.generated.resources.error_invalid_phone
 import kotlin.uuid.Uuid
 
 internal class ClientDetailsEditViewModel(

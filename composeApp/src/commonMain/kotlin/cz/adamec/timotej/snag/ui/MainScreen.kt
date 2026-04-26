@@ -31,11 +31,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cz.adamec.timotej.snag.directory.ui.DirectoryBackStack
 import cz.adamec.timotej.snag.directory.ui.DirectoryNavRoute
-import cz.adamec.timotej.snag.lib.design.fe.adaptive.isScreenWide
-import cz.adamec.timotej.snag.lib.design.fe.scaffold.AppScaffold
-import cz.adamec.timotej.snag.lib.design.fe.scaffold.SyncStatusBar
-import cz.adamec.timotej.snag.lib.design.fe.scaffold.SyncStatusBarState
-import cz.adamec.timotej.snag.lib.design.fe.theme.SnagTheme
+import cz.adamec.timotej.snag.lib.design.fe.api.adaptive.isScreenWide
+import cz.adamec.timotej.snag.lib.design.fe.api.scaffold.AppScaffold
+import cz.adamec.timotej.snag.lib.design.fe.api.scaffold.SyncStatusBar
+import cz.adamec.timotej.snag.lib.design.fe.api.scaffold.SyncStatusBarState
+import cz.adamec.timotej.snag.lib.design.fe.api.theme.SnagTheme
 import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectsBackStack
 import cz.adamec.timotej.snag.projects.fe.driving.api.ProjectsNavRoute
 import cz.adamec.timotej.snag.ui.components.TabItem

@@ -37,12 +37,12 @@ import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
 import cz.adamec.timotej.snag.authorization.business.UserRole
 import cz.adamec.timotej.snag.core.foundation.common.UuidProvider
-import cz.adamec.timotej.snag.lib.design.fe.button.AdaptiveTonalButton
-import cz.adamec.timotej.snag.lib.design.fe.scaffold.BackNavigationIcon
-import cz.adamec.timotej.snag.lib.design.fe.scaffold.CollapsableTopAppBarScaffold
-import cz.adamec.timotej.snag.lib.design.fe.scenes.StatusBarAwareDragHandle
-import cz.adamec.timotej.snag.lib.design.fe.theme.SnagPreview
-import cz.adamec.timotej.snag.lib.design.fe.theme.SnagTheme
+import cz.adamec.timotej.snag.lib.design.fe.api.button.AdaptiveTonalButton
+import cz.adamec.timotej.snag.lib.design.fe.api.scaffold.BackNavigationIcon
+import cz.adamec.timotej.snag.lib.design.fe.api.scaffold.CollapsableTopAppBarScaffold
+import cz.adamec.timotej.snag.lib.design.fe.api.scenes.StatusBarAwareDragHandle
+import cz.adamec.timotej.snag.lib.design.fe.api.theme.SnagPreview
+import cz.adamec.timotej.snag.lib.design.fe.api.theme.SnagTheme
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectAssignments.ui.components.AddUserBottomSheetContent
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectAssignments.ui.components.AssignedUserListItem
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectAssignments.vm.AssignedUserItem
@@ -52,9 +52,9 @@ import org.jetbrains.compose.resources.stringResource
 import snag.feat.projects.fe.driving.impl.generated.resources.Res
 import snag.feat.projects.fe.driving.impl.generated.resources.add_user_to_project
 import snag.feat.projects.fe.driving.impl.generated.resources.project_assignments_title
-import snag.lib.design.fe.generated.resources.ic_add
+import snag.lib.design.fe.api.generated.resources.ic_add
 import kotlin.uuid.Uuid
-import snag.lib.design.fe.generated.resources.Res as DesignRes
+import snag.lib.design.fe.api.generated.resources.Res as DesignRes
 
 @Composable
 internal fun ProjectAssignmentsContent(

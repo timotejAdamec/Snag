@@ -34,8 +34,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import cz.adamec.timotej.snag.lib.design.fe.dialog.FullScreenDialogMeasurements
-import cz.adamec.timotej.snag.lib.design.fe.theme.SnagPreview
+import cz.adamec.timotej.snag.lib.design.fe.api.dialog.FullScreenDialogMeasurements
+import cz.adamec.timotej.snag.lib.design.fe.api.theme.SnagPreview
 import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.structureDetailsEdit.ui.components.FloorPlanEditSection
 import cz.adamec.timotej.snag.structures.fe.driving.impl.internal.structureDetailsEdit.vm.StructureDetailsEditUiState
 import org.jetbrains.compose.resources.painterResource
@@ -44,10 +44,10 @@ import snag.feat.structures.fe.driving.impl.generated.resources.Res
 import snag.feat.structures.fe.driving.impl.generated.resources.new_structure
 import snag.feat.structures.fe.driving.impl.generated.resources.required
 import snag.feat.structures.fe.driving.impl.generated.resources.structure_name_label
-import snag.lib.design.fe.generated.resources.close
-import snag.lib.design.fe.generated.resources.ic_close
-import snag.lib.design.fe.generated.resources.save
-import snag.lib.design.fe.generated.resources.Res as DesignRes
+import snag.lib.design.fe.api.generated.resources.close
+import snag.lib.design.fe.api.generated.resources.ic_close
+import snag.lib.design.fe.api.generated.resources.save
+import snag.lib.design.fe.api.generated.resources.Res as DesignRes
 
 @Suppress("LongMethod")
 @Composable

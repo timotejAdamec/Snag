@@ -14,7 +14,7 @@ package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
-import cz.adamec.timotej.snag.lib.design.fe.events.ObserveAsEvents
+import cz.adamec.timotej.snag.lib.design.fe.api.events.ObserveAsEvents
 import cz.adamec.timotej.snag.reports.business.Report
 import io.github.vinceglb.filekit.FileKit
 import io.github.vinceglb.filekit.dialogs.openFileSaver

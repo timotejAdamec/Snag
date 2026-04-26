@@ -22,9 +22,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import cz.adamec.timotej.snag.clients.app.model.AppClient
 import org.jetbrains.compose.resources.painterResource
-import snag.lib.design.fe.generated.resources.ic_chevron_right
-import snag.lib.design.fe.generated.resources.ic_work
-import snag.lib.design.fe.generated.resources.Res as DesignRes
+import snag.lib.design.fe.api.generated.resources.ic_chevron_right
+import snag.lib.design.fe.api.generated.resources.ic_work
+import snag.lib.design.fe.api.generated.resources.Res as DesignRes
 
 @Composable
 internal fun ClientListItem(

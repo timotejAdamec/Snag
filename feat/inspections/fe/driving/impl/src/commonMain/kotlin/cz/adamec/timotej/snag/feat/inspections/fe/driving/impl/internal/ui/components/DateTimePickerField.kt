@@ -33,15 +33,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import cz.adamec.timotej.snag.lib.design.fe.theme.SnagPreview
+import cz.adamec.timotej.snag.lib.design.fe.api.theme.SnagPreview
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import snag.lib.design.fe.generated.resources.clear
-import snag.lib.design.fe.generated.resources.edit
-import snag.lib.design.fe.generated.resources.ic_close
-import snag.lib.design.fe.generated.resources.ic_edit
-import snag.lib.design.fe.generated.resources.ic_schedule
-import snag.lib.design.fe.generated.resources.Res as DesignRes
+import snag.lib.design.fe.api.generated.resources.clear
+import snag.lib.design.fe.api.generated.resources.edit
+import snag.lib.design.fe.api.generated.resources.ic_close
+import snag.lib.design.fe.api.generated.resources.ic_edit
+import snag.lib.design.fe.api.generated.resources.ic_schedule
+import snag.lib.design.fe.api.generated.resources.Res as DesignRes
 
 private const val DISABLED_CONTENT_ALPHA = 0.38f
 private const val DISABLED_BORDER_ALPHA = 0.12f

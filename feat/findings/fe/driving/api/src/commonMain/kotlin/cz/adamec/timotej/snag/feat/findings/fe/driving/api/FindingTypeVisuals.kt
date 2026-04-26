@@ -18,13 +18,13 @@ import androidx.compose.ui.graphics.Color
 import cz.adamec.timotej.snag.feat.findings.business.FindingType
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.StringResource
-import snag.lib.design.fe.generated.resources.Res
-import snag.lib.design.fe.generated.resources.finding_type_classic
-import snag.lib.design.fe.generated.resources.finding_type_note
-import snag.lib.design.fe.generated.resources.finding_type_unvisited
-import snag.lib.design.fe.generated.resources.ic_finding_classic
-import snag.lib.design.fe.generated.resources.ic_finding_note
-import snag.lib.design.fe.generated.resources.ic_finding_unvisited
+import snag.lib.design.fe.api.generated.resources.Res
+import snag.lib.design.fe.api.generated.resources.finding_type_classic
+import snag.lib.design.fe.api.generated.resources.finding_type_note
+import snag.lib.design.fe.api.generated.resources.finding_type_unvisited
+import snag.lib.design.fe.api.generated.resources.ic_finding_classic
+import snag.lib.design.fe.api.generated.resources.ic_finding_note
+import snag.lib.design.fe.api.generated.resources.ic_finding_unvisited
 
 data class FindingTypeVisuals(
     val icon: DrawableResource,

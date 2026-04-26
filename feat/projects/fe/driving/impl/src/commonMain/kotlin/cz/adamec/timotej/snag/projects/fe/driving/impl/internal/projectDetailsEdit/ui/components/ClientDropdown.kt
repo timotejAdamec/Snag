@@ -35,7 +35,7 @@ import cz.adamec.timotej.snag.clients.app.model.AppClient
 import cz.adamec.timotej.snag.clients.app.model.AppClientData
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.core.foundation.common.UuidProvider
-import cz.adamec.timotej.snag.lib.design.fe.theme.SnagPreview
+import cz.adamec.timotej.snag.lib.design.fe.api.theme.SnagPreview
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import org.jetbrains.compose.resources.painterResource
@@ -44,9 +44,9 @@ import snag.feat.projects.fe.driving.impl.generated.resources.Res
 import snag.feat.projects.fe.driving.impl.generated.resources.client_label
 import snag.feat.projects.fe.driving.impl.generated.resources.create_new_client
 import snag.feat.projects.fe.driving.impl.generated.resources.none
-import snag.lib.design.fe.generated.resources.ic_add
+import snag.lib.design.fe.api.generated.resources.ic_add
 import kotlin.uuid.Uuid
-import snag.lib.design.fe.generated.resources.Res as DesignRes
+import snag.lib.design.fe.api.generated.resources.Res as DesignRes
 
 @Composable
 internal fun ClientDropdown(

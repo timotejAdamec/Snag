@@ -47,8 +47,8 @@ import cz.adamec.timotej.snag.feat.findings.business.Importance
 import cz.adamec.timotej.snag.feat.findings.business.Term
 import cz.adamec.timotej.snag.feat.findings.fe.driving.api.visuals
 import cz.adamec.timotej.snag.findings.fe.driving.impl.internal.findingDetailsEdit.vm.FindingDetailsEditUiState
-import cz.adamec.timotej.snag.lib.design.fe.dialog.FullScreenDialogMeasurements
-import cz.adamec.timotej.snag.lib.design.fe.theme.SnagPreview
+import cz.adamec.timotej.snag.lib.design.fe.api.dialog.FullScreenDialogMeasurements
+import cz.adamec.timotej.snag.lib.design.fe.api.theme.SnagPreview
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import snag.feat.findings.fe.driving.impl.generated.resources.Res
@@ -65,10 +65,10 @@ import snag.feat.findings.fe.driving.impl.generated.resources.term_label
 import snag.feat.findings.fe.driving.impl.generated.resources.term_t1
 import snag.feat.findings.fe.driving.impl.generated.resources.term_t2
 import snag.feat.findings.fe.driving.impl.generated.resources.term_t3
-import snag.lib.design.fe.generated.resources.close
-import snag.lib.design.fe.generated.resources.ic_close
-import snag.lib.design.fe.generated.resources.save
-import snag.lib.design.fe.generated.resources.Res as DesignRes
+import snag.lib.design.fe.api.generated.resources.close
+import snag.lib.design.fe.api.generated.resources.ic_close
+import snag.lib.design.fe.api.generated.resources.save
+import snag.lib.design.fe.api.generated.resources.Res as DesignRes
 
 @Suppress("LongMethod", "CognitiveComplexMethod", "CyclomaticComplexMethod")
 @Composable

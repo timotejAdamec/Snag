@@ -33,8 +33,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import cz.adamec.timotej.snag.feat.findings.business.FindingTypeKey
 import cz.adamec.timotej.snag.feat.findings.business.toDefaultFindingType
-import cz.adamec.timotej.snag.lib.design.fe.dialog.DividedContentDialog
-import cz.adamec.timotej.snag.lib.design.fe.theme.SnagPreview
+import cz.adamec.timotej.snag.lib.design.fe.api.dialog.DividedContentDialog
+import cz.adamec.timotej.snag.lib.design.fe.api.theme.SnagPreview
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import snag.feat.findings.fe.driving.api.generated.resources.Res

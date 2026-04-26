@@ -15,7 +15,7 @@ package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectAssignme
 import cz.adamec.timotej.snag.authorization.business.UserRole
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.core.foundation.common.UuidProvider
-import cz.adamec.timotej.snag.lib.design.fe.error.UiError
+import cz.adamec.timotej.snag.lib.design.fe.api.error.UiError
 import cz.adamec.timotej.snag.network.fe.test.FakeConnectionStatusProvider
 import cz.adamec.timotej.snag.projects.app.model.AppProjectData
 import cz.adamec.timotej.snag.projects.fe.app.api.AssignUserToProjectUseCase

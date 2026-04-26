@@ -15,8 +15,8 @@ package cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import cz.adamec.timotej.snag.lib.design.fe.error.ShowSnackbarOnError
-import cz.adamec.timotej.snag.lib.design.fe.events.ObserveAsEvents
+import cz.adamec.timotej.snag.lib.design.fe.api.error.ShowSnackbarOnError
+import cz.adamec.timotej.snag.lib.design.fe.api.events.ObserveAsEvents
 import cz.adamec.timotej.snag.projects.fe.driving.impl.internal.projectDetails.vm.ProjectDetailsViewModel
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf

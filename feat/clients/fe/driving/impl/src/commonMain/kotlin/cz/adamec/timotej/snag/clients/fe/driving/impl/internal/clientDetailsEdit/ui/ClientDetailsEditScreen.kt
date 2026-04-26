@@ -26,10 +26,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.window.core.layout.WindowSizeClass
 import cz.adamec.timotej.snag.clients.fe.driving.impl.internal.clientDetailsEdit.vm.ClientDetailsEditViewModel
-import cz.adamec.timotej.snag.lib.design.fe.adaptive.isScreenLarge
-import cz.adamec.timotej.snag.lib.design.fe.dialog.dialogPadding
-import cz.adamec.timotej.snag.lib.design.fe.error.ShowSnackbarOnError
-import cz.adamec.timotej.snag.lib.design.fe.events.ObserveAsEvents
+import cz.adamec.timotej.snag.lib.design.fe.api.adaptive.isScreenLarge
+import cz.adamec.timotej.snag.lib.design.fe.api.dialog.dialogPadding
+import cz.adamec.timotej.snag.lib.design.fe.api.error.ShowSnackbarOnError
+import cz.adamec.timotej.snag.lib.design.fe.api.events.ObserveAsEvents
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 import kotlin.uuid.Uuid

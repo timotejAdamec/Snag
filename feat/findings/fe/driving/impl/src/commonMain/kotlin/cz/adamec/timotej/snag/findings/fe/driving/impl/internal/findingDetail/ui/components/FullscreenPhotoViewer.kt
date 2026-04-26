@@ -34,15 +34,15 @@ import com.github.panpf.zoomimage.rememberCoilZoomState
 import cz.adamec.timotej.snag.core.foundation.common.Timestamp
 import cz.adamec.timotej.snag.feat.findings.app.model.AppFindingPhoto
 import cz.adamec.timotej.snag.feat.findings.app.model.AppFindingPhotoData
-import cz.adamec.timotej.snag.lib.design.fe.dialog.fullscreenDialogProperties
+import cz.adamec.timotej.snag.lib.design.fe.api.dialog.fullscreenDialogProperties
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import snag.feat.findings.fe.driving.impl.generated.resources.Res
 import snag.feat.findings.fe.driving.impl.generated.resources.photo_counter
-import snag.lib.design.fe.generated.resources.close
-import snag.lib.design.fe.generated.resources.ic_close
+import snag.lib.design.fe.api.generated.resources.close
+import snag.lib.design.fe.api.generated.resources.ic_close
 import kotlin.uuid.Uuid
-import snag.lib.design.fe.generated.resources.Res as DesignRes
+import snag.lib.design.fe.api.generated.resources.Res as DesignRes
 
 @Composable
 internal fun FullscreenPhotoViewer(

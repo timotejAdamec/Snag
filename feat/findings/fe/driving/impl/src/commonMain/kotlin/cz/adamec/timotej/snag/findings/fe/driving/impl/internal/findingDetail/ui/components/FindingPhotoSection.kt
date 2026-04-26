@@ -50,10 +50,10 @@ import snag.feat.findings.fe.driving.impl.generated.resources.Res
 import snag.feat.findings.fe.driving.impl.generated.resources.add_photo
 import snag.feat.findings.fe.driving.impl.generated.resources.delete_photo
 import snag.feat.findings.fe.driving.impl.generated.resources.photos_section_title
-import snag.lib.design.fe.generated.resources.ic_add
-import snag.lib.design.fe.generated.resources.ic_delete
+import snag.lib.design.fe.api.generated.resources.ic_add
+import snag.lib.design.fe.api.generated.resources.ic_delete
 import kotlin.uuid.Uuid
-import snag.lib.design.fe.generated.resources.Res as DesignRes
+import snag.lib.design.fe.api.generated.resources.Res as DesignRes
 
 private val ThumbnailSize = 120.dp
 

@@ -17,11 +17,11 @@ import org.jetbrains.compose.resources.StringResource
 import snag.composeapp.generated.resources.Res
 import snag.composeapp.generated.resources.directory_tab_title
 import snag.composeapp.generated.resources.projects_tab_title
-import snag.lib.design.fe.generated.resources.ic_contacts
-import snag.lib.design.fe.generated.resources.ic_contacts_filled
-import snag.lib.design.fe.generated.resources.ic_home
-import snag.lib.design.fe.generated.resources.ic_home_filled
-import snag.lib.design.fe.generated.resources.Res as DesignRes
+import snag.lib.design.fe.api.generated.resources.ic_contacts
+import snag.lib.design.fe.api.generated.resources.ic_contacts_filled
+import snag.lib.design.fe.api.generated.resources.ic_home
+import snag.lib.design.fe.api.generated.resources.ic_home_filled
+import snag.lib.design.fe.api.generated.resources.Res as DesignRes
 
 internal sealed interface TopLevelDestination {
     val tabIcon: DrawableResource

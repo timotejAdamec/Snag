@@ -22,8 +22,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.painterResource
-import snag.lib.design.fe.generated.resources.Res
-import snag.lib.design.fe.generated.resources.ic_person
+import snag.lib.design.fe.api.generated.resources.Res
+import snag.lib.design.fe.api.generated.resources.ic_person
 
 @Composable
 internal fun CreatorInfo(

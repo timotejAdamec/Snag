@@ -14,7 +14,7 @@ package cz.adamec.timotej.snag.di
 
 import androidx.compose.runtime.Composable
 import cz.adamec.timotej.snag.initializer.SnagHierarchicalBrowserNavigationInitializer
-import cz.adamec.timotej.snag.lib.design.fe.initializer.ComposeInitializer
+import cz.adamec.timotej.snag.lib.design.fe.api.initializer.ComposeInitializer
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
