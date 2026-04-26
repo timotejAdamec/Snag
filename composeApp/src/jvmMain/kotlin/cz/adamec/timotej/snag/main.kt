@@ -17,7 +17,8 @@ package cz.adamec.timotej.snag
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 
-fun main() =
+fun main() {
+    installSnagDesktopImageLoader()
     application {
         Window(
             onCloseRequest = ::exitApplication,
@@ -26,3 +27,4 @@ fun main() =
             App()
         }
     }
+}
