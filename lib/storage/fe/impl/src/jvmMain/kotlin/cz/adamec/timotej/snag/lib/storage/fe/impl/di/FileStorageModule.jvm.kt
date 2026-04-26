@@ -14,7 +14,10 @@ package cz.adamec.timotej.snag.lib.storage.fe.impl.di
 
 import cz.adamec.timotej.snag.core.foundation.common.di.getIoDispatcher
 import cz.adamec.timotej.snag.core.storage.fe.LocalFileStorage
+import cz.adamec.timotej.snag.lib.storage.fe.api.JvmAppDataDirResolver
+import cz.adamec.timotej.snag.lib.storage.fe.impl.internal.RealJvmAppDataDirResolver
 import cz.adamec.timotej.snag.lib.storage.fe.impl.internal.RealLocalFileStorage
+import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
@@ -27,4 +30,5 @@ internal actual val fileStoragePlatformModule =
                 ioDispatcher = getIoDispatcher(),
             )
         } bind LocalFileStorage::class
+        factoryOf(::RealJvmAppDataDirResolver) bind JvmAppDataDirResolver::class
     }
