@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.sync.fe.driven.impl.di
 
+import cz.adamec.timotej.snag.configuration.fe.FrontendRunConfig
 import cz.adamec.timotej.snag.core.foundation.common.di.getIoDispatcher
 import cz.adamec.timotej.snag.lib.database.fe.sqlDelightDatabaseModule
 import cz.adamec.timotej.snag.sync.fe.driven.impl.RealPullSyncTimestampDb
@@ -29,6 +30,7 @@ private val syncDatabaseModule =
     sqlDelightDatabaseModule(
         schema = SyncDatabase.Schema,
         name = "sync.db",
+        appId = FrontendRunConfig.namespace,
         qualifier = named("syncDb"),
     )
 

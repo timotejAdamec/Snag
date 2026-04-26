@@ -18,12 +18,25 @@ import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.db.SqlSchema
 import app.cash.sqldelight.driver.jdbc.sqlite.JdbcSqliteDriver
 import org.koin.core.scope.Scope
+import java.io.File
 
 actual fun Scope.createPlatformSqlDriver(
     schema: SqlSchema<QueryResult.AsyncValue<Unit>>,
     name: String,
-): SqlDriver =
-    JdbcSqliteDriver(
-        url = "jdbc:sqlite:$name",
+    appId: String,
+): SqlDriver {
+    val absolutePath =
+        resolveJvmAppDatabasePath(
+            osName = System.getProperty("os.name").orEmpty(),
+            userHome = System.getProperty("user.home").orEmpty(),
+            appData = System.getenv("APPDATA"),
+            xdgDataHome = System.getenv("XDG_DATA_HOME"),
+            appId = appId,
+            dbName = name,
+        )
+    File(absolutePath).parentFile?.mkdirs()
+    return JdbcSqliteDriver(
+        url = "jdbc:sqlite:$absolutePath",
         schema = schema.synchronous(),
     )
+}

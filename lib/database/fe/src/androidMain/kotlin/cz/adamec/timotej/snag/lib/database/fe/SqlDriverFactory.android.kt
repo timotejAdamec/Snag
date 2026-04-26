@@ -23,6 +23,7 @@ import org.koin.core.scope.Scope
 actual fun Scope.createPlatformSqlDriver(
     schema: SqlSchema<QueryResult.AsyncValue<Unit>>,
     name: String,
+    appId: String,
 ): SqlDriver =
     AndroidSqliteDriver(
         schema = schema.synchronous(),

@@ -21,6 +21,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(project(":lib:database:fe"))
+            implementation(project(":lib:configuration:fe:api"))
         }
     }
 }

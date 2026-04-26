@@ -12,6 +12,7 @@
 
 package cz.adamec.timotej.snag.featShared.database.fe.driven.impl.di
 
+import cz.adamec.timotej.snag.configuration.fe.FrontendRunConfig
 import cz.adamec.timotej.snag.featShared.database.fe.driven.api.db.ClassicFindingEntityQueries
 import cz.adamec.timotej.snag.featShared.database.fe.driven.api.db.ClientEntityQueries
 import cz.adamec.timotej.snag.featShared.database.fe.driven.api.db.FindingCoordinateEntityQueries
@@ -33,6 +34,7 @@ private val snagDatabaseInfraModule =
     sqlDelightDatabaseModule(
         schema = SnagDatabase.Schema,
         name = "snag.db",
+        appId = FrontendRunConfig.namespace,
         qualifier = named("snagDb"),
     )
 

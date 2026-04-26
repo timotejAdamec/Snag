@@ -20,4 +20,5 @@ import org.koin.core.scope.Scope
 expect fun Scope.createPlatformSqlDriver(
     schema: SqlSchema<QueryResult.AsyncValue<Unit>>,
     name: String,
+    appId: String,
 ): SqlDriver

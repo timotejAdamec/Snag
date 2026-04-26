@@ -432,8 +432,8 @@ internal class DevDataSeederConfiguration(
 
         private const val FLOOR_PLAN_URL_1 =
             "https://storage.googleapis.com/snag-bucket-dev/projects/" +
-                    "00000000-0000-0000-0000-000000000001/structures/" +
-                    "00000000-0000-0000-0001-000000000001/019dabac-f533-73d2-9f9d-27eadb7eed0c.png"
+                "00000000-0000-0000-0000-000000000001/structures/" +
+                "00000000-0000-0000-0001-000000000001/019dabac-f533-73d2-9f9d-27eadb7eed0c.png"
         private const val FLOOR_PLAN_URL_6 =
             "https://storage.googleapis.com/snag-bucket-dev/projects/" +
                 "00000000-0000-0000-0000-000000000001/structures/" +
