@@ -12,9 +12,10 @@
 
 package cz.adamec.timotej.snag.lib.database.fe
 
-import cz.adamec.timotej.snag.lib.storage.fe.api.resolveJvmAppDataDir
+import cz.adamec.timotej.snag.lib.storage.fe.api.JvmAppDataDirResolver
 
 internal fun resolveJvmAppDatabasePath(
+    appDataDirResolver: JvmAppDataDirResolver,
     osName: String,
     userHome: String,
     appData: String?,
@@ -23,7 +24,7 @@ internal fun resolveJvmAppDatabasePath(
     dbName: String,
 ): String {
     val baseDir =
-        resolveJvmAppDataDir(
+        appDataDirResolver(
             osName = osName,
             userHome = userHome,
             appData = appData,

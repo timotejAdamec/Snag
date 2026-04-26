@@ -12,14 +12,18 @@
 
 package cz.adamec.timotej.snag.lib.database.fe
 
+import cz.adamec.timotej.snag.lib.storage.fe.api.JvmAppDataDirResolver
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class JvmAppDatabasePathTest {
     @Test
-    fun macOsResolvesUnderApplicationSupport() {
+    fun appendsDbNameToResolvedAppDataDir() {
+        val resolver = FakeJvmAppDataDirResolver(returns = "/base/cz.adamec.timotej.snag")
+
         val path =
             resolveJvmAppDatabasePath(
+                appDataDirResolver = resolver,
                 osName = "Mac OS X",
                 userHome = "/Users/tim",
                 appData = null,
@@ -29,116 +33,54 @@ class JvmAppDatabasePathTest {
             )
 
         assertEquals(
-            expected = "/Users/tim/Library/Application Support/cz.adamec.timotej.snag/snag.db",
+            expected = "/base/cz.adamec.timotej.snag/snag.db",
             actual = path,
         )
     }
 
     @Test
-    fun windowsUsesAppDataEnvWhenSet() {
-        val path =
-            resolveJvmAppDatabasePath(
-                osName = "Windows 11",
-                userHome = """C:\Users\Tim""",
-                appData = """C:\Users\Tim\AppData\Roaming""",
-                xdgDataHome = null,
-                appId = "cz.adamec.timotej.snag",
-                dbName = "snag.db",
-            )
+    fun forwardsAllInputsToResolver() {
+        val resolver = FakeJvmAppDataDirResolver(returns = "/ignored")
 
-        assertEquals(
-            expected = """C:\Users\Tim\AppData\Roaming/cz.adamec.timotej.snag/snag.db""",
-            actual = path,
+        resolveJvmAppDatabasePath(
+            appDataDirResolver = resolver,
+            osName = "Windows 11",
+            userHome = """C:\Users\Tim""",
+            appData = """C:\Users\Tim\AppData\Roaming""",
+            xdgDataHome = "/home/tim/.custom-data",
+            appId = "cz.adamec.timotej.snag",
+            dbName = "snag.db",
         )
+
+        assertEquals(expected = "Windows 11", actual = resolver.lastOsName)
+        assertEquals(expected = """C:\Users\Tim""", actual = resolver.lastUserHome)
+        assertEquals(expected = """C:\Users\Tim\AppData\Roaming""", actual = resolver.lastAppData)
+        assertEquals(expected = "/home/tim/.custom-data", actual = resolver.lastXdgDataHome)
+        assertEquals(expected = "cz.adamec.timotej.snag", actual = resolver.lastAppId)
     }
 
-    @Test
-    fun windowsFallsBackToHomeAppDataRoamingWhenEnvMissing() {
-        val path =
-            resolveJvmAppDatabasePath(
-                osName = "Windows 11",
-                userHome = """C:\Users\Tim""",
-                appData = null,
-                xdgDataHome = null,
-                appId = "cz.adamec.timotej.snag",
-                dbName = "snag.db",
-            )
+    private class FakeJvmAppDataDirResolver(
+        private val returns: String,
+    ) : JvmAppDataDirResolver {
+        var lastOsName: String? = null
+        var lastUserHome: String? = null
+        var lastAppData: String? = null
+        var lastXdgDataHome: String? = null
+        var lastAppId: String? = null
 
-        assertEquals(
-            expected = """C:\Users\Tim/AppData/Roaming/cz.adamec.timotej.snag/snag.db""",
-            actual = path,
-        )
-    }
-
-    @Test
-    fun linuxUsesXdgDataHomeWhenSet() {
-        val path =
-            resolveJvmAppDatabasePath(
-                osName = "Linux",
-                userHome = "/home/tim",
-                appData = null,
-                xdgDataHome = "/home/tim/.custom-data",
-                appId = "cz.adamec.timotej.snag",
-                dbName = "snag.db",
-            )
-
-        assertEquals(
-            expected = "/home/tim/.custom-data/cz.adamec.timotej.snag/snag.db",
-            actual = path,
-        )
-    }
-
-    @Test
-    fun linuxFallsBackToLocalShareWhenXdgMissing() {
-        val path =
-            resolveJvmAppDatabasePath(
-                osName = "Linux",
-                userHome = "/home/tim",
-                appData = null,
-                xdgDataHome = null,
-                appId = "cz.adamec.timotej.snag",
-                dbName = "snag.db",
-            )
-
-        assertEquals(
-            expected = "/home/tim/.local/share/cz.adamec.timotej.snag/snag.db",
-            actual = path,
-        )
-    }
-
-    @Test
-    fun unknownOsTreatedAsLinuxLike() {
-        val path =
-            resolveJvmAppDatabasePath(
-                osName = "FreeBSD",
-                userHome = "/home/tim",
-                appData = null,
-                xdgDataHome = null,
-                appId = "cz.adamec.timotej.snag",
-                dbName = "snag.db",
-            )
-
-        assertEquals(
-            expected = "/home/tim/.local/share/cz.adamec.timotej.snag/snag.db",
-            actual = path,
-        )
-    }
-
-    @Test
-    fun blankXdgDataHomeFallsBackToLocalShare() {
-        val path =
-            resolveJvmAppDatabasePath(
-                osName = "Linux",
-                userHome = "/home/tim",
-                appData = null,
-                xdgDataHome = "",
-                appId = "cz.adamec.timotej.snag",
-                dbName = "snag.db",
-            )
-
-        assertEquals(
-            expected = "/home/tim/.local/share/cz.adamec.timotej.snag/snag.db",
-            actual = path,
-        )
+        override fun invoke(
+            osName: String,
+            userHome: String,
+            appData: String?,
+            xdgDataHome: String?,
+            appId: String,
+        ): String {
+            lastOsName = osName
+            lastUserHome = userHome
+            lastAppData = appData
+            lastXdgDataHome = xdgDataHome
+            lastAppId = appId
+            return returns
+        }
     }
 }

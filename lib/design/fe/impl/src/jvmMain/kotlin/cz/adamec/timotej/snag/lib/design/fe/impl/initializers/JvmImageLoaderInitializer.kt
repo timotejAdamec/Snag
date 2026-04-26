@@ -24,25 +24,33 @@ import coil3.request.crossfade
 import coil3.util.DebugLogger
 import cz.adamec.timotej.snag.configuration.fe.FrontendRunConfig
 import cz.adamec.timotej.snag.lib.design.fe.api.initializer.ComposeInitializer
-import cz.adamec.timotej.snag.lib.storage.fe.api.resolveJvmAppDataDir
+import cz.adamec.timotej.snag.lib.storage.fe.api.JvmAppDataDirResolver
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.okhttp.OkHttp
 import okio.Path.Companion.toOkioPath
 import java.io.File
 
-internal class JvmImageLoaderInitializer : ComposeInitializer {
+internal class JvmImageLoaderInitializer(
+    private val appDataDirResolver: JvmAppDataDirResolver,
+) : ComposeInitializer {
     @Composable
     override fun init() {
         SingletonImageLoader.setSafe { context ->
-            createJvmImageLoader(context = context)
+            createJvmImageLoader(
+                context = context,
+                appDataDirResolver = appDataDirResolver,
+            )
         }
     }
 }
 
 @OptIn(ExperimentalCoilApi::class)
-private fun createJvmImageLoader(context: PlatformContext): ImageLoader {
+private fun createJvmImageLoader(
+    context: PlatformContext,
+    appDataDirResolver: JvmAppDataDirResolver,
+): ImageLoader {
     val baseDir =
-        resolveJvmAppDataDir(
+        appDataDirResolver(
             osName = System.getProperty("os.name").orEmpty(),
             userHome = System.getProperty("user.home").orEmpty(),
             appData = System.getenv("APPDATA"),

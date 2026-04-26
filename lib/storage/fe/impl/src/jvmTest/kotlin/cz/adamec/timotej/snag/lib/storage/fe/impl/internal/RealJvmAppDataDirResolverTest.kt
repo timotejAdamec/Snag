@@ -10,16 +10,18 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.lib.storage.fe.api
+package cz.adamec.timotej.snag.lib.storage.fe.impl.internal
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class JvmAppDataDirTest {
+class RealJvmAppDataDirResolverTest {
+    private val resolver = RealJvmAppDataDirResolver()
+
     @Test
     fun macOsResolvesUnderApplicationSupport() {
         val dir =
-            resolveJvmAppDataDir(
+            resolver(
                 osName = "Mac OS X",
                 userHome = "/Users/tim",
                 appData = null,
@@ -36,7 +38,7 @@ class JvmAppDataDirTest {
     @Test
     fun darwinAliasResolvesUnderApplicationSupport() {
         val dir =
-            resolveJvmAppDataDir(
+            resolver(
                 osName = "Darwin",
                 userHome = "/Users/tim",
                 appData = null,
@@ -53,7 +55,7 @@ class JvmAppDataDirTest {
     @Test
     fun windowsUsesAppDataEnvWhenSet() {
         val dir =
-            resolveJvmAppDataDir(
+            resolver(
                 osName = "Windows 11",
                 userHome = """C:\Users\Tim""",
                 appData = """C:\Users\Tim\AppData\Roaming""",
@@ -70,7 +72,7 @@ class JvmAppDataDirTest {
     @Test
     fun windowsFallsBackToHomeAppDataRoamingWhenEnvMissing() {
         val dir =
-            resolveJvmAppDataDir(
+            resolver(
                 osName = "Windows 11",
                 userHome = """C:\Users\Tim""",
                 appData = null,
@@ -87,7 +89,7 @@ class JvmAppDataDirTest {
     @Test
     fun windowsBlankAppDataFallsBackToHomeAppDataRoaming() {
         val dir =
-            resolveJvmAppDataDir(
+            resolver(
                 osName = "Windows 11",
                 userHome = """C:\Users\Tim""",
                 appData = "",
@@ -104,7 +106,7 @@ class JvmAppDataDirTest {
     @Test
     fun linuxUsesXdgDataHomeWhenSet() {
         val dir =
-            resolveJvmAppDataDir(
+            resolver(
                 osName = "Linux",
                 userHome = "/home/tim",
                 appData = null,
@@ -121,7 +123,7 @@ class JvmAppDataDirTest {
     @Test
     fun linuxFallsBackToLocalShareWhenXdgMissing() {
         val dir =
-            resolveJvmAppDataDir(
+            resolver(
                 osName = "Linux",
                 userHome = "/home/tim",
                 appData = null,
@@ -138,7 +140,7 @@ class JvmAppDataDirTest {
     @Test
     fun blankXdgDataHomeFallsBackToLocalShare() {
         val dir =
-            resolveJvmAppDataDir(
+            resolver(
                 osName = "Linux",
                 userHome = "/home/tim",
                 appData = null,
@@ -155,7 +157,7 @@ class JvmAppDataDirTest {
     @Test
     fun unknownOsTreatedAsLinuxLike() {
         val dir =
-            resolveJvmAppDataDir(
+            resolver(
                 osName = "FreeBSD",
                 userHome = "/home/tim",
                 appData = null,

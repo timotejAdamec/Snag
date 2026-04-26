@@ -17,6 +17,7 @@ import app.cash.sqldelight.db.QueryResult
 import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.db.SqlSchema
 import app.cash.sqldelight.driver.jdbc.sqlite.JdbcSqliteDriver
+import cz.adamec.timotej.snag.lib.storage.fe.api.JvmAppDataDirResolver
 import org.koin.core.scope.Scope
 import java.io.File
 
@@ -27,6 +28,7 @@ actual fun Scope.createPlatformSqlDriver(
 ): SqlDriver {
     val absolutePath =
         resolveJvmAppDatabasePath(
+            appDataDirResolver = get<JvmAppDataDirResolver>(),
             osName = System.getProperty("os.name").orEmpty(),
             userHome = System.getProperty("user.home").orEmpty(),
             appData = System.getenv("APPDATA"),
