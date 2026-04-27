@@ -22,6 +22,9 @@ kotlin {
             implementation(libs.oidc.tokenstore)
             implementation(libs.oidc.ktor)
         }
+        jvmMain.dependencies {
+            implementation(projects.lib.storage.fe.api)
+        }
         val webMain by getting {
             dependencies {
                 implementation(libs.kotlinx.browser)

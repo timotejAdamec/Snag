@@ -18,7 +18,7 @@ internal class RealJvmAppDataDirResolver : JvmAppDataDirResolver {
     override operator fun invoke(
         osName: String,
         userHome: String,
-        appData: String?,
+        localAppData: String?,
         xdgDataHome: String?,
         appId: String,
     ): String {
@@ -28,7 +28,7 @@ internal class RealJvmAppDataDirResolver : JvmAppDataDirResolver {
                     osName.contains(other = "darwin", ignoreCase = true) ->
                     "$userHome/Library/Application Support"
                 osName.contains(other = "win", ignoreCase = true) ->
-                    appData?.takeIf { it.isNotBlank() } ?: "$userHome/AppData/Roaming"
+                    localAppData?.takeIf { it.isNotBlank() } ?: "$userHome/AppData/Local"
                 else ->
                     xdgDataHome?.takeIf { it.isNotBlank() } ?: "$userHome/.local/share"
             }
