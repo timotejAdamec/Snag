@@ -10,5 +10,8 @@ kotlin {
             implementation(project(":lib:storage:contract"))
             implementation(libs.kotlinx.io.core)
         }
+        jvmMain.dependencies {
+            implementation(projects.lib.configuration.fe.api)
+        }
     }
 }

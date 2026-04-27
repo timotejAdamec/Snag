@@ -26,7 +26,7 @@ class JvmAppDatabasePathTest {
                 appDataDirResolver = resolver,
                 osName = "Mac OS X",
                 userHome = "/Users/tim",
-                appData = null,
+                localAppData = null,
                 xdgDataHome = null,
                 appId = "cz.adamec.timotej.snag",
                 dbName = "snag.db",
@@ -46,7 +46,7 @@ class JvmAppDatabasePathTest {
             appDataDirResolver = resolver,
             osName = "Windows 11",
             userHome = """C:\Users\Tim""",
-            appData = """C:\Users\Tim\AppData\Roaming""",
+            localAppData = """C:\Users\Tim\AppData\Local""",
             xdgDataHome = "/home/tim/.custom-data",
             appId = "cz.adamec.timotej.snag",
             dbName = "snag.db",
@@ -54,7 +54,7 @@ class JvmAppDatabasePathTest {
 
         assertEquals(expected = "Windows 11", actual = resolver.lastOsName)
         assertEquals(expected = """C:\Users\Tim""", actual = resolver.lastUserHome)
-        assertEquals(expected = """C:\Users\Tim\AppData\Roaming""", actual = resolver.lastAppData)
+        assertEquals(expected = """C:\Users\Tim\AppData\Local""", actual = resolver.lastLocalAppData)
         assertEquals(expected = "/home/tim/.custom-data", actual = resolver.lastXdgDataHome)
         assertEquals(expected = "cz.adamec.timotej.snag", actual = resolver.lastAppId)
     }
@@ -64,20 +64,20 @@ class JvmAppDatabasePathTest {
     ) : JvmAppDataDirResolver {
         var lastOsName: String? = null
         var lastUserHome: String? = null
-        var lastAppData: String? = null
+        var lastLocalAppData: String? = null
         var lastXdgDataHome: String? = null
         var lastAppId: String? = null
 
         override fun invoke(
             osName: String,
             userHome: String,
-            appData: String?,
+            localAppData: String?,
             xdgDataHome: String?,
             appId: String,
         ): String {
             lastOsName = osName
             lastUserHome = userHome
-            lastAppData = appData
+            lastLocalAppData = localAppData
             lastXdgDataHome = xdgDataHome
             lastAppId = appId
             return returns

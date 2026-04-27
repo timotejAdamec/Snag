@@ -18,7 +18,7 @@ internal fun resolveJvmAppDatabasePath(
     appDataDirResolver: JvmAppDataDirResolver,
     osName: String,
     userHome: String,
-    appData: String?,
+    localAppData: String?,
     xdgDataHome: String?,
     appId: String,
     dbName: String,
@@ -27,7 +27,7 @@ internal fun resolveJvmAppDatabasePath(
         appDataDirResolver(
             osName = osName,
             userHome = userHome,
-            appData = appData,
+            localAppData = localAppData,
             xdgDataHome = xdgDataHome,
             appId = appId,
         )

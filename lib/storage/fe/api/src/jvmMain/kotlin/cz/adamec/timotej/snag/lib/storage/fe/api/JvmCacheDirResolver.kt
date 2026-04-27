@@ -12,12 +12,12 @@
 
 package cz.adamec.timotej.snag.lib.storage.fe.api
 
-interface JvmAppDataDirResolver {
+interface JvmCacheDirResolver {
     operator fun invoke(
         osName: String,
         userHome: String,
         localAppData: String?,
-        xdgDataHome: String?,
+        xdgCacheHome: String?,
         appId: String,
     ): String
 }

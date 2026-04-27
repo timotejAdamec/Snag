@@ -31,7 +31,7 @@ actual fun Scope.createPlatformSqlDriver(
             appDataDirResolver = get<JvmAppDataDirResolver>(),
             osName = System.getProperty("os.name").orEmpty(),
             userHome = System.getProperty("user.home").orEmpty(),
-            appData = System.getenv("APPDATA"),
+            localAppData = System.getenv("LOCALAPPDATA"),
             xdgDataHome = System.getenv("XDG_DATA_HOME"),
             appId = appId,
             dbName = name,
