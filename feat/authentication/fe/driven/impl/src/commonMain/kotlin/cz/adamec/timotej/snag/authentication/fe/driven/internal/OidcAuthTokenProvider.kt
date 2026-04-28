@@ -33,9 +33,12 @@ internal class OidcAuthTokenProvider(
     override val authState: StateFlow<AuthState> = _authState
 
     private val client =
-        OpenIdConnectClient(
-            discoveryUri = "https://login.microsoftonline.com/${RunConfig.entraIdTenantId}/v2.0/.well-known/openid-configuration",
-        ) {
+        OpenIdConnectClient {
+            endpoints {
+                authorizationEndpoint = "https://login.microsoftonline.com/${RunConfig.entraIdTenantId}/oauth2/v2.0/authorize"
+                tokenEndpoint = "https://login.microsoftonline.com/${RunConfig.entraIdTenantId}/oauth2/v2.0/token"
+                endSessionEndpoint = "https://login.microsoftonline.com/${RunConfig.entraIdTenantId}/oauth2/v2.0/logout"
+            }
             clientId = RunConfig.entraIdClientId
             codeChallengeMethod = CodeChallengeMethod.S256
             scope = "openid profile email offline_access api://${RunConfig.entraIdClientId}/access_as_user"
