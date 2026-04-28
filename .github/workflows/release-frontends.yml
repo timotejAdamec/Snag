@@ -84,9 +84,6 @@ jobs:
 
   web-builds:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      id-token: write
 
     steps:
       - name: Checkout
@@ -126,21 +123,6 @@ jobs:
         with:
           name: wasmjs-dist
           path: snag-wasmjs.zip
-
-      - name: Authenticate to Google Cloud
-        id: auth
-        uses: google-github-actions/auth@v2
-        with:
-          workload_identity_provider: ${{ secrets.WIF_PROVIDER }}
-          service_account: ${{ secrets.WIF_SERVICE_ACCOUNT }}
-          create_credentials_file: true
-          export_environment_variables: true
-
-      - name: Install Firebase CLI
-        run: npm install -g firebase-tools
-
-      - name: Deploy WasmJS to Firebase Hosting
-        run: firebase deploy --only hosting --project ${{ secrets.GCP_PROJECT_ID }} --non-interactive
 
   macos-build:
     runs-on: macos-26
@@ -251,3 +233,40 @@ jobs:
             artifacts/macos-dmg/*.dmg
             artifacts/ios-framework/snag-ios-framework.zip
             artifacts/windows-msi/*.msi
+
+  firebase-deploy:
+    runs-on: ubuntu-latest
+    needs: [android-build, linux-build, web-builds, macos-build, ios-build, windows-build]
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download WasmJS distribution
+        uses: actions/download-artifact@v4
+        with:
+          name: wasmjs-dist
+          path: wasmjs-dist
+
+      - name: Unzip WasmJS distribution into hosting public dir
+        run: |
+          mkdir -p composeApp/build/dist/wasmJs/productionExecutable
+          unzip -o wasmjs-dist/snag-wasmjs.zip -d composeApp/build/dist/wasmJs/productionExecutable
+
+      - name: Authenticate to Google Cloud
+        id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.WIF_PROVIDER }}
+          service_account: ${{ secrets.WIF_SERVICE_ACCOUNT }}
+          create_credentials_file: true
+          export_environment_variables: true
+
+      - name: Install Firebase CLI
+        run: npm install -g firebase-tools
+
+      - name: Deploy WasmJS to Firebase Hosting
+        run: firebase deploy --only hosting --project ${{ secrets.GCP_PROJECT_ID }} --non-interactive
