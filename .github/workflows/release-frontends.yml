@@ -84,6 +84,9 @@ jobs:
 
   web-builds:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
 
     steps:
       - name: Checkout
@@ -123,6 +126,19 @@ jobs:
         with:
           name: wasmjs-dist
           path: snag-wasmjs.zip
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.WIF_PROVIDER }}
+          service_account: ${{ secrets.WIF_SERVICE_ACCOUNT }}
+
+      - name: Deploy WasmJS to Firebase Hosting
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          projectId: ${{ secrets.GCP_PROJECT_ID }}
+          channelId: live
 
   macos-build:
     runs-on: macos-26
