@@ -128,10 +128,13 @@ jobs:
           path: snag-wasmjs.zip
 
       - name: Authenticate to Google Cloud
+        id: auth
         uses: google-github-actions/auth@v2
         with:
           workload_identity_provider: ${{ secrets.WIF_PROVIDER }}
           service_account: ${{ secrets.WIF_SERVICE_ACCOUNT }}
+          create_credentials_file: true
+          export_environment_variables: true
 
       - name: Deploy WasmJS to Firebase Hosting
         uses: FirebaseExtended/action-hosting-deploy@v0
@@ -139,6 +142,8 @@ jobs:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
           projectId: ${{ secrets.GCP_PROJECT_ID }}
           channelId: live
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ steps.auth.outputs.credentials_file_path }}
 
   macos-build:
     runs-on: macos-26
