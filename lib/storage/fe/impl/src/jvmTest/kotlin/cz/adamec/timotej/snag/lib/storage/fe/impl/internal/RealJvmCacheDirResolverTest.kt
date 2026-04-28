@@ -15,39 +15,39 @@ package cz.adamec.timotej.snag.lib.storage.fe.impl.internal
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class RealJvmAppDataDirResolverTest {
-    private val resolver = RealJvmAppDataDirResolver()
+class RealJvmCacheDirResolverTest {
+    private val resolver = RealJvmCacheDirResolver()
 
     @Test
-    fun macOsResolvesUnderApplicationSupport() {
+    fun macOsResolvesUnderLibraryCaches() {
         val dir =
             resolver(
                 osName = "Mac OS X",
                 userHome = "/Users/tim",
                 localAppData = null,
-                xdgDataHome = null,
+                xdgCacheHome = null,
                 appId = "cz.adamec.timotej.snag",
             )
 
         assertEquals(
-            expected = "/Users/tim/Library/Application Support/cz.adamec.timotej.snag",
+            expected = "/Users/tim/Library/Caches/cz.adamec.timotej.snag",
             actual = dir,
         )
     }
 
     @Test
-    fun darwinAliasResolvesUnderApplicationSupport() {
+    fun darwinAliasResolvesUnderLibraryCaches() {
         val dir =
             resolver(
                 osName = "Darwin",
                 userHome = "/Users/tim",
                 localAppData = null,
-                xdgDataHome = null,
+                xdgCacheHome = null,
                 appId = "cz.adamec.timotej.snag",
             )
 
         assertEquals(
-            expected = "/Users/tim/Library/Application Support/cz.adamec.timotej.snag",
+            expected = "/Users/tim/Library/Caches/cz.adamec.timotej.snag",
             actual = dir,
         )
     }
@@ -59,12 +59,12 @@ class RealJvmAppDataDirResolverTest {
                 osName = "Windows 11",
                 userHome = """C:\Users\Tim""",
                 localAppData = """C:\Users\Tim\AppData\Local""",
-                xdgDataHome = null,
+                xdgCacheHome = null,
                 appId = "cz.adamec.timotej.snag",
             )
 
         assertEquals(
-            expected = """C:\Users\Tim\AppData\Local/cz.adamec.timotej.snag""",
+            expected = """C:\Users\Tim\AppData\Local/cz.adamec.timotej.snag/Cache""",
             actual = dir,
         )
     }
@@ -76,12 +76,12 @@ class RealJvmAppDataDirResolverTest {
                 osName = "Windows 11",
                 userHome = """C:\Users\Tim""",
                 localAppData = null,
-                xdgDataHome = null,
+                xdgCacheHome = null,
                 appId = "cz.adamec.timotej.snag",
             )
 
         assertEquals(
-            expected = """C:\Users\Tim/AppData/Local/cz.adamec.timotej.snag""",
+            expected = """C:\Users\Tim/AppData/Local/cz.adamec.timotej.snag/Cache""",
             actual = dir,
         )
     }
@@ -93,63 +93,63 @@ class RealJvmAppDataDirResolverTest {
                 osName = "Windows 11",
                 userHome = """C:\Users\Tim""",
                 localAppData = "",
-                xdgDataHome = null,
+                xdgCacheHome = null,
                 appId = "cz.adamec.timotej.snag",
             )
 
         assertEquals(
-            expected = """C:\Users\Tim/AppData/Local/cz.adamec.timotej.snag""",
+            expected = """C:\Users\Tim/AppData/Local/cz.adamec.timotej.snag/Cache""",
             actual = dir,
         )
     }
 
     @Test
-    fun linuxUsesXdgDataHomeWhenSet() {
+    fun linuxUsesXdgCacheHomeWhenSet() {
         val dir =
             resolver(
                 osName = "Linux",
                 userHome = "/home/tim",
                 localAppData = null,
-                xdgDataHome = "/home/tim/.custom-data",
+                xdgCacheHome = "/home/tim/.custom-cache",
                 appId = "cz.adamec.timotej.snag",
             )
 
         assertEquals(
-            expected = "/home/tim/.custom-data/cz.adamec.timotej.snag",
+            expected = "/home/tim/.custom-cache/cz.adamec.timotej.snag",
             actual = dir,
         )
     }
 
     @Test
-    fun linuxFallsBackToLocalShareWhenXdgMissing() {
+    fun linuxFallsBackToCacheWhenXdgMissing() {
         val dir =
             resolver(
                 osName = "Linux",
                 userHome = "/home/tim",
                 localAppData = null,
-                xdgDataHome = null,
+                xdgCacheHome = null,
                 appId = "cz.adamec.timotej.snag",
             )
 
         assertEquals(
-            expected = "/home/tim/.local/share/cz.adamec.timotej.snag",
+            expected = "/home/tim/.cache/cz.adamec.timotej.snag",
             actual = dir,
         )
     }
 
     @Test
-    fun blankXdgDataHomeFallsBackToLocalShare() {
+    fun blankXdgCacheHomeFallsBackToCache() {
         val dir =
             resolver(
                 osName = "Linux",
                 userHome = "/home/tim",
                 localAppData = null,
-                xdgDataHome = "",
+                xdgCacheHome = "",
                 appId = "cz.adamec.timotej.snag",
             )
 
         assertEquals(
-            expected = "/home/tim/.local/share/cz.adamec.timotej.snag",
+            expected = "/home/tim/.cache/cz.adamec.timotej.snag",
             actual = dir,
         )
     }
@@ -161,12 +161,12 @@ class RealJvmAppDataDirResolverTest {
                 osName = "FreeBSD",
                 userHome = "/home/tim",
                 localAppData = null,
-                xdgDataHome = null,
+                xdgCacheHome = null,
                 appId = "cz.adamec.timotej.snag",
             )
 
         assertEquals(
-            expected = "/home/tim/.local/share/cz.adamec.timotej.snag",
+            expected = "/home/tim/.cache/cz.adamec.timotej.snag",
             actual = dir,
         )
     }

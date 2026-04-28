@@ -24,21 +24,21 @@ import coil3.request.crossfade
 import coil3.util.DebugLogger
 import cz.adamec.timotej.snag.configuration.fe.FrontendRunConfig
 import cz.adamec.timotej.snag.lib.design.fe.api.initializer.ComposeInitializer
-import cz.adamec.timotej.snag.lib.storage.fe.api.JvmAppDataDirResolver
+import cz.adamec.timotej.snag.lib.storage.fe.api.JvmCacheDirResolver
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.okhttp.OkHttp
 import okio.Path.Companion.toOkioPath
 import java.io.File
 
 internal class JvmImageLoaderInitializer(
-    private val appDataDirResolver: JvmAppDataDirResolver,
+    private val cacheDirResolver: JvmCacheDirResolver,
 ) : ComposeInitializer {
     @Composable
     override fun init() {
         SingletonImageLoader.setSafe { context ->
             createJvmImageLoader(
                 context = context,
-                appDataDirResolver = appDataDirResolver,
+                cacheDirResolver = cacheDirResolver,
             )
         }
     }
@@ -47,14 +47,14 @@ internal class JvmImageLoaderInitializer(
 @OptIn(ExperimentalCoilApi::class)
 private fun createJvmImageLoader(
     context: PlatformContext,
-    appDataDirResolver: JvmAppDataDirResolver,
+    cacheDirResolver: JvmCacheDirResolver,
 ): ImageLoader {
     val baseDir =
-        appDataDirResolver(
+        cacheDirResolver(
             osName = System.getProperty("os.name").orEmpty(),
             userHome = System.getProperty("user.home").orEmpty(),
-            appData = System.getenv("APPDATA"),
-            xdgDataHome = System.getenv("XDG_DATA_HOME"),
+            localAppData = System.getenv("LOCALAPPDATA"),
+            xdgCacheHome = System.getenv("XDG_CACHE_HOME"),
             appId = FrontendRunConfig.namespace,
         )
     val cacheDir = File(baseDir, "image_cache").apply { mkdirs() }

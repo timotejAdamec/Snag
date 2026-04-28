@@ -31,10 +31,15 @@ private const val GCM_TAG_LENGTH = 128
 private const val GCM_IV_LENGTH = 12
 private const val AES_KEY_SIZE = 256
 
-internal class JvmEncryptedSettingsStore : SettingsStore {
-    private val snagDir = File(System.getProperty("user.home"), ".snag").apply { mkdirs() }
-    private val keystoreFile = File(snagDir, "auth.keystore")
-    private val dataFile = File(snagDir, "auth-tokens.enc")
+internal class JvmEncryptedSettingsStore(
+    baseDir: File,
+) : SettingsStore {
+    init {
+        baseDir.mkdirs()
+    }
+
+    private val keystoreFile = File(baseDir, "auth.keystore")
+    private val dataFile = File(baseDir, "auth-tokens.enc")
 
     private val secretKey: SecretKey by lazy { loadOrCreateKey() }
 
