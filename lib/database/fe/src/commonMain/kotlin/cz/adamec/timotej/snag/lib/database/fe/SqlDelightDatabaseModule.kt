@@ -24,11 +24,12 @@ import org.koin.dsl.module
 fun sqlDelightDatabaseModule(
     schema: SqlSchema<QueryResult.AsyncValue<Unit>>,
     name: String,
-    appId: String,
     qualifier: Qualifier,
 ) = module {
+    includes(sqlDriverFactoryModule)
+
     single(qualifier) {
-        createPlatformSqlDriver(schema = schema, name = name, appId = appId)
+        get<SqlDriverFactory>().create(schema = schema, name = name)
     } bind SqlDriver::class
 
     single<Initializer>(qualifier) {

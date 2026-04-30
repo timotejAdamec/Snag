@@ -10,16 +10,17 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.lib.database.fe
+package cz.adamec.timotej.snag.lib.database.fe.internal
 
 import app.cash.sqldelight.db.QueryResult
 import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.db.SqlSchema
 import app.cash.sqldelight.driver.worker.createDefaultWebWorkerDriver
-import org.koin.core.scope.Scope
+import cz.adamec.timotej.snag.lib.database.fe.SqlDriverFactory
 
-actual fun Scope.createPlatformSqlDriver(
-    schema: SqlSchema<QueryResult.AsyncValue<Unit>>,
-    name: String,
-    appId: String,
-): SqlDriver = createDefaultWebWorkerDriver()
+internal class WebSqlDriverFactory : SqlDriverFactory {
+    override fun create(
+        schema: SqlSchema<QueryResult.AsyncValue<Unit>>,
+        name: String,
+    ): SqlDriver = createDefaultWebWorkerDriver()
+}

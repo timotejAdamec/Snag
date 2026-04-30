@@ -10,7 +10,6 @@
  * Department of Software Engineering
  */
 
-import cz.adamec.timotej.snag.buildsrc.consts.SNAG_NAMESPACE
 import java.util.Properties
 
 plugins {
@@ -66,12 +65,6 @@ buildkonfig {
     objectName = "FrontendBuildConfig"
 
     defaultConfigs {
-        buildConfigField(
-            com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING,
-            "NAMESPACE",
-            SNAG_NAMESPACE,
-            const = true,
-        )
         buildConfigField(
             com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING,
             "SERVER_TARGET",

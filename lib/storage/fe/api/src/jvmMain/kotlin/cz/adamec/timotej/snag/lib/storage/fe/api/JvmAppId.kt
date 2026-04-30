@@ -10,13 +10,6 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.configuration.fe
+package cz.adamec.timotej.snag.lib.storage.fe.api
 
-/**
- * Compile-time configuration for frontend platforms only.
- *
- * Values are injected via the BuildKonfig Gradle plugin at build time.
- */
-object FrontendRunConfig {
-    val serverTarget: ServerTarget = ServerTarget.fromBuildConfig()
-}
+const val JVM_APP_ID: String = "Snag"

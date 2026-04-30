@@ -12,9 +12,9 @@
 
 package cz.adamec.timotej.snag.lib.storage.fe.impl.di
 
-import cz.adamec.timotej.snag.configuration.fe.FrontendRunConfig
 import cz.adamec.timotej.snag.core.foundation.common.di.getIoDispatcher
 import cz.adamec.timotej.snag.core.storage.fe.LocalFileStorage
+import cz.adamec.timotej.snag.lib.storage.fe.api.JVM_APP_ID
 import cz.adamec.timotej.snag.lib.storage.fe.api.JvmAppDataDirResolver
 import cz.adamec.timotej.snag.lib.storage.fe.api.JvmCacheDirResolver
 import cz.adamec.timotej.snag.lib.storage.fe.impl.internal.RealJvmAppDataDirResolver
@@ -35,7 +35,7 @@ internal actual val fileStoragePlatformModule =
                     userHome = System.getProperty("user.home").orEmpty(),
                     localAppData = System.getenv("LOCALAPPDATA"),
                     xdgDataHome = System.getenv("XDG_DATA_HOME"),
-                    appId = FrontendRunConfig.namespace,
+                    appId = JVM_APP_ID,
                 )
             RealLocalFileStorage(
                 baseDirectory = "$dataDir/files",
