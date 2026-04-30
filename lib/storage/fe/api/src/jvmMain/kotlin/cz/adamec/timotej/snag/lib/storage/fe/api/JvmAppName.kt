@@ -12,4 +12,4 @@
 
 package cz.adamec.timotej.snag.lib.storage.fe.api
 
-const val JVM_APP_ID: String = "Snag"
+const val JVM_APP_NAME: String = "Snag"

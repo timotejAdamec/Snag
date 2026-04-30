@@ -13,11 +13,11 @@
 package cz.adamec.timotej.snag.lib.design.fe.impl.initializers
 
 import cz.adamec.timotej.snag.core.foundation.fe.Initializer
-import cz.adamec.timotej.snag.lib.storage.fe.api.JVM_APP_ID
+import cz.adamec.timotej.snag.lib.storage.fe.api.JVM_APP_NAME
 import io.github.vinceglb.filekit.FileKit
 
 internal class JvmDesignInitializer : Initializer {
     override suspend fun init() {
-        FileKit.init(appId = JVM_APP_ID)
+        FileKit.init(appId = JVM_APP_NAME)
     }
 }

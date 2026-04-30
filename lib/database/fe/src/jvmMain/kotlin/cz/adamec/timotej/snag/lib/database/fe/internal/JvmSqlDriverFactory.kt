@@ -19,7 +19,7 @@ import app.cash.sqldelight.db.SqlSchema
 import app.cash.sqldelight.driver.jdbc.sqlite.JdbcSqliteDriver
 import cz.adamec.timotej.snag.lib.database.fe.SqlDriverFactory
 import cz.adamec.timotej.snag.lib.database.fe.resolveJvmAppDatabasePath
-import cz.adamec.timotej.snag.lib.storage.fe.api.JVM_APP_ID
+import cz.adamec.timotej.snag.lib.storage.fe.api.JVM_APP_NAME
 import cz.adamec.timotej.snag.lib.storage.fe.api.JvmAppDataDirResolver
 import java.io.File
 
@@ -37,7 +37,7 @@ internal class JvmSqlDriverFactory(
                 userHome = System.getProperty("user.home").orEmpty(),
                 localAppData = System.getenv("LOCALAPPDATA"),
                 xdgDataHome = System.getenv("XDG_DATA_HOME"),
-                appId = JVM_APP_ID,
+                appId = JVM_APP_NAME,
                 dbName = name,
             )
         File(absolutePath).parentFile?.mkdirs()
