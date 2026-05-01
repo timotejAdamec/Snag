@@ -14,4 +14,4 @@ package cz.adamec.timotej.snag.lib.database.fe
 
 import org.koin.core.module.Module
 
-expect val sqlDriverFactoryModule: Module
+internal expect val sqlDriverFactoryModule: Module

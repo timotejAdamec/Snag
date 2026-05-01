@@ -17,7 +17,7 @@ import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
-actual val sqlDriverFactoryModule =
+internal actual val sqlDriverFactoryModule =
     module {
         singleOf(::IosSqlDriverFactory) bind SqlDriverFactory::class
     }
