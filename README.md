@@ -1,5 +1,34 @@
 This is a Kotlin Multiplatform project targeting Android, iOS, Web, Desktop (JVM), Server.
 
+# Screenshots
+
+<table>
+  <tr>
+    <td align="center" width="33%">
+      <img src="docs/images/floor-plan-with-pins.png" alt="Interactive floor plan with finding pins (Android)" height="320"><br>
+      <sub>Interactive floor plan with finding pins (Android)</sub>
+    </td>
+    <td align="center" width="33%">
+      <img src="docs/images/wear-os-project-list.png" alt="Project list on Wear OS" height="320"><br>
+      <sub>Project list on Wear OS</sub>
+    </td>
+    <td align="center" width="33%">
+      <img src="docs/images/report-page-structure.png" alt="Generated PDF report page" height="320"><br>
+      <sub>Generated PDF report page</sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" colspan="2">
+      <img src="docs/images/adaptive-layout-extra-wide.png" alt="Adaptive multi-pane layout on desktop" width="100%"><br>
+      <sub>Adaptive multi-pane layout on desktop</sub>
+    </td>
+    <td align="center">
+      <img src="docs/images/closed-project-list.png" alt="Project list in the web app" width="100%"><br>
+      <sub>Project list in the web app</sub>
+    </td>
+  </tr>
+</table>
+
 # Prerequisites
 
 ## Google Cloud Storage Setup
