@@ -14,13 +14,9 @@ This is a Kotlin Multiplatform project targeting Android, iOS, Web, Desktop (JVM
     </td>
   </tr>
   <tr>
-    <td align="center">
+    <td align="center" colspan="2">
       <img src="docs/images/adaptive-layout-extra-wide.png" alt="Adaptive multi-pane layout on desktop" width="100%"><br>
       <sub>Adaptive multi-pane layout on desktop</sub>
-    </td>
-    <td align="center">
-      <img src="docs/images/closed-project-list.png" alt="Project list in the web app" width="100%"><br>
-      <sub>Project list in the web app</sub>
     </td>
   </tr>
 </table>
