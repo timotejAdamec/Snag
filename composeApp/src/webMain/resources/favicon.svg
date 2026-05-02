@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <!-- Tmavší podklad do hluboké černé pro prémiový vzhled -->
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1A1A1A" />
+      <stop offset="100%" stop-color="#000000" />
+    </linearGradient>
+
+    <!-- Stín pro pin -->
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="16" stdDeviation="20" flood-color="#000000" flood-opacity="0.8"/>
+    </filter>
+
+    <!-- Růžový gradient pro hlavní akcent -->
+    <linearGradient id="pinkGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF5285" />
+      <stop offset="100%" stop-color="#D81B60" />
+    </linearGradient>
+  </defs>
+
+  <!-- Pozadí s ideálním zaoblením pro ikony -->
+  <rect x="0" y="0" width="512" height="512" rx="116" fill="url(#bgGradient)" />
+
+  <!-- Skupina s pinem - zmenšená na 80% pro ideální vyvážení prostoru -->
+  <g transform="translate(256, 256) scale(0.80) translate(-256, -256)">
+    
+    <!-- Ikona pinu (čistě bílá) -->
+    <path d="M256,120 C189.7,120 136,173.7 136,240 C136,336 256,432 256,432 C256,432 376,336 376,240 C376,173.7 322.3,120 256,120 Z"
+          fill="#FFFFFF"
+          filter="url(#shadow)" />
+
+    <!-- Vnitřní růžový kruh (bod zájmu) -->
+    <circle cx="256" cy="224" r="54" fill="url(#pinkGradient)" />
+
+    <!-- Středový bílý bod - "záměr" -->
+    <circle cx="256" cy="224" r="12" fill="#FFFFFF" />
+    
+  </g>
+</svg>

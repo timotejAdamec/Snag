@@ -16,12 +16,16 @@ package cz.adamec.timotej.snag
 
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
+import org.jetbrains.compose.resources.painterResource
+import snag.composeapp.generated.resources.Res
+import snag.composeapp.generated.resources.snag_logo
 
 fun main() =
     application {
         Window(
             onCloseRequest = ::exitApplication,
             title = "Snag",
+            icon = painterResource(Res.drawable.snag_logo),
         ) {
             App()
         }

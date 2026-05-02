@@ -79,9 +79,14 @@ compose.desktop {
 
             macOS {
                 bundleID = SNAG_NAMESPACE
+                iconFile.set(project.file("icons/snag.icns"))
+            }
+            windows {
+                iconFile.set(project.file("icons/snag.ico"))
             }
             linux {
                 packageName = "snag"
+                iconFile.set(project.file("icons/snag.png"))
             }
 
             modules("java.sql", "jdk.unsupported")
