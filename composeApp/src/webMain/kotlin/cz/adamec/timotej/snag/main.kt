@@ -17,18 +17,35 @@ package cz.adamec.timotej.snag
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.window.ComposeViewport
 import cz.adamec.timotej.snag.configuration.fe.WebRunConfig
+import io.ktor.http.Url
 import kotlinx.browser.window
-import org.publicvalue.multiplatform.oidc.ExperimentalOpenIdConnect
-import org.publicvalue.multiplatform.oidc.appsupport.PlatformCodeAuthFlow
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
+import org.publicvalue.multiplatform.oidc.preferences.PreferencesFactory
+import org.publicvalue.multiplatform.oidc.preferences.setResponseUri
 
-@OptIn(ExperimentalComposeUiApi::class, ExperimentalOpenIdConnect::class)
+@OptIn(ExperimentalComposeUiApi::class)
 fun main() {
     val currentPath = window.location.pathname
-    if (currentPath.startsWith(WebRunConfig.redirectPath) || currentPath.startsWith("/logout")) {
-        PlatformCodeAuthFlow.handleRedirect()
+    if (currentPath.startsWith(WebRunConfig.redirectPath)) {
+        handleAuthRedirect()
         return
     }
-    ComposeViewport {
-        App()
+    if (currentPath.startsWith("/logout")) {
+        window.location.replace("/")
+        return
+    }
+    ComposeViewport { App() }
+}
+
+private fun handleAuthRedirect() {
+    val responseUrl = Url(window.location.href)
+    val hasCallbackParam =
+        responseUrl.parameters.contains("code") || responseUrl.parameters.contains("error")
+    MainScope().launch {
+        if (hasCallbackParam) {
+            PreferencesFactory().create().setResponseUri(responseUrl)
+        }
+        window.location.replace("/")
     }
 }

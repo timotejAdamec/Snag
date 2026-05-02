@@ -28,6 +28,7 @@ kotlin {
         val webMain by getting {
             dependencies {
                 implementation(libs.kotlinx.browser)
+                implementation(libs.oidc.preferences)
             }
         }
     }

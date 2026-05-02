@@ -12,6 +12,8 @@
 
 package cz.adamec.timotej.snag.authentication.fe.driven.di
 
+import cz.adamec.timotej.snag.authentication.fe.driven.internal.OidcLoginExecutor
+import cz.adamec.timotej.snag.authentication.fe.driven.internal.StandardOidcLoginExecutor
 import cz.adamec.timotej.snag.configuration.fe.MobileRunConfig
 import org.koin.core.module.Module
 import org.koin.dsl.module
@@ -26,5 +28,6 @@ actual val platformModule: Module =
     module {
         single<CodeAuthFlowFactory> { IosCodeAuthFlowFactory() }
         single<TokenStore> { IosKeychainTokenStore() }
+        single<OidcLoginExecutor> { StandardOidcLoginExecutor() }
         single(qualifier = OIDC_REDIRECT_URI_QUALIFIER) { MobileRunConfig.redirectUri }
     }

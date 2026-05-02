@@ -13,6 +13,8 @@
 package cz.adamec.timotej.snag.authentication.fe.driven.di
 
 import cz.adamec.timotej.snag.authentication.fe.driven.internal.JvmEncryptedSettingsStore
+import cz.adamec.timotej.snag.authentication.fe.driven.internal.OidcLoginExecutor
+import cz.adamec.timotej.snag.authentication.fe.driven.internal.StandardOidcLoginExecutor
 import cz.adamec.timotej.snag.configuration.fe.FrontendRunConfig
 import cz.adamec.timotej.snag.configuration.fe.JvmRunConfig
 import cz.adamec.timotej.snag.lib.storage.fe.api.JvmAppDataDirResolver
@@ -29,6 +31,7 @@ import java.io.File
 actual val platformModule: Module =
     module {
         single<CodeAuthFlowFactory> { JvmCodeAuthFlowFactory() }
+        single<OidcLoginExecutor> { StandardOidcLoginExecutor() }
         single<TokenStore> {
             val dataDir =
                 get<JvmAppDataDirResolver>().invoke(

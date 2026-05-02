@@ -65,6 +65,7 @@ kotlin {
             dependencies {
                 implementation(projects.lib.configuration.fe.api)
                 implementation(libs.oidc.appsupport)
+                implementation(libs.oidc.preferences)
             }
         }
     }

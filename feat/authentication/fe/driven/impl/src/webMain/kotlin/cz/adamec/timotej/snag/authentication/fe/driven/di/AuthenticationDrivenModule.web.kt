@@ -12,13 +12,15 @@
 
 package cz.adamec.timotej.snag.authentication.fe.driven.di
 
+import cz.adamec.timotej.snag.authentication.fe.driven.internal.OidcLoginExecutor
+import cz.adamec.timotej.snag.authentication.fe.driven.internal.RedirectCodeAuthFlowFactory
+import cz.adamec.timotej.snag.authentication.fe.driven.internal.RedirectOidcLoginExecutor
 import cz.adamec.timotej.snag.authentication.fe.driven.internal.WebLocalStorageSettingsStore
 import cz.adamec.timotej.snag.configuration.fe.WebRunConfig
 import kotlinx.browser.window
 import org.koin.core.module.Module
 import org.koin.dsl.module
 import org.publicvalue.multiplatform.oidc.ExperimentalOpenIdConnect
-import org.publicvalue.multiplatform.oidc.appsupport.WebCodeAuthFlowFactory
 import org.publicvalue.multiplatform.oidc.flows.CodeAuthFlowFactory
 import org.publicvalue.multiplatform.oidc.tokenstore.SettingsTokenStore
 import org.publicvalue.multiplatform.oidc.tokenstore.TokenStore
@@ -26,7 +28,8 @@ import org.publicvalue.multiplatform.oidc.tokenstore.TokenStore
 @OptIn(ExperimentalOpenIdConnect::class)
 actual val platformModule: Module =
     module {
-        single<CodeAuthFlowFactory> { WebCodeAuthFlowFactory() }
+        single<CodeAuthFlowFactory> { RedirectCodeAuthFlowFactory() }
         single<TokenStore> { SettingsTokenStore(settings = WebLocalStorageSettingsStore()) }
+        single<OidcLoginExecutor> { RedirectOidcLoginExecutor() }
         single(qualifier = OIDC_REDIRECT_URI_QUALIFIER) { "${window.location.origin}${WebRunConfig.redirectPath}" }
     }
