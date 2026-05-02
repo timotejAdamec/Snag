@@ -23,5 +23,7 @@ interface AuthTokenProvider {
 
     suspend fun getAccessToken(): String?
 
+    suspend fun refreshAccessToken(): String?
+
     suspend fun logout()
 }
