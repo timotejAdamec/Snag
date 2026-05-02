@@ -19,20 +19,25 @@ import cz.adamec.timotej.snag.configuration.common.RunConfig
 import org.koin.core.module.Module
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
+import org.publicvalue.multiplatform.oidc.ExperimentalOpenIdConnect
+import org.publicvalue.multiplatform.oidc.tokenstore.TokenRefreshHandler
 
 internal val OIDC_REDIRECT_URI_QUALIFIER = named("oidcRedirectUri")
 
 internal expect val platformModule: Module
 
+@OptIn(ExperimentalOpenIdConnect::class)
 val authenticationDrivenModule =
     module {
         includes(platformModule)
+        single { TokenRefreshHandler(tokenStore = get()) }
         single<AuthTokenProvider> {
             if (RunConfig.mockAuth) {
                 MockAuthTokenProvider()
             } else {
                 OidcAuthTokenProvider(
                     tokenStore = get(),
+                    tokenRefreshHandler = get(),
                     authFlowFactory = get(),
                     loginExecutor = get(),
                     redirectUri = get(qualifier = OIDC_REDIRECT_URI_QUALIFIER),

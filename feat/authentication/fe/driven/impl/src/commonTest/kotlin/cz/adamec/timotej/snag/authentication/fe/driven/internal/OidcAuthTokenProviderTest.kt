@@ -23,6 +23,7 @@ import org.publicvalue.multiplatform.oidc.OpenIdConnectException
 import org.publicvalue.multiplatform.oidc.flows.CodeAuthFlow
 import org.publicvalue.multiplatform.oidc.flows.CodeAuthFlowFactory
 import org.publicvalue.multiplatform.oidc.flows.EndSessionFlow
+import org.publicvalue.multiplatform.oidc.tokenstore.TokenRefreshHandler
 import org.publicvalue.multiplatform.oidc.tokenstore.TokenStore
 import org.publicvalue.multiplatform.oidc.types.AuthCodeRequest
 import org.publicvalue.multiplatform.oidc.types.remote.AccessTokenResponse
@@ -110,6 +111,7 @@ class OidcAuthTokenProviderTest {
     ): OidcAuthTokenProvider =
         OidcAuthTokenProvider(
             tokenStore = tokenStore,
+            tokenRefreshHandler = TokenRefreshHandler(tokenStore = tokenStore),
             authFlowFactory = FakeCodeAuthFlowFactory(flow = flow),
             loginExecutor = StandardOidcLoginExecutor(),
             redirectUri = "https://example.test/callback",

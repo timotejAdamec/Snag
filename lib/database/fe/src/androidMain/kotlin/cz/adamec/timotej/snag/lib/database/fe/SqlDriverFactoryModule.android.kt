@@ -12,13 +12,12 @@
 
 package cz.adamec.timotej.snag.lib.database.fe
 
-import app.cash.sqldelight.db.QueryResult
-import app.cash.sqldelight.db.SqlDriver
-import app.cash.sqldelight.db.SqlSchema
+import cz.adamec.timotej.snag.lib.database.fe.internal.AndroidSqlDriverFactory
+import org.koin.core.module.dsl.singleOf
+import org.koin.dsl.bind
+import org.koin.dsl.module
 
-interface SqlDriverFactory {
-    fun create(
-        schema: SqlSchema<QueryResult.AsyncValue<Unit>>,
-        name: String,
-    ): SqlDriver
-}
+internal actual val sqlDriverFactoryModule =
+    module {
+        singleOf(::AndroidSqlDriverFactory) bind SqlDriverFactory::class
+    }

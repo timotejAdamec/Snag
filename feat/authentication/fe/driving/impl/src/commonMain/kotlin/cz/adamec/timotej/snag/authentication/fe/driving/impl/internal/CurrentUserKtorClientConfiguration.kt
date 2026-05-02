@@ -13,6 +13,7 @@
 package cz.adamec.timotej.snag.authentication.fe.driving.impl.internal
 
 import cz.adamec.timotej.snag.authentication.fe.app.api.GetAccessTokenUseCase
+import cz.adamec.timotej.snag.authentication.fe.app.api.RefreshAccessTokenUseCase
 import cz.adamec.timotej.snag.configuration.common.RunConfig
 import cz.adamec.timotej.snag.network.fe.ports.KtorClientConfiguration
 import cz.adamec.timotej.snag.routing.common.USER_ID_HEADER
@@ -25,6 +26,7 @@ import io.ktor.client.plugins.auth.providers.bearer
 @Suppress("LabeledExpression")
 internal class CurrentUserKtorClientConfiguration(
     private val getAccessTokenUseCase: GetAccessTokenUseCase,
+    private val refreshAccessTokenUseCase: RefreshAccessTokenUseCase,
 ) : KtorClientConfiguration {
     override fun HttpClientConfig<*>.setup() {
         if (RunConfig.mockAuth) {
@@ -50,6 +52,10 @@ internal class CurrentUserKtorClientConfiguration(
             bearer {
                 loadTokens {
                     getAccessTokenUseCase()
+                        ?.let { BearerTokens(accessToken = it, refreshToken = "") }
+                }
+                refreshTokens {
+                    refreshAccessTokenUseCase()
                         ?.let { BearerTokens(accessToken = it, refreshToken = "") }
                 }
                 sendWithoutRequest { true }

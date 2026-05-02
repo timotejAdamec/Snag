@@ -13,11 +13,5 @@
 package cz.adamec.timotej.snag.lib.storage.fe.api
 
 interface JvmCacheDirResolver {
-    operator fun invoke(
-        osName: String,
-        userHome: String,
-        localAppData: String?,
-        xdgCacheHome: String?,
-        appId: String,
-    ): String
+    operator fun invoke(): String
 }

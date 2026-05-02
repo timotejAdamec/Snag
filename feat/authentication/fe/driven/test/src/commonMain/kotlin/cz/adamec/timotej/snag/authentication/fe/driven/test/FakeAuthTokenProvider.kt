@@ -24,6 +24,7 @@ class FakeAuthTokenProvider(
     override val authState: StateFlow<AuthState> = _authState
 
     var loginFailure: Throwable? = null
+    var refreshFailure: Throwable? = null
 
     override suspend fun restoreSession() = Unit
 
@@ -33,6 +34,11 @@ class FakeAuthTokenProvider(
     }
 
     override suspend fun getAccessToken(): String? = "fake-access-token"
+
+    override suspend fun refreshAccessToken(): String? {
+        refreshFailure?.let { throw it }
+        return "fake-access-token"
+    }
 
     override suspend fun logout() {
         _authState.value = AuthState.Unauthenticated

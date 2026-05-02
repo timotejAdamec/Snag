@@ -12,16 +12,17 @@
 
 package cz.adamec.timotej.snag.lib.storage.fe.impl.internal
 
+import cz.adamec.timotej.snag.lib.storage.fe.api.JVM_APP_NAME
 import cz.adamec.timotej.snag.lib.storage.fe.api.JvmAppDataDirResolver
 
-internal class RealJvmAppDataDirResolver : JvmAppDataDirResolver {
-    override operator fun invoke(
-        osName: String,
-        userHome: String,
-        localAppData: String?,
-        xdgDataHome: String?,
-        appId: String,
-    ): String {
+internal class RealJvmAppDataDirResolver(
+    private val osName: String = System.getProperty("os.name").orEmpty(),
+    private val userHome: String = System.getProperty("user.home").orEmpty(),
+    private val localAppData: String? = System.getenv("LOCALAPPDATA"),
+    private val xdgDataHome: String? = System.getenv("XDG_DATA_HOME"),
+    private val appId: String = JVM_APP_NAME,
+) : JvmAppDataDirResolver {
+    override operator fun invoke(): String {
         val baseDir =
             when {
                 osName.contains(other = "mac", ignoreCase = true) ||

@@ -16,12 +16,10 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class RealJvmCacheDirResolverTest {
-    private val resolver = RealJvmCacheDirResolver()
-
     @Test
     fun macOsResolvesUnderLibraryCaches() {
-        val dir =
-            resolver(
+        val resolver =
+            RealJvmCacheDirResolver(
                 osName = "Mac OS X",
                 userHome = "/Users/tim",
                 localAppData = null,
@@ -31,14 +29,14 @@ class RealJvmCacheDirResolverTest {
 
         assertEquals(
             expected = "/Users/tim/Library/Caches/cz.adamec.timotej.snag",
-            actual = dir,
+            actual = resolver(),
         )
     }
 
     @Test
     fun darwinAliasResolvesUnderLibraryCaches() {
-        val dir =
-            resolver(
+        val resolver =
+            RealJvmCacheDirResolver(
                 osName = "Darwin",
                 userHome = "/Users/tim",
                 localAppData = null,
@@ -48,14 +46,14 @@ class RealJvmCacheDirResolverTest {
 
         assertEquals(
             expected = "/Users/tim/Library/Caches/cz.adamec.timotej.snag",
-            actual = dir,
+            actual = resolver(),
         )
     }
 
     @Test
     fun windowsUsesLocalAppDataEnvWhenSet() {
-        val dir =
-            resolver(
+        val resolver =
+            RealJvmCacheDirResolver(
                 osName = "Windows 11",
                 userHome = """C:\Users\Tim""",
                 localAppData = """C:\Users\Tim\AppData\Local""",
@@ -65,14 +63,14 @@ class RealJvmCacheDirResolverTest {
 
         assertEquals(
             expected = """C:\Users\Tim\AppData\Local/cz.adamec.timotej.snag/Cache""",
-            actual = dir,
+            actual = resolver(),
         )
     }
 
     @Test
     fun windowsFallsBackToHomeAppDataLocalWhenEnvMissing() {
-        val dir =
-            resolver(
+        val resolver =
+            RealJvmCacheDirResolver(
                 osName = "Windows 11",
                 userHome = """C:\Users\Tim""",
                 localAppData = null,
@@ -82,14 +80,14 @@ class RealJvmCacheDirResolverTest {
 
         assertEquals(
             expected = """C:\Users\Tim/AppData/Local/cz.adamec.timotej.snag/Cache""",
-            actual = dir,
+            actual = resolver(),
         )
     }
 
     @Test
     fun windowsBlankLocalAppDataFallsBackToHomeAppDataLocal() {
-        val dir =
-            resolver(
+        val resolver =
+            RealJvmCacheDirResolver(
                 osName = "Windows 11",
                 userHome = """C:\Users\Tim""",
                 localAppData = "",
@@ -99,14 +97,14 @@ class RealJvmCacheDirResolverTest {
 
         assertEquals(
             expected = """C:\Users\Tim/AppData/Local/cz.adamec.timotej.snag/Cache""",
-            actual = dir,
+            actual = resolver(),
         )
     }
 
     @Test
     fun linuxUsesXdgCacheHomeWhenSet() {
-        val dir =
-            resolver(
+        val resolver =
+            RealJvmCacheDirResolver(
                 osName = "Linux",
                 userHome = "/home/tim",
                 localAppData = null,
@@ -116,14 +114,14 @@ class RealJvmCacheDirResolverTest {
 
         assertEquals(
             expected = "/home/tim/.custom-cache/cz.adamec.timotej.snag",
-            actual = dir,
+            actual = resolver(),
         )
     }
 
     @Test
     fun linuxFallsBackToCacheWhenXdgMissing() {
-        val dir =
-            resolver(
+        val resolver =
+            RealJvmCacheDirResolver(
                 osName = "Linux",
                 userHome = "/home/tim",
                 localAppData = null,
@@ -133,14 +131,14 @@ class RealJvmCacheDirResolverTest {
 
         assertEquals(
             expected = "/home/tim/.cache/cz.adamec.timotej.snag",
-            actual = dir,
+            actual = resolver(),
         )
     }
 
     @Test
     fun blankXdgCacheHomeFallsBackToCache() {
-        val dir =
-            resolver(
+        val resolver =
+            RealJvmCacheDirResolver(
                 osName = "Linux",
                 userHome = "/home/tim",
                 localAppData = null,
@@ -150,14 +148,14 @@ class RealJvmCacheDirResolverTest {
 
         assertEquals(
             expected = "/home/tim/.cache/cz.adamec.timotej.snag",
-            actual = dir,
+            actual = resolver(),
         )
     }
 
     @Test
     fun unknownOsTreatedAsLinuxLike() {
-        val dir =
-            resolver(
+        val resolver =
+            RealJvmCacheDirResolver(
                 osName = "FreeBSD",
                 userHome = "/home/tim",
                 localAppData = null,
@@ -167,7 +165,7 @@ class RealJvmCacheDirResolverTest {
 
         assertEquals(
             expected = "/home/tim/.cache/cz.adamec.timotej.snag",
-            actual = dir,
+            actual = resolver(),
         )
     }
 }

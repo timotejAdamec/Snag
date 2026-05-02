@@ -20,6 +20,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import org.publicvalue.multiplatform.oidc.OpenIdConnectClient
 import org.publicvalue.multiplatform.oidc.flows.CodeAuthFlowFactory
+import org.publicvalue.multiplatform.oidc.tokenstore.TokenRefreshHandler
 import org.publicvalue.multiplatform.oidc.tokenstore.TokenStore
 import org.publicvalue.multiplatform.oidc.types.CodeChallengeMethod
 import org.publicvalue.multiplatform.oidc.types.Jwt
@@ -27,6 +28,7 @@ import org.publicvalue.multiplatform.oidc.types.remote.AccessTokenResponse
 
 internal class OidcAuthTokenProvider(
     private val tokenStore: TokenStore,
+    private val tokenRefreshHandler: TokenRefreshHandler,
     authFlowFactory: CodeAuthFlowFactory,
     private val loginExecutor: OidcLoginExecutor,
     redirectUri: String,
@@ -79,6 +81,24 @@ internal class OidcAuthTokenProvider(
         return tokenStore.getAccessToken().also {
             logger.d { "Got access token: present=${it != null}." }
         }
+    }
+
+    override suspend fun refreshAccessToken(): String? {
+        logger.d { "Refreshing access token." }
+        val storedRefreshToken = tokenStore.getRefreshToken()
+        if (storedRefreshToken.isNullOrBlank()) {
+            logger.d { "No stored refresh token, cannot refresh." }
+            _authState.value = AuthState.Unauthenticated
+            return null
+        }
+        val oldAccessToken = tokenStore.getAccessToken().orEmpty()
+        val newTokens =
+            tokenRefreshHandler.refreshAndSaveToken(
+                client = client,
+                oldAccessToken = oldAccessToken,
+            )
+        logger.d { "Access token refreshed." }
+        return newTokens.accessToken
     }
 
     override suspend fun logout() {
