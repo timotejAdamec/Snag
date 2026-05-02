@@ -1,4 +1,11 @@
-This is a Kotlin Multiplatform project targeting Android, iOS, Web, Desktop (JVM), Server.
+<p align="center">
+  <img src="docs/images/logo.svg" alt="Snag logo" width="160">
+</p>
+
+<h1 align="center">Snag</h1>
+
+<p align="center">A Kotlin Multiplatform snagging system — Android, iOS, Web, Desktop (JVM), and a Ktor backend.</p>
+
 
 # Screenshots
 
