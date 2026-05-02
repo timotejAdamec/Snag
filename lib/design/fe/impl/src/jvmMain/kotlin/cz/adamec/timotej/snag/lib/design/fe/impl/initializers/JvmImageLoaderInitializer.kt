@@ -23,7 +23,6 @@ import coil3.network.ktor3.KtorNetworkFetcherFactory
 import coil3.request.crossfade
 import coil3.util.DebugLogger
 import cz.adamec.timotej.snag.lib.design.fe.api.initializer.ComposeInitializer
-import cz.adamec.timotej.snag.lib.storage.fe.api.JVM_APP_NAME
 import cz.adamec.timotej.snag.lib.storage.fe.api.JvmCacheDirResolver
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.okhttp.OkHttp
@@ -49,15 +48,7 @@ private fun createJvmImageLoader(
     context: PlatformContext,
     cacheDirResolver: JvmCacheDirResolver,
 ): ImageLoader {
-    val baseDir =
-        cacheDirResolver(
-            osName = System.getProperty("os.name").orEmpty(),
-            userHome = System.getProperty("user.home").orEmpty(),
-            localAppData = System.getenv("LOCALAPPDATA"),
-            xdgCacheHome = System.getenv("XDG_CACHE_HOME"),
-            appId = JVM_APP_NAME,
-        )
-    val cacheDir = File(baseDir, "image_cache").apply { mkdirs() }
+    val cacheDir = File(cacheDirResolver(), "image_cache").apply { mkdirs() }
     val networkFetcher = KtorNetworkFetcherFactory(httpClient = HttpClient(OkHttp))
     val diskCache =
         DiskCache

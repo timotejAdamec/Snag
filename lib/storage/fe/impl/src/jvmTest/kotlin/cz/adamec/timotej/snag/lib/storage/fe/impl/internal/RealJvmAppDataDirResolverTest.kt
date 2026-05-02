@@ -16,12 +16,10 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class RealJvmAppDataDirResolverTest {
-    private val resolver = RealJvmAppDataDirResolver()
-
     @Test
     fun macOsResolvesUnderApplicationSupport() {
-        val dir =
-            resolver(
+        val resolver =
+            RealJvmAppDataDirResolver(
                 osName = "Mac OS X",
                 userHome = "/Users/tim",
                 localAppData = null,
@@ -31,14 +29,14 @@ class RealJvmAppDataDirResolverTest {
 
         assertEquals(
             expected = "/Users/tim/Library/Application Support/cz.adamec.timotej.snag",
-            actual = dir,
+            actual = resolver(),
         )
     }
 
     @Test
     fun darwinAliasResolvesUnderApplicationSupport() {
-        val dir =
-            resolver(
+        val resolver =
+            RealJvmAppDataDirResolver(
                 osName = "Darwin",
                 userHome = "/Users/tim",
                 localAppData = null,
@@ -48,14 +46,14 @@ class RealJvmAppDataDirResolverTest {
 
         assertEquals(
             expected = "/Users/tim/Library/Application Support/cz.adamec.timotej.snag",
-            actual = dir,
+            actual = resolver(),
         )
     }
 
     @Test
     fun windowsUsesLocalAppDataEnvWhenSet() {
-        val dir =
-            resolver(
+        val resolver =
+            RealJvmAppDataDirResolver(
                 osName = "Windows 11",
                 userHome = """C:\Users\Tim""",
                 localAppData = """C:\Users\Tim\AppData\Local""",
@@ -65,14 +63,14 @@ class RealJvmAppDataDirResolverTest {
 
         assertEquals(
             expected = """C:\Users\Tim\AppData\Local/cz.adamec.timotej.snag""",
-            actual = dir,
+            actual = resolver(),
         )
     }
 
     @Test
     fun windowsFallsBackToHomeAppDataLocalWhenEnvMissing() {
-        val dir =
-            resolver(
+        val resolver =
+            RealJvmAppDataDirResolver(
                 osName = "Windows 11",
                 userHome = """C:\Users\Tim""",
                 localAppData = null,
@@ -82,14 +80,14 @@ class RealJvmAppDataDirResolverTest {
 
         assertEquals(
             expected = """C:\Users\Tim/AppData/Local/cz.adamec.timotej.snag""",
-            actual = dir,
+            actual = resolver(),
         )
     }
 
     @Test
     fun windowsBlankLocalAppDataFallsBackToHomeAppDataLocal() {
-        val dir =
-            resolver(
+        val resolver =
+            RealJvmAppDataDirResolver(
                 osName = "Windows 11",
                 userHome = """C:\Users\Tim""",
                 localAppData = "",
@@ -99,14 +97,14 @@ class RealJvmAppDataDirResolverTest {
 
         assertEquals(
             expected = """C:\Users\Tim/AppData/Local/cz.adamec.timotej.snag""",
-            actual = dir,
+            actual = resolver(),
         )
     }
 
     @Test
     fun linuxUsesXdgDataHomeWhenSet() {
-        val dir =
-            resolver(
+        val resolver =
+            RealJvmAppDataDirResolver(
                 osName = "Linux",
                 userHome = "/home/tim",
                 localAppData = null,
@@ -116,14 +114,14 @@ class RealJvmAppDataDirResolverTest {
 
         assertEquals(
             expected = "/home/tim/.custom-data/cz.adamec.timotej.snag",
-            actual = dir,
+            actual = resolver(),
         )
     }
 
     @Test
     fun linuxFallsBackToLocalShareWhenXdgMissing() {
-        val dir =
-            resolver(
+        val resolver =
+            RealJvmAppDataDirResolver(
                 osName = "Linux",
                 userHome = "/home/tim",
                 localAppData = null,
@@ -133,14 +131,14 @@ class RealJvmAppDataDirResolverTest {
 
         assertEquals(
             expected = "/home/tim/.local/share/cz.adamec.timotej.snag",
-            actual = dir,
+            actual = resolver(),
         )
     }
 
     @Test
     fun blankXdgDataHomeFallsBackToLocalShare() {
-        val dir =
-            resolver(
+        val resolver =
+            RealJvmAppDataDirResolver(
                 osName = "Linux",
                 userHome = "/home/tim",
                 localAppData = null,
@@ -150,14 +148,14 @@ class RealJvmAppDataDirResolverTest {
 
         assertEquals(
             expected = "/home/tim/.local/share/cz.adamec.timotej.snag",
-            actual = dir,
+            actual = resolver(),
         )
     }
 
     @Test
     fun unknownOsTreatedAsLinuxLike() {
-        val dir =
-            resolver(
+        val resolver =
+            RealJvmAppDataDirResolver(
                 osName = "FreeBSD",
                 userHome = "/home/tim",
                 localAppData = null,
@@ -167,7 +165,7 @@ class RealJvmAppDataDirResolverTest {
 
         assertEquals(
             expected = "/home/tim/.local/share/cz.adamec.timotej.snag",
-            actual = dir,
+            actual = resolver(),
         )
     }
 }

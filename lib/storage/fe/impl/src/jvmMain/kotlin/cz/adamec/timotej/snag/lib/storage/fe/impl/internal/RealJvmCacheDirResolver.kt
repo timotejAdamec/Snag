@@ -12,16 +12,17 @@
 
 package cz.adamec.timotej.snag.lib.storage.fe.impl.internal
 
+import cz.adamec.timotej.snag.lib.storage.fe.api.JVM_APP_NAME
 import cz.adamec.timotej.snag.lib.storage.fe.api.JvmCacheDirResolver
 
-internal class RealJvmCacheDirResolver : JvmCacheDirResolver {
-    override operator fun invoke(
-        osName: String,
-        userHome: String,
-        localAppData: String?,
-        xdgCacheHome: String?,
-        appId: String,
-    ): String =
+internal class RealJvmCacheDirResolver(
+    private val osName: String = System.getProperty("os.name").orEmpty(),
+    private val userHome: String = System.getProperty("user.home").orEmpty(),
+    private val localAppData: String? = System.getenv("LOCALAPPDATA"),
+    private val xdgCacheHome: String? = System.getenv("XDG_CACHE_HOME"),
+    private val appId: String = JVM_APP_NAME,
+) : JvmCacheDirResolver {
+    override operator fun invoke(): String =
         when {
             osName.contains(other = "mac", ignoreCase = true) ||
                 osName.contains(other = "darwin", ignoreCase = true) ->

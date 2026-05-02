@@ -18,8 +18,6 @@ import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.db.SqlSchema
 import app.cash.sqldelight.driver.jdbc.sqlite.JdbcSqliteDriver
 import cz.adamec.timotej.snag.lib.database.fe.SqlDriverFactory
-import cz.adamec.timotej.snag.lib.database.fe.resolveJvmAppDatabasePath
-import cz.adamec.timotej.snag.lib.storage.fe.api.JVM_APP_NAME
 import cz.adamec.timotej.snag.lib.storage.fe.api.JvmAppDataDirResolver
 import java.io.File
 
@@ -30,16 +28,7 @@ internal class JvmSqlDriverFactory(
         schema: SqlSchema<QueryResult.AsyncValue<Unit>>,
         name: String,
     ): SqlDriver {
-        val absolutePath =
-            resolveJvmAppDatabasePath(
-                appDataDirResolver = appDataDirResolver,
-                osName = System.getProperty("os.name").orEmpty(),
-                userHome = System.getProperty("user.home").orEmpty(),
-                localAppData = System.getenv("LOCALAPPDATA"),
-                xdgDataHome = System.getenv("XDG_DATA_HOME"),
-                appId = JVM_APP_NAME,
-                dbName = name,
-            )
+        val absolutePath = "${appDataDirResolver()}/$name"
         File(absolutePath).parentFile?.mkdirs()
         return JdbcSqliteDriver(
             url = "jdbc:sqlite:$absolutePath",

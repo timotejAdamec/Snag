@@ -14,7 +14,6 @@ package cz.adamec.timotej.snag.authentication.fe.driven.di
 
 import cz.adamec.timotej.snag.authentication.fe.driven.internal.JvmEncryptedSettingsStore
 import cz.adamec.timotej.snag.configuration.fe.JvmRunConfig
-import cz.adamec.timotej.snag.lib.storage.fe.api.JVM_APP_NAME
 import cz.adamec.timotej.snag.lib.storage.fe.api.JvmAppDataDirResolver
 import org.koin.core.module.Module
 import org.koin.dsl.module
@@ -30,16 +29,8 @@ actual val platformModule: Module =
     module {
         single<CodeAuthFlowFactory> { JvmCodeAuthFlowFactory() }
         single<TokenStore> {
-            val dataDir =
-                get<JvmAppDataDirResolver>().invoke(
-                    osName = System.getProperty("os.name").orEmpty(),
-                    userHome = System.getProperty("user.home").orEmpty(),
-                    localAppData = System.getenv("LOCALAPPDATA"),
-                    xdgDataHome = System.getenv("XDG_DATA_HOME"),
-                    appId = JVM_APP_NAME,
-                )
             SettingsTokenStore(
-                settings = JvmEncryptedSettingsStore(baseDir = File(dataDir)),
+                settings = JvmEncryptedSettingsStore(baseDir = File(get<JvmAppDataDirResolver>().invoke())),
             )
         }
         single(qualifier = OIDC_REDIRECT_URI_QUALIFIER) { JvmRunConfig.redirectUri }
