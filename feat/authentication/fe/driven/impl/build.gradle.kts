@@ -27,6 +27,7 @@ kotlin {
         }
         val webMain by getting {
             dependencies {
+                implementation(projects.feat.authentication.fe.driving.api)
                 implementation(libs.kotlinx.browser)
                 // oidc-appsupport's JS variant lists oidc-preferences only in runtimeElements,
                 // not apiElements — must declare it explicitly to compile against Preferences*.

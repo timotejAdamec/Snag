@@ -19,31 +19,17 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import co.touchlab.kermit.Logger
-import co.touchlab.kermit.koin.KermitKoinLogger
 import cz.adamec.timotej.snag.authentication.fe.driving.api.AuthenticationGate
 import cz.adamec.timotej.snag.core.foundation.fe.Initializer
-import cz.adamec.timotej.snag.di.appModule
 import cz.adamec.timotej.snag.lib.design.fe.api.initializer.ComposeInitializer
 import cz.adamec.timotej.snag.lib.design.fe.api.theme.SnagTheme
 import cz.adamec.timotej.snag.ui.MainScreen
-import org.koin.compose.KoinApplication
 import org.koin.compose.getKoin
 import org.koin.core.module.Module
-import org.koin.dsl.koinConfiguration
 
 @Composable
 fun App(extraModules: List<Module> = emptyList()) {
-    KoinApplication(
-        configuration =
-            koinConfiguration(
-                declaration = {
-                    modules(appModule)
-                    modules(extraModules)
-                    logger(KermitKoinLogger(Logger.withTag("Koin")))
-                },
-            ),
-    ) {
+    KoinAppContainer(extraModules = extraModules) {
         SnagTheme {
             InitializeInitializers(
                 uninitializedContent = { ContainedLoadingIndicator() },
@@ -55,6 +41,12 @@ fun App(extraModules: List<Module> = emptyList()) {
         }
     }
 }
+
+@Composable
+internal expect fun KoinAppContainer(
+    extraModules: List<Module>,
+    content: @Composable () -> Unit,
+)
 
 @Composable
 fun InitializeInitializers(

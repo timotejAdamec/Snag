@@ -16,10 +16,20 @@ package cz.adamec.timotej.snag
 
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.window.ComposeViewport
-import cz.adamec.timotej.snag.authentication.fe.driven.web.WebAuthBootstrap
+import co.touchlab.kermit.Logger
+import co.touchlab.kermit.koin.KermitKoinLogger
+import cz.adamec.timotej.snag.authentication.fe.driving.api.WebAuthRedirectInterceptor
+import cz.adamec.timotej.snag.di.appModule
+import org.koin.core.context.startKoin
+import org.koin.mp.KoinPlatform
 
 @OptIn(ExperimentalComposeUiApi::class)
 fun main() {
-    if (WebAuthBootstrap.consumeAuthRedirectIfPresent()) return
+    startKoin {
+        modules(appModule)
+        logger(KermitKoinLogger(Logger.withTag("Koin")))
+    }
+    val interceptor = KoinPlatform.getKoin().get<WebAuthRedirectInterceptor>()
+    if (interceptor.consumeAuthRedirectIfPresent()) return
     ComposeViewport { App() }
 }

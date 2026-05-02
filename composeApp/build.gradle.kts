@@ -61,11 +61,6 @@ kotlin {
         jvmMain.dependencies {
             implementation(compose.desktop.currentOs)
         }
-        val webMain by getting {
-            dependencies {
-                implementation(projects.feat.authentication.fe.driven.impl)
-            }
-        }
     }
 }
 

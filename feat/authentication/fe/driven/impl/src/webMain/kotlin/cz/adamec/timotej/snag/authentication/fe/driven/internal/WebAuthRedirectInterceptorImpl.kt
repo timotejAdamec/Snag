@@ -10,8 +10,9 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.authentication.fe.driven.web
+package cz.adamec.timotej.snag.authentication.fe.driven.internal
 
+import cz.adamec.timotej.snag.authentication.fe.driving.api.WebAuthRedirectInterceptor
 import cz.adamec.timotej.snag.configuration.fe.WebRunConfig
 import io.ktor.http.Url
 import kotlinx.browser.window
@@ -20,14 +21,8 @@ import kotlinx.coroutines.launch
 import org.publicvalue.multiplatform.oidc.preferences.PreferencesFactory
 import org.publicvalue.multiplatform.oidc.preferences.setResponseUri
 
-object WebAuthBootstrap {
-    /**
-     * Web-only entry point invoked before Compose mounts. When the current URL is the OIDC
-     * redirect callback, persists the pending response into the OIDC `Preferences` store so the
-     * next page load completes the token exchange via `restoreSession`, then replaces history
-     * with `/`. Returns true to signal the caller should skip normal app bootstrap.
-     */
-    fun consumeAuthRedirectIfPresent(): Boolean {
+internal class WebAuthRedirectInterceptorImpl : WebAuthRedirectInterceptor {
+    override fun consumeAuthRedirectIfPresent(): Boolean {
         if (!window.location.pathname.startsWith(WebRunConfig.redirectPath)) return false
         val responseUrl = Url(window.location.href)
         val hasCallbackParam =
