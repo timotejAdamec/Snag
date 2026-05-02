@@ -80,8 +80,15 @@ compose.desktop {
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = SNAG_NAMESPACE
+            packageName = "Snag"
             packageVersion = SnagVersioning.semanticVersion(project).get()
+
+            macOS {
+                bundleID = SNAG_NAMESPACE
+            }
+            linux {
+                packageName = "snag"
+            }
 
             modules("java.sql", "jdk.unsupported")
         }

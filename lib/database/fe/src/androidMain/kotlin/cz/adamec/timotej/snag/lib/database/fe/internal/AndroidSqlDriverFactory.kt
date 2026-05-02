@@ -10,7 +10,7 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.lib.database.fe
+package cz.adamec.timotej.snag.lib.database.fe.internal
 
 import android.content.Context
 import app.cash.sqldelight.async.coroutines.synchronous
@@ -18,15 +18,18 @@ import app.cash.sqldelight.db.QueryResult
 import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.db.SqlSchema
 import app.cash.sqldelight.driver.android.AndroidSqliteDriver
-import org.koin.core.scope.Scope
+import cz.adamec.timotej.snag.lib.database.fe.SqlDriverFactory
 
-actual fun Scope.createPlatformSqlDriver(
-    schema: SqlSchema<QueryResult.AsyncValue<Unit>>,
-    name: String,
-    appId: String,
-): SqlDriver =
-    AndroidSqliteDriver(
-        schema = schema.synchronous(),
-        context = get<Context>(),
-        name = name,
-    )
+internal class AndroidSqlDriverFactory(
+    private val context: Context,
+) : SqlDriverFactory {
+    override fun create(
+        schema: SqlSchema<QueryResult.AsyncValue<Unit>>,
+        name: String,
+    ): SqlDriver =
+        AndroidSqliteDriver(
+            schema = schema.synchronous(),
+            context = context,
+            name = name,
+        )
+}

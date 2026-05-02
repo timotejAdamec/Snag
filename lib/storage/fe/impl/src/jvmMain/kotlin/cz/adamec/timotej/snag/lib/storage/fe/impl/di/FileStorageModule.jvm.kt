@@ -12,7 +12,6 @@
 
 package cz.adamec.timotej.snag.lib.storage.fe.impl.di
 
-import cz.adamec.timotej.snag.configuration.fe.FrontendRunConfig
 import cz.adamec.timotej.snag.core.foundation.common.di.getIoDispatcher
 import cz.adamec.timotej.snag.core.storage.fe.LocalFileStorage
 import cz.adamec.timotej.snag.lib.storage.fe.api.JvmAppDataDirResolver
@@ -20,25 +19,16 @@ import cz.adamec.timotej.snag.lib.storage.fe.api.JvmCacheDirResolver
 import cz.adamec.timotej.snag.lib.storage.fe.impl.internal.RealJvmAppDataDirResolver
 import cz.adamec.timotej.snag.lib.storage.fe.impl.internal.RealJvmCacheDirResolver
 import cz.adamec.timotej.snag.lib.storage.fe.impl.internal.RealLocalFileStorage
-import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
 internal actual val fileStoragePlatformModule =
     module {
-        factoryOf(::RealJvmAppDataDirResolver) bind JvmAppDataDirResolver::class
-        factoryOf(::RealJvmCacheDirResolver) bind JvmCacheDirResolver::class
+        factory<JvmAppDataDirResolver> { RealJvmAppDataDirResolver() }
+        factory<JvmCacheDirResolver> { RealJvmCacheDirResolver() }
         factory {
-            val dataDir =
-                get<JvmAppDataDirResolver>().invoke(
-                    osName = System.getProperty("os.name").orEmpty(),
-                    userHome = System.getProperty("user.home").orEmpty(),
-                    localAppData = System.getenv("LOCALAPPDATA"),
-                    xdgDataHome = System.getenv("XDG_DATA_HOME"),
-                    appId = FrontendRunConfig.namespace,
-                )
             RealLocalFileStorage(
-                baseDirectory = "$dataDir/files",
+                baseDirectory = "${get<JvmAppDataDirResolver>().invoke()}/files",
                 ioDispatcher = getIoDispatcher(),
             )
         } bind LocalFileStorage::class

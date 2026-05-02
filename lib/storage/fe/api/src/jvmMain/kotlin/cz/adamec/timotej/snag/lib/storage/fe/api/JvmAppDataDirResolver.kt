@@ -13,11 +13,5 @@
 package cz.adamec.timotej.snag.lib.storage.fe.api
 
 interface JvmAppDataDirResolver {
-    operator fun invoke(
-        osName: String,
-        userHome: String,
-        localAppData: String?,
-        xdgDataHome: String?,
-        appId: String,
-    ): String
+    operator fun invoke(): String
 }
