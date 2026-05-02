@@ -28,6 +28,8 @@ kotlin {
         val webMain by getting {
             dependencies {
                 implementation(libs.kotlinx.browser)
+                // oidc-appsupport's JS variant lists oidc-preferences only in runtimeElements,
+                // not apiElements — must declare it explicitly to compile against Preferences*.
                 implementation(libs.oidc.preferences)
             }
         }
