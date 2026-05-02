@@ -63,11 +63,7 @@ kotlin {
         }
         val webMain by getting {
             dependencies {
-                implementation(projects.lib.configuration.fe.api)
-                implementation(libs.oidc.appsupport)
-                // oidc-appsupport's JS variant lists oidc-preferences only in runtimeElements,
-                // not apiElements — must declare it explicitly to compile against Preferences*.
-                implementation(libs.oidc.preferences)
+                implementation(projects.feat.authentication.fe.driven.impl)
             }
         }
     }

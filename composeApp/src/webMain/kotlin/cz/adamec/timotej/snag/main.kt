@@ -16,36 +16,10 @@ package cz.adamec.timotej.snag
 
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.window.ComposeViewport
-import cz.adamec.timotej.snag.configuration.fe.WebRunConfig
-import io.ktor.http.Url
-import kotlinx.browser.window
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.launch
-import org.publicvalue.multiplatform.oidc.preferences.PreferencesFactory
-import org.publicvalue.multiplatform.oidc.preferences.setResponseUri
+import cz.adamec.timotej.snag.authentication.fe.driven.web.WebAuthBootstrap
 
 @OptIn(ExperimentalComposeUiApi::class)
 fun main() {
-    val currentPath = window.location.pathname
-    if (currentPath.startsWith(WebRunConfig.redirectPath)) {
-        handleAuthRedirect()
-        return
-    }
-    if (currentPath.startsWith("/logout")) {
-        window.location.replace("/")
-        return
-    }
+    if (WebAuthBootstrap.consumeAuthRedirectIfPresent()) return
     ComposeViewport { App() }
-}
-
-private fun handleAuthRedirect() {
-    val responseUrl = Url(window.location.href)
-    val hasCallbackParam =
-        responseUrl.parameters.contains("code") || responseUrl.parameters.contains("error")
-    MainScope().launch {
-        if (hasCallbackParam) {
-            PreferencesFactory().create().setResponseUri(responseUrl)
-        }
-        window.location.replace("/")
-    }
 }
