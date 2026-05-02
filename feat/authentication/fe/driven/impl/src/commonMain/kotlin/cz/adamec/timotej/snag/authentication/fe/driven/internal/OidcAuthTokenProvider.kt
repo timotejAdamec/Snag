@@ -24,11 +24,13 @@ import org.publicvalue.multiplatform.oidc.tokenstore.TokenRefreshHandler
 import org.publicvalue.multiplatform.oidc.tokenstore.TokenStore
 import org.publicvalue.multiplatform.oidc.types.CodeChallengeMethod
 import org.publicvalue.multiplatform.oidc.types.Jwt
+import org.publicvalue.multiplatform.oidc.types.remote.AccessTokenResponse
 
 internal class OidcAuthTokenProvider(
     private val tokenStore: TokenStore,
     private val tokenRefreshHandler: TokenRefreshHandler,
-    private val authFlowFactory: CodeAuthFlowFactory,
+    authFlowFactory: CodeAuthFlowFactory,
+    private val loginExecutor: OidcLoginExecutor,
     redirectUri: String,
 ) : AuthTokenProvider {
     private val _authState = MutableStateFlow<AuthState>(AuthState.Loading)
@@ -47,36 +49,26 @@ internal class OidcAuthTokenProvider(
             this.redirectUri = redirectUri
         }
 
+    private val flow = authFlowFactory.createAuthFlow(client)
+
     override suspend fun restoreSession() {
         logger.d { "Restoring session." }
-        val accessToken = tokenStore.getAccessToken()
-        if (accessToken.isNullOrBlank()) {
-            logger.d { "No stored access token found, setting state to Unauthenticated." }
-            _authState.value = AuthState.Unauthenticated
-            return
+        if (flow.canContinueLogin()) {
+            logger.d { "Pending OIDC redirect detected, exchanging code for tokens." }
+            val tokens = flow.continueLogin()
+            saveTokens(tokens)
         }
-        val idToken = tokenStore.getIdToken()
-        val authProviderId = idToken?.let { extractOidFromIdToken(it) }
-        _authState.value =
-            if (authProviderId != null) {
-                logger.d { "Restored session for authProviderId=$authProviderId." }
-                AuthState.Authenticated(authProviderId = authProviderId)
-            } else {
-                logger.d { "No OID claim in ID token, setting state to Unauthenticated." }
-                AuthState.Unauthenticated
-            }
+        applyAuthStateFromStoredTokens()
     }
 
     override suspend fun login() {
         logger.d { "Starting OIDC login flow." }
-        val flow = authFlowFactory.createAuthFlow(client)
-        val tokens = flow.getAccessToken()
-        logger.d { "Received tokens from OIDC provider, saving to token store." }
-        tokenStore.saveTokens(
-            accessToken = tokens.access_token,
-            refreshToken = tokens.refresh_token,
-            idToken = tokens.id_token,
-        )
+        val tokens = loginExecutor.execute(flow)
+        if (tokens == null) {
+            logger.d { "Login execution handed off to platform (e.g. web redirect); state will be set after redirect." }
+            return
+        }
+        saveTokens(tokens)
         val authProviderId =
             tokens.id_token?.let { extractOidFromIdToken(it) }
                 ?: error("ID token missing or does not contain oid claim after successful login.")
@@ -114,6 +106,34 @@ internal class OidcAuthTokenProvider(
         tokenStore.saveTokens(accessToken = "", refreshToken = "", idToken = "")
         _authState.value = AuthState.Unauthenticated
         logger.d { "Logged out, state set to Unauthenticated." }
+    }
+
+    private suspend fun saveTokens(tokens: AccessTokenResponse) {
+        logger.d { "Saving tokens to token store." }
+        tokenStore.saveTokens(
+            accessToken = tokens.access_token,
+            refreshToken = tokens.refresh_token,
+            idToken = tokens.id_token,
+        )
+    }
+
+    private suspend fun applyAuthStateFromStoredTokens() {
+        val accessToken = tokenStore.getAccessToken()
+        if (accessToken.isNullOrBlank()) {
+            logger.d { "No stored access token found, setting state to Unauthenticated." }
+            _authState.value = AuthState.Unauthenticated
+            return
+        }
+        val idToken = tokenStore.getIdToken()
+        val authProviderId = idToken?.let { extractOidFromIdToken(it) }
+        _authState.value =
+            if (authProviderId != null) {
+                logger.d { "Restored session for authProviderId=$authProviderId." }
+                AuthState.Authenticated(authProviderId = authProviderId)
+            } else {
+                logger.d { "No OID claim in ID token, setting state to Unauthenticated." }
+                AuthState.Unauthenticated
+            }
     }
 
     private fun extractOidFromIdToken(idToken: String): String? {

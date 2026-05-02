@@ -167,6 +167,7 @@ ktor-server-auth-jwt = { module = "io.ktor:ktor-server-auth-jwt-jvm", version.re
 ktor-client-auth = { module = "io.ktor:ktor-client-auth", version.ref = "ktor" }
 kotlinx-browser = { module = "org.jetbrains.kotlinx:kotlinx-browser", version.ref = "kotlinx-browser" }
 oidc-appsupport = { module = "io.github.kalinjul.kotlin.multiplatform:oidc-appsupport", version.ref = "oidc" }
+oidc-preferences = { module = "io.github.kalinjul.kotlin.multiplatform:oidc-preferences", version.ref = "oidc" }
 oidc-tokenstore = { module = "io.github.kalinjul.kotlin.multiplatform:oidc-tokenstore", version.ref = "oidc" }
 oidc-ktor = { module = "io.github.kalinjul.kotlin.multiplatform:oidc-ktor", version.ref = "oidc" }
 

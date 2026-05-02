@@ -39,6 +39,7 @@ val authenticationDrivenModule =
                     tokenStore = get(),
                     tokenRefreshHandler = get(),
                     authFlowFactory = get(),
+                    loginExecutor = get(),
                     redirectUri = get(qualifier = OIDC_REDIRECT_URI_QUALIFIER),
                 )
             }

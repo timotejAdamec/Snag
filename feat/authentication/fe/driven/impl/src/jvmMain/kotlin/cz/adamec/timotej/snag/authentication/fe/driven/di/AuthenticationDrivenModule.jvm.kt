@@ -13,6 +13,8 @@
 package cz.adamec.timotej.snag.authentication.fe.driven.di
 
 import cz.adamec.timotej.snag.authentication.fe.driven.internal.JvmEncryptedSettingsStore
+import cz.adamec.timotej.snag.authentication.fe.driven.internal.OidcLoginExecutor
+import cz.adamec.timotej.snag.authentication.fe.driven.internal.StandardOidcLoginExecutor
 import cz.adamec.timotej.snag.configuration.fe.JvmRunConfig
 import cz.adamec.timotej.snag.lib.storage.fe.api.JvmAppDataDirResolver
 import org.koin.core.module.Module
@@ -28,6 +30,7 @@ import java.io.File
 actual val platformModule: Module =
     module {
         single<CodeAuthFlowFactory> { JvmCodeAuthFlowFactory() }
+        single<OidcLoginExecutor> { StandardOidcLoginExecutor() }
         single<TokenStore> {
             SettingsTokenStore(
                 settings = JvmEncryptedSettingsStore(baseDir = File(get<JvmAppDataDirResolver>().invoke())),
