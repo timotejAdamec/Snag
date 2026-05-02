@@ -1,14 +1,14 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
   <defs>
-    <!-- Tmavší podklad do hluboké černé pro prémiový vzhled -->
+    <!-- Tmavý podklad (černo-šedý gradient) -->
     <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#1A1A1A" />
-      <stop offset="100%" stop-color="#000000" />
+      <stop offset="0%" stop-color="#2A2A2A" />
+      <stop offset="100%" stop-color="#0F0F0F" />
     </linearGradient>
 
-    <!-- Stín pro pin -->
-    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
-      <feDropShadow dx="0" dy="16" stdDeviation="20" flood-color="#000000" flood-opacity="0.8"/>
+    <!-- Stín pro pin, aby lehce vystupoval z pozadí -->
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="16" stdDeviation="20" flood-color="#000000" flood-opacity="0.5"/>
     </filter>
 
     <!-- Růžový gradient pro hlavní akcent -->
@@ -18,22 +18,18 @@
     </linearGradient>
   </defs>
 
-  <!-- Pozadí s ideálním zaoblením pro ikony -->
-  <rect x="0" y="0" width="512" height="512" rx="116" fill="url(#bgGradient)" />
+  <!-- Základní tvar ikony (zaoblený čtverec - squircle) -->
+  <rect x="32" y="32" width="448" height="448" rx="100" fill="url(#bgGradient)" />
 
-  <!-- Skupina s pinem - zmenšená na 80% pro ideální vyvážení prostoru -->
-  <g transform="translate(256, 256) scale(0.80) translate(-256, -256)">
-    
-    <!-- Ikona pinu (čistě bílá) -->
-    <path d="M256,120 C189.7,120 136,173.7 136,240 C136,336 256,432 256,432 C256,432 376,336 376,240 C376,173.7 322.3,120 256,120 Z"
-          fill="#FFFFFF"
-          filter="url(#shadow)" />
+  <!-- Ikona pinu (čistě bílá) -->
+  <path d="M256,120 C189.7,120 136,173.7 136,240 C136,336 256,432 256,432 C256,432 376,336 376,240 C376,173.7 322.3,120 256,120 Z"
+        fill="#FFFFFF"
+        filter="url(#shadow)" />
 
-    <!-- Vnitřní růžový kruh (bod zájmu) -->
-    <circle cx="256" cy="224" r="54" fill="url(#pinkGradient)" />
+  <!-- Vnitřní růžový kruh (zvýrazněný bod zájmu) -->
+  <circle cx="256" cy="224" r="54" fill="url(#pinkGradient)" />
 
-    <!-- Středový bílý bod - "záměr" -->
-    <circle cx="256" cy="224" r="12" fill="#FFFFFF" />
-    
-  </g>
+  <!-- Středový bílý bod - "záměr" nebo "snag" -->
+  <circle cx="256" cy="224" r="12" fill="#FFFFFF" />
+
 </svg>
