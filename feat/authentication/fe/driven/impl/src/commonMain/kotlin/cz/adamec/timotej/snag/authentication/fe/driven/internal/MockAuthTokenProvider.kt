@@ -39,6 +39,11 @@ internal class MockAuthTokenProvider : AuthTokenProvider {
         return MOCK_USER_ID
     }
 
+    override suspend fun refreshAccessToken(): String? {
+        logger.d { "Mock: returning mock user ID as refreshed access token." }
+        return MOCK_USER_ID
+    }
+
     override suspend fun logout() {
         logger.d { "Mock: logging out." }
         _authState.value = AuthState.Unauthenticated
