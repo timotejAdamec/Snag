@@ -12,17 +12,15 @@
 
 package cz.adamec.timotej.snag.lib.design.fe.impl.initializers
 
-import androidx.compose.runtime.Composable
 import coil3.ImageLoader
 import coil3.PlatformContext
 import coil3.SingletonImageLoader
 import coil3.annotation.ExperimentalCoilApi
 import coil3.disk.DiskCache
-import coil3.disk.directory
 import coil3.network.ktor3.KtorNetworkFetcherFactory
 import coil3.request.crossfade
 import coil3.util.DebugLogger
-import cz.adamec.timotej.snag.lib.design.fe.api.initializer.ComposeInitializer
+import cz.adamec.timotej.snag.core.foundation.fe.Initializer
 import cz.adamec.timotej.snag.lib.storage.fe.api.JvmCacheDirResolver
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.okhttp.OkHttp
@@ -31,9 +29,8 @@ import java.io.File
 
 internal class JvmImageLoaderInitializer(
     private val cacheDirResolver: JvmCacheDirResolver,
-) : ComposeInitializer {
-    @Composable
-    override fun init() {
+) : Initializer {
+    override suspend fun init() {
         SingletonImageLoader.setSafe { context ->
             createJvmImageLoader(
                 context = context,

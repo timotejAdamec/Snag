@@ -21,7 +21,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import cz.adamec.timotej.snag.authentication.fe.driving.api.AuthenticationGate
 import cz.adamec.timotej.snag.core.foundation.fe.Initializer
-import cz.adamec.timotej.snag.lib.design.fe.api.initializer.ComposeInitializer
 import cz.adamec.timotej.snag.lib.design.fe.api.theme.SnagTheme
 import cz.adamec.timotej.snag.ui.MainScreen
 import org.koin.compose.getKoin
@@ -53,9 +52,6 @@ fun InitializeInitializers(
     uninitializedContent: @Composable () -> Unit,
     initializedContent: @Composable () -> Unit,
 ) {
-    val composeInitializers = getKoin().getAll<ComposeInitializer>()
-    composeInitializers.forEach { it.init() }
-
     val initializers = getKoin().getAll<Initializer>().sortedBy { it.priority }
     var isInitialized by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {

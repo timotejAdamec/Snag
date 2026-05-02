@@ -12,8 +12,13 @@
 
 package cz.adamec.timotej.snag.di
 
+import co.touchlab.kermit.Logger
+import co.touchlab.kermit.koin.KermitKoinLogger
+import org.koin.core.KoinApplication
 import org.koin.core.module.Module
-import org.koin.dsl.module
 
-internal actual val platformModule: Module =
-    module {}
+internal fun KoinApplication.koinAppDeclaration(extraModules: List<Module> = listOf()) {
+    modules(appModule)
+    modules(extraModules)
+    logger(KermitKoinLogger(Logger.withTag("Koin")))
+}

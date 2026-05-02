@@ -10,15 +10,10 @@
  * Department of Software Engineering
  */
 
-package cz.adamec.timotej.snag.lib.design.fe.api.initializer
+package cz.adamec.timotej.snag.lib.navigation.fe.internal
 
-import androidx.compose.runtime.Composable
+import co.touchlab.kermit.Logger
 
-/**
- * Things that need to be initialized before the app starts with Compose context.
- */
-interface ComposeInitializer {
-    @Suppress("ComposableNaming")
-    @Composable
-    fun init()
+internal object LH {
+    val logger = Logger.withTag("lib-routing-fe")
 }

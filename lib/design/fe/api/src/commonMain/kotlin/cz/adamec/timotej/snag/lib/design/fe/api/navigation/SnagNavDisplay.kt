@@ -22,6 +22,7 @@ import androidx.navigationevent.NavigationEventInfo
 import androidx.navigationevent.compose.NavigationEventHandler
 import androidx.navigationevent.compose.rememberNavigationEventState
 import cz.adamec.timotej.snag.lib.design.fe.api.scenes.InlineDialogSceneStrategy
+import cz.adamec.timotej.snag.lib.navigation.fe.RegisterActiveBackStack
 import cz.adamec.timotej.snag.lib.navigation.fe.SnagBackStack
 import cz.adamec.timotej.snag.lib.navigation.fe.SnagNavRoute
 import org.koin.compose.navigation3.koinEntryProvider
@@ -32,6 +33,7 @@ fun SnagNavDisplay(
     modifier: Modifier = Modifier,
     additionalSceneStrategies: List<SceneStrategy<SnagNavRoute>> = emptyList(),
 ) {
+    RegisterActiveBackStack(backStack = backStack)
     NavDisplay(
         modifier = modifier,
         backStack = backStack.value,

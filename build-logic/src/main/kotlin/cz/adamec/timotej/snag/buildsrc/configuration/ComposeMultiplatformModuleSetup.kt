@@ -80,6 +80,9 @@ internal fun Project.configureComposeMultiplatformModule() {
             jvmMain.dependencies {
                 implementation(library("kotlinx-coroutines-swing"))
             }
+            jvmTest.dependencies {
+                runtimeOnly("org.jetbrains.skiko:skiko-awt-runtime-${currentSkikoTarget()}:${version("skiko")}")
+            }
             getByName("webMain").dependencies {
                 implementation(library("navigation3-browser"))
             }
@@ -96,5 +99,18 @@ internal fun Project.configureComposeMultiplatformModule() {
         configurations.matching { it.name.startsWith("ksp") && it.name != "ksp" }.configureEach {
             add(this.name, koinKspCompilerLib)
         }
+    }
+}
+
+private fun currentSkikoTarget(): String {
+    val osName = System.getProperty("os.name").lowercase()
+    val osArch = System.getProperty("os.arch").lowercase()
+    return when {
+        osName.contains("mac") && osArch == "aarch64" -> "macos-arm64"
+        osName.contains("mac") -> "macos-x64"
+        osName.startsWith("windows") -> "windows-x64"
+        osName.startsWith("linux") && osArch == "aarch64" -> "linux-arm64"
+        osName.startsWith("linux") -> "linux-x64"
+        else -> error("Unsupported host for Skiko JVM tests: $osName / $osArch")
     }
 }

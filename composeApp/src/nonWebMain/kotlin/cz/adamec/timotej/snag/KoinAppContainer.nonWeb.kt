@@ -13,9 +13,7 @@
 package cz.adamec.timotej.snag
 
 import androidx.compose.runtime.Composable
-import co.touchlab.kermit.Logger
-import co.touchlab.kermit.koin.KermitKoinLogger
-import cz.adamec.timotej.snag.di.appModule
+import cz.adamec.timotej.snag.di.koinAppDeclaration
 import org.koin.compose.KoinApplication
 import org.koin.core.module.Module
 import org.koin.dsl.koinConfiguration
@@ -29,9 +27,7 @@ internal actual fun KoinAppContainer(
         configuration =
             koinConfiguration(
                 declaration = {
-                    modules(appModule)
-                    modules(extraModules)
-                    logger(KermitKoinLogger(Logger.withTag("Koin")))
+                    koinAppDeclaration(extraModules = extraModules)
                 },
             ),
     ) {

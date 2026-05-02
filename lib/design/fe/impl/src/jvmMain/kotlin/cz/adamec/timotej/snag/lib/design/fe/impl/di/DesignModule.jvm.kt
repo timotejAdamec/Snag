@@ -13,7 +13,6 @@
 package cz.adamec.timotej.snag.lib.design.fe.impl.di
 
 import cz.adamec.timotej.snag.core.foundation.fe.Initializer
-import cz.adamec.timotej.snag.lib.design.fe.api.initializer.ComposeInitializer
 import cz.adamec.timotej.snag.lib.design.fe.impl.initializers.JvmDesignInitializer
 import cz.adamec.timotej.snag.lib.design.fe.impl.initializers.JvmImageLoaderInitializer
 import org.koin.core.module.dsl.factoryOf
@@ -24,5 +23,5 @@ import org.koin.dsl.module
 internal actual val platformModule =
     module {
         factoryOf(::JvmDesignInitializer) bind Initializer::class
-        singleOf(::JvmImageLoaderInitializer) bind ComposeInitializer::class
+        singleOf(::JvmImageLoaderInitializer) bind Initializer::class
     }
