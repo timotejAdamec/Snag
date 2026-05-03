@@ -214,10 +214,10 @@ def figure_layer_platform_set_heatmap(df: pd.DataFrame) -> None:
     data = matrix.values
     im = ax.imshow(data, aspect="auto", cmap="YlOrRd")
 
-    ax.set_xlabel("Sada platforem (počet platforem, na které kód zasahuje)")
+    ax.set_xlabel("Sada platforem (počet platforem, na které zdrojová sada zasahuje)")
     ax.set_ylabel("Vrstva architektury")
     ax.set_title(
-        "Produkční Kotlin LOC (vrstva architektury × dosah platforem)",
+        "Produkční Kotlin LOC podle vrstvy architektury a sady platforem",
         pad=14,
     )
 
@@ -501,7 +501,7 @@ def figure_layer_divergence(df: pd.DataFrame) -> None:
     ax.set_xlabel("Produkční Kotlin LOC")
     ax.set_ylabel("Hexagonální vrstva")
     ax.set_title(
-        "Podíl platformně-specifického LOC v hexagonální vrstvě (deskriptivně)",
+        "Podíl platformně-specifického LOC v hexagonální vrstvě",
         pad=14,
     )
     ax.legend(loc="lower right", frameon=True, fontsize=8, ncol=2)
@@ -766,7 +766,7 @@ def figure_platform_reach_histogram(df: pd.DataFrame) -> None:
     ax.invert_yaxis()
     ax.set_xlabel("Produkční Kotlin LOC")
     ax.set_ylabel("Dosah (počet platforem)")
-    ax.set_title("Distribuce LOC podle počtu platforem, na které zdrojový kód zasahuje", pad=14)
+    ax.set_title("Rozdělení produkčního LOC podle počtu platforem, na které zdrojová sada zasahuje", pad=14)
     ax.grid(axis="x", linestyle=":", alpha=0.5)
 
     max_loc = int(agg_desc["kotlin_loc"].max()) if total > 0 else 0
@@ -811,6 +811,11 @@ RIPPLE_BUCKET_COLORS = {
     "local": "#4c72b0",       # calm blue — intrinsic cost of the change
     "intrinsic": "#dd8452",   # warm orange — NS-required ripple sites
     "collateral": "#c44e52",  # red — avoidable coupling, the anomaly to discuss
+}
+RIPPLE_BUCKET_LABELS_CS = {
+    "local": "lokální",
+    "intrinsic": "vlastní",
+    "collateral": "vedlejší",
 }
 
 
@@ -879,7 +884,7 @@ def figure_ripple_buckets() -> None:
                 values,
                 left=left,
                 color=RIPPLE_BUCKET_COLORS[bucket],
-                label=bucket,
+                label=RIPPLE_BUCKET_LABELS_CS[bucket],
                 edgecolor="white",
                 linewidth=0.5,
             )
@@ -911,24 +916,24 @@ def figure_ripple_buckets() -> None:
             ax.text(
                 total + max(1, total * 0.02),
                 y_pos[i],
-                f"  opak. intrinsic jednotky = {row['recurring_intrinsic_units']}",
+                f"  opak. vlastní místa = {row['recurring_intrinsic_units']}",
                 ha="left",
                 va="center",
                 fontsize=8,
                 color="#333",
             )
 
-        # Reserve headroom on the right so the "opak. intrinsic jednotky = N"
+        # Reserve headroom on the right so the "opak. vlastní místa = N"
         # annotation stays inside the axes frame for the widest bars.
         if max_total > 0:
             ax.set_xlim(right=max_total * 1.30)
 
-    _stacked_barh(ax_files, "bucket_files", "Ripple podle počtu souborů", "zasaženo souborů")
-    _stacked_barh(ax_churn, "bucket_churn", "Ripple podle LOC churn", "LOC churn (přidáno + odebráno)")
+    _stacked_barh(ax_files, "bucket_files", "Kategorie dopadu podle počtu souborů", "zasaženo souborů")
+    _stacked_barh(ax_churn, "bucket_churn", "Kategorie dopadu podle změny řádků", "Změny řádků (přidáno + odebráno)")
 
     handles, labels = ax_files.get_legend_handles_labels()
     fig.legend(handles, labels, loc="lower center", ncol=len(RIPPLE_BUCKET_ORDER), frameon=False)
-    fig.suptitle("Obr. 4.3 — Ripple dekompozice pro každou zkoumanou změnu", fontsize=12)
+    fig.suptitle("Obr. 4.3 — Rozdělení dopadu mezi kategorie napříč případovými studiemi", fontsize=12)
     fig.tight_layout(rect=(0, 0.05, 1, 0.95))
 
     FIGURES_DIR.mkdir(parents=True, exist_ok=True)
@@ -968,13 +973,14 @@ def figure_wearos_ripple_by_module_tree() -> None:
     collateral = df["collateral_files"].to_numpy()
     local = df["local_files"].to_numpy()
 
-    ax_files.bar(x_pos, intrinsic, bar_width, color=RIPPLE_BUCKET_COLORS["intrinsic"], label="intrinsic")
+    ax_files.bar(x_pos, intrinsic, bar_width, color=RIPPLE_BUCKET_COLORS["intrinsic"],
+                 label=RIPPLE_BUCKET_LABELS_CS["intrinsic"])
     ax_files.bar(x_pos, collateral, bar_width, bottom=intrinsic,
-                 color=RIPPLE_BUCKET_COLORS["collateral"], label="collateral")
+                 color=RIPPLE_BUCKET_COLORS["collateral"], label=RIPPLE_BUCKET_LABELS_CS["collateral"])
     ax_files.bar(x_pos, local, bar_width, bottom=intrinsic + collateral,
-                 color=RIPPLE_BUCKET_COLORS["local"], label="local")
+                 color=RIPPLE_BUCKET_COLORS["local"], label=RIPPLE_BUCKET_LABELS_CS["local"])
     ax_files.set_ylabel("zasaženo souborů")
-    ax_files.set_title("Obr. 4.4 — Ripple rozšíření Wear OS podle stromu repozitáře")
+    ax_files.set_title("Obr. 4.4 — Rozložení dopadu Wear OS podle stromu nejvyšší úrovně v repozitáři")
     ax_files.grid(axis="y", linestyle=":", alpha=0.5)
     ax_files.legend(loc="upper right", frameon=False, fontsize=9)
 
@@ -987,7 +993,7 @@ def figure_wearos_ripple_by_module_tree() -> None:
     ax_files.set_ylim(top=max_files * 1.15)
 
     ax_loc.bar(x_pos, df["loc_churn"], bar_width, color="#888")
-    ax_loc.set_ylabel("LOC churn (přidáno + odebráno)")
+    ax_loc.set_ylabel("Změny řádků (přidáno + odebráno)")
     ax_loc.set_xticks(x_pos)
     ax_loc.set_xticklabels(trees, rotation=30, ha="right")
     ax_loc.grid(axis="y", linestyle=":", alpha=0.5)

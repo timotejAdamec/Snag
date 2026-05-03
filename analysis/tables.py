@@ -189,19 +189,19 @@ def _render_measurement_log_wearos() -> str:
         r"\caption{Měřicí log experimentu Wear~OS -- "
         r"jeden řádek na každý soubor, který se změnil mezi základem \code{7fb6e2b27} "
         r"a~\code{experiment/wearos-feasibility-spike}. "
-        r"Sloupce: cesta souboru, ripple bucket (L/I/C), příznak opakujícího se zásahu, "
-        r"LOC churn a~klasifikační zdůvodnění.}\label{tab:appendix-measurement-log-wearos}\\"
+        r"Sloupce: cesta souboru, kategorie dopadu (L/V/Vd), příznak opakujícího se zásahu, "
+        r"rozsah úprav (LOC) a~klasifikační zdůvodnění.}\label{tab:appendix-measurement-log-wearos}\\"
     )
     lines.append(r"\toprule")
     lines.append(
-        r"\textbf{Soubor} & \textbf{Bucket} & \textbf{Opak.} & \textbf{LOC} & "
+        r"\textbf{Soubor} & \textbf{Kategorie} & \textbf{Opak.} & \textbf{LOC} & "
         r"\textbf{Zdůvodnění} \\"
     )
     lines.append(r"\midrule")
     lines.append(r"\endfirsthead")
     lines.append(r"\toprule")
     lines.append(
-        r"\textbf{Soubor} & \textbf{Bucket} & \textbf{Opak.} & \textbf{LOC} & "
+        r"\textbf{Soubor} & \textbf{Kategorie} & \textbf{Opak.} & \textbf{LOC} & "
         r"\textbf{Zdůvodnění} \\"
     )
     lines.append(r"\midrule")
@@ -223,7 +223,7 @@ def _render_measurement_log_wearos() -> str:
         if t not in seen:
             ordered.append(t)
 
-    _BUCKET_LABEL = {"local": "L", "intrinsic": "I", "collateral": "C"}
+    _BUCKET_LABEL = {"local": "L", "intrinsic": "V", "collateral": "Vd"}
 
     for tree in ordered:
         group = sorted(by_tree[tree], key=lambda r: r["file"])
