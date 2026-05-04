@@ -4,7 +4,7 @@
 
 Thesis evaluation (`analysis/thesis-evaluation-plan.md`) needs Phase 2: ripple analysis on feature-addition axis. Phases 0–1 complete: feasibility spike done, §4.2 sharing quantification tooling shipped in PR #223 (SharingReportTask + loc_report.sh + figures.py heatmap). Phase 2 builds the ripple classifier + dependency closure + case-study data used by §4.3 of Kapitola 4: Vyhodnocení.
 
-The outcome is **measured evidence that adding / extending features is not combinatorial**: for each studied change, partition touched `(module × source set)` units into local / intrinsic / collateral buckets (Normalized Systems ripple definition), annotate each with blast radius, and classify intrinsic-bucket files as recurring vs fixed. The headline finding is *"how many files in the intrinsic bucket recur per feature"* — those are the anomaly sites NS theory predicts.
+The outcome is **measured evidence that adding / extending features is not combinatorial**: for each studied change, partition touched architectural units (`(module, source_set)` pairs — see *Unit of measurement* in `thesis-evaluation-plan.md` §4.1) into local / intrinsic / collateral buckets (Normalized Systems ripple definition), annotate each with blast radius, and classify intrinsic-bucket files as recurring vs fixed. The headline finding is *"how many files in the intrinsic bucket recur per feature"* — those are the anomaly sites NS theory predicts.
 
 Phase 2 delivers:
 1. `analysis/dependency_closure.py` + a small Gradle task to dump the project dependency graph.
@@ -36,11 +36,10 @@ No thesis prose in Phase 2; §4.3 Czech prose is deferred to Phase 5 per the pla
 ### B. `analysis/dependency_closure.py`
 
 - Reads `build/reports/dependency_graph/dependency_graph.csv` + `analysis/data/sharing_report_with_loc.csv`.
-- For each `(module, source_set)` unit present in the sharing report, computes the transitive set of downstream units that depend on it. Configuration-name → source-set mapping (`commonMainImplementation` → `commonMain`, `androidMainImplementation` → `androidMain`, plain `implementation` → `main`, etc.). Expands the source-set hierarchy documented in `MultiplatformModuleSetup.kt`: a dependency from `nonWebMain` of module X resolves to every platform-specific source set derived from `nonWebMain` (androidMain, iosMain, jvmMain), not `nonWebMain` literally.
+- For each architectural unit (`(module, source_set)` pair) present in the sharing report, computes the transitive set of downstream units that depend on it. Combines (i) the inter-module Gradle dependency graph (api/implementation scope-aware — implementation edges terminate forward propagation, directly implementing AVT), (ii) the intra-module KMP source-set `dependsOn` hierarchy encoded in `analysis/source_set_hierarchy.py` (commonMain → mobile/nonWeb/nonAndroid/nonJvm → leaves; webMain has no descendants in Snag's wiring), and (iii) target-binary reachability for single-target consumers (BE modules' `main`, Android-app modules' `main`).
 - Emits `analysis/data/dependency_closure.json` keyed by `f"{module}::{source_set}"` → `{blast_radius_module: int, blast_radius_unit: int, downstream_sample: [top 20 units]}`. **Two blast-radius numbers:**
-  - `blast_radius_module` — downstream *module* count. Exact, no KMP approximation, defensible under attack.
-  - `blast_radius_unit` — downstream `(module, source_set)` count. Upper-bounded when KMP intermediate source sets don't expose distinct Gradle configurations; the approximation over-estimates (counts `commonMain` as reaching every downstream source set of every downstream module), which is conservative for the "risky touch" discussion.
-  §4.3 headline uses `blast_radius_module`; the source-set-axis discussion cites `blast_radius_unit` with its caveat.
+  - `blast_radius_unit` — downstream architectural unit count. **Headline metric** for §4.3 — exact under the combined api/impl-scope and source-set-hierarchy semantics.
+  - `blast_radius_module` — downstream Gradle *build module* count. Build-economy companion: how many `build.gradle.kts` files rebuild.
 - Deterministic, idempotent. CLI: `python analysis/dependency_closure.py`.
 
 ### C. `analysis/ripple_rules.yaml`

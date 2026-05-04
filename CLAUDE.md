@@ -48,6 +48,19 @@ features/libs and if there are any oddities, tell the developer working with you
 
 Do not worry about migrations, this is not in production yet.
 
+## KMP source-set hierarchy quirks
+
+`build-logic/src/main/kotlin/cz/adamec/timotej/snag/buildsrc/configuration/MultiplatformModuleSetup.kt` declares custom intermediate source sets `mobileMain`, `nonWebMain`, `nonAndroidMain`, `nonJvmMain`, and `webMain` that wrap `commonMain` for fine-grained sharing. **`webMain` is wired as a child of `nonAndroidMain` and `nonJvmMain` (so `webMain` *sees* their symbols), but `jsMain`/`wasmJsMain` are NOT declared as descendants of `webMain`** — they sit directly under `commonMain` via the default hierarchy template. Code authored in `webMain` therefore reaches no platform target binary in the current wiring; modules that want shared web-target code must put it in `commonMain` (or wire `jsMain.dependsOn(webMain)` per-module). This affects ripple-closure analysis (`analysis/source_set_hierarchy.py` encodes `webMain` as having no descendants and reaching no targets — faithful to the wiring, even if surprising).
+
+## Architectural unit vs build module (analysis terminology)
+
+The thesis evaluation chapter uses two distinct senses of "module":
+
+- **Architectural unit** = `(module, source_set)` pair. Primary unit for sharing, ripple, blast radius. Source set is where platform reach lives, where dependency declarations are made, and where the KMP `dependsOn` hierarchy expresses the architecture.
+- **Build module** = a Gradle project. Used for build-economy discussions (convention plugins, `build.gradle.kts` count).
+
+When updating analysis prose or thesis text, always disambiguate: "26 architectural units across 12 build modules", not "26 modules". The unit choice is justified in `analysis/thesis-evaluation-plan.md` §4.1 (BE-vs-FE counting symmetry argument).
+
 ## Available skills
 
 - `/project-structure`

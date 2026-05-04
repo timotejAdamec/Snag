@@ -1,12 +1,12 @@
 unit,module_path,source_set,file_count,loc_churn_sum,dominant_bucket,recurring,blast_radius_module,blast_radius_unit
-:feat:clients:app:model::commonMain[FE+BE],:feat:clients:app:model,commonMain[FE+BE],1,1,local,False,24,36
+:feat:clients:app:model::commonMain[FE+BE],:feat:clients:app:model,commonMain[FE+BE],1,1,local,False,24,33
 :feat:clients:be:app:model::main,:feat:clients:be:app:model,main,1,6,local,False,14,19
 :feat:clients:be:driven:impl::main,:feat:clients:be:driven:impl,main,2,6,local,False,1,1
 :feat:clients:be:driven:test::main,:feat:clients:be:driven:test,main,1,4,intrinsic,True,73,92
 :feat:clients:be:driving:impl::main,:feat:clients:be:driving:impl,main,1,2,local,False,1,1
-:feat:clients:business:model::commonMain[FE+BE],:feat:clients:business:model,commonMain[FE+BE],1,2,local,False,25,38
+:feat:clients:business:model::commonMain[FE+BE],:feat:clients:business:model,commonMain[FE+BE],1,2,local,False,25,34
 :feat:clients:contract::commonMain[FE+BE],:feat:clients:contract,commonMain[FE+BE],2,2,local,False,2,3
 :feat:clients:fe:driven:impl::commonMain[FE],:feat:clients:fe:driven:impl,commonMain[FE],2,4,local,False,1,1
 :featShared:database:be:driven:api::main,:featShared:database:be:driven:api,main,2,4,local,False,8,9
-:featShared:database:fe:driven:api::commonMain[FE],:featShared:database:fe:driven:api,commonMain[FE],3,7,local,False,18,27
+:featShared:database:fe:driven:api::commonMain[FE],:featShared:database:fe:driven:api,commonMain[FE],3,7,local,False,18,26
 :root::non-module,:root,non-module,1,64,local,False,0,0
