@@ -48,9 +48,9 @@ features/libs and if there are any oddities, tell the developer working with you
 
 Do not worry about migrations, this is not in production yet.
 
-## KMP source-set hierarchy quirks
+## KMP source-set hierarchy
 
-`build-logic/src/main/kotlin/cz/adamec/timotej/snag/buildsrc/configuration/MultiplatformModuleSetup.kt` declares custom intermediate source sets `mobileMain`, `nonWebMain`, `nonAndroidMain`, `nonJvmMain`, and `webMain` that wrap `commonMain` for fine-grained sharing. **`webMain` is wired as a child of `nonAndroidMain` and `nonJvmMain` (so `webMain` *sees* their symbols), but `jsMain`/`wasmJsMain` are NOT declared as descendants of `webMain`** — they sit directly under `commonMain` via the default hierarchy template. Code authored in `webMain` therefore reaches no platform target binary in the current wiring; modules that want shared web-target code must put it in `commonMain` (or wire `jsMain.dependsOn(webMain)` per-module). This affects ripple-closure analysis (`analysis/source_set_hierarchy.py` encodes `webMain` as having no descendants and reaching no targets — faithful to the wiring, even if surprising).
+`build-logic/src/main/kotlin/cz/adamec/timotej/snag/buildsrc/configuration/MultiplatformModuleSetup.kt` declares custom intermediate source sets `mobileMain`, `nonWebMain`, `nonAndroidMain`, `nonJvmMain`, and `webMain` on top of `commonMain`. The combined hierarchy (Snag wiring + `applyDefaultHierarchyTemplate()`) used by analysis tooling is encoded in `analysis/source_set_hierarchy.py`. Notable: `jsMain` and `wasmJsMain` are wired as descendants of `webMain` *implicitly* by the default hierarchy template's `web` group — they do not appear in `MultiplatformModuleSetup.kt`'s explicit dependsOn calls, but the implicit wiring is still in effect.
 
 ## Architectural unit vs build module (analysis terminology)
 

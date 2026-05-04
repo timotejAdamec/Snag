@@ -198,7 +198,7 @@
   },
   ":core:foundation:common::webMain": {
     "blast_radius_module": 188,
-    "blast_radius_unit": 25,
+    "blast_radius_unit": 27,
     "downstream_sample": [
       ":composeApp::webMain",
       ":feat:authentication:fe:driven:impl::webMain",
@@ -3420,10 +3420,12 @@
   },
   ":lib:configuration:fe:api::webMain": {
     "blast_radius_module": 7,
-    "blast_radius_unit": 3,
+    "blast_radius_unit": 5,
     "downstream_sample": [
       ":feat:authentication:fe:driven:impl::webMain",
       ":lib:network:fe:impl::webMain",
+      ":lib:network:fe:impl::jsMain",
+      ":lib:network:fe:impl::wasmJsMain",
       ":lib:storage:fe:impl::webMain"
     ]
   },
@@ -3647,8 +3649,11 @@
   },
   ":lib:network:fe:impl::webMain": {
     "blast_radius_module": 1,
-    "blast_radius_unit": 0,
-    "downstream_sample": []
+    "blast_radius_unit": 2,
+    "downstream_sample": [
+      ":lib:network:fe:impl::jsMain",
+      ":lib:network:fe:impl::wasmJsMain"
+    ]
   },
   ":lib:network:fe:test::commonMain": {
     "blast_radius_module": 10,

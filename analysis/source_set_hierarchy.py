@@ -19,24 +19,23 @@
 # source-set ABI changes — the consumer rebuilds iff the source set reaches
 # its target.
 #
-# Notable Snag-specific quirk: `webMain` is wired into the hierarchy as a
-# CHILD of `nonAndroidMain` and `nonJvmMain` (so `webMain` SEES symbols
-# from those parents), but `jsMain` and `wasmJsMain` are NOT declared as
-# children of `webMain`. They sit directly under `commonMain` via the
-# default hierarchy template. Therefore code authored in `webMain` does
-# not reach any platform binary in Snag's current wiring — `webMain` has
-# no descendants and reaches no targets. This is encoded faithfully here;
-# the implication is logged in CLAUDE.md as a project oddity.
+# `jsMain` and `wasmJsMain` descend from `webMain` via Kotlin's
+# `applyDefaultHierarchyTemplate()` (the template's `web` group covers both
+# JS targets). Snag's `MultiplatformModuleSetup.kt` adds the cross-cutting
+# `webMain dependsOn nonAndroidMain + nonJvmMain` wiring, which combined
+# with the default template gives `nonAndroidMain` and `nonJvmMain` the
+# transitive `web` reach as well.
 
 from __future__ import annotations
 
-# Per the dependsOn graph in MultiplatformModuleSetup.kt:
-#   mobileMain, nonWebMain, nonAndroidMain, nonJvmMain → commonMain
-#   androidMain → mobileMain, nonWebMain, nonJvmMain
-#   iosMain → mobileMain, nonWebMain, nonAndroidMain, nonJvmMain
-#   jvmMain → nonWebMain, nonAndroidMain
-#   webMain → nonAndroidMain, nonJvmMain
-#   jsMain, wasmJsMain → commonMain (default hierarchy template only)
+# Per the dependsOn graph in MultiplatformModuleSetup.kt + the default
+# hierarchy template applied via applyDefaultHierarchyTemplate():
+#   mobileMain, nonWebMain, nonAndroidMain, nonJvmMain → commonMain (Snag)
+#   androidMain → mobileMain, nonWebMain, nonJvmMain                (Snag)
+#   iosMain → mobileMain, nonWebMain, nonAndroidMain, nonJvmMain    (Snag)
+#   jvmMain → nonWebMain, nonAndroidMain                            (Snag)
+#   webMain → nonAndroidMain, nonJvmMain                            (Snag)
+#   jsMain, wasmJsMain → webMain                                    (default template)
 DESCENDANTS_MAIN: dict[str, frozenset[str]] = {
     "commonMain": frozenset({
         "mobileMain", "nonWebMain", "nonAndroidMain", "nonJvmMain",
@@ -45,9 +44,9 @@ DESCENDANTS_MAIN: dict[str, frozenset[str]] = {
     }),
     "mobileMain": frozenset({"androidMain", "iosMain"}),
     "nonWebMain": frozenset({"androidMain", "iosMain", "jvmMain"}),
-    "nonAndroidMain": frozenset({"iosMain", "jvmMain", "webMain"}),
-    "nonJvmMain": frozenset({"androidMain", "iosMain", "webMain"}),
-    "webMain": frozenset(),
+    "nonAndroidMain": frozenset({"iosMain", "jvmMain", "webMain", "jsMain", "wasmJsMain"}),
+    "nonJvmMain": frozenset({"androidMain", "iosMain", "webMain", "jsMain", "wasmJsMain"}),
+    "webMain": frozenset({"jsMain", "wasmJsMain"}),
     "androidMain": frozenset(),
     "iosMain": frozenset(),
     "jvmMain": frozenset(),
@@ -68,9 +67,9 @@ DESCENDANTS_TEST: dict[str, frozenset[str]] = {
     }),
     "mobileTest": frozenset({"androidUnitTest", "iosTest"}),
     "nonWebTest": frozenset({"androidUnitTest", "iosTest", "jvmTest"}),
-    "nonAndroidTest": frozenset({"iosTest", "jvmTest", "webTest"}),
-    "nonJvmTest": frozenset({"androidUnitTest", "iosTest", "webTest"}),
-    "webTest": frozenset(),
+    "nonAndroidTest": frozenset({"iosTest", "jvmTest", "webTest", "jsTest", "wasmJsTest"}),
+    "nonJvmTest": frozenset({"androidUnitTest", "iosTest", "webTest", "jsTest", "wasmJsTest"}),
+    "webTest": frozenset({"jsTest", "wasmJsTest"}),
     "androidUnitTest": frozenset(),
     "iosTest": frozenset(),
     "jvmTest": frozenset(),
@@ -81,16 +80,18 @@ DESCENDANTS_TEST: dict[str, frozenset[str]] = {
 
 DESCENDANTS: dict[str, frozenset[str]] = {**DESCENDANTS_MAIN, **DESCENDANTS_TEST}
 
-# Target binaries each source set's code reaches. `webMain` reaches none
-# because Snag's wiring does not declare `jsMain`/`wasmJsMain` as
-# descendants of `webMain` (see module-level comment).
+# Target binaries each source set's code reaches via the combined
+# Snag + default-template hierarchy. `webMain` reaches js + wasmJs because
+# `jsMain` and `wasmJsMain` descend from it via the default template;
+# `nonAndroidMain` and `nonJvmMain` inherit those targets transitively
+# through `webMain`.
 TARGET_BINS: dict[str, frozenset[str]] = {
     "commonMain": frozenset({"android", "ios", "jvm", "js", "wasmJs"}),
     "mobileMain": frozenset({"android", "ios"}),
     "nonWebMain": frozenset({"android", "ios", "jvm"}),
-    "nonAndroidMain": frozenset({"ios", "jvm"}),
-    "nonJvmMain": frozenset({"android", "ios"}),
-    "webMain": frozenset(),
+    "nonAndroidMain": frozenset({"ios", "jvm", "js", "wasmJs"}),
+    "nonJvmMain": frozenset({"android", "ios", "js", "wasmJs"}),
+    "webMain": frozenset({"js", "wasmJs"}),
     "androidMain": frozenset({"android"}),
     "iosMain": frozenset({"ios"}),
     "jvmMain": frozenset({"jvm"}),

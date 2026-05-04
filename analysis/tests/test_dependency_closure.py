@@ -308,29 +308,29 @@ def test_be_to_be_main_chain():
     assert closure[":T::main"]["blast_radius_unit"] == 1
 
 
-# ------------------------------- web quirk -----------------------------------
+# ------------------------------- web subtree ---------------------------------
 
-def test_web_main_change_does_not_propagate_in_snag_wiring():
-    # Snag's hierarchy declares webMain dependsOn(nonAndroid)+(nonJvm) but
-    # does NOT wire jsMain/wasmJsMain as descendants of webMain. So a change
-    # to webMain reaches no platform binary — the closure is 0 even if the
-    # consumer module also has webMain.
+def test_web_main_change_propagates_to_js_and_wasm_js_descendants():
+    # `applyDefaultHierarchyTemplate()` wires jsMain and wasmJsMain as
+    # descendants of webMain via the template's `web` group. A change to
+    # T::webMain rebuilds T's own jsMain/wasmJsMain leaves and the same
+    # pair in any consumer that has them.
     edges = [(":C", ":T", "api")]
     units = {
         ":T": ["commonMain", "webMain", "jsMain", "wasmJsMain"],
         ":C": ["commonMain", "webMain", "jsMain", "wasmJsMain"],
     }
     closure = dependency_closure.compute_closure(edges, units)
-    # Walking from T::webMain: same-name match in C still applies (C's webMain
-    # source set sees T's webMain via the cross-module dependsOn convention).
-    # But within each module, webMain has no descendants. So:
-    #   - T's intra: 0
-    #   - C: just C::webMain (no descendants)
     sample = set(closure[":T::webMain"]["downstream_sample"])
+    # Intra-module: T's own descendants of webMain.
+    assert ":T::jsMain" in sample
+    assert ":T::wasmJsMain" in sample
+    # Inter-module: same-name match plus consumer's own web-side descendants.
     assert ":C::webMain" in sample
-    assert ":C::jsMain" not in sample  # jsMain does NOT descend from webMain
-    assert ":C::wasmJsMain" not in sample
-    assert closure[":T::webMain"]["blast_radius_unit"] == 1
+    assert ":C::jsMain" in sample
+    assert ":C::wasmJsMain" in sample
+    # 2 intra + 3 inter (C::webMain, C::jsMain, C::wasmJsMain) = 5.
+    assert closure[":T::webMain"]["blast_radius_unit"] == 5
 
 
 # ------------------------------- diamond, fanout, self-loops ------------------

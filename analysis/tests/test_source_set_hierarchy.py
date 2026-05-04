@@ -31,27 +31,26 @@ def test_non_web_main_descends_to_all_non_web_targets():
     })
 
 
-def test_non_android_main_descends_to_ios_jvm_and_web():
-    # The wiring in MultiplatformModuleSetup.kt nests webMain under
-    # nonAndroidMain, so webMain DOES descend from nonAndroidMain.
+def test_non_android_main_descends_to_ios_jvm_web_and_web_leaves():
+    # Snag wires webMain dependsOn(nonAndroid), and the default hierarchy
+    # template wires jsMain+wasmJsMain dependsOn(webMain). So nonAndroidMain
+    # transitively contains all four web-side source sets.
     assert ssh.DESCENDANTS_MAIN["nonAndroidMain"] == frozenset({
-        "iosMain", "jvmMain", "webMain",
+        "iosMain", "jvmMain", "webMain", "jsMain", "wasmJsMain",
     })
 
 
-def test_non_jvm_main_descends_to_android_ios_and_web():
+def test_non_jvm_main_descends_to_android_ios_web_and_web_leaves():
     assert ssh.DESCENDANTS_MAIN["nonJvmMain"] == frozenset({
-        "androidMain", "iosMain", "webMain",
+        "androidMain", "iosMain", "webMain", "jsMain", "wasmJsMain",
     })
 
 
-def test_web_main_has_no_descendants_in_snag_wiring():
-    # Snag-specific quirk: jsMain and wasmJsMain are NOT wired as descendants
-    # of webMain (only the default hierarchy template is applied for them, and
-    # it does not nest js/wasmJs under web). Code authored in webMain therefore
-    # reaches no platform binary in Snag's current wiring. The closure model
-    # must reflect this faithfully.
-    assert ssh.DESCENDANTS_MAIN["webMain"] == frozenset()
+def test_web_main_descends_to_js_and_wasm_js():
+    # `applyDefaultHierarchyTemplate()` wires jsMain and wasmJsMain as
+    # children of webMain via its `web` group. Code authored in webMain
+    # therefore reaches both JS targets transitively.
+    assert ssh.DESCENDANTS_MAIN["webMain"] == frozenset({"jsMain", "wasmJsMain"})
 
 
 def test_leaf_main_source_sets_have_no_descendants():
@@ -79,19 +78,18 @@ def test_non_web_main_reaches_android_ios_jvm():
     assert ssh.TARGET_BINS["nonWebMain"] == frozenset({"android", "ios", "jvm"})
 
 
-def test_non_android_main_reaches_ios_and_jvm_only():
-    # NOT 'js'/'wasmJs' — webMain has no descendants so the web targets are
-    # not reached transitively from nonAndroidMain either.
-    assert ssh.TARGET_BINS["nonAndroidMain"] == frozenset({"ios", "jvm"})
+def test_non_android_main_reaches_ios_jvm_and_web_targets():
+    # Reaches ios + jvm directly (declared dependsOn) and js + wasmJs
+    # transitively via webMain → jsMain/wasmJsMain (default template).
+    assert ssh.TARGET_BINS["nonAndroidMain"] == frozenset({"ios", "jvm", "js", "wasmJs"})
 
 
-def test_non_jvm_main_reaches_android_and_ios_only():
-    # Same reasoning as nonAndroidMain — no path to js/wasmJs through webMain.
-    assert ssh.TARGET_BINS["nonJvmMain"] == frozenset({"android", "ios"})
+def test_non_jvm_main_reaches_android_ios_and_web_targets():
+    assert ssh.TARGET_BINS["nonJvmMain"] == frozenset({"android", "ios", "js", "wasmJs"})
 
 
-def test_web_main_reaches_no_targets_in_snag_wiring():
-    assert ssh.TARGET_BINS["webMain"] == frozenset()
+def test_web_main_reaches_js_and_wasm_js_targets():
+    assert ssh.TARGET_BINS["webMain"] == frozenset({"js", "wasmJs"})
 
 
 def test_target_bins_of_main_resolves_via_single_target_argument():
