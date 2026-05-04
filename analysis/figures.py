@@ -485,9 +485,9 @@ def figure_layer_divergence(df: pd.DataFrame) -> None:
     ax.set_yticks(y_pos, labels=layers)
     ax.invert_yaxis()
     ax.set_xlabel("Produkční Kotlin LOC")
-    ax.set_ylabel("Hexagonální vrstva")
+    ax.set_ylabel("Část architektury")
     ax.set_title(
-        "Podíl platformně-specifického LOC v části architektury",
+        "Rozdělení kódu dle zdrojových sad a částí architektury",
         pad=14,
     )
     ax.legend(loc="lower right", frameon=True, fontsize=8, ncol=2)
@@ -653,7 +653,11 @@ def figure_platform_reach_histogram(df: pd.DataFrame) -> None:
     ax.invert_yaxis()
     ax.set_xlabel("Produkční Kotlin LOC")
     ax.set_ylabel("Dosah (počet platforem)")
-    ax.set_title("Rozdělení produkčního LOC podle počtu platforem, na které zdrojová sada zasahuje", pad=14)
+    ax.set_title(
+        "Rozdělení produkčního LOC podle počtu platforem,\n"
+        "na které zdrojová sada zasahuje",
+        pad=14,
+    )
     ax.grid(axis="x", linestyle=":", alpha=0.5)
 
     max_loc = int(agg_desc["kotlin_loc"].max()) if total > 0 else 0
@@ -686,8 +690,8 @@ def figure_platform_reach_histogram(df: pd.DataFrame) -> None:
     FIGURES_DIR.mkdir(parents=True, exist_ok=True)
     pdf_path = FIGURES_DIR / "fig_4_2_platform_reach_histogram.pdf"
     png_path = FIGURES_DIR / "fig_4_2_platform_reach_histogram.png"
-    fig.savefig(pdf_path)
-    fig.savefig(png_path, dpi=200)
+    fig.savefig(pdf_path, bbox_inches="tight")
+    fig.savefig(png_path, dpi=200, bbox_inches="tight")
     plt.close(fig)
     print(f"wrote {pdf_path}")
     print(f"wrote {png_path}")
@@ -707,13 +711,13 @@ RIPPLE_BUCKET_LABELS_CS = {
 
 
 def figure_ripple_buckets() -> None:
-    """§4.3 stacked bar — one bar per studied change, segments = local / intrinsic /
-    collateral.
+    """§4.3 stacked bars — one bar per studied change, segments = local / intrinsic /
+    collateral. Emits two separate figures (file-count and LOC-churn variants) so
+    each can be embedded at full width in the thesis without compressing the
+    bar labels.
 
     Consumes every `analysis/data/ripple_<change>_units.csv` produced by
-    feature_retro.py --finalize. Each change contributes one bar with file-count
-    segments; LOC-churn variant rendered as a companion plot underneath. Recurring
-    intrinsic unit count annotated per bar.
+    feature_retro.py --finalize. Recurring intrinsic unit count annotated per bar.
 
     Skips gracefully when no ripple CSVs exist yet — Phase 2 writeup runs before
     any case study data is committed, so the smoke pass must not fail here.
@@ -753,14 +757,10 @@ def figure_ripple_buckets() -> None:
             },
         )
 
-    fig, (ax_files, ax_churn) = plt.subplots(
-        2,
-        1,
-        figsize=(10, max(3, 1.2 * len(per_change_rows)) * 2),
-        sharey=True,
-    )
+    def _render(key: str, title: str, xlabel: str, output_stem: str) -> None:
+        fig_height = max(3.5, 0.6 * len(per_change_rows) + 1.5)
+        fig, ax = plt.subplots(figsize=(10, fig_height))
 
-    def _stacked_barh(ax, key: str, title: str, xlabel: str) -> None:
         change_labels = [r["change_id"] for r in per_change_rows]
         y_pos = np.arange(len(change_labels))
         left = np.zeros(len(change_labels))
@@ -792,10 +792,9 @@ def figure_ripple_buckets() -> None:
         ax.set_yticklabels(change_labels)
         ax.invert_yaxis()
         ax.set_xlabel(xlabel)
-        ax.set_title(title)
+        ax.set_title(title, pad=12)
         ax.grid(axis="x", linestyle=":", alpha=0.5)
 
-        # Annotate the recurring intrinsic unit count at the end of each bar.
         totals = [sum(r[key].values()) for r in per_change_rows]
         max_total = max(totals) if totals else 0
         for i, row in enumerate(per_change_rows):
@@ -810,24 +809,37 @@ def figure_ripple_buckets() -> None:
                 color="#333",
             )
 
-        # Reserve headroom on the right so the "opak. vlastní místa = N"
-        # annotation stays inside the axes frame for the widest bars.
         if max_total > 0:
             ax.set_xlim(right=max_total * 1.30)
 
-    _stacked_barh(ax_files, "bucket_files", "Kategorie dopadu podle počtu souborů", "zasaženo souborů")
-    _stacked_barh(ax_churn, "bucket_churn", "Kategorie dopadu podle změny řádků", "Změny řádků (přidáno + odebráno)")
+        ax.legend(
+            loc="lower right",
+            ncol=len(RIPPLE_BUCKET_ORDER),
+            frameon=False,
+            fontsize=9,
+        )
+        fig.tight_layout()
 
-    handles, labels = ax_files.get_legend_handles_labels()
-    fig.legend(handles, labels, loc="lower center", ncol=len(RIPPLE_BUCKET_ORDER), frameon=False)
-    fig.suptitle("Obr. 4.3 — Rozdělení dopadu mezi kategorie napříč případovými studiemi", fontsize=12)
-    fig.tight_layout(rect=(0, 0.05, 1, 0.95))
+        FIGURES_DIR.mkdir(parents=True, exist_ok=True)
+        pdf_path = FIGURES_DIR / f"{output_stem}.pdf"
+        png_path = FIGURES_DIR / f"{output_stem}.png"
+        fig.savefig(pdf_path, bbox_inches="tight")
+        fig.savefig(png_path, dpi=200, bbox_inches="tight")
+        plt.close(fig)
+        print(f"figure_ripple_buckets: wrote {pdf_path}")
 
-    FIGURES_DIR.mkdir(parents=True, exist_ok=True)
-    fig.savefig(FIGURES_DIR / "fig_4_3_ripple_buckets.pdf", bbox_inches="tight")
-    fig.savefig(FIGURES_DIR / "fig_4_3_ripple_buckets.png", dpi=200, bbox_inches="tight")
-    plt.close(fig)
-    print(f"figure_ripple_buckets: wrote {FIGURES_DIR / 'fig_4_3_ripple_buckets.pdf'}")
+    _render(
+        key="bucket_files",
+        title="Rozdělení dopadu mezi kategorie napříč případovými studiemi (podle počtu souborů)",
+        xlabel="zasaženo souborů",
+        output_stem="fig_4_3_ripple_buckets_files",
+    )
+    _render(
+        key="bucket_churn",
+        title="Rozdělení dopadu mezi kategorie napříč případovými studiemi (podle změny řádků)",
+        xlabel="Změny řádků (přidáno + odebráno)",
+        output_stem="fig_4_3_ripple_buckets_churn",
+    )
 
 
 # ---------------------------------------------------------------------------------------------
@@ -850,8 +862,6 @@ def figure_wearos_ripple_by_module_tree() -> None:
     df = pd.read_csv(csv_path)
     df = df.sort_values("file_count", ascending=False).reset_index(drop=True)
 
-    fig, (ax_files, ax_loc) = plt.subplots(2, 1, figsize=(9, 7.5), sharex=True)
-
     trees = df["tree"].tolist()
     x_pos = np.arange(len(trees))
     bar_width = 0.7
@@ -860,6 +870,8 @@ def figure_wearos_ripple_by_module_tree() -> None:
     collateral = df["collateral_files"].to_numpy()
     local = df["local_files"].to_numpy()
 
+    # File-count figure
+    fig_files, ax_files = plt.subplots(figsize=(9, 5.0))
     ax_files.bar(x_pos, intrinsic, bar_width, color=RIPPLE_BUCKET_COLORS["intrinsic"],
                  label=RIPPLE_BUCKET_LABELS_CS["intrinsic"])
     ax_files.bar(x_pos, collateral, bar_width, bottom=intrinsic,
@@ -867,20 +879,40 @@ def figure_wearos_ripple_by_module_tree() -> None:
     ax_files.bar(x_pos, local, bar_width, bottom=intrinsic + collateral,
                  color=RIPPLE_BUCKET_COLORS["local"], label=RIPPLE_BUCKET_LABELS_CS["local"])
     ax_files.set_ylabel("zasaženo souborů")
-    ax_files.set_title("Obr. 4.4 — Rozložení dopadu Wear OS podle stromu nejvyšší úrovně v repozitáři")
+    ax_files.set_title(
+        "Rozložení dopadu Wear OS podle stromu nejvyšší úrovně v repozitáři\n"
+        "(podle počtu souborů)",
+        pad=12,
+    )
     ax_files.grid(axis="y", linestyle=":", alpha=0.5)
     ax_files.legend(loc="upper right", frameon=False, fontsize=9)
+    ax_files.set_xticks(x_pos)
+    ax_files.set_xticklabels(trees, rotation=30, ha="right")
 
-    # Headroom above the tallest bar so value labels stay inside the axes
-    # frame (matplotlib's bar autoscale does not reserve space for text).
     max_files = int(df["file_count"].max())
     for i, total in enumerate(df["file_count"]):
         ax_files.text(x_pos[i], total + max_files * 0.02, str(total),
                       ha="center", va="bottom", fontsize=8)
     ax_files.set_ylim(top=max_files * 1.15)
 
+    fig_files.tight_layout()
+    FIGURES_DIR.mkdir(parents=True, exist_ok=True)
+    files_pdf = FIGURES_DIR / "fig_4_4_wear_ripple_by_module_tree_files.pdf"
+    files_png = FIGURES_DIR / "fig_4_4_wear_ripple_by_module_tree_files.png"
+    fig_files.savefig(files_pdf, bbox_inches="tight")
+    fig_files.savefig(files_png, dpi=200, bbox_inches="tight")
+    plt.close(fig_files)
+    print(f"figure_wearos_ripple_by_module_tree: wrote {files_pdf}")
+
+    # LOC-churn figure
+    fig_loc, ax_loc = plt.subplots(figsize=(9, 5.0))
     ax_loc.bar(x_pos, df["loc_churn"], bar_width, color="#888")
     ax_loc.set_ylabel("Změny řádků (přidáno + odebráno)")
+    ax_loc.set_title(
+        "Rozložení dopadu Wear OS podle stromu nejvyšší úrovně v repozitáři\n"
+        "(podle změny řádků)",
+        pad=12,
+    )
     ax_loc.set_xticks(x_pos)
     ax_loc.set_xticklabels(trees, rotation=30, ha="right")
     ax_loc.grid(axis="y", linestyle=":", alpha=0.5)
@@ -891,12 +923,13 @@ def figure_wearos_ripple_by_module_tree() -> None:
                     ha="center", va="bottom", fontsize=8)
     ax_loc.set_ylim(top=max_loc * 1.12)
 
-    fig.tight_layout()
-    FIGURES_DIR.mkdir(parents=True, exist_ok=True)
-    fig.savefig(FIGURES_DIR / "fig_4_4_wear_ripple_by_module_tree.pdf", bbox_inches="tight")
-    fig.savefig(FIGURES_DIR / "fig_4_4_wear_ripple_by_module_tree.png", dpi=200, bbox_inches="tight")
-    plt.close(fig)
-    print(f"figure_wearos_ripple_by_module_tree: wrote {FIGURES_DIR / 'fig_4_4_wear_ripple_by_module_tree.pdf'}")
+    fig_loc.tight_layout()
+    loc_pdf = FIGURES_DIR / "fig_4_4_wear_ripple_by_module_tree_loc.pdf"
+    loc_png = FIGURES_DIR / "fig_4_4_wear_ripple_by_module_tree_loc.png"
+    fig_loc.savefig(loc_pdf, bbox_inches="tight")
+    fig_loc.savefig(loc_png, dpi=200, bbox_inches="tight")
+    plt.close(fig_loc)
+    print(f"figure_wearos_ripple_by_module_tree: wrote {loc_pdf}")
 
 
 def main() -> int:
