@@ -10,41 +10,49 @@
 # edge list from `build/reports/dependency_graph/dependency_graph.csv`
 # produced by the Gradle DependencyGraphTask.
 #
-# Semantic model: the closure respects Gradle's api vs implementation scope.
-# A reverse-walk from module M enumerates every direct consumer (any scope —
-# all of them rebuild when M's ABI changes), but only continues the walk past
-# a consumer whose dependency on the reached node is scope=api. An
-# implementation edge terminates forward propagation at that node — Gradle's
-# api/implementation contract hides the transitive dependency from the
-# consumer's own consumers.
+# Semantic model: the closure is unit-level — each (module, source_set) is
+# the architectural unit of accounting. The walk respects two layers of
+# semantics:
 #
-# This directly implements Normalized Systems Theory's Action Version
-# Transparency: wherever a Snag convention plugin chose `implementation` over
-# `api`, the closure walk stops. Impl modules, testInfra, koinModulesAggregate,
-# and every other AVT seam act as natural sinks — no special-case list is
-# required, the api/impl split is honored directly.
+#   (1) Inter-module Gradle dependency edges with api/implementation scope.
+#       Direct consumers always rebuild; the walk only propagates past a
+#       consumer whose dependency on the reached node is api. This directly
+#       implements Snag's Action Version Transparency: wherever a convention
+#       plugin chose `implementation` over `api`, the closure walk stops.
+#       Impl modules, testInfra, koinModulesAggregate, and every other AVT
+#       seam act as natural sinks — no special-case list is required.
+#
+#   (2) Intra-module KMP source-set dependsOn hierarchy. Within a single
+#       module, a change to `commonMain` propagates to every descendant
+#       source set (mobile/nonWeb/nonAndroid/nonJvm intermediates → leaf
+#       source sets) because each descendant compiles with its ancestor's
+#       klib on its classpath. Cross-module consumers see the same hierarchy
+#       on their side: a same-named source set in the consumer plus its own
+#       descendants of that source set rebuild.
+#
+# Single-target consumers (BE modules and Android-app modules expose only a
+# `main` source set) are handled by target-binary reachability: a KMP module's
+# source set propagates to a single-target consumer's `main` iff the source
+# set reaches the consumer's target binary (e.g., `commonMain` reaches all
+# targets, `iosMain` reaches only ios — does NOT propagate to a BE consumer).
 #
 # Two blast-radius numbers per unit:
-#   - blast_radius_module: count of transitive downstream modules reachable
-#                          via api-forwarding chains. Exact under the Gradle
-#                          api/implementation contract.
+#   - blast_radius_module: count of transitive downstream Gradle modules
+#                          (build-economy view — answers "how many
+#                          build.gradle.kts files rebuild").
 #   - blast_radius_unit:   count of transitive downstream (module, source_set)
-#                          units. Upper bound — KMP intermediate source sets
-#                          do not expose distinct Gradle configurations, so
-#                          this metric counts every source set of every
-#                          downstream module. §4.3 headline uses
-#                          blast_radius_module; source-set-axis discussion
-#                          cites blast_radius_unit with this caveat.
+#                          architectural units. Headline metric for §4.3 —
+#                          exact under the combined api/impl-scope and
+#                          source-set-hierarchy semantics described above.
 #
 # Output:
-#   analysis/data/dependency_closure.json — keyed by "f{module}::{source_set}"
+#   analysis/data/dependency_closure.json — keyed by "{module}::{source_set}"
 #     → dict with blast_radius_module (int), blast_radius_unit (int),
 #     downstream_sample (up to 20 downstream unit keys).
 #
 # runtimeOnly edges are dropped at load time (not on the compile classpath).
 #
-# Deterministic, idempotent. Pure stdlib — no third-party deps beyond what
-# figures.py already uses.
+# Deterministic, idempotent. Pure stdlib — no third-party deps.
 #
 # Usage: python analysis/dependency_closure.py
 
@@ -55,6 +63,10 @@ import json
 import sys
 from collections import defaultdict
 from pathlib import Path
+
+# Local import — analysis/ is on sys.path when invoked as a script from the
+# repo root, and conftest.py inserts it for tests.
+import source_set_hierarchy
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 REPO_ROOT = SCRIPT_DIR.parent
@@ -110,9 +122,15 @@ def _load_edges(path: Path) -> list[tuple[str, str, str]]:
     return edges
 
 
-def _load_units(path: Path) -> dict[str, list[str]]:
-    """Returns module_path → list of source_set names (one per row in the sharing report).
-    Preserves duplicates suppressed — each (module, source_set) appears once."""
+def _load_units_and_targets(path: Path) -> tuple[dict[str, list[str]], dict[str, str]]:
+    """Returns (module_path → sorted list of source_set names, module_path →
+    inferred single-target name for non-KMP modules).
+
+    A module is single-target if it does NOT have `commonMain` in its source
+    sets. For those modules, the target is inferred from `platform_set`
+    column values seen on the module's rows: `backend` → jvm; `android` →
+    android. KMP modules (with commonMain) are absent from the target dict.
+    """
     if not path.is_file():
         sys.stderr.write(
             f"[dependency_closure] ERROR: {path} not found. "
@@ -121,12 +139,43 @@ def _load_units(path: Path) -> dict[str, list[str]]:
         sys.exit(2)
 
     units: dict[str, set[str]] = defaultdict(set)
+    platform_sets_per_module: dict[str, set[str]] = defaultdict(set)
     with path.open(newline="", encoding="utf-8") as f:
         reader = csv.DictReader(f)
         for row in reader:
-            units[row["module_path"]].add(row["source_set"])
+            module = row["module_path"]
+            units[module].add(row["source_set"])
+            ps = row.get("platform_set", "")
+            if ps:
+                platform_sets_per_module[module].add(ps)
 
-    return {module: sorted(ss_list) for module, ss_list in units.items()}
+    units_sorted = {module: sorted(ss_list) for module, ss_list in units.items()}
+    targets = _infer_module_targets(units_sorted, platform_sets_per_module)
+    return units_sorted, targets
+
+
+def _infer_module_targets(
+    units: dict[str, list[str]],
+    platform_sets_per_module: dict[str, set[str]],
+) -> dict[str, str]:
+    """Returns module_path → 'jvm' or 'android' for single-target modules.
+
+    Heuristic: a module without `commonMain` is single-target. Pick the
+    target from its `platform_set` values: backend → jvm, android → android.
+    Falls back to 'jvm' when ambiguous (the conservative default — Snag's
+    backend modules are the dominant single-target case)."""
+    targets: dict[str, str] = {}
+    for module, source_sets in units.items():
+        if "commonMain" in source_sets:
+            continue  # KMP module — not single-target
+        platform_sets = platform_sets_per_module.get(module, set())
+        if "android" in platform_sets:
+            targets[module] = "android"
+        elif "backend" in platform_sets or "jvm_shared" in platform_sets or "jvm_desktop" in platform_sets:
+            targets[module] = "jvm"
+        else:
+            targets[module] = "jvm"
+    return targets
 
 
 def _build_reverse_graph(
@@ -187,32 +236,95 @@ def _transitive_dependents(
     return frozenset(visited)
 
 
+def _downstream_units_for(
+    start_module: str,
+    start_ss: str,
+    consumer_modules: frozenset[str],
+    units: dict[str, list[str]],
+    module_targets: dict[str, str],
+) -> list[str]:
+    """Computes the unit-level downstream of (start_module, start_ss).
+
+    Combines intra-module hierarchy propagation (within start_module, which
+    descendants of start_ss in Snag's KMP hierarchy rebuild) with inter-module
+    propagation through each consumer module reached by the scope-aware
+    module walk. The consumer's matching/descendant source sets, or its
+    single-target `main` if the source set reaches the consumer's target
+    binary, are added to the downstream set."""
+    descendants = source_set_hierarchy.descendants_of(start_ss)
+    start_target_bins = source_set_hierarchy.target_bins_of(
+        start_ss,
+        single_target=module_targets.get(start_module),
+    )
+
+    downstream: list[str] = []
+    seen: set[str] = set()
+
+    def _add(unit: str) -> None:
+        if unit not in seen:
+            seen.add(unit)
+            downstream.append(unit)
+
+    own_sets = units.get(start_module, [])
+    for ss in own_sets:
+        if ss == start_ss:
+            continue
+        if ss in descendants:
+            _add(f"{start_module}::{ss}")
+
+    for consumer in sorted(consumer_modules):
+        consumer_sets = units.get(consumer, [])
+        consumer_target = module_targets.get(consumer)
+        if consumer_target is not None:
+            if consumer_target in start_target_bins:
+                for ss in consumer_sets:
+                    _add(f"{consumer}::{ss}")
+        else:
+            if start_ss in consumer_sets:
+                _add(f"{consumer}::{start_ss}")
+                for ss in consumer_sets:
+                    if ss != start_ss and ss in descendants:
+                        _add(f"{consumer}::{ss}")
+
+    return downstream
+
+
 def compute_closure(
     edges: list[tuple[str, str, str]],
     units: dict[str, list[str]],
+    module_targets: dict[str, str] | None = None,
 ) -> dict[str, dict]:
+    """Computes blast radius per unit.
+
+    `module_targets` maps single-target modules (BE, Android-app) to their
+    target binary name ('jvm' or 'android'). Modules absent from this dict
+    AND lacking 'commonMain' default to 'jvm' (Snag's dominant single-target
+    case is backend). KMP modules (those with 'commonMain') are always
+    treated as multi-target regardless of their entry."""
     reverse = _build_reverse_graph(edges)
+    targets = dict(module_targets) if module_targets else {}
+    for module, source_sets in units.items():
+        if "commonMain" in source_sets:
+            continue
+        targets.setdefault(module, "jvm")
 
     result: dict[str, dict] = {}
     for module, source_sets in sorted(units.items()):
         dependents = _transitive_dependents(module, reverse)
         blast_radius_module = len(dependents)
 
-        # Conservative unit-level: count every source set of every downstream module.
-        downstream_units: list[str] = []
-        for dep_module in sorted(dependents):
-            for ss in units.get(dep_module, []):
-                downstream_units.append(f"{dep_module}::{ss}")
-        blast_radius_unit = len(downstream_units)
-
-        # Each source set of the source module carries the same closure (module-level
-        # approximation); we emit per-source-set entries so consumers can look up units
-        # by the same key shape feature_retro.py uses.
         for ss in source_sets:
+            downstream_units = _downstream_units_for(
+                start_module=module,
+                start_ss=ss,
+                consumer_modules=dependents,
+                units=units,
+                module_targets=targets,
+            )
             key = f"{module}::{ss}"
             result[key] = {
                 "blast_radius_module": blast_radius_module,
-                "blast_radius_unit": blast_radius_unit,
+                "blast_radius_unit": len(downstream_units),
                 "downstream_sample": downstream_units[:DOWNSTREAM_SAMPLE_CAP],
             }
 
@@ -221,8 +333,8 @@ def compute_closure(
 
 def main() -> None:
     edges = _load_edges(EDGES_CSV)
-    units = _load_units(SHARING_CSV)
-    closure = compute_closure(edges, units)
+    units, module_targets = _load_units_and_targets(SHARING_CSV)
+    closure = compute_closure(edges, units, module_targets=module_targets)
 
     OUTPUT_JSON.parent.mkdir(parents=True, exist_ok=True)
     with OUTPUT_JSON.open("w", encoding="utf-8") as f:

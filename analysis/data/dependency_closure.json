@@ -13,52 +13,51 @@
   },
   ":composeApp::commonMain": {
     "blast_radius_module": 1,
-    "blast_radius_unit": 1,
+    "blast_radius_unit": 6,
     "downstream_sample": [
+      ":composeApp::androidMain",
+      ":composeApp::iosMain",
+      ":composeApp::jvmMain",
+      ":composeApp::nonWebMain",
+      ":composeApp::webMain",
       ":androidApp::main"
     ]
   },
   ":composeApp::iosMain": {
     "blast_radius_module": 1,
-    "blast_radius_unit": 1,
-    "downstream_sample": [
-      ":androidApp::main"
-    ]
+    "blast_radius_unit": 0,
+    "downstream_sample": []
   },
   ":composeApp::jvmMain": {
     "blast_radius_module": 1,
-    "blast_radius_unit": 1,
-    "downstream_sample": [
-      ":androidApp::main"
-    ]
+    "blast_radius_unit": 0,
+    "downstream_sample": []
   },
   ":composeApp::jvmTest": {
     "blast_radius_module": 1,
-    "blast_radius_unit": 1,
-    "downstream_sample": [
-      ":androidApp::main"
-    ]
+    "blast_radius_unit": 0,
+    "downstream_sample": []
   },
   ":composeApp::nonWebMain": {
     "blast_radius_module": 1,
-    "blast_radius_unit": 1,
+    "blast_radius_unit": 4,
     "downstream_sample": [
+      ":composeApp::androidMain",
+      ":composeApp::iosMain",
+      ":composeApp::jvmMain",
       ":androidApp::main"
     ]
   },
   ":composeApp::webMain": {
     "blast_radius_module": 1,
-    "blast_radius_unit": 1,
-    "downstream_sample": [
-      ":androidApp::main"
-    ]
+    "blast_radius_unit": 0,
+    "downstream_sample": []
   },
   ":core:business:rules:api::commonMain": {
     "blast_radius_module": 146,
-    "blast_radius_unit": 225,
+    "blast_radius_unit": 199,
     "downstream_sample": [
       ":core:business:rules:impl::commonMain",
-      ":core:business:rules:impl::commonTest",
       ":feat:authentication:app:model::commonMain",
       ":feat:authentication:be:driving:api::main",
       ":feat:authentication:be:driving:impl::main",
@@ -66,9 +65,8 @@
       ":feat:authentication:be:driving:test::main",
       ":feat:authentication:fe:app:api::commonMain",
       ":feat:authentication:fe:app:impl::commonMain",
-      ":feat:authentication:fe:app:impl::commonTest",
-      ":feat:authentication:fe:driven:impl::androidMain",
       ":feat:authentication:fe:driven:impl::commonMain",
+      ":feat:authentication:fe:driven:impl::androidMain",
       ":feat:authentication:fe:driven:impl::iosMain",
       ":feat:authentication:fe:driven:impl::jvmMain",
       ":feat:authentication:fe:driven:impl::webMain",
@@ -76,7 +74,9 @@
       ":feat:authentication:fe:driving:api::commonMain",
       ":feat:authentication:fe:driving:impl::commonMain",
       ":feat:authentication:fe:ports::commonMain",
-      ":feat:authorization:be:driving:api::main"
+      ":feat:authorization:be:driving:api::main",
+      ":feat:authorization:be:driving:impl::main",
+      ":feat:authorization:business:model::commonMain"
     ]
   },
   ":core:business:rules:impl::commonMain": {
@@ -89,11 +89,8 @@
   },
   ":core:business:rules:impl::commonTest": {
     "blast_radius_module": 2,
-    "blast_radius_unit": 2,
-    "downstream_sample": [
-      ":koinModulesAggregate:be::main",
-      ":koinModulesAggregate:fe::commonMain"
-    ]
+    "blast_radius_unit": 0,
+    "downstream_sample": []
   },
   ":core:foundation:be::main": {
     "blast_radius_module": 73,
@@ -122,14 +119,15 @@
     ]
   },
   ":core:foundation:common::commonMain": {
-    "blast_radius_module": 187,
-    "blast_radius_unit": 303,
+    "blast_radius_module": 188,
+    "blast_radius_unit": 272,
     "downstream_sample": [
-      ":composeApp::androidMain",
+      ":core:foundation:common::nonWebMain",
+      ":core:foundation:common::webMain",
       ":composeApp::commonMain",
+      ":composeApp::androidMain",
       ":composeApp::iosMain",
       ":composeApp::jvmMain",
-      ":composeApp::jvmTest",
       ":composeApp::nonWebMain",
       ":composeApp::webMain",
       ":core:foundation:be::main",
@@ -143,155 +141,153 @@
       ":feat:authentication:be:driving:impl::test",
       ":feat:authentication:be:driving:test::main",
       ":feat:authentication:fe:app:api::commonMain",
-      ":feat:authentication:fe:app:impl::commonMain",
-      ":feat:authentication:fe:app:impl::commonTest"
+      ":feat:authentication:fe:app:impl::commonMain"
     ]
   },
   ":core:foundation:common::commonTest": {
-    "blast_radius_module": 187,
-    "blast_radius_unit": 303,
+    "blast_radius_module": 188,
+    "blast_radius_unit": 25,
     "downstream_sample": [
-      ":composeApp::androidMain",
-      ":composeApp::commonMain",
-      ":composeApp::iosMain",
-      ":composeApp::jvmMain",
-      ":composeApp::jvmTest",
-      ":composeApp::nonWebMain",
-      ":composeApp::webMain",
-      ":core:foundation:be::main",
-      ":core:foundation:fe::commonMain",
-      ":core:network:fe::commonMain",
-      ":core:storage:fe::commonMain",
-      ":core:storage:fe::nonWebMain",
-      ":feat:authentication:app:model::commonMain",
-      ":feat:authentication:be:driving:api::main",
-      ":feat:authentication:be:driving:impl::main",
-      ":feat:authentication:be:driving:impl::test",
-      ":feat:authentication:be:driving:test::main",
-      ":feat:authentication:fe:app:api::commonMain",
-      ":feat:authentication:fe:app:impl::commonMain",
-      ":feat:authentication:fe:app:impl::commonTest"
+      ":feat:authentication:fe:app:impl::commonTest",
+      ":feat:clients:business:rules::commonTest",
+      ":feat:clients:fe:app:impl::commonTest",
+      ":feat:clients:fe:driving:impl::commonTest",
+      ":feat:findings:fe:app:impl::commonTest",
+      ":feat:findings:fe:app:impl::nonWebTest",
+      ":feat:findings:fe:app:impl::webTest",
+      ":feat:findings:fe:driving:impl::commonTest",
+      ":feat:inspections:fe:app:impl::commonTest",
+      ":feat:inspections:fe:driving:impl::commonTest",
+      ":feat:projects:business:rules::commonTest",
+      ":feat:projects:fe:app:impl::commonTest",
+      ":feat:projects:fe:app:impl::nonWebTest",
+      ":feat:projects:fe:app:impl::webTest",
+      ":feat:projects:fe:driving:impl::commonTest",
+      ":feat:reports:business:rules::commonTest",
+      ":feat:reports:fe:app:impl::commonTest",
+      ":feat:structures:fe:app:impl::commonTest",
+      ":feat:structures:fe:driving:impl::commonTest",
+      ":feat:sync:fe:app:api::commonTest"
     ]
   },
   ":core:foundation:common::nonWebMain": {
-    "blast_radius_module": 187,
-    "blast_radius_unit": 303,
+    "blast_radius_module": 188,
+    "blast_radius_unit": 120,
     "downstream_sample": [
+      ":composeApp::nonWebMain",
       ":composeApp::androidMain",
-      ":composeApp::commonMain",
       ":composeApp::iosMain",
       ":composeApp::jvmMain",
-      ":composeApp::jvmTest",
-      ":composeApp::nonWebMain",
-      ":composeApp::webMain",
       ":core:foundation:be::main",
-      ":core:foundation:fe::commonMain",
-      ":core:network:fe::commonMain",
-      ":core:storage:fe::commonMain",
       ":core:storage:fe::nonWebMain",
-      ":feat:authentication:app:model::commonMain",
       ":feat:authentication:be:driving:api::main",
       ":feat:authentication:be:driving:impl::main",
       ":feat:authentication:be:driving:impl::test",
       ":feat:authentication:be:driving:test::main",
-      ":feat:authentication:fe:app:api::commonMain",
-      ":feat:authentication:fe:app:impl::commonMain",
-      ":feat:authentication:fe:app:impl::commonTest"
+      ":feat:authorization:be:driving:api::main",
+      ":feat:authorization:be:driving:impl::main",
+      ":feat:clients:be:app:api::main",
+      ":feat:clients:be:app:impl::main",
+      ":feat:clients:be:app:impl::test",
+      ":feat:clients:be:app:model::main",
+      ":feat:clients:be:driven:impl::main",
+      ":feat:clients:be:driven:test::main",
+      ":feat:clients:be:driving:impl::main",
+      ":feat:clients:be:driving:impl::test"
     ]
   },
   ":core:foundation:common::webMain": {
-    "blast_radius_module": 187,
-    "blast_radius_unit": 303,
+    "blast_radius_module": 188,
+    "blast_radius_unit": 27,
     "downstream_sample": [
-      ":composeApp::androidMain",
-      ":composeApp::commonMain",
-      ":composeApp::iosMain",
-      ":composeApp::jvmMain",
-      ":composeApp::jvmTest",
-      ":composeApp::nonWebMain",
       ":composeApp::webMain",
-      ":core:foundation:be::main",
-      ":core:foundation:fe::commonMain",
-      ":core:network:fe::commonMain",
-      ":core:storage:fe::commonMain",
-      ":core:storage:fe::nonWebMain",
-      ":feat:authentication:app:model::commonMain",
-      ":feat:authentication:be:driving:api::main",
-      ":feat:authentication:be:driving:impl::main",
-      ":feat:authentication:be:driving:impl::test",
-      ":feat:authentication:be:driving:test::main",
-      ":feat:authentication:fe:app:api::commonMain",
-      ":feat:authentication:fe:app:impl::commonMain",
-      ":feat:authentication:fe:app:impl::commonTest"
+      ":feat:authentication:fe:driven:impl::webMain",
+      ":feat:clients:fe:driving:api::webMain",
+      ":feat:clients:fe:driving:impl::webMain",
+      ":feat:findings:fe:app:api::webMain",
+      ":feat:findings:fe:app:impl::webMain",
+      ":feat:findings:fe:driving:api::webMain",
+      ":feat:findings:fe:driving:impl::webMain",
+      ":feat:inspections:fe:driving:api::webMain",
+      ":feat:inspections:fe:driving:impl::webMain",
+      ":feat:projects:fe:app:api::webMain",
+      ":feat:projects:fe:app:impl::webMain",
+      ":feat:projects:fe:driving:api::webMain",
+      ":feat:projects:fe:driving:impl::webMain",
+      ":feat:structures:fe:driving:api::webMain",
+      ":feat:structures:fe:driving:impl::webMain",
+      ":feat:users:fe:driving:api::webMain",
+      ":feat:users:fe:driving:impl::webMain",
+      ":featShared:database:fe:driven:test::webMain",
+      ":lib:configuration:fe:api::webMain"
     ]
   },
   ":core:foundation:fe::commonMain": {
-    "blast_radius_module": 75,
-    "blast_radius_unit": 161,
+    "blast_radius_module": 76,
+    "blast_radius_unit": 132,
     "downstream_sample": [
-      ":composeApp::androidMain",
       ":composeApp::commonMain",
+      ":composeApp::androidMain",
       ":composeApp::iosMain",
       ":composeApp::jvmMain",
-      ":composeApp::jvmTest",
       ":composeApp::nonWebMain",
       ":composeApp::webMain",
       ":core:network:fe::commonMain",
       ":core:storage:fe::commonMain",
       ":core:storage:fe::nonWebMain",
       ":feat:authentication:fe:app:impl::commonMain",
-      ":feat:authentication:fe:app:impl::commonTest",
-      ":feat:authentication:fe:driven:impl::androidMain",
       ":feat:authentication:fe:driven:impl::commonMain",
+      ":feat:authentication:fe:driven:impl::androidMain",
       ":feat:authentication:fe:driven:impl::iosMain",
       ":feat:authentication:fe:driven:impl::jvmMain",
       ":feat:authentication:fe:driven:impl::webMain",
       ":feat:authentication:fe:driven:test::commonMain",
       ":feat:authentication:fe:driving:api::commonMain",
-      ":feat:authentication:fe:driving:impl::commonMain"
+      ":feat:authentication:fe:driving:impl::commonMain",
+      ":feat:authentication:fe:ports::commonMain",
+      ":feat:clients:fe:app:api::commonMain"
     ]
   },
   ":core:network:fe::commonMain": {
-    "blast_radius_module": 73,
-    "blast_radius_unit": 159,
+    "blast_radius_module": 74,
+    "blast_radius_unit": 130,
     "downstream_sample": [
-      ":composeApp::androidMain",
       ":composeApp::commonMain",
+      ":composeApp::androidMain",
       ":composeApp::iosMain",
       ":composeApp::jvmMain",
-      ":composeApp::jvmTest",
       ":composeApp::nonWebMain",
       ":composeApp::webMain",
       ":core:storage:fe::commonMain",
       ":core:storage:fe::nonWebMain",
       ":feat:authentication:fe:app:impl::commonMain",
-      ":feat:authentication:fe:app:impl::commonTest",
-      ":feat:authentication:fe:driven:impl::androidMain",
       ":feat:authentication:fe:driven:impl::commonMain",
+      ":feat:authentication:fe:driven:impl::androidMain",
       ":feat:authentication:fe:driven:impl::iosMain",
       ":feat:authentication:fe:driven:impl::jvmMain",
       ":feat:authentication:fe:driven:impl::webMain",
       ":feat:authentication:fe:driven:test::commonMain",
       ":feat:authentication:fe:driving:api::commonMain",
       ":feat:authentication:fe:driving:impl::commonMain",
-      ":feat:authentication:fe:ports::commonMain"
+      ":feat:authentication:fe:ports::commonMain",
+      ":feat:clients:fe:app:api::commonMain",
+      ":feat:clients:fe:app:impl::commonMain"
     ]
   },
   ":core:storage:fe::commonMain": {
-    "blast_radius_module": 72,
-    "blast_radius_unit": 157,
+    "blast_radius_module": 73,
+    "blast_radius_unit": 129,
     "downstream_sample": [
-      ":composeApp::androidMain",
+      ":core:storage:fe::nonWebMain",
       ":composeApp::commonMain",
+      ":composeApp::androidMain",
       ":composeApp::iosMain",
       ":composeApp::jvmMain",
-      ":composeApp::jvmTest",
       ":composeApp::nonWebMain",
       ":composeApp::webMain",
       ":feat:authentication:fe:app:impl::commonMain",
-      ":feat:authentication:fe:app:impl::commonTest",
-      ":feat:authentication:fe:driven:impl::androidMain",
       ":feat:authentication:fe:driven:impl::commonMain",
+      ":feat:authentication:fe:driven:impl::androidMain",
       ":feat:authentication:fe:driven:impl::iosMain",
       ":feat:authentication:fe:driven:impl::jvmMain",
       ":feat:authentication:fe:driven:impl::webMain",
@@ -300,38 +296,39 @@
       ":feat:authentication:fe:driving:impl::commonMain",
       ":feat:authentication:fe:ports::commonMain",
       ":feat:clients:fe:app:api::commonMain",
-      ":feat:clients:fe:app:impl::commonMain"
+      ":feat:clients:fe:app:impl::commonMain",
+      ":feat:clients:fe:driven:impl::commonMain"
     ]
   },
   ":core:storage:fe::nonWebMain": {
-    "blast_radius_module": 72,
-    "blast_radius_unit": 157,
+    "blast_radius_module": 73,
+    "blast_radius_unit": 26,
     "downstream_sample": [
+      ":composeApp::nonWebMain",
       ":composeApp::androidMain",
-      ":composeApp::commonMain",
       ":composeApp::iosMain",
       ":composeApp::jvmMain",
-      ":composeApp::jvmTest",
-      ":composeApp::nonWebMain",
-      ":composeApp::webMain",
-      ":feat:authentication:fe:app:impl::commonMain",
-      ":feat:authentication:fe:app:impl::commonTest",
-      ":feat:authentication:fe:driven:impl::androidMain",
-      ":feat:authentication:fe:driven:impl::commonMain",
-      ":feat:authentication:fe:driven:impl::iosMain",
-      ":feat:authentication:fe:driven:impl::jvmMain",
-      ":feat:authentication:fe:driven:impl::webMain",
-      ":feat:authentication:fe:driven:test::commonMain",
-      ":feat:authentication:fe:driving:api::commonMain",
-      ":feat:authentication:fe:driving:impl::commonMain",
-      ":feat:authentication:fe:ports::commonMain",
-      ":feat:clients:fe:app:api::commonMain",
-      ":feat:clients:fe:app:impl::commonMain"
+      ":feat:clients:fe:driving:api::nonWebMain",
+      ":feat:clients:fe:driving:impl::nonWebMain",
+      ":feat:findings:fe:app:api::nonWebMain",
+      ":feat:findings:fe:app:impl::nonWebMain",
+      ":feat:findings:fe:driving:api::nonWebMain",
+      ":feat:findings:fe:driving:impl::nonWebMain",
+      ":feat:inspections:fe:driving:api::nonWebMain",
+      ":feat:inspections:fe:driving:impl::nonWebMain",
+      ":feat:projects:fe:app:api::nonWebMain",
+      ":feat:projects:fe:app:impl::nonWebMain",
+      ":feat:projects:fe:driving:api::nonWebMain",
+      ":feat:projects:fe:driving:impl::nonWebMain",
+      ":feat:structures:fe:driving:api::nonWebMain",
+      ":feat:structures:fe:driving:impl::nonWebMain",
+      ":feat:users:fe:driving:api::nonWebMain",
+      ":feat:users:fe:driving:impl::nonWebMain"
     ]
   },
   ":feat:authentication:app:model::commonMain": {
     "blast_radius_module": 94,
-    "blast_radius_unit": 135,
+    "blast_radius_unit": 125,
     "downstream_sample": [
       ":core:foundation:be::main",
       ":feat:authentication:be:driving:api::main",
@@ -340,9 +337,8 @@
       ":feat:authentication:be:driving:test::main",
       ":feat:authentication:fe:app:api::commonMain",
       ":feat:authentication:fe:app:impl::commonMain",
-      ":feat:authentication:fe:app:impl::commonTest",
-      ":feat:authentication:fe:driven:impl::androidMain",
       ":feat:authentication:fe:driven:impl::commonMain",
+      ":feat:authentication:fe:driven:impl::androidMain",
       ":feat:authentication:fe:driven:impl::iosMain",
       ":feat:authentication:fe:driven:impl::jvmMain",
       ":feat:authentication:fe:driven:impl::webMain",
@@ -352,7 +348,8 @@
       ":feat:authorization:be:driving:api::main",
       ":feat:authorization:be:driving:impl::main",
       ":feat:clients:be:app:api::main",
-      ":feat:clients:be:app:impl::main"
+      ":feat:clients:be:app:impl::main",
+      ":feat:clients:be:app:impl::test"
     ]
   },
   ":feat:authentication:be:driving:api::main": {
@@ -403,13 +400,11 @@
   },
   ":feat:authentication:fe:app:api::commonMain": {
     "blast_radius_module": 3,
-    "blast_radius_unit": 5,
+    "blast_radius_unit": 3,
     "downstream_sample": [
       ":feat:authentication:fe:app:impl::commonMain",
-      ":feat:authentication:fe:app:impl::commonTest",
       ":feat:authentication:fe:driving:impl::commonMain",
-      ":feat:users:fe:app:impl::commonMain",
-      ":feat:users:fe:app:impl::commonTest"
+      ":feat:users:fe:app:impl::commonMain"
     ]
   },
   ":feat:authentication:fe:app:impl::commonMain": {
@@ -421,66 +416,63 @@
   },
   ":feat:authentication:fe:app:impl::commonTest": {
     "blast_radius_module": 1,
-    "blast_radius_unit": 1,
-    "downstream_sample": [
-      ":koinModulesAggregate:fe::commonMain"
-    ]
+    "blast_radius_unit": 0,
+    "downstream_sample": []
   },
   ":feat:authentication:fe:driven:impl::androidMain": {
     "blast_radius_module": 1,
-    "blast_radius_unit": 1,
-    "downstream_sample": [
-      ":koinModulesAggregate:fe::commonMain"
-    ]
+    "blast_radius_unit": 0,
+    "downstream_sample": []
   },
   ":feat:authentication:fe:driven:impl::commonMain": {
     "blast_radius_module": 1,
-    "blast_radius_unit": 1,
+    "blast_radius_unit": 5,
     "downstream_sample": [
+      ":feat:authentication:fe:driven:impl::androidMain",
+      ":feat:authentication:fe:driven:impl::iosMain",
+      ":feat:authentication:fe:driven:impl::jvmMain",
+      ":feat:authentication:fe:driven:impl::webMain",
       ":koinModulesAggregate:fe::commonMain"
     ]
   },
   ":feat:authentication:fe:driven:impl::iosMain": {
     "blast_radius_module": 1,
-    "blast_radius_unit": 1,
-    "downstream_sample": [
-      ":koinModulesAggregate:fe::commonMain"
-    ]
+    "blast_radius_unit": 0,
+    "downstream_sample": []
   },
   ":feat:authentication:fe:driven:impl::jvmMain": {
     "blast_radius_module": 1,
-    "blast_radius_unit": 1,
-    "downstream_sample": [
-      ":koinModulesAggregate:fe::commonMain"
-    ]
+    "blast_radius_unit": 0,
+    "downstream_sample": []
   },
   ":feat:authentication:fe:driven:impl::webMain": {
     "blast_radius_module": 1,
-    "blast_radius_unit": 1,
-    "downstream_sample": [
-      ":koinModulesAggregate:fe::commonMain"
-    ]
+    "blast_radius_unit": 0,
+    "downstream_sample": []
   },
   ":feat:authentication:fe:driven:test::commonMain": {
     "blast_radius_module": 2,
-    "blast_radius_unit": 3,
+    "blast_radius_unit": 2,
     "downstream_sample": [
       ":feat:authentication:fe:app:impl::commonMain",
-      ":feat:authentication:fe:app:impl::commonTest",
       ":testInfra:fe::commonMain"
     ]
   },
   ":feat:authentication:fe:driving:api::commonMain": {
-    "blast_radius_module": 2,
-    "blast_radius_unit": 8,
+    "blast_radius_module": 3,
+    "blast_radius_unit": 12,
     "downstream_sample": [
-      ":composeApp::androidMain",
       ":composeApp::commonMain",
+      ":composeApp::androidMain",
       ":composeApp::iosMain",
       ":composeApp::jvmMain",
-      ":composeApp::jvmTest",
       ":composeApp::nonWebMain",
       ":composeApp::webMain",
+      ":feat:authentication:fe:driven:impl::commonMain",
+      ":feat:authentication:fe:driven:impl::androidMain",
+      ":feat:authentication:fe:driven:impl::iosMain",
+      ":feat:authentication:fe:driven:impl::jvmMain",
+      ":feat:authentication:fe:driven:impl::webMain",
       ":feat:authentication:fe:driving:impl::commonMain"
     ]
   },
@@ -493,12 +485,11 @@
   },
   ":feat:authentication:fe:ports::commonMain": {
     "blast_radius_module": 5,
-    "blast_radius_unit": 10,
+    "blast_radius_unit": 9,
     "downstream_sample": [
       ":feat:authentication:fe:app:impl::commonMain",
-      ":feat:authentication:fe:app:impl::commonTest",
-      ":feat:authentication:fe:driven:impl::androidMain",
       ":feat:authentication:fe:driven:impl::commonMain",
+      ":feat:authentication:fe:driven:impl::androidMain",
       ":feat:authentication:fe:driven:impl::iosMain",
       ":feat:authentication:fe:driven:impl::jvmMain",
       ":feat:authentication:fe:driven:impl::webMain",
@@ -537,7 +528,7 @@
   },
   ":feat:authorization:business:model::commonMain": {
     "blast_radius_module": 93,
-    "blast_radius_unit": 135,
+    "blast_radius_unit": 122,
     "downstream_sample": [
       ":core:foundation:be::main",
       ":feat:authentication:be:driving:api::main",
@@ -556,14 +547,14 @@
       ":feat:clients:be:driving:impl::test",
       ":feat:clients:be:ports::main",
       ":feat:clients:business:rules::commonMain",
-      ":feat:clients:business:rules::commonTest",
       ":feat:clients:fe:app:impl::commonMain",
-      ":feat:clients:fe:app:impl::commonTest"
+      ":feat:clients:fe:driving:impl::commonMain",
+      ":feat:clients:fe:driving:impl::nonWebMain"
     ]
   },
   ":feat:clients:app:model::commonMain": {
     "blast_radius_module": 24,
-    "blast_radius_unit": 36,
+    "blast_radius_unit": 33,
     "downstream_sample": [
       ":feat:clients:be:app:api::main",
       ":feat:clients:be:app:impl::main",
@@ -576,15 +567,15 @@
       ":feat:clients:be:ports::main",
       ":feat:clients:fe:app:api::commonMain",
       ":feat:clients:fe:app:impl::commonMain",
-      ":feat:clients:fe:app:impl::commonTest",
       ":feat:clients:fe:driven:impl::commonMain",
       ":feat:clients:fe:driven:test::commonMain",
       ":feat:clients:fe:driving:impl::commonMain",
-      ":feat:clients:fe:driving:impl::commonTest",
       ":feat:clients:fe:driving:impl::nonWebMain",
       ":feat:clients:fe:driving:impl::webMain",
       ":feat:clients:fe:ports::commonMain",
-      ":feat:projects:fe:driving:impl::commonMain"
+      ":feat:projects:fe:driving:impl::commonMain",
+      ":feat:projects:fe:driving:impl::nonWebMain",
+      ":feat:projects:fe:driving:impl::webMain"
     ]
   },
   ":feat:clients:be:app:api::main": {
@@ -713,7 +704,7 @@
   },
   ":feat:clients:business:model::commonMain": {
     "blast_radius_module": 25,
-    "blast_radius_unit": 38,
+    "blast_radius_unit": 34,
     "downstream_sample": [
       ":feat:clients:app:model::commonMain",
       ":feat:clients:be:app:api::main",
@@ -726,34 +717,30 @@
       ":feat:clients:be:driving:impl::test",
       ":feat:clients:be:ports::main",
       ":feat:clients:business:rules::commonMain",
-      ":feat:clients:business:rules::commonTest",
       ":feat:clients:fe:app:api::commonMain",
       ":feat:clients:fe:app:impl::commonMain",
-      ":feat:clients:fe:app:impl::commonTest",
       ":feat:clients:fe:driven:impl::commonMain",
       ":feat:clients:fe:driven:test::commonMain",
       ":feat:clients:fe:driving:impl::commonMain",
-      ":feat:clients:fe:driving:impl::commonTest",
-      ":feat:clients:fe:driving:impl::nonWebMain"
+      ":feat:clients:fe:driving:impl::nonWebMain",
+      ":feat:clients:fe:driving:impl::webMain",
+      ":feat:clients:fe:ports::commonMain",
+      ":feat:projects:fe:driving:impl::commonMain"
     ]
   },
   ":feat:clients:business:rules::commonMain": {
     "blast_radius_module": 2,
-    "blast_radius_unit": 4,
+    "blast_radius_unit": 3,
     "downstream_sample": [
       ":feat:clients:be:app:impl::main",
       ":feat:clients:be:app:impl::test",
-      ":feat:clients:fe:app:impl::commonMain",
-      ":feat:clients:fe:app:impl::commonTest"
+      ":feat:clients:fe:app:impl::commonMain"
     ]
   },
   ":feat:clients:business:rules::commonTest": {
     "blast_radius_module": 2,
-    "blast_radius_unit": 4,
+    "blast_radius_unit": 1,
     "downstream_sample": [
-      ":feat:clients:be:app:impl::main",
-      ":feat:clients:be:app:impl::test",
-      ":feat:clients:fe:app:impl::commonMain",
       ":feat:clients:fe:app:impl::commonTest"
     ]
   },
@@ -768,16 +755,13 @@
   },
   ":feat:clients:fe:app:api::commonMain": {
     "blast_radius_module": 3,
-    "blast_radius_unit": 10,
+    "blast_radius_unit": 7,
     "downstream_sample": [
       ":feat:clients:fe:app:impl::commonMain",
-      ":feat:clients:fe:app:impl::commonTest",
       ":feat:clients:fe:driving:impl::commonMain",
-      ":feat:clients:fe:driving:impl::commonTest",
       ":feat:clients:fe:driving:impl::nonWebMain",
       ":feat:clients:fe:driving:impl::webMain",
       ":feat:projects:fe:driving:impl::commonMain",
-      ":feat:projects:fe:driving:impl::commonTest",
       ":feat:projects:fe:driving:impl::nonWebMain",
       ":feat:projects:fe:driving:impl::webMain"
     ]
@@ -791,10 +775,8 @@
   },
   ":feat:clients:fe:app:impl::commonTest": {
     "blast_radius_module": 1,
-    "blast_radius_unit": 1,
-    "downstream_sample": [
-      ":koinModulesAggregate:fe::commonMain"
-    ]
+    "blast_radius_unit": 0,
+    "downstream_sample": []
   },
   ":feat:clients:fe:driven:impl::commonMain": {
     "blast_radius_module": 1,
@@ -805,17 +787,14 @@
   },
   ":feat:clients:fe:driven:test::commonMain": {
     "blast_radius_module": 5,
-    "blast_radius_unit": 12,
+    "blast_radius_unit": 9,
     "downstream_sample": [
       ":feat:clients:fe:app:impl::commonMain",
-      ":feat:clients:fe:app:impl::commonTest",
       ":feat:clients:fe:driven:impl::commonMain",
       ":feat:clients:fe:driving:impl::commonMain",
-      ":feat:clients:fe:driving:impl::commonTest",
       ":feat:clients:fe:driving:impl::nonWebMain",
       ":feat:clients:fe:driving:impl::webMain",
       ":feat:projects:fe:driving:impl::commonMain",
-      ":feat:projects:fe:driving:impl::commonTest",
       ":feat:projects:fe:driving:impl::nonWebMain",
       ":feat:projects:fe:driving:impl::webMain",
       ":testInfra:fe::commonMain"
@@ -823,21 +802,20 @@
   },
   ":feat:clients:fe:driving:api::commonMain": {
     "blast_radius_module": 4,
-    "blast_radius_unit": 16,
+    "blast_radius_unit": 15,
     "downstream_sample": [
-      ":composeApp::androidMain",
+      ":feat:clients:fe:driving:api::nonWebMain",
+      ":feat:clients:fe:driving:api::webMain",
       ":composeApp::commonMain",
+      ":composeApp::androidMain",
       ":composeApp::iosMain",
       ":composeApp::jvmMain",
-      ":composeApp::jvmTest",
       ":composeApp::nonWebMain",
       ":composeApp::webMain",
       ":feat:clients:fe:driving:impl::commonMain",
-      ":feat:clients:fe:driving:impl::commonTest",
       ":feat:clients:fe:driving:impl::nonWebMain",
       ":feat:clients:fe:driving:impl::webMain",
       ":feat:projects:fe:driving:impl::commonMain",
-      ":feat:projects:fe:driving:impl::commonTest",
       ":feat:projects:fe:driving:impl::nonWebMain",
       ":feat:projects:fe:driving:impl::webMain",
       ":koinModulesAggregate:fe::commonMain"
@@ -845,90 +823,60 @@
   },
   ":feat:clients:fe:driving:api::nonWebMain": {
     "blast_radius_module": 4,
-    "blast_radius_unit": 16,
+    "blast_radius_unit": 6,
     "downstream_sample": [
+      ":composeApp::nonWebMain",
       ":composeApp::androidMain",
-      ":composeApp::commonMain",
       ":composeApp::iosMain",
       ":composeApp::jvmMain",
-      ":composeApp::jvmTest",
-      ":composeApp::nonWebMain",
-      ":composeApp::webMain",
-      ":feat:clients:fe:driving:impl::commonMain",
-      ":feat:clients:fe:driving:impl::commonTest",
       ":feat:clients:fe:driving:impl::nonWebMain",
-      ":feat:clients:fe:driving:impl::webMain",
-      ":feat:projects:fe:driving:impl::commonMain",
-      ":feat:projects:fe:driving:impl::commonTest",
-      ":feat:projects:fe:driving:impl::nonWebMain",
-      ":feat:projects:fe:driving:impl::webMain",
-      ":koinModulesAggregate:fe::commonMain"
+      ":feat:projects:fe:driving:impl::nonWebMain"
     ]
   },
   ":feat:clients:fe:driving:api::webMain": {
     "blast_radius_module": 4,
-    "blast_radius_unit": 16,
+    "blast_radius_unit": 3,
     "downstream_sample": [
-      ":composeApp::androidMain",
-      ":composeApp::commonMain",
-      ":composeApp::iosMain",
-      ":composeApp::jvmMain",
-      ":composeApp::jvmTest",
-      ":composeApp::nonWebMain",
       ":composeApp::webMain",
-      ":feat:clients:fe:driving:impl::commonMain",
-      ":feat:clients:fe:driving:impl::commonTest",
-      ":feat:clients:fe:driving:impl::nonWebMain",
       ":feat:clients:fe:driving:impl::webMain",
-      ":feat:projects:fe:driving:impl::commonMain",
-      ":feat:projects:fe:driving:impl::commonTest",
-      ":feat:projects:fe:driving:impl::nonWebMain",
-      ":feat:projects:fe:driving:impl::webMain",
-      ":koinModulesAggregate:fe::commonMain"
+      ":feat:projects:fe:driving:impl::webMain"
     ]
   },
   ":feat:clients:fe:driving:impl::commonMain": {
     "blast_radius_module": 1,
-    "blast_radius_unit": 1,
+    "blast_radius_unit": 3,
     "downstream_sample": [
+      ":feat:clients:fe:driving:impl::nonWebMain",
+      ":feat:clients:fe:driving:impl::webMain",
       ":koinModulesAggregate:fe::commonMain"
     ]
   },
   ":feat:clients:fe:driving:impl::commonTest": {
     "blast_radius_module": 1,
-    "blast_radius_unit": 1,
-    "downstream_sample": [
-      ":koinModulesAggregate:fe::commonMain"
-    ]
+    "blast_radius_unit": 0,
+    "downstream_sample": []
   },
   ":feat:clients:fe:driving:impl::nonWebMain": {
     "blast_radius_module": 1,
-    "blast_radius_unit": 1,
-    "downstream_sample": [
-      ":koinModulesAggregate:fe::commonMain"
-    ]
+    "blast_radius_unit": 0,
+    "downstream_sample": []
   },
   ":feat:clients:fe:driving:impl::webMain": {
     "blast_radius_module": 1,
-    "blast_radius_unit": 1,
-    "downstream_sample": [
-      ":koinModulesAggregate:fe::commonMain"
-    ]
+    "blast_radius_unit": 0,
+    "downstream_sample": []
   },
   ":feat:clients:fe:ports::commonMain": {
     "blast_radius_module": 7,
-    "blast_radius_unit": 14,
+    "blast_radius_unit": 11,
     "downstream_sample": [
       ":feat:clients:fe:app:impl::commonMain",
-      ":feat:clients:fe:app:impl::commonTest",
       ":feat:clients:fe:driven:impl::commonMain",
       ":feat:clients:fe:driven:test::commonMain",
       ":feat:clients:fe:driving:impl::commonMain",
-      ":feat:clients:fe:driving:impl::commonTest",
       ":feat:clients:fe:driving:impl::nonWebMain",
       ":feat:clients:fe:driving:impl::webMain",
       ":feat:projects:fe:driving:impl::commonMain",
-      ":feat:projects:fe:driving:impl::commonTest",
       ":feat:projects:fe:driving:impl::nonWebMain",
       ":feat:projects:fe:driving:impl::webMain",
       ":koinModulesAggregate:fe::commonMain",
@@ -937,13 +885,12 @@
   },
   ":feat:findings:app:model::commonMain": {
     "blast_radius_module": 27,
-    "blast_radius_unit": 59,
+    "blast_radius_unit": 48,
     "downstream_sample": [
-      ":composeApp::androidMain",
       ":composeApp::commonMain",
+      ":composeApp::androidMain",
       ":composeApp::iosMain",
       ":composeApp::jvmMain",
-      ":composeApp::jvmTest",
       ":composeApp::nonWebMain",
       ":composeApp::webMain",
       ":feat:findings:be:app:api::main",
@@ -958,7 +905,8 @@
       ":feat:findings:be:ports::main",
       ":feat:findings:fe:app:api::commonMain",
       ":feat:findings:fe:app:api::nonWebMain",
-      ":feat:findings:fe:app:api::webMain"
+      ":feat:findings:fe:app:api::webMain",
+      ":feat:findings:fe:app:impl::commonMain"
     ]
   },
   ":feat:findings:be:app:api::main": {
@@ -1095,13 +1043,12 @@
   },
   ":feat:findings:business:model::commonMain": {
     "blast_radius_module": 28,
-    "blast_radius_unit": 62,
+    "blast_radius_unit": 51,
     "downstream_sample": [
-      ":composeApp::androidMain",
       ":composeApp::commonMain",
+      ":composeApp::androidMain",
       ":composeApp::iosMain",
       ":composeApp::jvmMain",
-      ":composeApp::jvmTest",
       ":composeApp::nonWebMain",
       ":composeApp::webMain",
       ":feat:findings:app:model::commonMain",
@@ -1116,82 +1063,52 @@
       ":feat:findings:be:driving:impl::test",
       ":feat:findings:be:ports::main",
       ":feat:findings:fe:app:api::commonMain",
-      ":feat:findings:fe:app:api::nonWebMain"
+      ":feat:findings:fe:app:api::nonWebMain",
+      ":feat:findings:fe:app:api::webMain"
     ]
   },
   ":feat:findings:contract::commonMain": {
     "blast_radius_module": 2,
-    "blast_radius_unit": 4,
+    "blast_radius_unit": 3,
     "downstream_sample": [
       ":feat:findings:be:driving:impl::main",
       ":feat:findings:be:driving:impl::test",
-      ":feat:findings:fe:driven:impl::commonMain",
-      ":feat:findings:fe:driven:impl::jvmTest"
+      ":feat:findings:fe:driven:impl::commonMain"
     ]
   },
   ":feat:findings:fe:app:api::commonMain": {
     "blast_radius_module": 4,
-    "blast_radius_unit": 16,
+    "blast_radius_unit": 12,
     "downstream_sample": [
+      ":feat:findings:fe:app:api::nonWebMain",
+      ":feat:findings:fe:app:api::webMain",
       ":feat:findings:fe:app:impl::commonMain",
-      ":feat:findings:fe:app:impl::commonTest",
       ":feat:findings:fe:app:impl::nonWebMain",
-      ":feat:findings:fe:app:impl::nonWebTest",
       ":feat:findings:fe:app:impl::webMain",
-      ":feat:findings:fe:app:impl::webTest",
       ":feat:findings:fe:driving:impl::commonMain",
-      ":feat:findings:fe:driving:impl::commonTest",
       ":feat:findings:fe:driving:impl::nonWebMain",
       ":feat:findings:fe:driving:impl::webMain",
       ":feat:structures:fe:app:impl::commonMain",
-      ":feat:structures:fe:app:impl::commonTest",
       ":feat:structures:fe:driving:impl::commonMain",
-      ":feat:structures:fe:driving:impl::commonTest",
       ":feat:structures:fe:driving:impl::nonWebMain",
       ":feat:structures:fe:driving:impl::webMain"
     ]
   },
   ":feat:findings:fe:app:api::nonWebMain": {
     "blast_radius_module": 4,
-    "blast_radius_unit": 16,
+    "blast_radius_unit": 3,
     "downstream_sample": [
-      ":feat:findings:fe:app:impl::commonMain",
-      ":feat:findings:fe:app:impl::commonTest",
       ":feat:findings:fe:app:impl::nonWebMain",
-      ":feat:findings:fe:app:impl::nonWebTest",
-      ":feat:findings:fe:app:impl::webMain",
-      ":feat:findings:fe:app:impl::webTest",
-      ":feat:findings:fe:driving:impl::commonMain",
-      ":feat:findings:fe:driving:impl::commonTest",
       ":feat:findings:fe:driving:impl::nonWebMain",
-      ":feat:findings:fe:driving:impl::webMain",
-      ":feat:structures:fe:app:impl::commonMain",
-      ":feat:structures:fe:app:impl::commonTest",
-      ":feat:structures:fe:driving:impl::commonMain",
-      ":feat:structures:fe:driving:impl::commonTest",
-      ":feat:structures:fe:driving:impl::nonWebMain",
-      ":feat:structures:fe:driving:impl::webMain"
+      ":feat:structures:fe:driving:impl::nonWebMain"
     ]
   },
   ":feat:findings:fe:app:api::webMain": {
     "blast_radius_module": 4,
-    "blast_radius_unit": 16,
+    "blast_radius_unit": 3,
     "downstream_sample": [
-      ":feat:findings:fe:app:impl::commonMain",
-      ":feat:findings:fe:app:impl::commonTest",
-      ":feat:findings:fe:app:impl::nonWebMain",
-      ":feat:findings:fe:app:impl::nonWebTest",
       ":feat:findings:fe:app:impl::webMain",
-      ":feat:findings:fe:app:impl::webTest",
-      ":feat:findings:fe:driving:impl::commonMain",
-      ":feat:findings:fe:driving:impl::commonTest",
-      ":feat:findings:fe:driving:impl::nonWebMain",
       ":feat:findings:fe:driving:impl::webMain",
-      ":feat:structures:fe:app:impl::commonMain",
-      ":feat:structures:fe:app:impl::commonTest",
-      ":feat:structures:fe:driving:impl::commonMain",
-      ":feat:structures:fe:driving:impl::commonTest",
-      ":feat:structures:fe:driving:impl::nonWebMain",
       ":feat:structures:fe:driving:impl::webMain"
     ]
   },
@@ -1199,12 +1116,12 @@
     "blast_radius_module": 3,
     "blast_radius_unit": 9,
     "downstream_sample": [
+      ":feat:findings:fe:app:impl::nonWebMain",
+      ":feat:findings:fe:app:impl::webMain",
       ":feat:findings:fe:driving:impl::commonMain",
-      ":feat:findings:fe:driving:impl::commonTest",
       ":feat:findings:fe:driving:impl::nonWebMain",
       ":feat:findings:fe:driving:impl::webMain",
       ":feat:structures:fe:driving:impl::commonMain",
-      ":feat:structures:fe:driving:impl::commonTest",
       ":feat:structures:fe:driving:impl::nonWebMain",
       ":feat:structures:fe:driving:impl::webMain",
       ":koinModulesAggregate:fe::commonMain"
@@ -1212,78 +1129,39 @@
   },
   ":feat:findings:fe:app:impl::commonTest": {
     "blast_radius_module": 3,
-    "blast_radius_unit": 9,
+    "blast_radius_unit": 4,
     "downstream_sample": [
-      ":feat:findings:fe:driving:impl::commonMain",
+      ":feat:findings:fe:app:impl::nonWebTest",
+      ":feat:findings:fe:app:impl::webTest",
       ":feat:findings:fe:driving:impl::commonTest",
-      ":feat:findings:fe:driving:impl::nonWebMain",
-      ":feat:findings:fe:driving:impl::webMain",
-      ":feat:structures:fe:driving:impl::commonMain",
-      ":feat:structures:fe:driving:impl::commonTest",
-      ":feat:structures:fe:driving:impl::nonWebMain",
-      ":feat:structures:fe:driving:impl::webMain",
-      ":koinModulesAggregate:fe::commonMain"
+      ":feat:structures:fe:driving:impl::commonTest"
     ]
   },
   ":feat:findings:fe:app:impl::nonWebMain": {
     "blast_radius_module": 3,
-    "blast_radius_unit": 9,
+    "blast_radius_unit": 2,
     "downstream_sample": [
-      ":feat:findings:fe:driving:impl::commonMain",
-      ":feat:findings:fe:driving:impl::commonTest",
       ":feat:findings:fe:driving:impl::nonWebMain",
-      ":feat:findings:fe:driving:impl::webMain",
-      ":feat:structures:fe:driving:impl::commonMain",
-      ":feat:structures:fe:driving:impl::commonTest",
-      ":feat:structures:fe:driving:impl::nonWebMain",
-      ":feat:structures:fe:driving:impl::webMain",
-      ":koinModulesAggregate:fe::commonMain"
+      ":feat:structures:fe:driving:impl::nonWebMain"
     ]
   },
   ":feat:findings:fe:app:impl::nonWebTest": {
     "blast_radius_module": 3,
-    "blast_radius_unit": 9,
-    "downstream_sample": [
-      ":feat:findings:fe:driving:impl::commonMain",
-      ":feat:findings:fe:driving:impl::commonTest",
-      ":feat:findings:fe:driving:impl::nonWebMain",
-      ":feat:findings:fe:driving:impl::webMain",
-      ":feat:structures:fe:driving:impl::commonMain",
-      ":feat:structures:fe:driving:impl::commonTest",
-      ":feat:structures:fe:driving:impl::nonWebMain",
-      ":feat:structures:fe:driving:impl::webMain",
-      ":koinModulesAggregate:fe::commonMain"
-    ]
+    "blast_radius_unit": 0,
+    "downstream_sample": []
   },
   ":feat:findings:fe:app:impl::webMain": {
     "blast_radius_module": 3,
-    "blast_radius_unit": 9,
+    "blast_radius_unit": 2,
     "downstream_sample": [
-      ":feat:findings:fe:driving:impl::commonMain",
-      ":feat:findings:fe:driving:impl::commonTest",
-      ":feat:findings:fe:driving:impl::nonWebMain",
       ":feat:findings:fe:driving:impl::webMain",
-      ":feat:structures:fe:driving:impl::commonMain",
-      ":feat:structures:fe:driving:impl::commonTest",
-      ":feat:structures:fe:driving:impl::nonWebMain",
-      ":feat:structures:fe:driving:impl::webMain",
-      ":koinModulesAggregate:fe::commonMain"
+      ":feat:structures:fe:driving:impl::webMain"
     ]
   },
   ":feat:findings:fe:app:impl::webTest": {
     "blast_radius_module": 3,
-    "blast_radius_unit": 9,
-    "downstream_sample": [
-      ":feat:findings:fe:driving:impl::commonMain",
-      ":feat:findings:fe:driving:impl::commonTest",
-      ":feat:findings:fe:driving:impl::nonWebMain",
-      ":feat:findings:fe:driving:impl::webMain",
-      ":feat:structures:fe:driving:impl::commonMain",
-      ":feat:structures:fe:driving:impl::commonTest",
-      ":feat:structures:fe:driving:impl::nonWebMain",
-      ":feat:structures:fe:driving:impl::webMain",
-      ":koinModulesAggregate:fe::commonMain"
-    ]
+    "blast_radius_unit": 0,
+    "downstream_sample": []
   },
   ":feat:findings:fe:driven:impl::commonMain": {
     "blast_radius_module": 1,
@@ -1294,47 +1172,39 @@
   },
   ":feat:findings:fe:driven:impl::jvmTest": {
     "blast_radius_module": 1,
-    "blast_radius_unit": 1,
-    "downstream_sample": [
-      ":koinModulesAggregate:fe::commonMain"
-    ]
+    "blast_radius_unit": 0,
+    "downstream_sample": []
   },
   ":feat:findings:fe:driven:test::commonMain": {
     "blast_radius_module": 6,
-    "blast_radius_unit": 23,
+    "blast_radius_unit": 14,
     "downstream_sample": [
       ":feat:findings:fe:app:impl::commonMain",
-      ":feat:findings:fe:app:impl::commonTest",
       ":feat:findings:fe:app:impl::nonWebMain",
-      ":feat:findings:fe:app:impl::nonWebTest",
       ":feat:findings:fe:app:impl::webMain",
-      ":feat:findings:fe:app:impl::webTest",
       ":feat:findings:fe:driving:impl::commonMain",
-      ":feat:findings:fe:driving:impl::commonTest",
       ":feat:findings:fe:driving:impl::nonWebMain",
       ":feat:findings:fe:driving:impl::webMain",
       ":feat:projects:fe:app:impl::commonMain",
-      ":feat:projects:fe:app:impl::commonTest",
       ":feat:projects:fe:app:impl::nonWebMain",
-      ":feat:projects:fe:app:impl::nonWebTest",
       ":feat:projects:fe:app:impl::webMain",
-      ":feat:projects:fe:app:impl::webTest",
       ":feat:structures:fe:app:impl::commonMain",
-      ":feat:structures:fe:app:impl::commonTest",
       ":feat:structures:fe:driving:impl::commonMain",
-      ":feat:structures:fe:driving:impl::commonTest"
+      ":feat:structures:fe:driving:impl::nonWebMain",
+      ":feat:structures:fe:driving:impl::webMain",
+      ":testInfra:fe::commonMain"
     ]
   },
   ":feat:findings:fe:driving:api::commonMain": {
     "blast_radius_module": 3,
     "blast_radius_unit": 9,
     "downstream_sample": [
+      ":feat:findings:fe:driving:api::nonWebMain",
+      ":feat:findings:fe:driving:api::webMain",
       ":feat:findings:fe:driving:impl::commonMain",
-      ":feat:findings:fe:driving:impl::commonTest",
       ":feat:findings:fe:driving:impl::nonWebMain",
       ":feat:findings:fe:driving:impl::webMain",
       ":feat:structures:fe:driving:impl::commonMain",
-      ":feat:structures:fe:driving:impl::commonTest",
       ":feat:structures:fe:driving:impl::nonWebMain",
       ":feat:structures:fe:driving:impl::webMain",
       ":koinModulesAggregate:fe::commonMain"
@@ -1342,91 +1212,73 @@
   },
   ":feat:findings:fe:driving:api::nonWebMain": {
     "blast_radius_module": 3,
-    "blast_radius_unit": 9,
+    "blast_radius_unit": 2,
     "downstream_sample": [
-      ":feat:findings:fe:driving:impl::commonMain",
-      ":feat:findings:fe:driving:impl::commonTest",
       ":feat:findings:fe:driving:impl::nonWebMain",
-      ":feat:findings:fe:driving:impl::webMain",
-      ":feat:structures:fe:driving:impl::commonMain",
-      ":feat:structures:fe:driving:impl::commonTest",
-      ":feat:structures:fe:driving:impl::nonWebMain",
-      ":feat:structures:fe:driving:impl::webMain",
-      ":koinModulesAggregate:fe::commonMain"
+      ":feat:structures:fe:driving:impl::nonWebMain"
     ]
   },
   ":feat:findings:fe:driving:api::webMain": {
     "blast_radius_module": 3,
-    "blast_radius_unit": 9,
+    "blast_radius_unit": 2,
     "downstream_sample": [
-      ":feat:findings:fe:driving:impl::commonMain",
-      ":feat:findings:fe:driving:impl::commonTest",
-      ":feat:findings:fe:driving:impl::nonWebMain",
       ":feat:findings:fe:driving:impl::webMain",
-      ":feat:structures:fe:driving:impl::commonMain",
-      ":feat:structures:fe:driving:impl::commonTest",
-      ":feat:structures:fe:driving:impl::nonWebMain",
-      ":feat:structures:fe:driving:impl::webMain",
-      ":koinModulesAggregate:fe::commonMain"
+      ":feat:structures:fe:driving:impl::webMain"
     ]
   },
   ":feat:findings:fe:driving:impl::commonMain": {
     "blast_radius_module": 1,
-    "blast_radius_unit": 1,
+    "blast_radius_unit": 3,
     "downstream_sample": [
+      ":feat:findings:fe:driving:impl::nonWebMain",
+      ":feat:findings:fe:driving:impl::webMain",
       ":koinModulesAggregate:fe::commonMain"
     ]
   },
   ":feat:findings:fe:driving:impl::commonTest": {
     "blast_radius_module": 1,
-    "blast_radius_unit": 1,
-    "downstream_sample": [
-      ":koinModulesAggregate:fe::commonMain"
-    ]
+    "blast_radius_unit": 0,
+    "downstream_sample": []
   },
   ":feat:findings:fe:driving:impl::nonWebMain": {
     "blast_radius_module": 1,
-    "blast_radius_unit": 1,
-    "downstream_sample": [
-      ":koinModulesAggregate:fe::commonMain"
-    ]
+    "blast_radius_unit": 0,
+    "downstream_sample": []
   },
   ":feat:findings:fe:driving:impl::webMain": {
     "blast_radius_module": 1,
-    "blast_radius_unit": 1,
-    "downstream_sample": [
-      ":koinModulesAggregate:fe::commonMain"
-    ]
+    "blast_radius_unit": 0,
+    "downstream_sample": []
   },
   ":feat:findings:fe:ports::commonMain": {
     "blast_radius_module": 10,
-    "blast_radius_unit": 34,
+    "blast_radius_unit": 23,
     "downstream_sample": [
-      ":composeApp::androidMain",
       ":composeApp::commonMain",
+      ":composeApp::androidMain",
       ":composeApp::iosMain",
       ":composeApp::jvmMain",
-      ":composeApp::jvmTest",
       ":composeApp::nonWebMain",
       ":composeApp::webMain",
       ":feat:findings:fe:app:impl::commonMain",
-      ":feat:findings:fe:app:impl::commonTest",
       ":feat:findings:fe:app:impl::nonWebMain",
-      ":feat:findings:fe:app:impl::nonWebTest",
       ":feat:findings:fe:app:impl::webMain",
-      ":feat:findings:fe:app:impl::webTest",
       ":feat:findings:fe:driven:impl::commonMain",
-      ":feat:findings:fe:driven:impl::jvmTest",
       ":feat:findings:fe:driven:test::commonMain",
       ":feat:findings:fe:driving:impl::commonMain",
-      ":feat:findings:fe:driving:impl::commonTest",
       ":feat:findings:fe:driving:impl::nonWebMain",
-      ":feat:findings:fe:driving:impl::webMain"
+      ":feat:findings:fe:driving:impl::webMain",
+      ":feat:projects:fe:app:impl::commonMain",
+      ":feat:projects:fe:app:impl::nonWebMain",
+      ":feat:projects:fe:app:impl::webMain",
+      ":feat:structures:fe:app:impl::commonMain",
+      ":feat:structures:fe:driving:impl::commonMain",
+      ":feat:structures:fe:driving:impl::nonWebMain"
     ]
   },
   ":feat:inspections:app:model::commonMain": {
     "blast_radius_module": 26,
-    "blast_radius_unit": 45,
+    "blast_radius_unit": 39,
     "downstream_sample": [
       ":feat:inspections:be:app:api::main",
       ":feat:inspections:be:app:impl::main",
@@ -1439,15 +1291,15 @@
       ":feat:inspections:be:ports::main",
       ":feat:inspections:fe:app:api::commonMain",
       ":feat:inspections:fe:app:impl::commonMain",
-      ":feat:inspections:fe:app:impl::commonTest",
       ":feat:inspections:fe:driven:impl::commonMain",
       ":feat:inspections:fe:driven:test::commonMain",
       ":feat:inspections:fe:driving:api::commonMain",
       ":feat:inspections:fe:driving:api::nonWebMain",
       ":feat:inspections:fe:driving:api::webMain",
       ":feat:inspections:fe:driving:impl::commonMain",
-      ":feat:inspections:fe:driving:impl::commonTest",
-      ":feat:inspections:fe:driving:impl::nonWebMain"
+      ":feat:inspections:fe:driving:impl::nonWebMain",
+      ":feat:inspections:fe:driving:impl::webMain",
+      ":feat:inspections:fe:ports::commonMain"
     ]
   },
   ":feat:inspections:be:app:api::main": {
@@ -1576,7 +1428,7 @@
   },
   ":feat:inspections:business:model::commonMain": {
     "blast_radius_module": 26,
-    "blast_radius_unit": 45,
+    "blast_radius_unit": 39,
     "downstream_sample": [
       ":feat:inspections:app:model::commonMain",
       ":feat:inspections:be:app:api::main",
@@ -1590,14 +1442,14 @@
       ":feat:inspections:be:ports::main",
       ":feat:inspections:fe:app:api::commonMain",
       ":feat:inspections:fe:app:impl::commonMain",
-      ":feat:inspections:fe:app:impl::commonTest",
       ":feat:inspections:fe:driven:impl::commonMain",
       ":feat:inspections:fe:driven:test::commonMain",
       ":feat:inspections:fe:driving:api::commonMain",
       ":feat:inspections:fe:driving:api::nonWebMain",
       ":feat:inspections:fe:driving:api::webMain",
       ":feat:inspections:fe:driving:impl::commonMain",
-      ":feat:inspections:fe:driving:impl::commonTest"
+      ":feat:inspections:fe:driving:impl::nonWebMain",
+      ":feat:inspections:fe:driving:impl::webMain"
     ]
   },
   ":feat:inspections:contract::commonMain": {
@@ -1611,22 +1463,16 @@
   },
   ":feat:inspections:fe:app:api::commonMain": {
     "blast_radius_module": 4,
-    "blast_radius_unit": 16,
+    "blast_radius_unit": 10,
     "downstream_sample": [
       ":feat:inspections:fe:app:impl::commonMain",
-      ":feat:inspections:fe:app:impl::commonTest",
       ":feat:inspections:fe:driving:impl::commonMain",
-      ":feat:inspections:fe:driving:impl::commonTest",
       ":feat:inspections:fe:driving:impl::nonWebMain",
       ":feat:inspections:fe:driving:impl::webMain",
       ":feat:projects:fe:app:impl::commonMain",
-      ":feat:projects:fe:app:impl::commonTest",
       ":feat:projects:fe:app:impl::nonWebMain",
-      ":feat:projects:fe:app:impl::nonWebTest",
       ":feat:projects:fe:app:impl::webMain",
-      ":feat:projects:fe:app:impl::webTest",
       ":feat:projects:fe:driving:impl::commonMain",
-      ":feat:projects:fe:driving:impl::commonTest",
       ":feat:projects:fe:driving:impl::nonWebMain",
       ":feat:projects:fe:driving:impl::webMain"
     ]
@@ -1640,10 +1486,8 @@
   },
   ":feat:inspections:fe:app:impl::commonTest": {
     "blast_radius_module": 1,
-    "blast_radius_unit": 1,
-    "downstream_sample": [
-      ":koinModulesAggregate:fe::commonMain"
-    ]
+    "blast_radius_unit": 0,
+    "downstream_sample": []
   },
   ":feat:inspections:fe:driven:impl::commonMain": {
     "blast_radius_module": 1,
@@ -1654,17 +1498,14 @@
   },
   ":feat:inspections:fe:driven:test::commonMain": {
     "blast_radius_module": 5,
-    "blast_radius_unit": 12,
+    "blast_radius_unit": 9,
     "downstream_sample": [
       ":feat:inspections:fe:app:impl::commonMain",
-      ":feat:inspections:fe:app:impl::commonTest",
       ":feat:inspections:fe:driven:impl::commonMain",
       ":feat:inspections:fe:driving:impl::commonMain",
-      ":feat:inspections:fe:driving:impl::commonTest",
       ":feat:inspections:fe:driving:impl::nonWebMain",
       ":feat:inspections:fe:driving:impl::webMain",
       ":feat:projects:fe:driving:impl::commonMain",
-      ":feat:projects:fe:driving:impl::commonTest",
       ":feat:projects:fe:driving:impl::nonWebMain",
       ":feat:projects:fe:driving:impl::webMain",
       ":testInfra:fe::commonMain"
@@ -1674,12 +1515,12 @@
     "blast_radius_module": 3,
     "blast_radius_unit": 9,
     "downstream_sample": [
+      ":feat:inspections:fe:driving:api::nonWebMain",
+      ":feat:inspections:fe:driving:api::webMain",
       ":feat:inspections:fe:driving:impl::commonMain",
-      ":feat:inspections:fe:driving:impl::commonTest",
       ":feat:inspections:fe:driving:impl::nonWebMain",
       ":feat:inspections:fe:driving:impl::webMain",
       ":feat:projects:fe:driving:impl::commonMain",
-      ":feat:projects:fe:driving:impl::commonTest",
       ":feat:projects:fe:driving:impl::nonWebMain",
       ":feat:projects:fe:driving:impl::webMain",
       ":koinModulesAggregate:fe::commonMain"
@@ -1687,76 +1528,55 @@
   },
   ":feat:inspections:fe:driving:api::nonWebMain": {
     "blast_radius_module": 3,
-    "blast_radius_unit": 9,
+    "blast_radius_unit": 2,
     "downstream_sample": [
-      ":feat:inspections:fe:driving:impl::commonMain",
-      ":feat:inspections:fe:driving:impl::commonTest",
       ":feat:inspections:fe:driving:impl::nonWebMain",
-      ":feat:inspections:fe:driving:impl::webMain",
-      ":feat:projects:fe:driving:impl::commonMain",
-      ":feat:projects:fe:driving:impl::commonTest",
-      ":feat:projects:fe:driving:impl::nonWebMain",
-      ":feat:projects:fe:driving:impl::webMain",
-      ":koinModulesAggregate:fe::commonMain"
+      ":feat:projects:fe:driving:impl::nonWebMain"
     ]
   },
   ":feat:inspections:fe:driving:api::webMain": {
     "blast_radius_module": 3,
-    "blast_radius_unit": 9,
+    "blast_radius_unit": 2,
     "downstream_sample": [
-      ":feat:inspections:fe:driving:impl::commonMain",
-      ":feat:inspections:fe:driving:impl::commonTest",
-      ":feat:inspections:fe:driving:impl::nonWebMain",
       ":feat:inspections:fe:driving:impl::webMain",
-      ":feat:projects:fe:driving:impl::commonMain",
-      ":feat:projects:fe:driving:impl::commonTest",
-      ":feat:projects:fe:driving:impl::nonWebMain",
-      ":feat:projects:fe:driving:impl::webMain",
-      ":koinModulesAggregate:fe::commonMain"
+      ":feat:projects:fe:driving:impl::webMain"
     ]
   },
   ":feat:inspections:fe:driving:impl::commonMain": {
     "blast_radius_module": 1,
-    "blast_radius_unit": 1,
+    "blast_radius_unit": 3,
     "downstream_sample": [
+      ":feat:inspections:fe:driving:impl::nonWebMain",
+      ":feat:inspections:fe:driving:impl::webMain",
       ":koinModulesAggregate:fe::commonMain"
     ]
   },
   ":feat:inspections:fe:driving:impl::commonTest": {
     "blast_radius_module": 1,
-    "blast_radius_unit": 1,
-    "downstream_sample": [
-      ":koinModulesAggregate:fe::commonMain"
-    ]
+    "blast_radius_unit": 0,
+    "downstream_sample": []
   },
   ":feat:inspections:fe:driving:impl::nonWebMain": {
     "blast_radius_module": 1,
-    "blast_radius_unit": 1,
-    "downstream_sample": [
-      ":koinModulesAggregate:fe::commonMain"
-    ]
+    "blast_radius_unit": 0,
+    "downstream_sample": []
   },
   ":feat:inspections:fe:driving:impl::webMain": {
     "blast_radius_module": 1,
-    "blast_radius_unit": 1,
-    "downstream_sample": [
-      ":koinModulesAggregate:fe::commonMain"
-    ]
+    "blast_radius_unit": 0,
+    "downstream_sample": []
   },
   ":feat:inspections:fe:ports::commonMain": {
     "blast_radius_module": 7,
-    "blast_radius_unit": 14,
+    "blast_radius_unit": 11,
     "downstream_sample": [
       ":feat:inspections:fe:app:impl::commonMain",
-      ":feat:inspections:fe:app:impl::commonTest",
       ":feat:inspections:fe:driven:impl::commonMain",
       ":feat:inspections:fe:driven:test::commonMain",
       ":feat:inspections:fe:driving:impl::commonMain",
-      ":feat:inspections:fe:driving:impl::commonTest",
       ":feat:inspections:fe:driving:impl::nonWebMain",
       ":feat:inspections:fe:driving:impl::webMain",
       ":feat:projects:fe:driving:impl::commonMain",
-      ":feat:projects:fe:driving:impl::commonTest",
       ":feat:projects:fe:driving:impl::nonWebMain",
       ":feat:projects:fe:driving:impl::webMain",
       ":koinModulesAggregate:fe::commonMain",
@@ -1765,14 +1585,12 @@
   },
   ":feat:projects:app:model::commonMain": {
     "blast_radius_module": 40,
-    "blast_radius_unit": 81,
+    "blast_radius_unit": 69,
     "downstream_sample": [
       ":feat:clients:be:app:impl::main",
       ":feat:clients:be:app:impl::test",
       ":feat:clients:fe:app:impl::commonMain",
-      ":feat:clients:fe:app:impl::commonTest",
       ":feat:clients:fe:driving:impl::commonMain",
-      ":feat:clients:fe:driving:impl::commonTest",
       ":feat:clients:fe:driving:impl::nonWebMain",
       ":feat:clients:fe:driving:impl::webMain",
       ":feat:findings:be:app:impl::main",
@@ -1783,10 +1601,12 @@
       ":feat:findings:be:driving:impl::main",
       ":feat:findings:be:driving:impl::test",
       ":feat:findings:fe:app:impl::commonMain",
-      ":feat:findings:fe:app:impl::commonTest",
       ":feat:findings:fe:app:impl::nonWebMain",
-      ":feat:findings:fe:app:impl::nonWebTest",
-      ":feat:findings:fe:app:impl::webMain"
+      ":feat:findings:fe:app:impl::webMain",
+      ":feat:findings:fe:driving:impl::commonMain",
+      ":feat:findings:fe:driving:impl::nonWebMain",
+      ":feat:findings:fe:driving:impl::webMain",
+      ":feat:inspections:be:app:impl::main"
     ]
   },
   ":feat:projects:be:app:api::main": {
@@ -1930,14 +1750,12 @@
   },
   ":feat:projects:business:model::commonMain": {
     "blast_radius_module": 41,
-    "blast_radius_unit": 83,
+    "blast_radius_unit": 70,
     "downstream_sample": [
       ":feat:clients:be:app:impl::main",
       ":feat:clients:be:app:impl::test",
       ":feat:clients:fe:app:impl::commonMain",
-      ":feat:clients:fe:app:impl::commonTest",
       ":feat:clients:fe:driving:impl::commonMain",
-      ":feat:clients:fe:driving:impl::commonTest",
       ":feat:clients:fe:driving:impl::nonWebMain",
       ":feat:clients:fe:driving:impl::webMain",
       ":feat:findings:be:app:impl::main",
@@ -1948,15 +1766,17 @@
       ":feat:findings:be:driving:impl::main",
       ":feat:findings:be:driving:impl::test",
       ":feat:findings:fe:app:impl::commonMain",
-      ":feat:findings:fe:app:impl::commonTest",
       ":feat:findings:fe:app:impl::nonWebMain",
-      ":feat:findings:fe:app:impl::nonWebTest",
-      ":feat:findings:fe:app:impl::webMain"
+      ":feat:findings:fe:app:impl::webMain",
+      ":feat:findings:fe:driving:impl::commonMain",
+      ":feat:findings:fe:driving:impl::nonWebMain",
+      ":feat:findings:fe:driving:impl::webMain",
+      ":feat:inspections:be:app:impl::main"
     ]
   },
   ":feat:projects:business:rules::commonMain": {
     "blast_radius_module": 5,
-    "blast_radius_unit": 14,
+    "blast_radius_unit": 11,
     "downstream_sample": [
       ":feat:findings:be:app:impl::main",
       ":feat:findings:be:app:impl::test",
@@ -1965,33 +1785,19 @@
       ":feat:projects:be:app:impl::main",
       ":feat:projects:be:app:impl::test",
       ":feat:projects:fe:app:impl::commonMain",
-      ":feat:projects:fe:app:impl::commonTest",
       ":feat:projects:fe:app:impl::nonWebMain",
-      ":feat:projects:fe:app:impl::nonWebTest",
       ":feat:projects:fe:app:impl::webMain",
-      ":feat:projects:fe:app:impl::webTest",
       ":feat:structures:be:app:impl::main",
       ":feat:structures:be:app:impl::test"
     ]
   },
   ":feat:projects:business:rules::commonTest": {
     "blast_radius_module": 5,
-    "blast_radius_unit": 14,
+    "blast_radius_unit": 3,
     "downstream_sample": [
-      ":feat:findings:be:app:impl::main",
-      ":feat:findings:be:app:impl::test",
-      ":feat:inspections:be:app:impl::main",
-      ":feat:inspections:be:app:impl::test",
-      ":feat:projects:be:app:impl::main",
-      ":feat:projects:be:app:impl::test",
-      ":feat:projects:fe:app:impl::commonMain",
       ":feat:projects:fe:app:impl::commonTest",
-      ":feat:projects:fe:app:impl::nonWebMain",
       ":feat:projects:fe:app:impl::nonWebTest",
-      ":feat:projects:fe:app:impl::webMain",
-      ":feat:projects:fe:app:impl::webTest",
-      ":feat:structures:be:app:impl::main",
-      ":feat:structures:be:app:impl::test"
+      ":feat:projects:fe:app:impl::webTest"
     ]
   },
   ":feat:projects:contract::commonMain": {
@@ -2005,96 +1811,67 @@
   },
   ":feat:projects:fe:app:api::commonMain": {
     "blast_radius_module": 7,
-    "blast_radius_unit": 30,
+    "blast_radius_unit": 21,
     "downstream_sample": [
+      ":feat:projects:fe:app:api::nonWebMain",
+      ":feat:projects:fe:app:api::webMain",
       ":feat:clients:fe:app:impl::commonMain",
-      ":feat:clients:fe:app:impl::commonTest",
       ":feat:findings:fe:app:impl::commonMain",
-      ":feat:findings:fe:app:impl::commonTest",
       ":feat:findings:fe:app:impl::nonWebMain",
-      ":feat:findings:fe:app:impl::nonWebTest",
       ":feat:findings:fe:app:impl::webMain",
-      ":feat:findings:fe:app:impl::webTest",
       ":feat:findings:fe:driving:impl::commonMain",
-      ":feat:findings:fe:driving:impl::commonTest",
       ":feat:findings:fe:driving:impl::nonWebMain",
       ":feat:findings:fe:driving:impl::webMain",
       ":feat:inspections:fe:driving:impl::commonMain",
-      ":feat:inspections:fe:driving:impl::commonTest",
       ":feat:inspections:fe:driving:impl::nonWebMain",
       ":feat:inspections:fe:driving:impl::webMain",
       ":feat:projects:fe:app:impl::commonMain",
-      ":feat:projects:fe:app:impl::commonTest",
       ":feat:projects:fe:app:impl::nonWebMain",
-      ":feat:projects:fe:app:impl::nonWebTest"
+      ":feat:projects:fe:app:impl::webMain",
+      ":feat:projects:fe:driving:impl::commonMain",
+      ":feat:projects:fe:driving:impl::nonWebMain",
+      ":feat:projects:fe:driving:impl::webMain",
+      ":feat:structures:fe:driving:impl::commonMain",
+      ":feat:structures:fe:driving:impl::nonWebMain"
     ]
   },
   ":feat:projects:fe:app:api::nonWebMain": {
     "blast_radius_module": 7,
-    "blast_radius_unit": 30,
+    "blast_radius_unit": 6,
     "downstream_sample": [
-      ":feat:clients:fe:app:impl::commonMain",
-      ":feat:clients:fe:app:impl::commonTest",
-      ":feat:findings:fe:app:impl::commonMain",
-      ":feat:findings:fe:app:impl::commonTest",
       ":feat:findings:fe:app:impl::nonWebMain",
-      ":feat:findings:fe:app:impl::nonWebTest",
-      ":feat:findings:fe:app:impl::webMain",
-      ":feat:findings:fe:app:impl::webTest",
-      ":feat:findings:fe:driving:impl::commonMain",
-      ":feat:findings:fe:driving:impl::commonTest",
       ":feat:findings:fe:driving:impl::nonWebMain",
-      ":feat:findings:fe:driving:impl::webMain",
-      ":feat:inspections:fe:driving:impl::commonMain",
-      ":feat:inspections:fe:driving:impl::commonTest",
       ":feat:inspections:fe:driving:impl::nonWebMain",
-      ":feat:inspections:fe:driving:impl::webMain",
-      ":feat:projects:fe:app:impl::commonMain",
-      ":feat:projects:fe:app:impl::commonTest",
       ":feat:projects:fe:app:impl::nonWebMain",
-      ":feat:projects:fe:app:impl::nonWebTest"
+      ":feat:projects:fe:driving:impl::nonWebMain",
+      ":feat:structures:fe:driving:impl::nonWebMain"
     ]
   },
   ":feat:projects:fe:app:api::webMain": {
     "blast_radius_module": 7,
-    "blast_radius_unit": 30,
+    "blast_radius_unit": 6,
     "downstream_sample": [
-      ":feat:clients:fe:app:impl::commonMain",
-      ":feat:clients:fe:app:impl::commonTest",
-      ":feat:findings:fe:app:impl::commonMain",
-      ":feat:findings:fe:app:impl::commonTest",
-      ":feat:findings:fe:app:impl::nonWebMain",
-      ":feat:findings:fe:app:impl::nonWebTest",
       ":feat:findings:fe:app:impl::webMain",
-      ":feat:findings:fe:app:impl::webTest",
-      ":feat:findings:fe:driving:impl::commonMain",
-      ":feat:findings:fe:driving:impl::commonTest",
-      ":feat:findings:fe:driving:impl::nonWebMain",
       ":feat:findings:fe:driving:impl::webMain",
-      ":feat:inspections:fe:driving:impl::commonMain",
-      ":feat:inspections:fe:driving:impl::commonTest",
-      ":feat:inspections:fe:driving:impl::nonWebMain",
       ":feat:inspections:fe:driving:impl::webMain",
-      ":feat:projects:fe:app:impl::commonMain",
-      ":feat:projects:fe:app:impl::commonTest",
-      ":feat:projects:fe:app:impl::nonWebMain",
-      ":feat:projects:fe:app:impl::nonWebTest"
+      ":feat:projects:fe:app:impl::webMain",
+      ":feat:projects:fe:driving:impl::webMain",
+      ":feat:structures:fe:driving:impl::webMain"
     ]
   },
   ":feat:projects:fe:app:impl::commonMain": {
     "blast_radius_module": 4,
-    "blast_radius_unit": 13,
+    "blast_radius_unit": 12,
     "downstream_sample": [
+      ":feat:projects:fe:app:impl::nonWebMain",
+      ":feat:projects:fe:app:impl::webMain",
       ":feat:findings:fe:driving:impl::commonMain",
-      ":feat:findings:fe:driving:impl::commonTest",
       ":feat:findings:fe:driving:impl::nonWebMain",
       ":feat:findings:fe:driving:impl::webMain",
       ":feat:inspections:fe:driving:impl::commonMain",
-      ":feat:inspections:fe:driving:impl::commonTest",
       ":feat:inspections:fe:driving:impl::nonWebMain",
       ":feat:inspections:fe:driving:impl::webMain",
       ":feat:structures:fe:driving:impl::commonMain",
-      ":feat:structures:fe:driving:impl::commonTest",
       ":feat:structures:fe:driving:impl::nonWebMain",
       ":feat:structures:fe:driving:impl::webMain",
       ":koinModulesAggregate:fe::commonMain"
@@ -2102,98 +1879,42 @@
   },
   ":feat:projects:fe:app:impl::commonTest": {
     "blast_radius_module": 4,
-    "blast_radius_unit": 13,
+    "blast_radius_unit": 5,
     "downstream_sample": [
-      ":feat:findings:fe:driving:impl::commonMain",
+      ":feat:projects:fe:app:impl::nonWebTest",
+      ":feat:projects:fe:app:impl::webTest",
       ":feat:findings:fe:driving:impl::commonTest",
-      ":feat:findings:fe:driving:impl::nonWebMain",
-      ":feat:findings:fe:driving:impl::webMain",
-      ":feat:inspections:fe:driving:impl::commonMain",
       ":feat:inspections:fe:driving:impl::commonTest",
-      ":feat:inspections:fe:driving:impl::nonWebMain",
-      ":feat:inspections:fe:driving:impl::webMain",
-      ":feat:structures:fe:driving:impl::commonMain",
-      ":feat:structures:fe:driving:impl::commonTest",
-      ":feat:structures:fe:driving:impl::nonWebMain",
-      ":feat:structures:fe:driving:impl::webMain",
-      ":koinModulesAggregate:fe::commonMain"
+      ":feat:structures:fe:driving:impl::commonTest"
     ]
   },
   ":feat:projects:fe:app:impl::nonWebMain": {
     "blast_radius_module": 4,
-    "blast_radius_unit": 13,
+    "blast_radius_unit": 3,
     "downstream_sample": [
-      ":feat:findings:fe:driving:impl::commonMain",
-      ":feat:findings:fe:driving:impl::commonTest",
       ":feat:findings:fe:driving:impl::nonWebMain",
-      ":feat:findings:fe:driving:impl::webMain",
-      ":feat:inspections:fe:driving:impl::commonMain",
-      ":feat:inspections:fe:driving:impl::commonTest",
       ":feat:inspections:fe:driving:impl::nonWebMain",
-      ":feat:inspections:fe:driving:impl::webMain",
-      ":feat:structures:fe:driving:impl::commonMain",
-      ":feat:structures:fe:driving:impl::commonTest",
-      ":feat:structures:fe:driving:impl::nonWebMain",
-      ":feat:structures:fe:driving:impl::webMain",
-      ":koinModulesAggregate:fe::commonMain"
+      ":feat:structures:fe:driving:impl::nonWebMain"
     ]
   },
   ":feat:projects:fe:app:impl::nonWebTest": {
     "blast_radius_module": 4,
-    "blast_radius_unit": 13,
-    "downstream_sample": [
-      ":feat:findings:fe:driving:impl::commonMain",
-      ":feat:findings:fe:driving:impl::commonTest",
-      ":feat:findings:fe:driving:impl::nonWebMain",
-      ":feat:findings:fe:driving:impl::webMain",
-      ":feat:inspections:fe:driving:impl::commonMain",
-      ":feat:inspections:fe:driving:impl::commonTest",
-      ":feat:inspections:fe:driving:impl::nonWebMain",
-      ":feat:inspections:fe:driving:impl::webMain",
-      ":feat:structures:fe:driving:impl::commonMain",
-      ":feat:structures:fe:driving:impl::commonTest",
-      ":feat:structures:fe:driving:impl::nonWebMain",
-      ":feat:structures:fe:driving:impl::webMain",
-      ":koinModulesAggregate:fe::commonMain"
-    ]
+    "blast_radius_unit": 0,
+    "downstream_sample": []
   },
   ":feat:projects:fe:app:impl::webMain": {
     "blast_radius_module": 4,
-    "blast_radius_unit": 13,
+    "blast_radius_unit": 3,
     "downstream_sample": [
-      ":feat:findings:fe:driving:impl::commonMain",
-      ":feat:findings:fe:driving:impl::commonTest",
-      ":feat:findings:fe:driving:impl::nonWebMain",
       ":feat:findings:fe:driving:impl::webMain",
-      ":feat:inspections:fe:driving:impl::commonMain",
-      ":feat:inspections:fe:driving:impl::commonTest",
-      ":feat:inspections:fe:driving:impl::nonWebMain",
       ":feat:inspections:fe:driving:impl::webMain",
-      ":feat:structures:fe:driving:impl::commonMain",
-      ":feat:structures:fe:driving:impl::commonTest",
-      ":feat:structures:fe:driving:impl::nonWebMain",
-      ":feat:structures:fe:driving:impl::webMain",
-      ":koinModulesAggregate:fe::commonMain"
+      ":feat:structures:fe:driving:impl::webMain"
     ]
   },
   ":feat:projects:fe:app:impl::webTest": {
     "blast_radius_module": 4,
-    "blast_radius_unit": 13,
-    "downstream_sample": [
-      ":feat:findings:fe:driving:impl::commonMain",
-      ":feat:findings:fe:driving:impl::commonTest",
-      ":feat:findings:fe:driving:impl::nonWebMain",
-      ":feat:findings:fe:driving:impl::webMain",
-      ":feat:inspections:fe:driving:impl::commonMain",
-      ":feat:inspections:fe:driving:impl::commonTest",
-      ":feat:inspections:fe:driving:impl::nonWebMain",
-      ":feat:inspections:fe:driving:impl::webMain",
-      ":feat:structures:fe:driving:impl::commonMain",
-      ":feat:structures:fe:driving:impl::commonTest",
-      ":feat:structures:fe:driving:impl::nonWebMain",
-      ":feat:structures:fe:driving:impl::webMain",
-      ":koinModulesAggregate:fe::commonMain"
-    ]
+    "blast_radius_unit": 0,
+    "downstream_sample": []
   },
   ":feat:projects:fe:driven:impl::commonMain": {
     "blast_radius_module": 1,
@@ -2204,117 +1925,97 @@
   },
   ":feat:projects:fe:driven:test::commonMain": {
     "blast_radius_module": 9,
-    "blast_radius_unit": 30,
+    "blast_radius_unit": 21,
     "downstream_sample": [
       ":feat:clients:fe:app:impl::commonMain",
-      ":feat:clients:fe:app:impl::commonTest",
       ":feat:clients:fe:driving:impl::commonMain",
-      ":feat:clients:fe:driving:impl::commonTest",
       ":feat:clients:fe:driving:impl::nonWebMain",
       ":feat:clients:fe:driving:impl::webMain",
       ":feat:findings:fe:driving:impl::commonMain",
-      ":feat:findings:fe:driving:impl::commonTest",
       ":feat:findings:fe:driving:impl::nonWebMain",
       ":feat:findings:fe:driving:impl::webMain",
       ":feat:inspections:fe:driving:impl::commonMain",
-      ":feat:inspections:fe:driving:impl::commonTest",
       ":feat:inspections:fe:driving:impl::nonWebMain",
       ":feat:inspections:fe:driving:impl::webMain",
       ":feat:projects:fe:app:impl::commonMain",
-      ":feat:projects:fe:app:impl::commonTest",
       ":feat:projects:fe:app:impl::nonWebMain",
-      ":feat:projects:fe:app:impl::nonWebTest",
       ":feat:projects:fe:app:impl::webMain",
-      ":feat:projects:fe:app:impl::webTest"
+      ":feat:projects:fe:driven:impl::commonMain",
+      ":feat:projects:fe:driving:impl::commonMain",
+      ":feat:projects:fe:driving:impl::nonWebMain",
+      ":feat:projects:fe:driving:impl::webMain",
+      ":feat:structures:fe:driving:impl::commonMain",
+      ":feat:structures:fe:driving:impl::nonWebMain",
+      ":feat:structures:fe:driving:impl::webMain"
     ]
   },
   ":feat:projects:fe:driving:api::commonMain": {
     "blast_radius_module": 9,
-    "blast_radius_unit": 33,
+    "blast_radius_unit": 30,
     "downstream_sample": [
-      ":composeApp::androidMain",
+      ":feat:projects:fe:driving:api::nonWebMain",
+      ":feat:projects:fe:driving:api::webMain",
       ":composeApp::commonMain",
+      ":composeApp::androidMain",
       ":composeApp::iosMain",
       ":composeApp::jvmMain",
-      ":composeApp::jvmTest",
       ":composeApp::nonWebMain",
       ":composeApp::webMain",
       ":feat:findings:fe:driving:api::commonMain",
       ":feat:findings:fe:driving:api::nonWebMain",
       ":feat:findings:fe:driving:api::webMain",
       ":feat:findings:fe:driving:impl::commonMain",
-      ":feat:findings:fe:driving:impl::commonTest",
       ":feat:findings:fe:driving:impl::nonWebMain",
       ":feat:findings:fe:driving:impl::webMain",
       ":feat:inspections:fe:driving:api::commonMain",
       ":feat:inspections:fe:driving:api::nonWebMain",
       ":feat:inspections:fe:driving:api::webMain",
       ":feat:inspections:fe:driving:impl::commonMain",
-      ":feat:inspections:fe:driving:impl::commonTest",
-      ":feat:inspections:fe:driving:impl::nonWebMain"
+      ":feat:inspections:fe:driving:impl::nonWebMain",
+      ":feat:inspections:fe:driving:impl::webMain"
     ]
   },
   ":feat:projects:fe:driving:api::nonWebMain": {
     "blast_radius_module": 9,
-    "blast_radius_unit": 33,
+    "blast_radius_unit": 11,
     "downstream_sample": [
+      ":composeApp::nonWebMain",
       ":composeApp::androidMain",
-      ":composeApp::commonMain",
       ":composeApp::iosMain",
       ":composeApp::jvmMain",
-      ":composeApp::jvmTest",
-      ":composeApp::nonWebMain",
-      ":composeApp::webMain",
-      ":feat:findings:fe:driving:api::commonMain",
       ":feat:findings:fe:driving:api::nonWebMain",
-      ":feat:findings:fe:driving:api::webMain",
-      ":feat:findings:fe:driving:impl::commonMain",
-      ":feat:findings:fe:driving:impl::commonTest",
       ":feat:findings:fe:driving:impl::nonWebMain",
-      ":feat:findings:fe:driving:impl::webMain",
-      ":feat:inspections:fe:driving:api::commonMain",
       ":feat:inspections:fe:driving:api::nonWebMain",
-      ":feat:inspections:fe:driving:api::webMain",
-      ":feat:inspections:fe:driving:impl::commonMain",
-      ":feat:inspections:fe:driving:impl::commonTest",
-      ":feat:inspections:fe:driving:impl::nonWebMain"
+      ":feat:inspections:fe:driving:impl::nonWebMain",
+      ":feat:projects:fe:driving:impl::nonWebMain",
+      ":feat:structures:fe:driving:api::nonWebMain",
+      ":feat:structures:fe:driving:impl::nonWebMain"
     ]
   },
   ":feat:projects:fe:driving:api::webMain": {
     "blast_radius_module": 9,
-    "blast_radius_unit": 33,
+    "blast_radius_unit": 8,
     "downstream_sample": [
-      ":composeApp::androidMain",
-      ":composeApp::commonMain",
-      ":composeApp::iosMain",
-      ":composeApp::jvmMain",
-      ":composeApp::jvmTest",
-      ":composeApp::nonWebMain",
       ":composeApp::webMain",
-      ":feat:findings:fe:driving:api::commonMain",
-      ":feat:findings:fe:driving:api::nonWebMain",
       ":feat:findings:fe:driving:api::webMain",
-      ":feat:findings:fe:driving:impl::commonMain",
-      ":feat:findings:fe:driving:impl::commonTest",
-      ":feat:findings:fe:driving:impl::nonWebMain",
       ":feat:findings:fe:driving:impl::webMain",
-      ":feat:inspections:fe:driving:api::commonMain",
-      ":feat:inspections:fe:driving:api::nonWebMain",
       ":feat:inspections:fe:driving:api::webMain",
-      ":feat:inspections:fe:driving:impl::commonMain",
-      ":feat:inspections:fe:driving:impl::commonTest",
-      ":feat:inspections:fe:driving:impl::nonWebMain"
+      ":feat:inspections:fe:driving:impl::webMain",
+      ":feat:projects:fe:driving:impl::webMain",
+      ":feat:structures:fe:driving:api::webMain",
+      ":feat:structures:fe:driving:impl::webMain"
     ]
   },
   ":feat:projects:fe:driving:impl::commonMain": {
     "blast_radius_module": 2,
-    "blast_radius_unit": 8,
+    "blast_radius_unit": 9,
     "downstream_sample": [
-      ":composeApp::androidMain",
+      ":feat:projects:fe:driving:impl::nonWebMain",
+      ":feat:projects:fe:driving:impl::webMain",
       ":composeApp::commonMain",
+      ":composeApp::androidMain",
       ":composeApp::iosMain",
       ":composeApp::jvmMain",
-      ":composeApp::jvmTest",
       ":composeApp::nonWebMain",
       ":composeApp::webMain",
       ":koinModulesAggregate:fe::commonMain"
@@ -2322,70 +2023,50 @@
   },
   ":feat:projects:fe:driving:impl::commonTest": {
     "blast_radius_module": 2,
-    "blast_radius_unit": 8,
-    "downstream_sample": [
-      ":composeApp::androidMain",
-      ":composeApp::commonMain",
-      ":composeApp::iosMain",
-      ":composeApp::jvmMain",
-      ":composeApp::jvmTest",
-      ":composeApp::nonWebMain",
-      ":composeApp::webMain",
-      ":koinModulesAggregate:fe::commonMain"
-    ]
+    "blast_radius_unit": 0,
+    "downstream_sample": []
   },
   ":feat:projects:fe:driving:impl::nonWebMain": {
     "blast_radius_module": 2,
-    "blast_radius_unit": 8,
+    "blast_radius_unit": 4,
     "downstream_sample": [
-      ":composeApp::androidMain",
-      ":composeApp::commonMain",
-      ":composeApp::iosMain",
-      ":composeApp::jvmMain",
-      ":composeApp::jvmTest",
       ":composeApp::nonWebMain",
-      ":composeApp::webMain",
-      ":koinModulesAggregate:fe::commonMain"
+      ":composeApp::androidMain",
+      ":composeApp::iosMain",
+      ":composeApp::jvmMain"
     ]
   },
   ":feat:projects:fe:driving:impl::webMain": {
     "blast_radius_module": 2,
-    "blast_radius_unit": 8,
+    "blast_radius_unit": 1,
     "downstream_sample": [
-      ":composeApp::androidMain",
-      ":composeApp::commonMain",
-      ":composeApp::iosMain",
-      ":composeApp::jvmMain",
-      ":composeApp::jvmTest",
-      ":composeApp::nonWebMain",
-      ":composeApp::webMain",
-      ":koinModulesAggregate:fe::commonMain"
+      ":composeApp::webMain"
     ]
   },
   ":feat:projects:fe:ports::commonMain": {
     "blast_radius_module": 11,
-    "blast_radius_unit": 32,
+    "blast_radius_unit": 23,
     "downstream_sample": [
       ":feat:clients:fe:app:impl::commonMain",
-      ":feat:clients:fe:app:impl::commonTest",
       ":feat:clients:fe:driving:impl::commonMain",
-      ":feat:clients:fe:driving:impl::commonTest",
       ":feat:clients:fe:driving:impl::nonWebMain",
       ":feat:clients:fe:driving:impl::webMain",
       ":feat:findings:fe:driving:impl::commonMain",
-      ":feat:findings:fe:driving:impl::commonTest",
       ":feat:findings:fe:driving:impl::nonWebMain",
       ":feat:findings:fe:driving:impl::webMain",
       ":feat:inspections:fe:driving:impl::commonMain",
-      ":feat:inspections:fe:driving:impl::commonTest",
       ":feat:inspections:fe:driving:impl::nonWebMain",
       ":feat:inspections:fe:driving:impl::webMain",
       ":feat:projects:fe:app:impl::commonMain",
-      ":feat:projects:fe:app:impl::commonTest",
       ":feat:projects:fe:app:impl::nonWebMain",
-      ":feat:projects:fe:app:impl::nonWebTest",
       ":feat:projects:fe:app:impl::webMain",
-      ":feat:projects:fe:app:impl::webTest"
+      ":feat:projects:fe:driven:impl::commonMain",
+      ":feat:projects:fe:driven:test::commonMain",
+      ":feat:projects:fe:driving:impl::commonMain",
+      ":feat:projects:fe:driving:impl::nonWebMain",
+      ":feat:projects:fe:driving:impl::webMain",
+      ":feat:structures:fe:driving:impl::commonMain",
+      ":feat:structures:fe:driving:impl::nonWebMain"
     ]
   },
   ":feat:reports:be:app:api::main": {
@@ -2476,10 +2157,9 @@
   },
   ":feat:reports:business:model::commonMain": {
     "blast_radius_module": 18,
-    "blast_radius_unit": 25,
+    "blast_radius_unit": 22,
     "downstream_sample": [
       ":feat:projects:fe:driving:impl::commonMain",
-      ":feat:projects:fe:driving:impl::commonTest",
       ":feat:projects:fe:driving:impl::nonWebMain",
       ":feat:projects:fe:driving:impl::webMain",
       ":feat:reports:be:app:api::main",
@@ -2492,36 +2172,31 @@
       ":feat:reports:be:driving:impl::test",
       ":feat:reports:be:ports::main",
       ":feat:reports:business:rules::commonMain",
-      ":feat:reports:business:rules::commonTest",
       ":feat:reports:fe:app:api::commonMain",
       ":feat:reports:fe:app:impl::commonMain",
-      ":feat:reports:fe:app:impl::commonTest",
       ":feat:reports:fe:driven:impl::commonMain",
-      ":feat:reports:fe:driven:test::commonMain"
+      ":feat:reports:fe:driven:test::commonMain",
+      ":feat:reports:fe:ports::commonMain",
+      ":koinModulesAggregate:be::main",
+      ":koinModulesAggregate:fe::commonMain"
     ]
   },
   ":feat:reports:business:rules::commonMain": {
     "blast_radius_module": 4,
-    "blast_radius_unit": 6,
+    "blast_radius_unit": 5,
     "downstream_sample": [
       ":feat:reports:be:app:impl::main",
       ":feat:reports:be:app:impl::test",
       ":feat:reports:fe:app:impl::commonMain",
-      ":feat:reports:fe:app:impl::commonTest",
       ":koinModulesAggregate:be::main",
       ":koinModulesAggregate:fe::commonMain"
     ]
   },
   ":feat:reports:business:rules::commonTest": {
     "blast_radius_module": 4,
-    "blast_radius_unit": 6,
+    "blast_radius_unit": 1,
     "downstream_sample": [
-      ":feat:reports:be:app:impl::main",
-      ":feat:reports:be:app:impl::test",
-      ":feat:reports:fe:app:impl::commonMain",
-      ":feat:reports:fe:app:impl::commonTest",
-      ":koinModulesAggregate:be::main",
-      ":koinModulesAggregate:fe::commonMain"
+      ":feat:reports:fe:app:impl::commonTest"
     ]
   },
   ":feat:reports:contract::commonMain": {
@@ -2535,14 +2210,12 @@
   },
   ":feat:reports:fe:app:api::commonMain": {
     "blast_radius_module": 2,
-    "blast_radius_unit": 6,
+    "blast_radius_unit": 4,
     "downstream_sample": [
       ":feat:projects:fe:driving:impl::commonMain",
-      ":feat:projects:fe:driving:impl::commonTest",
       ":feat:projects:fe:driving:impl::nonWebMain",
       ":feat:projects:fe:driving:impl::webMain",
-      ":feat:reports:fe:app:impl::commonMain",
-      ":feat:reports:fe:app:impl::commonTest"
+      ":feat:reports:fe:app:impl::commonMain"
     ]
   },
   ":feat:reports:fe:app:impl::commonMain": {
@@ -2554,10 +2227,8 @@
   },
   ":feat:reports:fe:app:impl::commonTest": {
     "blast_radius_module": 1,
-    "blast_radius_unit": 1,
-    "downstream_sample": [
-      ":koinModulesAggregate:fe::commonMain"
-    ]
+    "blast_radius_unit": 0,
+    "downstream_sample": []
   },
   ":feat:reports:fe:driven:impl::commonMain": {
     "blast_radius_module": 1,
@@ -2568,27 +2239,23 @@
   },
   ":feat:reports:fe:driven:test::commonMain": {
     "blast_radius_module": 3,
-    "blast_radius_unit": 7,
+    "blast_radius_unit": 5,
     "downstream_sample": [
       ":feat:projects:fe:driving:impl::commonMain",
-      ":feat:projects:fe:driving:impl::commonTest",
       ":feat:projects:fe:driving:impl::nonWebMain",
       ":feat:projects:fe:driving:impl::webMain",
       ":feat:reports:fe:app:impl::commonMain",
-      ":feat:reports:fe:app:impl::commonTest",
       ":testInfra:fe::commonMain"
     ]
   },
   ":feat:reports:fe:ports::commonMain": {
     "blast_radius_module": 6,
-    "blast_radius_unit": 10,
+    "blast_radius_unit": 8,
     "downstream_sample": [
       ":feat:projects:fe:driving:impl::commonMain",
-      ":feat:projects:fe:driving:impl::commonTest",
       ":feat:projects:fe:driving:impl::nonWebMain",
       ":feat:projects:fe:driving:impl::webMain",
       ":feat:reports:fe:app:impl::commonMain",
-      ":feat:reports:fe:app:impl::commonTest",
       ":feat:reports:fe:driven:impl::commonMain",
       ":feat:reports:fe:driven:test::commonMain",
       ":koinModulesAggregate:fe::commonMain",
@@ -2597,7 +2264,7 @@
   },
   ":feat:structures:app:model::commonMain": {
     "blast_radius_module": 87,
-    "blast_radius_unit": 128,
+    "blast_radius_unit": 118,
     "downstream_sample": [
       ":core:foundation:be::main",
       ":feat:authentication:be:driving:api::main",
@@ -2752,7 +2419,7 @@
   },
   ":feat:structures:business:model::commonMain": {
     "blast_radius_module": 87,
-    "blast_radius_unit": 128,
+    "blast_radius_unit": 118,
     "downstream_sample": [
       ":core:foundation:be::main",
       ":feat:authentication:be:driving:api::main",
@@ -2787,40 +2454,31 @@
   },
   ":feat:structures:fe:app:api::commonMain": {
     "blast_radius_module": 5,
-    "blast_radius_unit": 22,
+    "blast_radius_unit": 13,
     "downstream_sample": [
       ":feat:findings:fe:app:impl::commonMain",
-      ":feat:findings:fe:app:impl::commonTest",
       ":feat:findings:fe:app:impl::nonWebMain",
-      ":feat:findings:fe:app:impl::nonWebTest",
       ":feat:findings:fe:app:impl::webMain",
-      ":feat:findings:fe:app:impl::webTest",
       ":feat:projects:fe:app:impl::commonMain",
-      ":feat:projects:fe:app:impl::commonTest",
       ":feat:projects:fe:app:impl::nonWebMain",
-      ":feat:projects:fe:app:impl::nonWebTest",
       ":feat:projects:fe:app:impl::webMain",
-      ":feat:projects:fe:app:impl::webTest",
       ":feat:projects:fe:driving:impl::commonMain",
-      ":feat:projects:fe:driving:impl::commonTest",
       ":feat:projects:fe:driving:impl::nonWebMain",
       ":feat:projects:fe:driving:impl::webMain",
       ":feat:structures:fe:app:impl::commonMain",
-      ":feat:structures:fe:app:impl::commonTest",
       ":feat:structures:fe:driving:impl::commonMain",
-      ":feat:structures:fe:driving:impl::commonTest"
+      ":feat:structures:fe:driving:impl::nonWebMain",
+      ":feat:structures:fe:driving:impl::webMain"
     ]
   },
   ":feat:structures:fe:app:impl::commonMain": {
     "blast_radius_module": 3,
-    "blast_radius_unit": 9,
+    "blast_radius_unit": 7,
     "downstream_sample": [
       ":feat:findings:fe:driving:impl::commonMain",
-      ":feat:findings:fe:driving:impl::commonTest",
       ":feat:findings:fe:driving:impl::nonWebMain",
       ":feat:findings:fe:driving:impl::webMain",
       ":feat:structures:fe:driving:impl::commonMain",
-      ":feat:structures:fe:driving:impl::commonTest",
       ":feat:structures:fe:driving:impl::nonWebMain",
       ":feat:structures:fe:driving:impl::webMain",
       ":koinModulesAggregate:fe::commonMain"
@@ -2828,17 +2486,10 @@
   },
   ":feat:structures:fe:app:impl::commonTest": {
     "blast_radius_module": 3,
-    "blast_radius_unit": 9,
+    "blast_radius_unit": 2,
     "downstream_sample": [
-      ":feat:findings:fe:driving:impl::commonMain",
       ":feat:findings:fe:driving:impl::commonTest",
-      ":feat:findings:fe:driving:impl::nonWebMain",
-      ":feat:findings:fe:driving:impl::webMain",
-      ":feat:structures:fe:driving:impl::commonMain",
-      ":feat:structures:fe:driving:impl::commonTest",
-      ":feat:structures:fe:driving:impl::nonWebMain",
-      ":feat:structures:fe:driving:impl::webMain",
-      ":koinModulesAggregate:fe::commonMain"
+      ":feat:structures:fe:driving:impl::commonTest"
     ]
   },
   ":feat:structures:fe:driven:impl::commonMain": {
@@ -2850,47 +2501,43 @@
   },
   ":feat:structures:fe:driven:test::commonMain": {
     "blast_radius_module": 7,
-    "blast_radius_unit": 27,
+    "blast_radius_unit": 17,
     "downstream_sample": [
       ":feat:findings:fe:app:impl::commonMain",
-      ":feat:findings:fe:app:impl::commonTest",
       ":feat:findings:fe:app:impl::nonWebMain",
-      ":feat:findings:fe:app:impl::nonWebTest",
       ":feat:findings:fe:app:impl::webMain",
-      ":feat:findings:fe:app:impl::webTest",
       ":feat:findings:fe:driving:impl::commonMain",
-      ":feat:findings:fe:driving:impl::commonTest",
       ":feat:findings:fe:driving:impl::nonWebMain",
       ":feat:findings:fe:driving:impl::webMain",
       ":feat:projects:fe:app:impl::commonMain",
-      ":feat:projects:fe:app:impl::commonTest",
       ":feat:projects:fe:app:impl::nonWebMain",
-      ":feat:projects:fe:app:impl::nonWebTest",
       ":feat:projects:fe:app:impl::webMain",
-      ":feat:projects:fe:app:impl::webTest",
       ":feat:projects:fe:driving:impl::commonMain",
-      ":feat:projects:fe:driving:impl::commonTest",
       ":feat:projects:fe:driving:impl::nonWebMain",
-      ":feat:projects:fe:driving:impl::webMain"
+      ":feat:projects:fe:driving:impl::webMain",
+      ":feat:structures:fe:app:impl::commonMain",
+      ":feat:structures:fe:driving:impl::commonMain",
+      ":feat:structures:fe:driving:impl::nonWebMain",
+      ":feat:structures:fe:driving:impl::webMain",
+      ":testInfra:fe::commonMain"
     ]
   },
   ":feat:structures:fe:driving:api::commonMain": {
     "blast_radius_module": 5,
-    "blast_radius_unit": 16,
+    "blast_radius_unit": 15,
     "downstream_sample": [
+      ":feat:structures:fe:driving:api::nonWebMain",
+      ":feat:structures:fe:driving:api::webMain",
       ":feat:findings:fe:driving:api::commonMain",
       ":feat:findings:fe:driving:api::nonWebMain",
       ":feat:findings:fe:driving:api::webMain",
       ":feat:findings:fe:driving:impl::commonMain",
-      ":feat:findings:fe:driving:impl::commonTest",
       ":feat:findings:fe:driving:impl::nonWebMain",
       ":feat:findings:fe:driving:impl::webMain",
       ":feat:projects:fe:driving:impl::commonMain",
-      ":feat:projects:fe:driving:impl::commonTest",
       ":feat:projects:fe:driving:impl::nonWebMain",
       ":feat:projects:fe:driving:impl::webMain",
       ":feat:structures:fe:driving:impl::commonMain",
-      ":feat:structures:fe:driving:impl::commonTest",
       ":feat:structures:fe:driving:impl::nonWebMain",
       ":feat:structures:fe:driving:impl::webMain",
       ":koinModulesAggregate:fe::commonMain"
@@ -2898,100 +2545,72 @@
   },
   ":feat:structures:fe:driving:api::nonWebMain": {
     "blast_radius_module": 5,
-    "blast_radius_unit": 16,
+    "blast_radius_unit": 4,
     "downstream_sample": [
-      ":feat:findings:fe:driving:api::commonMain",
       ":feat:findings:fe:driving:api::nonWebMain",
-      ":feat:findings:fe:driving:api::webMain",
-      ":feat:findings:fe:driving:impl::commonMain",
-      ":feat:findings:fe:driving:impl::commonTest",
       ":feat:findings:fe:driving:impl::nonWebMain",
-      ":feat:findings:fe:driving:impl::webMain",
-      ":feat:projects:fe:driving:impl::commonMain",
-      ":feat:projects:fe:driving:impl::commonTest",
       ":feat:projects:fe:driving:impl::nonWebMain",
-      ":feat:projects:fe:driving:impl::webMain",
-      ":feat:structures:fe:driving:impl::commonMain",
-      ":feat:structures:fe:driving:impl::commonTest",
-      ":feat:structures:fe:driving:impl::nonWebMain",
-      ":feat:structures:fe:driving:impl::webMain",
-      ":koinModulesAggregate:fe::commonMain"
+      ":feat:structures:fe:driving:impl::nonWebMain"
     ]
   },
   ":feat:structures:fe:driving:api::webMain": {
     "blast_radius_module": 5,
-    "blast_radius_unit": 16,
+    "blast_radius_unit": 4,
     "downstream_sample": [
-      ":feat:findings:fe:driving:api::commonMain",
-      ":feat:findings:fe:driving:api::nonWebMain",
       ":feat:findings:fe:driving:api::webMain",
-      ":feat:findings:fe:driving:impl::commonMain",
-      ":feat:findings:fe:driving:impl::commonTest",
-      ":feat:findings:fe:driving:impl::nonWebMain",
       ":feat:findings:fe:driving:impl::webMain",
-      ":feat:projects:fe:driving:impl::commonMain",
-      ":feat:projects:fe:driving:impl::commonTest",
-      ":feat:projects:fe:driving:impl::nonWebMain",
       ":feat:projects:fe:driving:impl::webMain",
-      ":feat:structures:fe:driving:impl::commonMain",
-      ":feat:structures:fe:driving:impl::commonTest",
-      ":feat:structures:fe:driving:impl::nonWebMain",
-      ":feat:structures:fe:driving:impl::webMain",
-      ":koinModulesAggregate:fe::commonMain"
+      ":feat:structures:fe:driving:impl::webMain"
     ]
   },
   ":feat:structures:fe:driving:impl::commonMain": {
     "blast_radius_module": 1,
-    "blast_radius_unit": 1,
+    "blast_radius_unit": 3,
     "downstream_sample": [
+      ":feat:structures:fe:driving:impl::nonWebMain",
+      ":feat:structures:fe:driving:impl::webMain",
       ":koinModulesAggregate:fe::commonMain"
     ]
   },
   ":feat:structures:fe:driving:impl::commonTest": {
     "blast_radius_module": 1,
-    "blast_radius_unit": 1,
-    "downstream_sample": [
-      ":koinModulesAggregate:fe::commonMain"
-    ]
+    "blast_radius_unit": 0,
+    "downstream_sample": []
   },
   ":feat:structures:fe:driving:impl::nonWebMain": {
     "blast_radius_module": 1,
-    "blast_radius_unit": 1,
-    "downstream_sample": [
-      ":koinModulesAggregate:fe::commonMain"
-    ]
+    "blast_radius_unit": 0,
+    "downstream_sample": []
   },
   ":feat:structures:fe:driving:impl::webMain": {
     "blast_radius_module": 1,
-    "blast_radius_unit": 1,
-    "downstream_sample": [
-      ":koinModulesAggregate:fe::commonMain"
-    ]
+    "blast_radius_unit": 0,
+    "downstream_sample": []
   },
   ":feat:structures:fe:ports::commonMain": {
     "blast_radius_module": 10,
-    "blast_radius_unit": 30,
+    "blast_radius_unit": 20,
     "downstream_sample": [
       ":feat:findings:fe:app:impl::commonMain",
-      ":feat:findings:fe:app:impl::commonTest",
       ":feat:findings:fe:app:impl::nonWebMain",
-      ":feat:findings:fe:app:impl::nonWebTest",
       ":feat:findings:fe:app:impl::webMain",
-      ":feat:findings:fe:app:impl::webTest",
       ":feat:findings:fe:driving:impl::commonMain",
-      ":feat:findings:fe:driving:impl::commonTest",
       ":feat:findings:fe:driving:impl::nonWebMain",
       ":feat:findings:fe:driving:impl::webMain",
       ":feat:projects:fe:app:impl::commonMain",
-      ":feat:projects:fe:app:impl::commonTest",
       ":feat:projects:fe:app:impl::nonWebMain",
-      ":feat:projects:fe:app:impl::nonWebTest",
       ":feat:projects:fe:app:impl::webMain",
-      ":feat:projects:fe:app:impl::webTest",
       ":feat:projects:fe:driving:impl::commonMain",
-      ":feat:projects:fe:driving:impl::commonTest",
       ":feat:projects:fe:driving:impl::nonWebMain",
-      ":feat:projects:fe:driving:impl::webMain"
+      ":feat:projects:fe:driving:impl::webMain",
+      ":feat:structures:fe:app:impl::commonMain",
+      ":feat:structures:fe:driven:impl::commonMain",
+      ":feat:structures:fe:driven:test::commonMain",
+      ":feat:structures:fe:driving:impl::commonMain",
+      ":feat:structures:fe:driving:impl::nonWebMain",
+      ":feat:structures:fe:driving:impl::webMain",
+      ":koinModulesAggregate:fe::commonMain",
+      ":testInfra:fe::commonMain"
     ]
   },
   ":feat:sync:be:app:api::main": {
@@ -3052,13 +2671,12 @@
   },
   ":feat:sync:business:model::commonMain": {
     "blast_radius_module": 128,
-    "blast_radius_unit": 197,
+    "blast_radius_unit": 176,
     "downstream_sample": [
-      ":composeApp::androidMain",
       ":composeApp::commonMain",
+      ":composeApp::androidMain",
       ":composeApp::iosMain",
       ":composeApp::jvmMain",
-      ":composeApp::jvmTest",
       ":composeApp::nonWebMain",
       ":composeApp::webMain",
       ":core:foundation:be::main",
@@ -3073,59 +2691,56 @@
       ":feat:clients:be:app:impl::main",
       ":feat:clients:be:app:impl::test",
       ":feat:clients:be:app:model::main",
-      ":feat:clients:be:driven:impl::main"
+      ":feat:clients:be:driven:impl::main",
+      ":feat:clients:be:driven:test::main"
     ]
   },
   ":feat:sync:fe:app:api::commonMain": {
     "blast_radius_module": 15,
-    "blast_radius_unit": 51,
+    "blast_radius_unit": 34,
     "downstream_sample": [
-      ":composeApp::androidMain",
       ":composeApp::commonMain",
+      ":composeApp::androidMain",
       ":composeApp::iosMain",
       ":composeApp::jvmMain",
-      ":composeApp::jvmTest",
       ":composeApp::nonWebMain",
       ":composeApp::webMain",
       ":feat:clients:fe:app:impl::commonMain",
-      ":feat:clients:fe:app:impl::commonTest",
       ":feat:clients:fe:driving:impl::commonMain",
-      ":feat:clients:fe:driving:impl::commonTest",
       ":feat:clients:fe:driving:impl::nonWebMain",
       ":feat:clients:fe:driving:impl::webMain",
       ":feat:findings:fe:app:impl::commonMain",
-      ":feat:findings:fe:app:impl::commonTest",
       ":feat:findings:fe:app:impl::nonWebMain",
-      ":feat:findings:fe:app:impl::nonWebTest",
       ":feat:findings:fe:app:impl::webMain",
-      ":feat:findings:fe:app:impl::webTest",
-      ":feat:findings:fe:driving:impl::commonMain"
+      ":feat:findings:fe:driving:impl::commonMain",
+      ":feat:findings:fe:driving:impl::nonWebMain",
+      ":feat:findings:fe:driving:impl::webMain",
+      ":feat:inspections:fe:app:impl::commonMain",
+      ":feat:inspections:fe:driving:impl::commonMain",
+      ":feat:inspections:fe:driving:impl::nonWebMain",
+      ":feat:inspections:fe:driving:impl::webMain"
     ]
   },
   ":feat:sync:fe:app:api::commonTest": {
     "blast_radius_module": 15,
-    "blast_radius_unit": 51,
+    "blast_radius_unit": 16,
     "downstream_sample": [
-      ":composeApp::androidMain",
-      ":composeApp::commonMain",
-      ":composeApp::iosMain",
-      ":composeApp::jvmMain",
-      ":composeApp::jvmTest",
-      ":composeApp::nonWebMain",
-      ":composeApp::webMain",
-      ":feat:clients:fe:app:impl::commonMain",
       ":feat:clients:fe:app:impl::commonTest",
-      ":feat:clients:fe:driving:impl::commonMain",
       ":feat:clients:fe:driving:impl::commonTest",
-      ":feat:clients:fe:driving:impl::nonWebMain",
-      ":feat:clients:fe:driving:impl::webMain",
-      ":feat:findings:fe:app:impl::commonMain",
       ":feat:findings:fe:app:impl::commonTest",
-      ":feat:findings:fe:app:impl::nonWebMain",
       ":feat:findings:fe:app:impl::nonWebTest",
-      ":feat:findings:fe:app:impl::webMain",
       ":feat:findings:fe:app:impl::webTest",
-      ":feat:findings:fe:driving:impl::commonMain"
+      ":feat:findings:fe:driving:impl::commonTest",
+      ":feat:inspections:fe:app:impl::commonTest",
+      ":feat:inspections:fe:driving:impl::commonTest",
+      ":feat:projects:fe:app:impl::commonTest",
+      ":feat:projects:fe:app:impl::nonWebTest",
+      ":feat:projects:fe:app:impl::webTest",
+      ":feat:projects:fe:driving:impl::commonTest",
+      ":feat:structures:fe:app:impl::commonTest",
+      ":feat:structures:fe:driving:impl::commonTest",
+      ":feat:sync:fe:app:impl::commonTest",
+      ":feat:users:fe:app:impl::commonTest"
     ]
   },
   ":feat:sync:fe:app:impl::commonMain": {
@@ -3137,35 +2752,33 @@
   },
   ":feat:sync:fe:app:impl::commonTest": {
     "blast_radius_module": 1,
-    "blast_radius_unit": 1,
-    "downstream_sample": [
-      ":koinModulesAggregate:fe::commonMain"
-    ]
+    "blast_radius_unit": 0,
+    "downstream_sample": []
   },
   ":feat:sync:fe:app:model::commonMain": {
     "blast_radius_module": 19,
-    "blast_radius_unit": 56,
+    "blast_radius_unit": 38,
     "downstream_sample": [
-      ":composeApp::androidMain",
       ":composeApp::commonMain",
+      ":composeApp::androidMain",
       ":composeApp::iosMain",
       ":composeApp::jvmMain",
-      ":composeApp::jvmTest",
       ":composeApp::nonWebMain",
       ":composeApp::webMain",
       ":feat:clients:fe:app:impl::commonMain",
-      ":feat:clients:fe:app:impl::commonTest",
       ":feat:clients:fe:driving:impl::commonMain",
-      ":feat:clients:fe:driving:impl::commonTest",
       ":feat:clients:fe:driving:impl::nonWebMain",
       ":feat:clients:fe:driving:impl::webMain",
       ":feat:findings:fe:app:impl::commonMain",
-      ":feat:findings:fe:app:impl::commonTest",
       ":feat:findings:fe:app:impl::nonWebMain",
-      ":feat:findings:fe:app:impl::nonWebTest",
       ":feat:findings:fe:app:impl::webMain",
-      ":feat:findings:fe:app:impl::webTest",
-      ":feat:findings:fe:driving:impl::commonMain"
+      ":feat:findings:fe:driving:impl::commonMain",
+      ":feat:findings:fe:driving:impl::nonWebMain",
+      ":feat:findings:fe:driving:impl::webMain",
+      ":feat:inspections:fe:app:impl::commonMain",
+      ":feat:inspections:fe:driving:impl::commonMain",
+      ":feat:inspections:fe:driving:impl::nonWebMain",
+      ":feat:inspections:fe:driving:impl::webMain"
     ]
   },
   ":feat:sync:fe:driven:impl::commonMain": {
@@ -3177,59 +2790,59 @@
   },
   ":feat:sync:fe:driven:test::commonMain": {
     "blast_radius_module": 13,
-    "blast_radius_unit": 43,
+    "blast_radius_unit": 27,
     "downstream_sample": [
       ":feat:clients:fe:app:impl::commonMain",
-      ":feat:clients:fe:app:impl::commonTest",
       ":feat:clients:fe:driving:impl::commonMain",
-      ":feat:clients:fe:driving:impl::commonTest",
       ":feat:clients:fe:driving:impl::nonWebMain",
       ":feat:clients:fe:driving:impl::webMain",
       ":feat:findings:fe:app:impl::commonMain",
-      ":feat:findings:fe:app:impl::commonTest",
       ":feat:findings:fe:app:impl::nonWebMain",
-      ":feat:findings:fe:app:impl::nonWebTest",
       ":feat:findings:fe:app:impl::webMain",
-      ":feat:findings:fe:app:impl::webTest",
       ":feat:findings:fe:driving:impl::commonMain",
-      ":feat:findings:fe:driving:impl::commonTest",
       ":feat:findings:fe:driving:impl::nonWebMain",
       ":feat:findings:fe:driving:impl::webMain",
       ":feat:inspections:fe:app:impl::commonMain",
-      ":feat:inspections:fe:app:impl::commonTest",
       ":feat:inspections:fe:driving:impl::commonMain",
-      ":feat:inspections:fe:driving:impl::commonTest"
+      ":feat:inspections:fe:driving:impl::nonWebMain",
+      ":feat:inspections:fe:driving:impl::webMain",
+      ":feat:projects:fe:app:impl::commonMain",
+      ":feat:projects:fe:app:impl::nonWebMain",
+      ":feat:projects:fe:app:impl::webMain",
+      ":feat:projects:fe:driving:impl::commonMain",
+      ":feat:projects:fe:driving:impl::nonWebMain",
+      ":feat:projects:fe:driving:impl::webMain"
     ]
   },
   ":feat:sync:fe:ports::commonMain": {
     "blast_radius_module": 16,
-    "blast_radius_unit": 46,
+    "blast_radius_unit": 30,
     "downstream_sample": [
       ":feat:clients:fe:app:impl::commonMain",
-      ":feat:clients:fe:app:impl::commonTest",
       ":feat:clients:fe:driving:impl::commonMain",
-      ":feat:clients:fe:driving:impl::commonTest",
       ":feat:clients:fe:driving:impl::nonWebMain",
       ":feat:clients:fe:driving:impl::webMain",
       ":feat:findings:fe:app:impl::commonMain",
-      ":feat:findings:fe:app:impl::commonTest",
       ":feat:findings:fe:app:impl::nonWebMain",
-      ":feat:findings:fe:app:impl::nonWebTest",
       ":feat:findings:fe:app:impl::webMain",
-      ":feat:findings:fe:app:impl::webTest",
       ":feat:findings:fe:driving:impl::commonMain",
-      ":feat:findings:fe:driving:impl::commonTest",
       ":feat:findings:fe:driving:impl::nonWebMain",
       ":feat:findings:fe:driving:impl::webMain",
       ":feat:inspections:fe:app:impl::commonMain",
-      ":feat:inspections:fe:app:impl::commonTest",
       ":feat:inspections:fe:driving:impl::commonMain",
-      ":feat:inspections:fe:driving:impl::commonTest"
+      ":feat:inspections:fe:driving:impl::nonWebMain",
+      ":feat:inspections:fe:driving:impl::webMain",
+      ":feat:projects:fe:app:impl::commonMain",
+      ":feat:projects:fe:app:impl::nonWebMain",
+      ":feat:projects:fe:app:impl::webMain",
+      ":feat:projects:fe:driving:impl::commonMain",
+      ":feat:projects:fe:driving:impl::nonWebMain",
+      ":feat:projects:fe:driving:impl::webMain"
     ]
   },
   ":feat:users:app:model::commonMain": {
     "blast_radius_module": 87,
-    "blast_radius_unit": 123,
+    "blast_radius_unit": 114,
     "downstream_sample": [
       ":core:foundation:be::main",
       ":feat:authentication:be:driving:api::main",
@@ -3248,9 +2861,9 @@
       ":feat:clients:be:driving:impl::test",
       ":feat:clients:be:ports::main",
       ":feat:clients:fe:app:impl::commonMain",
-      ":feat:clients:fe:app:impl::commonTest",
       ":feat:clients:fe:driving:impl::commonMain",
-      ":feat:clients:fe:driving:impl::commonTest"
+      ":feat:clients:fe:driving:impl::nonWebMain",
+      ":feat:clients:fe:driving:impl::webMain"
     ]
   },
   ":feat:users:be:app:api::main": {
@@ -3396,7 +3009,7 @@
   },
   ":feat:users:business:model::commonMain": {
     "blast_radius_module": 92,
-    "blast_radius_unit": 134,
+    "blast_radius_unit": 121,
     "downstream_sample": [
       ":core:foundation:be::main",
       ":feat:authentication:be:driving:api::main",
@@ -3415,28 +3028,24 @@
       ":feat:clients:be:driving:impl::test",
       ":feat:clients:be:ports::main",
       ":feat:clients:business:rules::commonMain",
-      ":feat:clients:business:rules::commonTest",
       ":feat:clients:fe:app:impl::commonMain",
-      ":feat:clients:fe:app:impl::commonTest"
+      ":feat:clients:fe:driving:impl::commonMain",
+      ":feat:clients:fe:driving:impl::nonWebMain"
     ]
   },
   ":feat:users:business:rules::commonMain": {
     "blast_radius_module": 2,
-    "blast_radius_unit": 4,
+    "blast_radius_unit": 3,
     "downstream_sample": [
       ":feat:users:be:app:impl::main",
       ":feat:users:be:app:impl::test",
-      ":feat:users:fe:app:impl::commonMain",
-      ":feat:users:fe:app:impl::commonTest"
+      ":feat:users:fe:app:impl::commonMain"
     ]
   },
   ":feat:users:business:rules::commonTest": {
     "blast_radius_module": 2,
-    "blast_radius_unit": 4,
+    "blast_radius_unit": 1,
     "downstream_sample": [
-      ":feat:users:be:app:impl::main",
-      ":feat:users:be:app:impl::test",
-      ":feat:users:fe:app:impl::commonMain",
       ":feat:users:fe:app:impl::commonTest"
     ]
   },
@@ -3454,26 +3063,18 @@
   },
   ":feat:users:fe:app:api::commonMain": {
     "blast_radius_module": 6,
-    "blast_radius_unit": 20,
+    "blast_radius_unit": 12,
     "downstream_sample": [
       ":feat:clients:fe:app:impl::commonMain",
-      ":feat:clients:fe:app:impl::commonTest",
       ":feat:projects:fe:app:impl::commonMain",
-      ":feat:projects:fe:app:impl::commonTest",
       ":feat:projects:fe:app:impl::nonWebMain",
-      ":feat:projects:fe:app:impl::nonWebTest",
       ":feat:projects:fe:app:impl::webMain",
-      ":feat:projects:fe:app:impl::webTest",
       ":feat:projects:fe:driving:impl::commonMain",
-      ":feat:projects:fe:driving:impl::commonTest",
       ":feat:projects:fe:driving:impl::nonWebMain",
       ":feat:projects:fe:driving:impl::webMain",
       ":feat:reports:fe:app:impl::commonMain",
-      ":feat:reports:fe:app:impl::commonTest",
       ":feat:users:fe:app:impl::commonMain",
-      ":feat:users:fe:app:impl::commonTest",
       ":feat:users:fe:driving:impl::commonMain",
-      ":feat:users:fe:driving:impl::commonTest",
       ":feat:users:fe:driving:impl::nonWebMain",
       ":feat:users:fe:driving:impl::webMain"
     ]
@@ -3487,10 +3088,8 @@
   },
   ":feat:users:fe:app:impl::commonTest": {
     "blast_radius_module": 1,
-    "blast_radius_unit": 1,
-    "downstream_sample": [
-      ":koinModulesAggregate:fe::commonMain"
-    ]
+    "blast_radius_unit": 0,
+    "downstream_sample": []
   },
   ":feat:users:fe:driven:impl::commonMain": {
     "blast_radius_module": 1,
@@ -3501,47 +3100,42 @@
   },
   ":feat:users:fe:driven:test::commonMain": {
     "blast_radius_module": 8,
-    "blast_radius_unit": 25,
+    "blast_radius_unit": 16,
     "downstream_sample": [
       ":feat:clients:fe:app:impl::commonMain",
-      ":feat:clients:fe:app:impl::commonTest",
       ":feat:clients:fe:driving:impl::commonMain",
-      ":feat:clients:fe:driving:impl::commonTest",
       ":feat:clients:fe:driving:impl::nonWebMain",
       ":feat:clients:fe:driving:impl::webMain",
       ":feat:projects:fe:app:impl::commonMain",
-      ":feat:projects:fe:app:impl::commonTest",
       ":feat:projects:fe:app:impl::nonWebMain",
-      ":feat:projects:fe:app:impl::nonWebTest",
       ":feat:projects:fe:app:impl::webMain",
-      ":feat:projects:fe:app:impl::webTest",
       ":feat:projects:fe:driving:impl::commonMain",
-      ":feat:projects:fe:driving:impl::commonTest",
       ":feat:projects:fe:driving:impl::nonWebMain",
       ":feat:projects:fe:driving:impl::webMain",
       ":feat:reports:fe:app:impl::commonMain",
-      ":feat:reports:fe:app:impl::commonTest",
       ":feat:users:fe:app:impl::commonMain",
-      ":feat:users:fe:app:impl::commonTest"
+      ":feat:users:fe:driving:impl::commonMain",
+      ":feat:users:fe:driving:impl::nonWebMain",
+      ":feat:users:fe:driving:impl::webMain",
+      ":testInfra:fe::commonMain"
     ]
   },
   ":feat:users:fe:driving:api::commonMain": {
     "blast_radius_module": 4,
-    "blast_radius_unit": 16,
+    "blast_radius_unit": 15,
     "downstream_sample": [
-      ":composeApp::androidMain",
+      ":feat:users:fe:driving:api::nonWebMain",
+      ":feat:users:fe:driving:api::webMain",
       ":composeApp::commonMain",
+      ":composeApp::androidMain",
       ":composeApp::iosMain",
       ":composeApp::jvmMain",
-      ":composeApp::jvmTest",
       ":composeApp::nonWebMain",
       ":composeApp::webMain",
       ":feat:projects:fe:driving:impl::commonMain",
-      ":feat:projects:fe:driving:impl::commonTest",
       ":feat:projects:fe:driving:impl::nonWebMain",
       ":feat:projects:fe:driving:impl::webMain",
       ":feat:users:fe:driving:impl::commonMain",
-      ":feat:users:fe:driving:impl::commonTest",
       ":feat:users:fe:driving:impl::nonWebMain",
       ":feat:users:fe:driving:impl::webMain",
       ":koinModulesAggregate:fe::commonMain"
@@ -3549,100 +3143,72 @@
   },
   ":feat:users:fe:driving:api::nonWebMain": {
     "blast_radius_module": 4,
-    "blast_radius_unit": 16,
+    "blast_radius_unit": 6,
     "downstream_sample": [
+      ":composeApp::nonWebMain",
       ":composeApp::androidMain",
-      ":composeApp::commonMain",
       ":composeApp::iosMain",
       ":composeApp::jvmMain",
-      ":composeApp::jvmTest",
-      ":composeApp::nonWebMain",
-      ":composeApp::webMain",
-      ":feat:projects:fe:driving:impl::commonMain",
-      ":feat:projects:fe:driving:impl::commonTest",
       ":feat:projects:fe:driving:impl::nonWebMain",
-      ":feat:projects:fe:driving:impl::webMain",
-      ":feat:users:fe:driving:impl::commonMain",
-      ":feat:users:fe:driving:impl::commonTest",
-      ":feat:users:fe:driving:impl::nonWebMain",
-      ":feat:users:fe:driving:impl::webMain",
-      ":koinModulesAggregate:fe::commonMain"
+      ":feat:users:fe:driving:impl::nonWebMain"
     ]
   },
   ":feat:users:fe:driving:api::webMain": {
     "blast_radius_module": 4,
-    "blast_radius_unit": 16,
+    "blast_radius_unit": 3,
     "downstream_sample": [
-      ":composeApp::androidMain",
-      ":composeApp::commonMain",
-      ":composeApp::iosMain",
-      ":composeApp::jvmMain",
-      ":composeApp::jvmTest",
-      ":composeApp::nonWebMain",
       ":composeApp::webMain",
-      ":feat:projects:fe:driving:impl::commonMain",
-      ":feat:projects:fe:driving:impl::commonTest",
-      ":feat:projects:fe:driving:impl::nonWebMain",
       ":feat:projects:fe:driving:impl::webMain",
-      ":feat:users:fe:driving:impl::commonMain",
-      ":feat:users:fe:driving:impl::commonTest",
-      ":feat:users:fe:driving:impl::nonWebMain",
-      ":feat:users:fe:driving:impl::webMain",
-      ":koinModulesAggregate:fe::commonMain"
+      ":feat:users:fe:driving:impl::webMain"
     ]
   },
   ":feat:users:fe:driving:impl::commonMain": {
     "blast_radius_module": 1,
-    "blast_radius_unit": 1,
+    "blast_radius_unit": 3,
     "downstream_sample": [
+      ":feat:users:fe:driving:impl::nonWebMain",
+      ":feat:users:fe:driving:impl::webMain",
       ":koinModulesAggregate:fe::commonMain"
     ]
   },
   ":feat:users:fe:driving:impl::commonTest": {
     "blast_radius_module": 1,
-    "blast_radius_unit": 1,
-    "downstream_sample": [
-      ":koinModulesAggregate:fe::commonMain"
-    ]
+    "blast_radius_unit": 0,
+    "downstream_sample": []
   },
   ":feat:users:fe:driving:impl::nonWebMain": {
     "blast_radius_module": 1,
-    "blast_radius_unit": 1,
-    "downstream_sample": [
-      ":koinModulesAggregate:fe::commonMain"
-    ]
+    "blast_radius_unit": 0,
+    "downstream_sample": []
   },
   ":feat:users:fe:driving:impl::webMain": {
     "blast_radius_module": 1,
-    "blast_radius_unit": 1,
-    "downstream_sample": [
-      ":koinModulesAggregate:fe::commonMain"
-    ]
+    "blast_radius_unit": 0,
+    "downstream_sample": []
   },
   ":feat:users:fe:ports::commonMain": {
     "blast_radius_module": 11,
-    "blast_radius_unit": 28,
+    "blast_radius_unit": 19,
     "downstream_sample": [
       ":feat:clients:fe:app:impl::commonMain",
-      ":feat:clients:fe:app:impl::commonTest",
       ":feat:clients:fe:driving:impl::commonMain",
-      ":feat:clients:fe:driving:impl::commonTest",
       ":feat:clients:fe:driving:impl::nonWebMain",
       ":feat:clients:fe:driving:impl::webMain",
       ":feat:projects:fe:app:impl::commonMain",
-      ":feat:projects:fe:app:impl::commonTest",
       ":feat:projects:fe:app:impl::nonWebMain",
-      ":feat:projects:fe:app:impl::nonWebTest",
       ":feat:projects:fe:app:impl::webMain",
-      ":feat:projects:fe:app:impl::webTest",
       ":feat:projects:fe:driving:impl::commonMain",
-      ":feat:projects:fe:driving:impl::commonTest",
       ":feat:projects:fe:driving:impl::nonWebMain",
       ":feat:projects:fe:driving:impl::webMain",
       ":feat:reports:fe:app:impl::commonMain",
-      ":feat:reports:fe:app:impl::commonTest",
       ":feat:users:fe:app:impl::commonMain",
-      ":feat:users:fe:app:impl::commonTest"
+      ":feat:users:fe:driven:impl::commonMain",
+      ":feat:users:fe:driven:test::commonMain",
+      ":feat:users:fe:driving:impl::commonMain",
+      ":feat:users:fe:driving:impl::nonWebMain",
+      ":feat:users:fe:driving:impl::webMain",
+      ":koinModulesAggregate:fe::commonMain",
+      ":testInfra:fe::commonMain"
     ]
   },
   ":featShared:database:be:driven:api::main": {
@@ -3677,17 +3243,16 @@
   },
   ":featShared:database:fe:driven:api::commonMain": {
     "blast_radius_module": 18,
-    "blast_radius_unit": 27,
+    "blast_radius_unit": 26,
     "downstream_sample": [
-      ":feat:authentication:fe:driven:impl::androidMain",
       ":feat:authentication:fe:driven:impl::commonMain",
+      ":feat:authentication:fe:driven:impl::androidMain",
       ":feat:authentication:fe:driven:impl::iosMain",
       ":feat:authentication:fe:driven:impl::jvmMain",
       ":feat:authentication:fe:driven:impl::webMain",
       ":feat:clients:fe:driven:impl::commonMain",
       ":feat:clients:fe:driven:test::commonMain",
       ":feat:findings:fe:driven:impl::commonMain",
-      ":feat:findings:fe:driven:impl::jvmTest",
       ":feat:findings:fe:driven:test::commonMain",
       ":feat:inspections:fe:driven:impl::commonMain",
       ":feat:inspections:fe:driven:test::commonMain",
@@ -3698,7 +3263,8 @@
       ":feat:structures:fe:driven:impl::commonMain",
       ":feat:structures:fe:driven:test::commonMain",
       ":feat:sync:fe:driven:impl::commonMain",
-      ":feat:users:fe:driven:impl::commonMain"
+      ":feat:users:fe:driven:impl::commonMain",
+      ":feat:users:fe:driven:test::commonMain"
     ]
   },
   ":featShared:database:fe:driven:impl::commonMain": {
@@ -3710,38 +3276,34 @@
   },
   ":featShared:database:fe:driven:test::androidMain": {
     "blast_radius_module": 1,
-    "blast_radius_unit": 1,
-    "downstream_sample": [
-      ":testInfra:fe::commonMain"
-    ]
+    "blast_radius_unit": 0,
+    "downstream_sample": []
   },
   ":featShared:database:fe:driven:test::commonMain": {
     "blast_radius_module": 1,
-    "blast_radius_unit": 1,
+    "blast_radius_unit": 5,
     "downstream_sample": [
+      ":featShared:database:fe:driven:test::androidMain",
+      ":featShared:database:fe:driven:test::iosMain",
+      ":featShared:database:fe:driven:test::jvmMain",
+      ":featShared:database:fe:driven:test::webMain",
       ":testInfra:fe::commonMain"
     ]
   },
   ":featShared:database:fe:driven:test::iosMain": {
     "blast_radius_module": 1,
-    "blast_radius_unit": 1,
-    "downstream_sample": [
-      ":testInfra:fe::commonMain"
-    ]
+    "blast_radius_unit": 0,
+    "downstream_sample": []
   },
   ":featShared:database:fe:driven:test::jvmMain": {
     "blast_radius_module": 1,
-    "blast_radius_unit": 1,
-    "downstream_sample": [
-      ":testInfra:fe::commonMain"
-    ]
+    "blast_radius_unit": 0,
+    "downstream_sample": []
   },
   ":featShared:database:fe:driven:test::webMain": {
     "blast_radius_module": 1,
-    "blast_radius_unit": 1,
-    "downstream_sample": [
-      ":testInfra:fe::commonMain"
-    ]
+    "blast_radius_unit": 0,
+    "downstream_sample": []
   },
   ":featShared:storage:be:driven:impl::main": {
     "blast_radius_module": 1,
@@ -3768,13 +3330,12 @@
   },
   ":koinModulesAggregate:fe::commonMain": {
     "blast_radius_module": 2,
-    "blast_radius_unit": 8,
+    "blast_radius_unit": 7,
     "downstream_sample": [
-      ":composeApp::androidMain",
       ":composeApp::commonMain",
+      ":composeApp::androidMain",
       ":composeApp::iosMain",
       ":composeApp::jvmMain",
-      ":composeApp::jvmTest",
       ":composeApp::nonWebMain",
       ":composeApp::webMain",
       ":testInfra:fe::commonMain"
@@ -3793,157 +3354,96 @@
     ]
   },
   ":lib:configuration:common:api::commonMain": {
-    "blast_radius_module": 11,
-    "blast_radius_unit": 36,
+    "blast_radius_module": 14,
+    "blast_radius_unit": 30,
     "downstream_sample": [
-      ":composeApp::androidMain",
-      ":composeApp::commonMain",
-      ":composeApp::iosMain",
-      ":composeApp::jvmMain",
-      ":composeApp::jvmTest",
-      ":composeApp::nonWebMain",
-      ":composeApp::webMain",
       ":feat:authentication:be:driving:impl::main",
       ":feat:authentication:be:driving:impl::test",
-      ":feat:authentication:fe:driven:impl::androidMain",
       ":feat:authentication:fe:driven:impl::commonMain",
+      ":feat:authentication:fe:driven:impl::androidMain",
       ":feat:authentication:fe:driven:impl::iosMain",
       ":feat:authentication:fe:driven:impl::jvmMain",
       ":feat:authentication:fe:driven:impl::webMain",
       ":feat:authentication:fe:driving:impl::commonMain",
+      ":feat:sync:fe:driven:impl::commonMain",
+      ":featShared:database:fe:driven:impl::commonMain",
       ":featShared:storage:be:driven:impl::main",
       ":lib:configuration:be:api::main",
       ":lib:configuration:fe:api::commonMain",
       ":lib:configuration:fe:api::jvmMain",
-      ":lib:configuration:fe:api::mobileMain"
+      ":lib:configuration:fe:api::mobileMain",
+      ":lib:configuration:fe:api::webMain",
+      ":lib:network:be:impl::main",
+      ":lib:network:fe:impl::commonMain",
+      ":lib:network:fe:impl::jsMain",
+      ":lib:network:fe:impl::nonWebMain"
     ]
   },
   ":lib:configuration:fe:api::commonMain": {
-    "blast_radius_module": 4,
-    "blast_radius_unit": 24,
+    "blast_radius_module": 7,
+    "blast_radius_unit": 21,
     "downstream_sample": [
-      ":composeApp::androidMain",
-      ":composeApp::commonMain",
-      ":composeApp::iosMain",
-      ":composeApp::jvmMain",
-      ":composeApp::jvmTest",
-      ":composeApp::nonWebMain",
-      ":composeApp::webMain",
-      ":feat:authentication:fe:driven:impl::androidMain",
+      ":lib:configuration:fe:api::jvmMain",
+      ":lib:configuration:fe:api::mobileMain",
+      ":lib:configuration:fe:api::webMain",
       ":feat:authentication:fe:driven:impl::commonMain",
+      ":feat:authentication:fe:driven:impl::androidMain",
       ":feat:authentication:fe:driven:impl::iosMain",
       ":feat:authentication:fe:driven:impl::jvmMain",
       ":feat:authentication:fe:driven:impl::webMain",
-      ":lib:design:fe::androidMain",
-      ":lib:design:fe::commonMain",
-      ":lib:design:fe::commonTest",
-      ":lib:design:fe::jvmMain",
-      ":lib:design:fe::nonAndroidMain",
-      ":lib:design:fe::nonJvmMain",
+      ":feat:sync:fe:driven:impl::commonMain",
+      ":featShared:database:fe:driven:impl::commonMain",
       ":lib:network:fe:impl::commonMain",
-      ":lib:network:fe:impl::commonTest"
+      ":lib:network:fe:impl::jsMain",
+      ":lib:network:fe:impl::nonWebMain",
+      ":lib:network:fe:impl::wasmJsMain",
+      ":lib:network:fe:impl::webMain",
+      ":lib:storage:fe:impl::commonMain",
+      ":lib:storage:fe:impl::androidMain",
+      ":lib:storage:fe:impl::iosMain",
+      ":lib:storage:fe:impl::jvmMain",
+      ":lib:storage:fe:impl::nonWebMain"
     ]
   },
   ":lib:configuration:fe:api::jvmMain": {
-    "blast_radius_module": 4,
-    "blast_radius_unit": 24,
+    "blast_radius_module": 7,
+    "blast_radius_unit": 2,
     "downstream_sample": [
-      ":composeApp::androidMain",
-      ":composeApp::commonMain",
-      ":composeApp::iosMain",
-      ":composeApp::jvmMain",
-      ":composeApp::jvmTest",
-      ":composeApp::nonWebMain",
-      ":composeApp::webMain",
-      ":feat:authentication:fe:driven:impl::androidMain",
-      ":feat:authentication:fe:driven:impl::commonMain",
-      ":feat:authentication:fe:driven:impl::iosMain",
       ":feat:authentication:fe:driven:impl::jvmMain",
-      ":feat:authentication:fe:driven:impl::webMain",
-      ":lib:design:fe::androidMain",
-      ":lib:design:fe::commonMain",
-      ":lib:design:fe::commonTest",
-      ":lib:design:fe::jvmMain",
-      ":lib:design:fe::nonAndroidMain",
-      ":lib:design:fe::nonJvmMain",
-      ":lib:network:fe:impl::commonMain",
-      ":lib:network:fe:impl::commonTest"
+      ":lib:storage:fe:impl::jvmMain"
     ]
   },
   ":lib:configuration:fe:api::mobileMain": {
-    "blast_radius_module": 4,
-    "blast_radius_unit": 24,
-    "downstream_sample": [
-      ":composeApp::androidMain",
-      ":composeApp::commonMain",
-      ":composeApp::iosMain",
-      ":composeApp::jvmMain",
-      ":composeApp::jvmTest",
-      ":composeApp::nonWebMain",
-      ":composeApp::webMain",
-      ":feat:authentication:fe:driven:impl::androidMain",
-      ":feat:authentication:fe:driven:impl::commonMain",
-      ":feat:authentication:fe:driven:impl::iosMain",
-      ":feat:authentication:fe:driven:impl::jvmMain",
-      ":feat:authentication:fe:driven:impl::webMain",
-      ":lib:design:fe::androidMain",
-      ":lib:design:fe::commonMain",
-      ":lib:design:fe::commonTest",
-      ":lib:design:fe::jvmMain",
-      ":lib:design:fe::nonAndroidMain",
-      ":lib:design:fe::nonJvmMain",
-      ":lib:network:fe:impl::commonMain",
-      ":lib:network:fe:impl::commonTest"
-    ]
+    "blast_radius_module": 7,
+    "blast_radius_unit": 0,
+    "downstream_sample": []
   },
   ":lib:configuration:fe:api::webMain": {
-    "blast_radius_module": 4,
-    "blast_radius_unit": 24,
+    "blast_radius_module": 7,
+    "blast_radius_unit": 5,
     "downstream_sample": [
-      ":composeApp::androidMain",
-      ":composeApp::commonMain",
-      ":composeApp::iosMain",
-      ":composeApp::jvmMain",
-      ":composeApp::jvmTest",
-      ":composeApp::nonWebMain",
-      ":composeApp::webMain",
-      ":feat:authentication:fe:driven:impl::androidMain",
-      ":feat:authentication:fe:driven:impl::commonMain",
-      ":feat:authentication:fe:driven:impl::iosMain",
-      ":feat:authentication:fe:driven:impl::jvmMain",
       ":feat:authentication:fe:driven:impl::webMain",
-      ":lib:design:fe::androidMain",
-      ":lib:design:fe::commonMain",
-      ":lib:design:fe::commonTest",
-      ":lib:design:fe::jvmMain",
-      ":lib:design:fe::nonAndroidMain",
-      ":lib:design:fe::nonJvmMain",
-      ":lib:network:fe:impl::commonMain",
-      ":lib:network:fe:impl::commonTest"
+      ":lib:network:fe:impl::webMain",
+      ":lib:network:fe:impl::jsMain",
+      ":lib:network:fe:impl::wasmJsMain",
+      ":lib:storage:fe:impl::webMain"
     ]
   },
   ":lib:database:fe::androidMain": {
     "blast_radius_module": 8,
-    "blast_radius_unit": 9,
-    "downstream_sample": [
-      ":feat:clients:fe:driven:impl::commonMain",
-      ":feat:findings:fe:driven:impl::commonMain",
-      ":feat:findings:fe:driven:impl::jvmTest",
-      ":feat:inspections:fe:driven:impl::commonMain",
-      ":feat:projects:fe:driven:impl::commonMain",
-      ":feat:structures:fe:driven:impl::commonMain",
-      ":feat:sync:fe:driven:impl::commonMain",
-      ":feat:users:fe:driven:impl::commonMain",
-      ":featShared:database:fe:driven:impl::commonMain"
-    ]
+    "blast_radius_unit": 0,
+    "downstream_sample": []
   },
   ":lib:database:fe::commonMain": {
     "blast_radius_module": 8,
-    "blast_radius_unit": 9,
+    "blast_radius_unit": 12,
     "downstream_sample": [
+      ":lib:database:fe::androidMain",
+      ":lib:database:fe::iosMain",
+      ":lib:database:fe::jvmMain",
+      ":lib:database:fe::webMain",
       ":feat:clients:fe:driven:impl::commonMain",
       ":feat:findings:fe:driven:impl::commonMain",
-      ":feat:findings:fe:driven:impl::jvmTest",
       ":feat:inspections:fe:driven:impl::commonMain",
       ":feat:projects:fe:driven:impl::commonMain",
       ":feat:structures:fe:driven:impl::commonMain",
@@ -3954,48 +3454,18 @@
   },
   ":lib:database:fe::iosMain": {
     "blast_radius_module": 8,
-    "blast_radius_unit": 9,
-    "downstream_sample": [
-      ":feat:clients:fe:driven:impl::commonMain",
-      ":feat:findings:fe:driven:impl::commonMain",
-      ":feat:findings:fe:driven:impl::jvmTest",
-      ":feat:inspections:fe:driven:impl::commonMain",
-      ":feat:projects:fe:driven:impl::commonMain",
-      ":feat:structures:fe:driven:impl::commonMain",
-      ":feat:sync:fe:driven:impl::commonMain",
-      ":feat:users:fe:driven:impl::commonMain",
-      ":featShared:database:fe:driven:impl::commonMain"
-    ]
+    "blast_radius_unit": 0,
+    "downstream_sample": []
   },
   ":lib:database:fe::jvmMain": {
     "blast_radius_module": 8,
-    "blast_radius_unit": 9,
-    "downstream_sample": [
-      ":feat:clients:fe:driven:impl::commonMain",
-      ":feat:findings:fe:driven:impl::commonMain",
-      ":feat:findings:fe:driven:impl::jvmTest",
-      ":feat:inspections:fe:driven:impl::commonMain",
-      ":feat:projects:fe:driven:impl::commonMain",
-      ":feat:structures:fe:driven:impl::commonMain",
-      ":feat:sync:fe:driven:impl::commonMain",
-      ":feat:users:fe:driven:impl::commonMain",
-      ":featShared:database:fe:driven:impl::commonMain"
-    ]
+    "blast_radius_unit": 0,
+    "downstream_sample": []
   },
   ":lib:database:fe::webMain": {
     "blast_radius_module": 8,
-    "blast_radius_unit": 9,
-    "downstream_sample": [
-      ":feat:clients:fe:driven:impl::commonMain",
-      ":feat:findings:fe:driven:impl::commonMain",
-      ":feat:findings:fe:driven:impl::jvmTest",
-      ":feat:inspections:fe:driven:impl::commonMain",
-      ":feat:projects:fe:driven:impl::commonMain",
-      ":feat:structures:fe:driven:impl::commonMain",
-      ":feat:sync:fe:driven:impl::commonMain",
-      ":feat:users:fe:driven:impl::commonMain",
-      ":featShared:database:fe:driven:impl::commonMain"
-    ]
+    "blast_radius_unit": 0,
+    "downstream_sample": []
   },
   ":lib:database:fe:test::commonMain": {
     "blast_radius_module": 7,
@@ -4011,159 +3481,42 @@
     ]
   },
   ":lib:design:fe::androidMain": {
-    "blast_radius_module": 16,
-    "blast_radius_unit": 52,
-    "downstream_sample": [
-      ":composeApp::androidMain",
-      ":composeApp::commonMain",
-      ":composeApp::iosMain",
-      ":composeApp::jvmMain",
-      ":composeApp::jvmTest",
-      ":composeApp::nonWebMain",
-      ":composeApp::webMain",
-      ":feat:authentication:fe:driving:api::commonMain",
-      ":feat:authentication:fe:driving:impl::commonMain",
-      ":feat:clients:fe:driving:api::commonMain",
-      ":feat:clients:fe:driving:api::nonWebMain",
-      ":feat:clients:fe:driving:api::webMain",
-      ":feat:clients:fe:driving:impl::commonMain",
-      ":feat:clients:fe:driving:impl::commonTest",
-      ":feat:clients:fe:driving:impl::nonWebMain",
-      ":feat:clients:fe:driving:impl::webMain",
-      ":feat:findings:fe:driving:api::commonMain",
-      ":feat:findings:fe:driving:api::nonWebMain",
-      ":feat:findings:fe:driving:api::webMain",
-      ":feat:findings:fe:driving:impl::commonMain"
-    ]
+    "blast_radius_module": 0,
+    "blast_radius_unit": 0,
+    "downstream_sample": []
   },
   ":lib:design:fe::commonMain": {
-    "blast_radius_module": 16,
-    "blast_radius_unit": 52,
+    "blast_radius_module": 0,
+    "blast_radius_unit": 4,
     "downstream_sample": [
-      ":composeApp::androidMain",
-      ":composeApp::commonMain",
-      ":composeApp::iosMain",
-      ":composeApp::jvmMain",
-      ":composeApp::jvmTest",
-      ":composeApp::nonWebMain",
-      ":composeApp::webMain",
-      ":feat:authentication:fe:driving:api::commonMain",
-      ":feat:authentication:fe:driving:impl::commonMain",
-      ":feat:clients:fe:driving:api::commonMain",
-      ":feat:clients:fe:driving:api::nonWebMain",
-      ":feat:clients:fe:driving:api::webMain",
-      ":feat:clients:fe:driving:impl::commonMain",
-      ":feat:clients:fe:driving:impl::commonTest",
-      ":feat:clients:fe:driving:impl::nonWebMain",
-      ":feat:clients:fe:driving:impl::webMain",
-      ":feat:findings:fe:driving:api::commonMain",
-      ":feat:findings:fe:driving:api::nonWebMain",
-      ":feat:findings:fe:driving:api::webMain",
-      ":feat:findings:fe:driving:impl::commonMain"
+      ":lib:design:fe::androidMain",
+      ":lib:design:fe::jvmMain",
+      ":lib:design:fe::nonAndroidMain",
+      ":lib:design:fe::nonJvmMain"
     ]
   },
   ":lib:design:fe::commonTest": {
-    "blast_radius_module": 16,
-    "blast_radius_unit": 52,
-    "downstream_sample": [
-      ":composeApp::androidMain",
-      ":composeApp::commonMain",
-      ":composeApp::iosMain",
-      ":composeApp::jvmMain",
-      ":composeApp::jvmTest",
-      ":composeApp::nonWebMain",
-      ":composeApp::webMain",
-      ":feat:authentication:fe:driving:api::commonMain",
-      ":feat:authentication:fe:driving:impl::commonMain",
-      ":feat:clients:fe:driving:api::commonMain",
-      ":feat:clients:fe:driving:api::nonWebMain",
-      ":feat:clients:fe:driving:api::webMain",
-      ":feat:clients:fe:driving:impl::commonMain",
-      ":feat:clients:fe:driving:impl::commonTest",
-      ":feat:clients:fe:driving:impl::nonWebMain",
-      ":feat:clients:fe:driving:impl::webMain",
-      ":feat:findings:fe:driving:api::commonMain",
-      ":feat:findings:fe:driving:api::nonWebMain",
-      ":feat:findings:fe:driving:api::webMain",
-      ":feat:findings:fe:driving:impl::commonMain"
-    ]
+    "blast_radius_module": 0,
+    "blast_radius_unit": 0,
+    "downstream_sample": []
   },
   ":lib:design:fe::jvmMain": {
-    "blast_radius_module": 16,
-    "blast_radius_unit": 52,
-    "downstream_sample": [
-      ":composeApp::androidMain",
-      ":composeApp::commonMain",
-      ":composeApp::iosMain",
-      ":composeApp::jvmMain",
-      ":composeApp::jvmTest",
-      ":composeApp::nonWebMain",
-      ":composeApp::webMain",
-      ":feat:authentication:fe:driving:api::commonMain",
-      ":feat:authentication:fe:driving:impl::commonMain",
-      ":feat:clients:fe:driving:api::commonMain",
-      ":feat:clients:fe:driving:api::nonWebMain",
-      ":feat:clients:fe:driving:api::webMain",
-      ":feat:clients:fe:driving:impl::commonMain",
-      ":feat:clients:fe:driving:impl::commonTest",
-      ":feat:clients:fe:driving:impl::nonWebMain",
-      ":feat:clients:fe:driving:impl::webMain",
-      ":feat:findings:fe:driving:api::commonMain",
-      ":feat:findings:fe:driving:api::nonWebMain",
-      ":feat:findings:fe:driving:api::webMain",
-      ":feat:findings:fe:driving:impl::commonMain"
-    ]
+    "blast_radius_module": 0,
+    "blast_radius_unit": 0,
+    "downstream_sample": []
   },
   ":lib:design:fe::nonAndroidMain": {
-    "blast_radius_module": 16,
-    "blast_radius_unit": 52,
+    "blast_radius_module": 0,
+    "blast_radius_unit": 1,
     "downstream_sample": [
-      ":composeApp::androidMain",
-      ":composeApp::commonMain",
-      ":composeApp::iosMain",
-      ":composeApp::jvmMain",
-      ":composeApp::jvmTest",
-      ":composeApp::nonWebMain",
-      ":composeApp::webMain",
-      ":feat:authentication:fe:driving:api::commonMain",
-      ":feat:authentication:fe:driving:impl::commonMain",
-      ":feat:clients:fe:driving:api::commonMain",
-      ":feat:clients:fe:driving:api::nonWebMain",
-      ":feat:clients:fe:driving:api::webMain",
-      ":feat:clients:fe:driving:impl::commonMain",
-      ":feat:clients:fe:driving:impl::commonTest",
-      ":feat:clients:fe:driving:impl::nonWebMain",
-      ":feat:clients:fe:driving:impl::webMain",
-      ":feat:findings:fe:driving:api::commonMain",
-      ":feat:findings:fe:driving:api::nonWebMain",
-      ":feat:findings:fe:driving:api::webMain",
-      ":feat:findings:fe:driving:impl::commonMain"
+      ":lib:design:fe::jvmMain"
     ]
   },
   ":lib:design:fe::nonJvmMain": {
-    "blast_radius_module": 16,
-    "blast_radius_unit": 52,
+    "blast_radius_module": 0,
+    "blast_radius_unit": 1,
     "downstream_sample": [
-      ":composeApp::androidMain",
-      ":composeApp::commonMain",
-      ":composeApp::iosMain",
-      ":composeApp::jvmMain",
-      ":composeApp::jvmTest",
-      ":composeApp::nonWebMain",
-      ":composeApp::webMain",
-      ":feat:authentication:fe:driving:api::commonMain",
-      ":feat:authentication:fe:driving:impl::commonMain",
-      ":feat:clients:fe:driving:api::commonMain",
-      ":feat:clients:fe:driving:api::nonWebMain",
-      ":feat:clients:fe:driving:api::webMain",
-      ":feat:clients:fe:driving:impl::commonMain",
-      ":feat:clients:fe:driving:impl::commonTest",
-      ":feat:clients:fe:driving:impl::nonWebMain",
-      ":feat:clients:fe:driving:impl::webMain",
-      ":feat:findings:fe:driving:api::commonMain",
-      ":feat:findings:fe:driving:api::nonWebMain",
-      ":feat:findings:fe:driving:api::webMain",
-      ":feat:findings:fe:driving:impl::commonMain"
+      ":lib:design:fe::androidMain"
     ]
   },
   ":lib:network:be:api::main": {
@@ -4227,11 +3580,10 @@
   },
   ":lib:network:common:impl::commonMain": {
     "blast_radius_module": 2,
-    "blast_radius_unit": 7,
+    "blast_radius_unit": 6,
     "downstream_sample": [
       ":lib:network:be:impl::main",
       ":lib:network:fe:impl::commonMain",
-      ":lib:network:fe:impl::commonTest",
       ":lib:network:fe:impl::jsMain",
       ":lib:network:fe:impl::nonWebMain",
       ":lib:network:fe:impl::wasmJsMain",
@@ -4240,10 +3592,10 @@
   },
   ":lib:network:fe:api::commonMain": {
     "blast_radius_module": 20,
-    "blast_radius_unit": 35,
+    "blast_radius_unit": 33,
     "downstream_sample": [
-      ":feat:authentication:fe:driven:impl::androidMain",
       ":feat:authentication:fe:driven:impl::commonMain",
+      ":feat:authentication:fe:driven:impl::androidMain",
       ":feat:authentication:fe:driven:impl::iosMain",
       ":feat:authentication:fe:driven:impl::jvmMain",
       ":feat:authentication:fe:driven:impl::webMain",
@@ -4251,7 +3603,6 @@
       ":feat:clients:fe:driven:impl::commonMain",
       ":feat:clients:fe:driven:test::commonMain",
       ":feat:findings:fe:driven:impl::commonMain",
-      ":feat:findings:fe:driven:impl::jvmTest",
       ":feat:findings:fe:driven:test::commonMain",
       ":feat:inspections:fe:driven:impl::commonMain",
       ":feat:inspections:fe:driven:test::commonMain",
@@ -4261,67 +3612,61 @@
       ":feat:reports:fe:driven:test::commonMain",
       ":feat:structures:fe:driven:impl::commonMain",
       ":feat:structures:fe:driven:test::commonMain",
-      ":feat:sync:fe:driven:impl::commonMain"
+      ":feat:sync:fe:driven:impl::commonMain",
+      ":feat:users:fe:driven:impl::commonMain"
     ]
   },
   ":lib:network:fe:impl::commonMain": {
     "blast_radius_module": 1,
-    "blast_radius_unit": 1,
+    "blast_radius_unit": 5,
     "downstream_sample": [
+      ":lib:network:fe:impl::jsMain",
+      ":lib:network:fe:impl::nonWebMain",
+      ":lib:network:fe:impl::wasmJsMain",
+      ":lib:network:fe:impl::webMain",
       ":koinModulesAggregate:fe::commonMain"
     ]
   },
   ":lib:network:fe:impl::commonTest": {
     "blast_radius_module": 1,
-    "blast_radius_unit": 1,
-    "downstream_sample": [
-      ":koinModulesAggregate:fe::commonMain"
-    ]
+    "blast_radius_unit": 0,
+    "downstream_sample": []
   },
   ":lib:network:fe:impl::jsMain": {
     "blast_radius_module": 1,
-    "blast_radius_unit": 1,
-    "downstream_sample": [
-      ":koinModulesAggregate:fe::commonMain"
-    ]
+    "blast_radius_unit": 0,
+    "downstream_sample": []
   },
   ":lib:network:fe:impl::nonWebMain": {
     "blast_radius_module": 1,
-    "blast_radius_unit": 1,
-    "downstream_sample": [
-      ":koinModulesAggregate:fe::commonMain"
-    ]
+    "blast_radius_unit": 0,
+    "downstream_sample": []
   },
   ":lib:network:fe:impl::wasmJsMain": {
     "blast_radius_module": 1,
-    "blast_radius_unit": 1,
-    "downstream_sample": [
-      ":koinModulesAggregate:fe::commonMain"
-    ]
+    "blast_radius_unit": 0,
+    "downstream_sample": []
   },
   ":lib:network:fe:impl::webMain": {
     "blast_radius_module": 1,
-    "blast_radius_unit": 1,
+    "blast_radius_unit": 2,
     "downstream_sample": [
-      ":koinModulesAggregate:fe::commonMain"
+      ":lib:network:fe:impl::jsMain",
+      ":lib:network:fe:impl::wasmJsMain"
     ]
   },
   ":lib:network:fe:test::commonMain": {
     "blast_radius_module": 10,
-    "blast_radius_unit": 18,
+    "blast_radius_unit": 14,
     "downstream_sample": [
       ":feat:clients:fe:driven:test::commonMain",
       ":feat:findings:fe:driven:test::commonMain",
       ":feat:inspections:fe:driven:test::commonMain",
       ":feat:projects:fe:app:impl::commonMain",
-      ":feat:projects:fe:app:impl::commonTest",
       ":feat:projects:fe:app:impl::nonWebMain",
-      ":feat:projects:fe:app:impl::nonWebTest",
       ":feat:projects:fe:app:impl::webMain",
-      ":feat:projects:fe:app:impl::webTest",
       ":feat:projects:fe:driven:test::commonMain",
       ":feat:projects:fe:driving:impl::commonMain",
-      ":feat:projects:fe:driving:impl::commonTest",
       ":feat:projects:fe:driving:impl::nonWebMain",
       ":feat:projects:fe:driving:impl::webMain",
       ":feat:reports:fe:driven:test::commonMain",
@@ -4383,14 +3728,14 @@
     ]
   },
   ":lib:routing:fe::commonMain": {
-    "blast_radius_module": 15,
-    "blast_radius_unit": 51,
+    "blast_radius_module": 16,
+    "blast_radius_unit": 45,
     "downstream_sample": [
-      ":composeApp::androidMain",
+      ":lib:routing:fe::webMain",
       ":composeApp::commonMain",
+      ":composeApp::androidMain",
       ":composeApp::iosMain",
       ":composeApp::jvmMain",
-      ":composeApp::jvmTest",
       ":composeApp::nonWebMain",
       ":composeApp::webMain",
       ":feat:authentication:fe:driving:api::commonMain",
@@ -4399,39 +3744,32 @@
       ":feat:clients:fe:driving:api::nonWebMain",
       ":feat:clients:fe:driving:api::webMain",
       ":feat:clients:fe:driving:impl::commonMain",
-      ":feat:clients:fe:driving:impl::commonTest",
       ":feat:clients:fe:driving:impl::nonWebMain",
       ":feat:clients:fe:driving:impl::webMain",
       ":feat:findings:fe:driving:api::commonMain",
       ":feat:findings:fe:driving:api::nonWebMain",
       ":feat:findings:fe:driving:api::webMain",
-      ":feat:findings:fe:driving:impl::commonMain"
+      ":feat:findings:fe:driving:impl::commonMain",
+      ":feat:findings:fe:driving:impl::nonWebMain"
     ]
   },
   ":lib:routing:fe::webMain": {
-    "blast_radius_module": 15,
-    "blast_radius_unit": 51,
+    "blast_radius_module": 16,
+    "blast_radius_unit": 13,
     "downstream_sample": [
-      ":composeApp::androidMain",
-      ":composeApp::commonMain",
-      ":composeApp::iosMain",
-      ":composeApp::jvmMain",
-      ":composeApp::jvmTest",
-      ":composeApp::nonWebMain",
       ":composeApp::webMain",
-      ":feat:authentication:fe:driving:api::commonMain",
-      ":feat:authentication:fe:driving:impl::commonMain",
-      ":feat:clients:fe:driving:api::commonMain",
-      ":feat:clients:fe:driving:api::nonWebMain",
       ":feat:clients:fe:driving:api::webMain",
-      ":feat:clients:fe:driving:impl::commonMain",
-      ":feat:clients:fe:driving:impl::commonTest",
-      ":feat:clients:fe:driving:impl::nonWebMain",
       ":feat:clients:fe:driving:impl::webMain",
-      ":feat:findings:fe:driving:api::commonMain",
-      ":feat:findings:fe:driving:api::nonWebMain",
       ":feat:findings:fe:driving:api::webMain",
-      ":feat:findings:fe:driving:impl::commonMain"
+      ":feat:findings:fe:driving:impl::webMain",
+      ":feat:inspections:fe:driving:api::webMain",
+      ":feat:inspections:fe:driving:impl::webMain",
+      ":feat:projects:fe:driving:api::webMain",
+      ":feat:projects:fe:driving:impl::webMain",
+      ":feat:structures:fe:driving:api::webMain",
+      ":feat:structures:fe:driving:impl::webMain",
+      ":feat:users:fe:driving:api::webMain",
+      ":feat:users:fe:driving:impl::webMain"
     ]
   },
   ":lib:storage:be:api::main": {
@@ -4475,8 +3813,8 @@
     "downstream_sample": [
       ":lib:storage:be:impl::main",
       ":lib:storage:be:impl::test",
-      ":lib:storage:fe:impl::androidMain",
       ":lib:storage:fe:impl::commonMain",
+      ":lib:storage:fe:impl::androidMain",
       ":lib:storage:fe:impl::iosMain",
       ":lib:storage:fe:impl::jvmMain",
       ":lib:storage:fe:impl::nonWebMain",
@@ -4484,86 +3822,85 @@
     ]
   },
   ":lib:storage:fe:api::commonMain": {
-    "blast_radius_module": 5,
-    "blast_radius_unit": 15,
+    "blast_radius_module": 8,
+    "blast_radius_unit": 24,
     "downstream_sample": [
+      ":feat:authentication:fe:driven:impl::commonMain",
+      ":feat:authentication:fe:driven:impl::androidMain",
+      ":feat:authentication:fe:driven:impl::iosMain",
+      ":feat:authentication:fe:driven:impl::jvmMain",
+      ":feat:authentication:fe:driven:impl::webMain",
       ":feat:structures:fe:driven:impl::commonMain",
       ":feat:structures:fe:driving:impl::commonMain",
-      ":feat:structures:fe:driving:impl::commonTest",
       ":feat:structures:fe:driving:impl::nonWebMain",
       ":feat:structures:fe:driving:impl::webMain",
       ":featShared:storage:fe:driven:impl::commonMain",
-      ":lib:storage:fe:impl::androidMain",
+      ":lib:database:fe::commonMain",
+      ":lib:database:fe::androidMain",
+      ":lib:database:fe::iosMain",
+      ":lib:database:fe::jvmMain",
+      ":lib:database:fe::webMain",
       ":lib:storage:fe:impl::commonMain",
+      ":lib:storage:fe:impl::androidMain",
       ":lib:storage:fe:impl::iosMain",
       ":lib:storage:fe:impl::jvmMain",
-      ":lib:storage:fe:impl::nonWebMain",
-      ":lib:storage:fe:impl::webMain",
-      ":lib:storage:fe:test::commonMain",
-      ":lib:storage:fe:test::nonWebMain",
-      ":lib:storage:fe:test::webMain"
+      ":lib:storage:fe:impl::nonWebMain"
     ]
   },
   ":lib:storage:fe:impl::androidMain": {
     "blast_radius_module": 1,
-    "blast_radius_unit": 1,
-    "downstream_sample": [
-      ":koinModulesAggregate:fe::commonMain"
-    ]
+    "blast_radius_unit": 0,
+    "downstream_sample": []
   },
   ":lib:storage:fe:impl::commonMain": {
     "blast_radius_module": 1,
-    "blast_radius_unit": 1,
+    "blast_radius_unit": 6,
     "downstream_sample": [
+      ":lib:storage:fe:impl::androidMain",
+      ":lib:storage:fe:impl::iosMain",
+      ":lib:storage:fe:impl::jvmMain",
+      ":lib:storage:fe:impl::nonWebMain",
+      ":lib:storage:fe:impl::webMain",
       ":koinModulesAggregate:fe::commonMain"
     ]
   },
   ":lib:storage:fe:impl::iosMain": {
     "blast_radius_module": 1,
-    "blast_radius_unit": 1,
-    "downstream_sample": [
-      ":koinModulesAggregate:fe::commonMain"
-    ]
+    "blast_radius_unit": 0,
+    "downstream_sample": []
   },
   ":lib:storage:fe:impl::jvmMain": {
     "blast_radius_module": 1,
-    "blast_radius_unit": 1,
-    "downstream_sample": [
-      ":koinModulesAggregate:fe::commonMain"
-    ]
+    "blast_radius_unit": 0,
+    "downstream_sample": []
   },
   ":lib:storage:fe:impl::nonWebMain": {
     "blast_radius_module": 1,
-    "blast_radius_unit": 1,
+    "blast_radius_unit": 3,
     "downstream_sample": [
-      ":koinModulesAggregate:fe::commonMain"
+      ":lib:storage:fe:impl::androidMain",
+      ":lib:storage:fe:impl::iosMain",
+      ":lib:storage:fe:impl::jvmMain"
     ]
   },
   ":lib:storage:fe:impl::webMain": {
     "blast_radius_module": 1,
-    "blast_radius_unit": 1,
-    "downstream_sample": [
-      ":koinModulesAggregate:fe::commonMain"
-    ]
+    "blast_radius_unit": 0,
+    "downstream_sample": []
   },
   ":lib:storage:fe:test::commonMain": {
     "blast_radius_module": 4,
-    "blast_radius_unit": 17,
+    "blast_radius_unit": 12,
     "downstream_sample": [
+      ":lib:storage:fe:test::nonWebMain",
+      ":lib:storage:fe:test::webMain",
       ":feat:findings:fe:app:impl::commonMain",
-      ":feat:findings:fe:app:impl::commonTest",
       ":feat:findings:fe:app:impl::nonWebMain",
-      ":feat:findings:fe:app:impl::nonWebTest",
       ":feat:findings:fe:app:impl::webMain",
-      ":feat:findings:fe:app:impl::webTest",
       ":feat:projects:fe:app:impl::commonMain",
-      ":feat:projects:fe:app:impl::commonTest",
       ":feat:projects:fe:app:impl::nonWebMain",
-      ":feat:projects:fe:app:impl::nonWebTest",
       ":feat:projects:fe:app:impl::webMain",
-      ":feat:projects:fe:app:impl::webTest",
       ":feat:structures:fe:driving:impl::commonMain",
-      ":feat:structures:fe:driving:impl::commonTest",
       ":feat:structures:fe:driving:impl::nonWebMain",
       ":feat:structures:fe:driving:impl::webMain",
       ":testInfra:fe::commonMain"
@@ -4571,48 +3908,20 @@
   },
   ":lib:storage:fe:test::nonWebMain": {
     "blast_radius_module": 4,
-    "blast_radius_unit": 17,
+    "blast_radius_unit": 3,
     "downstream_sample": [
-      ":feat:findings:fe:app:impl::commonMain",
-      ":feat:findings:fe:app:impl::commonTest",
       ":feat:findings:fe:app:impl::nonWebMain",
-      ":feat:findings:fe:app:impl::nonWebTest",
-      ":feat:findings:fe:app:impl::webMain",
-      ":feat:findings:fe:app:impl::webTest",
-      ":feat:projects:fe:app:impl::commonMain",
-      ":feat:projects:fe:app:impl::commonTest",
       ":feat:projects:fe:app:impl::nonWebMain",
-      ":feat:projects:fe:app:impl::nonWebTest",
-      ":feat:projects:fe:app:impl::webMain",
-      ":feat:projects:fe:app:impl::webTest",
-      ":feat:structures:fe:driving:impl::commonMain",
-      ":feat:structures:fe:driving:impl::commonTest",
-      ":feat:structures:fe:driving:impl::nonWebMain",
-      ":feat:structures:fe:driving:impl::webMain",
-      ":testInfra:fe::commonMain"
+      ":feat:structures:fe:driving:impl::nonWebMain"
     ]
   },
   ":lib:storage:fe:test::webMain": {
     "blast_radius_module": 4,
-    "blast_radius_unit": 17,
+    "blast_radius_unit": 3,
     "downstream_sample": [
-      ":feat:findings:fe:app:impl::commonMain",
-      ":feat:findings:fe:app:impl::commonTest",
-      ":feat:findings:fe:app:impl::nonWebMain",
-      ":feat:findings:fe:app:impl::nonWebTest",
       ":feat:findings:fe:app:impl::webMain",
-      ":feat:findings:fe:app:impl::webTest",
-      ":feat:projects:fe:app:impl::commonMain",
-      ":feat:projects:fe:app:impl::commonTest",
-      ":feat:projects:fe:app:impl::nonWebMain",
-      ":feat:projects:fe:app:impl::nonWebTest",
       ":feat:projects:fe:app:impl::webMain",
-      ":feat:projects:fe:app:impl::webTest",
-      ":feat:structures:fe:driving:impl::commonMain",
-      ":feat:structures:fe:driving:impl::commonTest",
-      ":feat:structures:fe:driving:impl::nonWebMain",
-      ":feat:structures:fe:driving:impl::webMain",
-      ":testInfra:fe::commonMain"
+      ":feat:structures:fe:driving:impl::webMain"
     ]
   },
   ":server::main": {
@@ -4652,14 +3961,13 @@
     ]
   },
   ":testInfra:common::commonMain": {
-    "blast_radius_module": 149,
-    "blast_radius_unit": 254,
+    "blast_radius_module": 150,
+    "blast_radius_unit": 225,
     "downstream_sample": [
-      ":composeApp::androidMain",
       ":composeApp::commonMain",
+      ":composeApp::androidMain",
       ":composeApp::iosMain",
       ":composeApp::jvmMain",
-      ":composeApp::jvmTest",
       ":composeApp::nonWebMain",
       ":composeApp::webMain",
       ":core:foundation:be::main",
@@ -4672,20 +3980,20 @@
       ":feat:authentication:be:driving:impl::test",
       ":feat:authentication:be:driving:test::main",
       ":feat:authentication:fe:app:impl::commonMain",
-      ":feat:authentication:fe:app:impl::commonTest",
+      ":feat:authentication:fe:driven:impl::commonMain",
       ":feat:authentication:fe:driven:impl::androidMain",
-      ":feat:authentication:fe:driven:impl::commonMain"
+      ":feat:authentication:fe:driven:impl::iosMain",
+      ":feat:authentication:fe:driven:impl::jvmMain"
     ]
   },
   ":testInfra:fe::commonMain": {
-    "blast_radius_module": 74,
-    "blast_radius_unit": 160,
+    "blast_radius_module": 75,
+    "blast_radius_unit": 131,
     "downstream_sample": [
-      ":composeApp::androidMain",
       ":composeApp::commonMain",
+      ":composeApp::androidMain",
       ":composeApp::iosMain",
       ":composeApp::jvmMain",
-      ":composeApp::jvmTest",
       ":composeApp::nonWebMain",
       ":composeApp::webMain",
       ":core:foundation:fe::commonMain",
@@ -4693,14 +4001,15 @@
       ":core:storage:fe::commonMain",
       ":core:storage:fe::nonWebMain",
       ":feat:authentication:fe:app:impl::commonMain",
-      ":feat:authentication:fe:app:impl::commonTest",
-      ":feat:authentication:fe:driven:impl::androidMain",
       ":feat:authentication:fe:driven:impl::commonMain",
+      ":feat:authentication:fe:driven:impl::androidMain",
       ":feat:authentication:fe:driven:impl::iosMain",
       ":feat:authentication:fe:driven:impl::jvmMain",
       ":feat:authentication:fe:driven:impl::webMain",
       ":feat:authentication:fe:driven:test::commonMain",
-      ":feat:authentication:fe:driving:api::commonMain"
+      ":feat:authentication:fe:driving:api::commonMain",
+      ":feat:authentication:fe:driving:impl::commonMain",
+      ":feat:authentication:fe:ports::commonMain"
     ]
   }
 }
