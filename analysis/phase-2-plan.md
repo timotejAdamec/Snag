@@ -425,8 +425,8 @@ File: `analysis/figures.py`
 - Add `figure_layer_divergence()` that consumes `analysis/data/sharing_report_with_loc.csv`.
 - Aggregation key is the `hex_layer` column (already emitted by `SharingReportRowBuilder`). Rows with empty `hex_layer` (app modules, some libs) are grouped as `"other"`.
 - Two outputs:
-  - CSV `analysis/data/layer_divergence.csv` with columns `hex_layer, total_loc, platform_specific_loc, platform_specific_share, divergent_module_count, total_module_count`.
-  - PDF `analysis/figures/fig_4_2_layer_divergence.pdf` — stacked horizontal bar per layer, segments = commonMain / nonWebMain / webMain / other platform-specific; annotated with divergent_module_count.
+  - CSV `analysis/data/layer_divergence.csv` with columns `hex_layer, total_loc, platform_specific_loc, platform_specific_share`.
+  - PDF `analysis/figures/fig_4_2_layer_divergence.pdf` — stacked horizontal bar per layer, segments = commonMain / nonWebMain / webMain / other platform-specific (incl. single-target `main` for backend and `:androidApp`); annotated with platform-specific LOC share per layer.
 - Add unit test `analysis/tests/test_layer_divergence.py` with ~4 fixture-based cases: empty input, pure-common layer (share = 0%), pure-platform-specific layer (share = 100%), mixed layer (share matches hand-computed ratio).
 
 ### Thesis §4.1 operationalization row
@@ -649,7 +649,7 @@ To be created / modified:
 ## H. Verification for the addendum work
 
 1. **Part A tests green**: `python -m pytest analysis/tests/test_layer_divergence.py -v` (4 tests).
-2. **Part A figure renders**: `python analysis/figures.py` produces `layer_divergence.csv` + PDF without errors; stacked bar reads sensibly (no layer > 100% platform-specific, no layer < 0%, divergent module counts are non-negative).
+2. **Part A figure renders**: `python analysis/figures.py` produces `layer_divergence.csv` + PDF without errors; stacked bar reads sensibly (no layer > 100% platform-specific, no layer < 0%).
 3. **Part A idempotence**: two runs produce byte-identical CSV + PDF.
 4. **Counterfactual compiles**: `./gradlew check` passes on `experiment/commonize-photo` (or, if `archCheck` fails, the failure is documented as part of the measurement, not worked around).
 5. **Evolution branches compile**: `./gradlew check` passes on both `experiment/photo-progress-correct` and `experiment/photo-progress-commonized`.

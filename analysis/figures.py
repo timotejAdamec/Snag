@@ -273,41 +273,51 @@ def figure_layer_platform_set_heatmap(df: pd.DataFrame) -> None:
 # Figure 4.2 (part A) — per-hex-layer platform-specific LOC share
 # ---------------------------------------------------------------------------------------------
 #
-# Descriptive readout: for each hexagonal layer, what fraction of production Kotlin LOC lives
-# in named platform-specific source sets (webMain, nonWebMain, androidMain, iosMain, jvmMain,
-# and the rarer nonAndroidMain/nonJvmMain/mobileMain/jsMain/wasmJsMain) versus the neutral
-# source sets (commonMain / main).
+# Descriptive readout: for each hexagonal layer, what fraction of production Kotlin LOC reaches
+# only a single platform — i.e. lives outside the multi-platform-shared `commonMain`. The
+# definition matches the reach histogram (§4.2 part B) where `reach == 1` is labelled
+# "platformně specifické": named frontend-platform source sets (webMain, androidMain, iosMain,
+# jsMain, wasmJsMain, jvmMain) AND the backend-module `main` source set (which only runs on
+# JVM backend) all count as platform-specific. Intermediate source sets (nonWebMain,
+# nonAndroidMain, mobileMain, …) are also outside commonMain and thus count too — they cover
+# 2–4 platforms but not the full reach of commonMain.
 #
 # This metric is strictly descriptive. The same shape is compatible with correctly-scoped,
 # over-shared, and over-fragmented codebases — the thesis §4.2 prose must call it out as such
 # (see analysis/phase-2-plan.md §A on sharing/evolvability duality). The counterfactual in
 # Part D is where correctness is argued; this figure just shows where Snag's divergence lives.
 #
-# The *share metric* treats both `commonMain` (multiplatform) and `main` (BE-only jvmMain)
-# as the layer's "shared" source set — `is_platform_specific` is the complement of
-# `source_set ∈ NEUTRAL_SOURCE_SETS`. A BE module with code in `main` is not platform-
-# divergent (it only has one platform), and a KMP module's commonMain is inherently shared.
-#
-# The *visual breakdown* goes further: commonMain in a FULL-family (fe+be) module reaches
-# six platforms, commonMain in a FRONTEND-family module reaches five, and BE `main` reaches
-# one. Collapsing those under a single legend entry hides the reach difference that makes
-# the figure interesting. `NEUTRAL_SEGMENT_SPEC` below keyed on `(source_set, platform_set)`
-# breaks the neutral bucket into three visually distinct segments; rows that don't match
-# any entry fall through to their raw source-set name and pick up platform-specific colours.
+# The *visual breakdown* further splits commonMain into FE+BE-shared (reach 6) vs FE-only
+# (reach 5) so the reader sees the 6p-vs-5p reach difference. Everything outside commonMain
+# (including BE `main`) renders in the warm/platform-specific palette so the bar's warm
+# fraction reads directly as the per-layer platform-specific share.
 
-NEUTRAL_SOURCE_SETS = frozenset({"commonMain", "main"})
+NEUTRAL_SOURCE_SETS = frozenset({"commonMain"})
 
-# (source_set, platform_set) -> (segment id, legend label, colour)
+# (source_set, platform_set) -> (segment id, legend label, colour) for the cool/neutral
+# palette segments. Only commonMain rows land here — BE `main` is now a platform-specific
+# segment (see SEGMENT_SPEC below) consistent with the reach-histogram convention.
 NEUTRAL_SEGMENT_SPEC: dict[tuple[str, str], tuple[str, str, str]] = {
     ("commonMain", "all"):      ("commonMain_all", "commonMain · vše (6p fe+be)",    "#2d3e5e"),
     ("commonMain", "frontend"): ("commonMain_fe",  "commonMain · frontend (5p fe)",  "#4c72b0"),
-    ("main",       "backend"):  ("main_be",        "main · backend (1p be)",         "#8aa4c8"),
 }
-NEUTRAL_SEGMENT_ORDER = ["commonMain_all", "commonMain_fe", "main_be"]
+NEUTRAL_SEGMENT_ORDER = ["commonMain_all", "commonMain_fe"]
 NEUTRAL_SEGMENT_COLORS = {seg_id: colour for (seg_id, _, colour) in NEUTRAL_SEGMENT_SPEC.values()}
 NEUTRAL_SEGMENT_LABELS = {seg_id: label for (seg_id, label, _) in NEUTRAL_SEGMENT_SPEC.values()}
 
+# (source_set, platform_set) -> (segment id, legend label, colour) for single-target `main`
+# source sets. Both backend modules (JVM) and the top-level :androidApp shell (Android target)
+# use `main`; both are reach 1, so they join the warm/platform-specific palette.
+SINGLE_TARGET_MAIN_SPEC: dict[tuple[str, str], tuple[str, str, str]] = {
+    ("main", "backend"): ("main_be",      "main · backend (1p be)",      "#a37b50"),
+    ("main", "android"): ("main_android", "main · android (1p android)", "#3f7f4a"),
+}
+SINGLE_TARGET_MAIN_COLORS = {seg_id: colour for (seg_id, _, colour) in SINGLE_TARGET_MAIN_SPEC.values()}
+SINGLE_TARGET_MAIN_LABELS = {seg_id: label for (seg_id, label, _) in SINGLE_TARGET_MAIN_SPEC.values()}
+
 PLATFORM_SPECIFIC_SEGMENT_ORDER = [
+    "main_be",
+    "main_android",
     "nonWebMain",
     "webMain",
     "nonAndroidMain",
@@ -321,6 +331,7 @@ PLATFORM_SPECIFIC_SEGMENT_ORDER = [
 ]
 
 PLATFORM_SPECIFIC_SEGMENT_COLORS = {
+    **SINGLE_TARGET_MAIN_COLORS,
     "nonWebMain": "#dd8452",
     "webMain": "#c44e52",
     "nonAndroidMain": "#937860",
@@ -333,25 +344,30 @@ PLATFORM_SPECIFIC_SEGMENT_COLORS = {
     "wasmJsMain": "#4c4c4c",
 }
 
+PLATFORM_SPECIFIC_SEGMENT_LABELS = {
+    **SINGLE_TARGET_MAIN_LABELS,
+}
+
 _DIVERGENCE_COLUMNS = [
     "hex_layer",
     "total_loc",
     "platform_specific_loc",
     "platform_specific_share",
-    "divergent_module_count",
-    "total_module_count",
 ]
 
 
 def compute_layer_divergence(df: pd.DataFrame) -> pd.DataFrame:
     """Per-hex-layer aggregation of platform-specific LOC share.
 
+    Platform-specific = LOC outside `commonMain` (the only multi-platform-shared
+    source set). Includes BE-only `main` (reach 1) — consistent with the reach
+    histogram in §4.2 part B where `reach == 1` is labelled "platformně
+    specifické".
+
     Pure function over an already-loaded sharing report. Drops test source sets
-    and rows with empty `platform_set` (they carry no reach semantics). Empty
-    `hex_layer` rolls up into the `"other"` bucket so every production row lands
-    somewhere. Returns a DataFrame ordered by the hex rows of `LAYER_ORDER`
-    followed by `"other"` — rows are preserved even when empty so a missing
-    layer shows up as a zero row instead of vanishing.
+    and rows with empty `platform_set` (they carry no reach semantics). Returns
+    a DataFrame ordered by `LAYER_ORDER`; rows with no production LOC are not
+    emitted.
     """
     if df.empty:
         return pd.DataFrame(columns=_DIVERGENCE_COLUMNS)
@@ -364,9 +380,6 @@ def compute_layer_divergence(df: pd.DataFrame) -> pd.DataFrame:
     prod["is_platform_specific"] = ~prod["source_set"].isin(NEUTRAL_SOURCE_SETS)
     prod["platform_specific_loc"] = prod["kotlin_loc"].where(prod["is_platform_specific"], 0)
 
-    # Keep heatmap parity: only emit rows that carry LOC. `feat (other)` is a
-    # regression tripwire in LAYER_ORDER -- if featShared ever drifts back into
-    # a non-hex shape the row materialises here and in the heatmap together.
     present_layers = set(prod["layer"].unique())
     layer_rows = [layer for layer in LAYER_ORDER if layer in present_layers]
 
@@ -376,19 +389,11 @@ def compute_layer_divergence(df: pd.DataFrame) -> pd.DataFrame:
         total_loc = int(subset["kotlin_loc"].sum())
         ps_loc = int(subset["platform_specific_loc"].sum())
         share = ps_loc / total_loc if total_loc > 0 else 0.0
-        total_modules = subset["module_path"].nunique()
-        divergent_modules = (
-            subset[subset["is_platform_specific"] & (subset["kotlin_loc"] > 0)]
-            ["module_path"]
-            .nunique()
-        )
         records.append({
             "hex_layer": layer,
             "total_loc": total_loc,
             "platform_specific_loc": ps_loc,
             "platform_specific_share": share,
-            "divergent_module_count": int(divergent_modules),
-            "total_module_count": int(total_modules),
         })
 
     return pd.DataFrame(records, columns=_DIVERGENCE_COLUMNS)
@@ -409,7 +414,8 @@ def figure_layer_divergence(df: pd.DataFrame) -> None:
     prod["layer"] = prod.apply(derive_layer, axis=1)
     prod["kotlin_loc"] = prod["kotlin_loc"].astype(int)
     def _classify_segment(row: pd.Series) -> str:
-        spec = NEUTRAL_SEGMENT_SPEC.get((row["source_set"], row["platform_set"]))
+        key = (row["source_set"], row["platform_set"])
+        spec = NEUTRAL_SEGMENT_SPEC.get(key) or SINGLE_TARGET_MAIN_SPEC.get(key)
         return spec[0] if spec is not None else row["source_set"]
 
     prod["segment"] = prod.apply(_classify_segment, axis=1)
@@ -449,7 +455,11 @@ def figure_layer_divergence(df: pd.DataFrame) -> None:
             segment,
             PLATFORM_SPECIFIC_SEGMENT_COLORS.get(segment, "#777777"),
         )
-        label = NEUTRAL_SEGMENT_LABELS.get(segment, segment)
+        label = (
+            NEUTRAL_SEGMENT_LABELS.get(segment)
+            or PLATFORM_SPECIFIC_SEGMENT_LABELS.get(segment)
+            or segment
+        )
         ax.barh(
             y_pos,
             values,
@@ -471,30 +481,6 @@ def figure_layer_divergence(df: pd.DataFrame) -> None:
                     color="white",
                 )
         left += values
-
-    # Annotate each bar with "M/N modules divergent" + share percentage.
-    max_total = int(agg["total_loc"].max()) if not agg.empty else 0
-    for i, (_, row) in enumerate(agg.iterrows()):
-        total = int(row["total_loc"])
-        share_pct = row["platform_specific_share"] * 100.0
-        annotation = (
-            f"  {int(row['divergent_module_count'])}/{int(row['total_module_count'])} "
-            f"modulů divergentních ({share_pct:.1f}% LOC)"
-        )
-        ax.text(
-            total + max(1, int(seg_matrix.values.sum() * 0.005)),
-            y_pos[i],
-            annotation,
-            ha="left",
-            va="center",
-            fontsize=8,
-            color="#333",
-        )
-
-    # Reserve headroom on the right so the per-bar annotations stay inside the
-    # axes frame (the annotations can be ~40 chars wide for the widest layers).
-    if max_total > 0:
-        ax.set_xlim(right=max_total * 1.55)
 
     ax.set_yticks(y_pos, labels=layers)
     ax.invert_yaxis()
