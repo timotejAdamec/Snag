@@ -557,105 +557,6 @@ def figure_wearos_before_after(df: pd.DataFrame) -> None:
     """
 
 
-# ---------------------------------------------------------------------------------------------
-# Structural sharing score — per-module classification by applied plugin family
-# ---------------------------------------------------------------------------------------------
-#
-# A "platform-neutral plugin" is one of the KMP multiplatform plugins in PlatformReach.kt:
-# their applied-id contains the substring `multiplatform.module`. Single-target plugins
-# (backend JVM, Android application) and modules that apply no Snag plugin (e.g. :androidApp
-# top-level shell) are classified as platform-specific.
-#
-# A module is counted in the denominator only when it has at least one production row with
-# non-zero LOC — consistent with compute_layer_divergence's filter discipline.
-
-
-def _is_multiplatform_plugin(plugin_applied: str) -> bool:
-    return "multiplatform.module" in plugin_applied
-
-
-_STRUCTURAL_SCORE_COLUMNS = ["layer", "multiplatform_modules", "total_modules", "share"]
-
-
-def compute_structural_sharing_score(df: pd.DataFrame) -> pd.DataFrame:
-    """Per-layer and global fraction of modules whose plugin is KMP multiplatform.
-
-    Returns one row per hex layer that has any production LOC, plus a final
-    `"(celkem)"` row carrying the global ratio. The per-layer `share` is local
-    (layer's multiplatform count / layer's total count); the global row uses
-    the grand totals.
-    """
-    empty_result = pd.DataFrame(
-        [{"layer": "(celkem)", "multiplatform_modules": 0, "total_modules": 0, "share": 0.0}],
-        columns=_STRUCTURAL_SCORE_COLUMNS,
-    )
-    if df.empty:
-        return empty_result
-
-    prod = df.copy()
-    prod = prod[prod["platform_set"] != ""]
-    prod = prod[~prod["source_set"].str.endswith("Test")]
-    prod["kotlin_loc"] = prod["kotlin_loc"].astype(int)
-    prod = prod[prod["kotlin_loc"] > 0]
-    if prod.empty:
-        return empty_result
-
-    prod["layer"] = prod.apply(derive_layer, axis=1)
-    prod["is_multiplatform"] = prod["plugin_applied"].map(_is_multiplatform_plugin)
-
-    per_module = (
-        prod.groupby("module_path", as_index=False)
-        .agg(
-            layer=("layer", "first"),
-            is_multiplatform=("is_multiplatform", "max"),
-        )
-    )
-
-    records: list[dict] = []
-    present_layers = set(per_module["layer"].unique())
-    for layer in [*LAYER_ORDER, "other"]:
-        if layer not in present_layers:
-            continue
-        subset = per_module[per_module["layer"] == layer]
-        total = int(len(subset))
-        mp = int(subset["is_multiplatform"].sum())
-        share = mp / total if total > 0 else 0.0
-        records.append({
-            "layer": layer,
-            "multiplatform_modules": mp,
-            "total_modules": total,
-            "share": share,
-        })
-
-    grand_total = int(len(per_module))
-    grand_mp = int(per_module["is_multiplatform"].sum())
-    grand_share = grand_mp / grand_total if grand_total > 0 else 0.0
-    records.append({
-        "layer": "(celkem)",
-        "multiplatform_modules": grand_mp,
-        "total_modules": grand_total,
-        "share": grand_share,
-    })
-
-    return pd.DataFrame(records, columns=_STRUCTURAL_SCORE_COLUMNS)
-
-
-def write_structural_sharing_score(df: pd.DataFrame) -> None:
-    """Write `data/structural_sharing_score.csv` for §4.2 Part C.
-
-    This metric is a single headline number plus a per-layer decomposition; the
-    §4.2 prose cites it inline. No dedicated figure is produced — the per-layer
-    breakdown would duplicate the divergent-module-count annotation already on
-    `fig_4_2_layer_divergence`. The CSV is the canonical artefact; §A.2 of the
-    appendix mentions it alongside the full sharing report.
-    """
-    agg = compute_structural_sharing_score(df)
-    DATA_DIR.mkdir(parents=True, exist_ok=True)
-    csv_path = DATA_DIR / "structural_sharing_score.csv"
-    agg.to_csv(csv_path, index=False, lineterminator="\n")
-    print(f"wrote {csv_path}")
-
-
 _REACH_HISTOGRAM_COLUMNS = ["reach", "kotlin_loc", "source_set_count", "share"]
 
 
@@ -1003,7 +904,6 @@ def main() -> int:
     figure_layer_platform_set_heatmap(df)
     figure_layer_divergence(df)
     figure_platform_reach_histogram(df)
-    write_structural_sharing_score(df)
     figure_ripple_buckets()
     figure_wearos_ripple_by_module_tree()
     return 0
