@@ -11,7 +11,7 @@
 # produced by the Gradle DependencyGraphTask.
 #
 # Semantic model: the closure is unit-level — each (module, source_set) is
-# the architectural unit of accounting. The walk respects two layers of
+# a source-set-level unit of accounting. The walk respects two layers of
 # semantics:
 #
 #   (1) Inter-module Gradle dependency edges with api/implementation scope.
@@ -41,7 +41,7 @@
 #                          (build-economy view — answers "how many
 #                          build.gradle.kts files rebuild").
 #   - blast_radius_unit:   count of transitive downstream (module, source_set)
-#                          architectural units. Headline metric for §4.3 —
+#                          source-set-level units. Headline metric for §4.3 —
 #                          exact under the combined api/impl-scope and
 #                          source-set-hierarchy semantics described above.
 #
