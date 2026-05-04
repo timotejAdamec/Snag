@@ -434,7 +434,7 @@ File: `analysis/figures.py`
 Single new row under O1 in `~/Ctu/dp-thesis-timotej-adamec/text/text.tex` table `tab:eval-operacionalizace`:
 
 ```latex
-O1 & Podíl platformně-specifického LOC podle vrstvy hexagonální architektury (deskriptivní, nevyvracející)
+O1 & Podíl platformně-specifického LOC podle části architektury (deskriptivní, nevyvracející)
    & SharingReport CSV $\bowtie$ tokei LOC
    & \code{figures.py::figure\_layer\_divergence}
    & TBD \\
@@ -823,7 +823,7 @@ All fifteen T-rows shipped in thesis-repo commit `99afdce` on branch `feat/phase
 
 | ID | §-target | What was inserted | Source of truth | Status |
 |---|---|---|---|---|
-| **T-1** | §4.1 `tab:eval-operacionalizace` | O1 row: "Podíl platformně-specifického LOC podle vrstvy hexagonální architektury (deskriptivní, nevyvracející)" — tooling cite `figures.py::figure_layer_divergence` — result cell references `analysis/data/layer_divergence.csv` + `fig_4_2_layer_divergence.pdf`. | `phase-2-plan.md` §C lines 433–444 | **Done** in `99afdce`. |
+| **T-1** | §4.1 `tab:eval-operacionalizace` | O1 row: "Podíl platformně-specifického LOC podle části architektury (deskriptivní, nevyvracející)" — tooling cite `figures.py::figure_layer_divergence` — result cell references `analysis/data/layer_divergence.csv` + `fig_4_2_layer_divergence.pdf`. | `phase-2-plan.md` §C lines 433–444 | **Done** in `99afdce`. |
 | **T-2** | §4.1 `tab:eval-operacionalizace` | O2a row: Part B correct-branch ripple bucket counts — `8 souborů / 97 LOC / vše local`. | `phase-2-plan.md` §F + §G + `ripple_photo-progress-correct_units.csv` | **Done** in `99afdce`. |
 | **T-3** | §4.1 `tab:eval-operacionalizace` | O2b row: Part B commonized-branch ripple bucket counts — `12 souborů / 100 LOC / vše local`; $B_2/B_1 = 2{,}0\times$ blast radius na modul, $3\times$ přeložených FE listů. | `ripple_photo-progress-commonized_units.csv` + `counterfactual_photo_progress.md` | **Done** in `99afdce`. |
 | **T-4** | §4.2 introduction | One-sentence method note appended to first paragraph (structure descriptive; correctness argued by §4.6 + §4.9). | `phase-2-plan.md` §E + §J.5 | **Done** in `99afdce`. Czech phrasing landed as placeholder; Phase 5 prose author may refine. |

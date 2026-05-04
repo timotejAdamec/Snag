@@ -32,7 +32,7 @@
 **Verbatim LaTeX cell content** (adapted from `analysis/phase-2-plan.md` §C lines 433–444, result cell filled from `analysis/data/layer_divergence.csv`):
 
 ```latex
-O1 & Podíl platformně-specifického LOC podle vrstvy hexagonální architektury (deskriptivní, nevyvracející) & SharingReport CSV $\bowtie$ tokei LOC & \code{figures.py::figure\_layer\_divergence} & viz obr.\ \ref{fig:eval-layer-divergence} \\
+O1 & Podíl platformně-specifického LOC podle části architektury (deskriptivní, nevyvracející) & SharingReport CSV $\bowtie$ tokei LOC & \code{figures.py::figure\_layer\_divergence} & viz obr.\ \ref{fig:eval-layer-divergence} \\
 ```
 
 **Also insert.** Reference to the figure: a `\begin{figure}` block citing `analysis/figures/fig_4_2_layer_divergence.pdf` somewhere in §4.2 (recommended: after line 3241 `\todo{}`, as part of the same edit).
