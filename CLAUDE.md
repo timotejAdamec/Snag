@@ -48,19 +48,6 @@ features/libs and if there are any oddities, tell the developer working with you
 
 Do not worry about migrations, this is not in production yet.
 
-## KMP source-set hierarchy
-
-`build-logic/src/main/kotlin/cz/adamec/timotej/snag/buildsrc/configuration/MultiplatformModuleSetup.kt` declares custom intermediate source sets `mobileMain`, `nonWebMain`, `nonAndroidMain`, `nonJvmMain`, and `webMain` on top of `commonMain`. The combined hierarchy (Snag wiring + `applyDefaultHierarchyTemplate()`) used by analysis tooling is encoded in `analysis/source_set_hierarchy.py`. Notable: `jsMain` and `wasmJsMain` are wired as descendants of `webMain` *implicitly* by the default hierarchy template's `web` group — they do not appear in `MultiplatformModuleSetup.kt`'s explicit dependsOn calls, but the implicit wiring is still in effect.
-
-## Architectural unit vs build module (analysis terminology)
-
-The thesis evaluation chapter uses two distinct senses of "module":
-
-- **Architectural unit** = `(module, source_set)` pair. Primary unit for sharing, ripple, blast radius. Source set is where platform reach lives, where dependency declarations are made, and where the KMP `dependsOn` hierarchy expresses the architecture.
-- **Build module** = a Gradle project. Used for build-economy discussions (convention plugins, `build.gradle.kts` count).
-
-When updating analysis prose or thesis text, always disambiguate: "26 architectural units across 12 build modules", not "26 modules". The unit choice is justified in `analysis/thesis-evaluation-plan.md` §4.1 (BE-vs-FE counting symmetry argument).
-
 ## Available skills
 
 - `/project-structure`
