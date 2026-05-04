@@ -487,7 +487,7 @@ def figure_layer_divergence(df: pd.DataFrame) -> None:
     ax.set_xlabel("Produkční Kotlin LOC")
     ax.set_ylabel("Hexagonální vrstva")
     ax.set_title(
-        "Podíl platformně-specifického LOC v části architektury",
+        "Rozložení produkčního LOC po vrstvě architektury a zdrojové sadě",
         pad=14,
     )
     ax.legend(loc="lower right", frameon=True, fontsize=8, ncol=2)
