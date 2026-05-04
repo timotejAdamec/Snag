@@ -215,9 +215,9 @@ def figure_layer_platform_set_heatmap(df: pd.DataFrame) -> None:
     im = ax.imshow(data, aspect="auto", cmap="YlOrRd")
 
     ax.set_xlabel("Sada platforem (počet platforem, na které zdrojová sada zasahuje)")
-    ax.set_ylabel("Vrstva architektury")
+    ax.set_ylabel("Část architektury")
     ax.set_title(
-        "Produkční Kotlin LOC podle vrstvy architektury a sady platforem",
+        "Produkční Kotlin LOC podle části architektury a sady platforem",
         pad=14,
     )
 
