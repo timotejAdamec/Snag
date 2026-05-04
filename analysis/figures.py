@@ -289,8 +289,8 @@ def figure_layer_platform_set_heatmap(df: pd.DataFrame) -> None:
 #
 # The *visual breakdown* further splits commonMain into FE+BE-shared (reach 6) vs FE-only
 # (reach 5) so the reader sees the 6p-vs-5p reach difference. Everything outside commonMain
-# (including BE `main`) renders in the warm/platform-specific palette; the bar's warm fraction
-# matches the right-side `% platformně specifické` annotation.
+# (including BE `main`) renders in the warm/platform-specific palette so the bar's warm
+# fraction reads directly as the per-layer platform-specific share.
 
 NEUTRAL_SOURCE_SETS = frozenset({"commonMain"})
 
@@ -481,24 +481,6 @@ def figure_layer_divergence(df: pd.DataFrame) -> None:
                     color="white",
                 )
         left += values
-
-    max_total = int(agg["total_loc"].max()) if not agg.empty else 0
-    for i, (_, row) in enumerate(agg.iterrows()):
-        total = int(row["total_loc"])
-        share_pct = row["platform_specific_share"] * 100.0
-        annotation = f"  {share_pct:.1f} % platformně specifické"
-        ax.text(
-            total + max(1, int(seg_matrix.values.sum() * 0.005)),
-            y_pos[i],
-            annotation,
-            ha="left",
-            va="center",
-            fontsize=8,
-            color="#333",
-        )
-
-    if max_total > 0:
-        ax.set_xlim(right=max_total * 1.40)
 
     ax.set_yticks(y_pos, labels=layers)
     ax.invert_yaxis()
