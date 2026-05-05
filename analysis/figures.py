@@ -716,33 +716,34 @@ def figure_ripple_buckets() -> None:
     each can be embedded at full width in the thesis without compressing the
     bar labels.
 
-    Consumes every `analysis/data/ripple_<change>_units.csv` produced by
-    feature_retro.py --finalize. Recurring intrinsic unit count annotated per bar.
+    Consumes every `analysis/data/ripple_<change>_files.csv` produced by
+    feature_retro.py --finalize. Aggregates per-file `bucket` so mixed units
+    (a single Gradle module touching multiple buckets) split correctly across
+    segments — matches the per-file methodology in §metodologie and the
+    per-file numbers cited in §evaluation tables and prose.
 
     Skips gracefully when no ripple CSVs exist yet — Phase 2 writeup runs before
     any case study data is committed, so the smoke pass must not fail here.
     """
-    ripple_csvs = sorted(DATA_DIR.glob("ripple_*_units.csv"))
+    ripple_csvs = sorted(DATA_DIR.glob("ripple_*_files.csv"))
     if not ripple_csvs:
-        print("figure_ripple_buckets: no ripple_*_units.csv found — skipping")
+        print("figure_ripple_buckets: no ripple_*_files.csv found — skipping")
         return
 
     per_change_rows = []
     for csv_path in ripple_csvs:
-        change_id = csv_path.stem.removeprefix("ripple_").removesuffix("_units")
+        change_id = csv_path.stem.removeprefix("ripple_").removesuffix("_files")
         df = pd.read_csv(csv_path, dtype=str).fillna("")
-        df["file_count"] = df["file_count"].astype(int)
-        df["loc_churn_sum"] = df["loc_churn_sum"].astype(int)
-        df["recurring_bool"] = df["recurring"].str.lower().isin({"true", "1"})
+        df["loc_churn"] = df["loc_churn"].astype(int)
 
         bucket_files = {b: 0 for b in RIPPLE_BUCKET_ORDER}
         bucket_churn = {b: 0 for b in RIPPLE_BUCKET_ORDER}
         for _, row in df.iterrows():
-            b = row["dominant_bucket"]
+            b = row["bucket"]
             if b not in bucket_files:
                 continue
-            bucket_files[b] += int(row["file_count"])
-            bucket_churn[b] += int(row["loc_churn_sum"])
+            bucket_files[b] += 1
+            bucket_churn[b] += int(row["loc_churn"])
 
         per_change_rows.append(
             {
