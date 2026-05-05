@@ -126,7 +126,7 @@ git tag fe-v1.2.0   # or be-v1.2.0
 git push origin fe-v1.2.0
 ```
 
-All release tags are listed on the [Tags](https://github.com/timotejAdamec/Snag/tags) page. Frontend tags trigger GitHub Actions to build downloadable artifacts and publish a GitHub Release. Backend tags trigger a deployment workflow that builds a Docker image, pushes it to Artifact Registry, and rolls out the `snag-server-demo` service on GCP Cloud Run (region `europe-west3`); no GitHub artifacts are published.
+All release tags are listed on the [Tags](https://github.com/timotejAdamec/Snag/tags) page. Frontend tags trigger GitHub Actions to build downloadable artifacts and publish a GitHub Release. Backend tags trigger a deployment workflow that builds a Docker image, pushes it to GCP Artifact Registry, and rolls out the `snag-server-demo` service on GCP Cloud Run (region `europe-west3`); no GitHub artifacts are published.
 
 ## Project structure
 
