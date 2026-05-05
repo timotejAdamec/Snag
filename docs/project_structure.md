@@ -22,12 +22,11 @@ Can depend on both `core` and `feat` code.
 Each feature is structured by platforms and by layers:
 - `business/` is a directory (not a module) containing platform-agnostic domain code:
   - `business/model/` — Pure domain interfaces representing the analytical domain model. These have
-    no dependencies on other modules except `:core:foundation`. No `updatedAt` or sync concerns.
+    no dependencies on other modules except `:core:foundation`.
   - `business/rules/` — Business rules operating on domain interfaces (e.g., validation rules).
     Depends on `business/model/`.
 - `app/` contains application-layer code shared by all platforms:
-  - `app/model/` — Shared application interfaces (`AppX : X, Versioned`) and data classes. Extends
-    business models with `updatedAt` for sync versioning.
+  - `app/model/` — Shared application models (`AppX : X, Versioned`). Usually extends business models.
 - `be/` for backend code.
 - `fe/` for frontend code.
 

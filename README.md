@@ -6,8 +6,19 @@
 
 <p align="center">A Kotlin Multiplatform snagging system — Android, iOS, Web, Desktop (JVM), and a Ktor backend.</p>
 
+---
 
-# Screenshots
+## Contents
+
+- [Screenshots](#screenshots)
+- [Running the apps](#running-the-apps)
+- [Running the server locally](#running-the-server-locally)
+- [Choosing a server target](#choosing-a-server-target)
+- [Releases](#releases)
+- [Project structure](#project-structure)
+- [Affiliation](#affiliation)
+
+## Screenshots
 
 <table>
   <tr>
@@ -28,153 +39,103 @@
   </tr>
 </table>
 
-# Prerequisites
+## Running the apps
 
-## Google Cloud Storage Setup
+Frontend clients have no extra prerequisites — by default they talk to `localhost`. To point them at a hosted backend instead, see [Choosing a server target](#choosing-a-server-target).
 
-This project uses Google Cloud Storage for file storage. Follow these steps to set up your development environment:
+Each app can be launched from your IDE's run-configuration widget, or from the terminal:
 
-### 1. Install Google Cloud CLI
+| Target | Command |
+| --- | --- |
+| Android | `./gradlew :androidApp:assembleDebug` |
+| Desktop (JVM) | `./gradlew :composeApp:run` |
+| Web (Wasm — modern browsers, faster) | `./gradlew :composeApp:wasmJsBrowserDevelopmentRun` |
+| Web (JS — older browsers) | `./gradlew :composeApp:jsBrowserDevelopmentRun` |
+| iOS | open [`/iosApp`](./iosApp) in Xcode and run, or use the IDE run config |
 
-- **macOS** (using Homebrew):
-```shell
-  brew install --cask google-cloud-sdk
-```
-- **Windows/Linux**: Download from [https://cloud.google.com/sdk/docs/install](https://cloud.google.com/sdk/docs/install)
+> On Windows, replace `./gradlew` with `.\gradlew.bat`.
 
-### 2. Authenticate with Google Cloud
+## Running the server locally
 
-Initialize the gcloud CLI and authenticate:
+The server uses Google Cloud Storage for file storage, so a one-time GCP setup is required **only when running the backend on your machine**. Frontend-only work (or pointing the frontend at the `dev`/`demo` deployment) does not need this.
+
+### 1. Install the Google Cloud CLI
+
+- **macOS** (Homebrew): `brew install --cask google-cloud-sdk`
+- **Windows / Linux**: see [cloud.google.com/sdk/docs/install](https://cloud.google.com/sdk/docs/install)
+
+### 2. Authenticate
+
 ```shell
 gcloud init
 ```
-Follow the prompts to:
-- Sign in with your Google account (you have to be added to the GCP project)
-- Select the `snag-487319` project
 
-### 3. Set Up Application Default Credentials
+Sign in with a Google account that has access to the GCP project, and select `snag-487319`.
 
-Configure credentials for the application code:
+### 3. Set up Application Default Credentials
+
 ```shell
 gcloud auth application-default login
 ```
 
-This creates credentials at `~/.config/gcloud/application_default_credentials.json` that the application will use automatically.
+This writes credentials to `~/.config/gcloud/application_default_credentials.json`, which the server picks up automatically.
 
-**Important**: Never commit credential files to the repository. They contain sensitive authentication tokens.
+> Never commit credential files — they contain sensitive tokens.
 
-### 4. Verify Setup
+### 4. Verify
 
-You can verify your setup by listing the project's buckets:
 ```shell
 gsutil ls
 ```
 
-# Building and Running the Project
+### 5. Run the server
 
-## Build and Run Android Application
+```shell
+./scripts/run-be.sh
+```
 
-To build and run the development version of the Android app, use the run configuration from the run widget
-in your IDE’s toolbar or build it directly from the terminal:
-- on macOS/Linux
-  ```shell
-  ./gradlew :androidApp:assembleDebug
-  ```
-- on Windows
-  ```shell
-  .\gradlew.bat :androidApp:assembleDebug
-  ```
+The script loads `config/common-debug.properties` and `config/backend-debug.env` into the environment, then launches `:server:run`.
 
-## Build and Run Desktop (JVM) Application
+## Choosing a server target
 
-To build and run the development version of the desktop app, use the run configuration from the run widget
-in your IDE’s toolbar or run it directly from the terminal:
-- on macOS/Linux
-  ```shell
-  ./gradlew :composeApp:run
-  ```
-- on Windows
-  ```shell
-  .\gradlew.bat :composeApp:run
-  ```
-
-## Build and Run Server
-
-To build and run the development version of the server, use the run configuration from the run widget
-in your IDE’s toolbar or run it directly from the terminal:
-- on macOS/Linux
-  ```shell
-  ./gradlew :server:run --no-daemon
-  ```
-- on Windows
-  ```shell
-  .\gradlew.bat :server:run --no-daemon
-  ```
-
-## Build and Run Web Application
-
-To build and run the development version of the web app, use the run configuration from the run widget
-in your IDE's toolbar or run it directly from the terminal:
-- for the Wasm target (faster, modern browsers):
-  - on macOS/Linux
-    ```shell
-    ./gradlew :composeApp:wasmJsBrowserDevelopmentRun
-    ```
-  - on Windows
-    ```shell
-    .\gradlew.bat :composeApp:wasmJsBrowserDevelopmentRun
-    ```
-- for the JS target (slower, supports older browsers):
-  - on macOS/Linux
-    ```shell
-    ./gradlew :composeApp:jsBrowserDevelopmentRun
-    ```
-  - on Windows
-    ```shell
-    .\gradlew.bat :composeApp:jsBrowserDevelopmentRun
-    ```
-
-## Build and Run iOS Application
-
-To build and run the development version of the iOS app, use the run configuration from the run widget
-in your IDE’s toolbar or open the [/iosApp](./iosApp) directory in Xcode and run it from there.
-
-# Server Target
-
-By default, frontend clients connect to `localhost`. To target a Cloud Run deployment instead, set the `snag.serverTarget` property in `gradle.properties`:
+Frontend clients default to `localhost`. To target a Cloud Run deployment instead, set `snag.serverTarget` in `gradle.properties`:
 
 ```properties
 snag.serverTarget=dev
 ```
 
-Valid values: `localhost` (default), `dev`, `demo`.
+Valid values: `localhost` (default), `dev`, `demo`. Re-sync Gradle in your IDE after changing it. Applies to all frontend targets (Android, desktop, web, iOS).
 
-After changing the value, re-sync the Gradle project in your IDE. This applies to all build targets (Android, desktop, web).
+You can also pass it per-invocation without editing any files:
 
-Alternatively, you can pass it as a command-line flag without modifying any files:
 ```shell
 ./gradlew <task> -Psnag.serverTarget=dev
 ```
 
-# Making a Release
+## Releases
 
-1. Tag and push:
-   ```bash
-   git tag v0.2.0
-   git push origin v0.2.0
-   ```
-2. GitHub Actions automatically builds all platform artifacts and creates a GitHub Release with them attached
-3. Artifacts are downloadable from the [Releases](../../releases) page
+Frontend and backend release independently, each with its own tag prefix:
 
-The version is derived entirely from the git tag — no manual version bumps needed anywhere.
+- **Frontend** — Android / iOS / desktop / web — uses `fe-vX.Y.Z` tags.
+- **Backend** — Ktor server — uses `be-vX.Y.Z` tags.
 
-# Project Structure
+To cut a release, tag and push:
+
+```shell
+git tag fe-v1.2.0   # or be-v1.2.0
+git push origin fe-v1.2.0
+```
+
+GitHub Actions then builds the matching artifacts and publishes a GitHub Release. Downloads live on the [Releases](https://github.com/timotejAdamec/Snag/releases) page.
+
+The version is derived entirely from the git tag — no manual version bumps anywhere.
+
+## Project structure
 
 See [Project Structure](docs/project_structure.md).
 
+## Affiliation
+
 <img src="https://fit.cvut.cz/static/images/fit-cvut-logo-en.svg" alt="FIT CTU logo" height="200">
 
-# Affiliation
-
-This software was developed with the support of the **Faculty of Information Technology, Czech Technical University in Prague**.
-For more information, visit [fit.cvut.cz](https://fit.cvut.cz).
+This software was developed with the support of the **Faculty of Information Technology, Czech Technical University in Prague**. More at [fit.cvut.cz](https://fit.cvut.cz).
