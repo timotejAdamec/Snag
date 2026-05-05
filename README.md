@@ -91,10 +91,10 @@ gsutil ls
 ### 5. Run the server
 
 ```shell
-./gradlew :server:run --no-daemon
+./scripts/run-be.sh
 ```
 
-(Windows: `.\gradlew.bat :server:run --no-daemon`.)
+The script loads `config/common-debug.properties` and `config/backend-debug.env` into the environment, then launches `:server:run`.
 
 ## Choosing a server target
 
@@ -114,13 +114,19 @@ You can also pass it per-invocation without editing any files:
 
 ## Releases
 
-1. Tag and push:
-   ```shell
-   git tag v0.2.0
-   git push origin v0.2.0
-   ```
-2. GitHub Actions builds all platform artifacts and publishes a GitHub Release with them attached.
-3. Download from the [Releases](../../releases) page.
+Frontend and backend release independently, each with its own tag prefix:
+
+- **Frontend** — Android / iOS / desktop / web — uses `fe-vX.Y.Z` tags.
+- **Backend** — Ktor server — uses `be-vX.Y.Z` tags.
+
+To cut a release, tag and push:
+
+```shell
+git tag fe-v1.2.0   # or be-v1.2.0
+git push origin fe-v1.2.0
+```
+
+GitHub Actions then builds the matching artifacts and publishes a GitHub Release. Downloads live on the [Releases](https://github.com/timotejAdamec/Snag/releases) page.
 
 The version is derived entirely from the git tag — no manual version bumps anywhere.
 
