@@ -792,7 +792,8 @@ def figure_ripple_buckets() -> None:
         ax.grid(axis="x", linestyle=":", alpha=0.5)
 
         ax.legend(
-            loc="lower right",
+            loc="upper center",
+            bbox_to_anchor=(0.5, -0.12),
             ncol=len(RIPPLE_BUCKET_ORDER),
             frameon=False,
             fontsize=9,
