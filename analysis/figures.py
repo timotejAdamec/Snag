@@ -217,7 +217,7 @@ def figure_layer_platform_set_heatmap(df: pd.DataFrame) -> None:
     ax.set_xlabel("Sada platforem (počet platforem, na které zdrojová sada zasahuje)")
     ax.set_ylabel("Část architektury")
     ax.set_title(
-        "Produkční Kotlin LOC podle části architektury a sady platforem",
+        "Rozdělení kódu dle zdrojových sad a částí architektury",
         pad=14,
     )
 
@@ -744,16 +744,11 @@ def figure_ripple_buckets() -> None:
             bucket_files[b] += int(row["file_count"])
             bucket_churn[b] += int(row["loc_churn_sum"])
 
-        recurring_intrinsic_units = int(
-            ((df["dominant_bucket"] == "intrinsic") & df["recurring_bool"]).sum(),
-        )
-
         per_change_rows.append(
             {
                 "change_id": change_id,
                 "bucket_files": bucket_files,
                 "bucket_churn": bucket_churn,
-                "recurring_intrinsic_units": recurring_intrinsic_units,
             },
         )
 
@@ -794,23 +789,6 @@ def figure_ripple_buckets() -> None:
         ax.set_xlabel(xlabel)
         ax.set_title(title, pad=12)
         ax.grid(axis="x", linestyle=":", alpha=0.5)
-
-        totals = [sum(r[key].values()) for r in per_change_rows]
-        max_total = max(totals) if totals else 0
-        for i, row in enumerate(per_change_rows):
-            total = totals[i]
-            ax.text(
-                total + max(1, total * 0.02),
-                y_pos[i],
-                f"  opak. vlastní místa = {row['recurring_intrinsic_units']}",
-                ha="left",
-                va="center",
-                fontsize=8,
-                color="#333",
-            )
-
-        if max_total > 0:
-            ax.set_xlim(right=max_total * 1.30)
 
         ax.legend(
             loc="lower right",
