@@ -98,15 +98,15 @@ The script loads `config/common-debug.properties` and `config/backend-debug.env`
 
 ## Choosing a server target
 
-Frontend clients default to `localhost`. To target a Cloud Run deployment instead, set `snag.serverTarget` in `gradle.properties`:
+Frontend debug builds default to `localhost`; release builds default to `demo`. To override the debug default, edit `snag.serverTarget` in [`config/frontend-debug.properties`](./config/frontend-debug.properties):
 
 ```properties
 snag.serverTarget=dev
 ```
 
-Valid values: `localhost` (default), `dev`, `demo`. Re-sync Gradle in your IDE after changing it. Applies to all frontend targets (Android, desktop, web, iOS).
+Valid values: `localhost`, `dev`, `demo`. Re-sync Gradle in your IDE after changing it. Applies to all frontend targets (Android, desktop, web, iOS). The release default lives in [`config/frontend-release.properties`](./config/frontend-release.properties).
 
-You can also pass it per-invocation without editing any files:
+You can also override per-invocation without editing any files:
 
 ```shell
 ./gradlew <task> -Psnag.serverTarget=dev
@@ -126,7 +126,7 @@ git tag fe-v1.2.0   # or be-v1.2.0
 git push origin fe-v1.2.0
 ```
 
-GitHub Actions then builds the matching artifacts and publishes a GitHub Release. Downloads live on the [Releases](https://github.com/timotejAdamec/Snag/releases) page.
+All release tags are listed on the [Tags](https://github.com/timotejAdamec/Snag/tags) page. Frontend tags trigger GitHub Actions to build downloadable artifacts and publish a GitHub Release. Backend tags trigger a deployment workflow that builds a Docker image, pushes it to GCP Artifact Registry, and rolls out the `snag-server-demo` service on GCP Cloud Run (region `europe-west3`); no GitHub artifacts are published.
 
 ## Project structure
 
