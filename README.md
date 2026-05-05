@@ -128,8 +128,6 @@ git push origin fe-v1.2.0
 
 GitHub Actions then builds the matching artifacts and publishes a GitHub Release. Downloads live on the [Releases](https://github.com/timotejAdamec/Snag/releases) page.
 
-The version is derived entirely from the git tag — no manual version bumps anywhere.
-
 ## Project structure
 
 See [Project Structure](docs/project_structure.md).
