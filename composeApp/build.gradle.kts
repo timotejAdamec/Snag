@@ -47,6 +47,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(projects.koinModulesAggregate.fe)
+            implementation(projects.lib.configuration.fe.api)
             implementation(projects.lib.design.fe.api)
             implementation(projects.feat.authentication.fe.driving.api)
             implementation(projects.feat.sync.fe.app.api)
