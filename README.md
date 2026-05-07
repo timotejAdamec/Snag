@@ -12,6 +12,7 @@
 
 - [Screenshots](#screenshots)
 - [Running the apps](#running-the-apps)
+- [Demo account](#demo-account)
 - [Running the server locally](#running-the-server-locally)
 - [Choosing a server target](#choosing-a-server-target)
 - [Releases](#releases)
@@ -41,6 +42,8 @@
 
 ## Running the apps
 
+The web frontend is also hosted at [snag-demo-ctu.web.app](https://snag-demo-ctu.web.app/), pointed at the `demo` backend — no local setup needed.
+
 Frontend clients have no extra prerequisites — by default they talk to `localhost`. To point them at a hosted backend instead, see [Choosing a server target](#choosing-a-server-target).
 
 Each app can be launched from your IDE's run-configuration widget, or from the terminal:
@@ -54,6 +57,13 @@ Each app can be launched from your IDE's run-configuration widget, or from the t
 | iOS | open [`/iosApp`](./iosApp) in Xcode and run, or use the IDE run config |
 
 > On Windows, replace `./gradlew` with `.\gradlew.bat`.
+
+## Demo account
+
+A pre-seeded account is available on the `demo` deployment:
+
+- **Email:** `test-user-1@timadamecgmail.onmicrosoft.com`
+- **Password:** `8fNibabW`
 
 ## Running the server locally
 
