@@ -19,11 +19,5 @@ package cz.adamec.timotej.snag.configuration.fe
  */
 object FrontendRunConfig {
     val serverTarget: ServerTarget = ServerTarget.fromBuildConfig()
-
-    /**
-     * Kermit `Severity` name (e.g. `Verbose`, `Debug`, `Info`). The application initialises
-     * the global Kermit logger at this minimum severity, which gates all platform log output —
-     * including the Ktor `HTTP Client` logger that writes at `Verbose`.
-     */
     val logLevel: String = FrontendBuildConfig.LOG_LEVEL
 }
