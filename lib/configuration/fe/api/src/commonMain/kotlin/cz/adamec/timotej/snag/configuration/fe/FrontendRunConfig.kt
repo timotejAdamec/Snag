@@ -19,4 +19,5 @@ package cz.adamec.timotej.snag.configuration.fe
  */
 object FrontendRunConfig {
     val serverTarget: ServerTarget = ServerTarget.fromBuildConfig()
+    val logLevel: String = FrontendBuildConfig.LOG_LEVEL
 }

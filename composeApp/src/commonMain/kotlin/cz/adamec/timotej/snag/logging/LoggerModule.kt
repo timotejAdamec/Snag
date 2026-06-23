@@ -13,10 +13,13 @@
 package cz.adamec.timotej.snag.logging
 
 import co.touchlab.kermit.Logger
+import co.touchlab.kermit.Severity
 import co.touchlab.kermit.platformLogWriter
+import cz.adamec.timotej.snag.configuration.fe.FrontendRunConfig
 import org.koin.dsl.module
 
 internal val loggerModule =
     module {
         Logger.setLogWriters(platformLogWriter())
+        Logger.setMinSeverity(Severity.valueOf(FrontendRunConfig.logLevel))
     }

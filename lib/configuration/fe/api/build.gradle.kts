@@ -56,6 +56,7 @@ val serverTarget = requireProperty("snag.serverTarget")
 val serverLocalhostPort = requireProperty("snag.serverLocalhostPort")
 val serverDevUrl = requireProperty("snag.serverDevUrl")
 val serverDemoUrl = requireProperty("snag.serverDemoUrl")
+val logLevel = requireProperty("snag.logLevel")
 val entraIdMobileRedirectUri = requireProperty("snag.entraIdMobileRedirectUri")
 val entraIdJvmRedirectUri = requireProperty("snag.entraIdJvmRedirectUri")
 val entraIdWebRedirectPath = requireProperty("snag.entraIdWebRedirectPath")
@@ -87,6 +88,12 @@ buildkonfig {
             com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING,
             "SERVER_DEMO_URL",
             serverDemoUrl,
+            const = true,
+        )
+        buildConfigField(
+            com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING,
+            "LOG_LEVEL",
+            logLevel,
             const = true,
         )
         buildConfigField(
