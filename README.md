@@ -148,4 +148,4 @@ See [Project Structure](docs/project_structure.md).
 
 This software was developed with the support of the **Faculty of Information Technology, Czech Technical University in Prague**. More at [fit.cvut.cz](https://fit.cvut.cz).
 
-The thesis is available in https://dspace.cvut.cz/entities/publication/44075ea9-9dc4-4bb0-9c19-d396ac80eeae.
+The thesis is available at https://dspace.cvut.cz/entities/publication/44075ea9-9dc4-4bb0-9c19-d396ac80eeae.
