@@ -95,7 +95,7 @@ This writes credentials to `~/.config/gcloud/application_default_credentials.jso
 ### 4. Verify
 
 ```shell
-gsutil ls
+gcloud storage ls
 ```
 
 ### 5. Run the server
