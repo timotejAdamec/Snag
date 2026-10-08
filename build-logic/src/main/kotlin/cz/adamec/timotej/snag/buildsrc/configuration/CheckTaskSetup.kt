@@ -37,7 +37,6 @@ fun Project.configureCheckTask() {
         config.setFrom(files("${rootDir}/config/detekt/detekt.yml"))
         allRules.set(true)
         buildUponDefaultConfig.set(true)
-        autoCorrect.set(true)
     }
 
     tasks.named("detekt").configure {
